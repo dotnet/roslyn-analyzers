@@ -15,6 +15,10 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Performance
 {
     using static MicrosoftNetCoreAnalyzersResources;
+
+    /// <summary>
+    /// CA1849: Prefer static HashData over ComputeHash
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PreferHashDataOverComputeHashAnalyzer : DiagnosticAnalyzer
     {
@@ -79,26 +83,22 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // 3. Find all HashAlgorithm local references and store them
 
                 // At OperationBlockEnd:
-                // 1. Compile a symbol to dispose-invocation-array map
-                // 1. Create a set of local reference whose symbols appears only once excluding dispose invocation
-                // 2. Iterate the invocation, only report the invocation
+                // 1. Compile a 'disposeMap' map of symbol -> dispose invocations (Dictionary<ILocalSymbol, ImmutableArray<IInvocationOperation>>)
+                // 2. Compile a 'computeHashOnlyCountMap' map of symbol -> computehash invocation count (Dictionary<ILocalSymbol, int>)
+                //    a. if the count for its local references in the block does not match the count of computehash invocations + dispose invocations, it is excluded from this map
+                // 3. Iterate the invocation, only report the invocation
                 //    a. hashAlgorithm type has a static HashData method
                 //    b. hashAlgorithm instance was created in the block
-                //    c. hashAlgorithm ref count is the same number as the number of computehash invoked
+                //    c. hashAlgorithm instance exist in the 'computeHashOnlyCountMap' map
 
                 // Reporting of Diagnostic
                 // The main span reported is at the ComputeHash method
                 //
                 // Properties:
-                //  if there is only 1 local reference of a symbol excluding dispose reference, DeleteHashCreationPropertyKey is set
+                //  if there is only 1 local reference of a symbol excluding dispose references, DeleteHashCreationPropertyKey is set
                 //
                 // Additional locations:
-                // ComputeHash:
-                // Pattern #1                                      Pattern #2        
-                // 1. span where the hash instance was created
-                // 2-N. dispose invocations
-                //
-                // ComputeHash(a,b,c)/TryComputeHash
+                // ComputeHash/ComputeHash(a,b,c)/TryComputeHash:
                 // Pattern #1                                      Pattern #2        
                 // 1. span where the hash instance was created
                 // 2-N. dispose invocations
@@ -165,7 +165,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         ImmutableArray<Location> codefixerLocations;
                         var localSymbol = ((ILocalReferenceOperation)computeHash.Instance).Local;
                         var isToDeleteHashCreation = false;
-                        int hashCreationLocationIndex;
 
                         if (dataResult.TryGetDeclarationTuple(localSymbol, out var declarationTuple) &&
                             dataResult.TryGetSymbolComputeHashRefCountTuple(localSymbol, out var refCount) &&
@@ -173,15 +172,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         {
                             var disposeArray = dataResult.GetDisposeInvocationArray(localSymbol);
                             isToDeleteHashCreation = refCount == 1;
-                            codefixerLocations = GetFixerLocations(declarationTuple.VariableIntitializerOperation, disposeArray, out hashCreationLocationIndex);
+                            codefixerLocations = GetFixerLocations(declarationTuple.VariableIntitializerOperation, disposeArray, out var hashCreationLocationIndex);
+                            var diagnostics = CreateDiagnostics(computeHash, hashDataMethodSymbol.ContainingType, codefixerLocations, type, isToDeleteHashCreation, hashCreationLocationIndex);
+                            context.ReportDiagnostic(diagnostics);
                         }
-                        else
-                        {
-                            continue;
-                        }
-
-                        var diagnostics = CreateDiagnostics(computeHash, hashDataMethodSymbol.ContainingType, codefixerLocations, type, isToDeleteHashCreation, hashCreationLocationIndex);
-                        context.ReportDiagnostic(diagnostics);
                     }
                     dataResult.Free(cancellationToken);
                 }
@@ -189,13 +183,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             static void CaptureHashCreateInvocationOperation(DataCollector dataCollector, IInvocationOperation hashCreateInvocation)
             {
-                if (!TryGetVariableInitializerOperation(hashCreateInvocation.Parent, out var variableInitializerOperation))
+                if (TryGetVariableInitializerOperation(hashCreateInvocation.Parent, out var variableInitializerOperation))
                 {
-                    return;
+                    var ownerType = hashCreateInvocation.TargetMethod.ContainingType;
+                    CaptureVariableDeclaratorOperation(dataCollector, ownerType, variableInitializerOperation);
                 }
-
-                var ownerType = hashCreateInvocation.TargetMethod.ContainingType;
-                CaptureVariableDeclaratorOperation(dataCollector, ownerType, variableInitializerOperation);
             }
 
             static void CaptureVariableDeclaratorOperation(DataCollector dataCollector, ITypeSymbol createdType, IVariableInitializerOperation variableInitializerOperation)

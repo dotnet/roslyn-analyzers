@@ -38,7 +38,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 var hashInstanceTarget = new HashInstanceTarget(new List<ComputeHashSyntaxHolder> { computeHashSyntaxHolder });
                 var codeActionChain = new HashDataCodeAction(context.Document, hashInstanceTarget, Helper, root);
                 context.RegisterCodeFix(codeActionChain, diagnostic);
-                return;
             }
             else
             {

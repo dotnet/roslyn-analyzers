@@ -1,18 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
 using Resx = Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 
@@ -48,31 +40,64 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            var apiCache = GetApiHandlerCache(context.Compilation);
-
-            if (apiCache.IsEmpty)
+            if (!RequiredSymbols.TryGetSymbols(context.Compilation, out var symbols))
                 return;
 
+            var stringSplitMethods = GetProblematicStringSplitMethods(context.Compilation, symbols);
+
+            //  Report implicit char-to-int conversions in calls to certain overloads of string.Split
             context.RegisterOperationAction(context =>
             {
-                var targetMethod = context.Operation switch
+                var invocation = (IInvocationOperation)context.Operation;
+
+                if (stringSplitMethods.Contains(invocation.TargetMethod))
                 {
-                    IInvocationOperation invocation => invocation.TargetMethod,
-                    IObjectCreationOperation objectCreation => objectCreation.Constructor,
-                    _ => default
-                };
+                    foreach (var argument in invocation.Arguments)
+                    {
+                        if (IsImplicitCharToIntConversion(argument))
+                        {
+                            context.ReportDiagnostic(argument.CreateDiagnostic(Rule));
+                        }
+                    }
+                }
+            }, OperationKind.Invocation);
 
-                RoslynDebug.Assert(targetMethod is not null, $"{nameof(targetMethod)} must not be null.");
+            if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextStringBuilder, out var stringBuilderType))
+                return;
 
-                if (apiCache.TryGetValue(targetMethod, out var handler))
-                    handler.AnalyzeInvocationOperation(context);
+            //  Report implicit char-to-int conversions in calls to all StringBuilder constructors
+            context.RegisterOperationAction(context =>
+            {
+                var creation = (IObjectCreationOperation)context.Operation;
 
-            }, OperationKind.Invocation, OperationKind.ObjectCreation);
+                if (!creation.Constructor.ContainingType.Equals(stringBuilderType, SymbolEqualityComparer.Default))
+                    return;
+
+                foreach (var argument in creation.Arguments)
+                {
+                    if (IsImplicitCharToIntConversion(argument))
+                    {
+                        context.ReportDiagnostic(argument.CreateDiagnostic(Rule));
+                    }
+                }
+            }, OperationKind.ObjectCreation);
+
+            return;
+
+            //  Local functions
+
+            bool IsImplicitCharToIntConversion(IArgumentOperation argument)
+            {
+                return argument.Value is IConversionOperation conversion &&
+                    conversion.IsImplicit &&
+                    conversion.Operand.Type.Equals(symbols.CharType, SymbolEqualityComparer.Default) &&
+                    argument.Parameter.Type.Equals(symbols.Int32Type, SymbolEqualityComparer.Default);
+            }
         }
 
         //  Property bag
 #pragma warning disable CA1815 // Override equals and operator equals on value types
-        internal struct RequiredSymbols
+        internal readonly struct RequiredSymbols
 #pragma warning restore CA1815 // Override equals and operator equals on value types
         {
             private RequiredSymbols(ITypeSymbol charType, ITypeSymbol int32Type, ITypeSymbol stringType)
@@ -103,94 +128,82 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             public ITypeSymbol StringType { get; }
         }
 
-        //  Property bag
-#pragma warning disable CA1815 // Override equals and operator equals on value types
-        internal struct FixCharCastContext
-#pragma warning restore CA1815 // Override equals and operator equals on value types
+        /// <summary>
+        /// Gets the overloads of string.Split that may invite unintentional casts from <see cref="char"/> to <see cref="int"/>.
+        /// </summary>
+        private static ImmutableHashSet<IMethodSymbol> GetProblematicStringSplitMethods(Compilation compilation, RequiredSymbols symbols)
         {
-            public FixCharCastContext(CodeFixContext codeFixContext, IOperation operation, SuspiciousCastFromCharToIntFixer fixer, CancellationToken cancellationToken)
-            {
-                CodeFixContext = codeFixContext;
-                Operation = operation;
-                Fixer = fixer;
-                CancellationToken = cancellationToken;
-            }
+            if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringSplitOptions, out var stringSplitOptionsType))
+                return ImmutableHashSet<IMethodSymbol>.Empty;
 
-            public CodeFixContext CodeFixContext { get; }
-            public IOperation Operation { get; }
-            public SuspiciousCastFromCharToIntFixer Fixer { get; }
-            public CancellationToken CancellationToken { get; }
+            var builder = ImmutableHashSet.CreateBuilder<IMethodSymbol>(SymbolEqualityComparer.Default);
+            var splitMembers = symbols.StringType.GetMembers(nameof(string.Split)).OfType<IMethodSymbol>();
+
+            AddIfNotNull(splitMembers.GetFirstOrDefaultMemberWithParameterTypes(symbols.CharType, symbols.Int32Type, stringSplitOptionsType));
+            AddIfNotNull(splitMembers.GetFirstOrDefaultMemberWithParameterTypes(symbols.StringType, symbols.Int32Type, stringSplitOptionsType));
+
+            return builder.ToImmutable();
+
+            //  Local functions
+
+            void AddIfNotNull(IMethodSymbol? method)
+            {
+                if (method is not null)
+                    builder!.Add(method);
+            }
         }
 
-        internal abstract class ApiHandler
+#if false
+        private abstract class OperationAnalyzer
         {
-            protected ApiHandler(IMethodSymbol method)
+            protected OperationAnalyzer(IMethodSymbol invokedMethod)
             {
-                Method = method;
+                InvokedMethod = invokedMethod;
             }
 
-            public IMethodSymbol Method { get; }
+            public IMethodSymbol InvokedMethod { get; }
 
-            public abstract void AnalyzeInvocationOperation(OperationAnalysisContext context);
-
-            public abstract Task<Document> CreateChangedDocumentAsync(FixCharCastContext context);
+            public abstract void AnalyzeOperation(OperationAnalysisContext context);
         }
 
-        private sealed class StringSplitCharInt32StringSplitOptionsHandler : ApiHandler
+        /// <summary>
+        /// Analyze string.Split(char, int, StringSplitOptions) calls.
+        /// </summary>
+        private sealed class StringSplit_CharInt32StringSplitOptions : OperationAnalyzer
         {
-            private StringSplitCharInt32StringSplitOptionsHandler(IMethodSymbol splitMethod) : base(splitMethod) { }
+            private StringSplit_CharInt32StringSplitOptions(IMethodSymbol stringSplit) : base(stringSplit) { }
 
-            public static StringSplitCharInt32StringSplitOptionsHandler? Create(Compilation compilation, RequiredSymbols symbols)
+            public static StringSplit_CharInt32StringSplitOptions? Create(Compilation compilation, RequiredSymbols symbols)
             {
-                if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringSplitOptions, out var stringSplitOptions))
+                if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringSplitOptions, out var stringSplitOptionsType))
                     return null;
 
                 var splitMethod = symbols.StringType.GetMembers(nameof(string.Split)).OfType<IMethodSymbol>()
-                    .GetFirstOrDefaultMemberWithParameterTypes(symbols.CharType, symbols.Int32Type, stringSplitOptions);
+                    .GetFirstOrDefaultMemberWithParameterTypes(symbols.CharType, symbols.Int32Type, stringSplitOptionsType);
 
-                return splitMethod is not null ? new StringSplitCharInt32StringSplitOptionsHandler(splitMethod) : null;
+                return splitMethod is not null ? new StringSplit_CharInt32StringSplitOptions(splitMethod) : null;
             }
 
-            public override void AnalyzeInvocationOperation(OperationAnalysisContext context)
+            public override void AnalyzeOperation(OperationAnalysisContext context)
             {
                 var invocation = (IInvocationOperation)context.Operation;
                 var argument = invocation.Arguments.First(x => x.Parameter.Ordinal == 1);
 
-                if (argument.Value is IConversionOperation conversion && conversion.IsImplicit && conversion.Operand.Type.SpecialType == SpecialType.System_Char)
+                if (argument.Value is IConversionOperation conversion && conversion.IsImplicit && conversion.Operand.Type.SpecialType is SpecialType.System_Char)
                 {
                     context.ReportDiagnostic(argument.CreateDiagnostic(Rule));
                 }
             }
-
-            public override async Task<Document> CreateChangedDocumentAsync(FixCharCastContext context)
-            {
-                var doc = context.CodeFixContext.Document;
-                var token = context.CancellationToken;
-                var invocation = (IInvocationOperation)context.Operation;
-                var editor = await DocumentEditor.CreateAsync(doc, token).ConfigureAwait(false);
-
-                var charTypeExpressionSyntax = editor.Generator.TypeExpression(invocation.SemanticModel.Compilation.GetSpecialType(SpecialType.System_Char));
-                var arguments = invocation.GetArgumentsInParameterOrder();
-                var elementNodes = new[]
-                {
-                    arguments[0].Value.Syntax,
-                    arguments[1].Value.Syntax
-                };
-                var arrayCreationSyntax = editor.Generator.ArrayCreationExpression(charTypeExpressionSyntax, elementNodes);
-                var memberAccessSyntax = context.Fixer.GetMemberAccessExpressionSyntax(invocation.Syntax);
-                var newInvocationSyntax = editor.Generator.InvocationExpression(memberAccessSyntax, arrayCreationSyntax, arguments[2].Syntax);
-
-                editor.ReplaceNode(invocation.Syntax, newInvocationSyntax);
-
-                return editor.GetChangedDocument();
-            }
         }
 
-        private sealed class StringSplitStringInt32StringSplitOptionsHandler : ApiHandler
+        /// <summary>
+        /// Analyze string.Split(string, int, StringSplitOptions) calls
+        /// </summary>
+        private sealed class StringSplit_StringInt32StringSplitOptions : OperationAnalyzer
         {
-            private StringSplitStringInt32StringSplitOptionsHandler(IMethodSymbol splitMethod) : base(splitMethod) { }
+            private StringSplit_StringInt32StringSplitOptions(IMethodSymbol stringSplit) : base(stringSplit) { }
 
-            public static StringSplitStringInt32StringSplitOptionsHandler? Create(Compilation compilation, RequiredSymbols symbols)
+            public static StringSplit_StringInt32StringSplitOptions? Create(Compilation compilation, RequiredSymbols symbols)
             {
                 if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringSplitOptions, out var stringSplitOptionsType))
                     return null;
@@ -198,132 +211,72 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var splitMethod = symbols.StringType.GetMembers(nameof(string.Split)).OfType<IMethodSymbol>()
                     .GetFirstOrDefaultMemberWithParameterTypes(symbols.StringType, symbols.Int32Type, stringSplitOptionsType);
 
-                return splitMethod is not null ? new StringSplitStringInt32StringSplitOptionsHandler(splitMethod) : null;
+                return splitMethod is not null ? new StringSplit_StringInt32StringSplitOptions(splitMethod) : null;
             }
 
-            public override void AnalyzeInvocationOperation(OperationAnalysisContext context)
+            public override void AnalyzeOperation(OperationAnalysisContext context)
             {
                 var invocation = (IInvocationOperation)context.Operation;
                 var argument = invocation.Arguments.First(x => x.Parameter.Ordinal == 1);
 
-                if (argument.Value is IConversionOperation conversion && conversion.IsImplicit && conversion.Operand.Type.SpecialType == SpecialType.System_Char)
+                if (argument.Value is IConversionOperation conversion && conversion.IsImplicit && conversion.Operand.Type.SpecialType is SpecialType.System_Char)
                 {
                     context.ReportDiagnostic(argument.CreateDiagnostic(Rule));
                 }
             }
-
-            public override async Task<Document> CreateChangedDocumentAsync(FixCharCastContext context)
-            {
-                var editor = await DocumentEditor.CreateAsync(context.CodeFixContext.Document, context.CancellationToken).ConfigureAwait(false);
-                var invocation = (IInvocationOperation)context.Operation;
-
-                var stringType = invocation.SemanticModel.Compilation.GetSpecialType(SpecialType.System_String);
-                var stringTypeExpressionSyntax = editor.Generator.TypeExpression(stringType);
-
-                var arguments = invocation.GetArgumentsInParameterOrder();
-                var elementNodes = new[]
-                {
-                    arguments[0].Value.Syntax,
-                    ConvertCharOperationToString(editor, ((IConversionOperation)arguments[1].Value).Operand)
-                };
-                var arrayCreationSyntax = editor.Generator.ArrayCreationExpression(stringTypeExpressionSyntax, elementNodes);
-
-                var optionsArgumentSyntax = arguments[2].ArgumentKind is ArgumentKind.DefaultValue ?
-                    CreateEnumMemberAccess((INamedTypeSymbol)arguments[2].Parameter.Type, nameof(StringSplitOptions.None)) :
-                    arguments[2].Syntax;
-
-                var splitMemberAccessSyntax = context.Fixer.GetMemberAccessExpressionSyntax(context.Operation.Syntax);
-                var newInvocationSyntax = editor.Generator.InvocationExpression(splitMemberAccessSyntax, arrayCreationSyntax, optionsArgumentSyntax);
-
-                editor.ReplaceNode(context.Operation.Syntax, newInvocationSyntax);
-
-                return editor.GetChangedDocument();
-
-                //  Local functions
-
-                SyntaxNode CreateEnumMemberAccess(INamedTypeSymbol enumType, string enumMemberName)
-                {
-                    RoslynDebug.Assert(editor is not null);
-
-                    var enumTypeSyntax = editor.Generator.TypeExpressionForStaticMemberAccess(enumType);
-                    return editor.Generator.MemberAccessExpression(enumTypeSyntax, enumMemberName);
-                }
-            }
         }
 
-        private sealed class StringBuilderInt32Handler : ApiHandler
+        /// <summary>
+        /// Analyze new StringBuilder(int) calls.
+        /// </summary>
+        private sealed class StringBuilderCtor_Int32 : OperationAnalyzer
         {
-            private StringBuilderInt32Handler(IMethodSymbol ctor) : base(ctor) { }
+            private StringBuilderCtor_Int32(IMethodSymbol ctor) : base(ctor) { }
 
-            public static StringBuilderInt32Handler? Create(Compilation compilation, RequiredSymbols symbols)
+            public static StringBuilderCtor_Int32? Create(Compilation compilation, RequiredSymbols symbols)
             {
                 if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextStringBuilder, out var stringBuilderType))
                     return null;
 
-                var ctor = stringBuilderType.GetMembers(WellKnownMemberNames.InstanceConstructorName).Cast<IMethodSymbol>()
+                var ctor = stringBuilderType.GetMembers(WellKnownMemberNames.InstanceConstructorName).OfType<IMethodSymbol>()
                     .GetFirstOrDefaultMemberWithParameterTypes(symbols.Int32Type);
 
-                return ctor is not null ? new StringBuilderInt32Handler(ctor) : null;
+                return ctor is not null ? new StringBuilderCtor_Int32(ctor) : null;
             }
 
-            public override void AnalyzeInvocationOperation(OperationAnalysisContext context)
+            public override void AnalyzeOperation(OperationAnalysisContext context)
             {
                 var objectCreation = (IObjectCreationOperation)context.Operation;
                 var argument = objectCreation.Arguments[0];
 
-                if (argument.Value is IConversionOperation conversion && conversion.IsImplicit && conversion.Operand.Type.SpecialType == SpecialType.System_Char)
+                if (argument.Value is IConversionOperation conversion && conversion.IsImplicit && conversion.Operand.Type.SpecialType is SpecialType.System_Char)
                 {
                     context.ReportDiagnostic(argument.CreateDiagnostic(Rule));
                 }
             }
-
-            public override async Task<Document> CreateChangedDocumentAsync(FixCharCastContext context)
-            {
-                var editor = await DocumentEditor.CreateAsync(context.CodeFixContext.Document, context.CancellationToken).ConfigureAwait(false);
-                var instanceCreation = (IObjectCreationOperation)context.Operation;
-                var argument = instanceCreation.Arguments[0];
-
-                var newArgumentSyntax = ConvertCharOperationToString(editor, ((IConversionOperation)argument.Value).Operand);
-                var newObjectCreationSyntax = editor.Generator.ObjectCreationExpression(instanceCreation.Constructor.ContainingType, newArgumentSyntax);
-
-                editor.ReplaceNode(instanceCreation.Syntax, newObjectCreationSyntax);
-
-                return editor.GetChangedDocument();
-            }
         }
 
-        internal static ImmutableDictionary<IMethodSymbol, ApiHandler> GetApiHandlerCache(Compilation compilation)
+        private static ImmutableDictionary<IMethodSymbol, OperationAnalyzer> CreateAnalyzerCache(Compilation compilation)
         {
             if (!RequiredSymbols.TryGetSymbols(compilation, out var symbols))
-                return ImmutableDictionary<IMethodSymbol, ApiHandler>.Empty;
+                return ImmutableDictionary<IMethodSymbol, OperationAnalyzer>.Empty;
 
-            var builder = ImmutableDictionary.CreateBuilder<IMethodSymbol, ApiHandler>();
+            var builder = ImmutableDictionary.CreateBuilder<IMethodSymbol, OperationAnalyzer>();
 
-            AddIfNotNull(StringSplitCharInt32StringSplitOptionsHandler.Create(compilation, symbols));
-            AddIfNotNull(StringSplitStringInt32StringSplitOptionsHandler.Create(compilation, symbols));
-            AddIfNotNull(StringBuilderInt32Handler.Create(compilation, symbols));
+            AddIfNotNull(StringSplit_CharInt32StringSplitOptions.Create(compilation, symbols));
+            AddIfNotNull(StringSplit_StringInt32StringSplitOptions.Create(compilation, symbols));
+            AddIfNotNull(StringBuilderCtor_Int32.Create(compilation, symbols));
 
             return builder.ToImmutable();
 
-            // Local functions
+            //  Local functions
 
-            void AddIfNotNull(ApiHandler? handler)
+            void AddIfNotNull(OperationAnalyzer? analyzer)
             {
-                if (handler is not null)
-                    builder!.Add(handler.Method, handler);
+                if (analyzer is not null)
+                    builder!.Add(analyzer.InvokedMethod, analyzer);
             }
         }
-
-        private static SyntaxNode ConvertCharOperationToString(DocumentEditor editor, IOperation charOperation)
-        {
-            if (charOperation is ILiteralOperation charLiteral)
-            {
-                return editor.Generator.LiteralExpression(charLiteral.ConstantValue.Value.ToString());
-            }
-
-            var toStringMemberAccessSyntax = editor.Generator.MemberAccessExpression(charOperation.Syntax, nameof(object.ToString));
-
-            return editor.Generator.InvocationExpression(toStringMemberAccessSyntax);
-        }
+#endif
     }
 }

@@ -318,6 +318,7 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeVersioningRequiresPreviewFeaturesAttribute = "System.Runtime.Versioning.RequiresPreviewFeaturesAttribute";
         public const string SystemRuntimeVersioningSupportedOSPlatformAttribute = "System.Runtime.Versioning.SupportedOSPlatformAttribute";
         public const string SystemRuntimeVersioningUnsupportedOSPlatformAttribute = "System.Runtime.Versioning.UnsupportedOSPlatformAttribute";
+        public const string SystemSByte = "System.SByte";
         public const string SystemSecurityAuthenticationSslProtocols = "System.Security.Authentication.SslProtocols";
         public const string SystemSecurityCryptographyAesCcm = "System.Security.Cryptography.AesCcm";
         public const string SystemSecurityCryptographyAesGcm = "System.Security.Cryptography.AesGcm";

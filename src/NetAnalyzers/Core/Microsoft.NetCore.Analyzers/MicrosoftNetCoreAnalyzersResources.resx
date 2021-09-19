@@ -1795,4 +1795,13 @@
   <data name="DoNotAlwaysSkipTokenValidationInDelegatesMessage" xml:space="preserve">
     <value>The {0} is set to a function that is always returning true. By setting the validation delegate, you are overriding default validation and by always returning true, this validation is completely disabled.</value>
   </data>
+  <data name="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Description" xml:space="preserve">
+    <value>If an array field is readonly and the array is never modified, the compiler can emit more efficient code if the readonly field is replaced with a read-only ReadOnlySpan`1 property.</value>
+  </data>
+  <data name="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Message" xml:space="preserve">
+    <value>Prefer static ReadOnlySpan&lt;{0}&gt; property over static readonly {0}[] field</value>
+  </data>
+  <data name="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Title" xml:space="preserve">
+    <value>Prefer ReadOnlySpan`1 properties over readonly array fields</value>
+  </data>
 </root>

@@ -1852,6 +1852,21 @@
         <target state="new">Prefer 'ContainsValue' over 'Values.Contains' for dictionary type '{0}'</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Description">
+        <source>If an array field is readonly and the array is never modified, the compiler can emit more efficient code if the readonly field is replaced with a read-only ReadOnlySpan`1 property.</source>
+        <target state="new">If an array field is readonly and the array is never modified, the compiler can emit more efficient code if the readonly field is replaced with a read-only ReadOnlySpan`1 property.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Message">
+        <source>Prefer static ReadOnlySpan&lt;{0}&gt; property over static readonly {0}[] field</source>
+        <target state="new">Prefer static ReadOnlySpan&lt;{0}&gt; property over static readonly {0}[] field</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Title">
+        <source>Prefer ReadOnlySpan`1 properties over readonly array fields</source>
+        <target state="new">Prefer ReadOnlySpan`1 properties over readonly array fields</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">
         <source>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</source>
         <target state="translated">'Stream' には、最初の引数として 'Memory&lt;Byte&gt;' を取る 'ReadAsync' オーバーロードと、最初の引数として 'ReadOnlyMemory&lt;Byte&gt;' を取る 'WriteAsync' オーバーロードがあります。より効率的なメモリ ベースのオーバーロードを呼び出すことをお勧めします。</target>

@@ -62,11 +62,11 @@ namespace Analyzer.Utilities.Extensions
         /// </summary>
         public static ImmutableArray<IArgumentOperation> GetArgumentsInParameterOrder(this IInvocationOperation invocation)
         {
-            var result = ImmutableArray.CreateBuilder<IArgumentOperation>(invocation.Arguments.Length);
-            result.Count = invocation.Arguments.Length;
+            var result = invocation.Arguments.ToBuilder();
 
-            foreach (var argument in invocation.Arguments)
-                result[argument.Parameter.Ordinal] = argument;
+            //  IArgumentOperation.Parameter can be null if the argument is an __arglist argument.
+            //  Sort __arglist arguments last, since __arglist parameters must always be declared last.
+            result.Sort((x, y) => (x.Parameter?.Ordinal ?? int.MaxValue).CompareTo(y.Parameter?.Ordinal ?? int.MaxValue));
 
             return result.MoveToImmutable();
         }

@@ -18,3 +18,4 @@ CA2255 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA2256 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2256> | All members declared in parent interfaces must have an implementation in a DynamicInterfaceCastableImplementation-attributed interface |
 CA2257 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2257> | Members defined on an interface with the 'DynamicInterfaceCastableImplementationAttribute' should be 'static' |
 CA2258 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2258> | Providing a 'DynamicInterfaceCastableImplementation' interface in Visual Basic is unsupported |
+CA3200 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3200> | Suspicious cast from char to int |

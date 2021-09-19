@@ -4500,6 +4500,26 @@
             ]
           }
         },
+        "CA3200": {
+          "id": "CA3200",
+          "shortDescription": "Suspicious cast from char to int",
+          "fullDescription": "Implicit cast from char to int in method call is suspicious. Consider using a different overload.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3200",
+          "properties": {
+            "category": "Correctness",
+            "isEnabledByDefault": true,
+            "typeName": "SuspiciousCastFromCharToIntAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA5350": {
           "id": "CA5350",
           "shortDescription": "Do Not Use Weak Cryptographic Algorithms",

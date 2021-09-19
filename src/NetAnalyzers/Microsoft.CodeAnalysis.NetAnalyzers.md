@@ -2640,6 +2640,18 @@ Missing ValidateAntiForgeryTokenAttribute on controller action {0}
 |CodeFix|False|
 ---
 
+## [CA3200](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3200): Suspicious cast from char to int
+
+Implicit cast from char to int in method call is suspicious. Consider using a different overload.
+
+|Item|Value|
+|-|-|
+|Category|Correctness|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|True|
+---
+
 ## [CA5350](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5350): Do Not Use Weak Cryptographic Algorithms
 
 Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA-2 512, SHA-2 384, or SHA-2 256.

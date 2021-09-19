@@ -9,6 +9,7 @@ CA1840 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA1842 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1842> | Do not use 'WhenAll' with a single task |
 CA1843 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1843> | Do not use 'WaitAll' with a single task |
 CA1848 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848> | Use the LoggerMessage delegates |
+CA1849 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
 CA2017 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
 CA2019 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019> | Do not pass mutable value types by value |
 CA2020 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020> | Do not return mutable value types by value |

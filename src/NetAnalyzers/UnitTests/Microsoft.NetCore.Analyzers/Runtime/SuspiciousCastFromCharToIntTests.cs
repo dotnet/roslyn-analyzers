@@ -27,29 +27,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             "new char[] { 'c', 'a' }, options: System.StringSplitOptions.None")]
         public Task StringSplit_CharInt32StringSplitOptions_Fixed_CS(string testArgumentList, string fixedArgumentList)
         {
-            string source = $@"
+            string format = @"
 public class Testopolis
 {{
     private char _char;
     private char GetChar() => _char;
     public void M()
     {{
-        nameof(M).Split({testArgumentList});
+        nameof(M).Split({0});
     }}
 }}";
-            string fixedSource = $@"
-public class Testopolis
-{{
-    private char _char;
-    private char GetChar() => _char;
-    public void M()
-    {{
-        nameof(M).Split({fixedArgumentList});
-    }}
-}}";
-            var diagnostic = VerifyCS.Diagnostic(Rule).WithLocation(0);
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, testArgumentList) },
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0) },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                },
+                FixedState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, fixedArgumentList) },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                }
+            };
 
-            return VerifyCS.VerifyCodeFixAsync(source, diagnostic, fixedSource);
+            return test.RunAsync();
         }
 
         [Theory]
@@ -112,7 +115,13 @@ public class Testopolis
         [InlineData("s, (int)c, o")]
         public Task StringSplit_NoImplicitConversion_NoDiagnostic_CS(string argumentList)
         {
-            string source = $@"
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 using System;
 public class Testopolis
 {{
@@ -120,9 +129,13 @@ public class Testopolis
     {{
         nameof(M).Split({argumentList});
     }}
-}}";
+}}"
+                    },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                }
+            };
 
-            return VerifyCS.VerifyAnalyzerAsync(source);
+            return test.RunAsync();
         }
 
         [Theory]

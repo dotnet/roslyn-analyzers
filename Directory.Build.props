@@ -12,6 +12,9 @@
     <LangVersion Condition="'$(Language)' == 'C#'">preview</LangVersion>
     <LangVersion Condition="'$(Language)' == 'VB'">16</LangVersion>
 
+    <!-- suppress NETSDK1138 warnings for EOL frameworks -->
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+
     <!-- TODO: Enable Nullable for test and non-shipping projects -->
     <Nullable Condition="'$(Nullable)' == '' and '$(IsTestProject)' != 'true' and '$(NonShipping)' != 'true'">enable</Nullable>
   </PropertyGroup>

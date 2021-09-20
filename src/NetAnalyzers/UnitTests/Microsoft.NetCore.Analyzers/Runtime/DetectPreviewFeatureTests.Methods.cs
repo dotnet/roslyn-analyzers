@@ -128,6 +128,50 @@ namespace Preview_Feature_Scratch
         }
 
         [Fact]
+        public async Task TestPreviewParametersToMethodsWithCustomMessageAndUrl()
+        {
+            var csInput = @" 
+using System.Runtime.Versioning; using System;
+namespace Preview_Feature_Scratch
+{
+
+    class Program
+    {
+        public {|#2:Foo|} Getter({|#0:Foo|} foo)
+        {
+            return foo;
+        }
+
+#nullable enable
+        public {|#4:Foo|}? GetterNullable({|#3:Foo|}? foo)
+        {
+            return foo;
+        }
+#nullable disable
+
+        static void Main(string[] args)
+        {
+            Program prog = new Program();
+            prog.Getter({|#1:new Foo()|});
+        }
+    }
+
+    [RequiresPreviewFeatures(""Lib is in preview."", Url = ""https://aka.ms/aspnet/kestrel/http3reqs"")]
+    public class Foo
+    {
+    }
+}";
+
+            var test = TestCS(csInput);
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.MethodUsesPreviewTypeAsParameterRule).WithLocation(0).WithArguments("Lib is in preview.", string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, "https://aka.ms/aspnet/kestrel/http3reqs")));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("Lib is in preview.", string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, "https://aka.ms/aspnet/kestrel/http3reqs")));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.MethodReturnsPreviewTypeRule).WithLocation(2).WithArguments("Lib is in preview.", string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, "https://aka.ms/aspnet/kestrel/http3reqs")));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.MethodUsesPreviewTypeAsParameterRule).WithLocation(3).WithArguments("Lib is in preview.", string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, "https://aka.ms/aspnet/kestrel/http3reqs")));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.MethodReturnsPreviewTypeRule).WithLocation(4).WithArguments("Lib is in preview.", string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, "https://aka.ms/aspnet/kestrel/http3reqs")));
+            await test.RunAsync();
+        }
+
+        [Fact]
         public async Task TestPreviewParametersToMethods()
         {
             var csInput = @" 

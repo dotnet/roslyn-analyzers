@@ -268,11 +268,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 SyntaxNode? node = GetPreviewSyntaxNodeForFieldsOrEvents(symbol, symbolType);
                 if (node != null)
                 {
-                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, node, symbolType, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, FieldOrEventIsPreviewTypeRule, message);
+                    ReportDiagnosticWithCustomMessageIfItExists(context, node, symbolType, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, FieldOrEventIsPreviewTypeRule, message);
                 }
                 else
                 {
-                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, symbolType, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, FieldOrEventIsPreviewTypeRule, message);
+                    ReportDiagnosticWithCustomMessageIfItExists(context, symbolType, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, FieldOrEventIsPreviewTypeRule, message);
                 }
             }
 
@@ -286,11 +286,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 string message = string.Format(CultureInfo.CurrentCulture, (string)s_fieldOrEventIsPreviewTypeMessage, symbol.Name, previewSymbol.Name);
                 if (syntaxNode != null)
                 {
-                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, syntaxNode, previewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, FieldOrEventIsPreviewTypeRule, message);
+                    ReportDiagnosticWithCustomMessageIfItExists(context, syntaxNode, previewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, FieldOrEventIsPreviewTypeRule, message);
                 }
                 else
                 {
-                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, previewSymbol, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, FieldOrEventIsPreviewTypeRule, message);
+                    ReportDiagnosticWithCustomMessageIfItExists(context, previewSymbol, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, FieldOrEventIsPreviewTypeRule, message);
                 }
             }
         }
@@ -326,11 +326,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     string message = string.Format(CultureInfo.CurrentCulture, (string)s_implementsPreviewInterfaceMessage, symbol.Name, anInterface.Name);
                     if (interfaceNode != null)
                     {
-                        ReportDiagnosticWithCustomOrGivenDiagnostic(context, interfaceNode, anInterface, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, ImplementsPreviewInterfaceRule, message);
+                        ReportDiagnosticWithCustomMessageIfItExists(context, interfaceNode, anInterface, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, ImplementsPreviewInterfaceRule, message);
                     }
                     else
                     {
-                        ReportDiagnosticWithCustomOrGivenDiagnostic(context, anInterface, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, ImplementsPreviewInterfaceRule, message);
+                        ReportDiagnosticWithCustomMessageIfItExists(context, anInterface, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, ImplementsPreviewInterfaceRule, message);
                     }
                 }
             }
@@ -344,18 +344,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 string message = string.Format(CultureInfo.CurrentCulture, (string)s_usesPreviewTypeParameterMessage, symbol.Name, previewSymbol.Name);
                 if (syntaxNode != null)
                 {
-                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, syntaxNode, previewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
+                    ReportDiagnosticWithCustomMessageIfItExists(context, syntaxNode, previewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                 }
                 else
                 {
-                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, previewSymbol, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
+                    ReportDiagnosticWithCustomMessageIfItExists(context, previewSymbol, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                 }
             }
 
             if (ProcessTypeAttributeForPreviewness(symbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out SyntaxReference? attributeSyntaxReference, out string? attributeName, out ISymbol? previewAttributeSymbol))
             {
                 string message = string.Format(CultureInfo.CurrentCulture, (string)s_detectPreviewFeaturesMessage, attributeName);
-                ReportDiagnosticWithCustomOrGivenDiagnostic(context, attributeSyntaxReference.GetSyntax(context.CancellationToken), previewAttributeSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, GeneralPreviewFeatureAttributeRule, message);
+                ReportDiagnosticWithCustomMessageIfItExists(context, attributeSyntaxReference.GetSyntax(context.CancellationToken), previewAttributeSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, GeneralPreviewFeatureAttributeRule, message);
             }
 
             INamedTypeSymbol? baseType = symbol.BaseType;
@@ -367,11 +367,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     SyntaxNode? baseTypeNode = GetPreviewInterfaceNodeForTypeImplementingPreviewInterface(symbol, baseType);
                     if (baseTypeNode != null)
                     {
-                        ReportDiagnosticWithCustomOrGivenDiagnostic(context, baseTypeNode, baseType, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
+                        ReportDiagnosticWithCustomMessageIfItExists(context, baseTypeNode, baseType, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                     }
                     else
                     {
-                        ReportDiagnosticWithCustomOrGivenDiagnostic(context, baseType, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
+                        ReportDiagnosticWithCustomMessageIfItExists(context, baseType, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                     }
                 }
             }
@@ -514,7 +514,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     string baseInterfaceMemberName = baseInterfaceMember.ContainingSymbol != null ? baseInterfaceMember.ContainingSymbol.Name + "." + baseInterfaceMember.Name : baseInterfaceMember.Name;
                     string message = string.Format(CultureInfo.CurrentCulture, (string)s_implementsPreviewMethodMessage, propertyOrMethodSymbol.Name, baseInterfaceMemberName);
-                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, baseInterfaceMember, propertyOrMethodSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, ImplementsPreviewMethodRule, message);
+                    ReportDiagnosticWithCustomMessageIfItExists(context, baseInterfaceMember, propertyOrMethodSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, ImplementsPreviewMethodRule, message);
                 }
             }
 
@@ -525,7 +525,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     string overriddenName = overridden.ContainingSymbol != null ? overridden.ContainingSymbol.Name + "." + overridden.Name : overridden.Name;
                     string message = string.Format(CultureInfo.CurrentCulture, (string)s_overridePreviewMethodMessage, propertyOrMethodSymbol.Name, overriddenName);
-                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, overridden, propertyOrMethodSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, OverridesPreviewMethodRule, message);
+                    ReportDiagnosticWithCustomMessageIfItExists(context, overridden, propertyOrMethodSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, OverridesPreviewMethodRule, message);
                 }
             }
 
@@ -543,11 +543,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     SyntaxNode? returnTypeNode = GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(method.IsPropertyGetter() ? method.AssociatedSymbol : method, methodReturnType);
                     if (returnTypeNode != null)
                     {
-                        ReportDiagnosticWithCustomOrGivenDiagnostic(context, returnTypeNode, methodReturnType, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, MethodReturnsPreviewTypeRule, message);
+                        ReportDiagnosticWithCustomMessageIfItExists(context, returnTypeNode, methodReturnType, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, MethodReturnsPreviewTypeRule, message);
                     }
                     else
                     {
-                        ReportDiagnosticWithCustomOrGivenDiagnostic(context, methodReturnType, method, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, MethodReturnsPreviewTypeRule, message);
+                        ReportDiagnosticWithCustomMessageIfItExists(context, methodReturnType, method, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, MethodReturnsPreviewTypeRule, message);
                     }
                 }
 
@@ -560,11 +560,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         SyntaxNode? returnTypeNode = GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(method.IsPropertyGetter() ? method.AssociatedSymbol : method, innerPreviewSymbol);
                         if (returnTypeNode != null)
                         {
-                            ReportDiagnosticWithCustomOrGivenDiagnostic(context, returnTypeNode, innerPreviewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, MethodReturnsPreviewTypeRule, message);
+                            ReportDiagnosticWithCustomMessageIfItExists(context, returnTypeNode, innerPreviewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, MethodReturnsPreviewTypeRule, message);
                         }
                         else
                         {
-                            ReportDiagnosticWithCustomOrGivenDiagnostic(context, innerPreviewSymbol, method, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, MethodReturnsPreviewTypeRule, message);
+                            ReportDiagnosticWithCustomMessageIfItExists(context, innerPreviewSymbol, method, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, MethodReturnsPreviewTypeRule, message);
                         }
                     }
                 }
@@ -584,11 +584,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         SyntaxNode? previewParameterNode = GetPreviewParameterSyntaxNodeForMethod(method, parameterType);
                         if (previewParameterNode != null)
                         {
-                            ReportDiagnosticWithCustomOrGivenDiagnostic(context, previewParameterNode, parameterType, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, MethodUsesPreviewTypeAsParameterRule, message);
+                            ReportDiagnosticWithCustomMessageIfItExists(context, previewParameterNode, parameterType, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, MethodUsesPreviewTypeAsParameterRule, message);
                         }
                         else
                         {
-                            ReportDiagnosticWithCustomOrGivenDiagnostic(context, parameterType, parameter, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, MethodUsesPreviewTypeAsParameterRule, message);
+                            ReportDiagnosticWithCustomMessageIfItExists(context, parameterType, parameter, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, MethodUsesPreviewTypeAsParameterRule, message);
                         }
                     }
 
@@ -602,11 +602,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         string message = string.Format(CultureInfo.CurrentCulture, (string)s_usesPreviewTypeParameterMessage, propertyOrMethodSymbol.Name, referencedPreviewSymbol.Name);
                         if (syntaxNode != null)
                         {
-                            ReportDiagnosticWithCustomOrGivenDiagnostic(context, syntaxNode, referencedPreviewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
+                            ReportDiagnosticWithCustomMessageIfItExists(context, syntaxNode, referencedPreviewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                         }
                         else
                         {
-                            ReportDiagnosticWithCustomOrGivenDiagnostic(context, referencedPreviewSymbol, parameter, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
+                            ReportDiagnosticWithCustomMessageIfItExists(context, referencedPreviewSymbol, parameter, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                         }
                     }
                 }
@@ -621,11 +621,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 string message = string.Format(CultureInfo.CurrentCulture, (string)s_usesPreviewTypeParameterMessage, propertyOrMethodSymbol.Name, previewSymbol.Name);
                 if (referencedPreviewTypeSyntaxNode != null)
                 {
-                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, referencedPreviewTypeSyntaxNode, previewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
+                    ReportDiagnosticWithCustomMessageIfItExists(context, referencedPreviewTypeSyntaxNode, previewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                 }
                 else
                 {
-                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, previewSymbol, propertyOrMethodSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
+                    ReportDiagnosticWithCustomMessageIfItExists(context, previewSymbol, propertyOrMethodSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                 }
             }
         }
@@ -676,7 +676,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 string message = string.Format(CultureInfo.CurrentCulture, (string)s_detectPreviewFeaturesMessage, symbol.Name);
-                ReportDiagnosticWithCustomOrGivenDiagnostic(context, operation, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, GeneralPreviewFeatureAttributeRule, message);
+                ReportDiagnosticWithCustomMessageIfItExists(context, operation, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, GeneralPreviewFeatureAttributeRule, message);
             }
         }
 
@@ -880,37 +880,22 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     if (attribute.AttributeClass.Equals(previewFeatureAttribute))
                     {
-                        string? customMessage = GetMessageAndURLFromAttributeConstructor(attribute, out string? customUrl);
+                        message = GetMessageAndURLFromAttributeConstructor(attribute, out url);
 
-                        if (customMessage != null)
-                        {
-                            message = customMessage;
-                        }
-
-                        if (customUrl != null)
-                        {
-                            url = customUrl;
-                        }
+                        previewSymbolsToMessageAndUrl.GetOrAdd(symbol, new ValueTuple<string?, string?>(message, url));
                     }
                 }
             }
             else
             {
-                if (value.existingMessage != null)
-                {
-                    message = value.existingMessage;
-                }
-
-                if (value.existingUrl != null)
-                {
-                    url = value.existingUrl;
-                }
+                message = value.existingMessage;
+                url = value.existingUrl;
             }
 
             return message;
         }
 
-        private static void ReportDiagnosticWithCustomOrGivenDiagnostic(OperationAnalysisContext context,
+        private static void ReportDiagnosticWithCustomMessageIfItExists(OperationAnalysisContext context,
                                                                         IOperation operation,
                                                                         ISymbol symbol,
                                                                         ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
@@ -928,7 +913,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.ReportDiagnostic(operation.CreateDiagnostic(diagnosticDescriptor, message, url));
         }
 
-        private static void ReportDiagnosticWithCustomOrGivenDiagnostic(SymbolAnalysisContext context,
+        private static void ReportDiagnosticWithCustomMessageIfItExists(SymbolAnalysisContext context,
                                                                         SyntaxNode node,
                                                                         ISymbol previewSymbol,
                                                                         ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
@@ -946,7 +931,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.ReportDiagnostic(node.CreateDiagnostic(diagnosticDescriptor, message, url));
         }
 
-        private static void ReportDiagnosticWithCustomOrGivenDiagnostic(SymbolAnalysisContext context,
+        private static void ReportDiagnosticWithCustomMessageIfItExists(SymbolAnalysisContext context,
                                                                         ISymbol previewSymbol,
                                                                         ISymbol symbolToRaiseDiagnosticOn,
                                                                         ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,

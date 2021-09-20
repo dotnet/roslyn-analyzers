@@ -123,7 +123,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var editor = await DocumentEditor.CreateAsync(doc, token).ConfigureAwait(false);
 
                 var charTypeExpressionSyntax = editor.Generator.TypeExpression(invocation.SemanticModel.Compilation.GetSpecialType(SpecialType.System_Char));
-                var arguments = invocation.GetArgumentsInParameterOrder();
+                var arguments = invocation.Arguments.GetArgumentsInParameterOrder();
                 var elementNodes = new[]
                 {
                     arguments[0].Value.Syntax,
@@ -165,7 +165,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var stringType = invocation.SemanticModel.Compilation.GetSpecialType(SpecialType.System_String);
                 var stringTypeExpressionSyntax = editor.Generator.TypeExpression(stringType);
 
-                var arguments = invocation.GetArgumentsInParameterOrder();
+                var arguments = invocation.Arguments.GetArgumentsInParameterOrder();
                 var elementNodes = new[]
                 {
                     arguments[0].Value.Syntax,

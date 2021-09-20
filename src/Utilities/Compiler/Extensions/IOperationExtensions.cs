@@ -57,20 +57,6 @@ namespace Analyzer.Utilities.Extensions
             return typeInfo.Type as INamedTypeSymbol;
         }
 
-        /// <summary>
-        /// Gets the arguments for the current <see cref="IInvocationOperation"/> ordered by their respective parameter's <see cref="IParameterSymbol.Ordinal"/> property.
-        /// </summary>
-        public static ImmutableArray<IArgumentOperation> GetArgumentsInParameterOrder(this IInvocationOperation invocation)
-        {
-            var result = invocation.Arguments.ToBuilder();
-
-            //  IArgumentOperation.Parameter can be null if the argument is an __arglist argument.
-            //  Sort __arglist arguments last, since __arglist parameters must always be declared last.
-            result.Sort((x, y) => (x.Parameter?.Ordinal ?? int.MaxValue).CompareTo(y.Parameter?.Ordinal ?? int.MaxValue));
-
-            return result.MoveToImmutable();
-        }
-
         public static bool HasNullConstantValue(this IOperation operation)
         {
             return operation.ConstantValue.HasValue && operation.ConstantValue.Value == null;

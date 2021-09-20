@@ -2955,8 +2955,7 @@
             "isEnabledByDefault": true,
             "typeName": "SuspiciousCastFromCharToIntAnalyzer",
             "languages": [
-              "C#",
-              "Visual Basic"
+              "C#"
             ],
             "tags": [
               "Telemetry",

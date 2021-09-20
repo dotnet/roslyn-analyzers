@@ -10,7 +10,6 @@ namespace Analyzer.Utilities
         public const string Mobility = nameof(Mobility);
         public const string Performance = nameof(Performance);
         public const string Reliability = nameof(Reliability);
-        public const string Correctness = nameof(Correctness);
         public const string Security = nameof(Security);
         public const string Usage = nameof(Usage);
         public const string Naming = nameof(Naming);

@@ -10,22 +10,21 @@ using Resx = Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    //  Visual Basic does not allow implicit conversions from char to int
+#pragma warning disable RS1004 // Recommend adding language support to diagnostic analyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+#pragma warning restore RS1004 // Recommend adding language support to diagnostic analyzer
     public sealed class SuspiciousCastFromCharToIntAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA3200";
-
-        private static readonly LocalizableString s_localizableTitle = Resx.CreateLocalizableResourceString(nameof(Resx.SuspiciousCastFromCharToIntTitle));
-        private static readonly LocalizableString s_localizableMessage = Resx.CreateLocalizableResourceString(nameof(Resx.SuspiciousCastFromCharToIntMessage));
-        private static readonly LocalizableString s_localizableDescription = Resx.CreateLocalizableResourceString(nameof(Resx.SuspiciousCastFromCharToIntDescription));
+        internal const string RuleId = "CA2019";
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            s_localizableTitle,
-            s_localizableMessage,
-            DiagnosticCategory.Correctness,
+            Resx.CreateLocalizableResourceString(nameof(Resx.SuspiciousCastFromCharToIntCodeFixTitle)),
+            Resx.CreateLocalizableResourceString(nameof(Resx.SuspiciousCastFromCharToIntMessage)),
+            DiagnosticCategory.Reliability,
             RuleLevel.BuildWarning,
-            s_localizableDescription,
+            Resx.CreateLocalizableResourceString(nameof(Resx.SuspiciousCastFromCharToIntDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
@@ -40,9 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (!RequiredSymbols.TryGetSymbols(context.Compilation, out var symbols))
-                return;
-
+            var symbols = new RequiredSymbols(context.Compilation);
             var stringSplitMethods = GetProblematicStringSplitMethods(context.Compilation, symbols);
 
             //  Report implicit char-to-int conversions in calls to certain overloads of string.Split
@@ -86,12 +83,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             //  Local functions
 
-            bool IsImplicitCharToIntConversion(IArgumentOperation argument)
+            static bool IsImplicitCharToIntConversion(IArgumentOperation argument)
             {
                 return argument.Value is IConversionOperation conversion &&
                     conversion.IsImplicit &&
-                    conversion.Operand.Type.Equals(symbols.CharType, SymbolEqualityComparer.Default) &&
-                    argument.Parameter.Type.Equals(symbols.Int32Type, SymbolEqualityComparer.Default);
+                    conversion.Operand.Type.SpecialType is SpecialType.System_Char &&
+                    argument.Parameter.Type.SpecialType is SpecialType.System_Int32;
             }
         }
 
@@ -100,27 +97,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal readonly struct RequiredSymbols
 #pragma warning restore CA1815 // Override equals and operator equals on value types
         {
-            private RequiredSymbols(ITypeSymbol charType, ITypeSymbol int32Type, ITypeSymbol stringType)
+            public RequiredSymbols(Compilation compilation)
             {
-                CharType = charType;
-                Int32Type = int32Type;
-                StringType = stringType;
-            }
-
-            public static bool TryGetSymbols(Compilation compilation, out RequiredSymbols result)
-            {
-                var charType = compilation.GetSpecialType(SpecialType.System_Char);
-                var int32Type = compilation.GetSpecialType(SpecialType.System_Int32);
-                var stringType = compilation.GetSpecialType(SpecialType.System_String);
-
-                if (charType is not null && int32Type is not null && stringType is not null)
-                {
-                    result = new RequiredSymbols(charType, int32Type, stringType);
-                    return true;
-                }
-
-                result = default;
-                return false;
+                CharType = compilation.GetSpecialType(SpecialType.System_Char);
+                Int32Type = compilation.GetSpecialType(SpecialType.System_Int32);
+                StringType = compilation.GetSpecialType(SpecialType.System_String);
             }
 
             public ITypeSymbol CharType { get; }

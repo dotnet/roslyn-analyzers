@@ -11,6 +11,7 @@ CA1843 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA1848 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848> | Use the LoggerMessage delegates |
 CA1849 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
 CA2017 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
+CA2019 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019> | Use correct overload |
 CA2252 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252> | This API requires opting into preview features |
 CA2253 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253> | Named placeholders should not be numeric values |
 CA2254 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2254> | Template should be a static expression |
@@ -18,4 +19,3 @@ CA2255 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA2256 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2256> | All members declared in parent interfaces must have an implementation in a DynamicInterfaceCastableImplementation-attributed interface |
 CA2257 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2257> | Members defined on an interface with the 'DynamicInterfaceCastableImplementationAttribute' should be 'static' |
 CA2258 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2258> | Providing a 'DynamicInterfaceCastableImplementation' interface in Visual Basic is unsupported |
-CA3200 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3200> | Suspicious cast from char to int |

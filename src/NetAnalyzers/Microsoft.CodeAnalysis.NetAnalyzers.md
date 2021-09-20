@@ -1620,6 +1620,18 @@ Number of parameters supplied in the logging message template do not match the n
 |CodeFix|False|
 ---
 
+## [CA2019](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019): Use correct overload
+
+Implicit cast from char to int in method call is suspicious. Consider using a different overload.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|True|
+---
+
 ## [CA2100](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100): Review SQL queries for security vulnerabilities
 
 SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.
@@ -2638,18 +2650,6 @@ Missing ValidateAntiForgeryTokenAttribute on controller action {0}
 |Enabled|True|
 |Severity|Hidden|
 |CodeFix|False|
----
-
-## [CA3200](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3200): Suspicious cast from char to int
-
-Implicit cast from char to int in method call is suspicious. Consider using a different overload.
-
-|Item|Value|
-|-|-|
-|Category|Correctness|
-|Enabled|True|
-|Severity|Warning|
-|CodeFix|True|
 ---
 
 ## [CA5350](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5350): Do Not Use Weak Cryptographic Algorithms

@@ -25,6 +25,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         [InlineData(
             "options: System.StringSplitOptions.None, separator: 'c', {|#0:count: 'a'|}",
             "new char[] { 'c', 'a' }, options: System.StringSplitOptions.None")]
+        [InlineData(
+            "'c', ({|#0:'a'|}), System.StringSplitOptions.None",
+            "new char[] { 'c', 'a' }, System.StringSplitOptions.None")]
         public Task StringSplit_CharInt32StringSplitOptions_Fixed_CS(string testArgumentList, string fixedArgumentList)
         {
             string format = @"
@@ -61,6 +64,7 @@ public class Testopolis
         [InlineData("{|#0:count: c|}, separator: s", "new string[] { s, c.ToString() }, System.StringSplitOptions.None")]
         [InlineData("options: System.StringSplitOptions.None, {|#0:count: c|}, separator: s", "new string[] { s, c.ToString() }, options: System.StringSplitOptions.None")]
         [InlineData("s, {|#0:'a'|}", @"new string[] { s, ""a"" }, System.StringSplitOptions.None")]
+        [InlineData("s, ({|#0:c|}), System.StringSplitOptions.None", "new string[] { s, c.ToString() }, System.StringSplitOptions.None")]
         public Task StringSplit_StringInt32StringSplitOptions_Fixed_CS(string testArgumentList, string fixedArgumentList)
         {
             string format = @"
@@ -105,7 +109,7 @@ public class Testopolis
     }}
 }}";
 
-            return VerifyCS.VerifyAnalyzerAsync(source);
+            return VerifyCS.VerifyCodeFixAsync(source, source);
         }
 
         [Theory]
@@ -143,6 +147,7 @@ public class Testopolis
         [InlineData("{|#0:'a'|}", @"""a""")]
         [InlineData("{|#0:capacity: c|}", "c.ToString()")]
         [InlineData("{|#0:capacity: 'a'|}", @"""a""")]
+        [InlineData("({|#0:c|})", "c.ToString()")]
         public Task StringBuilderCtor_Int32_Fixed_CS(string testArgumentList, string fixedArgumentList)
         {
             string format = @"
@@ -193,7 +198,23 @@ public class Testopolis
 }}";
             var diagnostics = Enumerable.Range(0, diagnosticsCount).Select(x => VerifyCS.Diagnostic(Rule).WithLocation(x)).ToArray();
 
-            return VerifyCS.VerifyAnalyzerAsync(source, diagnostics);
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                },
+                FixedState =
+                {
+                    Sources = { source },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                }
+            };
+            test.TestState.ExpectedDiagnostics.AddRange(diagnostics);
+            test.FixedState.ExpectedDiagnostics.AddRange(diagnostics);
+
+            return test.RunAsync();
         }
 
         [Theory]
@@ -217,7 +238,7 @@ public class Testopolis
     }}
 }}";
 
-            return VerifyCS.VerifyAnalyzerAsync(source);
+            return VerifyCS.VerifyCodeFixAsync(source, source);
         }
 
         private static DiagnosticDescriptor Rule => SuspiciousCastFromCharToIntAnalyzer.Rule;

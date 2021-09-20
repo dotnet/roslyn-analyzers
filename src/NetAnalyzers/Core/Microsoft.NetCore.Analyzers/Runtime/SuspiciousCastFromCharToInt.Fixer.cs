@@ -28,7 +28,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var root = await doc.GetSyntaxRootAsync(token).ConfigureAwait(false);
             var model = await doc.GetSemanticModelAsync(token).ConfigureAwait(false);
 
-            if (model.GetOperation(root.FindNode(context.Span), token) is not IArgumentOperation argumentOperation)
+            //  If there were unnecessary parentheses on the argument expression, then we won't get the reported IArgumentOperation
+            //  from the call to SemanticModel.GetOperation().
+            //  This is because the Syntax property of an IArgumentOperation does NOT include the unnecessary parentheses.
+            //  In other words, if we have an IArgumentOperation 'argument', then the following two expressions are equivalent:
+            //      argument.SemanticModel.GetOperation(argument.Syntax) 
+            //  is equivalent to
+            //      argument.Value.WalkDownConversion()
+            var reportedOperation = model.GetOperation(root.FindNode(context.Span), token);
+            var argumentOperation = reportedOperation as IArgumentOperation ?? reportedOperation?.WalkUpConversion()?.Parent as IArgumentOperation;
+            if (argumentOperation is null)
                 return;
 
             var targetMethod = argumentOperation.Parent switch
@@ -49,7 +58,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var codeAction = CodeAction.Create(
                 MicrosoftNetCoreAnalyzersResources.SuspiciousCastFromCharToIntCodeFixTitle,
                 token => fixer.GetChangedDocumentAsync(new FixCharCastContext(context, argumentOperation.Parent, this, token)),
-                MicrosoftNetCoreAnalyzersResources.SuspiciousCastFromCharToIntCodeFixTitle);
+                nameof(MicrosoftNetCoreAnalyzersResources.SuspiciousCastFromCharToIntCodeFixTitle));
             context.RegisterCodeFix(codeAction, context.Diagnostics);
         }
 
@@ -222,9 +231,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static ImmutableDictionary<IMethodSymbol, OperationFixer> CreateFixerCache(Compilation compilation)
         {
-            if (!RequiredSymbols.TryGetSymbols(compilation, out var symbols))
-                return ImmutableDictionary<IMethodSymbol, OperationFixer>.Empty;
-
+            var symbols = new RequiredSymbols(compilation);
             var builder = ImmutableDictionary.CreateBuilder<IMethodSymbol, OperationFixer>();
 
             AddIfNotNull(StringSplit_CharInt32StringSplitOptions.Create(compilation, symbols));

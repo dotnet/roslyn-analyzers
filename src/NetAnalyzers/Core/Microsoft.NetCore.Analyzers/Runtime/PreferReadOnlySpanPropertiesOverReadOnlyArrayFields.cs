@@ -45,199 +45,178 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            //  Bail if we don't have all the required symbols.
             if (!Cache.TryCreateCache(context.Compilation, out var cache))
                 return;
-            var fieldReferenceWalker = new FieldReferenceWalker(cache);
+            var fieldReferenceVisitor = new FieldReferenceVisitor(cache);
 
-            context.RegisterSymbolAction(context =>
-            {
-                var field = (IFieldSymbol)context.Symbol;
-
-                if (field.IsStatic && field.IsReadOnly && field.Type is IArrayTypeSymbol arrayType && cache.IsSupportedArrayElementType(arrayType.ElementType))
-                {
-                    cache.Candidates.Add(field);
-                }
-            }, SymbolKind.Field);
-
-            context.RegisterOperationAction(AnalyzeFieldReferenceOperation, OperationKind.FieldReference);
-            context.RegisterOperationAction(AnalyzeFieldInitializerOperation, OperationKind.FieldInitializer);
-
-            context.RegisterCompilationEndAction(context =>
-            {
-                foreach (var candidate in cache.Candidates)
-                {
-                    context.ReportDiagnostic(candidate.CreateDiagnostic(Rule));
-                }
-                cache.Dispose();
-            });
+            context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Field);
+            context.RegisterOperationAction(AnalyzeOperation, OperationKind.FieldReference, OperationKind.FieldInitializer);
+            context.RegisterCompilationEndAction(OnCompilationEnd);
 
             return;
 
             //  Local functions
 
-            void AnalyzeFieldReferenceOperation(OperationAnalysisContext context)
+            void AnalyzeSymbol(SymbolAnalysisContext context)
             {
-                var fieldReference = (IFieldReferenceOperation)context.Operation;
-                if (cache.Candidates.Contains(fieldReference.Field))
-                    fieldReference.Parent.Accept(fieldReferenceWalker);
+                RoslynDebug.Assert(cache is not null, $"'{nameof(cache)}' was null.");
+
+                var field = (IFieldSymbol)context.Symbol;
+                if (field.IsStatic && field.IsReadOnly && field.Type is IArrayTypeSymbol arrayType && cache.IsSupportedArrayElementType(arrayType.ElementType))
+                {
+                    cache.Candidates.Add(field);
+                }
             }
 
-            void AnalyzeFieldInitializerOperation(OperationAnalysisContext context)
+            void AnalyzeOperation(OperationAnalysisContext context)
             {
-                //  Eliminate candidates that are not initialized with an array initializer
-                //  containing all constant elements.
-                var fieldInitializer = (IFieldInitializerOperation)context.Operation;
-                if (fieldInitializer.Value is not IArrayCreationOperation arrayCreation ||
-                    (fieldInitializer.InitializedFields.Any(x => cache.Candidates.Contains(x)) &&
-                    arrayCreation.Initializer.ElementValues.Any(x => !x.ConstantValue.HasValue)))
+                RoslynDebug.Assert(cache is not null, $"'{nameof(cache)}' was null.");
+                RoslynDebug.Assert(fieldReferenceVisitor is not null, $"'{nameof(fieldReferenceVisitor)}' was null.");
+
+                switch (context.Operation)
                 {
-                    foreach (var field in fieldInitializer.InitializedFields)
-                        cache.Candidates.Remove(field);
+                    case IFieldReferenceOperation fieldReference:
+                        fieldReference.Parent.Accept(fieldReferenceVisitor, fieldReference.Field);
+                        break;
+                    case IFieldInitializerOperation fieldInitializer:
+                        if (fieldInitializer.Value is not IArrayCreationOperation arrayCreation ||
+                            (fieldInitializer.InitializedFields.Any(x => cache.Candidates.Contains(x)) &&
+                            arrayCreation.Initializer.ElementValues.Any(x => !x.ConstantValue.HasValue)))
+                        {
+                            foreach (var field in fieldInitializer.InitializedFields)
+                                cache.Candidates.Remove(field);
+                        }
+                        break;
                 }
+            }
+
+            void OnCompilationEnd(CompilationAnalysisContext context)
+            {
+                foreach (var field in cache.Candidates)
+                {
+                    context.ReportDiagnostic(field.CreateDiagnostic(Rule));
+                }
+                cache.Dispose();
             }
         }
 
-        private sealed class FieldReferenceWalker : OperationVisitor
+        //  Visits the parent of an IFieldReferenceOperation
+        private sealed class FieldReferenceVisitor : OperationVisitor<IFieldSymbol, Unit>
         {
             private readonly Cache _cache;
-            private readonly ArrayElementWalker _elementWalker;
+            private readonly ArrayElementVisitor _arrayElementVisitor;
 
-            public FieldReferenceWalker(Cache cache)
+            public FieldReferenceVisitor(Cache cache)
             {
                 _cache = cache;
-                _elementWalker = new ArrayElementWalker(cache);
+                _arrayElementVisitor = new ArrayElementVisitor(cache);
             }
 
-            public override void VisitArgument(IArgumentOperation operation)
+            public override Unit VisitInvocation(IInvocationOperation operation, IFieldSymbol argument)
+            {
+                _cache.Candidates.Remove(argument);
+
+                return base.VisitInvocation(operation, argument);
+            }
+
+            public override Unit VisitArgument(IArgumentOperation operation, IFieldSymbol argument)
             {
                 if (operation.Parent is IInvocationOperation invocation && !_cache.IsAsSpanMethod(invocation.TargetMethod))
-                    _cache.Candidates.Remove(GetField(operation.Value));
+                    _cache.Candidates.Remove(argument);
 
-                base.VisitArgument(operation);
+                return base.VisitArgument(operation, argument);
             }
 
-            public override void VisitConversion(IConversionOperation operation)
+            public override Unit VisitPropertyReference(IPropertyReferenceOperation operation, IFieldSymbol argument)
+            {
+                if (!operation.Property.Equals(_cache.ArrayLengthProperty, SymbolEqualityComparer.Default))
+                    _cache.Candidates.Remove(argument);
+
+                return base.VisitPropertyReference(operation, argument);
+            }
+
+            public override Unit VisitConversion(IConversionOperation operation, IFieldSymbol argument)
             {
                 if (!operation.Type.OriginalDefinition.Equals(_cache.ReadOnlySpanType, SymbolEqualityComparer.Default))
-                    _cache.Candidates.Remove(GetField(operation.Operand));
+                    _cache.Candidates.Remove(argument);
 
-                base.VisitConversion(operation);
+                return base.VisitConversion(operation, argument);
             }
 
-            public override void VisitArrayElementReference(IArrayElementReferenceOperation operation)
+            public override Unit VisitArrayElementReference(IArrayElementReferenceOperation operation, IFieldSymbol argument)
             {
-                //  Eliminate candidates if any elements are assigned to ref locals, parameters, or returns.
+                //  Remove candidates who's elements were bound to ref or out variables.
                 if (operation.GetValueUsageInfo(operation.SemanticModel.GetEnclosingSymbol(operation.Syntax.SpanStart)) is
-                    ValueUsageInfo.WritableReference or ValueUsageInfo.ReadableWritableReference)
+                    ValueUsageInfo.ReadableWritableReference or ValueUsageInfo.WritableReference)
                 {
-                    _cache.Candidates.Remove(GetField(operation.ArrayReference));
+                    _cache.Candidates.Remove(argument);
                 }
                 else
                 {
-                    operation.Parent.Accept(_elementWalker);
+                    operation.Parent.Accept(_arrayElementVisitor, new ArrayElementVisitContext(operation, argument));
                 }
 
-                base.VisitArrayElementReference(operation);
-            }
-
-            public override void VisitPropertyReference(IPropertyReferenceOperation operation)
-            {
-                if (!operation.Property.OriginalDefinition.Equals(_cache.ArrayLengthProperty, SymbolEqualityComparer.Default))
-                    _cache.Candidates.Remove(GetField(operation.Instance));
-
-                base.VisitPropertyReference(operation);
-            }
-
-            public override void VisitInvocation(IInvocationOperation operation)
-            {
-                _cache.Candidates.Remove(GetField(operation.Instance));
-
-                base.VisitInvocation(operation);
-            }
-
-            public override void VisitFieldInitializer(IFieldInitializerOperation operation)
-            {
-                if (operation.Value is IArrayCreationOperation arrayCreation)
-                {
-                    foreach (var element in arrayCreation.Initializer.ElementValues)
-                    {
-                        if (!element.ConstantValue.HasValue)
-                        {
-                            foreach (var field in operation.InitializedFields)
-                                _cache.Candidates.Remove(field);
-                            break;
-                        }
-                    }
-                }
-                base.VisitFieldInitializer(operation);
-            }
-
-            private static IFieldSymbol GetField(IOperation fieldReference) => ((IFieldReferenceOperation)fieldReference).Field;
-            private static bool TryGetField(IOperation? fieldReference, [NotNullWhen(true)] out IFieldSymbol? field)
-            {
-                return (field = (fieldReference as IFieldReferenceOperation)?.Field) is not null;
+                return base.VisitArrayElementReference(operation, argument);
             }
         }
 
-        private sealed class ArrayElementWalker : OperationVisitor
+        //  Property bag.
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+        private readonly struct ArrayElementVisitContext
+#pragma warning restore CA1815 // Override equals and operator equals on value types
+        {
+            public ArrayElementVisitContext(IArrayElementReferenceOperation operation, IFieldSymbol field)
+            {
+                Operation = operation;
+                Field = field;
+            }
+
+            public IArrayElementReferenceOperation Operation { get; }
+            public IFieldSymbol Field { get; }
+        }
+
+        //  Visits the parent of an IArrayElementReferenceOperation
+        private sealed class ArrayElementVisitor : OperationVisitor<ArrayElementVisitContext, Unit>
         {
             private readonly Cache _cache;
 
-            public ArrayElementWalker(Cache cache)
+            public ArrayElementVisitor(Cache cache)
             {
                 _cache = cache;
             }
 
-            public override void VisitSimpleAssignment(ISimpleAssignmentOperation operation)
+            public override Unit VisitSimpleAssignment(ISimpleAssignmentOperation operation, ArrayElementVisitContext argument)
             {
-                if (TryGetField(operation.Target, out var field))
+                if (operation.Target.Equals(argument.Operation))
+                    _cache.Candidates.Remove(argument.Field);
+
+                return base.VisitSimpleAssignment(operation, argument);
+            }
+
+            public override Unit VisitCompoundAssignment(ICompoundAssignmentOperation operation, ArrayElementVisitContext argument)
+            {
+                if (operation.Target.Equals(argument.Operation))
+                    _cache.Candidates.Remove(argument.Field);
+
+                return base.VisitCompoundAssignment(operation, argument);
+            }
+
+            public override Unit VisitTuple(ITupleOperation operation, ArrayElementVisitContext argument)
+            {
+                if (operation.Parent is IDeconstructionAssignmentOperation &&
+                    operation.Elements.Any(x => x.Equals(argument.Operation)))
                 {
-                    _cache.Candidates.Remove(field);
+                    _cache.Candidates.Remove(argument.Field);
                 }
 
-                base.VisitSimpleAssignment(operation);
+                return base.VisitTuple(operation, argument);
             }
 
-            public override void VisitCompoundAssignment(ICompoundAssignmentOperation operation)
+            public override Unit VisitIncrementOrDecrement(IIncrementOrDecrementOperation operation, ArrayElementVisitContext argument)
             {
-                if (TryGetField(operation.Target, out var field))
-                {
-                    _cache.Candidates.Remove(field);
-                }
+                _cache.Candidates.Remove(argument.Field);
 
-                base.VisitCompoundAssignment(operation);
-            }
-
-            public override void VisitTuple(ITupleOperation operation)
-            {
-                if (operation.Parent is IDeconstructionAssignmentOperation)
-                {
-                    foreach (var element in operation.Elements)
-                    {
-                        if (TryGetField(element, out var field))
-                            _cache.Candidates.Remove(field);
-                    }
-                }
-
-                base.VisitTuple(operation);
-            }
-
-            public override void VisitIncrementOrDecrement(IIncrementOrDecrementOperation operation)
-            {
-                _cache.Candidates.Remove(GetField(operation.Target));
-
-                base.VisitIncrementOrDecrement(operation);
-            }
-
-            private static bool TryGetField(IOperation elementReference, [NotNullWhen(true)] out IFieldSymbol? field)
-            {
-                return (field = ((elementReference as IArrayElementReferenceOperation)?.ArrayReference as IFieldReferenceOperation)?.Field) is not null;
-            }
-
-            private static IFieldSymbol GetField(IOperation elementReference)
-            {
-                return ((IFieldReferenceOperation)((IArrayElementReferenceOperation)elementReference).ArrayReference).Field;
+                return base.VisitIncrementOrDecrement(operation, argument);
             }
         }
 

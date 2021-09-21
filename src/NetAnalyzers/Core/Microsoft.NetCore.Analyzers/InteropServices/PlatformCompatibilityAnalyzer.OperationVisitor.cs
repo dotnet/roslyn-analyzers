@@ -194,7 +194,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return value;
             }
 
-            private bool HasAnyGuardAttribute(ImmutableArray<AttributeData> attributes, Version expectedVersion, [NotNullWhen(true)] out SmallDictionary<string, Versions>? mappedAttributes)
+            private static bool HasAnyGuardAttribute(ImmutableArray<AttributeData> attributes, Version expectedVersion, [NotNullWhen(true)] out SmallDictionary<string, Versions>? mappedAttributes)
             {
                 mappedAttributes = null;
 

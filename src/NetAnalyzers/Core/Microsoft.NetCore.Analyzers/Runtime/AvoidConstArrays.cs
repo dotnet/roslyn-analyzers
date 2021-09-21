@@ -11,6 +11,8 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
     /// CA1850: Avoid constant arrays as arguments. Replace with static readonly arrays.
     /// </summary>
@@ -19,9 +21,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA1850";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysTitle));
+        private static readonly LocalizableString s_localizableMessage = CreateLocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysMessage));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysDescription));
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
             s_localizableTitle,
@@ -39,78 +41,85 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            // Analyzes an argument operation
-            context.RegisterOperationAction(operationContext =>
+            context.RegisterCompilationStartAction(compilationContext =>
             {
-                IArgumentOperation? argumentOperation;
-                INamedTypeSymbol readonlySpanType = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation)
-                    .GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1)!;
-
-                if (operationContext.Operation is IArrayCreationOperation arrayCreationOperation) // For arrays passed as arguments
+                INamedTypeSymbol? readonlySpanType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1);
+                if (readonlySpanType is null)
                 {
-                    argumentOperation = arrayCreationOperation.GetAncestor<IArgumentOperation>(OperationKind.Argument);
-                    if (argumentOperation is null)
-                    {
-                        return;
-                    }
+                    return;
                 }
-                else if (operationContext.Operation is IInvocationOperation invocationOperation) // For arrays passed in extension methods, like in LINQ
-                {
-                    if (invocationOperation.Descendants().Any(x => x is IArrayCreationOperation)
-                        && invocationOperation.Descendants().Any(x => x is IArgumentOperation))
-                    {
-                        // This is an invocation that contains an array as an argument
-                        // This will get caught by the first case in another cycle
-                        return;
-                    }
 
-                    argumentOperation = invocationOperation.Arguments.FirstOrDefault();
-                    if (argumentOperation is not null)
+                // Analyzes an argument operation
+                compilationContext.RegisterOperationAction(operationContext =>
+                {
+                    IArgumentOperation? argumentOperation;
+
+                    if (operationContext.Operation is IArrayCreationOperation arrayCreationOperation) // For arrays passed as arguments
                     {
-                        if (argumentOperation.Children.First() is not IConversionOperation conversionOperation
-                            || conversionOperation.Operand is not IArrayCreationOperation arrayCreation)
-                        {
-                            return;
-                        }
-                        arrayCreationOperation = arrayCreation;
-                    }
-                    else // An invocation, extension or regular, has an argument, unless it's a VB extension method call
-                    {
-                        // For VB extension method invocations, find a matching child
-                        arrayCreationOperation = (IArrayCreationOperation)invocationOperation.Descendants()
-                            .FirstOrDefault(x => x is IArrayCreationOperation);
-                        if (arrayCreationOperation is null)
+                        argumentOperation = arrayCreationOperation.GetAncestor<IArgumentOperation>(OperationKind.Argument);
+                        if (argumentOperation is null)
                         {
                             return;
                         }
                     }
-                }
-                else
-                {
-                    return;
-                }
+                    else if (operationContext.Operation is IInvocationOperation invocationOperation) // For arrays passed in extension methods, like in LINQ
+                    {
+                        if (invocationOperation.Descendants().Any(x => x is IArrayCreationOperation)
+                            && invocationOperation.Descendants().Any(x => x is IArgumentOperation))
+                        {
+                            // This is an invocation that contains an array as an argument
+                            // This will get caught by the first case in another cycle
+                            return;
+                        }
 
-                // Can't be a ReadOnlySpan, as those are already optimized
-                if (argumentOperation is not null && argumentOperation.Parameter.Type.OriginalDefinition.Equals(readonlySpanType))
-                {
-                    return;
-                }
+                        argumentOperation = invocationOperation.Arguments.FirstOrDefault();
+                        if (argumentOperation is not null)
+                        {
+                            if (argumentOperation.Children.First() is not IConversionOperation conversionOperation
+                                || conversionOperation.Operand is not IArrayCreationOperation arrayCreation)
+                            {
+                                return;
+                            }
+                            arrayCreationOperation = arrayCreation;
+                        }
+                        else // An invocation, extension or regular, has an argument, unless it's a VB extension method call
+                        {
+                            // For VB extension method invocations, find a matching child
+                            arrayCreationOperation = (IArrayCreationOperation)invocationOperation.Descendants()
+                                .FirstOrDefault(x => x is IArrayCreationOperation);
+                            if (arrayCreationOperation is null)
+                            {
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return;
+                    }
 
-                // Must be literal array
-                if (!arrayCreationOperation.Initializer.ElementValues.All(x => x is ILiteralOperation))
-                {
-                    return;
-                }
+                    // Can't be a ReadOnlySpan, as those are already optimized
+                    if (argumentOperation is not null && argumentOperation.Parameter.Type.OriginalDefinition.Equals(readonlySpanType))
+                    {
+                        return;
+                    }
 
-                Dictionary<string, string?> properties = new()
-                {
-                    { "paramName", argumentOperation?.Parameter?.Name }
-                };
+                    // Must be literal array
+                    if (!arrayCreationOperation.Initializer.ElementValues.All(x => x is ILiteralOperation))
+                    {
+                        return;
+                    }
 
-                operationContext.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties.ToImmutableDictionary()));
-            },
-            OperationKind.ArrayCreation,
-            OperationKind.Invocation);
+                    Dictionary<string, string?> properties = new()
+                    {
+                        { "paramName", argumentOperation?.Parameter?.Name }
+                    };
+
+                    operationContext.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties.ToImmutableDictionary()));
+                },
+                OperationKind.ArrayCreation,
+                OperationKind.Invocation);
+            });
         }
     }
 }

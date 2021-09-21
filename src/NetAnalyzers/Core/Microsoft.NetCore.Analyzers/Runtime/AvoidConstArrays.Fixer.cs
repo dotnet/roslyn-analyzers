@@ -38,11 +38,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, context.CancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
 
+            string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
-                    MicrosoftNetCoreAnalyzersResources.AvoidConstArraysTitle,
+                    title,
                     async c => await ExtractConstArrayAsync(node, model, editor, generator, context.Diagnostics.First().Properties, c).ConfigureAwait(false),
-                    equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysTitle)),
+                    equivalenceKey: title),
                 context.Diagnostics);
         }
 

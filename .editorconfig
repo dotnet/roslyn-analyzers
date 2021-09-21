@@ -191,7 +191,7 @@ dotnet_analyzer_diagnostic.category-CodeQuality.severity = warning
 dotnet_diagnostic.IDE0066.severity = suggestion
 
 # IDE0073: File header
-file_header_template = Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+file_header_template = Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 # IDE0001: Name can be simplified
 dotnet_diagnostic.IDE0001.severity = silent
@@ -271,3 +271,12 @@ dotnet_diagnostic.CA1309.severity = suggestion
 
 # Analyzers bail-out if the PublicAPI.*.txt file is not found
 dotnet_public_api_analyzer.require_api_files = true
+
+### Configuration for vs-threading analyzers executed on this repo ###
+[*.{cs,vb}]
+
+# VSTHRD002: Avoid problematic synchronous waits
+dotnet_diagnostic.VSTHRD002.severity = none
+
+# VSTHRD011: Use AsyncLazy<T>
+dotnet_diagnostic.VSTHRD011.severity = none

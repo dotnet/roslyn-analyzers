@@ -308,7 +308,7 @@
           "id": "CA2252",
           "shortDescription": "This API requires opting into preview features",
           "fullDescription": "An assembly has to opt into preview features before using them.",
-          "defaultLevel": "note",
+          "defaultLevel": "error",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252",
           "properties": {
             "category": "Usage",
@@ -2703,10 +2703,30 @@
         },
         "CA1849": {
           "id": "CA1849",
+          "shortDescription": "Call async methods when in an async method",
+          "fullDescription": "When inside a Task-returning method, use the async version of methods, if they exist.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": false,
+            "typeName": "UseAsyncMethodInAsyncContext",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1850": {
+          "id": "CA1850",
           "shortDescription": "Avoid constant arrays as arguments",
           "fullDescription": "Having a constant array passed as an argument is not ideally performant. Extract constant arrays as 'static readonly'.",
           "defaultLevel": "note",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
@@ -5863,7 +5883,7 @@
           "id": "CA2252",
           "shortDescription": "This API requires opting into preview features",
           "fullDescription": "An assembly has to opt into preview features before using them.",
-          "defaultLevel": "note",
+          "defaultLevel": "error",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252",
           "properties": {
             "category": "Usage",

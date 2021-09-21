@@ -1452,7 +1452,19 @@ For improved performance, use the LoggerMessage delegates.
 |CodeFix|False|
 ---
 
-## [CA1849](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849): Avoid constant arrays as arguments
+## [CA1849](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849): Call async methods when in an async method
+
+When inside a Task-returning method, use the async version of methods, if they exist.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|False|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA1850](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850): Avoid constant arrays as arguments
 
 Having a constant array passed as an argument is not ideally performant. Extract constant arrays as 'static readonly'.
 
@@ -2072,7 +2084,7 @@ An assembly has to opt into preview features before using them.
 |-|-|
 |Category|Usage|
 |Enabled|True|
-|Severity|Info|
+|Severity|Error|
 |CodeFix|False|
 ---
 

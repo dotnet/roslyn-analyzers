@@ -2,7 +2,6 @@
 
 Rule ID | Missing Help Link | Title |
 --------|-------------------|-------|
-CA1418 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1418> | Use valid platform string |
 CA1419 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419> | Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle' |
 CA1727 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727> | Use PascalCase for named placeholders |
 CA1839 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839> | Use 'Environment.ProcessPath' |
@@ -10,7 +9,8 @@ CA1840 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA1842 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1842> | Do not use 'WhenAll' with a single task |
 CA1843 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1843> | Do not use 'WaitAll' with a single task |
 CA1848 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848> | Use the LoggerMessage delegates |
-CA1849 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Use 'Clear' instead of 'Fill' with default value |
+CA1849 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
+CA1850 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Use 'Clear' instead of 'Fill' with default value |
 CA2017 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
 CA2252 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252> | This API requires opting into preview features |
 CA2253 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253> | Named placeholders should not be numeric values |

@@ -9,7 +9,7 @@ using Microsoft.NetCore.Analyzers.Performance;
 namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 {
     /// <summary>
-    /// CA1849: C# implementation of use Span.Clear instead of Span.Fill(default)
+    /// CA1850: C# implementation of use Span.Clear instead of Span.Fill(default)
     /// Implements the <see cref="CodeFixProvider" />
     /// </summary>
     /// <seealso cref="UseSpanClearInsteadOfFillFixer"/>

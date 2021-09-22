@@ -1464,7 +1464,7 @@ When inside a Task-returning method, use the async version of methods, if they e
 |CodeFix|False|
 ---
 
-## [CA1850](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850): Use Clear instead of Fill with default value
+## [CA1850](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850): Use 'Clear' instead of 'Fill' with default value
 
 It is more efficient to use 'Clear', instead of 'Fill' with default value.
 

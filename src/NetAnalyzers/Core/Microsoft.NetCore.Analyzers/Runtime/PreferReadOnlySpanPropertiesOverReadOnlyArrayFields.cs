@@ -20,7 +20,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 #pragma warning disable RS1004 // Recommend adding language support to diagnostic analyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
 #pragma warning restore RS1004 // Recommend adding language support to diagnostic analyzer
-    public sealed class PreferReadOnlySpanPropertiesOverReadOnlyArrayFields: DiagnosticAnalyzer
+    public sealed class PreferReadOnlySpanPropertiesOverReadOnlyArrayFields : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1850";
 
@@ -76,9 +76,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 switch (context.Operation)
                 {
                     case IFieldReferenceOperation fieldReference:
-                        fieldReference.Parent.Accept(fieldReferenceVisitor, fieldReference.Field);
+                        //  Eliminate candidates that are assigned to ref or out variables (this can only happen in static ctor).
+                        if (fieldReference.GetValueUsageInfo(fieldReference.SemanticModel.GetEnclosingSymbol(fieldReference.Syntax.SpanStart, context.CancellationToken)) is
+                            ValueUsageInfo.ReadableWritableReference or ValueUsageInfo.WritableReference)
+                        {
+                            cache.Candidates.Remove(fieldReference.Field);
+                        }
+                        else
+                        {
+                            fieldReference.Parent.Accept(fieldReferenceVisitor, new VisitContext(fieldReference, fieldReference.Field, context.CancellationToken));
+                        }
                         break;
                     case IFieldInitializerOperation fieldInitializer:
+                        //  Eliminate candidates that don't have an array initializer with all-constant elements.
                         if (fieldInitializer.Value is not IArrayCreationOperation arrayCreation ||
                             (fieldInitializer.InitializedFields.Any(x => cache.Candidates.Contains(x)) &&
                             arrayCreation.Initializer.ElementValues.Any(x => !x.ConstantValue.HasValue)))
@@ -100,122 +110,146 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        //  Visits the parent of an IFieldReferenceOperation
-        private sealed class FieldReferenceVisitor : OperationVisitor<IFieldSymbol, Unit>
+        private readonly struct VisitContext
+        {
+            public VisitContext(IOperation operation, IFieldSymbol field, CancellationToken cancellationToken)
+            {
+                Operation = operation;
+                Field = field;
+                CancellationToken = cancellationToken;
+            }
+
+            public IOperation Operation { get; }
+            public IFieldSymbol Field { get; }
+            public CancellationToken CancellationToken { get; }
+
+            public VisitContext WithOperation(IOperation newOperation) => new(newOperation, Field, CancellationToken);
+        }
+
+        private sealed class FieldReferenceVisitor : OperationVisitor<VisitContext, Unit>
         {
             private readonly Cache _cache;
-            private readonly ArrayElementVisitor _arrayElementVisitor;
+            private readonly ArrayElementReferenceVisitor _arrayElementReferenceVisitor;
 
             public FieldReferenceVisitor(Cache cache)
             {
                 _cache = cache;
-                _arrayElementVisitor = new ArrayElementVisitor(cache);
+                _arrayElementReferenceVisitor = new ArrayElementReferenceVisitor(cache);
             }
 
-            public override Unit VisitInvocation(IInvocationOperation operation, IFieldSymbol argument)
+            public override Unit VisitArrayElementReference(IArrayElementReferenceOperation operation, VisitContext argument)
             {
-                _cache.Candidates.Remove(argument);
-
-                return base.VisitInvocation(operation, argument);
-            }
-
-            public override Unit VisitArgument(IArgumentOperation operation, IFieldSymbol argument)
-            {
-                if (operation.Parent is IInvocationOperation invocation && !_cache.IsAsSpanMethod(invocation.TargetMethod))
-                    _cache.Candidates.Remove(argument);
-
-                return base.VisitArgument(operation, argument);
-            }
-
-            public override Unit VisitPropertyReference(IPropertyReferenceOperation operation, IFieldSymbol argument)
-            {
-                if (!operation.Property.Equals(_cache.ArrayLengthProperty, SymbolEqualityComparer.Default))
-                    _cache.Candidates.Remove(argument);
-
-                return base.VisitPropertyReference(operation, argument);
-            }
-
-            public override Unit VisitConversion(IConversionOperation operation, IFieldSymbol argument)
-            {
-                if (!operation.Type.OriginalDefinition.Equals(_cache.ReadOnlySpanType, SymbolEqualityComparer.Default))
-                    _cache.Candidates.Remove(argument);
-
-                return base.VisitConversion(operation, argument);
-            }
-
-            public override Unit VisitArrayElementReference(IArrayElementReferenceOperation operation, IFieldSymbol argument)
-            {
-                //  Remove candidates who's elements were bound to ref or out variables.
-                if (operation.GetValueUsageInfo(operation.SemanticModel.GetEnclosingSymbol(operation.Syntax.SpanStart)) is
+                if (operation.GetValueUsageInfo(operation.SemanticModel.GetEnclosingSymbol(operation.Syntax.SpanStart, argument.CancellationToken)) is
                     ValueUsageInfo.ReadableWritableReference or ValueUsageInfo.WritableReference)
                 {
-                    _cache.Candidates.Remove(argument);
+                    _cache.Candidates.Remove(argument.Field);
                 }
                 else
                 {
-                    operation.Parent.Accept(_arrayElementVisitor, new ArrayElementVisitContext(operation, argument));
+                    operation.Parent.Accept(_arrayElementReferenceVisitor, argument.WithOperation(operation));
                 }
-
                 return base.VisitArrayElementReference(operation, argument);
             }
-        }
 
-        //  Property bag.
-#pragma warning disable CA1815 // Override equals and operator equals on value types
-        private readonly struct ArrayElementVisitContext
-#pragma warning restore CA1815 // Override equals and operator equals on value types
-        {
-            public ArrayElementVisitContext(IArrayElementReferenceOperation operation, IFieldSymbol field)
+            public override Unit VisitInvocation(IInvocationOperation operation, VisitContext argument)
             {
-                Operation = operation;
-                Field = field;
+                _cache.Candidates.Remove(argument.Field);
+                return base.VisitInvocation(operation, argument);
             }
 
-            public IArrayElementReferenceOperation Operation { get; }
-            public IFieldSymbol Field { get; }
+            public override Unit VisitPropertyReference(IPropertyReferenceOperation operation, VisitContext argument)
+            {
+                if (!operation.Property.Equals(_cache.ArrayLengthProperty, SymbolEqualityComparer.Default))
+                    _cache.Candidates.Remove(argument.Field);
+                return base.VisitPropertyReference(operation, argument);
+            }
+
+            public override Unit VisitArgument(IArgumentOperation operation, VisitContext argument)
+            {
+                if (TryGetTargetMethod(operation.Parent, out var targetMethod) && !_cache.IsAsSpanMethod(targetMethod))
+                    _cache.Candidates.Remove(argument.Field);
+                return base.VisitArgument(operation, argument);
+            }
+
+            public override Unit VisitConversion(IConversionOperation operation, VisitContext argument)
+            {
+                if (!operation.Type.OriginalDefinition.Equals(_cache.ReadOnlySpanType, SymbolEqualityComparer.Default))
+                    _cache.Candidates.Remove(argument.Field);
+                return base.VisitConversion(operation, argument);
+            }
+
+            public override Unit VisitSimpleAssignment(ISimpleAssignmentOperation operation, VisitContext argument)
+            {
+                _cache.Candidates.Remove(argument.Field);
+                return base.VisitSimpleAssignment(operation, argument);
+            }
+
+            public override Unit VisitCoalesceAssignment(ICoalesceAssignmentOperation operation, VisitContext argument)
+            {
+                _cache.Candidates.Remove(argument.Field);
+                return base.VisitCoalesceAssignment(operation, argument);
+            }
+
+            public override Unit VisitVariableInitializer(IVariableInitializerOperation operation, VisitContext argument)
+            {
+                _cache.Candidates.Remove(argument.Field);
+                return base.VisitVariableInitializer(operation, argument);
+            }
+
+            public override Unit VisitTuple(ITupleOperation operation, VisitContext argument)
+            {
+                _cache.Candidates.Remove(argument.Field);
+                return base.VisitTuple(operation, argument);
+            }
+
+            private static bool TryGetTargetMethod(IOperation methodOrCtorCall, [NotNullWhen(true)] out IMethodSymbol? targetMethod)
+            {
+                targetMethod = methodOrCtorCall switch
+                {
+                    IInvocationOperation invocation => invocation.TargetMethod,
+                    IObjectCreationOperation objectCreation => objectCreation.Constructor,
+                    _ => null
+                };
+
+                return targetMethod is not null;
+            }
         }
 
-        //  Visits the parent of an IArrayElementReferenceOperation
-        private sealed class ArrayElementVisitor : OperationVisitor<ArrayElementVisitContext, Unit>
+        private sealed class ArrayElementReferenceVisitor : OperationVisitor<VisitContext, Unit>
         {
             private readonly Cache _cache;
 
-            public ArrayElementVisitor(Cache cache)
+            public ArrayElementReferenceVisitor(Cache cache)
             {
                 _cache = cache;
             }
 
-            public override Unit VisitSimpleAssignment(ISimpleAssignmentOperation operation, ArrayElementVisitContext argument)
+            public override Unit VisitSimpleAssignment(ISimpleAssignmentOperation operation, VisitContext argument)
             {
                 if (operation.Target.Equals(argument.Operation))
                     _cache.Candidates.Remove(argument.Field);
-
                 return base.VisitSimpleAssignment(operation, argument);
             }
 
-            public override Unit VisitCompoundAssignment(ICompoundAssignmentOperation operation, ArrayElementVisitContext argument)
+            public override Unit VisitCompoundAssignment(ICompoundAssignmentOperation operation, VisitContext argument)
             {
                 if (operation.Target.Equals(argument.Operation))
                     _cache.Candidates.Remove(argument.Field);
-
                 return base.VisitCompoundAssignment(operation, argument);
             }
 
-            public override Unit VisitTuple(ITupleOperation operation, ArrayElementVisitContext argument)
+            public override Unit VisitTuple(ITupleOperation operation, VisitContext argument)
             {
-                if (operation.Parent is IDeconstructionAssignmentOperation &&
-                    operation.Elements.Any(x => x.Equals(argument.Operation)))
+                if (operation.Parent is IDeconstructionAssignmentOperation deconstruction && deconstruction.Target.Equals(operation))
                 {
                     _cache.Candidates.Remove(argument.Field);
                 }
-
                 return base.VisitTuple(operation, argument);
             }
 
-            public override Unit VisitIncrementOrDecrement(IIncrementOrDecrementOperation operation, ArrayElementVisitContext argument)
+            public override Unit VisitIncrementOrDecrement(IIncrementOrDecrementOperation operation, VisitContext argument)
             {
                 _cache.Candidates.Remove(argument.Field);
-
                 return base.VisitIncrementOrDecrement(operation, argument);
             }
         }

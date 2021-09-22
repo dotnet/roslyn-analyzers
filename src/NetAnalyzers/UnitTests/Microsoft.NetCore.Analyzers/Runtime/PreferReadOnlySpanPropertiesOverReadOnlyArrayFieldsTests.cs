@@ -50,6 +50,8 @@ public class C
         [Theory]
         [InlineData("int n = a[2];")]
         [InlineData("int n = a[1] + a[2];")]
+        [InlineData("(byte, byte) t = (a[1], a[2]);")]
+        [InlineData("byte b, c; (b, c) = (a[1], a[2]);")]
         [InlineData("int n = a.Length;")]
         [InlineData("a[0].ToString();")]
         [InlineData("ConsumeRos(a);")]
@@ -114,6 +116,7 @@ public class C
         [InlineData("(a[0], a[1]) = t;")]
         [InlineData("(a[1], b) = t;")]
         [InlineData("(b, a[1]) = t;")]
+        [InlineData("byte[] c; (b, c) = (1, a);")]
         [InlineData("a[1] += 12;")]
         [InlineData("a[2] -= 12;")]
         [InlineData("a[3] *= 12;")]
@@ -123,10 +126,14 @@ public class C
         [InlineData("a[1]--;")]
         [InlineData("--a[1];")]
         [InlineData("ref byte r = ref a[1];")]
+        [InlineData("byte[] local = a;")]
+        [InlineData("byte[] local; local = a;")]
+        [InlineData("byte[] local = null; local ??= a;")]
         [InlineData("ConsumeByteRef(ref a[3]);")]
         [InlineData("ConsumeByteOut(out a[3]);")]
         [InlineData("ConsumeImplicit(a);")]
         [InlineData("ConsumeExplicit((Explicit)a);")]
+        [InlineData("new C(a);")]
         public Task IllegalFieldUsage_NoDiagnostic_CS(string code)
         {
             var test = new VerifyCS.Test
@@ -144,6 +151,7 @@ public class C
     private static void ConsumeByteOut(out byte b) => b = default;
     private static void ConsumeImplicit(Implicit i) {{ }}
     private static void ConsumeExplicit(Explicit e) {{ }}
+    public C(byte[] bytes) {{ }}
 
     public void M(byte b, (byte x, byte y) t)
     {{
@@ -160,7 +168,8 @@ public class Explicit
 {{
     public static explicit operator Explicit(byte[] operand) => new Explicit();
 }}",
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp10
             };
             return test.RunAsync();
         }
@@ -200,6 +209,37 @@ public class C
 public class C
 {{
     {declaration}
+}}",
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+            };
+            return test.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("a = new byte[1];")]
+        [InlineData("(a, b) = t;")]
+        [InlineData("a = GetBytes();")]
+        [InlineData("a = new byte[] { 1, 2, 3 };")]
+        [InlineData("ConsumeBytesRef(ref a);")]
+        [InlineData("ref byte[] r = ref a;")]
+        public Task MutationInStaticCtor_NoDiagnostic_CS(string code)
+        {
+            var test = new VerifyCS.Test
+            {
+                TestCode = $@"
+using System;
+public class C
+{{
+    private static readonly byte[] a = new byte[] {{ 1 }};
+    private static byte[] GetBytes() => new byte[1];
+    private static void ConsumeBytesRef(ref byte[] bytes) {{ }}
+    private static byte b;
+    private static (byte[], byte) t;
+
+    static C()
+    {{
+        {code}
+    }}
 }}",
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50
             };

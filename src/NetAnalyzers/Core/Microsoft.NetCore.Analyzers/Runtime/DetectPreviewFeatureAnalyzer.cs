@@ -360,11 +360,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     SyntaxNode? baseTypeNode = GetPreviewInterfaceNodeForTypeImplementingPreviewInterface(symbol, baseType);
                     if (baseTypeNode != null)
                     {
-                        ReportDiagnosticWithCustomMessageIfItExists(context, baseTypeNode, baseType, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, symbol.Name, baseType.Name);
+                        ReportDiagnosticWithCustomMessageIfItExists(context, baseTypeNode, baseType, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, DerivesFromPreviewClassRule, symbol.Name, baseType.Name);
                     }
                     else
                     {
-                        ReportDiagnosticWithCustomMessageIfItExists(context, baseType, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, symbol.Name, baseType.Name);
+                        ReportDiagnosticWithCustomMessageIfItExists(context, baseType, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, DerivesFromPreviewClassRule, symbol.Name, baseType.Name);
                     }
                 }
             }

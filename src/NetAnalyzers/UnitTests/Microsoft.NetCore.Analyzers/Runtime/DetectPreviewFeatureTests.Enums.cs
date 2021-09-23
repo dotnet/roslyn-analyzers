@@ -40,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("Lib is in preview.", string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, "https://aka.ms/aspnet/kestrel/http3reqs")));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("Lib is in preview.", "Lib", "https://aka.ms/aspnet/kestrel/http3reqs"));
             await test.RunAsync();
         }
 
@@ -106,8 +106,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("Foo", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("Bar", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("", "Foo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("", "Bar", DetectPreviewFeatureAnalyzer.DefaultURL));
             await test.RunAsync();
         }
     }

@@ -41,7 +41,7 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("Lib is in preview.", string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, "https://aka.ms/aspnet/kestrel/http3reqs")));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("Lib is in preview.", "Foo", "https://aka.ms/aspnet/kestrel/http3reqs"));
             await test.RunAsync();
         }
 
@@ -74,7 +74,7 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("Lib is in preview.", string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, "https://aka.ms/aspnet/kestrel/http3reqs")));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("Lib is in preview.", "Foo", "https://aka.ms/aspnet/kestrel/http3reqs"));
             await test.RunAsync();
         }
 
@@ -109,7 +109,7 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRule).WithLocation(0).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_usesPreviewTypeParameterMessage, "GenericMethod", "Foo"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("GenericMethod", "Foo", DetectPreviewFeatureAnalyzer.DefaultURL));
             await test.RunAsync();
         }
 
@@ -138,7 +138,7 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("Lib is in preview.", string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, "https://aka.ms/aspnet/kestrel/http3reqs")));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("Lib is in preview.", "Foo", "https://aka.ms/aspnet/kestrel/http3reqs"));
             await test.RunAsync();
         }
 
@@ -248,7 +248,7 @@ interface IFoo
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesMessage, "Foo"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("Foo", DetectPreviewFeatureAnalyzer.DefaultURL));
             await test.RunAsync();
         }
 
@@ -290,10 +290,10 @@ interface IFoo
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesMessage, "Bar"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRule).WithLocation(1).WithArguments("Lib is in preview.", string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, "https://aka.ms/aspnet/kestrel/http3reqs")));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(2).WithArguments("Lib is in preview.", string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, "https://aka.ms/aspnet/kestrel/http3reqs")));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(3).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_implementsPreviewMethodMessage, "Bar", "IFoo.Bar"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("Bar", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRule).WithLocation(1).WithArguments("Lib is in preview.", "IFoo", "https://aka.ms/aspnet/kestrel/http3reqs"));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(2).WithArguments("Lib is in preview.", "IFoo", "https://aka.ms/aspnet/kestrel/http3reqs"));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(3).WithArguments("Bar", "IFoo.Bar", DetectPreviewFeatureAnalyzer.DefaultURL));
             await test.RunAsync();
         }
 
@@ -335,10 +335,10 @@ interface IFoo
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesMessage, "Bar"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRule).WithLocation(1).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_usesPreviewTypeParameterMessage, "A", "IFoo"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(2).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_implementsPreviewInterfaceMessage, "Foo", "IFoo"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(3).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_implementsPreviewMethodMessage, "Bar", "IFoo.Bar"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("Bar", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRule).WithLocation(1).WithArguments("A", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(2).WithArguments("Foo", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(3).WithArguments("Bar", "IFoo.Bar", DetectPreviewFeatureAnalyzer.DefaultURL));
             await test.RunAsync();
         }
 
@@ -368,7 +368,7 @@ class PreviewClass
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_implementsPreviewInterfaceMessage, "A", "IFoo"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("A", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
             await test.RunAsync();
         }
 
@@ -393,7 +393,7 @@ class PreviewClass<T>
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.DerivesFromPreviewClassRule).WithLocation(0).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_derivesFromPreviewClassMessage, "A", "PreviewClass"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.DerivesFromPreviewClassRule).WithLocation(0).WithArguments("A", "PreviewClass", DetectPreviewFeatureAnalyzer.DefaultURL));
             await test.RunAsync();
         }
 
@@ -440,10 +440,10 @@ public interface IFoo
 
             var test = SetupDependencyAndTestCSWithOneSourceFile(csInput, csDependencyCode);
 
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesMessage, "Bar"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRule).WithLocation(1).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_usesPreviewTypeParameterMessage, "A", "IFoo"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(2).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_implementsPreviewInterfaceMessage, "Foo", "IFoo"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(3).WithArguments(string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_implementsPreviewMethodMessage, "Bar", "IFoo.Bar"), string.Format(CultureInfo.CurrentCulture, (string)DetectPreviewFeatureAnalyzer.s_detectPreviewFeaturesUrl, DetectPreviewFeatureAnalyzer.DefaultURL)));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("Bar", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRule).WithLocation(1).WithArguments("A", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(2).WithArguments("Foo", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(3).WithArguments("Bar", "IFoo.Bar", DetectPreviewFeatureAnalyzer.DefaultURL));
             await test.RunAsync();
         }
     }

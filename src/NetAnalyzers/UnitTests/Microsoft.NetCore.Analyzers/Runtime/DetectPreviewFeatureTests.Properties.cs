@@ -229,56 +229,6 @@ namespace Preview_Feature_Scratch
         }
 
         [Fact]
-        public async Task TestNullablePropertyReturnTypePreviewGetterAndSetters()
-        {
-            var csInput = @" 
-using System.Runtime.Versioning; using System;
-namespace Preview_Feature_Scratch
-{
-
-    class AFoo
-    {
-#nullable enable
-        private {|#5:Foo|}[]? _valueNullable;
-        private {|#8:Foo?|}[]? _valueNullableArray;
-        private {|#9:Foo?|}[] _valueNullableArrayInitialized;
-
-        public {|#6:Foo|}[]? ValueNullable
-        {
-            get
-            {
-                return _valueNullable;
-            }
-            {|#7:set|}
-            {
-                _valueNullable = value;
-            }
-        }
-
-        public AFoo()
-        {
-            _valueNullableArrayInitialized = {|#10:new Foo?[0]|};
-        }
-#nullable disable
-    }
-
-    [RequiresPreviewFeatures(""Lib is in preview."", Url = ""https://aka.ms/aspnet/kestrel/http3reqs"")]
-    public class Foo
-    {
-    }
-}";
-
-            var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(5).WithArguments("Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.MethodReturnsPreviewTypeRule).WithLocation(6).WithArguments("Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.MethodUsesPreviewTypeAsParameterRule).WithLocation(7).WithArguments("Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(8).WithArguments("Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(9).WithArguments("Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(10).WithArguments("Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            await test.RunAsync();
-        }
-
-        [Fact]
         public async Task TestPropertyReturnTypePreviewGetterAndSetters()
         {
             var csInput = @" 
@@ -531,7 +481,7 @@ namespace Preview_Feature_Scratch
 
             var test = TestCS(csInput);
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("Foo", DetectPreviewFeatureAnalyzer.DefaultURL, ""));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.OverridesPreviewMethodRule).WithLocation(1).WithArguments("", "AProperty", "Program.AProperty", DetectPreviewFeatureAnalyzer.DefaultURL, ""));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.OverridesPreviewMethodRule).WithLocation(1).WithArguments("AProperty", "Program.AProperty", DetectPreviewFeatureAnalyzer.DefaultURL, ""));
             await test.RunAsync();
         }
     }

@@ -25,15 +25,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string DefaultURL = "https://aka.ms/dotnet-warnings/preview-features";
         private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(DetectPreviewFeaturesTitle));
         private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(DetectPreviewFeaturesDescription));
-        //internal static readonly LocalizableString s_detectPreviewFeaturesMessage = CreateLocalizableResourceString(nameof(DetectPreviewFeaturesMessage));
-        //internal static readonly LocalizableString s_implementsPreviewInterfaceMessage = CreateLocalizableResourceString(nameof(ImplementsPreviewInterfaceMessage));
-        //internal static readonly LocalizableString s_implementsPreviewMethodMessage = CreateLocalizableResourceString(nameof(ImplementsPreviewMethodMessage));
-        //internal static readonly LocalizableString s_overridePreviewMethodMessage = CreateLocalizableResourceString(nameof(OverridesPreviewMethodMessage));
-        //internal static readonly LocalizableString s_derivesFromPreviewClassMessage = CreateLocalizableResourceString(nameof(DerivesFromPreviewClassMessage));
-        //internal static readonly LocalizableString s_usesPreviewTypeParameterMessage = CreateLocalizableResourceString(nameof(UsesPreviewTypeParameterMessage));
-        //internal static readonly LocalizableString s_methodReturnsPreviewTypeMessage = CreateLocalizableResourceString(nameof(MethodReturnsPreviewTypeMessage));
-        //internal static readonly LocalizableString s_methodUsesPreviewTypeAsParameterMessage = CreateLocalizableResourceString(nameof(MethodUsesPreviewTypeAsParamaterMessage));
-        //internal static readonly LocalizableString s_fieldOrEventIsPreviewTypeMessage = CreateLocalizableResourceString(nameof(FieldIsPreviewTypeMessage));
         private static readonly ImmutableArray<SymbolKind> s_symbols = ImmutableArray.Create(SymbolKind.NamedType, SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event);
 
         internal static DiagnosticDescriptor GeneralPreviewFeatureAttributeRule = DiagnosticDescriptorHelper.Create(RuleId,

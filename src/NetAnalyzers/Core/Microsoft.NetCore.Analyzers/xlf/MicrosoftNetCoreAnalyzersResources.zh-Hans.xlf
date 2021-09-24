@@ -338,6 +338,11 @@
         <note />
       </trans-unit>
       <trans-unit id="DerivesFromPreviewClassMessage">
+        <source>'{0}' derives from preview class '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</source>
+        <target state="new">'{0}' derives from preview class '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DerivesFromPreviewClassMessageWithCustomMessagePlaceholder">
         <source>'{3}' '{0}' derives from preview class '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</source>
         <target state="new">'{3}' '{0}' derives from preview class '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</target>
         <note />
@@ -348,6 +353,11 @@
         <note />
       </trans-unit>
       <trans-unit id="DetectPreviewFeaturesMessage">
+        <source>Using '{0}' requires opting into preview features. See {1} for more information.</source>
+        <target state="new">Using '{0}' requires opting into preview features. See {1} for more information.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DetectPreviewFeaturesMessageWithCustomMessagePlaceholder">
         <source>{2} Using '{0}' requires opting into preview features. See {1} for more information.</source>
         <target state="new">{2} Using '{0}' requires opting into preview features. See {1} for more information.</target>
         <note />
@@ -1103,6 +1113,11 @@
         <note />
       </trans-unit>
       <trans-unit id="FieldIsPreviewTypeMessage">
+        <source>'{0}''s type contains the preview type '{1}' and requires opting into preview features. See '{2}' for more information.</source>
+        <target state="new">'{0}''s type contains the preview type '{1}' and requires opting into preview features. See '{2}' for more information.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FieldIsPreviewTypeMessageWithCustomMessagePlaceholder">
         <source>'{3}' '{0}''s type contains the preview type '{1}' and requires opting into preview features. See '{2}' for more information.</source>
         <target state="new">'{3}' '{0}''s type contains the preview type '{1}' and requires opting into preview features. See '{2}' for more information.</target>
         <note />
@@ -1258,11 +1273,21 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementsPreviewInterfaceMessage">
+        <source>'{0}' implements the preview interface '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</source>
+        <target state="new">'{0}' implements the preview interface '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementsPreviewInterfaceMessageWithCustomMessagePlaceholder">
         <source>'{3}' '{0}' implements the preview interface '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</source>
         <target state="new">'{3}' '{0}' implements the preview interface '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementsPreviewMethodMessage">
+        <source>'{0}' implements the preview method '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</source>
+        <target state="new">'{0}' implements the preview method '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementsPreviewMethodMessageWithCustomMessagePlaceholder">
         <source>'{3}' '{0}' implements the preview method '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</source>
         <target state="new">'{3}' '{0}' implements the preview method '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</target>
         <note />
@@ -1573,11 +1598,21 @@
         <note />
       </trans-unit>
       <trans-unit id="MethodReturnsPreviewTypeMessage">
+        <source>'{0}' returns the preview type '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</source>
+        <target state="new">'{0}' returns the preview type '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MethodReturnsPreviewTypeMessageWithCustomMessagePlaceholder">
         <source>'{3}' '{0}' returns the preview type '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</source>
         <target state="new">'{3}' '{0}' returns the preview type '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</target>
         <note />
       </trans-unit>
-      <trans-unit id="MethodUsesPreviewTypeAsParamaterMessage">
+      <trans-unit id="MethodUsesPreviewTypeAsParameterMessage">
+        <source>'{0}' takes in a preview parameter of type '{1}' and needs to opt into preview features. See '{2}' for more information.</source>
+        <target state="new">'{0}' takes in a preview parameter of type '{1}' and needs to opt into preview features. See '{2}' for more information.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MethodUsesPreviewTypeAsParameterMessageWithCustomMessagePlaceholder">
         <source>'{3}' '{0}' takes in a preview parameter of type '{1}' and needs to opt into preview features. See '{2}' for more information.</source>
         <target state="new">'{3}' '{0}' takes in a preview parameter of type '{1}' and needs to opt into preview features. See '{2}' for more information.</target>
         <note />
@@ -1673,6 +1708,11 @@
         <note />
       </trans-unit>
       <trans-unit id="OverridesPreviewMethodMessage">
+        <source>'{0}' overrides the preview method '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</source>
+        <target state="new">'{0}' overrides the preview method '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OverridesPreviewMethodMessageWithCustomMessagePlaceholder">
         <source>'{3}' '{0}' overrides the preview method '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</source>
         <target state="new">'{3}' '{0}' overrides the preview method '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</target>
         <note />
@@ -2768,6 +2808,11 @@
         <note />
       </trans-unit>
       <trans-unit id="UsesPreviewTypeParameterMessage">
+        <source>'{0}' uses the preview type '{1}' and needs to opt into preview features. See '{2}' for more information.</source>
+        <target state="new">'{0}' uses the preview type '{1}' and needs to opt into preview features. See '{2}' for more information.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder">
         <source>'{3}' '{0}' uses the preview type '{1}' and needs to opt into preview features. See '{2}' for more information.</source>
         <target state="new">'{3}' '{0}' uses the preview type '{1}' and needs to opt into preview features. See '{2}' for more information.</target>
         <note />

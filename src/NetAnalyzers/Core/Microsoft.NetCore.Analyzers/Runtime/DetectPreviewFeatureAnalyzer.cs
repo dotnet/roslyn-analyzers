@@ -5,7 +5,6 @@ using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -255,7 +254,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // Handle symbol operations involving preview features
-                context.RegisterOperationAction(context => BuildSymbolInformationFromOperations(context, requiresPreviewFeaturesSymbols/*, previewSymbolToMessageAndUrl*/, previewFeaturesAttribute),
+                context.RegisterOperationAction(context => BuildSymbolInformationFromOperations(context, requiresPreviewFeaturesSymbols, previewFeaturesAttribute),
                     OperationKind.Invocation,
                     OperationKind.ObjectCreation,
                     OperationKind.PropertyReference,
@@ -271,7 +270,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     );
 
                 // Handle preview symbol definitions
-                context.RegisterSymbolAction(context => AnalyzeSymbol(context, requiresPreviewFeaturesSymbols/*, previewSymbolToMessageAndUrl*/, virtualStaticsInInterfaces, previewFeaturesAttribute), s_symbols);
+                context.RegisterSymbolAction(context => AnalyzeSymbol(context, requiresPreviewFeaturesSymbols, virtualStaticsInInterfaces, previewFeaturesAttribute), s_symbols);
             });
         }
 
@@ -922,37 +921,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return message;
         }
 
-//#pragma warning disable CA1054,CA1055 // url should be of type URI
-//        private static string? GetMessageAndURLForSymbol(ISymbol symbol,
-//            INamedTypeSymbol previewFeatureAttribute,
-//            //ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
-//            out string? url)
-//#pragma warning restore CA1054,CA1055
-//        {
-//            string? message = null;
-//            url = null;
-//            if (!previewSymbolsToMessageAndUrl.TryGetValue(symbol, out (string? existingMessage, string? existingUrl) value))
-//            {
-//                ImmutableArray<AttributeData> attributes = symbol.GetAttributes();
-//                foreach (var attribute in attributes)
-//                {
-//                    if (attribute.AttributeClass.Equals(previewFeatureAttribute))
-//                    {
-//                        message = GetMessageAndURLFromAttributeConstructor(attribute, out url);
-
-//                        previewSymbolsToMessageAndUrl.GetOrAdd(symbol, new ValueTuple<string?, string?>(message, url));
-//                    }
-//                }
-//            }
-//            else
-//            {
-//                message = value.existingMessage;
-//                url = value.existingUrl;
-//            }
-
-//            return message;
-//        }
-
         private static void ReportDiagnosticWithCustomMessageIfItExists(OperationAnalysisContext context,
                                                                         IOperation operation,
                                                                         ISymbol symbol,
@@ -1070,6 +1038,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         string? message = GetMessageAndURLFromAttributeConstructor(attribute, out string? url);
                         requiresPreviewFeaturesSymbols.GetOrAdd(symbol, new ValueTuple<bool, string?, string?>(true, message, url));
+                        return true;
                     }
                 }
 
@@ -1083,6 +1052,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     if (SymbolIsAnnotatedAsPreview(parent, requiresPreviewFeaturesSymbols, previewFeatureAttribute))
                     {
+                        requiresPreviewFeaturesSymbols.GetOrAdd(symbol, new ValueTuple<bool, string?, string?>(true, null, null));
                         return true;
                     }
                 }

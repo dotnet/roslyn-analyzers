@@ -123,7 +123,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
                         Await New ValueTask()
                         Await Helpers.ReturnsValueTask()
                         Await New ValueTask(Of String)("", hello, "")
-                        Await New ValueTask(Of String)(Task.FromResult(hello, "", ""))
+                        Await New ValueTask(Of String)(Task.FromResult("", hello, ""))
                         Dim s As String = Await Helpers.ReturnsValueTaskOfT(Of String)()
                         Dim i As Integer = Await Helpers.ReturnsValueTaskOfInt()
                     End Function

@@ -138,6 +138,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (value is IObjectCreationOperation objectCreation)
             {
                 return objectCreation.Type.IsValueType
+                    && objectCreation.Constructor.IsImplicitlyDeclared
                     && objectCreation.Arguments.IsEmpty
                     && (objectCreation.Initializer?.Initializers.IsEmpty ?? true)
                     && SymbolEqualityComparer.Default.Equals(value.Type, type);

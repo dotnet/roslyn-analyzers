@@ -237,7 +237,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols = new();
-                ////ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolToMessageAndUrl = new();
 
                 IFieldSymbol? virtualStaticsInInterfaces = null;
                 if (context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesRuntimeFeature, out INamedTypeSymbol? runtimeFeatureType))
@@ -314,7 +313,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private void ProcessFieldSymbolAttributes(SymbolAnalysisContext context,
                                                   IFieldSymbol symbol,
                                                   ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
-                                                  //ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
                                                   INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             ISymbol symbolType = symbol.Type;
@@ -330,7 +328,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                          ISymbol symbol,
                                                          ISymbol symbolType,
                                                          ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
-                                                         //ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
                                                          INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             if (SymbolIsAnnotatedAsPreview(symbolType, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
@@ -367,7 +364,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private void ProcessEventSymbolAttributes(SymbolAnalysisContext context,
                                                   IEventSymbol symbol,
                                                   ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
-                                                  //ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
                                                   INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             ISymbol symbolType = symbol.Type;
@@ -382,7 +378,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private void ProcessTypeSymbolAttributes(SymbolAnalysisContext context,
                                                  ITypeSymbol symbol,
                                                  ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
-                                                 //ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
                                                  INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             // We're only concerned about types(class/struct/interface) directly implementing preview interfaces. Implemented interfaces(direct/base) will report their diagnostics independently
@@ -561,7 +556,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private void ProcessPropertyOrMethodAttributes(SymbolAnalysisContext context,
                                                        ISymbol propertyOrMethodSymbol,
                                                        ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
-                                                       //ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
                                                        IFieldSymbol? virtualStaticsInInterfaces,
                                                        INamedTypeSymbol previewFeatureAttributeSymbol)
         {
@@ -690,7 +684,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private void AnalyzeSymbol(SymbolAnalysisContext context,
                                    ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
-                                   //ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
                                    IFieldSymbol? virtualStaticsInInterfaces,
                                    INamedTypeSymbol previewFeatureAttributeSymbol)
         {
@@ -722,7 +715,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private void BuildSymbolInformationFromOperations(OperationAnalysisContext context,
                                                           ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
-                                                          //ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
                                                           INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             if (OperationUsesPreviewFeatures(context, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out ISymbol? symbol))

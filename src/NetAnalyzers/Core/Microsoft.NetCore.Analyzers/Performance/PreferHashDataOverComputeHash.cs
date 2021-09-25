@@ -17,12 +17,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
-    /// CA1849: Prefer static HashData over ComputeHash
+    /// CA1850: Prefer static HashData over ComputeHash
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PreferHashDataOverComputeHashAnalyzer : DiagnosticAnalyzer
     {
-        internal const string CA1849 = nameof(CA1849);
+        internal const string CA1850 = nameof(CA1850);
         internal const string TargetHashTypeDiagnosticPropertyKey = nameof(TargetHashTypeDiagnosticPropertyKey);
         internal const string DeleteHashCreationPropertyKey = nameof(DeleteHashCreationPropertyKey);
         internal const string ComputeTypePropertyKey = nameof(ComputeTypePropertyKey);
@@ -35,7 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private const string CreateMethodName = nameof(System.Security.Cryptography.SHA256.Create);
 
         internal static readonly DiagnosticDescriptor StringRule = DiagnosticDescriptorHelper.Create(
-            CA1849,
+            CA1850,
             CreateLocalizableResourceString(nameof(PreferHashDataOverComputeHashAnalyzerTitle)),
             CreateLocalizableResourceString(nameof(PreferHashDataOverComputeHashAnalyzerMessage)),
             DiagnosticCategory.Performance,

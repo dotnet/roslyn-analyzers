@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 {
     public abstract class PreferHashDataOverComputeHashFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(PreferHashDataOverComputeHashAnalyzer.CA1849);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(PreferHashDataOverComputeHashAnalyzer.CA1850);
         public abstract override FixAllProvider GetFixAllProvider();
         protected abstract PreferHashDataOverComputeHashFixHelper Helper { get; }
 

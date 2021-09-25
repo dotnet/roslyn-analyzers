@@ -1452,7 +1452,7 @@ For improved performance, use the LoggerMessage delegates.
 |CodeFix|False|
 ---
 
-## [CA1849](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849): Prefer static 'HashData' method over 'ComputeHash'
+## [CA1850](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850): Prefer static 'HashData' method over 'ComputeHash'
 
 It is more efficient to use the static 'HashData' method over creating and managing a HashAlgorithm instance to call 'ComputeHash'.
 

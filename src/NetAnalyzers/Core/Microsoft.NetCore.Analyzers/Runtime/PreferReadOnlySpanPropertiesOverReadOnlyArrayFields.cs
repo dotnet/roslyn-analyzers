@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Analyzer.Utilities;
@@ -49,6 +48,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
+            //  Bail if we're missing required symbols.
             if (!Cache.TryCreateCache(context.Compilation, out var cache))
                 return;
             var fieldReferenceVisitor = new FieldReferenceVisitor(cache);
@@ -61,6 +61,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             //  Local functions
 
+            //  We start by finding all field symbols for static readonly fields that are
+            //  arrays of an allowed element type.
             void AnalyzeSymbol(SymbolAnalysisContext context)
             {
                 RoslynDebug.Assert(cache is not null, $"'{nameof(cache)}' was null.");
@@ -72,6 +74,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
 
+            //  Candidate elimination round.
             void AnalyzeOperation(OperationAnalysisContext context)
             {
                 RoslynDebug.Assert(cache is not null, $"'{nameof(cache)}' was null.");
@@ -80,14 +83,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 switch (context.Operation)
                 {
                     case IFieldReferenceOperation fieldReference:
-                        //  Eliminate candidates that are assigned to ref or out variables (this can only happen in static ctor).
                         if (fieldReference.GetValueUsageInfo(fieldReference.SemanticModel.GetEnclosingSymbol(fieldReference.Syntax.SpanStart, context.CancellationToken)) is
                             ValueUsageInfo.ReadableWritableReference or ValueUsageInfo.WritableReference)
                         {
+                            //  Eliminate candidates that are assigned to ref or out variables.
                             cache.Candidates.Remove(fieldReference.Field);
                         }
                         else
                         {
+                            //  Eliminate candidates that are used in ways that prohibit conversion to ReadOnlySpan (see
+                            //  visitor classes for details).
                             fieldReference.Parent.Accept(fieldReferenceVisitor, new VisitContext(fieldReference, fieldReference.Field, context.CancellationToken));
                         }
                         break;
@@ -104,13 +109,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
 
+            //  Report diagnostics on all field symbols that survived the candidate elimination round.
             void OnCompilationEnd(CompilationAnalysisContext context)
             {
                 var asSpanInvocationLookup = cache.GetSavedOperationsLookup();
                 foreach (var field in cache.Candidates)
                 {
-                    var savedSpans = asSpanInvocationLookup[field].Select(x => new SavedSpanLocation(x.Syntax.Span, x.Syntax.SyntaxTree.FilePath));
-                    string propertyValue = SavedSpanLocation.Serialize(savedSpans);
+                    //  Save the locations of all operations that need to be fixed by the fixer.
+                    var savedLocations = asSpanInvocationLookup[field].Select(x => new SavedSpanLocation(x.Syntax.Span, x.Syntax.SyntaxTree.FilePath));
+                    string propertyValue = SavedSpanLocation.Serialize(savedLocations);
                     var properties = ImmutableDictionary<string, string?>.Empty.Add(FixerDataPropertyName, propertyValue);
                     var diagnostic = field.CreateDiagnostic(Rule, properties);
                     context.ReportDiagnostic(diagnostic);
@@ -137,7 +144,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         /// <summary>
         /// Represents a saved span in source code that that needs to be fixed by the fixer.
-        /// Currently used to save calls to 'AsSpan()' that need to be converted to calls to 'Slice'
+        /// Currently used to save field references that were passed to any 'AsSpan' overload.
         /// </summary>
         internal readonly struct SavedSpanLocation : IEquatable<SavedSpanLocation>
         {
@@ -196,6 +203,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             public override int GetHashCode() => (Span, SourceFilePath).GetHashCode();
         }
 
+        /// <summary>
+        /// Visits the parents of <see cref="IFieldReferenceOperation"/>s and eliminate candidates that
+        /// are used in ways that prohibit conversion to <see cref="ReadOnlySpan{T}"/>.
+        /// </summary>
         private sealed class FieldReferenceVisitor : OperationVisitor<VisitContext, Unit>
         {
             private readonly Cache _cache;
@@ -212,10 +223,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (operation.GetValueUsageInfo(operation.SemanticModel.GetEnclosingSymbol(operation.Syntax.SpanStart, argument.CancellationToken)) is
                     ValueUsageInfo.ReadableWritableReference or ValueUsageInfo.WritableReference)
                 {
+                    //  Eliminate candidates who's elements are assigned to ref or out variables.
                     _cache.Candidates.Remove(argument.Field);
                 }
                 else
                 {
+                    //  Eliminate candidates who's elements are used in ways that prohibit conversion to ReadOnlySpan
                     operation.Parent.Accept(_arrayElementReferenceVisitor, argument.WithOperation(operation));
                 }
                 return base.VisitArrayElementReference(operation, argument);
@@ -282,16 +295,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return base.VisitTuple(operation, argument);
             }
 
-            private static bool TryGetTargetMethod(IOperation methodOrCtorCall, [NotNullWhen(true)] out IMethodSymbol? targetMethod)
-            {
-                targetMethod = methodOrCtorCall switch
-                {
-                    IInvocationOperation invocation => invocation.TargetMethod,
-                    IObjectCreationOperation objectCreation => objectCreation.Constructor,
-                    _ => null
-                };
-                return targetMethod is not null;
-            }
             private static IMethodSymbol GetTargetMethod(IOperation invocationOrObjectCreation)
             {
                 IMethodSymbol? result = invocationOrObjectCreation switch
@@ -303,18 +306,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 RoslynDebug.Assert(result is not null);
                 return result;
             }
-            private static bool TryGetInvocationOrObjectCreationOperation(IOperation methodOrCtorCall, [NotNullWhen(true)] out IOperation? invocationOrObjectCreation)
-            {
-                invocationOrObjectCreation = methodOrCtorCall switch
-                {
-                    IInvocationOperation invocation => invocation,
-                    IObjectCreationOperation objectCreation => objectCreation,
-                    _ => null
-                };
-                return invocationOrObjectCreation is not null;
-            }
         }
 
+        /// <summary>
+        /// Visits the parents of <see cref="IArrayElementReferenceOperation"/>s and eliminate candidates
+        /// who's elements are used in ways that prohibit conversion to <see cref="ReadOnlySpan{T}"/>.
+        /// </summary>
         private sealed class ArrayElementReferenceVisitor : OperationVisitor<VisitContext, Unit>
         {
             private readonly Cache _cache;
@@ -425,6 +422,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             public bool IsAsSpanMethod(IMethodSymbol method) => _asSpanMethods.Contains(method.OriginalDefinition);
 
+            /// <summary>
+            /// Add <see cref="IOperation"/>s that need to be fixed by fixer. Currently this is used
+            /// for invocations of any 'AsSpan' method on a field reference.
+            /// </summary>
+            /// <param name="field">The field the operation is associated with</param>
+            /// <param name="operation">The field reference operation that needs to be fixed.</param>
             public void AddSavedOperation(IFieldSymbol field, IOperation operation) => _savedOperations.Add((field, operation));
 
             public ILookup<IFieldSymbol, IOperation> GetSavedOperationsLookup() => _savedOperations.ToLookup(

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -16,8 +15,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Rename;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.NetCore.Analyzers;
 using Microsoft.NetCore.Analyzers.Runtime;
 
@@ -54,6 +51,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
             async Task<Document> GetChangedDocumentAsync(CancellationToken token)
             {
+                //  Replace readonly array field declaration with ReadOnlySpan<> property declaration
                 var editor = await DocumentEditor.CreateAsync(doc, token).ConfigureAwait(false);
                 var rosNameSyntax = SyntaxFactory.GenericName(
                     SyntaxFactory.Identifier(readOnlySpanType.Name),
@@ -69,45 +67,61 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                     .WithTriviaFrom(fieldDeclarationSyntax);
                 editor.ReplaceNode(fieldDeclarationSyntax, propertyDeclarationSyntax);
 
-                //  Replace calls to 'AsSpan' with either the field itself for 'AsSpan()', or 'field.Slice(...)' for 'AsSpan(int)' or 'AsSpan(int, int)'
-                var savedSpans = PreferReadOnlySpanPropertiesOverReadOnlyArrayFields.SavedSpanLocation.Deserialize(
-                    context.Diagnostics[0].Properties[PreferReadOnlySpanPropertiesOverReadOnlyArrayFields.FixerDataPropertyName]);
-                var documentLookup = context.Document.Project.Documents.ToImmutableDictionary(x => x.FilePath);
-                foreach (var savedSpan in savedSpans)
+                //  Update all calls to 'AsSpan'
+                var savedOperations = await GetFieldReferenceOperationsRequiringUpdateAsync(token).ConfigureAwait(false);
+                foreach (var fieldReference in savedOperations)
                 {
-                    RoslynDebug.Assert(documentLookup.ContainsKey(savedSpan.SourceFilePath), "Missing FilePath in document dictionary");
+                    //  Walk up to the AsSpan invocation operation.
+                    var invocation = (IInvocationOperation)fieldReference.Parent.Parent;
 
-                    var doc = documentLookup[savedSpan.SourceFilePath];
-                    var root = await doc.GetSyntaxRootAsync(token).ConfigureAwait(false);
-                    var model = await doc.GetSemanticModelAsync(token).ConfigureAwait(false);
-                    var savedFieldReference = model.GetOperation(root.FindNode(savedSpan.Span, getInnermostNodeForTie: true), token);
-                    var invocation = (IInvocationOperation)savedFieldReference.Parent.Parent;
-
-                    //  If we called 'AsSpan(int)' or 'AsSpan(int, int)', replace with a call to the appropriate Slice overload
+                    //  If we called 'AsSpan(int)' or 'AsSpan(int, int)', replace with call to appropriate Slice overload.
+                    //  Otherwise we simply replace the 'AsSpan()' call with the field reference itself.
                     if (invocation.TargetMethod.Parameters.Length > 1)
                     {
-                        var asSpanInvocationSyntax = (InvocationExpressionSyntax)invocation.Syntax;
-                        var memberAccessSyntax = (MemberAccessExpressionSyntax)asSpanInvocationSyntax.Expression;
-                        var sliceMemberNameSyntax = SyntaxFactory.IdentifierName(nameof(ReadOnlySpan<byte>.Slice));
+                        var invocationSyntax = (InvocationExpressionSyntax)invocation.Syntax;
+                        var memberAccessSyntax = (MemberAccessExpressionSyntax)invocationSyntax.Expression;
 
-                        //  If 'AsSpan' was not talled via extension method, we need to remove the first argument node from the
-                        //  argument list, and replace the expression of the AsSpan member invocation syntax with the array field reference.
-                        if (asSpanInvocationSyntax.ArgumentList.Arguments.Count == invocation.Arguments.Length)
+                        //  If 'AsSpan' was not called via extension method, then memberAccessSyntax.Expression will be the type name
+                        //  expression 'MemoryExtensions'. We need to replace it with the first argument in the argument list (which will be the
+                        //  reference to the array field) and then remove the first argument from the argument list.
+                        if (invocationSyntax.ArgumentList.Arguments.Count == invocation.Arguments.Length)
                         {
-                            var newArgumentList = asSpanInvocationSyntax.ArgumentList.WithArguments(asSpanInvocationSyntax.ArgumentList.Arguments.RemoveAt(0));
-                            editor.ReplaceNode(asSpanInvocationSyntax.ArgumentList, newArgumentList);
-                            editor.ReplaceNode(memberAccessSyntax.Expression, savedFieldReference.Syntax.WithTriviaFrom(memberAccessSyntax.Expression));
+                            var newArgumentList = invocationSyntax.ArgumentList.WithArguments(invocationSyntax.ArgumentList.Arguments.RemoveAt(0));
+                            editor.ReplaceNode(invocationSyntax.ArgumentList, newArgumentList);
+                            var newExpressionSyntax = fieldReference.Syntax.WithTriviaFrom(memberAccessSyntax.Expression);
+                            editor.ReplaceNode(memberAccessSyntax.Expression, newExpressionSyntax);
                         }
 
-                        editor.ReplaceNode(memberAccessSyntax.Name, sliceMemberNameSyntax.WithTriviaFrom(memberAccessSyntax.Name));
+                        var sliceMemberNameSyntax = SyntaxFactory.IdentifierName(nameof(ReadOnlySpan<byte>.Slice)).WithTriviaFrom(memberAccessSyntax.Name);
+                        editor.ReplaceNode(memberAccessSyntax.Name, sliceMemberNameSyntax);
                     }
                     else
                     {
-                        editor.ReplaceNode(invocation.Syntax, savedFieldReference.Syntax.WithTriviaFrom(invocation.Syntax));
+                        editor.ReplaceNode(invocation.Syntax, fieldReference.Syntax.WithTriviaFrom(invocation.Syntax));
                     }
                 }
 
                 return editor.GetChangedDocument();
+            }
+
+            async Task<ImmutableArray<IOperation>> GetFieldReferenceOperationsRequiringUpdateAsync(CancellationToken token)
+            {
+                var savedSpans = PreferReadOnlySpanPropertiesOverReadOnlyArrayFields.SavedSpanLocation.Deserialize(
+                    context.Diagnostics[0].Properties[PreferReadOnlySpanPropertiesOverReadOnlyArrayFields.FixerDataPropertyName]);
+                var documentLookup = context.Document.Project.Documents.ToImmutableDictionary(x => x.FilePath);
+                var builder = ImmutableArray.CreateBuilder<IOperation>(savedSpans.Length);
+                builder.Count = savedSpans.Length;
+
+                for (int i = 0; i < savedSpans.Length; ++i)
+                {
+                    var doc = documentLookup[savedSpans[i].SourceFilePath];
+                    var root = await doc.GetSyntaxRootAsync(token).ConfigureAwait(false);
+                    var model = await doc.GetSemanticModelAsync(token).ConfigureAwait(false);
+                    var node = root.FindNode(savedSpans[i].Span, getInnermostNodeForTie: true);
+                    builder[i] = model.GetOperation(node, token);
+                }
+
+                return builder.MoveToImmutable();
             }
         }
     }

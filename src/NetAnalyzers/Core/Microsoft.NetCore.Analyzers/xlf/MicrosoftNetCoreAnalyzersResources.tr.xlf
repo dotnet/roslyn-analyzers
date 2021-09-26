@@ -1852,6 +1852,11 @@
         <target state="new">Prefer 'ContainsValue' over 'Values.Contains' for dictionary type '{0}'</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_CodeFixTitle">
+        <source>Use ReadOnlySpan`1 property</source>
+        <target state="new">Use ReadOnlySpan`1 property</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Description">
         <source>If an array field is readonly and the array is never modified, the compiler can emit more efficient code if the readonly field is replaced with a read-only ReadOnlySpan`1 property.</source>
         <target state="new">If an array field is readonly and the array is never modified, the compiler can emit more efficient code if the readonly field is replaced with a read-only ReadOnlySpan`1 property.</target>

@@ -2,15 +2,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.PreferReadOnlySpanPropertiesOverReadOnlyArrayFields,
-    Microsoft.NetCore.Analyzers.Runtime.PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsFixer>;
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpPreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -30,19 +32,30 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         [InlineData("sbyte", "")]
         public Task ConstReadOnlyArrayFields_Diagnostic_CS(string arrayType, string arrayInitializer)
         {
-            var test = new VerifyCS.Test
-            {
-                TestCode = $@"
+            string testDeclaration = $"private static readonly {arrayType}[] {{|#0:_array|}} = new {arrayType}[] {{ {arrayInitializer} }};";
+            string fixedDeclaration = $"private static ReadOnlySpan<{arrayType}> _array => new {arrayType}[] {{ {arrayInitializer} }};";
+            string format = @"
 using System;
 public class C
 {{
-    private static readonly {arrayType}[] {{|#0:_array|}} = new {arrayType}[] {{ {arrayInitializer} }};
+    {0}
     private const byte ConstByte = 7;
     private const sbyte ConstSByte = -7;
     private const bool ConstBool = true;
-}}",
-                ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0) },
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+}}";
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, testDeclaration) },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0) }
+                },
+                FixedState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, fixedDeclaration) },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                }
             };
             return test.RunAsync();
         }
@@ -54,28 +67,108 @@ public class C
         [InlineData("byte b, c; (b, c) = (a[1], a[2]);")]
         [InlineData("int n = a.Length;")]
         [InlineData("a[0].ToString();")]
-        [InlineData("ConsumeRos(a);")]
-        [InlineData("ConsumeRos(a.AsSpan());")]
-        [InlineData("ConsumeRos(a.AsSpan(3));")]
-        [InlineData("ConsumeRos(a.AsSpan(1, 4));")]
         public Task LegalUsage_Diagnostic_CS(string code)
         {
-            var test = new VerifyCS.Test
-            {
-                TestCode = $@"
+            string format = @"
 using System;
 public class C
 {{
-    private static readonly byte[] {{|#0:a|}} = new byte[] {{ 2, 4, 8, 16 }};
-    public void ConsumeRos(ReadOnlySpan<byte> span) {{ }}
-
+    private static {0} new byte[] {{ 2, 4, 8, 16 }};
     public void M()
     {{
-        {code}
+        {1}
     }}
-}}",
-                ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0) },
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+}}";
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, "readonly byte[] {|#0:a|} =", code) },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0) }
+                },
+                FixedState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, "ReadOnlySpan<byte> a =>", code) },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                }
+            };
+            return test.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("a.AsSpan()", "a")]
+        [InlineData("MemoryExtensions.AsSpan(a)", "a")]
+        [InlineData("a.AsSpan(3)", "a.Slice(3)")]
+        [InlineData("MemoryExtensions.AsSpan(a, 3)", "a.Slice(3)")]
+        [InlineData("a.AsSpan(1, 3)", "a.Slice(1, 3)")]
+        [InlineData("MemoryExtensions.AsSpan(a, 1, 3)", "a.Slice(1, 3)")]
+        public Task AsSpanCallToRosArgument_Diagnostic_CS(string code, string fixedCode)
+        {
+            string format = @"
+using System;
+public class C
+{{
+    private static {0} new byte[] {{ 2, 4, 8, 16 }};
+    public void ConsumeRos(ReadOnlySpan<byte> ros) {{ }}
+    public void M()
+    {{
+        ConsumeRos({1});
+        ReadOnlySpan<byte> ros = {1};
+    }}
+}}";
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, "readonly byte[] {|#0:a|} =", code) },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0) }
+                },
+                FixedState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, "ReadOnlySpan<byte> a =>", fixedCode) },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                }
+            };
+            return test.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("a[0..]")]
+        [InlineData("a[^2..]")]
+        [InlineData("a[1..^1]")]
+        [InlineData("a[0..^0]")]
+        [InlineData("a[1..3]")]
+        [InlineData("a[..^0]")]
+        public Task ArraySliceIndexer_Diagnostic_CS(string code)
+        {
+            string format = @"
+using System;
+public class C
+{{
+    private static {0} new byte[] {{ 2, 4, 8, 16 }};
+    public void ConsumeRos(ReadOnlySpan<byte> ros) {{ }}
+    public void M()
+    {{
+        ConsumeRos({1});
+        ReadOnlySpan<byte> ros = {1};
+    }}
+}}";
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, "readonly byte[] {|#0:a|} =", code) },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0) }
+                },
+                FixedState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, "ReadOnlySpan<byte> a =>", code) },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                },
+                LanguageVersion = LanguageVersion.CSharp10
             };
             return test.RunAsync();
         }
@@ -169,7 +262,35 @@ public class Explicit
     public static explicit operator Explicit(byte[] operand) => new Explicit();
 }}",
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp10
+                LanguageVersion = LanguageVersion.CSharp10
+            };
+            return test.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("ConsumeSpan(a.AsSpan());")]
+        [InlineData("ConsumeSpan(a.AsSpan(1));")]
+        [InlineData("ConsumeSpan(a.AsSpan(1, 3));")]
+        [InlineData("var span = a.AsSpan();")]
+        [InlineData("var span = a.AsSpan(1);")]
+        [InlineData("var span = a.AsSpan(1, 3);")]
+        public Task IllegalAsSpanResultUsage_NoDiagnostic_CS(string code)
+        {
+            string format = @"
+using System;
+public class C
+{{
+    private static readonly byte[] a = new byte[] {{ 2, 4, 6, 8 }};
+    private void ConsumeSpan(Span<byte> span) {{ }}
+    public void M()
+    {{
+        {0}
+    }}
+}}";
+            var test = new VerifyCS.Test
+            {
+                TestCode = string.Format(CultureInfo.InvariantCulture, format, code),
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50
             };
             return test.RunAsync();
         }

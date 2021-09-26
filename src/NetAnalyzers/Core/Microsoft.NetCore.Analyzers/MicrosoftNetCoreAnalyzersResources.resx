@@ -1804,4 +1804,7 @@
   <data name="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Title" xml:space="preserve">
     <value>Prefer ReadOnlySpan`1 properties over readonly array fields</value>
   </data>
+  <data name="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_CodeFixTitle" xml:space="preserve">
+    <value>Use ReadOnlySpan`1 property</value>
+  </data>
 </root>

@@ -15,16 +15,10 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public sealed class PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsFixer : CodeFixProvider
+    public abstract class PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsFixer : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(PreferReadOnlySpanPropertiesOverReadOnlyArrayFields.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(PreferReadOnlySpanPropertiesOverReadOnlyArrayFields.RuleId);
 
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
-        {
-            return Task.CompletedTask;
-        }
-
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+        public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
     }
 }

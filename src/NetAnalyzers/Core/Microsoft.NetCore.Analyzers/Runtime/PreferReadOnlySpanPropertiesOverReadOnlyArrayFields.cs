@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -12,6 +14,7 @@ using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.CodeAnalysis.Text;
 using Resx = Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
@@ -23,6 +26,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     public sealed class PreferReadOnlySpanPropertiesOverReadOnlyArrayFields : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1850";
+        internal const string FixerDataPropertyName = nameof(FixerDataPropertyName);
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
@@ -102,9 +106,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             void OnCompilationEnd(CompilationAnalysisContext context)
             {
+                var asSpanInvocationLookup = cache.GetSavedOperationsLookup();
                 foreach (var field in cache.Candidates)
                 {
-                    context.ReportDiagnostic(field.CreateDiagnostic(Rule));
+                    var savedSpans = asSpanInvocationLookup[field].Select(x => new SavedSpanLocation(x.Syntax.Span, x.Syntax.SyntaxTree.FilePath));
+                    string propertyValue = SavedSpanLocation.Serialize(savedSpans);
+                    var properties = ImmutableDictionary<string, string?>.Empty.Add(FixerDataPropertyName, propertyValue);
+                    var diagnostic = field.CreateDiagnostic(Rule, properties);
+                    context.ReportDiagnostic(diagnostic);
                 }
                 cache.Dispose();
             }
@@ -124,6 +133,67 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             public CancellationToken CancellationToken { get; }
 
             public VisitContext WithOperation(IOperation newOperation) => new(newOperation, Field, CancellationToken);
+        }
+
+        /// <summary>
+        /// Represents a saved span in source code that that needs to be fixed by the fixer.
+        /// Currently used to save calls to 'AsSpan()' that need to be converted to calls to 'Slice'
+        /// </summary>
+        internal readonly struct SavedSpanLocation : IEquatable<SavedSpanLocation>
+        {
+            private const int SpanStartCaptureGroup = 1;
+            private const int SpanLengthCaptureGroup = 2;
+            private const int SourceFilePathCaptureGroup = 3;
+            private const string FieldSeparator = "|";
+            private const string SavedSpanSeparator = "\n";
+            private static readonly Regex s_parseRegex = new($"([0-9]+){Regex.Escape(FieldSeparator)}([0-9]+){Regex.Escape(FieldSeparator)}(.*)$");
+
+            public SavedSpanLocation(TextSpan span, string sourceFilePath)
+            {
+                Span = span;
+                SourceFilePath = sourceFilePath;
+            }
+
+            public TextSpan Span { get; }
+            public string SourceFilePath { get; }
+
+            public override string ToString()
+            {
+                return $@"{Span.Start}{FieldSeparator}{Span.Length}{FieldSeparator}{SourceFilePath}";
+            }
+
+            public static SavedSpanLocation Parse(string text)
+            {
+                var match = s_parseRegex.Match(text);
+                RoslynDebug.Assert(match.Success, "Invalid saved data format");
+
+                return new SavedSpanLocation(
+                    new TextSpan(int.Parse(match.Groups[SpanStartCaptureGroup].Value), int.Parse(match.Groups[SpanLengthCaptureGroup].Value)),
+                    match.Groups[SourceFilePathCaptureGroup].Value);
+            }
+
+            public static string Serialize(IEnumerable<SavedSpanLocation> savedSpans)
+            {
+                return string.Join(SavedSpanSeparator, savedSpans.Select(x => x.ToString()));
+            }
+
+            public static ImmutableArray<SavedSpanLocation> Deserialize(string text)
+            {
+                var lines = text.Split(new[] { SavedSpanSeparator }, StringSplitOptions.RemoveEmptyEntries);
+                var builder = ImmutableArray.CreateBuilder<SavedSpanLocation>(lines.Length);
+                builder.Count = lines.Length;
+                for (int i = 0; i < lines.Length; ++i)
+                    builder[i] = Parse(lines[i]);
+
+                return builder.MoveToImmutable();
+            }
+
+            public static bool Equals(SavedSpanLocation left, SavedSpanLocation right) => (left.Span, left.SourceFilePath) == (right.Span, right.SourceFilePath);
+            public static bool operator ==(SavedSpanLocation left, SavedSpanLocation right) => Equals(left, right);
+            public static bool operator !=(SavedSpanLocation left, SavedSpanLocation right) => !Equals(left, right);
+            public bool Equals(SavedSpanLocation other) => Equals(this, other);
+            public override bool Equals(object obj) => obj is SavedSpanLocation other && Equals(this, other);
+            public override int GetHashCode() => (Span, SourceFilePath).GetHashCode();
         }
 
         private sealed class FieldReferenceVisitor : OperationVisitor<VisitContext, Unit>
@@ -166,8 +236,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             public override Unit VisitArgument(IArgumentOperation operation, VisitContext argument)
             {
-                if (TryGetTargetMethod(operation.Parent, out var targetMethod) && !_cache.IsAsSpanMethod(targetMethod))
+                var targetMethod = GetTargetMethod(operation.Parent);
+                if (_cache.IsAsSpanMethod(targetMethod) &&
+                    operation.Parent.Parent is IConversionOperation conversion &&
+                    conversion.Type.OriginalDefinition.Equals(_cache.ReadOnlySpanType, SymbolEqualityComparer.Default))
+                {
+                    _cache.AddSavedOperation(argument.Field, operation);
+                }
+                else
+                {
                     _cache.Candidates.Remove(argument.Field);
+                }
+
                 return base.VisitArgument(operation, argument);
             }
 
@@ -210,8 +290,28 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     IObjectCreationOperation objectCreation => objectCreation.Constructor,
                     _ => null
                 };
-
                 return targetMethod is not null;
+            }
+            private static IMethodSymbol GetTargetMethod(IOperation invocationOrObjectCreation)
+            {
+                IMethodSymbol? result = invocationOrObjectCreation switch
+                {
+                    IInvocationOperation invocation => invocation.TargetMethod,
+                    IObjectCreationOperation objectCreation => objectCreation.Constructor,
+                    _ => null
+                };
+                RoslynDebug.Assert(result is not null);
+                return result;
+            }
+            private static bool TryGetInvocationOrObjectCreationOperation(IOperation methodOrCtorCall, [NotNullWhen(true)] out IOperation? invocationOrObjectCreation)
+            {
+                invocationOrObjectCreation = methodOrCtorCall switch
+                {
+                    IInvocationOperation invocation => invocation,
+                    IObjectCreationOperation objectCreation => objectCreation,
+                    _ => null
+                };
+                return invocationOrObjectCreation is not null;
             }
         }
 
@@ -258,6 +358,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             private readonly ImmutableHashSet<ITypeSymbol> _supportedArrayElementTypes;
             private readonly ImmutableHashSet<IMethodSymbol> _asSpanMethods;
+            private readonly PooledConcurrentSet<(IFieldSymbol Field, IOperation Operation)> _savedOperations;
+
             public INamedTypeSymbol ReadOnlySpanType { get; }
             public IPropertySymbol ArrayLengthProperty { get; }
 
@@ -270,6 +372,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 ArrayLengthProperty = arrayLengthProperty;
                 Candidates = PooledConcurrentSet<IFieldSymbol>.GetInstance(SymbolEqualityComparer.Default);
                 _asSpanMethods = GetAsSpanMethods(compilation, readOnlySpanType);
+                _savedOperations = PooledConcurrentSet<(IFieldSymbol, IOperation)>.GetInstance();
                 return;
 
                 //  Local functions
@@ -278,9 +381,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     var builder = ImmutableHashSet.CreateBuilder<ITypeSymbol>(SymbolEqualityComparer.Default);
 
-                    builder.AddIfNotNull(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemBoolean));
-                    builder.AddIfNotNull(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemByte));
-                    builder.AddIfNotNull(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSByte));
+                    builder.AddIfNotNull(compilation.GetSpecialType(SpecialType.System_Boolean));
+                    builder.AddIfNotNull(compilation.GetSpecialType(SpecialType.System_Byte));
+                    builder.AddIfNotNull(compilation.GetSpecialType(SpecialType.System_SByte));
 
                     return builder.ToImmutable();
                 }
@@ -300,7 +403,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 x.ReturnType.OriginalDefinition.Equals(spanType, SymbolEqualityComparer.Default));
                         });
                     builder.AddRange(asSpanMethods);
-
                     return builder.ToImmutable();
                 }
             }
@@ -323,7 +425,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             public bool IsAsSpanMethod(IMethodSymbol method) => _asSpanMethods.Contains(method.OriginalDefinition);
 
-            public void Dispose() => Candidates.Dispose();
+            public void AddSavedOperation(IFieldSymbol field, IOperation operation) => _savedOperations.Add((field, operation));
+
+            public ILookup<IFieldSymbol, IOperation> GetSavedOperationsLookup() => _savedOperations.ToLookup(
+                t => t.Field,
+                t => t.Operation);
+
+            public void Dispose()
+            {
+                Candidates.Dispose();
+                _savedOperations.Dispose();
+            }
         }
     }
 }

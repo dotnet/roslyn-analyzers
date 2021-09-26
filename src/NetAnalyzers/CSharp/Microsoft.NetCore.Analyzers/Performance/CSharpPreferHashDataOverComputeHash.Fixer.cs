@@ -90,6 +90,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     // hashTypeName.TryHashData(rosSpan, span, write)
                     case PreferHashDataOverComputeHashAnalyzer.ComputeType.TryComputeHash:
                         {
+                            // method has same parameter names
                             var hashData = SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName(hashTypeName),

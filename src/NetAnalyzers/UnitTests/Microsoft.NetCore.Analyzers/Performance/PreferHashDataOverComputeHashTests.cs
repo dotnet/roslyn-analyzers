@@ -487,7 +487,7 @@ Public Class Test
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
         Dim line2 = 10
-        Dim digest As Byte() = {{|#1:{hashType}.Create().ComputeHash(offset:=0, count:=10, buffer:=buffer)|}}
+        Dim digest As Byte() = {{|#1:{hashType}.Create().ComputeHash(OFFSET:=0, count:=10, BUFFER:=buffer)|}}
         Dim line3 = 10
     End Sub
     Public Shared Sub TestMethod3()

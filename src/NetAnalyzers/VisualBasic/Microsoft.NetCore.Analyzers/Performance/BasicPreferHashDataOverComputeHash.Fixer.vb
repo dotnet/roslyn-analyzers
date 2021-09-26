@@ -79,9 +79,9 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                         Return SyntaxFactory.InvocationExpression(hashData, args)
                     Case PreferHashDataOverComputeHashAnalyzer.ComputeType.ComputeHashSection
                         Dim list = argumentList.Arguments.ToList()
-                        Dim firstArg = list.Find(Function(a) a.IsNamed = False OrElse DirectCast(a, SimpleArgumentSyntax).NameColonEquals.Name.Identifier.Text.Equals("buffer", StringComparison.Ordinal))
+                        Dim firstArg = list.Find(Function(a) a.IsNamed = False OrElse DirectCast(a, SimpleArgumentSyntax).NameColonEquals.Name.Identifier.Text.Equals("buffer", StringComparison.OrdinalIgnoreCase))
                         list.Remove(firstArg)
-                        Dim secondArgIndex = list.FindIndex(Function(a) (Not a.IsNamed) OrElse DirectCast(a, SimpleArgumentSyntax).NameColonEquals.Name.Identifier.Text.Equals("offset", StringComparison.Ordinal))
+                        Dim secondArgIndex = list.FindIndex(Function(a) (Not a.IsNamed) OrElse DirectCast(a, SimpleArgumentSyntax).NameColonEquals.Name.Identifier.Text.Equals("offset", StringComparison.OrdinalIgnoreCase))
                         Dim thirdArgIndex = If(secondArgIndex = 0, 1, 0) ' second And third can only be 0 Or 1
                         Dim secondArg = DirectCast(list(secondArgIndex), SimpleArgumentSyntax)
                         If secondArg.IsNamed Then
@@ -112,6 +112,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                         Dim args = SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(Of ArgumentSyntax)(arg))
                         Return SyntaxFactory.InvocationExpression(hashData, args)
                     Case PreferHashDataOverComputeHashAnalyzer.ComputeType.TryComputeHash
+                        ' method has same parameter names
                         Dim hashData = SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         SyntaxFactory.IdentifierName(hashTypeName),

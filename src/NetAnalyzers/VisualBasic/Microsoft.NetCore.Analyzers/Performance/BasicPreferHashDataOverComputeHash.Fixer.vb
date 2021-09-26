@@ -79,7 +79,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                         Return SyntaxFactory.InvocationExpression(hashData, args)
                     Case PreferHashDataOverComputeHashAnalyzer.ComputeType.ComputeHashSection
                         Dim list = argumentList.Arguments.ToList()
-                        Dim firstArg = list.Find(Function(a) a.IsNamed = False OrElse DirectCast(a, SimpleArgumentSyntax).NameColonEquals.Name.Identifier.Text.Equals("buffer", StringComparison.OrdinalIgnoreCase))
+                        Dim firstArg = list.Find(Function(a) (Not a.IsNamed) OrElse DirectCast(a, SimpleArgumentSyntax).NameColonEquals.Name.Identifier.Text.Equals("buffer", StringComparison.OrdinalIgnoreCase))
                         list.Remove(firstArg)
                         Dim secondArgIndex = list.FindIndex(Function(a) (Not a.IsNamed) OrElse DirectCast(a, SimpleArgumentSyntax).NameColonEquals.Name.Identifier.Text.Equals("offset", StringComparison.OrdinalIgnoreCase))
                         Dim thirdArgIndex = If(secondArgIndex = 0, 1, 0) ' second And third can only be 0 Or 1

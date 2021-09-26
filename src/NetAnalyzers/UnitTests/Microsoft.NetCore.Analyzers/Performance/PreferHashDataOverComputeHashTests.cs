@@ -372,6 +372,174 @@ End Class
         }
 
         [Fact]
+        public async Task CSharpCreateHelperChainNamedParameterCase()
+        {
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
+using System;
+using System.Security.Cryptography;
+
+public class Test
+{{
+    public static void TestMethod()
+    {{
+        var buffer = new byte[1024];
+        int line1 = 20;
+        byte[] digest = {{|#0:{hashType}.Create().ComputeHash(buffer: buffer)|}};
+        int line2 = 10;
+    }}
+
+    public static void TestMethod2()
+    {{
+        var buffer = new byte[1024];
+        int line2 = 10;
+        byte[] digest2 = {{|#1:{hashType}.Create().ComputeHash(offset: 0, count: 10, buffer: buffer)|}};
+        int line3 = 10;
+    }}
+
+    public static void TestMethod3()
+    {{
+        var buffer = new byte[1024];
+        int line3 = 10;
+        byte[] digest3 = new byte[1024];
+        int line4 = 10;
+        if ({{|#2:{hashType}.Create().TryComputeHash(bytesWritten: out var i, source: buffer, destination: digest3)|}})
+        {{
+            int line5 = 10;
+        }}
+        int line6 = 10;
+    }}
+}}
+";
+
+                string csFix = $@"
+using System;
+using System.Security.Cryptography;
+
+public class Test
+{{
+    public static void TestMethod()
+    {{
+        var buffer = new byte[1024];
+        int line1 = 20;
+        byte[] digest = {hashType}.HashData(source: buffer);
+        int line2 = 10;
+    }}
+
+    public static void TestMethod2()
+    {{
+        var buffer = new byte[1024];
+        int line2 = 10;
+        byte[] digest2 = {hashType}.HashData(source: buffer.AsSpan(start: 0, length: 10));
+        int line3 = 10;
+    }}
+
+    public static void TestMethod3()
+    {{
+        var buffer = new byte[1024];
+        int line3 = 10;
+        byte[] digest3 = new byte[1024];
+        int line4 = 10;
+        if ({hashType}.TryHashData(bytesWritten: out var i, source: buffer, destination: digest3))
+        {{
+            int line5 = 10;
+        }}
+        int line6 = 10;
+    }}
+}}
+";
+                await TestCSAsync(
+                    csInput,
+                    csFix,
+                    GetChainedCSDiagnostics($"System.Security.Cryptography.{hashType}"));
+            }
+        }
+
+        [Fact]
+        public async Task BasicCreateHelperChainNamedParameterCase()
+        {
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
+Imports System
+Imports System.Security.Cryptography
+
+Public Class Test
+    Public Shared Sub TestMethod()
+        Dim buffer = New Byte(1023) {{}}
+        Dim line1 = 20
+        Dim digest As Byte() = {{|#0:{hashType}.Create().ComputeHash(buffer:=buffer)|}}
+        Dim line2 = 10
+    End Sub
+    Public Shared Sub TestMethod2()
+        Dim buffer = New Byte(1023) {{}}
+        Dim line2 = 10
+        Dim digest As Byte() = {{|#1:{hashType}.Create().ComputeHash(offset:=0, count:=10, buffer:=buffer)|}}
+        Dim line3 = 10
+    End Sub
+    Public Shared Sub TestMethod3()
+        Dim buffer = New Byte(1023) {{}}
+        Dim line3 = 10
+        Dim digest = New Byte(1023) {{}}
+        Dim i As Integer
+        If {{|#2:{hashType}.Create().TryComputeHash(bytesWritten:=i, source:=buffer, destination:=digest)|}} Then
+            Dim line5 = 10
+        End If
+        Dim line6 = 10
+    End Sub
+End Class
+";
+
+                string vbFix = $@"
+Imports System
+Imports System.Security.Cryptography
+
+Public Class Test
+    Public Shared Sub TestMethod()
+        Dim buffer = New Byte(1023) {{}}
+        Dim line1 = 20
+        Dim digest As Byte() = {hashType}.HashData(source:=buffer)
+        Dim line2 = 10
+    End Sub
+    Public Shared Sub TestMethod2()
+        Dim buffer = New Byte(1023) {{}}
+        Dim line2 = 10
+        Dim digest As Byte() = {hashType}.HashData(source:=buffer.AsSpan(start:=0, length:=10))
+        Dim line3 = 10
+    End Sub
+    Public Shared Sub TestMethod3()
+        Dim buffer = New Byte(1023) {{}}
+        Dim line3 = 10
+        Dim digest = New Byte(1023) {{}}
+        Dim i As Integer
+        If {hashType}.TryHashData(bytesWritten:=i, source:=buffer, destination:=digest) Then
+            Dim line5 = 10
+        End If
+        Dim line6 = 10
+    End Sub
+End Class
+";
+                await TestVBAsync(
+                    vbInput,
+                    vbFix,
+                    GetChainedVBDiagnostics($"System.Security.Cryptography.{hashType}"));
+            }
+        }
+
+        [Fact]
         public async Task CSharpCreateHelperNoUsingStatement2Case()
         {
             await TestWithType(HashTypeMD5);

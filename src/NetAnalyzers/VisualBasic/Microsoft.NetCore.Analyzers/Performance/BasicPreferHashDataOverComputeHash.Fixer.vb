@@ -71,21 +71,45 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                         SyntaxFactory.IdentifierName(hashTypeName),
                         SyntaxFactory.Token(SyntaxKind.DotToken),
                     SyntaxFactory.IdentifierName(PreferHashDataOverComputeHashAnalyzer.HashDataMethodName))
-                        Return SyntaxFactory.InvocationExpression(hashData, argumentList)
+                        Dim arg = argumentList.Arguments(0)
+                        If arg.IsNamed Then
+                            arg = DirectCast(arg, SimpleArgumentSyntax).WithNameColonEquals(SyntaxFactory.NameColonEquals(SyntaxFactory.IdentifierName("source")))
+                        End If
+                        Dim args = SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(Of ArgumentSyntax)(arg))
+                        Return SyntaxFactory.InvocationExpression(hashData, args)
                     Case PreferHashDataOverComputeHashAnalyzer.ComputeType.ComputeHashSection
+                        Dim list = argumentList.Arguments.ToList()
+                        Dim firstArg = list.Find(Function(a) a.IsNamed = False OrElse DirectCast(a, SimpleArgumentSyntax).NameColonEquals.Name.Identifier.Text.Equals("buffer", StringComparison.Ordinal))
+                        list.Remove(firstArg)
+                        Dim secondArgIndex = list.FindIndex(Function(a) (Not a.IsNamed) OrElse DirectCast(a, SimpleArgumentSyntax).NameColonEquals.Name.Identifier.Text.Equals("offset", StringComparison.Ordinal))
+                        Dim thirdArgIndex = If(secondArgIndex = 0, 1, 0) ' second And third can only be 0 Or 1
+                        Dim secondArg = DirectCast(list(secondArgIndex), SimpleArgumentSyntax)
+                        If secondArg.IsNamed Then
+                            list(secondArgIndex) = secondArg.WithNameColonEquals(SyntaxFactory.NameColonEquals(SyntaxFactory.IdentifierName("start")))
+                        End If
+                        Dim thirdArg = DirectCast(list(thirdArgIndex), SimpleArgumentSyntax)
+                        If thirdArg.IsNamed Then
+                            list(thirdArgIndex) = thirdArg.WithNameColonEquals(SyntaxFactory.NameColonEquals(SyntaxFactory.IdentifierName("length")))
+                        End If
+
                         Dim asSpan = SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
-                        argumentList.Arguments(0).GetExpression(),
+                        firstArg.GetExpression(),
                         SyntaxFactory.Token(SyntaxKind.DotToken),
                         SyntaxFactory.IdentifierName("AsSpan"))
-                        Dim spanArgs = SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(SyntaxFactory.List(argumentList.Arguments.Skip(1))))
+                        Dim spanArgs = SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(list))
                         Dim asSpanInvoked = SyntaxFactory.InvocationExpression(asSpan, spanArgs)
                         Dim hashData = SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         SyntaxFactory.IdentifierName(hashTypeName),
                         SyntaxFactory.Token(SyntaxKind.DotToken),
                         SyntaxFactory.IdentifierName(PreferHashDataOverComputeHashAnalyzer.HashDataMethodName))
-                        Dim args = SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(Of ArgumentSyntax)(SyntaxFactory.SimpleArgument(asSpanInvoked)))
+
+                        Dim arg = SyntaxFactory.SimpleArgument(asSpanInvoked)
+                        If firstArg.IsNamed Then
+                            arg = arg.WithNameColonEquals(SyntaxFactory.NameColonEquals(SyntaxFactory.IdentifierName("source")))
+                        End If
+                        Dim args = SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(Of ArgumentSyntax)(arg))
                         Return SyntaxFactory.InvocationExpression(hashData, args)
                     Case PreferHashDataOverComputeHashAnalyzer.ComputeType.TryComputeHash
                         Dim hashData = SyntaxFactory.MemberAccessExpression(

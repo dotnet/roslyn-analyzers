@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -46,7 +48,7 @@ public class C
                 {
                     Sources = { string.Format(CultureInfo.InvariantCulture, format, testDeclaration) },
                     ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0) }
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments(arrayType) }
                 },
                 FixedState =
                 {
@@ -54,6 +56,88 @@ public class C
                     ReferenceAssemblies = ReferenceAssemblies.Net.Net50
                 }
             };
+            return test.RunAsync();
+        }
+
+        [Fact]
+        public Task NoArrayInitializer_FixedToEmptyReadOnlySpan_CS()
+        {
+            string format = @"
+using System;
+public class C
+{{
+    {0}
+}}";
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, "private static readonly byte[] {|#0:a|};") },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments("byte") }
+                },
+                FixedState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, "private static ReadOnlySpan<byte> a => ReadOnlySpan<byte>.Empty;") },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                }
+            };
+            return test.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(@"
+    private static readonly byte[] {|#0:a|} = new byte[] { 1, 2, 3 }, {|#1:b|} = new byte[] { 5, 7 };",
+            @"
+    private static ReadOnlySpan<byte> b => new byte[] { 5, 7 };
+    private static ReadOnlySpan<byte> a => new byte[] { 1, 2, 3 };", 2, 2)]
+        [InlineData(@"
+    private static readonly byte[] {|#0:a|} = new byte[] { 1 }, b = new byte[] { field };",
+            @"
+    private static readonly byte[] b = new byte[] { field };
+    private static ReadOnlySpan<byte> a => new byte[] { 1 };")]
+        [InlineData(@"
+    private static readonly byte[] a = new byte[] { field }, {|#0:b|} = new byte[] { 1 };",
+            @"
+    private static readonly byte[] a = new byte[] { field };
+    private static ReadOnlySpan<byte> b => new byte[] { 1 };")]
+        [InlineData(@"
+    private static readonly byte[] a = new byte[] { 1, 2, field }, {|#0:b|} = new byte[] { 4, 5, 6 }, c = new byte[] { field, field };",
+            @"
+    private static readonly byte[] a = new byte[] { 1, 2, field }, c = new byte[] { field, field };
+    private static ReadOnlySpan<byte> b => new byte[] { 4, 5, 6 };")]
+        [InlineData(@"
+    private static readonly byte[] {|#0:a|} = new byte[] { 1, 2 }, b = new byte[] { field, 4 }, {|#1:c|} = new byte[] { 5, 6, 7 };",
+            @"
+    private static readonly byte[] b = new byte[] { field, 4 };
+    private static ReadOnlySpan<byte> c => new byte[] { 5, 6, 7 };
+    private static ReadOnlySpan<byte> a => new byte[] { 1, 2 };", 2)]
+        public Task MultipleFieldsDeclaredSingleLine_FixedCorrectly_CS(string declaration, string fixedDeclaration, int expectedDiagnostics = 1, int fixAllIterations = 1)
+        {
+            string format = @"
+using System;
+public class C
+{{
+    private static byte field;
+    private static byte Method() => 6;
+{0}
+}}";
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, declaration) },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                },
+                FixedState =
+                {
+                    Sources = { string.Format(CultureInfo.InvariantCulture, format, fixedDeclaration) },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                },
+                NumberOfFixAllIterations = fixAllIterations
+            };
+            var diagnostics = Enumerable.Range(0, expectedDiagnostics).Select(x => VerifyCS.Diagnostic(Rule).WithLocation(x).WithArguments("byte"));
+            test.TestState.ExpectedDiagnostics.AddRange(diagnostics);
             return test.RunAsync();
         }
 
@@ -82,7 +166,7 @@ public class C
                 {
                     Sources = { string.Format(CultureInfo.InvariantCulture, format, "readonly byte[] {|#0:a|} =", code) },
                     ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0) }
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments("byte") }
                 },
                 FixedState =
                 {
@@ -120,7 +204,7 @@ public class C
                 {
                     Sources = { string.Format(CultureInfo.InvariantCulture, format, "readonly byte[] {|#0:a|} =", code) },
                     ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0) }
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments("byte") }
                 },
                 FixedState =
                 {
@@ -158,7 +242,7 @@ public class C
                 {
                     Sources = { string.Format(CultureInfo.InvariantCulture, format, "readonly byte[] {|#0:a|} =", code) },
                     ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0) }
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments("byte") }
                 },
                 FixedState =
                 {
@@ -316,6 +400,9 @@ public class C
         [Theory]
         [InlineData("private readonly byte[] a = new byte[] { 1 };")]
         [InlineData("private static byte[] a = new byte[] { 1 };")]
+        [InlineData("private static readonly byte[,] a = new byte[,] { { 1, 2 }, { 3, 4 } };")]
+        [InlineData("private static readonly byte[][] a = new byte[][] { new byte[] { 1, 2 }, new byte[] { 3, 4, 5 } };")]
+        [InlineData("private static byte[] A { get; } = new byte[] { 1 };")]
         [InlineData("private static readonly short[] a = new short[] { 1 };")]
         [InlineData("private static readonly int[] a = new int[] { 1 };")]
         [InlineData("private static readonly string[] a = new string[] { nameof(a) };")]

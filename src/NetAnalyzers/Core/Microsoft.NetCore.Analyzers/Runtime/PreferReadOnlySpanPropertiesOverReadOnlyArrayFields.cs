@@ -119,7 +119,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var savedLocations = asSpanInvocationLookup[field].Select(x => new SavedSpanLocation(x.Syntax.Span, x.Syntax.SyntaxTree.FilePath));
                     string propertyValue = SavedSpanLocation.Serialize(savedLocations);
                     var properties = ImmutableDictionary<string, string?>.Empty.Add(FixerDataPropertyName, propertyValue);
-                    var diagnostic = field.CreateDiagnostic(Rule, properties);
+                    var messageArgument = ((IArrayTypeSymbol)field.Type).ElementType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                    var diagnostic = field.CreateDiagnostic(Rule, properties, messageArgument);
                     context.ReportDiagnostic(diagnostic);
                 }
                 cache.Dispose();
@@ -204,7 +205,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         /// <summary>
-        /// Visits the parents of <see cref="IFieldReferenceOperation"/>s and eliminate candidates that
+        /// Visits the parents of <see cref="IFieldReferenceOperation"/>s and eliminates candidates that
         /// are used in ways that prohibit conversion to <see cref="ReadOnlySpan{T}"/>.
         /// </summary>
         private sealed class FieldReferenceVisitor : OperationVisitor<VisitContext, Unit>
@@ -309,7 +310,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         /// <summary>
-        /// Visits the parents of <see cref="IArrayElementReferenceOperation"/>s and eliminate candidates
+        /// Visits the parents of <see cref="IArrayElementReferenceOperation"/>s and eliminates candidates
         /// who's elements are used in ways that prohibit conversion to <see cref="ReadOnlySpan{T}"/>.
         /// </summary>
         private sealed class ArrayElementReferenceVisitor : OperationVisitor<VisitContext, Unit>

@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers;
 using Microsoft.NetCore.Analyzers.Runtime;
@@ -27,9 +28,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
         {
             var doc = context.Document;
             var root = await doc.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Diagnostics.First().Location.SourceSpan);
 
-            if (node?.Parent?.Parent is not FieldDeclarationSyntax fieldDeclarationSyntax ||
+            if (root.FindNode(context.Diagnostics.First().Location.SourceSpan) is not VariableDeclaratorSyntax variableDeclaratorSyntax ||
+                variableDeclaratorSyntax?.Parent?.Parent is not FieldDeclarationSyntax fieldDeclarationSyntax ||
                 fieldDeclarationSyntax.Declaration.Type is not ArrayTypeSyntax arrayTypeSyntax)
             {
                 return;
@@ -53,21 +54,86 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             {
                 //  Replace readonly array field declaration with ReadOnlySpan<> property declaration
                 var editor = await DocumentEditor.CreateAsync(doc, token).ConfigureAwait(false);
+                FixDeclaration(editor);
+                await FixAsSpanInvocationsAsync(editor, token).ConfigureAwait(false);
+                return await Formatter.FormatAsync(editor.GetChangedDocument(), Formatter.Annotation, cancellationToken: token).ConfigureAwait(false);
+            }
+
+            async Task<ImmutableArray<IOperation>> GetFieldReferenceOperationsRequiringUpdateAsync(CancellationToken token)
+            {
+                var savedSpans = PreferReadOnlySpanPropertiesOverReadOnlyArrayFields.SavedSpanLocation.Deserialize(
+                    context.Diagnostics[0].Properties[PreferReadOnlySpanPropertiesOverReadOnlyArrayFields.FixerDataPropertyName]);
+                var documentLookup = context.Document.Project.Documents.ToImmutableDictionary(x => x.FilePath);
+                var builder = ImmutableArray.CreateBuilder<IOperation>(savedSpans.Length);
+                builder.Count = savedSpans.Length;
+
+                for (int i = 0; i < savedSpans.Length; ++i)
+                {
+                    var doc = documentLookup[savedSpans[i].SourceFilePath];
+                    var root = await doc.GetSyntaxRootAsync(token).ConfigureAwait(false);
+                    var model = await doc.GetSemanticModelAsync(token).ConfigureAwait(false);
+                    var node = root.FindNode(savedSpans[i].Span, getInnermostNodeForTie: true);
+                    builder[i] = model.GetOperation(node, token);
+                }
+
+                return builder.MoveToImmutable();
+            }
+
+            void FixDeclaration(DocumentEditor editor)
+            {
                 var rosNameSyntax = SyntaxFactory.GenericName(
                     SyntaxFactory.Identifier(readOnlySpanType.Name),
                     SyntaxFactory.TypeArgumentList(SyntaxFactory.SingletonSeparatedList(arrayTypeSyntax.ElementType)));
-                var newModifiers = SyntaxFactory.TokenList(fieldDeclarationSyntax.Modifiers.Where(x => !x.IsKind(SyntaxKind.ReadOnlyKeyword)));
-                var arrowExpressionClauseSyntax = SyntaxFactory.ArrowExpressionClause(
-                    SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken).WithTriviaFrom(fieldDeclarationSyntax.Declaration.Variables[0].Initializer.EqualsToken),
-                    fieldDeclarationSyntax.Declaration.Variables[0].Initializer.Value);
-                var propertyDeclarationSyntax = SyntaxFactory.PropertyDeclaration(rosNameSyntax, fieldDeclarationSyntax.Declaration.Variables[0].Identifier)
-                    .WithExpressionBody(arrowExpressionClauseSyntax)
-                    .WithModifiers(newModifiers)
-                    .WithSemicolonToken(fieldDeclarationSyntax.SemicolonToken)
-                    .WithTriviaFrom(fieldDeclarationSyntax);
-                editor.ReplaceNode(fieldDeclarationSyntax, propertyDeclarationSyntax);
+                var arrowExpressionClauseSyntax = variableDeclaratorSyntax.Initializer is not null ?
+                    SyntaxFactory.ArrowExpressionClause(
+                        SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken).WithTriviaFrom(variableDeclaratorSyntax.Initializer.EqualsToken),
+                        variableDeclaratorSyntax.Initializer.Value) :
+                    SyntaxFactory.ArrowExpressionClause(
+                        SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken),
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            rosNameSyntax,
+                            SyntaxFactory.IdentifierName(nameof(ReadOnlySpan<byte>.Empty))));
 
-                //  Update all calls to 'AsSpan'
+                var declaration = fieldDeclarationSyntax.Declaration;
+                var modifiersWithoutReadOnlyKeyword = SyntaxFactory.TokenList(fieldDeclarationSyntax.Modifiers.Where(x => !x.IsKind(SyntaxKind.ReadOnlyKeyword)));
+
+                //  If multiple fields were declared in a single field declaration, then we need to
+                //  insert the newly-created property declaration after the field declaration, and then remove
+                //  the reported field variable declarator from the field declaration. In other words:
+                //      private static readonly byte[] {|a|} = new[] { ... }, b = new[] { ... };
+                //  becomes
+                //      private static readonly byte[] b = new[] { ... };
+                //      private static ReadOnlySpan<byte> a => new[] { ... };
+                //  where {|...|} indicates the location of the diagnostic.
+                if (declaration.Variables.Count > 1)
+                {
+                    var propertyDeclarationSyntax = SyntaxFactory.PropertyDeclaration(rosNameSyntax, variableDeclaratorSyntax.Identifier)
+                        .WithExpressionBody(arrowExpressionClauseSyntax)
+                        .WithModifiers(modifiersWithoutReadOnlyKeyword)
+                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken).WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed))
+                        .WithoutLeadingTrivia()
+                        .WithAdditionalAnnotations(Formatter.Annotation);
+                    editor.InsertAfter(fieldDeclarationSyntax, propertyDeclarationSyntax);
+
+                    var newDeclaration = declaration.WithVariables(declaration.Variables.Remove(variableDeclaratorSyntax));
+                    editor.ReplaceNode(declaration, newDeclaration);
+                }
+                else
+                {
+                    var propertyDeclarationSyntax = SyntaxFactory.PropertyDeclaration(rosNameSyntax, variableDeclaratorSyntax.Identifier)
+                        .WithExpressionBody(arrowExpressionClauseSyntax)
+                        .WithModifiers(modifiersWithoutReadOnlyKeyword)
+                        .WithSemicolonToken(fieldDeclarationSyntax.SemicolonToken)
+                        .WithTriviaFrom(fieldDeclarationSyntax);
+                    editor.ReplaceNode(fieldDeclarationSyntax, propertyDeclarationSyntax);
+                }
+            }
+
+            //  Update calls to 'AsSpan'
+            async Task FixAsSpanInvocationsAsync(DocumentEditor editor, CancellationToken token)
+            {
+
                 var savedOperations = await GetFieldReferenceOperationsRequiringUpdateAsync(token).ConfigureAwait(false);
                 foreach (var fieldReference in savedOperations)
                 {
@@ -75,7 +141,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                     var invocation = (IInvocationOperation)fieldReference.Parent.Parent;
 
                     //  If we called 'AsSpan(int)' or 'AsSpan(int, int)', replace with call to appropriate Slice overload.
-                    //  Otherwise we simply replace the 'AsSpan()' call with the field reference itself.
+                    //  Otherwise simply replace the 'AsSpan()' call with the field reference itself.
                     if (invocation.TargetMethod.Parameters.Length > 1)
                     {
                         var invocationSyntax = (InvocationExpressionSyntax)invocation.Syntax;
@@ -100,28 +166,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                         editor.ReplaceNode(invocation.Syntax, fieldReference.Syntax.WithTriviaFrom(invocation.Syntax));
                     }
                 }
-
-                return editor.GetChangedDocument();
-            }
-
-            async Task<ImmutableArray<IOperation>> GetFieldReferenceOperationsRequiringUpdateAsync(CancellationToken token)
-            {
-                var savedSpans = PreferReadOnlySpanPropertiesOverReadOnlyArrayFields.SavedSpanLocation.Deserialize(
-                    context.Diagnostics[0].Properties[PreferReadOnlySpanPropertiesOverReadOnlyArrayFields.FixerDataPropertyName]);
-                var documentLookup = context.Document.Project.Documents.ToImmutableDictionary(x => x.FilePath);
-                var builder = ImmutableArray.CreateBuilder<IOperation>(savedSpans.Length);
-                builder.Count = savedSpans.Length;
-
-                for (int i = 0; i < savedSpans.Length; ++i)
-                {
-                    var doc = documentLookup[savedSpans[i].SourceFilePath];
-                    var root = await doc.GetSyntaxRootAsync(token).ConfigureAwait(false);
-                    var model = await doc.GetSemanticModelAsync(token).ConfigureAwait(false);
-                    var node = root.FindNode(savedSpans[i].Span, getInnermostNodeForTie: true);
-                    builder[i] = model.GetOperation(node, token);
-                }
-
-                return builder.MoveToImmutable();
             }
         }
     }

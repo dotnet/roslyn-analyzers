@@ -1732,28 +1732,28 @@
     <value>Converting an instance method to a static method may produce invalid code</value>
   </data>
   <data name="DerivesFromPreviewClassMessageWithCustomMessagePlaceholder" xml:space="preserve">
-    <value>'{3}' '{0}' derives from preview class '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</value>
+    <value>{3} '{0}' derives from preview class '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</value>
   </data>
   <data name="ImplementsPreviewInterfaceMessageWithCustomMessagePlaceholder" xml:space="preserve">
-    <value>'{3}' '{0}' implements the preview interface '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</value>
+    <value>{3} '{0}' implements the preview interface '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</value>
   </data>
   <data name="ImplementsPreviewMethodMessageWithCustomMessagePlaceholder" xml:space="preserve">
-    <value>'{3}' '{0}' implements the preview method '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</value>
+    <value>{3} '{0}' implements the preview method '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</value>
   </data>
   <data name="MethodReturnsPreviewTypeMessageWithCustomMessagePlaceholder" xml:space="preserve">
-    <value>'{3}' '{0}' returns the preview type '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</value>
+    <value>{3} '{0}' returns the preview type '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</value>
   </data>
   <data name="MethodUsesPreviewTypeAsParameterMessageWithCustomMessagePlaceholder" xml:space="preserve">
-    <value>'{3}' '{0}' takes in a preview parameter of type '{1}' and needs to opt into preview features. See '{2}' for more information.</value>
+    <value>{3} '{0}' takes in a preview parameter of type '{1}' and needs to opt into preview features. See '{2}' for more information.</value>
   </data>
   <data name="OverridesPreviewMethodMessageWithCustomMessagePlaceholder" xml:space="preserve">
-    <value>'{3}' '{0}' overrides the preview method '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</value>
+    <value>{3} '{0}' overrides the preview method '{1}' and therefore needs to opt into preview features. See '{2}' for more information.</value>
   </data>
   <data name="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder" xml:space="preserve">
-    <value>'{3}' '{0}' uses the preview type '{1}' and needs to opt into preview features. See '{2}' for more information.</value>
+    <value>{3} '{0}' uses the preview type '{1}' and needs to opt into preview features. See '{2}' for more information.</value>
   </data>
   <data name="FieldIsPreviewTypeMessageWithCustomMessagePlaceholder" xml:space="preserve">
-    <value>'{3}' '{0}''s type contains the preview type '{1}' and requires opting into preview features. See '{2}' for more information.</value>
+    <value>{3} '{0}''s type contains the preview type '{1}' and requires opting into preview features. See '{2}' for more information.</value>
   </data>
   <data name="ModuleInitializerAttributeShouldNotBeUsedInLibrariesDescription" xml:space="preserve">
     <value>Module initializers are intended to be used by application code to ensure an application's components are initialized before the application code begins executing. If library code declares a 'ModuleInitializer' method, it can interfere with application initialization and also lead to limitations in that application's trimming abilities. Library code should therefore not utilize the 'ModuleInitializer' attribute, but instead expose methods that can be used to initialize any components within the library and allow the application to invoke the method during application initialization.</value>

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -236,7 +237,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols = new();
+                ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols = new();
 
                 IFieldSymbol? virtualStaticsInInterfaces = null;
                 if (context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesRuntimeFeature, out INamedTypeSymbol? runtimeFeatureType))
@@ -282,7 +283,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         /// If the typeArguments was something like List[List[List[PreviewType]]]], this function will return PreviewType"
         /// </remarks>
         private static ISymbol? GetPreviewSymbolForGenericTypesFromTypeArguments(ImmutableArray<ITypeSymbol> typeArguments,
-            ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+           ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
             INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             for (int i = 0; i < typeArguments.Length; i++)
@@ -312,7 +313,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private void ProcessFieldSymbolAttributes(SymbolAnalysisContext context,
                                                   IFieldSymbol symbol,
-                                                  ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                 ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                   INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             ISymbol symbolType = symbol.Type;
@@ -327,7 +328,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private void ProcessFieldOrEventSymbolAttributes(SymbolAnalysisContext context,
                                                          ISymbol symbol,
                                                          ISymbol symbolType,
-                                                         ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                        ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                          INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             if (SymbolIsAnnotatedAsPreview(symbolType, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
@@ -363,7 +364,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private void ProcessEventSymbolAttributes(SymbolAnalysisContext context,
                                                   IEventSymbol symbol,
-                                                  ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                 ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                   INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             ISymbol symbolType = symbol.Type;
@@ -377,7 +378,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private void ProcessTypeSymbolAttributes(SymbolAnalysisContext context,
                                                  ITypeSymbol symbol,
-                                                 ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                  INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             // We're only concerned about types(class/struct/interface) directly implementing preview interfaces. Implemented interfaces(direct/base) will report their diagnostics independently
@@ -438,7 +439,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private static bool ProcessTypeAttributeForPreviewness(ISymbol symbol,
-                                                               ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                              ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                                INamedTypeSymbol previewFeatureAttribute,
                                                                [NotNullWhen(true)] out SyntaxReference? attributeSyntaxReference,
                                                                [NotNullWhen(true)] out string? attributeName,
@@ -487,7 +488,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private bool SymbolContainsGenericTypesWithPreviewAttributes(ISymbol symbol,
-                                                                     ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                                    ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                                      INamedTypeSymbol previewFeatureAttribute,
                                                                      [NotNullWhen(true)] out ISymbol? previewSymbol,
                                                                      out SyntaxNode? previewSyntaxNode,
@@ -547,7 +548,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
-        private static bool SymbolIsStaticAndAbstract(ISymbol symbol, ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols, INamedTypeSymbol previewFeatureAttributeSymbol)
+        private static bool SymbolIsStaticAndAbstract(ISymbol symbol, ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols, INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             // Static Abstract is only legal on interfaces. Anything else is likely a compile error and we shouldn't tag such cases.
             return symbol.IsStatic && symbol.IsAbstract && symbol.ContainingType != null && symbol.ContainingType.TypeKind == TypeKind.Interface && !SymbolIsAnnotatedAsPreview(symbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol);
@@ -555,7 +556,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private void ProcessPropertyOrMethodAttributes(SymbolAnalysisContext context,
                                                        ISymbol propertyOrMethodSymbol,
-                                                       ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                       ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                        IFieldSymbol? virtualStaticsInInterfaces,
                                                        INamedTypeSymbol previewFeatureAttributeSymbol)
         {
@@ -683,7 +684,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private void AnalyzeSymbol(SymbolAnalysisContext context,
-                                   ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                  ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                    IFieldSymbol? virtualStaticsInInterfaces,
                                    INamedTypeSymbol previewFeatureAttributeSymbol)
         {
@@ -714,7 +715,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private void BuildSymbolInformationFromOperations(OperationAnalysisContext context,
-                                                          ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                         ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                           INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             if (OperationUsesPreviewFeatures(context, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out ISymbol? symbol))
@@ -730,7 +731,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private bool SymbolIsAnnotatedOrUsesPreviewTypes(ISymbol symbol,
-                                                         ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                        ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                          INamedTypeSymbol previewFeatureAttributeSymbol,
                                                          [NotNullWhen(true)] out ISymbol? referencedPreviewSymbol)
         {
@@ -755,7 +756,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private bool OperationUsesPreviewFeatures(OperationAnalysisContext context,
-                                                  ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                 ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                   INamedTypeSymbol previewFeatureAttributeSymbol,
                                                   [NotNullWhen(true)] out ISymbol? referencedPreviewSymbol)
         {
@@ -857,7 +858,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private bool TypeParametersHavePreviewAttribute(ISymbol namedTypeSymbolOrMethodSymbol,
                                                         ImmutableArray<ITypeParameterSymbol> typeParameters,
-                                                        ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                       ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                         INamedTypeSymbol previewFeatureAttribute,
                                                         [NotNullWhen(true)] out ISymbol? previewSymbol,
                                                         out SyntaxNode? previewSyntaxNode)
@@ -893,10 +894,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
 
-            ImmutableArray<System.Collections.Generic.KeyValuePair<string, TypedConstant>> namedArguments = attribute.NamedArguments;
+            ImmutableArray<KeyValuePair<string, TypedConstant>> namedArguments = attribute.NamedArguments;
             if (namedArguments.Length != 0)
             {
-                foreach (System.Collections.Generic.KeyValuePair<string, TypedConstant> namedArgument in namedArguments)
+                foreach (KeyValuePair<string, TypedConstant> namedArgument in namedArguments)
                 {
                     if (namedArgument.Key == "Message")
                     {
@@ -916,19 +917,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static void ReportDiagnosticWithCustomMessageIfItExists(OperationAnalysisContext context,
                                                                         IOperation operation,
                                                                         ISymbol symbol,
-                                                                        ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                                        ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                                         DiagnosticDescriptor diagnosticDescriptor,
                                                                         DiagnosticDescriptor diagnosticDescriptorWithPlaceholdersForCustomMessage,
                                                                         string diagnosticMessageArgument)
         {
-            if (!requiresPreviewFeaturesSymbols.TryGetValue(symbol, out ValueTuple<bool, string?, string?> existing))
+            if (!requiresPreviewFeaturesSymbols.TryGetValue(symbol, out (bool isPreview, string? message, string? url) existing))
             {
                 Debug.Assert(true, $"Should never reach this line. This means the symbol {symbol.Name} was not processed in this analyzer");
             }
             else
             {
-                string url = existing.Item3 ?? DefaultURL;
-                if (existing.Item2 is string customMessage)
+                string url = existing.url ?? DefaultURL;
+                if (existing.message is string customMessage)
                 {
                     context.ReportDiagnostic(operation.CreateDiagnostic(diagnosticDescriptorWithPlaceholdersForCustomMessage, diagnosticMessageArgument, url, customMessage));
                 }
@@ -942,20 +943,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static void ReportDiagnosticWithCustomMessageIfItExists(SymbolAnalysisContext context,
                                                                         SyntaxNode node,
                                                                         ISymbol previewSymbol,
-                                                                        ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                                       ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                                         DiagnosticDescriptor diagnosticDescriptor,
                                                                         DiagnosticDescriptor diagnosticDescriptorWithPlaceholdersForCustomMessage,
                                                                         string diagnosticMessageArgument0,
                                                                         string diagnosticMessageArgument1)
         {
-            if (!requiresPreviewFeaturesSymbols.TryGetValue(previewSymbol, out ValueTuple<bool, string?, string?> existing))
+            if (!requiresPreviewFeaturesSymbols.TryGetValue(previewSymbol, out (bool isPreview, string? message, string? url) existing))
             {
                 Debug.Assert(true, $"Should never reach this line. This means the symbol {previewSymbol.Name} was not processed in this analyzer");
             }
             else
             {
-                string url = existing.Item3 ?? DefaultURL;
-                if (existing.Item2 is string customMessage)
+                string url = existing.url ?? DefaultURL;
+                if (existing.message is string customMessage)
                 {
                     context.ReportDiagnostic(node.CreateDiagnostic(diagnosticDescriptorWithPlaceholdersForCustomMessage, diagnosticMessageArgument0, diagnosticMessageArgument1, url, customMessage));
                 }
@@ -969,19 +970,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static void ReportDiagnosticWithCustomMessageIfItExists(SymbolAnalysisContext context,
                                                                         SyntaxNode node,
                                                                         ISymbol previewSymbol,
-                                                                        ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                                       ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                                         DiagnosticDescriptor diagnosticDescriptor,
                                                                         DiagnosticDescriptor diagnosticDescriptorWithPlaceholdersForCustomMessage,
                                                                         string diagnosticMessageArgument0)
         {
-            if (!requiresPreviewFeaturesSymbols.TryGetValue(previewSymbol, out ValueTuple<bool, string?, string?> existing))
+            if (!requiresPreviewFeaturesSymbols.TryGetValue(previewSymbol, out (bool isPreview, string? message, string? url) existing))
             {
                 Debug.Assert(true, $"Should never reach this line. This means the symbol {previewSymbol.Name} was not processed in this analyzer");
             }
             else
             {
-                string url = existing.Item3 ?? DefaultURL;
-                if (existing.Item2 is string customMessage)
+                string url = existing.url ?? DefaultURL;
+                if (existing.message is string customMessage)
                 {
                     context.ReportDiagnostic(node.CreateDiagnostic(diagnosticDescriptorWithPlaceholdersForCustomMessage, diagnosticMessageArgument0, url, customMessage));
                 }
@@ -995,20 +996,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static void ReportDiagnosticWithCustomMessageIfItExists(SymbolAnalysisContext context,
                                                                         ISymbol previewSymbol,
                                                                         ISymbol symbolToRaiseDiagnosticOn,
-                                                                        ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols,
+                                                                       ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                                         DiagnosticDescriptor diagnosticDescriptor,
                                                                         DiagnosticDescriptor diagnosticDescriptorWithPlaceholdersForCustomMessage,
                                                                         string diagnosticMessageArgument0,
                                                                         string diagnosticMessageArgument1)
         {
-            if (!requiresPreviewFeaturesSymbols.TryGetValue(previewSymbol, out ValueTuple<bool, string?, string?> existing))
+            if (!requiresPreviewFeaturesSymbols.TryGetValue(previewSymbol, out (bool isPreview, string? message, string? url) existing))
             {
                 Debug.Assert(true, $"Should never reach this line. This means the symbol {previewSymbol.Name} was not processed in this analyzer");
             }
             else
             {
-                string url = existing.Item3 ?? DefaultURL;
-                if (existing.Item2 is string customMessage)
+                string url = existing.url ?? DefaultURL;
+                if (existing.message is string customMessage)
                 {
                     context.ReportDiagnostic(symbolToRaiseDiagnosticOn.CreateDiagnostic(diagnosticDescriptorWithPlaceholdersForCustomMessage, diagnosticMessageArgument0, diagnosticMessageArgument1, url, customMessage));
                 }
@@ -1019,9 +1020,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        private static bool SymbolIsAnnotatedAsPreview(ISymbol symbol, ConcurrentDictionary<ISymbol, ValueTuple<bool, string?, string?>> requiresPreviewFeaturesSymbols, INamedTypeSymbol previewFeatureAttribute)
+        private static bool SymbolIsAnnotatedAsPreview(ISymbol symbol, ConcurrentDictionary<ISymbol, (bool, string? message, string? url)> requiresPreviewFeaturesSymbols, INamedTypeSymbol previewFeatureAttribute)
         {
-            if (!requiresPreviewFeaturesSymbols.TryGetValue(symbol, out ValueTuple<bool, string?, string?> existing))
+            if (!requiresPreviewFeaturesSymbols.TryGetValue(symbol, out (bool isPreview, string? message, string? url) existing))
             {
                 ImmutableArray<AttributeData> attributes = symbol.GetAttributes();
                 foreach (var attribute in attributes)
@@ -1053,7 +1054,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return false;
             }
 
-            return existing.Item1;
+            return existing.isPreview;
         }
     }
 }

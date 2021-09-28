@@ -5,7 +5,7 @@ on:
 jobs:
   add_milestone:
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'dotnet/roslyn' && github.event.pull_request.merged_at != null && github.event.pull_request.milestone == null && github.event.pull_request.base.ref == 'main' }}
+    if: ${{ github.repository == 'dotnet/roslyn-analyzers' && github.event.pull_request.merged_at != null && github.event.pull_request.milestone == null && github.event.pull_request.base.ref == 'main' }}
     steps:
     - name: Get milestone data
       env:

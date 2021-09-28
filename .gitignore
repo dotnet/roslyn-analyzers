@@ -6,6 +6,7 @@
 *.user
 .vs/
 .vscode/
+.idea/
 
 # Build results
 artifacts/

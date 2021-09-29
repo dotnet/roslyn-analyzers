@@ -59,32 +59,6 @@ public class C
             return test.RunAsync();
         }
 
-        [Fact]
-        public Task NoArrayInitializer_FixedToEmptyReadOnlySpan_CS()
-        {
-            string format = @"
-using System;
-public class C
-{{
-    {0}
-}}";
-            var test = new VerifyCS.Test
-            {
-                TestState =
-                {
-                    Sources = { string.Format(CultureInfo.InvariantCulture, format, "private static readonly byte[] {|#0:a|};") },
-                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                    ExpectedDiagnostics = { VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments("byte") }
-                },
-                FixedState =
-                {
-                    Sources = { string.Format(CultureInfo.InvariantCulture, format, "private static ReadOnlySpan<byte> a => ReadOnlySpan<byte>.Empty;") },
-                    ReferenceAssemblies = ReferenceAssemblies.Net.Net50
-                }
-            };
-            return test.RunAsync();
-        }
-
         [Theory]
         [InlineData(@"
     private static readonly byte[] {|#0:a|} = new byte[] { 1, 2, 3 }, {|#1:b|} = new byte[] { 5, 7 };",
@@ -406,6 +380,8 @@ public class C
         [InlineData("private static readonly short[] a = new short[] { 1 };")]
         [InlineData("private static readonly int[] a = new int[] { 1 };")]
         [InlineData("private static readonly string[] a = new string[] { nameof(a) };")]
+        [InlineData("private static readonly byte[] a;")]
+        [InlineData("private static readonly byte[] a = new byte[123];")]
         public Task IllegalDeclarations_NoDiagnostic_CS(string declaration)
         {
             var test = new VerifyCS.Test

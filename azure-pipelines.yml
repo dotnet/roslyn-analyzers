@@ -15,7 +15,7 @@ pr:
 jobs:
 
 - job: CheckChanges
-  displayName: 'Check changes'
+  displayName: 'Check for product changes'
   pool:
     vmImage: 'windows-latest'
   steps:
@@ -142,6 +142,41 @@ jobs:
       condition: eq(variables.source_code_changed, 'true')
 
 - template: eng/common/templates/job/source-build.yml
+
+- job: Performance
+  dependsOn: CheckChanges
+  strategy:
+    maxParallel: 4
+    matrix:
+      Release:
+        _configuration: Release
+        _codeCoverage: False
+  pool:
+    name: Hosted VS2017
+    queue: Windows.10.Amd64.20H2.Owl.Perf
+  timeoutInMinutes: 120
+  variables:
+    source_code_changed: $[ dependencies.CheckChanges.outputs['check_changes.SOURCE_CODE_CHANGED'] ]
+
+  steps:
+    - checkout: self
+      clean: true
+    - task: PowerShell@2
+      displayName: Restore
+      inputs:
+        filePath: eng\common\build.ps1
+        arguments: -configuration Release -prepareMachine -ci -restore -binaryLog
+      condition: eq(variables.source_code_changed, 'true')
+    - pwsh: eng\perf\PerfCore.ps1 -v diag -diff -ci 
+      displayName: Validate Performance
+      condition: eq(variables.source_code_changed, 'true')
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Performance Results
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)\artifacts'
+        ArtifactName: 'Windows Performance Results'
+      continueOnError: true
+      condition: eq(variables.source_code_changed, 'true')
 
 - job: Markdownlint
   pool:

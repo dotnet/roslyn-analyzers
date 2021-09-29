@@ -28,18 +28,16 @@ jobs:
             }
           }' -f org=$ORGANIZATION -f repo=$REPOSITORY -f milestone="$MILESTONE_NAME" > milestone_data.json
 
-        echo 'MILESTONE_ID='$(jq 'if (((.data.repository.milestones.nodes | length) == 1) and .data.repository.milestones.nodes[0].title == "$MILESTONE_NAME") then .data.repository.milestones.nodes[0].id else null end' milestone_data.json) >> $GITHUB_ENV
+        echo 'MILESTONE_ID='$(jq 'if (((.data.repository.milestones.nodes | length) == 1) and .data.repository.milestones.nodes[0].title == "$MILESTONE_NAME") then .data.repository.milestones.nodes[0].id else null end' --arg MILESTONE_NAME "$MILESTONE_NAME" milestone_data.json) >> $GITHUB_ENV
 
     - name: Assign milestone
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PULL_REQUEST_ID: ${{ github.event.pull_request.node_id }}
       run: |
-        echo $MILESTONE_ID
-
-        #gh api graphql -f query='
-        #  mutation($pull: ID!, $milestone: ID!) {
-        #    updatePullRequest(input: {pullRequestId: $pull, milestoneId: $milestone}) {
-        #      clientMutationId
-        #    }
-        #  }' -f pull=$PULL_REQUEST_ID -f milestone=$MILESTONE_ID
+        gh api graphql -f query='
+          mutation($pull: ID!, $milestone: ID!) {
+            updatePullRequest(input: {pullRequestId: $pull, milestoneId: $milestone}) {
+              clientMutationId
+            }
+          }' -f pull=$PULL_REQUEST_ID -f milestone=$MILESTONE_ID

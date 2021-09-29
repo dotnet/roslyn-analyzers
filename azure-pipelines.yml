@@ -13,7 +13,25 @@ pr:
 - 2.9.x
 
 jobs:
+
+- job: CheckChanges
+  displayName: 'Check changes'
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+    - powershell: |
+        $changedFiles = & git diff HEAD HEAD~ --name-only
+        $changedMarkdownFiles = $changedFiles.where{$_ -match '.md' }
+        if ($changedFiles.Length -eq $changedMarkdownFiles.Length) {
+          echo "##vso[task.setvariable variable=SOURCE_CODE_CHANGED;isOutput=true]false"
+        }
+        else {
+          echo "##vso[task.setvariable variable=SOURCE_CODE_CHANGED;isOutput=true]true"
+        }
+      name: check_changes
+      displayName: 'Check changed files'
 - job: Windows
+  dependsOn: CheckChanges
   strategy:
     maxParallel: 4
     matrix:
@@ -27,52 +45,57 @@ jobs:
     name: NetCorePublic-Pool
     queue: BuildPool.Windows.10.Amd64.VS2019.Pre.Open
   timeoutInMinutes: 40
+  variables:
+    source_code_changed: $[ dependencies.CheckChanges.outputs['check_changes.SOURCE_CODE_CHANGED'] ]
 
   steps:
     - checkout: self
       clean: true
     - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine /p:Coverage=$(_codeCoverage)
       displayName: Build and Test
-
+      condition: eq(variables.source_code_changed, 'true')
     - task: PublishTestResults@2
       inputs:
         testRunner: XUnit
         testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)\*.xml'
         mergeTestResults: true
         testRunTitle: 'Windows $(_configuration)'
-      condition: always()
+      condition: eq(variables.source_code_changed, 'true')
     - script: dotnet msbuild -binaryLogger:artifacts\log\$(_configuration)\uploadCodeCov.binlog;ProjectImports=Embed -restore eng/CodeCoverage.proj
       displayName: Upload coverage to codecov.io
-      condition: and(succeeded(), eq(variables['_codeCoverage'], True))
+      condition: and(succeeded(), eq(variables['_codeCoverage'], True), eq(variables.source_code_changed, 'true'))
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
         ArtifactName: 'Windows $(_configuration)'
       continueOnError: true
-      condition: always()
+      condition: eq(variables.source_code_changed, 'true')
 
 - job: Windows_Desktop_Spanish_Unit_Tests
+  dependsOn: CheckChanges
   strategy:
     maxParallel: 4
   pool:
     name: NetCorePublic-Pool
     queue: BuildPool.Windows.Amd64.VS2019.Pre.ES.Open
   timeoutInMinutes: 40
+  variables:
+    source_code_changed: $[ dependencies.CheckChanges.outputs['check_changes.SOURCE_CODE_CHANGED'] ]
 
   steps:
     - checkout: self
       clean: true
     - script: eng\common\cibuild.cmd -prepareMachine
       displayName: Build and Test
-
+      condition: eq(variables.source_code_changed, 'true')
     - task: PublishTestResults@2
       inputs:
         testRunner: XUnit
         testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\Debug\*.xml'
         mergeTestResults: true
         testRunTitle: 'Windows Desktop Spanish'
-      condition: always()
+      condition: eq(variables.source_code_changed, 'true')
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs
       inputs:
@@ -82,6 +105,7 @@ jobs:
       condition: not(succeeded())
 
 - job: Ubuntu
+  dependsOn: CheckChanges
   strategy:
     maxParallel: 4
     matrix:
@@ -93,26 +117,29 @@ jobs:
     name: NetCorePublic-Pool
     queue: BuildPool.Ubuntu.1804.amd64.Open
   timeoutInMinutes: 40
+  variables:
+    source_code_changed: $[ dependencies.CheckChanges.outputs['check_changes.SOURCE_CODE_CHANGED'] ]
+
   steps:
     - checkout: self
       clean: true
     - script: eng/common/cibuild.sh -configuration $(_configuration) -prepareMachine
       displayName: Build and Test
-
+      condition: eq(variables.source_code_changed, 'true')
     - task: PublishTestResults@2
       inputs:
         testRunner: XUnit
         testResultsFiles: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_configuration)/*.xml'
         mergeTestResults: true
         testRunTitle: 'Ubuntu $(_configuration)'
-      condition: always()
+      condition: eq(variables.source_code_changed, 'true')
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)/artifacts/log/$(_configuration)'
         ArtifactName: 'Ubuntu $(_configuration)'
       continueOnError: true
-      condition: always()
+      condition: eq(variables.source_code_changed, 'true')
 
 - template: eng/common/templates/job/source-build.yml
 

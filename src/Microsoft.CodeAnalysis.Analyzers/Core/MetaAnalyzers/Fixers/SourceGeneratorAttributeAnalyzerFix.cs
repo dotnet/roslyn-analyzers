@@ -57,7 +57,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             context.RegisterCodeFix(codeAction, diagnostic);
         }
 
-        public override FixAllProvider GetFixAllProvider() => null;
+        public override FixAllProvider? GetFixAllProvider() => null;
 
         private static async Task<Document> FixDocumentAsync(Document document, SyntaxNode node, string[] languageNames, CancellationToken cancellationToken)
         {

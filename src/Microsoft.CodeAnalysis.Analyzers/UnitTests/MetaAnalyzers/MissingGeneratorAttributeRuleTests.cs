@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Threading.Tasks;
@@ -19,8 +19,11 @@ namespace Microsoft.CodeAnalysis.Analyzers.UnitTests.MetaAnalyzers
         private static readonly ReferenceAssemblies ReferenceAssemblies =
             ReferenceAssemblies.Default.AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "3.10.0")));
 
-        [Fact]
-        public async Task TestSimpleClass_CSharp()
+        [Theory]
+        [InlineData("[Generator]", 0)]
+        [InlineData("[Generator(LanguageNames.VisualBasic)]", 1)]
+        [InlineData("[Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)]", 2)]
+        public async Task TestSimpleClass_CSharp(string attr, int index)
         {
             var code = @"
 using Microsoft.CodeAnalysis;
@@ -31,26 +34,21 @@ public class [|CustomGenerator|] : ISourceGenerator
     public void Execute(GeneratorExecutionContext context) {}
 }";
 
-            var fixedCode = @"
+            var fixedCode = @$"
 using Microsoft.CodeAnalysis;
 
-[Generator]
+{attr}
 public class CustomGenerator : ISourceGenerator
-{
-    public void Initialize(GeneratorInitializationContext context) {}
-    public void Execute(GeneratorExecutionContext context) {}
-}";
+{{
+    public void Initialize(GeneratorInitializationContext context) {{}}
+    public void Execute(GeneratorExecutionContext context) {{}}
+}}";
             await new VerifyCS.Test
             {
                 ReferenceAssemblies = ReferenceAssemblies,
-                TestState =
-                {
-                    Sources = { code },
-                },
-                FixedState =
-                {
-                    Sources = { fixedCode },
-                },
+                TestCode = code,
+                FixedCode = fixedCode,
+                CodeActionIndex = index
             }.RunAsync();
         }
 
@@ -85,8 +83,11 @@ public class CustomGenerator : Microsoft.CodeAnalysis.ISourceGenerator
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task TestSimpleClass_VisualBasic()
+        [Theory]
+        [InlineData("<Generator>", 0)]
+        [InlineData("<Generator(LanguageNames.VisualBasic)>", 1)]
+        [InlineData("<Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)>", 2)]
+        public async Task TestSimpleClass_VisualBasic(string attr, int index)
         {
             var code = @"
 Imports Microsoft.CodeAnalysis 
@@ -103,10 +104,10 @@ Public Class [|CustomGenerator|]
     End Sub
 End Class";
 
-            var fixedCode = @"
+            var fixedCode = @$"
 Imports Microsoft.CodeAnalysis
 
-<Generator>
+{attr}
 Public Class CustomGenerator 
     Implements ISourceGenerator
 
@@ -122,14 +123,9 @@ End Class";
             await new VerifyVB.Test
             {
                 ReferenceAssemblies = ReferenceAssemblies,
-                TestState =
-                {
-                    Sources = { code },
-                },
-                FixedState =
-                {
-                    Sources = { fixedCode },
-                },
+                TestCode = code,
+                FixedCode = fixedCode,
+                CodeActionIndex = index
             }.RunAsync();
         }
 
@@ -162,14 +158,8 @@ End Class";
             await new VerifyVB.Test
             {
                 ReferenceAssemblies = ReferenceAssemblies,
-                TestState =
-                {
-                    Sources = { code },
-                },
-                FixedState =
-                {
-                    Sources = { fixedCode },
-                },
+                TestCode = code,
+                FixedCode = fixedCode,
             }.RunAsync();
         }
 
@@ -211,14 +201,8 @@ public class CustomGenerator : CustomGeneratorBase
             await new VerifyCS.Test
             {
                 ReferenceAssemblies = ReferenceAssemblies,
-                TestState =
-                {
-                    Sources = { code },
-                },
-                FixedState =
-                {
-                    Sources = { fixedCode },
-                },
+                TestCode = code,
+                FixedCode = fixedCode,
             }.RunAsync();
         }
 
@@ -269,14 +253,8 @@ End Class";
             await new VerifyVB.Test
             {
                 ReferenceAssemblies = ReferenceAssemblies,
-                TestState =
-                {
-                    Sources = { code },
-                },
-                FixedState =
-                {
-                    Sources = { fixedCode },
-                },
+                TestCode = code,
+                FixedCode = fixedCode,
             }.RunAsync();
         }
 
@@ -302,10 +280,7 @@ public class CustomGenerator : CustomGeneratorBase
             await new VerifyCS.Test
             {
                 ReferenceAssemblies = ReferenceAssemblies,
-                TestState =
-                {
-                    Sources = { code },
-                }
+                TestCode = code,
             }.RunAsync();
         }
 
@@ -336,10 +311,7 @@ End Class";
             await new VerifyVB.Test
             {
                 ReferenceAssemblies = ReferenceAssemblies,
-                TestState =
-                {
-                    Sources = { code }
-                }
+                TestCode = code,
             }.RunAsync();
         }
     }

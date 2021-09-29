@@ -47,7 +47,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             }
         }
 
-        private void AddFix(string title, CodeFixContext context, Document document, SyntaxNode node, Diagnostic diagnostic, params string[] languageNames)
+        private static void AddFix(string title, CodeFixContext context, Document document, SyntaxNode node, Diagnostic diagnostic, params string[] languageNames)
         {
             var codeAction = CodeAction.Create(
                 title,
@@ -57,7 +57,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             context.RegisterCodeFix(codeAction, diagnostic);
         }
 
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+        public override FixAllProvider GetFixAllProvider() => null;
 
         private static async Task<Document> FixDocumentAsync(Document document, SyntaxNode node, string[] languageNames, CancellationToken cancellationToken)
         {

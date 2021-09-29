@@ -17,7 +17,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
     [Shared]
     public sealed class SourceGeneratorAttributeAnalyzerFix : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             DiagnosticIds.MissingSourceGeneratorAttributeId);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -34,15 +34,15 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             foreach (var diagnostic in context.Diagnostics)
             {
                 AddFix(
-                    string.Format(CultureInfo.CurrentCulture, CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_1, LanguageNames.CSharp),
+                    string.Format(CultureInfo.CurrentUICulture, CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_1, LanguageNames.CSharp),
                     context, document, node, diagnostic, LanguageNames.CSharp);
 
                 AddFix(
-                    string.Format(CultureInfo.CurrentCulture, CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_1, LanguageNames.VisualBasic),
+                    string.Format(CultureInfo.CurrentUICulture, CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_1, LanguageNames.VisualBasic),
                     context, document, node, diagnostic, LanguageNames.VisualBasic);
 
                 AddFix(
-                    string.Format(CultureInfo.CurrentCulture, CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_2, LanguageNames.CSharp, LanguageNames.VisualBasic),
+                    string.Format(CultureInfo.CurrentUICulture, CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_2, LanguageNames.CSharp, LanguageNames.VisualBasic),
                     context, document, node, diagnostic, LanguageNames.CSharp, LanguageNames.VisualBasic);
             }
         }
@@ -90,9 +90,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
                 {
                     RoslynDebug.Assert(languageNames[i] == LanguageNames.CSharp || languageNames[i] == LanguageNames.VisualBasic);
 
-                    var language = languageNames[i] == LanguageNames.CSharp
-                        ? nameof(LanguageNames.CSharp)
-                        : nameof(LanguageNames.VisualBasic);
+                    var language = languageNames[i];
 
                     var finalExpression = generator.MemberAccessExpression(baseLanguageNameExpression, language);
                     arguments[i] = finalExpression;

@@ -9,6 +9,7 @@ jobs:
     steps:
     - name: Get milestone data
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         ORGANIZATION: dotnet
         REPOSITORY: roslyn-analyzers
         MILESTONE_NAME: vNext
@@ -30,6 +31,7 @@ jobs:
 
     - name: Assign milestone
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PULL_REQUEST_ID: ${{ github.event.pull_request.node_id }}
       run: |
         echo $MILESTONE_ID

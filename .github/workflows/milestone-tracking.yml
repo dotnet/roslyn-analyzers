@@ -2,6 +2,8 @@ name: Milestone tracking
 on:
   pull_request:
     types: [closed]
+permissions:
+  pull-requests: write
 jobs:
   add_milestone:
     runs-on: ubuntu-latest
@@ -26,8 +28,7 @@ jobs:
             }
           }' -f org=$ORGANIZATION -f repo=$REPOSITORY -f milestone="$MILESTONE_NAME" > milestone_data.json
 
-        cat milestone_data.json
-        echo 'MILESTONE_ID='$(jq 'if (((.data.repository.milestones.nodes | length) == 1) and .data.repository.milestones.nodes[0].title == "$MILESTONE_NAME") then .data.repository.milestones.nodes[0].id else null end' label_data.json) >> $GITHUB_ENV
+        echo 'MILESTONE_ID='$(jq 'if (((.data.repository.milestones.nodes | length) == 1) and .data.repository.milestones.nodes[0].title == "$MILESTONE_NAME") then .data.repository.milestones.nodes[0].id else null end' milestone_data.json) >> $GITHUB_ENV
 
     - name: Assign milestone
       env:

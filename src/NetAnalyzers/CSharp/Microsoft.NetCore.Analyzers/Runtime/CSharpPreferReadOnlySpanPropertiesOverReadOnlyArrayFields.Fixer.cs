@@ -111,7 +111,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                     var propertyDeclarationSyntax = SyntaxFactory.PropertyDeclaration(rosNameSyntax, variableDeclaratorSyntax.Identifier)
                         .WithExpressionBody(arrowExpressionClauseSyntax)
                         .WithModifiers(modifiersWithoutReadOnlyKeyword)
-                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken).WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed))
+                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken).WithTrailingTrivia(SyntaxFactory.EndOfLine(Environment.NewLine)))
                         .WithoutLeadingTrivia()
                         .WithAdditionalAnnotations(Formatter.Annotation);
                     editor.InsertAfter(fieldDeclarationSyntax, propertyDeclarationSyntax);

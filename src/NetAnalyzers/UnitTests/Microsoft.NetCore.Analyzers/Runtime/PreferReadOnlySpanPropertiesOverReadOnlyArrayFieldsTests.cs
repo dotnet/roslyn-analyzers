@@ -451,6 +451,77 @@ public class C
             return test.RunAsync();
         }
 
+        [Theory]
+        [InlineData("byte[]")]
+        [InlineData("Span<byte>")]
+        public Task ReturnArrayOrSpan_NoDiagnostic_CS(string returnType)
+        {
+            string source = $@"
+using System;
+public class C
+{{
+    private static readonly byte[] a = new byte[] {{ 1, 2, 3 }};
+    private {returnType} M()
+    {{
+        return a;
+    }}
+}}";
+            var test = new VerifyCS.Test
+            {
+                TestCode = source,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+            };
+            return test.RunAsync();
+        }
+
+        [Fact]
+        public Task UsedInArrayInitializer_NoDiagnostic_CS()
+        {
+            var test = new VerifyCS.Test
+            {
+                TestCode = @"
+using System;
+public class C
+{
+    private static readonly byte[] a = new byte[] { 1, 2, 3 };
+    private static readonly byte[][] b = new byte[][]
+    {
+        a,
+        new byte[] { 4, 5, 6, 7 },
+        new byte[] { 8, 9 }
+    };
+}",
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+            };
+            return test.RunAsync();
+        }
+
+        [Fact]
+        public Task UsedInObjectInitializer_NoDiagnostic_CS()
+        {
+            var test = new VerifyCS.Test
+            {
+                TestCode = @"
+using System;
+public class O
+{
+    public byte[] A { get; set; }
+    public int I { get; set; }
+}
+
+public class C
+{
+    private static readonly byte[] a = new byte[] { 1, 2, 3 };
+    public void M()
+    {
+        var o = new O { A = a, I = 12 };
+    }
+}",
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+            };
+            return test.RunAsync();
+        }
+
         private static DiagnosticDescriptor Rule => PreferReadOnlySpanPropertiesOverReadOnlyArrayFields.Rule;
     }
 }

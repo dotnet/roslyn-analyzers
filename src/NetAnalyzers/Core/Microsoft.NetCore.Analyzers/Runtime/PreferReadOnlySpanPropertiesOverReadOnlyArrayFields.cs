@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -127,7 +128,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
+        //  Not compared for equality
+#pragma warning disable CA1815
         private readonly struct VisitContext
+#pragma warning restore CA1815
         {
             public VisitContext(IOperation operation, IFieldSymbol field, CancellationToken cancellationToken)
             {
@@ -143,11 +147,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             public VisitContext WithOperation(IOperation newOperation) => new(newOperation, Field, CancellationToken);
         }
 
+        //  Not compared for equality
+#pragma warning disable CA1815
         /// <summary>
         /// Represents a saved span in source code that that needs to be fixed by the fixer.
         /// Currently used to save field references that were passed to any 'AsSpan' overload.
         /// </summary>
         internal readonly struct SavedSpanLocation : IEquatable<SavedSpanLocation>
+#pragma warning restore CA1815
         {
             private const int SpanStartCaptureGroup = 1;
             private const int SpanLengthCaptureGroup = 2;
@@ -176,7 +183,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 RoslynDebug.Assert(match.Success, "Invalid saved data format");
 
                 return new SavedSpanLocation(
-                    new TextSpan(int.Parse(match.Groups[SpanStartCaptureGroup].Value), int.Parse(match.Groups[SpanLengthCaptureGroup].Value)),
+                    new TextSpan(
+                        int.Parse(match.Groups[SpanStartCaptureGroup].Value, CultureInfo.InvariantCulture),
+                        int.Parse(match.Groups[SpanLengthCaptureGroup].Value, CultureInfo.InvariantCulture)),
                     match.Groups[SourceFilePathCaptureGroup].Value);
             }
 
@@ -296,7 +305,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return base.VisitTuple(operation, argument);
             }
 
-            private static IMethodSymbol GetTargetMethod(IOperation invocationOrObjectCreation)
+            public override Unit VisitReturn(IReturnOperation operation, VisitContext argument)
+            {
+                _cache.Candidates.Remove(argument.Field);
+                return base.VisitReturn(operation, argument);
+            }
+
+            public override Unit VisitArrayInitializer(IArrayInitializerOperation operation, VisitContext argument)
+            {
+                _cache.Candidates.Remove(argument.Field);
+                return base.VisitArrayInitializer(operation, argument);
+            }
+
+            private static IMethodSymbol? GetTargetMethod(IOperation invocationOrObjectCreation)
             {
                 IMethodSymbol? result = invocationOrObjectCreation switch
                 {
@@ -304,7 +325,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     IObjectCreationOperation objectCreation => objectCreation.Constructor,
                     _ => null
                 };
-                RoslynDebug.Assert(result is not null);
                 return result;
             }
         }
@@ -421,7 +441,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             public bool IsSupportedArrayElementType(ITypeSymbol type) => _supportedArrayElementTypes.Contains(type);
 
-            public bool IsAsSpanMethod(IMethodSymbol method) => _asSpanMethods.Contains(method.OriginalDefinition);
+            public bool IsAsSpanMethod(IMethodSymbol? method) => method is not null && _asSpanMethods.Contains(method.OriginalDefinition);
 
             /// <summary>
             /// Add <see cref="IOperation"/>s that need to be fixed by fixer. Currently this is used

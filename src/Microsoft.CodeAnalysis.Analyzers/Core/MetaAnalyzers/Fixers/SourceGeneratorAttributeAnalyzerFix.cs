@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Globalization;
@@ -88,9 +89,12 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
                 var arguments = new SyntaxNode[languageNames.Length];
                 for (var i = 0; i < languageNames.Length; i++)
                 {
-                    RoslynDebug.Assert(languageNames[i] == LanguageNames.CSharp || languageNames[i] == LanguageNames.VisualBasic);
-
-                    var language = languageNames[i];
+                    var language = languageNames[i] switch
+                    {
+                        LanguageNames.CSharp => nameof(LanguageNames.CSharp),
+                        LanguageNames.VisualBasic => nameof(LanguageNames.VisualBasic),
+                        _ => throw new InvalidOperationException()
+                    };
 
                     var finalExpression = generator.MemberAccessExpression(baseLanguageNameExpression, language);
                     arguments[i] = finalExpression;

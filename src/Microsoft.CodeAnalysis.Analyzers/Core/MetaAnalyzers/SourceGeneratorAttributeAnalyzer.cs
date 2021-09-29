@@ -11,17 +11,13 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class SourceGeneratorAttributeAnalyzer : DiagnosticAnalyzer
     {
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.MissingSourceGeneratorAttributeTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.MissingSourceGeneratorAttributeTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.MissingSourceGeneratorAttributeDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
-
         public static readonly DiagnosticDescriptor DiagnosticRule = new(
             DiagnosticIds.MissingSourceGeneratorAttributeId,
-            s_localizableTitle,
-            s_localizableMessage,
+            CodeAnalysisDiagnosticsResources.CreateLocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.MissingSourceGeneratorAttributeTitle)),
+            CodeAnalysisDiagnosticsResources.CreateLocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.MissingSourceGeneratorAttributeTitle)),
             DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
             DiagnosticSeverity.Warning,
-            description: s_localizableDescription,
+            description: CodeAnalysisDiagnosticsResources.CreateLocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.MissingSourceGeneratorAttributeDescription)),
             isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DiagnosticRule);

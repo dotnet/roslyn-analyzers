@@ -20,13 +20,31 @@ jobs:
     vmImage: 'windows-latest'
   steps:
     - powershell: |
-        $changedFiles = & git diff HEAD HEAD~ --name-only
-        $changedMarkdownFiles = $changedFiles.where{$_ -match '.md' }
-        if ($changedFiles.Length -eq $changedMarkdownFiles.Length) {
-          echo "##vso[task.setvariable variable=SOURCE_CODE_CHANGED;isOutput=true]true"
+        $ignoredDirectories = @('docs')
+        $ignoredFiles = @('CODE-OF-CONDUCT.md', 'GuidelinesForNewRules.md', 'PostReleaseActivities.md', 'SECURITY.md', 'THIRD-PARTY-NOTICES.txt', 'VERSIONING.md')
+        $changedFiles = & git diff origin/main... --name-only
+        $matchCount = 0
+        foreach ($changedFile in $changedFiles)
+        {
+            foreach ($ignoredDirectory in $ignoredDirectories)
+            {
+                if ($changedFile.StartsWith($ignoredDirectory, 'OrdinalIgnoreCase')) {
+                    $matchCount += 1
+                }
+            }
+            
+            foreach ($ignoredFile in $ignoredFiles)
+            {
+                if ($changedFile -match $ignoredFile) {
+                    $matchCount += 1
+                }
+            }
+        }
+        if ($changedFiles.Length -eq $matchCount) {
+            Write-Output "##vso[task.setvariable variable=SOURCE_CODE_CHANGED;isOutput=true]false"
         }
         else {
-          echo "##vso[task.setvariable variable=SOURCE_CODE_CHANGED;isOutput=true]false"
+            Write-Output "##vso[task.setvariable variable=SOURCE_CODE_CHANGED;isOutput=true]true"
         }
       name: check_changes
       displayName: 'Check changed files'

@@ -257,6 +257,14 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                         return ret;
                     }
                 }
+                else if (typeSymbolDefinition is InterfaceDeclarationSyntax interfaceDeclaration)
+                {
+                    SeparatedSyntaxList<BaseTypeSyntax> baseListTypes = interfaceDeclaration.BaseList.Types;
+                    if (TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseListTypes, previewInterfaceSymbol, out ret))
+                    {
+                        return ret;
+                    }
+                }
             }
 
             return ret;

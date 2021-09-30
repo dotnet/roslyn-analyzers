@@ -6,6 +6,9 @@ using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpDetectPreviewFeatureAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicDetectPreviewFeatureAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -22,6 +25,22 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Sources =
                     {
                         csInput
+                    },
+                },
+            };
+        }
+
+        private static VerifyVB.Test TestVB(string vbInput)
+        {
+            return new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.Net60,
+                LanguageVersion = CodeAnalysis.VisualBasic.LanguageVersion.Latest,
+                TestState =
+                {
+                    Sources =
+                    {
+                        vbInput
                     },
                 },
             };

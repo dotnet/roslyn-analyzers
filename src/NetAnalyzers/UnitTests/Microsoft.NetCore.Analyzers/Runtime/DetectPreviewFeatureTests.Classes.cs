@@ -37,7 +37,7 @@ namespace Preview_Feature_Scratch
     {
     }
 
-    interface {|#0:IZoo|} : IFoo
+    interface IZoo : {|#0:IFoo|}
     { 
         bool Bar() { return true; }
     }

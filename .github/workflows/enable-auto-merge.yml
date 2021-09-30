@@ -3,8 +3,7 @@ on:
   pull_request_target:
     types: [opened, ready_for_review]
 permissions:
-  issues: write
-  pull-requests: write
+  contents: write
 jobs:
   add_milestone:
     runs-on: ubuntu-latest

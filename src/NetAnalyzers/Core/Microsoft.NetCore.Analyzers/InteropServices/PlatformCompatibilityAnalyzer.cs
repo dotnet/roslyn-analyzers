@@ -485,9 +485,21 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     }
                                     attribute.UnsupportedFirst = null;
                                 }
-                                else if (value.AnalysisValues.Contains(new PlatformMethodValue(info.PlatformName, EmptyVersion, false)))
+                                else
                                 {
-                                    csAttributes = SetCallSiteUnsupportedAttribute(csAttributes, info);
+                                    if (csAttributes != null &&
+                                        AllowList(attribute) &&
+                                        IsOnlySupportNeedsGuard(info.PlatformName, attributes, csAttributes))
+                                    {
+                                        attribute.SupportedFirst = null;
+                                        attribute.SupportedSecond = null;
+                                        attribute.UnsupportedSecond = null;
+                                        attribute.UnsupportedFirst = null;
+                                    }
+                                    else if (value.AnalysisValues.Contains(new PlatformMethodValue(info.PlatformName, EmptyVersion, false)))
+                                    {
+                                        csAttributes = SetCallSiteUnsupportedAttribute(csAttributes, info);
+                                    }
                                 }
 
                                 if (attribute.UnsupportedSecond != null &&
@@ -584,6 +596,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 return true;
             }
+
+            static bool IsOnlySupportNeedsGuard(string platformName, SmallDictionary<string, Versions> attributes, SmallDictionary<string, Versions> csAttributes)
+                 => csAttributes.TryGetValue(platformName, out var versions) &&
+                    AllowList(versions) &&
+                    attributes.Count() == 1 &&
+                    csAttributes.Any(cs => !cs.Key.Equals(platformName, StringComparison.OrdinalIgnoreCase));
 
             static bool IsNegationOfParentValues(GlobalFlowStateAnalysisValueSet value, ImmutableHashSet<IAbstractAnalysisValue>.Enumerator parentEnumerator)
             {

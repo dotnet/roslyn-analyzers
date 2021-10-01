@@ -6,33 +6,38 @@ permissions:
   issues: write
   pull-requests: write
 jobs:
-  add_milestone:
+  add_community_label:
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'dotnet/roslyn-analyzers' && github.event.pull_request.author_association != 'MEMBER' && github.event.pull_request.author_association != 'OWNER' }}
+    if: ${{ github.repository == 'dotnet/roslyn-analyzers' }}
     steps:
-    - name: Get label data
+    - name: Get data
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         ORGANIZATION: dotnet
         REPOSITORY: roslyn-analyzers
         LABEL_NAME: Community
+        PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
       run: |
         gh api graphql -f query='
-          query($org: String!, $repo: String!, $label: String!) {
+          query($org: String!, $repo: String!, $pull: Int!, $label: String!) {
             repository(name: $repo, owner: $org) {
               label(name: $label) {
                 id
               }
+              pullRequest(number: $pull) {
+                authorAssociation
+              }
             }
-          }' -f org=$ORGANIZATION -f repo=$REPOSITORY -f label="$LABEL_NAME" > label_data.json
+          }' -f org=$ORGANIZATION -f repo=$REPOSITORY -f pull="$PULL_REQUEST_NUMBER" -f label="$LABEL_NAME" > data.json
 
-        echo 'LABEL_ID='$(jq -r '.data.repository.label.id' label_data.json) >> $GITHUB_ENV
+        echo 'LABEL_ID='$(jq -r '.data.repository.label.id' data.json) >> $GITHUB_ENV
+        echo 'AUTHOR_ASSOCIATION='$(jq -r '.data.repository.pullRequest.authorAssociation' data.json) >> $GITHUB_ENV
 
     - name: Assign label
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PULL_REQUEST_ID: ${{ github.event.pull_request.node_id }}
-      if: ${{ env.LABEL_ID != '' && env.LABEL_ID != 'null' }}
+      if: ${{ env.LABEL_ID != '' && env.LABEL_ID != 'null' && env.AUTHOR_ASSOCIATION == 'MEMBER' }}
       run: |
         gh api graphql -f query='
           mutation($pull: ID!, $label: ID!) {

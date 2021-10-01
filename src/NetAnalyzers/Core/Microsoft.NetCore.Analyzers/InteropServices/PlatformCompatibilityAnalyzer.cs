@@ -347,9 +347,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         var value = analysisResult[platformSpecificOperation.Key.Kind, platformSpecificOperation.Key.Syntax];
                         var csAttributes = pair.csAttributes != null ? CopyAttributes(pair.csAttributes) : null;
 
-                        if ((value.Kind == GlobalFlowStateAnalysisValueSetKind.Known && IsKnownValueGuarded(pair.attributes, ref csAttributes, value)) ||
+                        if ((value.Kind == GlobalFlowStateAnalysisValueSetKind.Known && IsKnownValueGuarded(pair.attributes, ref csAttributes, value, pair.csAttributes)) ||
                            (value.Kind == GlobalFlowStateAnalysisValueSetKind.Unknown && HasGuardedLambdaOrLocalFunctionResult(platformSpecificOperation.Key,
-                           pair.attributes, ref csAttributes, analysisResult)))
+                           pair.attributes, ref csAttributes, analysisResult, pair.csAttributes)))
                         {
                             continue;
                         }
@@ -386,7 +386,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         }
 
         private static bool HasGuardedLambdaOrLocalFunctionResult(IOperation platformSpecificOperation, SmallDictionary<string, Versions> attributes,
-            ref SmallDictionary<string, Versions>? csAttributes, DataFlowAnalysisResult<GlobalFlowStateBlockAnalysisResult, GlobalFlowStateAnalysisValueSet> analysisResult)
+            ref SmallDictionary<string, Versions>? csAttributes, DataFlowAnalysisResult<GlobalFlowStateBlockAnalysisResult,
+                GlobalFlowStateAnalysisValueSet> analysisResult, SmallDictionary<string, Versions>? originalCsAttributes)
         {
             if (!platformSpecificOperation.IsWithinLambdaOrLocalFunction(out var containingLambdaOrLocalFunctionOperation))
             {
@@ -406,7 +407,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 // NOTE: IsKnownValueGuarded mutates the input values, so we pass in cloned values
                 // to ensure that evaluation of each result is independent of evaluation of other parts.
                 if (localValue.Kind != GlobalFlowStateAnalysisValueSetKind.Known ||
-                    !IsKnownValueGuarded(CopyAttributes(attributes), ref csAttributes, localValue))
+                    !IsKnownValueGuarded(CopyAttributes(attributes), ref csAttributes, localValue, originalCsAttributes))
                 {
                     return false;
                 }
@@ -454,16 +455,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         }
 
         private static bool IsKnownValueGuarded(SmallDictionary<string, Versions> attributes,
-                ref SmallDictionary<string, Versions>? csAttributes, GlobalFlowStateAnalysisValueSet value)
+                ref SmallDictionary<string, Versions>? csAttributes, GlobalFlowStateAnalysisValueSet value, SmallDictionary<string, Versions>? originalCsAttributes)
         {
             using var capturedVersions = PooledDictionary<string, Version>.GetInstance(StringComparer.OrdinalIgnoreCase);
-            return IsKnownValueGuarded(attributes, ref csAttributes, value, capturedVersions);
+            return IsKnownValueGuarded(attributes, ref csAttributes, value, capturedVersions, originalCsAttributes);
 
             static bool IsKnownValueGuarded(
                 SmallDictionary<string, Versions> attributes,
                 ref SmallDictionary<string, Versions>? csAttributes,
                 GlobalFlowStateAnalysisValueSet value,
-                PooledDictionary<string, Version> capturedVersions)
+                PooledDictionary<string, Version> capturedVersions,
+                SmallDictionary<string, Versions>? originalCsAttributes)
             {
                 // 'GlobalFlowStateAnalysisValueSet.AnalysisValues' represent the && of values.
                 foreach (var analysisValue in value.AnalysisValues)
@@ -487,9 +489,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 }
                                 else
                                 {
-                                    if (csAttributes != null &&
+                                    if (originalCsAttributes != null &&
                                         AllowList(attribute) &&
-                                        IsOnlySupportNeedsGuard(info.PlatformName, attributes, csAttributes))
+                                        IsOnlySupportNeedsGuard(info.PlatformName, attributes, originalCsAttributes))
                                     {
                                         attribute.SupportedFirst = null;
                                         attribute.SupportedSecond = null;
@@ -587,7 +589,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             }
                         }
 
-                        if (!IsKnownValueGuarded(parentAttributes, ref csAttributes, parent, parentCapturedVersions))
+                        if (!IsKnownValueGuarded(parentAttributes, ref csAttributes, parent, parentCapturedVersions, originalCsAttributes))
                         {
                             return false;
                         }

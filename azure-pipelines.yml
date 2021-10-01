@@ -17,7 +17,7 @@ jobs:
     matrix:
       Debug:
         _configuration: Debug
-        _codeCoverage: True
+        _codeCoverage: False
       Release:
         _configuration: Release
         _codeCoverage: False

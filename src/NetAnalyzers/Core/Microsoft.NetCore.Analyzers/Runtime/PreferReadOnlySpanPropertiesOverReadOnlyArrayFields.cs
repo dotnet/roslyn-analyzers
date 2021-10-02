@@ -36,7 +36,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             RuleLevel.IdeSuggestion,
             Resx.CreateLocalizableResourceString(nameof(Resx.PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Description)),
             isPortedFxCopRule: false,
-            isDataflowRule: false);
+            isDataflowRule: false,
+            isReportedAtCompilationEnd: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 

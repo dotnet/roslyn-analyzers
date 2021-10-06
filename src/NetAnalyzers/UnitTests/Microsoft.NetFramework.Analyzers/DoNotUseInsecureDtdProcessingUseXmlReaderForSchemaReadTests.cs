@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -15,13 +15,17 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
         private static DiagnosticResult GetCA3075SchemaReadCSharpResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseDtdProcessingOverloads).WithLocation(line, column).WithArguments("Read");
+#pragma warning restore RS0030 // Do not used banned APIs
 
         private static DiagnosticResult GetCA3075SchemaReadBasicResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseDtdProcessingOverloads).WithLocation(line, column).WithArguments("Read");
+#pragma warning restore RS0030 // Do not used banned APIs
 
         [Fact]
-        public async Task UseXmlSchemaReadWithoutXmlTextReaderShouldGenerateDiagnostic()
+        public async Task UseXmlSchemaReadWithoutXmlTextReaderShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -62,7 +66,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task UseXmlSchemaReadWithoutXmlTextReaderInGetShouldGenerateDiagnostic()
+        public async Task UseXmlSchemaReadWithoutXmlTextReaderInGetShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -107,7 +111,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseUseXmlSchemaReadWithoutXmlTextReaderInSetShouldGenerateDiagnostic()
+        public async Task UseUseXmlSchemaReadWithoutXmlTextReaderInSetShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -165,7 +169,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlSchemaReadWithoutXmlTextReaderInTryBlockShouldGenerateDiagnostic()
+        public async Task UseXmlSchemaReadWithoutXmlTextReaderInTryBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -215,7 +219,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlSchemaReadWithoutXmlTextReaderInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseXmlSchemaReadWithoutXmlTextReaderInCatchBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -264,7 +268,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlSchemaReadWithoutXmlTextReaderInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseXmlSchemaReadWithoutXmlTextReaderInFinallyBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -314,7 +318,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlSchemaReadWithoutXmlTextReaderInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseXmlSchemaReadWithoutXmlTextReaderInAsyncAwaitShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -368,7 +372,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlSchemaReadWithoutXmlTextReaderInDelegateShouldGenerateDiagnostic()
+        public async Task UseXmlSchemaReadWithoutXmlTextReaderInDelegateShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -410,7 +414,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlSchemaReadWithXmlTextReaderShouldNotGenerateDiagnostic()
+        public async Task UseXmlSchemaReadWithXmlTextReaderShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,

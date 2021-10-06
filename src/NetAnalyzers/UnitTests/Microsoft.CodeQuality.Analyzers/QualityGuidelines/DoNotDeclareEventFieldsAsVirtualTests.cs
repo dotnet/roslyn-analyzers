@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Xunit;
@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
     public class DoNotDeclareEventFieldsAsVirtualTests
     {
         [Fact]
-        public async Task EventFieldVirtual_Diagnostic()
+        public async Task EventFieldVirtual_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -19,11 +19,13 @@ public class C
 {
     public virtual event EventHandler ThresholdReached;
 }",
+#pragma warning disable RS0030 // Do not used banned APIs
                 VerifyCS.Diagnostic().WithLocation(5, 39).WithArguments("ThresholdReached"));
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         [Fact]
-        public async Task EventPropertyVirtual_NoDiagnostic()
+        public async Task EventPropertyVirtual_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -63,7 +65,7 @@ public class C
         // Invalid analyzer option ignored
         [InlineData("internal", @"dotnet_code_quality.api_surface = all
                                   dotnet_code_quality.CA1070.api_surface_2 = private")]
-        public async Task CSharp_ApiSurfaceOption(string accessibility, string editorConfigText)
+        public async Task CSharp_ApiSurfaceOptionAsync(string accessibility, string editorConfigText)
         {
             await new VerifyCS.Test
             {
@@ -78,7 +80,11 @@ public class OuterClass
     {accessibility} virtual event EventHandler [|ThresholdReached|];
 }}"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
                 },
             }.RunAsync();
         }

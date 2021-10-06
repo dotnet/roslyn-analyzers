@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -18,19 +18,23 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         #region Verifiers
 
         private static DiagnosticResult CSharpResult(int line, int column, string objectName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(objectName);
 
         private static DiagnosticResult BasicResult(int line, int column, string objectName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(objectName);
 
         #endregion
 
         [Fact]
-        public async Task CA1052NoDiagnosticForEmptyNonStaticClassCSharp()
+        public async Task CA1052NoDiagnosticForEmptyNonStaticClassCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C1
@@ -40,7 +44,7 @@ public class C1
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForEmptyInheritableClassBasic()
+        public async Task CA1052NoDiagnosticForEmptyInheritableClassBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B1
@@ -50,7 +54,7 @@ End Class
 
         [Fact]
 
-        public async Task CA1052NoDiagnosticForStaticClassWithOnlyStaticDeclaredMembersCSharp()
+        public async Task CA1052NoDiagnosticForStaticClassWithOnlyStaticDeclaredMembersCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public static class C2
@@ -61,7 +65,7 @@ public static class C2
         }
 
         [Fact, WorkItem(1320, "https://github.com/dotnet/roslyn-analyzers/issues/1320")]
-        public async Task CA1052NoDiagnosticForSealedClassWithOnlyStaticDeclaredMembersCSharp()
+        public async Task CA1052NoDiagnosticForSealedClassWithOnlyStaticDeclaredMembersCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public sealed class C3
@@ -72,7 +76,7 @@ public sealed class C3
         }
 
         [Fact, WorkItem(1320, "https://github.com/dotnet/roslyn-analyzers/issues/1320")]
-        public async Task CA1052NoDiagnosticForNonInheritableClassWithOnlySharedDeclaredMembersBasic()
+        public async Task CA1052NoDiagnosticForNonInheritableClassWithOnlySharedDeclaredMembersBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public NotInheritable Class B3
@@ -83,7 +87,7 @@ End Class
         }
 
         [Fact, WorkItem(1292, "https://github.com/dotnet/roslyn-analyzers/issues/1292")]
-        public async Task CA1052NoDiagnosticForSealedClassWithPublicConstructorAndStaticMembers()
+        public async Task CA1052NoDiagnosticForSealedClassWithPublicConstructorAndStaticMembersAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading;
@@ -113,7 +117,7 @@ public sealed class ConcurrentCreationDummy
         }
 
         [Fact]
-        public async Task CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersCSharp()
+        public async Task CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C4
@@ -125,7 +129,7 @@ public class C4
         }
 
         [Fact]
-        public async Task CA1052DiagnosticForNonStaticClassWithOnlySharedDeclaredMembersBasic()
+        public async Task CA1052DiagnosticForNonStaticClassWithOnlySharedDeclaredMembersBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B4
@@ -137,7 +141,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithBothStaticAndInstanceDeclaredMembersCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithBothStaticAndInstanceDeclaredMembersCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C5
@@ -149,7 +153,7 @@ public class C5
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithBothSharedAndInstanceDeclaredMembersBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithBothSharedAndInstanceDeclaredMembersBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B5
@@ -163,7 +167,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForInternalClassWithOnlyStaticDeclaredMembersCSharp()
+        public async Task CA1052NoDiagnosticForInternalClassWithOnlyStaticDeclaredMembersCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 internal class C6
@@ -174,7 +178,7 @@ internal class C6
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public async Task CA1052NoDiagnosticForEffectivelyInternalClassWithOnlyStaticDeclaredMembersCSharp()
+        public async Task CA1052NoDiagnosticForEffectivelyInternalClassWithOnlyStaticDeclaredMembersCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 internal class C6
@@ -188,7 +192,7 @@ internal class C6
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForFriendClassWithOnlySharedDeclaredMembersBasic()
+        public async Task CA1052NoDiagnosticForFriendClassWithOnlySharedDeclaredMembersBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Friend Class B6
@@ -199,7 +203,7 @@ End Class
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public async Task CA1052NoDiagnosticForEffectivelyFriendClassWithOnlySharedDeclaredMembersBasic()
+        public async Task CA1052NoDiagnosticForEffectivelyFriendClassWithOnlySharedDeclaredMembersBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Friend Class B6
@@ -212,7 +216,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithUserDefinedOperatorCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithUserDefinedOperatorCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C7
@@ -226,7 +230,7 @@ public class C7
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithUserDefinedOperatorBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithUserDefinedOperatorBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B7
@@ -238,7 +242,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticMethodAndUserDefinedOperatorCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticMethodAndUserDefinedOperatorCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C8
@@ -254,7 +258,7 @@ public class C8
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithSharedMethodAndUserDefinedOperatorBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithSharedMethodAndUserDefinedOperatorBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B8
@@ -269,7 +273,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052DiagnosticForNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
+        public async Task CA1052DiagnosticForNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C9
@@ -283,7 +287,7 @@ public class C9
         }
 
         [Fact]
-        public async Task CA1052DiagnosticForNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasic()
+        public async Task CA1052DiagnosticForNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B9
@@ -298,7 +302,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052DiagnosticForNonStaticClassWithProtectedDefaultConstructorAndStaticMethodCSharp()
+        public async Task CA1052DiagnosticForNonStaticClassWithProtectedDefaultConstructorAndStaticMethodCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C10
@@ -312,7 +316,7 @@ public class C10
         }
 
         [Fact]
-        public async Task CA1052DiagnosticForNonStaticClassWithProtectedDefaultConstructorAndSharedMethodBasic()
+        public async Task CA1052DiagnosticForNonStaticClassWithProtectedDefaultConstructorAndSharedMethodBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B10
@@ -327,7 +331,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052DiagnosticForNonStaticClassWithPrivateDefaultConstructorAndStaticMethodCSharp()
+        public async Task CA1052DiagnosticForNonStaticClassWithPrivateDefaultConstructorAndStaticMethodCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C11
@@ -341,7 +345,7 @@ public class C11
         }
 
         [Fact]
-        public async Task CA1052DiagnosticForNonStaticClassWithPrivateDefaultConstructorAndSharedMethodBasic()
+        public async Task CA1052DiagnosticForNonStaticClassWithPrivateDefaultConstructorAndSharedMethodBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B11
@@ -356,7 +360,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorAndStaticMethodCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorAndStaticMethodCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C12
@@ -369,7 +373,7 @@ public class C12
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorAndSharedMethodBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorAndSharedMethodBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B12
@@ -383,7 +387,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorWithDefaultedParametersAndStaticMethodCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorWithDefaultedParametersAndStaticMethodCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C13
@@ -396,7 +400,7 @@ public class C13
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorWithOptionalParametersAndSharedMethodBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorWithOptionalParametersAndSharedMethodBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B13
@@ -410,7 +414,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052DiagnosticForNestedPublicNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
+        public async Task CA1052DiagnosticForNestedPublicNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C14
@@ -428,7 +432,7 @@ public class C14
         }
 
         [Fact]
-        public async Task CA1052DiagnosticForNestedPublicNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasic()
+        public async Task CA1052DiagnosticForNestedPublicNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B14
@@ -448,7 +452,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForEmptyStaticClassCSharp()
+        public async Task CA1052NoDiagnosticForEmptyStaticClassCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public static class C15
@@ -458,7 +462,7 @@ public static class C15
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticConstructorCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticConstructorCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C16
@@ -469,7 +473,7 @@ public class C16
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticConstructorBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticConstructorBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B16
@@ -480,7 +484,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForStaticClassWithStaticConstructorCSharp()
+        public async Task CA1052NoDiagnosticForStaticClassWithStaticConstructorCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public static class C17
@@ -491,7 +495,7 @@ public static class C17
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C18
@@ -503,7 +507,7 @@ public class C18
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B18
@@ -517,7 +521,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052DiagnosticForNestedPublicClassInOtherwiseEmptyNonStaticClassCSharp()
+        public async Task CA1052DiagnosticForNestedPublicClassInOtherwiseEmptyNonStaticClassCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C19
@@ -531,7 +535,7 @@ public class C19
         }
 
         [Fact]
-        public async Task CA1052DiagnosticForNestedPublicClassInOtherwiseEmptyNonStaticClassBasic()
+        public async Task CA1052DiagnosticForNestedPublicClassInOtherwiseEmptyNonStaticClassBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B19
@@ -543,7 +547,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticAnEnumCSharp()
+        public async Task CA1052NoDiagnosticAnEnumCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public enum E20
@@ -554,7 +558,7 @@ public enum E20
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticAnEnumBasic()
+        public async Task CA1052NoDiagnosticAnEnumBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Enum EB20
@@ -564,7 +568,7 @@ End Enum
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticOnClassWithOnlyDefaultConstructorCSharp()
+        public async Task CA1052NoDiagnosticOnClassWithOnlyDefaultConstructorCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C21
@@ -575,7 +579,7 @@ public class C21
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticOnClassWithOnlyDefaultConstructorBasic()
+        public async Task CA1052NoDiagnosticOnClassWithOnlyDefaultConstructorBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B21
@@ -586,7 +590,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNestedPrivateNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
+        public async Task CA1052NoDiagnosticForNestedPrivateNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C22
@@ -603,7 +607,7 @@ public class C22
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNestedPrivateNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasic()
+        public async Task CA1052NoDiagnosticForNestedPrivateNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B22
@@ -622,7 +626,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C23Base
@@ -636,7 +640,7 @@ public class C23 : C23Base
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B23Base
@@ -650,7 +654,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public interface IC24Base
@@ -664,7 +668,7 @@ public class C24 : IC24Base
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Interface IB24Base
@@ -678,7 +682,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndNotEmptyBaseInterfaceCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndNotEmptyBaseInterfaceCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public interface IC25Base
@@ -694,7 +698,7 @@ public class C25 : IC25Base
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndNotEmptyBaseInterfaceBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndNotEmptyBaseInterfaceBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Interface IB25Base
@@ -711,7 +715,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C26 :{|CS1031:|}
@@ -722,7 +726,7 @@ public class C26 :{|CS1031:|}
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B26
@@ -734,7 +738,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionCSharp()
+        public async Task CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C27 :{|CS1031:|}
@@ -744,7 +748,7 @@ public class C27 :{|CS1031:|}
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionBasic()
+        public async Task CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B27
@@ -754,7 +758,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyPrivateAndProtectedStaticMethodsCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyPrivateAndProtectedStaticMethodsCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C28
@@ -766,7 +770,7 @@ public class C28
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyPrivateAndProtectedStaticMethodsBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyPrivateAndProtectedStaticMethodsBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B28
@@ -779,7 +783,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C29
@@ -790,7 +794,7 @@ public class C29
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyImplicitConversionOperatorsCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyImplicitConversionOperatorsCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C29
@@ -801,7 +805,7 @@ public class C29
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B29
@@ -813,7 +817,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1052NoDiagnosticForAbstractNonStaticClassCSharp()
+        public async Task CA1052NoDiagnosticForAbstractNonStaticClassCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public abstract class C1
@@ -822,6 +826,21 @@ public abstract class C1
     }
 }
 ");
+        }
+
+        [Fact]
+        public async Task CA1052NoDiagnosticRecordsAsync()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                TestCode = @"
+public record C
+{
+    public static void M() { }
+}
+"
+            }.RunAsync();
         }
     }
 }

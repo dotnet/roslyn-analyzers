@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -9,6 +9,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA1068: CancellationToken parameters must come last.
     /// </summary>
@@ -17,20 +19,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA1068";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.CancellationTokenParametersMustComeLastTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.CancellationTokenParametersMustComeLastMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            s_localizableTitle,
-            s_localizableMessage,
+            CreateLocalizableResourceString(nameof(CancellationTokenParametersMustComeLastTitle)),
+            CreateLocalizableResourceString(nameof(CancellationTokenParametersMustComeLastMessage)),
             DiagnosticCategory.Design,
             RuleLevel.IdeSuggestion,
             description: null,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -42,6 +41,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationContext.Compilation);
                 INamedTypeSymbol? cancellationTokenType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingCancellationToken);
                 INamedTypeSymbol? iprogressType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIProgress1);
+
+                var builder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+                builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesCallerFilePathAttribute));
+                builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesCallerLineNumberAttribute));
+                builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesCallerMemberNameAttribute));
+                var callerInformationAttributes = builder.ToImmutable();
+
                 if (cancellationTokenType == null)
                 {
                     return;
@@ -56,8 +62,28 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
+                    if (!symbolContext.Options.MatchesConfiguredVisibility(Rule, methodSymbol, symbolContext.Compilation,
+                            defaultRequiredVisibility: SymbolVisibilityGroup.All))
+                    {
+                        return;
+                    }
+
+                    if (symbolContext.Options.IsConfiguredToSkipAnalysis(Rule, methodSymbol,
+                            symbolContext.Compilation))
+                    {
+                        return;
+                    }
+
                     int last = methodSymbol.Parameters.Length - 1;
                     if (last >= 0 && methodSymbol.Parameters[last].IsParams)
+                    {
+                        last--;
+                    }
+
+                    // Ignore parameters that have any of these attributes.
+                    // C# reserved attributes: https://docs.microsoft.com/dotnet/csharp/language-reference/attributes/caller-information
+                    while (last >= 0
+                        && HasCallerInformationAttribute(methodSymbol.Parameters[last], callerInformationAttributes))
                     {
                         last--;
                     }
@@ -73,8 +99,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         {
                             if (methodSymbol.Parameters[last].Type.Equals(cancellationTokenType))
                             {
-                                symbolContext.ReportDiagnostic(Diagnostic.Create(
-                                    Rule, methodSymbol.Locations.First(), methodSymbol.ToDisplayString()));
+                                symbolContext.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule, methodSymbol.ToDisplayString()));
                             }
 
                             last--;
@@ -115,13 +140,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             continue;
                         }
 
-                        symbolContext.ReportDiagnostic(Diagnostic.Create(
-                            Rule, methodSymbol.Locations.First(), methodSymbol.ToDisplayString()));
+                        symbolContext.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule, methodSymbol.ToDisplayString()));
                         break;
                     }
                 },
                 SymbolKind.Method);
             });
         }
+
+        private static bool HasCallerInformationAttribute(IParameterSymbol parameter, ImmutableHashSet<INamedTypeSymbol> callerAttributes)
+            => parameter.GetAttributes().Any(
+                attribute => callerAttributes.Any(
+                    callerAttribute => SymbolEqualityComparer.Default.Equals(callerAttribute, attribute.AttributeClass)));
     }
 }

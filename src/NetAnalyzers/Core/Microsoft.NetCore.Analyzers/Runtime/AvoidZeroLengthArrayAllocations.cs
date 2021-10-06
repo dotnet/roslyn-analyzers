@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -11,6 +11,8 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>Base type for an analyzer that looks for empty array allocations and recommends their replacement.</summary>
     public abstract class AvoidZeroLengthArrayAllocationsAnalyzer : DiagnosticAnalyzer
     {
@@ -22,19 +24,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         /// <summary>The name of the Empty method on System.Array.</summary>
         internal const string ArrayEmptyMethodName = "Empty";
 
-        private static readonly SymbolDisplayFormat ReportFormat = new SymbolDisplayFormat(
+        private static readonly SymbolDisplayFormat ReportFormat = new(
             memberOptions: SymbolDisplayMemberOptions.IncludeContainingType | SymbolDisplayMemberOptions.IncludeParameters,
             genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
             miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidZeroLengthArrayAllocationsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidZeroLengthArrayAllocationsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-
         /// <summary>The diagnostic descriptor used when Array.Empty should be used instead of a new array allocation.</summary>
         internal static readonly DiagnosticDescriptor UseArrayEmptyDescriptor = DiagnosticDescriptorHelper.Create(
             RuleId,
-            s_localizableTitle,
-            s_localizableMessage,
+            CreateLocalizableResourceString(nameof(AvoidZeroLengthArrayAllocationsTitle)),
+            CreateLocalizableResourceString(nameof(AvoidZeroLengthArrayAllocationsMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
             description: null,
@@ -42,7 +41,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isDataflowRule: false);
 
         /// <summary>Gets the set of supported diagnostic descriptors from this analyzer.</summary>
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(UseArrayEmptyDescriptor);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(UseArrayEmptyDescriptor);
 
         public sealed override void Initialize(AnalysisContext context)
         {
@@ -77,6 +76,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // We can't replace array allocations in attributes, as they're persisted to metadata
             // TODO: Once we have operation walkers, we can replace this syntactic check with an operation-based check.
             if (arrayCreationExpression.Syntax.Ancestors().Any(isAttributeSytnax))
+            {
+                return;
+            }
+
+            var linqExpressionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqExpressionsExpression1);
+            if (arrayCreationExpression.IsWithinExpressionTree(linqExpressionType))
             {
                 return;
             }

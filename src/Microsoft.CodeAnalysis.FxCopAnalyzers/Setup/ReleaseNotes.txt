@@ -1,2 +1,0 @@
-May 2019: v3.0.0 Official Release
-Requires Visual Studio 2019 RTW or later.

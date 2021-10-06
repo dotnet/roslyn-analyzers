@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -16,7 +16,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class UsePropertiesWhereAppropriateTests
     {
         [Fact]
-        public async Task CSharp_CA1024NoDiagnosticCases()
+        public async Task CSharp_CA1024NoDiagnosticCasesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -117,6 +117,11 @@ public class Class1 : Base
         return null;
     }
 
+    public ref string GetPinnableReference() // If the method isn't ref-returning, there will be a diagnostic.
+    {
+        return ref fileName;
+    }
+
     // 10) Method with invocation expressions
     public int GetSomethingWithInvocation()
     {
@@ -142,11 +147,21 @@ public class Class1 : Base
         return fileName;
     }
 }
+
+public class Class2
+{
+    private string fileName = """";
+
+    public ref readonly string GetPinnableReference() // If the method isn't ref-returning, there will be a diagnostic.
+    {
+        return ref fileName;
+    }
+}
 ");
         }
 
         [Fact]
-        public async Task CSharp_CA1024DiagnosticCases()
+        public async Task CSharp_CA1024DiagnosticCasesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class
@@ -172,16 +187,22 @@ public class Class
     {
         return fileName;
     }
+
+    public int GetPinnableReference() // Not a ref-return method.
+    {
+        return 0;
+    }
 }
 ",
             GetCA1024CSharpResultAt(6, 19, "GetFileName"),
             GetCA1024CSharpResultAt(11, 19, "Get_FileName2"),
             GetCA1024CSharpResultAt(16, 19, "Get123"),
-            GetCA1024CSharpResultAt(21, 22, "GetFileNameProtected"));
+            GetCA1024CSharpResultAt(21, 22, "GetFileNameProtected"),
+            GetCA1024CSharpResultAt(26, 16, "GetPinnableReference"));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public async Task CSharp_CA1024NoDiagnosticCases_Internal()
+        public async Task CSharp_CA1024NoDiagnosticCases_InternalAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class
@@ -212,7 +233,7 @@ public class Class
         }
 
         [Fact]
-        public async Task VisualBasic_CA1024NoDiagnosticCases()
+        public async Task VisualBasic_CA1024NoDiagnosticCasesAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Collections
@@ -314,7 +335,7 @@ End Class
         }
 
         [Fact]
-        public async Task CSharp_CA1024NoDiagnosticOnUnboundMethodCaller()
+        public async Task CSharp_CA1024NoDiagnosticOnUnboundMethodCallerAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -331,7 +352,7 @@ public class class1
         }
 
         [Fact]
-        public async Task VisualBasic_CA1024NoDiagnosticOnUnboundMethodCaller()
+        public async Task VisualBasic_CA1024NoDiagnosticOnUnboundMethodCallerAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -346,7 +367,7 @@ End Class
         }
 
         [Fact]
-        public async Task VisualBasic_CA1024DiagnosticCases()
+        public async Task VisualBasic_CA1024DiagnosticCasesAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
@@ -376,7 +397,7 @@ End Class
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public async Task VisualBasic_CA1024NoDiagnosticCases_Internal()
+        public async Task VisualBasic_CA1024NoDiagnosticCases_InternalAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
@@ -402,7 +423,7 @@ End Class
         }
 
         [Fact, WorkItem(1551, "https://github.com/dotnet/roslyn-analyzers/issues/1551")]
-        public async Task CA1024_ExplicitInterfaceImplementation_NoDiagnostic()
+        public async Task CA1024_ExplicitInterfaceImplementation_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public interface ISomething
@@ -421,7 +442,7 @@ public class Something : ISomething
         }
 
         [Fact, WorkItem(1551, "https://github.com/dotnet/roslyn-analyzers/issues/1551")]
-        public async Task CA1024_ImplicitInterfaceImplementation_NoDiagnostic()
+        public async Task CA1024_ImplicitInterfaceImplementation_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public interface ISomething
@@ -440,7 +461,7 @@ public class Something : ISomething
         }
 
         [Fact, WorkItem(3877, "https://github.com/dotnet/roslyn-analyzers/issues/3877")]
-        public async Task CA1024_ReturnsTask_NoDiagnostic()
+        public async Task CA1024_ReturnsTask_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading.Tasks;
@@ -478,14 +499,77 @@ End Class
 ");
         }
 
+        [Fact, WorkItem(4623, "https://github.com/dotnet/roslyn-analyzers/issues/4623")]
+        public async Task AwaiterPattern_INotifyCompletion_NoDiagnosticAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Runtime.CompilerServices;
+
+public class DummyAwaiter : INotifyCompletion
+{
+    public object GetResult() => null;
+
+    public bool IsCompleted => false;
+
+    public void OnCompleted(Action continuation) => throw null;
+}");
+        }
+
+        [Fact, WorkItem(4623, "https://github.com/dotnet/roslyn-analyzers/issues/4623")]
+        public async Task AwaiterPattern_ICriticalNotifyCompletion_NoDiagnosticAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Runtime.CompilerServices;
+
+public class DummyAwaiter : ICriticalNotifyCompletion
+{
+    public object GetResult() => null;
+
+    public bool IsCompleted => false;
+
+    public void OnCompleted(Action continuation) => throw null;
+    public void UnsafeOnCompleted(Action continuation) => throw null;
+}");
+        }
+
+        [Fact, WorkItem(4623, "https://github.com/dotnet/roslyn-analyzers/issues/4623")]
+        public async Task AwaitablePattern_NoDiagnosticAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Runtime.CompilerServices;
+
+public class DummyAwaitable
+{
+    public DummyAwaiter GetAwaiter() => new DummyAwaiter();
+}
+
+public class DummyAwaiter : INotifyCompletion
+{
+    public void GetResult()
+    {
+    }
+
+    public bool IsCompleted => false;
+
+    public void OnCompleted(Action continuation) => throw null;
+}");
+        }
+
         private static DiagnosticResult GetCA1024CSharpResultAt(int line, int column, string methodName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(methodName);
 
         private static DiagnosticResult GetCA1024BasicResultAt(int line, int column, string methodName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(methodName);
     }
 }

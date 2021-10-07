@@ -2317,6 +2317,26 @@
         <target state="translated">'static' 修飾子と 'abstract' 修飾子の両方を使用するには、プレビュー機能を選択する必要があります。詳細については、「https://aka.ms/dotnet-warnings/preview-features」を参照してください。</target>
         <note />
       </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntCodeFixTitle">
+        <source>Use correct overload</source>
+        <target state="new">Use correct overload</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntDescription">
+        <source>Implicit cast from char to int in method call is suspicious. Consider using a different overload.</source>
+        <target state="new">Implicit cast from char to int in method call is suspicious. Consider using a different overload.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntMessage">
+        <source>Suspicious implicit cast from char to int</source>
+        <target state="new">Suspicious implicit cast from char to int</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntTitle">
+        <source>Suspicious cast from char to int</source>
+        <target state="new">Suspicious cast from char to int</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TestForEmptyStringsUsingStringLengthDescription">
         <source>Comparing strings by using the String.Length property or the String.IsNullOrEmpty method is significantly faster than using Equals.</source>
         <target state="translated">String.Length プロパティまたは String.IsNullOrEmpty メソッドを使用して文字列を比較すると、Equals を使用した場合よりも処理速度が大幅に向上します。</target>

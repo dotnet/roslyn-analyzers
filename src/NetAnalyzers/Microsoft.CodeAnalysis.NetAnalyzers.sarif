@@ -2944,6 +2944,25 @@
             ]
           }
         },
+        "CA2019": {
+          "id": "CA2019",
+          "shortDescription": "Use correct overload",
+          "fullDescription": "Implicit cast from char to int in method call is suspicious. Consider using a different overload.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "SuspiciousCastFromCharToIntAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2100": {
           "id": "CA2100",
           "shortDescription": "Review SQL queries for security vulnerabilities",

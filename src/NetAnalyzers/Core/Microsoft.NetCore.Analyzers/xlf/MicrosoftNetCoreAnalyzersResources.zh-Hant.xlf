@@ -2317,6 +2317,26 @@
         <target state="translated">同時使用 'static' 和 'abstract' 修飾元必須加入預覽功能。如需詳細資訊，請參閱 https://aka.ms/dotnet-warnings/preview-features。</target>
         <note />
       </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntCodeFixTitle">
+        <source>Use correct overload</source>
+        <target state="new">Use correct overload</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntDescription">
+        <source>Implicit cast from char to int in method call is suspicious. Consider using a different overload.</source>
+        <target state="new">Implicit cast from char to int in method call is suspicious. Consider using a different overload.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntMessage">
+        <source>Suspicious implicit cast from char to int</source>
+        <target state="new">Suspicious implicit cast from char to int</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntTitle">
+        <source>Suspicious cast from char to int</source>
+        <target state="new">Suspicious cast from char to int</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TestForEmptyStringsUsingStringLengthDescription">
         <source>Comparing strings by using the String.Length property or the String.IsNullOrEmpty method is significantly faster than using Equals.</source>
         <target state="translated">使用 String.Length 屬性或 String.IsNullOrEmpty 方法來比較字串的速度，大幅快過於使用 Equals。</target>

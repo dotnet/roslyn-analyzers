@@ -2317,6 +2317,26 @@
         <target state="translated">Per l'uso di entrambi i modificatori 'static' e 'abstract' è richiesto il consenso esplicito per le funzionalità di anteprima. Per altre informazioni, vedere https://aka.ms/dotnet-warnings/preview-features.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntCodeFixTitle">
+        <source>Use correct overload</source>
+        <target state="new">Use correct overload</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntDescription">
+        <source>Implicit cast from char to int in method call is suspicious. Consider using a different overload.</source>
+        <target state="new">Implicit cast from char to int in method call is suspicious. Consider using a different overload.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntMessage">
+        <source>Suspicious implicit cast from char to int</source>
+        <target state="new">Suspicious implicit cast from char to int</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntTitle">
+        <source>Suspicious cast from char to int</source>
+        <target state="new">Suspicious cast from char to int</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TestForEmptyStringsUsingStringLengthDescription">
         <source>Comparing strings by using the String.Length property or the String.IsNullOrEmpty method is significantly faster than using Equals.</source>
         <target state="translated">Il confronto di stringhe è notevolmente più rapido se si usa la proprietà String.Length o il metodo String.IsNullOrEmpty invece di Equals.</target>

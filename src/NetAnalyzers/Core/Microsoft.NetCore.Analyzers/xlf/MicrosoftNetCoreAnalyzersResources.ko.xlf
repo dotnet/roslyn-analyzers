@@ -2317,6 +2317,26 @@
         <target state="translated">'정적' 및 '추상' 한정자를 모두 사용하려면 미리 보기 기능을 선택해야 합니다. 자세한 내용은 https://aka.ms/dotnet-warnings/preview-features를 참조하세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntCodeFixTitle">
+        <source>Use correct overload</source>
+        <target state="new">Use correct overload</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntDescription">
+        <source>Implicit cast from char to int in method call is suspicious. Consider using a different overload.</source>
+        <target state="new">Implicit cast from char to int in method call is suspicious. Consider using a different overload.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntMessage">
+        <source>Suspicious implicit cast from char to int</source>
+        <target state="new">Suspicious implicit cast from char to int</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuspiciousCastFromCharToIntTitle">
+        <source>Suspicious cast from char to int</source>
+        <target state="new">Suspicious cast from char to int</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TestForEmptyStringsUsingStringLengthDescription">
         <source>Comparing strings by using the String.Length property or the String.IsNullOrEmpty method is significantly faster than using Equals.</source>
         <target state="translated">String.Length 속성 또는 String.IsNullOrEmpty 메서드를 사용하면 Equals를 사용하는 것보다 훨씬 빠르게 문자열을 비교할 수 있습니다.</target>

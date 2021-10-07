@@ -1022,6 +1022,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static bool SymbolIsAnnotatedAsPreview(ISymbol symbol, ConcurrentDictionary<ISymbol, (bool isPreview, string? message, string? url)> requiresPreviewFeaturesSymbols, INamedTypeSymbol previewFeatureAttribute)
         {
+            if (symbol is null)
+            {
+                // We are sometimes null, such as for IPropertySymbol.GetOverriddenMember()
+                // when the property symbol represents an indexer, so return false as a precaution
+                return false;
+            }
+
             if (!requiresPreviewFeaturesSymbols.TryGetValue(symbol, out (bool isPreview, string? message, string? url) existing))
             {
                 ImmutableArray<AttributeData> attributes = symbol.GetAttributes();

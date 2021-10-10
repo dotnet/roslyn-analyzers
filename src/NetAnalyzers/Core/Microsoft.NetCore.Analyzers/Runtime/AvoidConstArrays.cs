@@ -21,20 +21,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA1850";
 
-        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysTitle));
-        private static readonly LocalizableString s_localizableMessage = CreateLocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysMessage));
-        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysDescription));
-
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-            s_localizableTitle,
-            s_localizableMessage,
+            CreateLocalizableResourceString(AvoidConstArraysTitle),
+            CreateLocalizableResourceString(AvoidConstArraysMessage),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
-            s_localizableDescription,
+            CreateLocalizableResourceString(AvoidConstArraysDescription),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get;  } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {

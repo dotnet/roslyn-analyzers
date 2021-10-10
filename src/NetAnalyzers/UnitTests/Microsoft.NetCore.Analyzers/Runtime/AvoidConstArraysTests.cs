@@ -381,6 +381,21 @@ public class A
     }
 }
 ");
+
+            // A lambda with an array creation
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Linq;
+
+public class A
+{
+    public void B()
+    {
+        var x = new string[] { ""a"", ""b"" };
+        var y = x.Select(z => new[] { z, ""c"" }); // [ac, bc]
+    }
+}
+");
         }
     }
 }

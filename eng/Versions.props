@@ -65,7 +65,7 @@
     <MicrosoftNETCoreAppRefVersion>6.0.0-preview.4.21253.7</MicrosoftNETCoreAppRefVersion>
     <MicrosoftVisualBasicVersion>10.1.0</MicrosoftVisualBasicVersion>
     <MicrosoftVisualStudioCompositionVersion>16.1.8</MicrosoftVisualStudioCompositionVersion>
-    <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
+    <NewtonsoftJsonVersion>12.0.1</NewtonsoftJsonVersion>
     <PerfolizerVersion>0.2.1</PerfolizerVersion>
     <SQLitePCLRawVersion>1.1.2</SQLitePCLRawVersion>
     <SystemCommandLineRenderingVersion>2.0.0-beta1.20074.1</SystemCommandLineRenderingVersion>

@@ -392,7 +392,7 @@ public class A
     public void B()
     {
         var x = new string[] { ""a"", ""b"" };
-        var y = x.Select(z => new[] { z, ""c"" }); // [ac, bc]
+        var y = x.Select(z => new[] { ""c"" });
     }
 }
 ");

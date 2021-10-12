@@ -147,7 +147,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static string GetMemberNameFromType(IArrayCreationOperation arrayCreationOperation)
         {
 #pragma warning disable CA1308 // Normalize strings to uppercase
-            return ((IArrayTypeSymbol)arrayCreationOperation.Type).ElementType.Name.ToLowerInvariant() + "Array";
+            return ((IArrayTypeSymbol)arrayCreationOperation.Type).ElementType.OriginalDefinition.Name.ToLowerInvariant() + "Array";
 #pragma warning restore CA1308 // Normalize strings to uppercase
         }
 

@@ -101,7 +101,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     // Must be literal array
-                    if (!arrayCreationOperation.Initializer.ElementValues.All(x => x is ILiteralOperation))
+                    if (arrayCreationOperation.Initializer.ElementValues.Any(x => x is not ILiteralOperation))
                     {
                         return;
                     }

@@ -62,8 +62,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
                     else if (context.Operation is IInvocationOperation invocationOperation) // For arrays passed in extension methods, like in LINQ
                     {
-                        if (invocationOperation.Descendants().Any(x => x is IArrayCreationOperation)
-                            && invocationOperation.Descendants().Any(x => x is IArgumentOperation))
+                        IEnumerable<IOperation> invocationDescendants = invocationOperation.Descendants();
+                        if (invocationDescendants.Any(x => x is IArrayCreationOperation)
+                            && invocationDescendants.Any(x => x is IArgumentOperation))
                         {
                             // This is an invocation that contains an array as an argument
                             // This will get caught by the first case in another cycle

@@ -173,6 +173,64 @@ public class A
 }
 ");
 
+            // A lambda with an array creation
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+using System.Linq;
+
+public class A
+{
+    public void B()
+    {
+        var x = new string[] { ""a"", ""b"" };
+        var y = x.Select(z => {|CA1850:new[] { ""c"" }|});
+    }
+}
+", @"
+using System;
+using System.Linq;
+
+public class A
+{
+    private static readonly string[] stringArray = new[] { ""c"" };
+
+    public void B()
+    {
+        var x = new string[] { ""a"", ""b"" };
+        var y = x.Select(z => stringArray);
+    }
+}
+");
+
+            // A lambda with an invoked array creation
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+using System.Linq;
+
+public class A
+{
+    public void B()
+    {
+        var x = new string[] { ""a"", ""b"" };
+        var y = x.Select(z => {|CA1850:new[] { ""c"" }|}.First());
+    }
+}
+", @"
+using System;
+using System.Linq;
+
+public class A
+{
+    private static readonly string[] sourceArray = new[] { ""c"" };
+
+    public void B()
+    {
+        var x = new string[] { ""a"", ""b"" };
+        var y = x.Select(z => sourceArray.First());
+    }
+}
+");
+
             // Extension method usage
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
@@ -378,21 +436,6 @@ public class A
 
     private void C(ReadOnlySpan<bool> span)
     {
-    }
-}
-");
-
-            // A lambda with an array creation
-            await VerifyCS.VerifyAnalyzerAsync(@"
-using System;
-using System.Linq;
-
-public class A
-{
-    public void B()
-    {
-        var x = new string[] { ""a"", ""b"" };
-        var y = x.Select(z => new[] { ""c"" });
     }
 }
 ");

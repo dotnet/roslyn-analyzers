@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -18,7 +18,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         #region CSharpUnitTests
 
         [Fact]
-        public async Task CSharp_CA1028_NoDiagnostic()
+        public async Task CSharp_CA1028_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -57,7 +57,7 @@ namespace Test
         }
 
         [Fact]
-        public async Task CSharp_CA1028_DiagnosticForInt64WithNoFlags()
+        public async Task CSharp_CA1028_DiagnosticForInt64WithNoFlagsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -74,7 +74,7 @@ namespace Test
         }
 
         [Fact]
-        public async Task CSharp_CA1028_DiagnosticForSByte()
+        public async Task CSharp_CA1028_DiagnosticForSByteAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -91,7 +91,7 @@ namespace Test
         }
 
         [Fact]
-        public async Task CSharp_CA1028_DiagnosticForUShort()
+        public async Task CSharp_CA1028_DiagnosticForUShortAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -111,7 +111,7 @@ namespace Test
         #region BasicUnitTests
 
         [Fact]
-        public async Task Basic_CA1028_NoDiagnostic()
+        public async Task Basic_CA1028_NoDiagnosticAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -143,7 +143,7 @@ End Module
         }
 
         [Fact]
-        public async Task Basic_CA1028_DiagnosticForInt64WithNoFlags()
+        public async Task Basic_CA1028_DiagnosticForInt64WithNoFlagsAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -158,7 +158,7 @@ End Module
         }
 
         [Fact]
-        public async Task Basic_CA1028_DiagnosticForByte()
+        public async Task Basic_CA1028_DiagnosticForByteAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -173,7 +173,7 @@ End Module
         }
 
         [Fact]
-        public async Task Basic_CA1028_DiagnosticForUShort()
+        public async Task Basic_CA1028_DiagnosticForUShortAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -189,13 +189,17 @@ End Module
         #endregion
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
     }
 }

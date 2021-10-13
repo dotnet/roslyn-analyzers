@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Text;
@@ -148,7 +148,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     builder
                         .Append(AsyncKeyword)
                         .Append(' ');
-                };
+                }
 
                 return builder
                     .Append(@"void M()
@@ -282,7 +282,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     builder
                         .Append(AsyncKeyword)
                         .Append(' ');
-                };
+                }
 
                 return builder
                     .Append(@"Sub M()
@@ -438,8 +438,10 @@ End Namespace
                 }
 
                 test.TestState.ExpectedDiagnostics.Add(
+#pragma warning disable RS0030 // Do not used banned APIs
                     Test.Utilities.CSharpCodeFixVerifier<TAnalyzer, TCodeFix>.Diagnostic(this.DiagnosticId)
                         .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                         .WithArguments(methodName));
 
                 foreach (var fixedSource in fixedSources)
@@ -492,8 +494,10 @@ End Namespace
                 }
 
                 test.TestState.ExpectedDiagnostics.Add(
+#pragma warning disable RS0030 // Do not used banned APIs
                     Test.Utilities.VisualBasicCodeFixVerifier<TAnalyzer, TCodeFix>.Diagnostic(this.DiagnosticId)
                         .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                         .WithArguments(methodName));
 
                 foreach (var fixedSource in fixedSources)

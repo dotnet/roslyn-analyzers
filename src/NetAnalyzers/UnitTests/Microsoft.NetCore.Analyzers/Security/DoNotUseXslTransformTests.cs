@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -12,7 +12,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     public class DoNotUseXslTransformTests
     {
         [Fact]
-        public async Task TestConstructXslTransformDiagnostic()
+        public async Task TestConstructXslTransformDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -29,7 +29,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestConstructNormalClassNoDiagnostic()
+        public async Task TestConstructNormalClassNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -45,7 +45,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestInvokeMethodOfXslTransformNoDiagnostic()
+        public async Task TestInvokeMethodOfXslTransformNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -61,7 +61,9 @@ class TestClass
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
     }
 }

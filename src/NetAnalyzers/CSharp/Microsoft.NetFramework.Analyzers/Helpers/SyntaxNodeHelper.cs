@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Linq;
@@ -301,11 +301,11 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
                    node.AncestorsAndSelf().OfType<FieldDeclarationSyntax>().FirstOrDefault() != null;
         }
 
-        public override SyntaxNode? GetVariableDeclaratorOfAFieldDeclarationNode(SyntaxNode? node)
+        public override SyntaxNode? GetVariableDeclaratorOfAFieldDeclarationNode(SyntaxNode? objectCreationExpression)
         {
-            if (IsObjectCreationExpressionUnderFieldDeclaration(node))
+            if (IsObjectCreationExpressionUnderFieldDeclaration(objectCreationExpression))
             {
-                return node.AncestorsAndSelf().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
+                return objectCreationExpression.AncestorsAndSelf().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
             }
             else
             {

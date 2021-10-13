@@ -1,9 +1,8 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -12,62 +11,62 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA1019: Define accessors for attribute arguments
     ///
     /// Cause:
     /// In its constructor, an attribute defines arguments that do not have corresponding properties.
     /// </summary>
-    public abstract class DefineAccessorsForAttributeArgumentsAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class DefineAccessorsForAttributeArgumentsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1019";
         internal const string AddAccessorCase = "AddAccessor";
         internal const string MakePublicCase = "MakePublic";
         internal const string RemoveSetterCase = "RemoveSetter";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DefineAccessorsForAttributeArgumentsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_defaultRuleMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageDefault), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_increaseVisibilityMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_removeSetterMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageRemoveSetter), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(DefineAccessorsForAttributeArgumentsTitle));
 
-        internal static DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                                    s_localizableTitle,
-                                                                                    s_defaultRuleMessage,
-                                                                                    DiagnosticCategory.Design,
-                                                                                    RuleLevel.Disabled,
-                                                                                    description: null,
-                                                                                    isPortedFxCopRule: true,
-                                                                                    isDataflowRule: false,
-                                                                                    isEnabledByDefaultInFxCopAnalyzers: false);
+        internal static readonly DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DefineAccessorsForAttributeArgumentsMessageDefault)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: null,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor IncreaseVisibilityRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                                               s_localizableTitle,
-                                                                                               s_increaseVisibilityMessage,
-                                                                                               DiagnosticCategory.Design,
-                                                                                               RuleLevel.Disabled,
-                                                                                               description: null,
-                                                                                               isPortedFxCopRule: true,
-                                                                                               isDataflowRule: false,
-                                                                                               isEnabledByDefaultInFxCopAnalyzers: false);
+        internal static readonly DiagnosticDescriptor IncreaseVisibilityRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: null,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor RemoveSetterRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                                         s_localizableTitle,
-                                                                                         s_removeSetterMessage,
-                                                                                         DiagnosticCategory.Design,
-                                                                                         RuleLevel.Disabled,
-                                                                                         description: null,
-                                                                                         isPortedFxCopRule: true,
-                                                                                         isDataflowRule: false,
-                                                                                         isEnabledByDefaultInFxCopAnalyzers: false);
+        internal static readonly DiagnosticDescriptor RemoveSetterRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DefineAccessorsForAttributeArgumentsMessageRemoveSetter)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: null,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, IncreaseVisibilityRule, RemoveSetterRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DefaultRule, IncreaseVisibilityRule, RemoveSetterRule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol? attributeType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
                 if (attributeType == null)
@@ -83,7 +82,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             });
         }
 
-        private void AnalyzeSymbol(INamedTypeSymbol symbol, INamedTypeSymbol attributeType, Compilation compilation, Action<Diagnostic> addDiagnostic)
+        private static void AnalyzeSymbol(INamedTypeSymbol symbol, INamedTypeSymbol attributeType, Compilation compilation, Action<Diagnostic> addDiagnostic)
         {
             if (symbol != null && symbol.GetBaseTypesAndThis().Contains(attributeType) && symbol.DeclaredAccessibility != Accessibility.Private)
             {
@@ -95,11 +94,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
             }
         }
-
-        protected abstract bool IsAssignableTo(
-            [NotNullWhen(returnValue: true)] ITypeSymbol? fromSymbol,
-            [NotNullWhen(returnValue: true)] ITypeSymbol? toSymbol,
-            Compilation compilation);
 
         private static IEnumerable<IParameterSymbol> GetAllPublicConstructorParameters(INamedTypeSymbol attributeType)
         {
@@ -142,14 +136,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return propertiesMap;
         }
 
-        private void AnalyzeParameters(Compilation compilation, IEnumerable<IParameterSymbol> parameters, IDictionary<string, IPropertySymbol> propertiesMap, INamedTypeSymbol attributeType, Action<Diagnostic> addDiagnostic)
+        private static void AnalyzeParameters(Compilation compilation, IEnumerable<IParameterSymbol> parameters, IDictionary<string, IPropertySymbol> propertiesMap, INamedTypeSymbol attributeType, Action<Diagnostic> addDiagnostic)
         {
             foreach (IParameterSymbol parameter in parameters)
             {
                 if (parameter.Type.Kind != SymbolKind.ErrorType)
                 {
                     if (!propertiesMap.TryGetValue(parameter.Name, out IPropertySymbol property) ||
-                        !IsAssignableTo(parameter.Type, property.Type, compilation))
+                        !parameter.Type.IsAssignableTo(property.Type, compilation))
                     {
                         // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
                         addDiagnostic(GetDefaultDiagnostic(parameter, attributeType));

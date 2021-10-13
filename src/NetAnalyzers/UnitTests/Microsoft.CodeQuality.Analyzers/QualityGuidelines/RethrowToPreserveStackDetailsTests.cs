@@ -1,14 +1,15 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpRethrowToPreserveStackDetailsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.RethrowToPreserveStackDetailsAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicRethrowToPreserveStackDetailsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.RethrowToPreserveStackDetailsAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
@@ -16,7 +17,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
     public class RethrowToPreserveStackDetailsTests
     {
         [Fact]
-        public async Task CA2200_NoDiagnosticsForRethrow()
+        public async Task CA2200_NoDiagnosticsForRethrowAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -52,7 +53,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForThrowAnotherException()
+        public async Task CA2200_NoDiagnosticsForThrowAnotherExceptionAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -92,7 +93,55 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_DiagnosticForThrowCaughtException()
+        [WorkItem(4280, "https://github.com/dotnet/roslyn-analyzers/issues/4280")]
+        public async Task CA2200_NoDiagnosticsForThrowAnotherExceptionInWhenClauseAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+public abstract class C
+{
+    public void M()
+    {
+        try
+        {
+        }
+        catch (Exception ex) when (Map(ex, out Exception mappedEx))
+        {
+            throw mappedEx;
+        }
+    }
+    protected abstract bool Map(Exception ex, out Exception ex2);
+}
+");
+        }
+
+        [Fact]
+        [WorkItem(4280, "https://github.com/dotnet/roslyn-analyzers/issues/4280")]
+        public async Task CA2200_NoDiagnosticsForThrowAnotherExceptionInWhenClauseWithoutVariableDeclaratorAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public abstract class C
+{
+    public void M()
+    {
+        try
+        {
+        }
+        catch (Exception) when (Map(out Exception ex))
+        {
+            throw ex;
+        }
+    }
+
+    protected abstract bool Map(out Exception ex);
+}
+");
+        }
+
+        [Fact]
+        public async Task CA2200_DiagnosticForThrowCaughtExceptionAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -107,7 +156,7 @@ class Program
         }
         catch (ArithmeticException e)
         {
-            throw e;
+            [|throw e;|]
         }
     }
 
@@ -116,8 +165,7 @@ class Program
         throw new ArithmeticException();
     }
 }
-",
-           GetCA2200CSharpResultAt(14, 13));
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -127,16 +175,15 @@ Class Program
         Try
             Throw New ArithmeticException()
         Catch e As ArithmeticException
-            Throw e
+            [|Throw e|]
         End Try
     End Sub
 End Class
-",
-            GetCA2200BasicResultAt(9, 13));
+");
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForThrowCaughtReassignedException()
+        public async Task CA2200_NoDiagnosticsForThrowCaughtReassignedExceptionAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -179,7 +226,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForEmptyBlock()
+        public async Task CA2200_NoDiagnosticsForEmptyBlockAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -220,7 +267,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForThrowCaughtExceptionInAnotherScope()
+        public async Task CA2200_NoDiagnosticsForThrowCaughtExceptionInAnotherScopeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -248,7 +295,7 @@ class Program
         }
 
         [Fact]
-        public async Task CA2200_SingleDiagnosticForThrowCaughtExceptionInSpecificScope()
+        public async Task CA2200_SingleDiagnosticForThrowCaughtExceptionInSpecificScopeAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -260,16 +307,15 @@ Class Program
         Catch e As ArithmeticException
             [|Throw e|]
         Catch e As Exception
-            Throw e
+            [|Throw e|]
         End Try
     End Sub
 End Class
-",
-            GetCA2200BasicResultAt(11, 13));
+");
         }
 
         [Fact]
-        public async Task CA2200_MultipleDiagnosticsForThrowCaughtExceptionAtMultiplePlaces()
+        public async Task CA2200_MultipleDiagnosticsForThrowCaughtExceptionAtMultiplePlacesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -284,11 +330,11 @@ class Program
         }
         catch (ArithmeticException e)
         {
-            throw e;
+            [|throw e;|]
         }
         catch (Exception e)
         {
-            throw e;
+            [|throw e;|]
         }
     }
 
@@ -297,9 +343,7 @@ class Program
         throw new ArithmeticException();
     }
 }
-",
-            GetCA2200CSharpResultAt(14, 13),
-            GetCA2200CSharpResultAt(18, 13));
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -309,19 +353,17 @@ Class Program
         Try
             Throw New ArithmeticException()
         Catch e As ArithmeticException
-            Throw e
+            [|Throw e|]
         Catch e As Exception
-            Throw e
+            [|Throw e|]
         End Try
     End Sub
 End Class
-",
-            GetCA2200BasicResultAt(9, 13),
-            GetCA2200BasicResultAt(11, 13));
+");
         }
 
         [Fact]
-        public async Task CA2200_DiagnosticForThrowOuterCaughtException()
+        public async Task CA2200_NoDiagnosticForThrowOuterCaughtExceptionAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -347,8 +389,7 @@ class Program
         }
     }
 }
-",
-            GetCA2200CSharpResultAt(20, 17));
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -366,12 +407,11 @@ Class Program
         End Try
     End Sub
 End Class
-",
-            GetCA2200BasicResultAt(12, 17));
+");
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForNestingWithCompileErrors()
+        public async Task CA2200_NoDiagnosticsForNestingWithCompileErrorsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -435,7 +475,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForCatchWithoutIdentifier()
+        public async Task CA2200_NoDiagnosticsForCatchWithoutIdentifierAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -459,7 +499,7 @@ class Program
 
         [Fact]
         [WorkItem(2167, "https://github.com/dotnet/roslyn-analyzers/issues/2167")]
-        public async Task CA2200_NoDiagnosticsForCatchWithoutArgument()
+        public async Task CA2200_NoDiagnosticsForCatchWithoutArgumentAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -495,12 +535,120 @@ End Class
 ");
         }
 
-        private static DiagnosticResult GetCA2200BasicResultAt(int line, int column)
-            => VerifyVB.Diagnostic()
-                .WithLocation(line, column);
+        [Fact]
+        public async Task CA2200_DiagnosticsForThrowCaughtExceptionInLocalMethodAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
 
-        private static DiagnosticResult GetCA2200CSharpResultAt(int line, int column)
-            => VerifyCS.Diagnostic()
-                .WithLocation(line, column);
+class Program
+{
+    void CatchAndRethrowExplicitly()
+    {
+        try
+        {
+        }
+        catch (Exception e)
+        {
+            DoThrow();
+
+            void DoThrow()
+            {
+                throw e;
+            }
+        }
+    }
+}
+");
+        }
+
+        [Fact]
+        public async Task CA2200_NoDiagnosticsForThrowCaughtExceptionInLocalMethodAfterReassignmentAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+class Program
+{
+    void CatchAndRethrowExplicitly()
+    {
+        try
+        {
+        }
+        catch (Exception e)
+        {
+            e = new ArgumentException();
+            DoThrow();
+
+            void DoThrow()
+            {
+                throw e; // This should not fire.
+            }
+        }
+    }
+}
+");
+        }
+
+        [Fact]
+        public async Task CA2200_NoDiagnosticsForThrowCaughtExceptionInActionOrFuncAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+class Program
+{
+    void CatchAndRethrowExplicitly()
+    {
+        try
+        {
+        }
+        catch (Exception e)
+        {
+            Action DoThrowAction = () =>
+            {
+                throw e;
+            };
+
+            Func<int> DoThrowFunc = () =>
+            {
+                throw e;
+            };
+
+
+            DoThrowAction();
+            var result = DoThrowFunc();
+        }
+    }
+}
+");
+        }
+
+        [Fact]
+        public async Task CA2200_NoDiagnosticsForThrowVariableAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+class Program
+{
+    void M()
+    {
+        var e = new ArithmeticException();
+        throw e;
+    }
+}
+");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+Class Program
+    Sub M()
+        Dim e = New ArithmeticException()
+        Throw e
+    End Sub
+End Class
+");
+        }
     }
 }

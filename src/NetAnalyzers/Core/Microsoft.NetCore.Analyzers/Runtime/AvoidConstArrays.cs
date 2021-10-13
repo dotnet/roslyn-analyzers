@@ -37,22 +37,22 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(context =>
             {
-                INamedTypeSymbol? readonlySpanType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1);
-                INamedTypeSymbol? functionType = compilationContext.Compilation.GetOrCreateTypeByMetadataName("System.Func`2");
+                INamedTypeSymbol? readonlySpanType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1);
+                INamedTypeSymbol? functionType = context.Compilation.GetOrCreateTypeByMetadataName("System.Func`2");
                 if (readonlySpanType is null || functionType is null)
                 {
                     return;
                 }
 
                 // Analyzes an argument operation
-                compilationContext.RegisterOperationAction(operationContext =>
+                context.RegisterOperationAction(context =>
                 {
                     bool isDirectlyInsideLambda = false;
                     IArgumentOperation? argumentOperation;
 
-                    if (operationContext.Operation is IArrayCreationOperation arrayCreationOperation) // For arrays passed as arguments
+                    if (context.Operation is IArrayCreationOperation arrayCreationOperation) // For arrays passed as arguments
                     {
                         argumentOperation = arrayCreationOperation.GetAncestor<IArgumentOperation>(OperationKind.Argument);
                         if (argumentOperation is null)
@@ -60,7 +60,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             return;
                         }
                     }
-                    else if (operationContext.Operation is IInvocationOperation invocationOperation) // For arrays passed in extension methods, like in LINQ
+                    else if (context.Operation is IInvocationOperation invocationOperation) // For arrays passed in extension methods, like in LINQ
                     {
                         if (invocationOperation.Descendants().Any(x => x is IArrayCreationOperation)
                             && invocationOperation.Descendants().Any(x => x is IArgumentOperation))
@@ -122,7 +122,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         { "paramName", isDirectlyInsideLambda ? null : argumentOperation?.Parameter?.Name }
                     };
 
-                    operationContext.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties.ToImmutableDictionary()));
+                    context.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties.ToImmutableDictionary()));
                 },
                 OperationKind.ArrayCreation,
                 OperationKind.Invocation);

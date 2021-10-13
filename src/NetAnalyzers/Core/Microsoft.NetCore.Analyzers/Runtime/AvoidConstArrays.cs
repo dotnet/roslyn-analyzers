@@ -41,8 +41,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 INamedTypeSymbol? readonlySpanType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1);
                 INamedTypeSymbol? functionType = compilationContext.Compilation.GetOrCreateTypeByMetadataName("System.Func`2");
-                INamedTypeSymbol? actionType = compilationContext.Compilation.GetOrCreateTypeByMetadataName("System.Action`1");
-                if (readonlySpanType is null || functionType is null || actionType is null)
+                if (readonlySpanType is null || functionType is null)
                 {
                     return;
                 }
@@ -97,18 +96,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    // Check if the parameter is a function or action so the name can be set to null
-                    // If the argument found is a function or action, the paramter name doesn't reflect the array creation
                     if (argumentOperation is not null)
                     {
-                        ITypeSymbol originalTypeDefinition = argumentOperation.Parameter.Type.OriginalDefinition;
-                        isDirectlyInsideLambda = originalTypeDefinition.Equals(functionType) || originalTypeDefinition.Equals(actionType);
-                    }
+                        ITypeSymbol originalDefinition = argumentOperation.Parameter.Type.OriginalDefinition;
 
-                    // Can't be a ReadOnlySpan, as those are already optimized
-                    if (argumentOperation is not null && argumentOperation.Parameter.Type.OriginalDefinition.Equals(readonlySpanType))
-                    {
-                        return;
+                        // Can't be a ReadOnlySpan, as those are already optimized
+                        if (originalDefinition.Equals(readonlySpanType))
+                        {
+                            return;
+                        }
+
+                        // Check if the parameter is a function so the name can be set to null
+                        // Otherwise, the parameter name doesn't reflect the array creation as well
+                        isDirectlyInsideLambda = originalDefinition.Equals(functionType);
                     }
 
                     // Must be literal array

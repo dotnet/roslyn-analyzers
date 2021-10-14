@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Threading.Tasks;
@@ -19,7 +19,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class AvoidEmptyInterfacesTests
     {
         [Fact]
-        public async Task TestCSharpEmptyPublicInterface()
+        public async Task TestCSharpEmptyPublicInterfaceAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public interface I
@@ -28,7 +28,7 @@ public interface I
         }
 
         [Fact]
-        public async Task TestBasicEmptyPublicInterface()
+        public async Task TestBasicEmptyPublicInterfaceAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Interface I
@@ -36,7 +36,7 @@ End Interface", CreateBasicResult(2, 18));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public async Task TestCSharpEmptyInternalInterface()
+        public async Task TestCSharpEmptyInternalInterfaceAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 interface I
@@ -45,7 +45,7 @@ interface I
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public async Task TestBasicEmptyInternalInterface()
+        public async Task TestBasicEmptyInternalInterfaceAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Interface I
@@ -53,7 +53,7 @@ End Interface");
         }
 
         [Fact]
-        public async Task TestCSharpNonEmptyInterface1()
+        public async Task TestCSharpNonEmptyInterface1Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public interface I
@@ -63,7 +63,7 @@ public interface I
         }
 
         [Fact]
-        public async Task TestBasicNonEmptyInterface1()
+        public async Task TestBasicNonEmptyInterface1Async()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Interface I
@@ -72,7 +72,7 @@ End Interface");
         }
 
         [Fact]
-        public async Task TestCSharpEmptyInterfaceWithNoInheritedMembers()
+        public async Task TestCSharpEmptyInterfaceWithNoInheritedMembersAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public interface I : IBase
@@ -83,7 +83,7 @@ public interface IBase { }", CreateCSharpResult(2, 18), CreateCSharpResult(6, 18
         }
 
         [Fact]
-        public async Task TestBasicEmptyInterfaceWithNoInheritedMembers()
+        public async Task TestBasicEmptyInterfaceWithNoInheritedMembersAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Interface I
@@ -95,7 +95,7 @@ End Interface", CreateBasicResult(2, 18), CreateBasicResult(6, 18));
         }
 
         [Fact]
-        public async Task TestCSharpEmptyInterfaceWithInheritedMembers()
+        public async Task TestCSharpEmptyInterfaceWithInheritedMembersAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public interface I : IBase
@@ -109,7 +109,7 @@ public interface IBase
         }
 
         [Fact]
-        public async Task TestBasicEmptyInterfaceWithInheritedMembers()
+        public async Task TestBasicEmptyInterfaceWithInheritedMembersAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Interface I
@@ -146,7 +146,7 @@ End Interface");
         // Invalid analyzer option ignored
         [InlineData("internal", @"dotnet_code_quality.api_surface = all
                                   dotnet_code_quality.CA1040.api_surface_2 = private")]
-        public async Task TestCSharpEmptyInterface_AnalyzerOptions_Diagnostic(string accessibility, string editorConfigText)
+        public async Task TestCSharpEmptyInterface_AnalyzerOptions_DiagnosticAsync(string accessibility, string editorConfigText)
         {
             await new VerifyCS.Test
             {
@@ -160,7 +160,11 @@ public class C
     {accessibility} interface I {{ }}
 }}"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
                 ExpectedDiagnostics =
                 {
@@ -194,7 +198,7 @@ public class C
         // Invalid analyzer option ignored
         [InlineData("Friend", @"dotnet_code_quality.api_surface = All
                                 dotnet_code_quality.CA1040.api_surface_2 = Private")]
-        public async Task TestBasicEmptyInterface_AnalyzerOptions_Diagnostic(string accessibility, string editorConfigText)
+        public async Task TestBasicEmptyInterface_AnalyzerOptions_DiagnosticAsync(string accessibility, string editorConfigText)
         {
             await new VerifyVB.Test
             {
@@ -208,7 +212,11 @@ Public Class C
     End Interface
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
                 ExpectedDiagnostics =
                 {
@@ -223,7 +231,7 @@ End Class"
         [InlineData("public", "dotnet_code_quality.Design.api_surface = internal, private")]
         [InlineData("public", @"dotnet_code_quality.api_surface = all
                                   dotnet_code_quality.CA1040.api_surface = private")]
-        public async Task TestCSharpEmptyInterface_AnalyzerOptions_NoDiagnostic(string accessibility, string editorConfigText)
+        public async Task TestCSharpEmptyInterface_AnalyzerOptions_NoDiagnosticAsync(string accessibility, string editorConfigText)
         {
             await new VerifyCS.Test
             {
@@ -237,7 +245,11 @@ public class C
     {accessibility} interface I {{ }}
 }}"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             }.RunAsync();
         }
@@ -248,7 +260,7 @@ public class C
         [InlineData("Public", "dotnet_code_quality.Design.api_surface = Friend, Private")]
         [InlineData("Public", @"dotnet_code_quality.api_surface = All
                                 dotnet_code_quality.CA1040.api_surface = Private")]
-        public async Task TestBasicEmptyInterface_AnalyzerOptions_NoDiagnostic(string accessibility, string editorConfigText)
+        public async Task TestBasicEmptyInterface_AnalyzerOptions_NoDiagnosticAsync(string accessibility, string editorConfigText)
         {
             await new VerifyVB.Test
             {
@@ -262,14 +274,18 @@ Public Class C
     End Interface
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             }.RunAsync();
         }
 
         [Theory(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/3494")]
         [CombinatorialData]
-        public async Task TestConflictingAnalyzerOptionsForPartials(bool hasConflict)
+        public async Task TestConflictingAnalyzerOptionsForPartialsAsync(bool hasConflict)
         {
             var csTest = new VerifyCS.Test
             {
@@ -286,7 +302,7 @@ End Class"
 
             if (!hasConflict)
             {
-                csTest.ExpectedDiagnostics.Add(VerifyCS.Diagnostic().WithSpan(@"z:\folder1\Test0.cs", 1, 26, 1, 27).WithSpan(@"z:\folder2\Test1.cs", 1, 26, 1, 27));
+                csTest.ExpectedDiagnostics.Add(VerifyCS.Diagnostic().WithSpan(@"/folder1/Test0.cs", 1, 26, 1, 27).WithSpan(@"/folder2\Test1.cs", 1, 26, 1, 27));
             }
 
             await csTest.RunAsync();
@@ -310,7 +326,7 @@ End Interface"
 
             if (!hasConflict)
             {
-                vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic().WithSpan(@"z:\folder1\Test0.vb", 2, 26, 2, 27).WithSpan(@"z:\folder2\Test1.vb", 2, 26, 2, 27));
+                vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic().WithSpan(@"/folder1/Test0.vb", 2, 26, 2, 27).WithSpan(@"/folder2/Test1.vb", 2, 26, 2, 27));
             }
 
             await vbTest.RunAsync();
@@ -319,7 +335,7 @@ End Interface"
             Solution ApplyTransform(Solution solution, ProjectId projectId)
             {
                 var project = solution.GetProject(projectId)!;
-                var projectFilePath = project.Language == LanguageNames.CSharp ? @"z:\Test.csproj" : @"z:\Test.vbproj";
+                var projectFilePath = project.Language == LanguageNames.CSharp ? @"/Test.csproj" : @"/Test.vbproj";
                 solution = solution.WithProjectFilePath(projectId, projectFilePath);
 
                 var documentExtension = project.Language == LanguageNames.CSharp ? "cs" : "vb";
@@ -327,7 +343,7 @@ End Interface"
                 var document2OptionValue = hasConflict ? "internal" : "public";
                 var document2EditorConfig = $"[*.{documentExtension}]" + Environment.NewLine + $"dotnet_code_quality.api_surface = {document2OptionValue}";
 
-                var document1Folder = $@"z:\folder1";
+                var document1Folder = $@"/folder1";
                 solution = solution.WithDocumentFilePath(project.DocumentIds[0], $@"{document1Folder}\Test0.{documentExtension}");
                 solution = solution.GetProject(projectId)!
                     .AddAnalyzerConfigDocument(
@@ -336,7 +352,7 @@ End Interface"
                         filePath: $@"{document1Folder}\.editorconfig")
                     .Project.Solution;
 
-                var document2Folder = $@"z:\folder2";
+                var document2Folder = $@"/folder2";
                 solution = solution.WithDocumentFilePath(project.DocumentIds[1], $@"{document2Folder}\Test1.{documentExtension}");
                 return solution.GetProject(projectId)!
                     .AddAnalyzerConfigDocument(
@@ -348,11 +364,15 @@ End Interface"
         }
 
         private static DiagnosticResult CreateCSharpResult(int line, int col)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, col);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         private static DiagnosticResult CreateBasicResult(int line, int col)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, col);
+#pragma warning restore RS0030 // Do not used banned APIs
     }
 }

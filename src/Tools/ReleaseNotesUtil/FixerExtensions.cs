@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -96,7 +96,7 @@ namespace ReleaseNotesUtil
                 int metadataToken = BitConverter.ToInt32(methodBodyIL, 1);
                 MethodBase? calledMethod = method.Module.ResolveMethod(metadataToken);
                 if (calledMethod != null
-                    && calledMethod?.DeclaringType?.FullName == "System.Threading.Tasks.Task"
+                    && calledMethod.DeclaringType?.FullName == "System.Threading.Tasks.Task"
                     && calledMethod.Name == "get_CompletedTask")
                 {
                     return false;

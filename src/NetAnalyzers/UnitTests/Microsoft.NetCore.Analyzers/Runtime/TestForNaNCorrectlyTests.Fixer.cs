@@ -1,6 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
-
-#if !BUILDING_VSIX // Analyzer not supported in the Microsoft CodeAnalysis (FxCop analyzers) VSIX
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Xunit;
@@ -16,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class TestForNaNCorrectlyFixerTests
     {
         [Fact]
-        public async Task CA2242_FixFloatForEqualityWithFloatNaN()
+        public async Task CA2242_FixFloatForEqualityWithFloatNaNAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -52,7 +50,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2242_FixFloatForInequalityWithFloatNaN()
+        public async Task CA2242_FixFloatForInequalityWithFloatNaNAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -88,7 +86,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2242_FixDoubleForEqualityWithDoubleNaN()
+        public async Task CA2242_FixDoubleForEqualityWithDoubleNaNAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -124,7 +122,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2242_FixDoubleForInequalityWithDoubleNaN()
+        public async Task CA2242_FixDoubleForInequalityWithDoubleNaNAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -160,7 +158,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2242_FixForComparisonWithNaNOnLeft()
+        public async Task CA2242_FixForComparisonWithNaNOnLeftAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -197,7 +195,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2242_FixOnlyOneDiagnosticForComparisonWithNaNOnBothSides()
+        public async Task CA2242_FixOnlyOneDiagnosticForComparisonWithNaNOnBothSidesAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -234,7 +232,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2242_FixForComparisonWithNaNInFunctionArgument()
+        public async Task CA2242_FixForComparisonWithNaNInFunctionArgumentAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -288,7 +286,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2242_FixForComparisonWithNaNInTernaryOperator()
+        public async Task CA2242_FixForComparisonWithNaNInTernaryOperatorAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -333,7 +331,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2242_FixForComparisonWithNaNInThrowStatement()
+        public async Task CA2242_FixForComparisonWithNaNInThrowStatementAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -359,7 +357,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA2242_FixForComparisonWithNaNInCatchFilterClause()
+        public async Task CA2242_FixForComparisonWithNaNInCatchFilterClauseAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
@@ -389,7 +387,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA2242_FixForComparisonWithNaNInYieldReturnStatement()
+        public async Task CA2242_FixForComparisonWithNaNInYieldReturnStatementAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System.Collections.Generic;
@@ -419,7 +417,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA2242_FixForComparisonWithNaNInSwitchStatement()
+        public async Task CA2242_FixForComparisonWithNaNInSwitchStatementAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -453,7 +451,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA2242_FixForComparisonWithNaNInForLoop()
+        public async Task CA2242_FixForComparisonWithNaNInForLoopAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -485,7 +483,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA2242_FixForComparisonWithNaNInWhileLoop()
+        public async Task CA2242_FixForComparisonWithNaNInWhileLoopAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -515,7 +513,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA2242_FixForComparisonWithNaNInDoWhileLoop()
+        public async Task CA2242_FixForComparisonWithNaNInDoWhileLoopAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -547,5 +545,3 @@ public class A
         }
     }
 }
-
-#endif

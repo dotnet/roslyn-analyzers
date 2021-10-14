@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         #region No Diagnostic Tests
 
         [Fact]
-        public async Task NoDiagnostic_ToUpperCases()
+        public async Task NoDiagnostic_ToUpperCasesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -83,7 +83,7 @@ End Class
         }
 
         [Fact]
-        public async Task NoDiagnostic_ToLowerCases()
+        public async Task NoDiagnostic_ToLowerCasesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -149,7 +149,7 @@ End Class
         }
 
         [Fact]
-        public async Task NoDiagnostic_ToUpperInvariantCases()
+        public async Task NoDiagnostic_ToUpperInvariantCasesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -181,7 +181,7 @@ End Class
         #region Diagnostic Tests
 
         [Fact]
-        public async Task Diagnostic_ToLowerCases()
+        public async Task Diagnostic_ToLowerCasesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -211,7 +211,7 @@ End Class
         }
 
         [Fact]
-        public async Task Diagnostic_ToLowerInvariantCases()
+        public async Task Diagnostic_ToLowerInvariantCasesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -245,13 +245,17 @@ End Class
         #region Helpers
 
         private static DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string containingMethod, string invokedMethod, string suggestedMethod)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(containingMethod, invokedMethod, suggestedMethod);
 
         private static DiagnosticResult GetBasicDefaultResultAt(int line, int column, string containingMethod, string invokedMethod, string suggestedMethod)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(containingMethod, invokedMethod, suggestedMethod);
 
         #endregion

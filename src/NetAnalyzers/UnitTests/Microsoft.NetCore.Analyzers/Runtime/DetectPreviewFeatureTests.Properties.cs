@@ -400,6 +400,32 @@ namespace Preview_Feature_Scratch
             var test = TestCS(csInput);
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Foo", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
             await test.RunAsync();
+
+            var vbInput = @" 
+Imports System.Runtime.Versioning
+Imports System
+
+Namespace Preview_Feature_Scratch
+    Public Class Foo
+        Implements {|#0:IFoo|}
+
+        <RequiresPreviewFeatures>
+        Public ReadOnly Property Value As Decimal Implements IFoo.Value
+            Get
+                Return 1.1D
+            End Get
+        End Property
+    End Class
+
+    <RequiresPreviewFeatures>
+    Interface IFoo
+        ReadOnly Property Value As Decimal
+    End Interface
+End Namespace
+";
+            var vbTest = TestVB(vbInput);
+            vbTest.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Foo", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            await vbTest.RunAsync();
         }
 
         [Fact]

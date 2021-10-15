@@ -40,12 +40,38 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 void MarkedMethodInInterface();
             }
         }
-
             ";
 
             var test = TestCS(csInput);
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "IProgram.MarkedMethodInInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
             await test.RunAsync();
+
+            var vbInput = @"
+        Imports System.Runtime.Versioning
+        Imports System
+
+        Namespace Preview_Feature_Scratch
+            Class Program
+                Implements IProgram
+
+                Private Shared Sub Main(ByVal args As String())
+                    Dim prog = New Program()
+                End Sub
+
+                Public Sub {|#0:MarkedMethodInInterface|}() Implements IProgram.MarkedMethodInInterface
+                    Throw New NotImplementedException()
+                End Sub
+            End Class
+
+            Interface IProgram
+                <RequiresPreviewFeatures>
+                Sub MarkedMethodInInterface()
+            End Interface
+        End Namespace";
+
+            var testVb = TestVB(vbInput);
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "IProgram.MarkedMethodInInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
+            await testVb.RunAsync();
         }
 
         [Fact]
@@ -73,7 +99,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 public void UnmarkedMethodInMarkedInterface() { }
             }
         }
-
             ";
 
             var test = TestCS(csInput);
@@ -87,15 +112,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         Module Preview_Feature_Scratch
             Public Class Program
                 Implements {|#1:IProgram|}
+                Private Shared Sub Main(ByVal args As String())
+                    Dim prog = New Program()
+                End Sub
+
+                Public Sub {|#0:MarkedMethodInInterface|}() Implements IProgram.MarkedMethodInInterface
+                    Throw New NotImplementedException()
+                End Sub
             End Class
 
             <RequiresPreviewFeatures>
             Public Interface IProgram
+                Sub MarkedMethodInInterface()
             End Interface
         End Module
             ";
 
             var testVb = TestVB(vbInput);
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "IProgram.MarkedMethodInInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
             testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(1).WithArguments("Program", "IProgram", DetectPreviewFeatureAnalyzer.DefaultURL));
             await testVb.RunAsync();
         }
@@ -121,12 +155,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             {
             }
         }
-
             ";
 
             var test = TestCS(csInput);
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Program", "IProgram", DetectPreviewFeatureAnalyzer.DefaultURL));
             await test.RunAsync();
+
+            var vbInput = @" 
+        Imports System
+        Imports System.Runtime.Versioning
+        Module Preview_Feature_Scratch
+            Public Class Program
+                Implements {|#1:IProgram|}
+                Private Shared Sub Main(ByVal args As String())
+                    Dim prog = New Program()
+                End Sub
+            End Class
+
+            <RequiresPreviewFeatures>
+            Public Interface IProgram
+            End Interface
+        End Module
+            ";
+
+            var testVb = TestVB(vbInput);
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(1).WithArguments("Program", "IProgram", DetectPreviewFeatureAnalyzer.DefaultURL));
+            await testVb.RunAsync();
         }
 
         [Fact]
@@ -162,6 +216,7 @@ namespace Preview_Feature_Scratch
 
             <RequiresPreviewFeatures>
             Public Interface IFoo
+                Sub Bar()
             End Interface
         End Module
             ";

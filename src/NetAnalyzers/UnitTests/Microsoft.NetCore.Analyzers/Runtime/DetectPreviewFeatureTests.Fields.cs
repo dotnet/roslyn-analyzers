@@ -241,6 +241,39 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(2).WithArguments("_genericPreviewField", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(3).WithArguments("_genericPreviewField", "AGenericClass", DetectPreviewFeatureAnalyzer.DefaultURL));
             await test.RunAsync();
+
+            var vbInput = @" 
+        Imports System.Runtime.Versioning
+        Imports System
+
+        Namespace Preview_Feature_Scratch
+            Public Class Program
+                Private _field As {|#0:PreviewType|}
+                Private _genericPreviewField As {|#3:AGenericClass(Of {|#2:PreviewType|})|}()
+
+                Public Sub New()
+                    _field = {|#1:New PreviewType()|}
+                End Sub
+
+                Private Shared Sub Main(ByVal args As String())
+                End Sub
+            End Class
+
+            <RequiresPreviewFeatures>
+            Public Class PreviewType
+            End Class
+
+            <RequiresPreviewFeatures>
+            Public Class AGenericClass(Of T As PreviewType)
+            End Class
+        End Namespace";
+
+            var vbTest = TestVB(vbInput);
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(0).WithArguments("_field", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(2).WithArguments("_genericPreviewField", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(3).WithArguments("_genericPreviewField", "AGenericClass", DetectPreviewFeatureAnalyzer.DefaultURL));
+            await vbTest.RunAsync();
         }
 
         [Fact]

@@ -97,7 +97,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
             Dim generic = TryCast(baseType, GenericNameSyntax)
             If generic IsNot Nothing Then
-                Dim previewConstraint As SyntaxNode
+                Dim previewConstraint As SyntaxNode = Nothing
                 If TryMatchGenericSyntaxNodeWithGivenSymbol(generic, previewInterfaceSymbol, previewConstraint) Then
                     previewInterfaceNode = previewConstraint
                     Return True
@@ -132,7 +132,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                     Dim classBlock = TryCast(classStatement.Parent, ClassBlockSyntax)
                     If classBlock IsNot Nothing Then
                         Dim classImplement = classBlock.Implements
-                        Dim syntaxNode As SyntaxNode
+                        Dim syntaxNode As SyntaxNode = Nothing
                         If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(classImplement, previewInterfaceSymbol, syntaxNode) Then
                             Return syntaxNode
                         End If
@@ -144,7 +144,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                     Dim structBlock = TryCast(structStatement.Parent, StructureBlockSyntax)
                     If structBlock IsNot Nothing Then
                         Dim structImplement = structBlock.Implements
-                        Dim syntaxNode As SyntaxNode
+                        Dim syntaxNode As SyntaxNode = Nothing
                         If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(structImplement, previewInterfaceSymbol, syntaxNode) Then
                             Return syntaxNode
                         End If
@@ -156,7 +156,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                     Dim interfaceBlock = TryCast(interfaceStatement.Parent, InterfaceBlockSyntax)
                     If interfaceBlock IsNot Nothing Then
                         Dim interfaceImplement = interfaceBlock.Inherits
-                        Dim syntaxNode As SyntaxNode
+                        Dim syntaxNode As SyntaxNode = Nothing
                         If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(interfaceImplement, previewInterfaceSymbol, syntaxNode) Then
                             Return syntaxNode
                         End If
@@ -182,7 +182,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
                 Dim genericName = TryCast(returnType, GenericNameSyntax)
                 If genericName IsNot Nothing Then
-                    Dim previewNode As SyntaxNode
+                    Dim previewNode As SyntaxNode = Nothing
                     If TryMatchGenericSyntaxNodeWithGivenSymbol(genericName, previewReturnTypeSymbol, previewNode) Then
                         Return previewNode
                     End If

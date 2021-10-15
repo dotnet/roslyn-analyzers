@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -14,7 +13,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         [Fact]
         public async Task Unused_NoDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var src = @"
 public class A {}
 public class B : A {}
 
@@ -23,13 +22,14 @@ public class Z
     public void M(B b)
     {
     }
-}");
+}";
+            await VerifyCS.VerifyCodeFixAsync(src, src);
         }
 
         [Fact]
         public async Task MethodCall_TypeWithBase()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var src = @"
 public class A
 {
     public int GetSomething() => 42;
@@ -58,13 +58,14 @@ public class Z
         b.GetSomethingElse();
     }
 }
-", VerifyCS.Diagnostic().WithLocation(0).WithArguments("b", "B", "A"));
+";
+            await VerifyCS.VerifyCodeFixAsync(src, VerifyCS.Diagnostic().WithLocation(0).WithArguments("b", "B", "A"), src);
         }
 
         [Fact]
         public async Task MethodCall_TypeWithInterface()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var src = @"
 public interface IA
 {
     int GetSomething();
@@ -94,13 +95,14 @@ public class Z
         a.GetSomethingElse();
     }
 }
-", VerifyCS.Diagnostic().WithLocation(0).WithArguments("a", "A", "IA"));
+";
+            await VerifyCS.VerifyCodeFixAsync(src, VerifyCS.Diagnostic().WithLocation(0).WithArguments("a", "A", "IA"), src);
         }
 
         [Fact]
         public async Task EventLikeMethod_NoDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var src = @"
 using System;
 
 public class ThresholdReachedEventArgs : EventArgs
@@ -118,13 +120,14 @@ public class C
     {
         var x = e.P;
     }
-}");
+}";
+            await VerifyCS.VerifyCodeFixAsync(src, src);
         }
 
         [Fact]
         public async Task MethodCall_MultipleBase()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var src = @"
 public interface IA
 {
     int GetSomething();
@@ -175,17 +178,22 @@ public class Z
         d.GetSomethingElse();
     }
 }
-",
-    VerifyCS.Diagnostic().WithLocation(0).WithArguments("c", "C", "IA"),
-    VerifyCS.Diagnostic().WithLocation(1).WithArguments("c", "C", "IB"),
-    VerifyCS.Diagnostic().WithLocation(2).WithArguments("c", "C", "B"),
-    VerifyCS.Diagnostic().WithLocation(3).WithArguments("d", "D", "IAll"));
+";
+            await VerifyCS.VerifyCodeFixAsync(
+                src,
+                new[]
+                {
+                    VerifyCS.Diagnostic().WithLocation(0).WithArguments("c", "C", "IA"),
+                    VerifyCS.Diagnostic().WithLocation(1).WithArguments("c", "C", "IB"),
+                    VerifyCS.Diagnostic().WithLocation(2).WithArguments("c", "C", "B"),
+                    VerifyCS.Diagnostic().WithLocation(3).WithArguments("d", "D", "IAll"),
+                }, src);
         }
 
         [Fact]
         public async Task PropertyCall_TypeWithBase()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var src = @"
 public class A
 {
     public int Age => 42;
@@ -214,13 +222,14 @@ public class Z
         var y = b.OtherAge;
     }
 }
-", VerifyCS.Diagnostic().WithLocation(0).WithArguments("b", "B", "A"));
+";
+            await VerifyCS.VerifyCodeFixAsync(src, VerifyCS.Diagnostic().WithLocation(0).WithArguments("b", "B", "A"), src);
         }
 
         [Fact]
         public async Task PropertyCall_TypeWithInterface()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var src = @"
 public interface IA
 {
     int Age { get; }
@@ -250,13 +259,14 @@ public class Z
         var y = a.OtherAge;
     }
 }
-", VerifyCS.Diagnostic().WithLocation(0).WithArguments("a", "A", "IA"));
+";
+            await VerifyCS.VerifyCodeFixAsync(src, VerifyCS.Diagnostic().WithLocation(0).WithArguments("a", "A", "IA"), src);
         }
 
         [Fact]
         public async Task FieldCall_TypeWithBase()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var src = @"
 public class A
 {
     public int Age = 42;
@@ -285,13 +295,14 @@ public class Z
         var y = b.OtherAge;
     }
 }
-", VerifyCS.Diagnostic().WithLocation(0).WithArguments("b", "B", "A"));
+";
+            await VerifyCS.VerifyCodeFixAsync(src, VerifyCS.Diagnostic().WithLocation(0).WithArguments("b", "B", "A"), src);
         }
 
         [Fact]
         public async Task EventCall_TypeWithBase()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var src = @"
 using System;
 
 public class A
@@ -322,13 +333,14 @@ public class Z
         b.OtherChanged += (s, e) => {};
     }
 }
-", VerifyCS.Diagnostic().WithLocation(0).WithArguments("b", "B", "A"));
+";
+            await VerifyCS.VerifyCodeFixAsync(src, VerifyCS.Diagnostic().WithLocation(0).WithArguments("b", "B", "A"), src);
         }
 
         [Fact]
         public async Task EventCall_TypeWithInterface()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var src = @"
 using System;
 
 public interface IA
@@ -360,13 +372,14 @@ public class Z
         a.OtherChanged += (s, e) => {};
     }
 }
-", VerifyCS.Diagnostic().WithLocation(0).WithArguments("a", "A", "IA"));
+";
+            await VerifyCS.VerifyCodeFixAsync(src, VerifyCS.Diagnostic().WithLocation(0).WithArguments("a", "A", "IA"), src);
         }
 
         [Fact]
         public async Task TypeInstance_TypeWithBase()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var src = @"
 public class A
 {
 }
@@ -396,13 +409,14 @@ public class Z
     private void NeedA(A a) {}
     private void NeedB(B b) {}
 }
-", VerifyCS.Diagnostic().WithLocation(0).WithArguments("b", "B", "A"));
+";
+            await VerifyCS.VerifyCodeFixAsync(src, VerifyCS.Diagnostic().WithLocation(0).WithArguments("b", "B", "A"), src);
         }
 
         [Fact]
         public async Task Assignment_NoDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var src = @"
 public class A {}
 public class B : A {}
 
@@ -412,7 +426,8 @@ public class Z
     {
         b = new B();
     }
-}");
+}";
+            await VerifyCS.VerifyCodeFixAsync(src, src);
         }
     }
 }

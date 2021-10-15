@@ -1312,7 +1312,7 @@
     <value>Add operator overload named alternate</value>
   </data>
   <data name="ConsiderPassingBaseTypesAsParametersDescription" xml:space="preserve">
-    <value>Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'. This method appears to only require base class members in its implementation.</value>
+    <value>Consider changing this type to its base type. This method appears to only require base class members in its implementation.</value>
   </data>
   <data name="ConsiderPassingBaseTypesAsParametersMessage" xml:space="preserve">
     <value>Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'</value>

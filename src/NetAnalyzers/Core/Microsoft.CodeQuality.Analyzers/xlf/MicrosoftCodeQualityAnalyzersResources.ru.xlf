@@ -68,8 +68,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ConsiderPassingBaseTypesAsParametersDescription">
-        <source>Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'. This method appears to only require base class members in its implementation.</source>
-        <target state="new">Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'. This method appears to only require base class members in its implementation.</target>
+        <source>Consider changing this type to its base type. This method appears to only require base class members in its implementation.</source>
+        <target state="new">Consider changing this type to its base type. This method appears to only require base class members in its implementation.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConsiderPassingBaseTypesAsParametersMessage">

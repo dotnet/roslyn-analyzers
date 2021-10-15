@@ -22,11 +22,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string RuleId = "CA1850";
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-            CreateLocalizableResourceString(AvoidConstArraysTitle),
-            CreateLocalizableResourceString(AvoidConstArraysMessage),
+            CreateLocalizableResourceString(nameof(AvoidConstArraysTitle)),
+            CreateLocalizableResourceString(nameof(AvoidConstArraysMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
-            CreateLocalizableResourceString(AvoidConstArraysDescription),
+            CreateLocalizableResourceString(nameof(AvoidConstArraysDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 

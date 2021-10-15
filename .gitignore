@@ -16,6 +16,7 @@ obj/
 .dotnet/
 .tools/
 .packages/
+temp/
 
 # Per-user project properties
 launchSettings.json

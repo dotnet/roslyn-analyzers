@@ -1,4 +1,4 @@
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information. -->
 <Project>
   <Import Project="..\Directory.Build.props"/>
 
@@ -6,7 +6,6 @@
     <!-- Enable flow-analysis feature flag (can be removed when we move to Microsoft.CodeAnalysis 3.0 or larger) -->
     <Features>$(Features);flow-analysis</Features>
 
-    <DefineConstants Condition="'$(BUILDING_VSIX)' == 'true'">$(DefineConstants),BUILDING_VSIX</DefineConstants>
     <DefineConstants Condition="'$(LEGACY_CODE_METRICS_MODE)' == 'true'">$(DefineConstants),LEGACY_CODE_METRICS_MODE</DefineConstants>
   </PropertyGroup>
 
@@ -15,22 +14,44 @@
     <None Include="$(MSBuildThisFileDirectory)Common\Test\App.config" CopyToOutputDirectory="PreserveNewest" Condition="'$(IsUnitTestProject)' == 'true'" />
   </ItemGroup>
 
-  <!-- Code analyzers -->
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="$(MicrosoftCodeAnalysisFXCopAnalyzersVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="$(MicrosoftCodeAnalysisAnalyzersVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="$(MicrosoftCodeAnalysisPublicApiAnalyzersVersion)" />
-    <PackageReference Include="Roslyn.Diagnostics.Analyzers" Version="$(RoslynDiagnosticsAnalyzersVersion)" />
-  </ItemGroup>
+  <Choose>
+    <When Condition="'$(DotNetBuildFromSource)' == 'true'">
+      <!-- Disable code analysis for source build -->
+      <PropertyGroup>
+        <EnableNETAnalyzers>false</EnableNETAnalyzers>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <!-- Default build configuration -->
 
-  <!-- Code Style analyzers -->
-  <ItemGroup Condition="'$(Language)' == 'C#'">
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="$(CodeStyleAnalyersVersion)" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(Language)' == 'VB'">
-    <!-- https://github.com/dotnet/roslyn-analyzers/issues/2095 tracks uncommenting the below -->
-    <!-- <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="$(CodeStyleAnalyersVersion)" /> -->
-  </ItemGroup>
+      <!-- Code analyzers -->
+      <PropertyGroup>
+        <!-- Enable all the latest CA rules from 'Microsoft.CodeAnalysis.NetAnalyzers' as build warnings by default. Specific rules are disabled or downgraded in repo's editorconfig. -->
+        <AnalysisLevel>latest</AnalysisLevel>
+        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+
+        <!-- Do not automatically include PerformanceSensitiveAttribute. It will be included manually. -->
+        <GeneratePerformanceSensitiveAttribute>false</GeneratePerformanceSensitiveAttribute>
+      </PropertyGroup>
+
+      <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="$(DogfoodNetAnalyzersVersion)" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="$(MicrosoftCodeAnalysisAnalyzersVersion)" />
+        <PackageReference Include="Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers" Version="$(MicrosoftCodeAnalysisPerformanceSensitiveAnalyzersVersion)" />
+        <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="$(MicrosoftCodeAnalysisPublicApiAnalyzersVersion)" />
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="$(MicrosoftVisualStudioThreadingAnalyzersVersion)" />
+        <PackageReference Include="Roslyn.Diagnostics.Analyzers" Version="$(RoslynDiagnosticsAnalyzersVersion)" />
+      </ItemGroup>
+
+      <!-- Code Style analyzers -->
+      <ItemGroup Condition="'$(Language)' == 'C#'">
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="$(CodeStyleAnalyersVersion)" />
+      </ItemGroup>
+      <ItemGroup Condition="'$(Language)' == 'VB'">
+        <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="$(CodeStyleAnalyersVersion)" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
 
   <!-- Setup the correct code analysis rulesets -->
   <Choose>

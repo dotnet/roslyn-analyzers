@@ -1,7 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
 using Test.Utilities;
 using Xunit;
@@ -25,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 
         [Theory]
         [MemberData(nameof(NamedArgumentsData))]
-        public async Task GuardMethodWithNamedArgumentsTest(string arguments)
+        public async Task GuardMethodWithNamedArgumentsTestAsync(string arguments)
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -35,13 +34,13 @@ class Test
 {
     public void Api_Usage()
     {
-        if (OperatingSystemHelper.IsAndroidVersionAtLeast(" + arguments + @"))
+        if (OperatingSystem.IsAndroidVersionAtLeast(" + arguments + @"))
         {
             Api();
         }
         [|Api()|];
 
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(" + arguments + @", platform : ""Android""))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(" + arguments + @", platform : ""Android""))
         {
             Api();
         }
@@ -52,16 +51,89 @@ class Test
     }
 
     [SupportedOSPlatform(""Android12.0.2.521"")]
-    void Api()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void Api() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task SupportedUnsupportedRange_GuardedWithOr()
+        public async Task MethodsWithOsDependentTypeParameterGuardedAsync()
+        {
+            var csSource = @"
+using System;
+using System.Runtime.Versioning;
+
+[SupportedOSPlatform(""windows"")]
+class WindowsOnlyType {}
+
+class GenericClass<T> {}
+
+public class Test
+{
+    void GenericMethod<T>() {}
+    void GenericMethod2<T1, T2>() {}
+    void M1()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            GenericMethod<WindowsOnlyType>();
+            GenericMethod2<Test, WindowsOnlyType>();
+            GenericClass<WindowsOnlyType> obj = new GenericClass<WindowsOnlyType>();
+        }
+        else
+        {
+            [|GenericMethod<WindowsOnlyType>()|];
+            [|GenericMethod2<Test, WindowsOnlyType>()|];
+            GenericClass<WindowsOnlyType> obj = [|new GenericClass<WindowsOnlyType>()|];
+        }
+    }
+}
+";
+            await VerifyAnalyzerCSAsync(csSource, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task PlatformDependentMethodsAndTypeParametersGuardedAsync()
+        {
+            var csSource = @"
+using System;
+using System.Runtime.Versioning;
+
+[SupportedOSPlatform(""browser"")]
+class BrowserOnlyType {}
+[SupportedOSPlatform(""windows"")]
+class WindowsOnlyType {}
+
+public class Test
+{
+    [SupportedOSPlatform(""windows"")]
+    void WindowsOnlyMethod<T>() {}
+    void GenericMethod<T1, T2>() {}
+    void M1()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            [|WindowsOnlyMethod<BrowserOnlyType>()|];  // should flag for BrowserOnlyType parameter
+            [|GenericMethod<WindowsOnlyType, BrowserOnlyType>()|]; // same
+        }
+        else
+        {
+            {|#0:WindowsOnlyMethod<BrowserOnlyType>()|};  // should flag for WindowsOnlyMethod method and BrowserOnlyType parameter
+            {|#1:GenericMethod<WindowsOnlyType, BrowserOnlyType>()|}; // should flag for WindowsOnlyType and BrowserOnlyType parameters
+        }
+    }
+}
+";
+            await VerifyAnalyzerCSAsync(csSource, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(0).WithArguments("BrowserOnlyType", "'browser'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(0).WithArguments("Test.WindowsOnlyMethod<BrowserOnlyType>()", "'windows'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(1).WithArguments("WindowsOnlyType", "'windows'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(1).WithArguments("BrowserOnlyType", "'browser'"));
+        }
+
+        [Fact]
+        public async Task SupportedUnsupportedRange_GuardedWithOrAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -71,8 +143,8 @@ class Test
 {
     public void Api_Usage()
     {
-        if (!OperatingSystemHelper.IsWindows() ||
-            OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0, 19041))
+        if (!OperatingSystem.IsWindows() ||
+            OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041))
         {
             Api();
         }
@@ -82,16 +154,14 @@ class Test
 
     [UnsupportedOSPlatform(""windows"")]
     [SupportedOSPlatform(""windows10.0.19041"")]
-    void Api()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void Api() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact, WorkItem(4932, "https://github.com/dotnet/roslyn-analyzers/issues/4932")]
-        public async Task GuardMethodWith3VersionPartsEquavalentTo4PartsWithLeading0()
+        public async Task GuardMethodWith3VersionPartsEquavalentTo4PartsWithLeading0Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -107,25 +177,25 @@ public class MSAL
 
     static void Test()
     {
-        if (OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0, 17763, 0))
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17763, 0))
         {
             UseWAMWithLeading0();
             UseWAMNoLeading0();
         }
 
-        if (OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0, 17763))
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17763))
         {
             UseWAMWithLeading0();
             UseWAMNoLeading0();
         }
     }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardMethodWith1VersionPartsEquavalentTo2PartsWithLeading0()
+        public async Task GuardMethodWith1VersionPartsEquavalentTo2PartsWithLeading0Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -138,23 +208,23 @@ public class MSAL
 
     static void Test()
     {
-        if (OperatingSystemHelper.IsWindowsVersionAtLeast(10))
+        if (OperatingSystem.IsWindowsVersionAtLeast(10))
         {
             UseWAMWithLeading0();
         }
 
-        if (OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0))
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 0))
         {
             UseWAMWithLeading0();
         }
     }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardMethodWith2VersionPartsEquavalentTo3PartsWithLeading0()
+        public async Task GuardMethodWith2VersionPartsEquavalentTo3PartsWithLeading0Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -170,25 +240,25 @@ public class MSAL
 
     static void Test()
     {
-        if (OperatingSystemHelper.IsWindowsVersionAtLeast(10, 1))
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 1))
         {
             UseWAMWithLeading0();
             UseWAMNoLeading0();
         }
 
-        if (OperatingSystemHelper.IsWindowsVersionAtLeast(10, 1, 0))
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 1, 0))
         {
             UseWAMWithLeading0();
             UseWAMNoLeading0();
         }
     }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardsAroundSupported_SimpleIfElse()
+        public async Task GuardsAroundSupported_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -200,7 +270,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
     {
         public static void TestWithGuardMethods()
         {
-            if (OperatingSystemHelper.IsWindows() || OperatingSystemHelper.IsBrowser())
+            if (OperatingSystem.IsWindows() || OperatingSystem.IsBrowser())
             {
                 [|Target.SupportedOnWindows()|]; // This call site is reachable on: 'Windows', 'Browser'. 'Target.SupportedOnWindows()' is only supported on: 'windows'.
                 [|Target.SupportedOnWindows10()|];
@@ -224,13 +294,154 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
         [SupportedOSPlatform(""windows10.0""), SupportedOSPlatform(""browser"")]
         public static void SupportedOnWindows10AndBrowser() { }
     }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardsAroundSupported()
+        public async Task SupportedOnOsx_GuardedWithIsMacOSAsync()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    public void Api_Usage()
+    {
+        if (OperatingSystem.IsWindows() ||
+            OperatingSystem.IsLinux() ||
+            OperatingSystem.IsMacOS())
+        {
+            Api();
+            Api2();
+        }
+
+        [|Api()|]; // This call site is reachable on all platforms. 'Test.Api()' is only supported on: 'macOS/OSX', 'Linux', 'windows'.
+        [|Api2()|]; // This call site is reachable on all platforms. 'Test.Api2()' is only supported on: 'macOS/OSX', 'Linux', 'windows'.
+    }
+
+    [SupportedOSPlatform(""macos"")]
+    [SupportedOSPlatform(""windows"")]
+    [SupportedOSPlatform(""Linux"")]
+    void Api() { }
+
+    [SupportedOSPlatform(""windows"")]
+    [SupportedOSPlatform(""Osx"")]
+    [SupportedOSPlatform(""Linux"")]
+    void Api2() { }
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task UnsupportedOnOsx_GuardedWithIsMacOSAsync()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    public void Api_Usage()
+    {
+        if (!OperatingSystem.IsWindows() &&
+            !OperatingSystem.IsLinux() &&
+            !OperatingSystem.IsMacOS())
+        {
+            Api();
+        }
+
+        [|Api()|]; // This call site is reachable on all platforms. 'Test.Api()' is unsupported on: 'macOS/OSX', 'windows'.
+    }
+
+    [UnsupportedOSPlatform(""windows"")]
+    [UnsupportedOSPlatform(""Linux"")]
+    [UnsupportedOSPlatform(""Osx"")]
+    void Api() { }
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task SupportedOnOsxVersioned_GuardedWithIsMacOSVersionedAsync()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    public void Api_Usage()
+    {
+        if (OperatingSystem.IsWindowsVersionAtLeast(10) ||
+            OperatingSystem.IsLinux() ||
+            OperatingSystem.IsMacOSVersionAtLeast(11))
+        {
+            Api();
+        }
+
+        [|Api()|]; // This call site is reachable on all platforms. 'Test.Api2()' is only supported on: 'macOS/OSX' 10.1 and later, 'windows' 10.0 and later, 'Linux'.
+    }
+
+    [SupportedOSPlatform(""windows10.0"")]
+    [SupportedOSPlatform(""Linux"")]
+    [SupportedOSPlatform(""Osx10.1"")]
+    void Api() { }
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task SupportedUnsupportedOnOsx_GuardedWithIsMacOS_MessageParameterTestAsync()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    public void Api_Usage()
+    {
+        if (OperatingSystem.IsMacOS())
+        {
+            MacOsApi();
+            OsxApi();
+            {|#0:UnsupportedOsxApi()|};
+        }
+        else
+        {
+            {|#1:MacOsApi()|}; // This call site is reachable on all platforms. 'Test.Api()' is only supported on: 'macOS/OSX', 'Linux', 'windows'.
+            {|#2:OsxApi()|}; // This call site is reachable on all platforms. 'Test.Api2()' is only supported on: 'macOS/OSX', 'Linux', 'windows'.
+            UnsupportedOsxApi();
+        }
+    }
+
+    [SupportedOSPlatform(""macos"")]
+    void MacOsApi() { }
+
+    [SupportedOSPlatform(""Osx"")]
+    void OsxApi() { }
+
+    [UnsupportedOSPlatform(""Osx"")]
+    void UnsupportedOsxApi() { }
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable)
+                    .WithLocation(0).WithArguments("Test.UnsupportedOsxApi()", "'macOS/OSX'", "'macOS/OSX'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms)
+                    .WithLocation(1).WithArguments("Test.MacOsApi()", "'macOS/OSX'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms)
+                    .WithLocation(2).WithArguments("Test.OsxApi()", "'macOS/OSX'"));
+        }
+
+        [Fact]
+        public async Task GuardsAroundSupportedAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -242,7 +453,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
     {
         public static void TestWithGuardMethods()
         {
-            if (!OperatingSystemHelper.IsWindows())
+            if (!OperatingSystem.IsWindows())
             {
                 [|Target.SupportedOnWindows()|]; // This call site is reachable on all platforms. 'Target.SupportedOnWindows()' is only supported on: 'windows'.
                 [|Target.SupportedOnWindows10()|];
@@ -250,7 +461,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
                 [|Target.SupportedOnWindows10AndBrowser()|]; // expected two diagnostics - supported on windows 10 and browser
             }
 
-            if (OperatingSystemHelper.IsWindows())
+            if (OperatingSystem.IsWindows())
             {
                 Target.SupportedOnWindows();
                 [|Target.SupportedOnWindows10()|]; // This call site is reachable on: 'Windows' all versions. 'Target.SupportedOnWindows10()' is only supported on: 'windows' 10.0 and later.
@@ -258,7 +469,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
                 [|Target.SupportedOnWindows10AndBrowser()|]; // This call site is reachable on: 'Windows' all versions. 'Target.SupportedOnWindows10AndBrowser()' is only supported on: 'windows' 10.0 and later, 'browser'.
             }
 
-            if (OperatingSystemHelper.IsWindowsVersionAtLeast(10))
+            if (OperatingSystem.IsWindowsVersionAtLeast(10))
             {
                 Target.SupportedOnWindows();
                 Target.SupportedOnWindows10();
@@ -266,7 +477,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
                 Target.SupportedOnWindows10AndBrowser(); // the same, no diagnostic expected
             }
 
-            if (OperatingSystemHelper.IsBrowser())
+            if (OperatingSystem.IsBrowser())
             {
                 [|Target.SupportedOnWindows()|]; // This call site is reachable on: 'Browser'. 'Target.SupportedOnWindows()' is only supported on: 'windows'.
                 [|Target.SupportedOnWindows10()|];
@@ -274,7 +485,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
                 Target.SupportedOnWindows10AndBrowser(); // The same, no diagnostic expected
             }
 
-            if (OperatingSystemHelper.IsWindows() || OperatingSystemHelper.IsBrowser())
+            if (OperatingSystem.IsWindows() || OperatingSystem.IsBrowser())
             {
                 [|Target.SupportedOnWindows()|]; // This call site is reachable on: 'Windows', 'Browser'. 'Target.SupportedOnWindows()' is only supported on: 'windows'.
                 [|Target.SupportedOnWindows10()|]; // This call site is reachable on: 'Windows' all versions. 'Target.SupportedOnWindows10()' is only supported on: 'windows' 10.0 and later.
@@ -282,7 +493,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
                 [|Target.SupportedOnWindows10AndBrowser()|]; // This call site is reachable on: 'Windows' all versions. 'Target.SupportedOnWindows10AndBrowser()' is only supported on: 'windows' 10.0 and later, 'browser'.
             }
 
-           if (OperatingSystemHelper.IsWindowsVersionAtLeast(10) || OperatingSystemHelper.IsBrowser())
+           if (OperatingSystem.IsWindowsVersionAtLeast(10) || OperatingSystem.IsBrowser())
             {
                 [|Target.SupportedOnWindows()|]; //  This call site is reachable on: 'Browser'. 'Target.SupportedOnWindows()' is only supported on: 'windows'.
                 [|Target.SupportedOnWindows10()|]; // This call site is reachable on: 'Browser'. 'Target.SupportedOnWindows10()' is only supported on: 'windows' 10.0 and later. 
@@ -306,13 +517,13 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
         [SupportedOSPlatform(""windows10.0""), SupportedOSPlatform(""browser"")]
         public static void SupportedOnWindows10AndBrowser() { }
     }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task MoreGuardsAroundSupported()
+        public async Task MoreGuardsAroundSupportedAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -324,7 +535,7 @@ namespace PlatformCompatDemo.SupportedUnupported
     {
         public static void UnsupportedCombinations()
         {
-            if (OperatingSystemHelper.IsBrowser())
+            if (OperatingSystem.IsBrowser())
             {
                 var withoutAttributes = new TypeWithoutAttributes();
                 withoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11();
@@ -347,7 +558,7 @@ namespace PlatformCompatDemo.SupportedUnupported
                 unsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12.FunctionSupportedOnWindows13();
             }
 
-            if (OperatingSystemHelper.IsWindows())
+            if (OperatingSystem.IsWindows())
             {
                 var withoutAttributes = new TypeWithoutAttributes();
                 [|withoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11()|]; // This call site is reachable on: 'Windows' all versions. 'TypeWithoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11()' is supported on: 'windows' 11.0 and later.
@@ -367,13 +578,13 @@ namespace PlatformCompatDemo.SupportedUnupported
             }
         }
     }
-}" + TargetTypesForTest + MockAttributesCsSource + MockOperatingSystemApiSource;
+}" + TargetTypesForTest;
 
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact]
-        public async Task MoreGuardsAroundUnSupported()
+        public async Task MoreGuardsAroundUnSupportedAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -385,7 +596,7 @@ namespace PlatformCompatDemo.SupportedUnupported
     {
         public static void UnsupportedSingleCondition()
         {
-            if (!OperatingSystemHelper.IsWindowsVersionAtLeast(10))
+            if (!OperatingSystem.IsWindowsVersionAtLeast(10))
             {
                 var unsupported = new TypeWithoutAttributes();
                 [|unsupported.FunctionUnsupportedOnWindows()|]; // This call site is reachable on all platforms. 'TypeWithoutAttributes.FunctionUnsupportedOnWindows()' is unsupported on: 'windows'.
@@ -416,7 +627,7 @@ namespace PlatformCompatDemo.SupportedUnupported
 
         public static void UnsupportedWithAnd()
         {
-            if (!OperatingSystemHelper.IsWindowsVersionAtLeast(10) && !OperatingSystemHelper.IsBrowser())
+            if (!OperatingSystem.IsWindowsVersionAtLeast(10) && !OperatingSystem.IsBrowser())
             {
                 var unsupported = new TypeWithoutAttributes();
                 [|unsupported.FunctionUnsupportedOnWindows()|]; // This call site is reachable on all platforms. 'TypeWithoutAttributes.FunctionUnsupportedOnWindows()' is unsupported on: 'windows'.
@@ -452,7 +663,7 @@ namespace PlatformCompatDemo.SupportedUnupported
 
         public static void UnsupportedCombinations()
         {
-            if (!OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsBrowser())
+            if (!OperatingSystem.IsWindows() && !OperatingSystem.IsBrowser())
             {
                 var withoutAttributes = new TypeWithoutAttributes();
                 withoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11();
@@ -476,13 +687,13 @@ namespace PlatformCompatDemo.SupportedUnupported
             }
         }
     }
-}" + TargetTypesForTest + MockAttributesCsSource + MockOperatingSystemApiSource;
+}" + TargetTypesForTest;
 
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact]
-        public async Task GuardsAroundUnsupported()
+        public async Task GuardsAroundUnsupportedAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -494,7 +705,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundUnsupported
     {
         public static void TestWithGuardMethods()
         {
-            if (!OperatingSystemHelper.IsWindows())
+            if (!OperatingSystem.IsWindows())
             {
                 Target.UnsupportedInWindows();
                 Target.UnsupportedInWindows10();
@@ -503,7 +714,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundUnsupported
                 [|Target.UnsupportedOnWindows10AndBrowser()|]; // This call site is reachable on all platforms. 'Target.UnsupportedOnWindows10AndBrowser()' is unsupported on: 'browser'.
             }
 
-            if (!OperatingSystemHelper.IsWindowsVersionAtLeast(10))
+            if (!OperatingSystem.IsWindowsVersionAtLeast(10))
             {
                 [|Target.UnsupportedInWindows()|]; // This call site is reachable on all platforms. 'Target.UnsupportedInWindows()' is unsupported on: 'windows'.
                 Target.UnsupportedInWindows10();
@@ -512,7 +723,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundUnsupported
                 [|Target.UnsupportedOnWindows10AndBrowser()|]; // expected diagnostic - browser unsupported
             }
 
-            if (OperatingSystemHelper.IsWindows())
+            if (OperatingSystem.IsWindows())
             {
                 [|Target.UnsupportedInWindows()|]; // This call site is reachable on: 'Windows'. 'Target.UnsupportedInWindows()' is unsupported on: 'windows'.
                 [|Target.UnsupportedInWindows10()|]; // expected diagnostic - windows 10 unsupported
@@ -521,7 +732,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundUnsupported
                 [|Target.UnsupportedOnWindows10AndBrowser()|]; // This call site is reachable on: 'Windows' all versions. 'Target.UnsupportedOnWindows10AndBrowser()' is unsupported on: 'windows' 10.0 and later.
             }
 
-            if (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10))
+            if (OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(10))
             {
                 [|Target.UnsupportedInWindows()|]; // This call site is reachable on: 'Windows'. 'Target.UnsupportedInWindows()' is unsupported on: 'windows'.
                 Target.UnsupportedInWindows10();
@@ -530,7 +741,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundUnsupported
                 Target.UnsupportedOnWindows10AndBrowser();
             }
 
-            if (OperatingSystemHelper.IsBrowser())
+            if (OperatingSystem.IsBrowser())
             {
                 Target.UnsupportedInWindows();
                 Target.UnsupportedInWindows10();
@@ -558,13 +769,13 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundUnsupported
         [UnsupportedOSPlatform(""windows10.0""), UnsupportedOSPlatform(""browser"")]
         public static void UnsupportedOnWindows10AndBrowser() { }
     }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+}";
 
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact]
-        public async Task SupportedUnsupportedRange_GuardedWithAnd()
+        public async Task SupportedUnsupportedRange_GuardedWithAndAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -574,8 +785,8 @@ class Test
 {
     public void Api_Usage()
     {
-        if (OperatingSystemHelper.IsIOSVersionAtLeast(12,0) &&
-           !OperatingSystemHelper.IsIOSVersionAtLeast(14,0))
+        if (OperatingSystem.IsIOSVersionAtLeast(12,0) &&
+           !OperatingSystem.IsIOSVersionAtLeast(14,0))
         {
             Api();
         }
@@ -584,16 +795,14 @@ class Test
 
     [SupportedOSPlatform(""ios12.0"")]
     [UnsupportedOSPlatform(""ios14.0"")]
-    void Api()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void Api() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task Unsupported_GuardedWith_IsOsNameMethods()
+        public async Task Unsupported_GuardedWith_IsOsNameMethodsAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -603,7 +812,7 @@ class Test
 {
     void M1()
     {
-        if(!OperatingSystemHelper.IsBrowser())
+        if(!OperatingSystem.IsBrowser())
         {
             NotForBrowser();
             [|NotForIos12OrLater()|];
@@ -614,7 +823,7 @@ class Test
             [|NotForBrowser()|];
         }
 
-        if(OperatingSystemHelper.IsOSPlatform(""Browser""))
+        if(OperatingSystem.IsOSPlatform(""Browser""))
         {
             [|NotForBrowser()|];
         }
@@ -623,7 +832,7 @@ class Test
             NotForBrowser();
         }
         
-        if(OperatingSystemHelper.IsIOS())
+        if(OperatingSystem.IsIOS())
         {
             [|NotForIos12OrLater()|];
         }
@@ -632,7 +841,7 @@ class Test
             NotForIos12OrLater();
         }
 
-        if(OperatingSystemHelper.IsIOSVersionAtLeast(12,1))
+        if(OperatingSystem.IsIOSVersionAtLeast(12,1))
         {
             [|NotForIos12OrLater()|];
         }
@@ -641,7 +850,7 @@ class Test
             NotForIos12OrLater();
         }
 
-        if(OperatingSystemHelper.IsIOS() && !OperatingSystemHelper.IsIOSVersionAtLeast(12,0))
+        if(OperatingSystem.IsIOS() && !OperatingSystem.IsIOSVersionAtLeast(12,0))
         {
             NotForIos12OrLater();
         }
@@ -652,21 +861,17 @@ class Test
     }
 
     [UnsupportedOSPlatform(""browser"")]
-    void NotForBrowser()
-    {
-    }
+    void NotForBrowser() { }
 
     [UnsupportedOSPlatform(""ios12.1"")]
-    void NotForIos12OrLater()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void NotForIos12OrLater() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact, WorkItem(4190, "https://github.com/dotnet/roslyn-analyzers/issues/4190")]
-        public async Task Unsupported_GuardedWith_DebugAssert_IsOsNameMethods()
+        public async Task Unsupported_GuardedWith_DebugAssert_IsOsNameMethodsAsync()
         {
             var source = @"
 using System;
@@ -678,7 +883,7 @@ class Test
 {
     void M1()
     {
-        Debug.Assert(!OperatingSystemHelper.IsBrowser());
+        Debug.Assert(!OperatingSystem.IsBrowser());
 
         NotForBrowser();
         [|NotForIos12OrLater()|];
@@ -686,7 +891,7 @@ class Test
 
     void M2()
     {
-        Debug.Assert(OperatingSystemHelper.IsBrowser());
+        Debug.Assert(OperatingSystem.IsBrowser());
 
         NotForIos12OrLater();
         [|NotForBrowser()|];
@@ -694,66 +899,61 @@ class Test
 
     void M3()
     {
-        Debug.Assert(OperatingSystemHelper.IsOSPlatform(""Browser""));
+        Debug.Assert(OperatingSystem.IsOSPlatform(""Browser""));
         [|NotForBrowser()|];
     }
 
     void M4()
     {
-        Debug.Assert(!OperatingSystemHelper.IsOSPlatform(""Browser""));
+        Debug.Assert(!OperatingSystem.IsOSPlatform(""Browser""));
         NotForBrowser();
     }
 
     void M5()
     {
-        Debug.Assert(OperatingSystemHelper.IsIOS());
+        Debug.Assert(OperatingSystem.IsIOS());
         [|NotForIos12OrLater()|];
     }
 
     void M6()
     {
-        Debug.Assert(!OperatingSystemHelper.IsIOS());
+        Debug.Assert(!OperatingSystem.IsIOS());
         NotForIos12OrLater();
     }
 
     void M7()
     {
-        Debug.Assert(OperatingSystemHelper.IsIOSVersionAtLeast(12,1));
+        Debug.Assert(OperatingSystem.IsIOSVersionAtLeast(12,1));
         [|NotForIos12OrLater()|];
     }
 
     void M8()
     {
-        Debug.Assert(!OperatingSystemHelper.IsIOSVersionAtLeast(12,1));
+        Debug.Assert(!OperatingSystem.IsIOSVersionAtLeast(12,1));
         NotForIos12OrLater();
     }
 
     void M9()
     {
-        Debug.Assert(OperatingSystemHelper.IsIOS());
-        Debug.Assert(!OperatingSystemHelper.IsIOSVersionAtLeast(12,0));
+        Debug.Assert(OperatingSystem.IsIOS());
+        Debug.Assert(!OperatingSystem.IsIOSVersionAtLeast(12,0));
         
         NotForIos12OrLater();
     }
 
     void M10()
     {
-        Debug.Assert(!(OperatingSystemHelper.IsIOS() && !OperatingSystemHelper.IsIOSVersionAtLeast(12,0)));
+        Debug.Assert(!(OperatingSystem.IsIOS() && !OperatingSystem.IsIOSVersionAtLeast(12,0)));
         [|NotForIos12OrLater()|];
     }
 
     [UnsupportedOSPlatform(""browser"")]
-    void NotForBrowser()
-    {
-    }
+    void NotForBrowser() { }
 
     [UnsupportedOSPlatform(""ios12.1"")]
-    void NotForIos12OrLater()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
-
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+    void NotForIos12OrLater() { }
+}";
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         public static IEnumerable<object[]> OperatingSystem_IsOsNameVersionAtLeast_MethodsTestData()
@@ -783,7 +983,7 @@ class Test
 
         [Theory]
         [MemberData(nameof(OperatingSystem_IsOsNameVersionAtLeast_MethodsTestData))]
-        public async Task GuardedWith_IsOsNameVersionAtLeast_SimpleIfElse(string osName, string isOsMethod, string version, bool versionMatch)
+        public async Task GuardedWith_IsOsNameVersionAtLeast_SimpleIfElseAsync(string osName, string isOsMethod, string version, bool versionMatch)
         {
             var match = versionMatch ? "OsSpecificMethod()" : "[|OsSpecificMethod()|]";
             var source = @"
@@ -794,7 +994,7 @@ class Test
 {
     void M1()
     {
-        if(OperatingSystemHelper." + isOsMethod + @"VersionAtLeast(" + version + @"))
+        if(OperatingSystem." + isOsMethod + @"VersionAtLeast(" + version + @"))
         {
             " + match + @";
         }
@@ -805,12 +1005,10 @@ class Test
     }
 
     [SupportedOSPlatform(""" + osName + @""")]
-    void OsSpecificMethod()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void OsSpecificMethod() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         public static IEnumerable<object[]> OperatingSystem_IsOsName_MethodsTestData()
@@ -841,7 +1039,7 @@ class Test
 
         [Theory]
         [MemberData(nameof(OperatingSystem_IsOsName_MethodsTestData))]
-        public async Task GuardedWith_IsOsNameMethods_SimpleIfElse(string osName, string isOsMethod)
+        public async Task GuardedWith_IsOsNameMethods_SimpleIfElseAsync(string osName, string isOsMethod)
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -851,7 +1049,7 @@ class Test
 {
     void M1()
     {
-        if(OperatingSystemHelper." + isOsMethod + @"())
+        if(OperatingSystem." + isOsMethod + @"())
         {
             OsSpecificMethod();
         }
@@ -862,16 +1060,14 @@ class Test
     }
 
     [SupportedOSPlatform(""" + osName + @""")]
-    void OsSpecificMethod()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void OsSpecificMethod() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedWith_OperatingSystem_IsOSPlatform_SimpleIfElse()
+        public async Task GuardedWith_OperatingSystem_IsOSPlatform_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -881,7 +1077,7 @@ class Test
 {
     void M1()
     {
-        if(OperatingSystemHelper.IsOSPlatform(""Windows""))
+        if(OperatingSystem.IsOSPlatform(""Windows""))
         {
             M2();
         }
@@ -890,7 +1086,7 @@ class Test
             [|M2()|];
         }
 
-        if(OperatingSystemHelper.IsOSPlatform(""Windows8.0""))
+        if(OperatingSystem.IsOSPlatform(""Windows8.0""))
         {
             M2();
         }
@@ -901,16 +1097,14 @@ class Test
     }
 
     [SupportedOSPlatform(""windows"")]
-    void M2()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void M2() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedWith_RuntimeInformation_IsOSPlatform_SimpleIfElse()
+        public async Task GuardedWith_RuntimeInformation_IsOSPlatform_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -931,16 +1125,57 @@ class Test
     }
 
     [SupportedOSPlatform(""Windows"")]
-    void M2()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void M2() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedWith_RuntimeInformation_IsOSPlatform_OSX_GuardsMacOS()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+class Test
+{
+    void M1()
+    {
+        if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            SupportsMacOS();
+            [|UnsupportsMacOS()|];
+            SupportsOSX();
+            [|UnsupportsOSX()|];
+        }
+        else
+        {
+            [|SupportsMacOS()|];
+            UnsupportsMacOS();
+            [|SupportsOSX()|];
+            UnsupportsOSX();
+        }
+    }
+
+    [SupportedOSPlatform(""macos"")]
+    void SupportsMacOS() { }
+
+    [UnsupportedOSPlatform(""MacOS"")]
+    void UnsupportsMacOS() { }
+
+    [SupportedOSPlatform(""OSX"")]
+    void SupportsOSX() { }
+
+    [UnsupportedOSPlatform(""osx"")]
+    void UnsupportsOSX() { }
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact, WorkItem(4119, "https://github.com/dotnet/roslyn-analyzers/issues/4119")]
-        public async Task GuardedWith_RuntimeInformation_IsOSPlatform_OSPlatformCreate_SimpleIfElse()
+        public async Task GuardedWith_RuntimeInformation_IsOSPlatform_OSPlatformCreate_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -961,16 +1196,14 @@ class Test
     }
 
     [SupportedOSPlatform(""Windows"")]
-    void M2()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void M2() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact, WorkItem(4119, "https://github.com/dotnet/roslyn-analyzers/issues/4119")]
-        public async Task GuardedWith_RuntimeInformation_IsOSPlatform_OSPlatformCreate_ValueCachedInLocal_SimpleIfElse()
+        public async Task GuardedWith_RuntimeInformation_IsOSPlatform_OSPlatformCreate_ValueCachedInLocal_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -992,16 +1225,14 @@ class Test
     }
 
     [SupportedOSPlatform(""Windows"")]
-    void M2()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void M2() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact, WorkItem(4119, "https://github.com/dotnet/roslyn-analyzers/issues/4119")]
-        public async Task GuardedWith_RuntimeInformation_IsOSPlatform_OSPlatformCreate_MultipleValuesCachedWithConditionalLogic()
+        public async Task GuardedWith_RuntimeInformation_IsOSPlatform_OSPlatformCreate_MultipleValuesCachedWithConditionalLogicAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1053,16 +1284,14 @@ class Test
 
     [SupportedOSPlatform(""Windows"")]
     [SupportedOSPlatform(""Linux"")]
-    void M2()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void M2() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedCalled_SimpleIfElse_VersionNotMatch_Warns()
+        public async Task GuardedCalled_SimpleIfElse_VersionNotMatch_WarnsAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1073,7 +1302,7 @@ static class Program
 {
     public static void Main()
     {
-        if (OperatingSystemHelper.IsWindowsVersionAtLeast(10))
+        if (OperatingSystem.IsWindowsVersionAtLeast(10))
         {
             [|WindowsSpecificApis.WindowsOnlyMethod()|];
         }
@@ -1089,12 +1318,12 @@ public class WindowsSpecificApis
     [SupportedOSPlatform(""windows10.1.2.3"")]
     public static void WindowsOnlyMethod() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task ReintroducingApiSupport_Guarded_NotWarn()
+        public async Task ReintroducingApiSupport_Guarded_NotWarnAsync()
         {
             var source = @"
 using System;
@@ -1105,7 +1334,7 @@ static class Program
 {
     public static void Main()
     {
-        if (OperatingSystemHelper.IsWindowsVersionAtLeast(10))
+        if (OperatingSystem.IsWindowsVersionAtLeast(10))
         {
             Some.WindowsSpecificApi();
         }
@@ -1120,20 +1349,18 @@ static class Some
 {
     [UnsupportedOSPlatform(""windows"")]
     [SupportedOSPlatform(""windows10.0"")]
-    public static void WindowsSpecificApi()
-    {
-    }
+    public static void WindowsSpecificApi() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
+";
 
-            await VerifyAnalyzerAsyncCs(source,
+            await VerifyAnalyzerCSAsync(source,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsReachable).WithLocation(0).
                 WithArguments("Some.WindowsSpecificApi()", GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "windows", "10.0"),
                 GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, "windows")));
         }
 
         [Fact]
-        public async Task GuardedCalled_SimpleIf_NotWarns()
+        public async Task GuardedCalled_SimpleIf_NotWarnsAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1144,16 +1371,14 @@ public class Test
     public void M1()
     {
         [|M2()|];
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
             M2();
     }
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
 
             var vbSource = @"
 Imports System.Runtime.Versioning
@@ -1162,19 +1387,18 @@ Imports System
 Public Class Test
     Public Sub M1()
         [|M2()|]
-        If OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3) Then M2()
+        If OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3) Then M2()
     End Sub
 
     <SupportedOSPlatform(""Windows10.1.2.3"")>
     Public Sub M2()
     End Sub
-End Class
-" + MockAttributesVbSource + MockRuntimeApiSourceVb;
-            await VerifyAnalyzerAsyncVb(vbSource);
+End Class";
+            await VerifyAnalyzerVBAsync(vbSource);
         }
 
         [Fact]
-        public async Task GuardedCall_MultipleSimpleIfTests()
+        public async Task GuardedCall_MultipleSimpleIfTestsAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1185,26 +1409,24 @@ public class Test
     public void M1()
     {
         [|M2()|];
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
             M2();
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 10, 1, 2, 3))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Linux"", 10, 1, 2, 3))
             [|M2()|];
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
             M2();
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 8, 1, 2, 3))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 8, 1, 2, 3))
             [|M2()|];        
     }
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedWith_IsOSPlatformVersionAtLeast_SimpleIfElse()
+        public async Task GuardedWith_IsOSPlatformVersionAtLeast_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1214,7 +1436,7 @@ class Test
 {
     void M1()
     {
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             M2();
         }
@@ -1225,16 +1447,14 @@ class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    void M2()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void M2() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedWith_AlternativeOf_IsOSPlatformEarlierThan()
+        public async Task GuardedWith_AlternativeOf_IsOSPlatformEarlierThanAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1245,7 +1465,7 @@ class Test
     [SupportedOSPlatform(""Windows"")]
     void M1()
     {
-        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0))
+        if(OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(10, 0))
         {
             [|M2()|];
             M3();
@@ -1258,20 +1478,16 @@ class Test
     }
 
     [SupportedOSPlatform(""MacOs12.2.3"")]
-    void M2()
-    {
-    }
+    void M2() { }
 
     [UnsupportedOSPlatform(""Windows10.0"")]
-    void M3 ()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+    void M3() { }
+}";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedWith_Unsupported_SimpleIfElse()
+        public async Task GuardedWith_Unsupported_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1282,7 +1498,7 @@ class Test
     [SupportedOSPlatform(""Windows"")]
     void M1()
     {
-        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10, 1, 2, 3))
+        if(OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(10, 1, 2, 3))
         {
             [|M2()|];
             M3();
@@ -1293,7 +1509,7 @@ class Test
             [|M3()|];
         }
 
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"",10,1,3))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"",10,1,3))
         {
             [|M3()|];
             M2();
@@ -1306,15 +1522,12 @@ class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    void M2()
-    {
-    }
+    void M2() { }
+
     [UnsupportedOSPlatform(""Windows10.1.2.3"")]
-    void M3 ()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+    void M3() { }
+}";
+            await VerifyAnalyzerCSAsync(source);
 
             var vbSource = @"
 Imports System.Runtime.Versioning
@@ -1323,7 +1536,7 @@ Imports System
 Class Test
     <SupportedOSPlatform(""Windows"")>
     Private Sub M1()
-        If OperatingSystemHelper.IsWindows() AndAlso Not OperatingSystemHelper.IsWindowsVersionAtLeast(10, 1, 2, 3) Then
+        If OperatingSystem.IsWindows() AndAlso Not OperatingSystem.IsWindowsVersionAtLeast(10, 1, 2, 3) Then
             [|M2()|]
             M3()
         Else
@@ -1331,7 +1544,7 @@ Class Test
             [|M3()|]
         End If
 
-        If OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"",10,1,3) Then
+        If OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"",10,1,3) Then
             [|M3()|]
             M2()
         Else
@@ -1347,13 +1560,12 @@ Class Test
     <UnsupportedOSPlatform(""Windows10.1.2.3"")>
     Private Sub M3()
     End Sub
-End Class
-" + MockAttributesVbSource + MockRuntimeApiSourceVb;
-            await VerifyAnalyzerAsyncVb(vbSource);
+End Class";
+            await VerifyAnalyzerVBAsync(vbSource);
         }
 
         [Fact]
-        public async Task OsDependentEnumValue_GuardedCall_SimpleIfElse()
+        public async Task OsDependentEnumValue_GuardedCall_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1364,7 +1576,7 @@ public class Test2
     public void M1()
     {
         PlatformEnum val = [|PlatformEnum.Windows10|];
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10))
         {
             M2(PlatformEnum.Windows10);
         }
@@ -1389,12 +1601,12 @@ public enum PlatformEnum
     Linux48,
     NoPlatform
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task OsDependentProperty_GuardedCall_SimpleIfElse()
+        public async Task OsDependentProperty_GuardedCall_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1414,7 +1626,7 @@ public class Test
     
     public void M1()
     {
-        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(8, 0, 19222)) 
+        if(OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(8, 0, 19222)) 
         {
             WindowsOnlyPropertyGetter = true;
             var val = WindowsOnlyPropertyGetter;
@@ -1437,12 +1649,12 @@ public class Test
         return option;
     }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+";
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact, WorkItem(4105, "https://github.com/dotnet/roslyn-analyzers/issues/4105")]
-        public async Task OsDependentPropertyWithInitializer_NoDiagnostic()
+        public async Task OsDependentPropertyWithInitializer_NoDiagnosticAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1450,19 +1662,17 @@ using System;
 
 class C
 {
-    public static object Property { get; } = OperatingSystemHelper.IsWindows() ? null : new A();
+    public static object Property { get; } = OperatingSystem.IsWindows() ? null : new A();
 }
 
 [UnsupportedOSPlatform(""windows"")]
-class A
-{
-}
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+class A { }
+";
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact, WorkItem(4105, "https://github.com/dotnet/roslyn-analyzers/issues/4105")]
-        public async Task OsDependentPropertyWithInitializer_Diagnostic()
+        public async Task OsDependentPropertyWithInitializer_DiagnosticAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1470,19 +1680,17 @@ using System;
 
 class C
 {
-    public static object Property { get; } = OperatingSystemHelper.IsWindows() ? [|new A()|] : null;
+    public static object Property { get; } = OperatingSystem.IsWindows() ? [|new A()|] : null;
 }
 
 [UnsupportedOSPlatform(""windows"")]
-class A
-{
-}
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+class A { }
+";
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact, WorkItem(4105, "https://github.com/dotnet/roslyn-analyzers/issues/4105")]
-        public async Task OsDependentFieldWithInitializer_NoDiagnostic()
+        public async Task OsDependentFieldWithInitializer_NoDiagnosticAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1490,19 +1698,17 @@ using System;
 
 class C
 {
-    private static object _field = OperatingSystemHelper.IsWindows() ? null : new A();
+    private static object _field = OperatingSystem.IsWindows() ? null : new A();
 }
 
 [UnsupportedOSPlatform(""windows"")]
-class A
-{
-}
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+class A { }
+";
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact, WorkItem(4105, "https://github.com/dotnet/roslyn-analyzers/issues/4105")]
-        public async Task OsDependentFieldWithInitializer_Diagnostic()
+        public async Task OsDependentFieldWithInitializer_DiagnosticAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1510,19 +1716,17 @@ using System;
 
 class C
 {
-    private static object _field = OperatingSystemHelper.IsWindows() ? [|new A()|] : null;
+    private static object _field = OperatingSystem.IsWindows() ? [|new A()|] : null;
 }
 
 [UnsupportedOSPlatform(""windows"")]
-class A
-{
-}
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+class A { }
+";
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact]
-        public async Task OsDependentConstructorOfClass_GuardedCall_SimpleIfElse()
+        public async Task OsDependentConstructorOfClass_GuardedCall_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1532,7 +1736,7 @@ public class Test
 {
     public void M1()
     {
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             C instance = new C();
             instance.M2();
@@ -1548,19 +1752,16 @@ public class Test
 public class C
 {
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public C()
-    {
-    }
-    public void M2()
-    {
-    }
+    public C() { }
+
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task ConstructorAndMethodOfOsDependentClass_GuardedCall_SimpleIfElse()
+        public async Task ConstructorAndMethodOfOsDependentClass_GuardedCall_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1570,7 +1771,7 @@ public class Test
 {
     public void M1()
     {
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             OsDependentClass odc = new OsDependentClass();
             odc.Method2();
@@ -1585,12 +1786,10 @@ public class Test
 [SupportedOSPlatform(""Windows10.1.2.3"")]
 public class OsDependentClass
 {
-    public void Method2()
-    {
-    }
+    public void Method2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
 
             var vbSource = @"
 Imports System.Runtime.Versioning
@@ -1598,7 +1797,7 @@ Imports System
 
 Public Class Test
     Public Sub M1()
-        If OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) Then
+        If OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) Then
             Dim odc As OsDependentClass = New OsDependentClass()
             odc.M2()
         Else
@@ -1612,13 +1811,12 @@ End Class
 Public Class OsDependentClass
     Public Sub M2()
     End Sub
-End Class
-" + MockRuntimeApiSourceVb + MockAttributesVbSource;
-            await VerifyAnalyzerAsyncVb(vbSource);
+End Class";
+            await VerifyAnalyzerVBAsync(vbSource);
         }
 
         [Fact]
-        public async Task LocalFunctionCallsOsDependentMember_GuardedCall_SimpleIfElse()
+        public async Task LocalFunctionCallsOsDependentMember_GuardedCall_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1630,7 +1828,7 @@ public class Test
     {
         void Test()
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
             {
                 M2();
             }
@@ -1643,16 +1841,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromDifferentContext()
+        public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromDifferentContextAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1662,7 +1858,7 @@ public class Test
     void M()
     {
         LocalM();
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             LocalM();
         }
@@ -1672,12 +1868,12 @@ public class Test
         {
             [|WindowsOnlyMethod()|];
            
-            if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+            if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
             {
                 WindowsOnlyMethod();
             }
 
-            if (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10,0))
+            if (OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(10,0))
             {
                 UnsupportedWindows10();
             }
@@ -1689,20 +1885,15 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void WindowsOnlyMethod()
-    {
-    }
+    public void WindowsOnlyMethod() { }
     [UnsupportedOSPlatform(""Windows10.0"")]
-    public void UnsupportedWindows10()
-    {
-    }
-}
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+    public void UnsupportedWindows10() { }
+}";
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact]
-        public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromNotGuardedDifferentContext()
+        public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromNotGuardedDifferentContextAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1714,7 +1905,7 @@ public class Test
     {
         LocalM();
 
-        if (!OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 10, 2))
+        if (!OperatingSystem.IsOSPlatformVersionAtLeast(""Linux"", 10, 2))
         {
             LocalM();
         }
@@ -1726,7 +1917,7 @@ public class Test
         {
             [|WindowsOnlyMethod()|];
 
-            if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+            if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
             {
                 WindowsOnlyMethod();
             }
@@ -1735,7 +1926,7 @@ public class Test
                 [|WindowsOnlyMethod()|];
             }
 
-            if (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10,0))
+            if (OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(10,0))
             {
                 UnsupportedWindows10();
             }
@@ -1747,21 +1938,17 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void WindowsOnlyMethod()
-    {
-    }
+    public void WindowsOnlyMethod() { }
 
     [UnsupportedOSPlatform(""Windows10.0"")]
-    public void UnsupportedWindows10()
-    {
-    }
+    public void UnsupportedWindows10() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+";
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact]
-        public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromGuardedDifferentContext()
+        public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromGuardedDifferentContextAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1771,12 +1958,12 @@ public class Test
 {
     void M()
     {
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             LocalM();
         }
 
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             LocalM();
         }
@@ -1787,7 +1974,7 @@ public class Test
         {
             WindowsOnlyMethod();
 
-            if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+            if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
             {
                 WindowsOnlyMethod();
             }
@@ -1796,7 +1983,7 @@ public class Test
                 WindowsOnlyMethod();
             }
 
-            if (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10,0))
+            if (OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(10,0))
             {
                 UnsupportedWindows10();
             }
@@ -1808,21 +1995,17 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void WindowsOnlyMethod()
-    {
-    }
+    public void WindowsOnlyMethod() { }
 
     [UnsupportedOSPlatform(""Windows10.0"")]
-    public void UnsupportedWindows10()
-    {
-    }
+    public void UnsupportedWindows10() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+";
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
         [Fact]
-        public async Task LocalFunctionEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse()
+        public async Task LocalFunctionEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1835,7 +2018,7 @@ public class Test
         // Warn inside local function escaped as delegate.
         void LocalFunction()
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -1849,18 +2032,16 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 
     public void M3(Action a) { a(); }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LocalFunctionEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_02()
+        public async Task LocalFunctionEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_02Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1873,7 +2054,7 @@ public class Test
         // Warn inside local function escaped as delegate indirectly from another local function.
         void LocalFunction()
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -1893,18 +2074,16 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 
     public void M3(Action a) { a(); }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LocalFunctionEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_03()
+        public async Task LocalFunctionEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_03Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1917,7 +2096,7 @@ public class Test
         // Warn inside local function escaped as delegate indirectly from a lambda invoked inside a local function.
         void LocalFunction()
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -1942,18 +2121,16 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 
     public void M3(Action a) { a(); }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LocalFunctionEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_04()
+        public async Task LocalFunctionEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_04Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -1972,7 +2149,7 @@ public class Test
         // Escaped as delegate, can potentially be invoked from unguarded context.
         M3(LocalFunction);
 
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             // Invoked directly from guarded context.
             LocalFunction();
@@ -1980,18 +2157,16 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 
     public void M3(Action a) { a(); }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LocalFunctionMultipleCallsOsDependentMember_MixedGuardedCalls()
+        public async Task LocalFunctionMultipleCallsOsDependentMember_MixedGuardedCallsAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2014,9 +2189,9 @@ public class Test
             LocalFunction();
         }
 
-        if(OperatingSystemHelper.IsWindows())
+        if(OperatingSystem.IsWindows())
         {
-            if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 // Invoked multiple times directly from guarded context.
                 LocalFunction();
@@ -2032,21 +2207,17 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows"")]
-    public void WindowsOnly()
-    {
-    }
+    public void WindowsOnly() { }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void Windows10OrLaterOnly()
-    {
-    }
+    public void Windows10OrLaterOnly() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LocalFunctionMultipleCalls_DifferentOrder_OsDependentMember_MixedGuardedCalls()
+        public async Task LocalFunctionMultipleCalls_DifferentOrder_OsDependentMember_MixedGuardedCallsAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2063,7 +2234,7 @@ public class Test
 
         // Unguarded call before guarded call - should warn.
         LocalFunction();
-        if(OperatingSystemHelper.IsWindows())
+        if(OperatingSystem.IsWindows())
         {
             LocalFunction();
         }
@@ -2078,23 +2249,21 @@ public class Test
 
         // Guarded call before unguarded call - should warn.
         LocalFunction();
-        if(OperatingSystemHelper.IsWindows())
+        if(OperatingSystem.IsWindows())
         {
             LocalFunction();
         }
     }
 
     [SupportedOSPlatform(""Windows"")]
-    public void WindowsOnly()
-    {
-    }
+    public void WindowsOnly() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LocalFunctionWithUnrelatedLocalFunctionCallsOsDependentMember_GuardedCalls()
+        public async Task LocalFunctionWithUnrelatedLocalFunctionCallsOsDependentMember_GuardedCallsAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2114,7 +2283,7 @@ public class Test
         {
         }
 
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             LocalFunction();
         }
@@ -2124,16 +2293,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LocalFunctionUnusedCallsOsDependentMember_GuardedCalls_SimpleIfElse()
+        public async Task LocalFunctionUnusedCallsOsDependentMember_GuardedCalls_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2146,7 +2313,7 @@ public class Test
         // Do not warn inside unused local function.
         void LocalFunction()
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -2158,16 +2325,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaCallsOsDependentMember_GuardedCall_SimpleIfElse()
+        public async Task LambdaCallsOsDependentMember_GuardedCall_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2177,7 +2342,7 @@ public class Test
 {
     public void M1()
     {
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
         {
             void Test() => M2();
             Test();
@@ -2190,7 +2355,7 @@ public class Test
 
         Action action = () =>
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
             {
                 M2();
             }
@@ -2203,16 +2368,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact, WorkItem(4090, "https://github.com/dotnet/roslyn-analyzers/issues/4090")]
-        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_DirectlyPassedAsArgument()
+        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_DirectlyPassedAsArgumentAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2225,7 +2388,7 @@ public class Test
         // Warn inside lambda escaped as delegate argument.
         M3(a: () =>
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -2237,18 +2400,16 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 
     public void M3(Action a) { a(); }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse()
+        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2261,7 +2422,7 @@ public class Test
         // Warn inside lambda escaped as delegate.
         Action a = () =>
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -2275,18 +2436,16 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 
     public void M3(Action a) { a(); }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_02()
+        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_02Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2299,7 +2458,7 @@ public class Test
         // Warn inside lambda escaped as delegate indirectly from another lambda.
         Action a1 = () =>
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -2319,18 +2478,16 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 
     public void M3(Action a) { a(); }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_03()
+        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_03Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2343,7 +2500,7 @@ public class Test
         // Warn inside lambda escaped as delegate indirectly from a local function invoked inside a lambda.
         Action a1 = () =>
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -2368,18 +2525,16 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 
     public void M3(Action a) { a(); }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_04()
+        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_04Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2394,7 +2549,7 @@ public class Test
         // Warn inside lambda escaped via field.
         Action a = () =>
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -2409,18 +2564,16 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 
     public void M3() { _field(); }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_05()
+        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_05Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2433,7 +2586,7 @@ public class Test
         // Warn inside lambda escaped via return value.
         Action a = () =>
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -2447,16 +2600,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_06()
+        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_06Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2469,7 +2620,7 @@ public class Test
         // Warn inside lambda escaped via conversion.
         Action a = () =>
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -2484,18 +2635,16 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 
     public void M3(object a) { ((Action)a)(); }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_07()
+        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_07Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2508,7 +2657,7 @@ public class Test
         // Warn inside lambda escaped via out argument.
         Action a = () =>
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -2523,16 +2672,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_08()
+        public async Task LambdaEscapedCallsOsDependentMember_GuardedCalls_SimpleIfElse_08Async()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2551,7 +2698,7 @@ public class Test
         // Escaped as delegate, can potentially be invoked from unguarded context.
         M3(a);
 
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             // Invoked directly from guarded context.
             a();
@@ -2559,18 +2706,16 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 
     public void M3(Action a) { a(); }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaUnusedCallsOsDependentMember_GuardedCalls_SimpleIfElse()
+        public async Task LambdaUnusedCallsOsDependentMember_GuardedCalls_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2583,7 +2728,7 @@ public class Test
         // Warn inside unused lambda.
         Action a = () =>
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 M2();
             }
@@ -2595,16 +2740,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaMultipleCallsOsDependentMember_MixedGuardedCalls()
+        public async Task LambdaMultipleCallsOsDependentMember_MixedGuardedCallsAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2622,9 +2765,9 @@ public class Test
             [|Windows10OrLaterOnly()|];
         };
 
-        if(OperatingSystemHelper.IsWindows())
+        if(OperatingSystem.IsWindows())
         {
-            if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+            if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
             {
                 // Invoked multiple times directly from guarded context.
                 a();
@@ -2645,21 +2788,17 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows"")]
-    public void WindowsOnly()
-    {
-    }
+    public void WindowsOnly() { }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void Windows10OrLaterOnly()
-    {
-    }
+    public void Windows10OrLaterOnly() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaWithUnrelatedLambdaCallsOsDependentMember_GuardedCalls()
+        public async Task LambdaWithUnrelatedLambdaCallsOsDependentMember_GuardedCallsAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2679,7 +2818,7 @@ public class Test
         {
         };
 
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             a();
         }
@@ -2689,16 +2828,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LambdaContaingLocalFunctionCallsOsDependentMember_GuardedCall_SimpleIfElse()
+        public async Task LambdaContaingLocalFunctionCallsOsDependentMember_GuardedCall_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2710,7 +2847,7 @@ public class Test
     {
         Action a = () =>
         {
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
             {
                 LocalFunction();
             }
@@ -2726,16 +2863,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task LocalFunctionContainingLambdaCallsOsDependentMember_GuardedCall_SimpleIfElse()
+        public async Task LocalFunctionContainingLambdaCallsOsDependentMember_GuardedCall_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2753,7 +2888,7 @@ public class Test
                 M2();
             };
 
-            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
+            if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
             {
                 a();
             }
@@ -2763,16 +2898,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact, WorkItem(4209, "https://github.com/dotnet/roslyn-analyzers/issues/4209")]
-        public async Task LambdaInvocationWithUnknownTarget_BeforeGuardedCall()
+        public async Task LambdaInvocationWithUnknownTarget_BeforeGuardedCallAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2785,7 +2918,7 @@ class Test
     void M1()
     {
         Greetings();
-        if (OperatingSystemHelper.IsBrowser())
+        if (OperatingSystem.IsBrowser())
         {
             SupportedOnBrowser();
         }
@@ -2801,12 +2934,12 @@ class Test
     [UnsupportedOSPlatform(""browser"")]
     void UnsupportedOnBrowser() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task OsDependentEventAccessed_GuardedCall_SimpleIfElse()
+        public async Task OsDependentEventAccessed_GuardedCall_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2821,7 +2954,7 @@ public class Test
 
     public void M1()
     {
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             SampleEvent += M3;
         }
@@ -2833,7 +2966,7 @@ public class Test
 
     public void M2()
     {
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             SampleEvent?.Invoke();
         }
@@ -2843,19 +2976,15 @@ public class Test
         }
     }
 
-    public void M3()
-    {
-    }
-    public void M4()
-    {
-    }
+    public void M3() { }
+    public void M4() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task OsDependentMethodAssignedToDelegate_GuardedCall_SimpleIfElse()
+        public async Task OsDependentMethodAssignedToDelegate_GuardedCall_SimpleIfElseAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2866,12 +2995,11 @@ public class Test
     public delegate void Del();
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void DelegateMethod()
-    {
-    }
+    public void DelegateMethod() { }
+
     public void M1()
     {
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11, 0))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11, 0))
         {
             Del handler = DelegateMethod;
             handler();
@@ -2883,12 +3011,12 @@ public class Test
         }
     }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedCall_SimpleIfElseIfElseTest()
+        public async Task GuardedCall_SimpleIfElseIfElseTestAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2900,19 +3028,19 @@ class Test
     {
         [|M2()|];
 
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             M2();
         }
-        else if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(8, 0, 19222))
+        else if(OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(8, 0, 19222))
         {
             [|M2()|];
         }
-        else if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222))
+        else if(OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(12, 0, 19222))
         {
             [|M2()|];
         }
-        else if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 12))
+        else if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 12))
         {
             M2();
         }
@@ -2923,15 +3051,13 @@ class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    void M2()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+    void M2() { }
+}";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedCall_SimpleIfElseTestWithNegation()
+        public async Task GuardedCall_SimpleIfElseTestWithNegationAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2942,22 +3068,20 @@ public class Test
     public void M1()
     {
         [|M2()|];
-        if(!OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
+        if(!OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
             [|M2()|];
         else
             M2();
     }
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedCall_SimpleIfElseIfElseTestWithNegation()
+        public async Task GuardedCall_SimpleIfElseIfElseTestWithNegationAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2968,24 +3092,22 @@ public class Test
     public void M1()
     {
         [|M2()|];
-        if(!OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
+        if(!OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
             [|M2()|];
-        else if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222))
+        else if(OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(12, 0, 19222))
             M2();
         else
             M2();
     }
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedCall_SimpleIfTestWithNegationAndReturn()
+        public async Task GuardedCall_SimpleIfTestWithNegationAndReturnAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -2996,17 +3118,15 @@ public class Test
     public void M1()
     {
         [|M2()|];
-        if(!OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
+        if(!OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
             return;
         M2();
     }
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
 
             var vbSource = @"
 Imports System.Runtime.Versioning
@@ -3015,20 +3135,19 @@ Imports System
 Public Class Test
     Public Sub M1()
         [|M2()|]
-        If Not OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3) Then Return
+        If Not OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3) Then Return
         M2()
     End Sub
 
     <SupportedOSPlatform(""Windows10.1.2.3"")>
     Public Sub M2()
     End Sub
-End Class
-" + MockAttributesVbSource + MockRuntimeApiSourceVb;
-            await VerifyAnalyzerAsyncVb(vbSource);
+End Class";
+            await VerifyAnalyzerVBAsync(vbSource);
         }
 
         [Fact]
-        public async Task GuardedCall_SimpleIfTestWithLogicalAnd()
+        public async Task GuardedCall_SimpleIfTestWithLogicalAndAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3038,25 +3157,25 @@ public class Test
 {
     public void M1()
     {
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) &&
-           (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) &&
+           (OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(12, 0, 19222)))
         {
             M2();
         }
 
-        if((OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)) &&
-           OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 12))
+        if((OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(12, 0, 19222)) &&
+           OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 12))
         {
             M2();
         }
 
-        if((OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)) &&
-           OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 12))
+        if((OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(12, 0, 19222)) &&
+           OperatingSystem.IsOSPlatformVersionAtLeast(""Linux"", 12))
         {
             [|M2()|];
         }
 
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) && 1 == 1)
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) && 1 == 1)
         {
             M2();
         }
@@ -3064,16 +3183,14 @@ public class Test
         [|M2()|];
     }
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedCall_SimpleIfElseTestWithLogicalAnd()
+        public async Task GuardedCall_SimpleIfElseTestWithLogicalAndAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3085,8 +3202,8 @@ public class Test
     {
         [|M2()|];
 
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) &&
-           (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) &&
+           (OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(12, 0, 19222)))
         {
             M2();
         }
@@ -3095,8 +3212,8 @@ public class Test
             [|M2()|];
         }
 
-        if((OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)) &&
-           OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 12))
+        if((OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(12, 0, 19222)) &&
+           OperatingSystem.IsOSPlatformVersionAtLeast(""Linux"", 12))
         {
             [|M2()|];
         }
@@ -3106,16 +3223,14 @@ public class Test
         }
     }
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedCall_SimpleIfTestWithLogicalOr()
+        public async Task GuardedCall_SimpleIfTestWithLogicalOrAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3125,36 +3240,34 @@ public class Test
 {
     public void M1()
     {
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
-           (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
+           (OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(12, 0, 19222)))
         {
             [|M2()|];
         }
 
-        if(OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222) || 
-            OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+        if(OperatingSystem.IsWindowsVersionAtLeast(12, 0, 19222) || 
+            OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             M2();
         }
 
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 12) || 
-            OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+        if(OperatingSystem.IsOSPlatformVersionAtLeast(""Linux"", 12) || 
+            OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             [|M2()|];
         }
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedCall_SimpleIfElseTestWithLogicalOr()
+        public async Task GuardedCall_SimpleIfElseTestWithLogicalOrAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3164,8 +3277,8 @@ public class Test
 {
     public void M1()
     {
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
-           OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
+           OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             M2();
         }
@@ -3176,16 +3289,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedCall_SimpleIfElseTestWithLogicalOrAndNegation()
+        public async Task GuardedCall_SimpleIfElseTestWithLogicalOrAndNegationAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3195,8 +3306,8 @@ public class Test
 {
     public void M1()
     {
-        if (!(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
-           OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11)))
+        if (!(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
+           OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11)))
         {
             [|M2()|];
         }
@@ -3207,16 +3318,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedCall_SimpleIfElseIfElseTestWithLogicalOr()
+        public async Task GuardedCall_SimpleIfElseIfElseTestWithLogicalOrAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3226,20 +3335,20 @@ public class Test
 {
     public void M1()
     {
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
-           OperatingSystemHelper.IsLinux())
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
+           OperatingSystem.IsLinux())
         {
             [|M2()|]; //12
         }
-        else if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+        else if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             M2();
         }
         else
             [|M2()|];
 
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
-           (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
+           (OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(12, 0, 19222)))
         {
             [|M2()|];
         }
@@ -3248,8 +3357,8 @@ public class Test
             [|M2()|];
         }
 
-        if((OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)) || 
-            OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+        if((OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(12, 0, 19222)) || 
+            OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             [|M2()|]; //34
         }
@@ -3260,16 +3369,14 @@ public class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    public void M2()
-    {
-    }
+    public void M2() { }
 }
-" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedCall_SimpleIfElseTestWithLogicalOrAnd()
+        public async Task GuardedCall_SimpleIfElseTestWithLogicalOrAndAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3279,8 +3386,8 @@ class Test
 {
     void M1()
     {       
-        if ((!OperatingSystemHelper.IsWindows() || OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0, 1903)) &&
-            (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0, 2004)))
+        if ((!OperatingSystem.IsWindows() || OperatingSystem.IsWindowsVersionAtLeast(10, 0, 1903)) &&
+            (OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(10, 0, 2004)))
         {
             M2(); 
         }
@@ -3293,12 +3400,9 @@ class Test
     [UnsupportedOSPlatform(""windows"")]
     [SupportedOSPlatform(""windows10.0.1903"")]
     [UnsupportedOSPlatform(""windows10.0.2004"")]
-    void M2()
-    {
-    }
-}"
-+ MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+    void M2() { }
+}";
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
 
             var vbSource = @"
 Imports System.Runtime.Versioning
@@ -3306,7 +3410,7 @@ Imports System
 
 Class Test
     Private Sub M1()
-        If (Not OperatingSystemHelper.IsWindows() OrElse OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0, 1903)) AndAlso (OperatingSystemHelper.IsWindows() AndAlso Not OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0, 2004)) Then
+        If (Not OperatingSystem.IsWindows() OrElse OperatingSystem.IsWindowsVersionAtLeast(10, 0, 1903)) AndAlso (OperatingSystem.IsWindows() AndAlso Not OperatingSystem.IsWindowsVersionAtLeast(10, 0, 2004)) Then
             M2()
         Else
             [|M2()|]
@@ -3318,13 +3422,12 @@ Class Test
     <UnsupportedOSPlatform(""Windows10.0.2004"")>
     Private Sub M2()
     End Sub
-End Class
-" + MockRuntimeApiSourceVb + MockAttributesVbSource;
-            await VerifyAnalyzerAsyncVb(vbSource, s_msBuildPlatforms);
+End Class";
+            await VerifyAnalyzerVBAsync(vbSource, s_msBuildPlatforms);
         }
 
         [Fact]
-        public async Task GuardedWith_ControlFlowAndMultipleChecks()
+        public async Task GuardedWith_ControlFlowAndMultipleChecksAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3334,15 +3437,15 @@ class Test
 {
     void M1()
     {
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 8))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 8))
         {
             [|M2()|];
 
-            if (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222))
+            if (OperatingSystem.IsWindows() && !OperatingSystem.IsWindowsVersionAtLeast(12, 0, 19222))
             {
                 [|M2()|];
             }
-            else if (!OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
+            else if (!OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
             {
                 [|M2()|];
             } 
@@ -3362,16 +3465,14 @@ class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    void M2()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+    void M2() { }
+}";
 
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedWith_DebugAssertAnalysisTest()
+        public async Task GuardedWith_DebugAssertAnalysisTestAsync()
         {
             var source = @"
 using System;
@@ -3389,22 +3490,18 @@ class Test
         // Should still warn for Windows10.1.2.3 
         [|M2()|];
 
-        Debug.Assert(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2));
+        Debug.Assert(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2));
         M2();
         M3();
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    void M2()
-    {
-    }
+    void M2() { }
 
     [SupportedOSPlatform(""Windows"")]
-    void M3()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+    void M3() { }
+}";
+            await VerifyAnalyzerCSAsync(source);
 
             var vbSource = @"
 Imports System.Diagnostics
@@ -3414,20 +3511,19 @@ Imports System
 Class Test
     Private Sub M1()
         [|M2()|]
-        Debug.Assert(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+        Debug.Assert(OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         M2()
     End Sub
 
     <SupportedOSPlatform(""Windows10.1.2.3"")>
     Private Sub M2()
     End Sub
-End Class
-" + MockAttributesVbSource + MockRuntimeApiSourceVb;
-            await VerifyAnalyzerAsyncVb(vbSource);
+End Class";
+            await VerifyAnalyzerVBAsync(vbSource);
         }
 
         [Fact]
-        public async Task GuardedWith_ResultSavedInLocal()
+        public async Task GuardedWith_ResultSavedInLocalAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3437,8 +3533,8 @@ class Test
 {
     void M1()
     {
-        var x1 = OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11);
-        var x2 = OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 1);
+        var x1 = OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11);
+        var x2 = OperatingSystem.IsOSPlatformVersionAtLeast(""Linux"", 1);
 
         if (x1)
         {
@@ -3455,15 +3551,13 @@ class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    void M2()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+    void M2() { }
+}";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task GuardedWith_VersionSavedInLocal()
+        public async Task GuardedWith_VersionSavedInLocalAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3474,22 +3568,20 @@ class Test
     void M1()
     {
         var v11 = 11;
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", v11))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", v11))
         {
             M2();
         }
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    void M2()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+    void M2() { }
+}";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task PlatformSavedInLocal_NotYetSupported() // TODO do we want to support it?
+        public async Task PlatformSavedInLocal_NotYetSupportedAsync() // TODO do we want to support it?
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3500,22 +3592,20 @@ class Test
     void M1()
     {
         var platform = ""Windows"";
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(platform, 11))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(platform, 11))
         {
             [|M2()|];
         }
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    void M2()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+    void M2() { }
+}";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact]
-        public async Task UnrelatedConditionCheckDoesNotInvalidateState()
+        public async Task UnrelatedConditionCheckDoesNotInvalidateStateAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3527,7 +3617,7 @@ class Test
     {
         [|M2()|];
 
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+        if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             M2();
 
@@ -3554,11 +3644,9 @@ class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    void M2()
-    {
-    }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+    void M2() { }
+}";
+            await VerifyAnalyzerCSAsync(source);
 
             var vbSource = @"
 Imports System.Runtime.Versioning
@@ -3568,7 +3656,7 @@ Class Test
     Private Sub M1(ByVal flag1 As Boolean, ByVal flag2 As Boolean)
         [|M2()|]
 
-        If OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11) Then
+        If OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 11) Then
             M2()
 
             If flag1 OrElse flag2 Then
@@ -3590,13 +3678,12 @@ Class Test
     <SupportedOSPlatform(""Windows10.1.2.3"")>
     Private Sub M2()
     End Sub
-End Class
-" + MockRuntimeApiSourceVb + MockAttributesVbSource;
-            await VerifyAnalyzerAsyncVb(vbSource);
+End Class";
+            await VerifyAnalyzerVBAsync(vbSource);
         }
 
         [Fact]
-        public async Task InterproceduralAnalysisTest()
+        public async Task InterproceduralAnalysisTestAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3619,21 +3706,143 @@ class Test
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
-    void M2()
-    {
-    }
+    void M2() { }
 
     bool IsWindows11OrLater()
     {
-        return OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"",10,2,3,4);
+        return OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"",10,2,3,4);
     }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+}";
 
-            await VerifyAnalyzerAsyncCs(source, "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive\nbuild_property.TargetFramework = net5");
+            await VerifyAnalyzerCSAsync(source, "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive\nbuild_property.TargetFramework = net5");
+        }
+
+        [Fact, WorkItem(4282, "https://github.com/dotnet/roslyn-analyzers/issues/4282")]
+        public async Task LambdaPassedAsArgumentOrNotInvokedWithinContextWouldNotAnalyzed_WithoutInterproceduralAnalysisAsync()
+        {
+            var source = @"
+using System;
+using System.Diagnostics;
+using System.Runtime.Versioning;
+
+class Test
+{
+    public delegate void VoidCallback();
+ 
+    public void DelegateAsArgument(VoidCallback callback) 
+    {
+        callback(); // even call back invoked here could not guarantee it called from guarded context
+    }
+
+    [SupportedOSPlatform(""windows"")]
+    private void WindowsOnly() { }
+
+    public void GuardedCalls()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Action a = () =>
+            {
+                [|WindowsOnly()|]; // Warns, not invoked
+            };
+
+            Func<string> greetings = () =>
+            {
+                WindowsOnly(); // Not warn, invoked below
+                return  ""Hi"";
+            };
+            greetings();
+
+            DelegateAsArgument(() => [|WindowsOnly()|]); // Warns, couldn'd analyze
+        }
+    }
+
+    public void AssertedCalls()
+    {
+        Debug.Assert(OperatingSystem.IsWindows());
+
+        Action a = () =>
+        {
+            WindowsOnly(); // Not warn, invoked below
+        };
+        a();
+            
+        Func<string> greetings = () =>
+        {
+            [|WindowsOnly()|]; // Warns, not invoked
+            return ""Hi"";
+        };
+
+        DelegateAsArgument(() => [|WindowsOnly()|]); // Warns, couldn'd analyze
+    }
+}";
+
+            await VerifyAnalyzerCSAsync(source);
+        }
+
+        [Fact, WorkItem(4282, "https://github.com/dotnet/roslyn-analyzers/issues/4282")]
+        public async Task LambdaPassedAsArgumentOrNotInvokedWithinContextWouldAnalyzed_WithInterproceduralAnalysisAsync()
+        {
+            var source = @"
+using System;
+using System.Diagnostics;
+using System.Runtime.Versioning;
+
+class Test
+{
+    public delegate void VoidCallback();
+ 
+    public void DelegateAsArgument(VoidCallback callback) 
+    {
+        callback(); // interprocedural analysis would help keep track of context
+    }
+
+    [SupportedOSPlatform(""windows"")]
+    private void WindowsOnly() { }
+
+    public void GuardedCalls()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Action a = () =>
+            {
+                WindowsOnly(); // Not warn, interprocedural analysis enabled
+            };
+
+            Func<string> greetings = () =>
+            {
+                WindowsOnly(); // Same
+                return  ""Hi"";
+            };
+
+            DelegateAsArgument(() => WindowsOnly()); // Same
+        }
+    }
+
+    public void AssertedCalls()
+    {
+        Debug.Assert(OperatingSystem.IsWindows());
+
+        Action a = () =>
+        {
+            WindowsOnly(); // Not warn, interprocedural analysis enabled
+        };
+            
+        Func<string> greetings = () =>
+        {
+            WindowsOnly();
+            return ""Hi"";
+        };
+
+        DelegateAsArgument(() => WindowsOnly());
+    }
+}";
+
+            await VerifyAnalyzerCSAsync(source, "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive");
         }
 
         [Fact, WorkItem(4182, "https://github.com/dotnet/roslyn-analyzers/issues/4182")]
-        public async Task LoopWithinGuardCheck()
+        public async Task LoopWithinGuardCheckAsync()
         {
             var source = @"
 using System;
@@ -3674,12 +3883,12 @@ namespace Repro
         [SupportedOSPlatform(""windows"")]
         public static IEnumerable<int> GetProcesses() => throw null;
     }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+}";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact, WorkItem(4372, "https://github.com/dotnet/roslyn-analyzers/issues/4372")]
-        public async Task LoopWithinGuardCheck_02()
+        public async Task LoopWithinGuardCheck_02Async()
         {
             var source = @"
 using System;
@@ -3696,7 +3905,7 @@ namespace Repro
         {
             for (var i = 0; i < 2; i++)
             {
-                if (OperatingSystemHelper.IsWindows())
+                if (OperatingSystem.IsWindows())
                 {
                     WindowsSupported();
                 }
@@ -3706,12 +3915,12 @@ namespace Repro
         [SupportedOSPlatform(""windows"")]
         public static void WindowsSupported() { }
     }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+}";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact, WorkItem(4372, "https://github.com/dotnet/roslyn-analyzers/issues/4372")]
-        public async Task LoopWithinGuardCheck_03()
+        public async Task LoopWithinGuardCheck_03Async()
         {
             var source = @"
 using System;
@@ -3726,7 +3935,7 @@ namespace Repro
     {
         public static void M()
         {
-            if (OperatingSystemHelper.IsWindows())
+            if (OperatingSystem.IsWindows())
             {
                 for (var i = 0; i < 2; i++)
                 {
@@ -3738,12 +3947,12 @@ namespace Repro
         [SupportedOSPlatform(""windows"")]
         public static void WindowsSupported() { }
     }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+}";
+            await VerifyAnalyzerCSAsync(source);
         }
 
         [Fact(Skip = "TODO: Analysis value not returned, needs to be fixed")]
-        public async Task InterproceduralAnalysisTest_LogicalOr()
+        public async Task InterproceduralAnalysisTest_LogicalOrAsync()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -3770,13 +3979,857 @@ class Test
 
     bool IsWindows11OrLater()
     {
-        return OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"",10,2,3,4) ||
-            OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"",11);
+        return OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"",10,2,3,4) ||
+            OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"",11);
     }
-}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+}";
 
-            await VerifyAnalyzerAsyncCs(source, "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive");
+            await VerifyAnalyzerCSAsync(source, "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive");
         }
+
+        [Fact]
+        public async Task GuardMembersWithSupportedGuardAttributesAsync()
+        {
+            var source = @"
+using System;
+using System.Diagnostics;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [SupportedOSPlatformGuard(""linux"")]
+    private bool IsLunuxSupported() => true;
+
+    [SupportedOSPlatformGuard(""linux"")]
+    [SupportedOSPlatformGuard(""Windows"")]
+    internal bool LinuxAndWindowsSupported { get; set; }
+
+    [SupportedOSPlatformGuard(""linux"")]
+    [SupportedOSPlatformGuard(""macOS"")]
+    [SupportedOSPlatformGuard(""Windows"")]
+    private readonly bool _http3Enabled;
+
+    [SupportedOSPlatformGuard(""linux"")]
+    [SupportedOSPlatformGuard(""macOS"")]
+    [SupportedOSPlatformGuard(""Windows"")]
+    [SupportedOSPlatformGuard(""Android"")]
+    private bool IsHttp3PlusAndroidEnabled() => false;
+
+    [SupportedOSPlatformGuard(""linux"")]
+    [SupportedOSPlatformGuard(""macOS"")]
+    [SupportedOSPlatformGuard(""Windows"")]
+    [UnsupportedOSPlatformGuard(""Android"")]
+    private readonly bool _http3EnabledNotAndroid;
+
+    void M1()
+    {
+        if (IsLunuxSupported()) // one of the support guarded, so no warning
+        {
+            SupportedOnWindowsLinuxOsx();    
+            SupportedOnLinux();
+        }
+
+        if (_http3Enabled)
+        {
+            SupportedOnWindowsLinuxOsx();  
+            [|SupportedOnLinux()|]; // only supported on linux but call site is reachable on 3, linux, windows, macos
+        }
+        else
+        {
+            {|#0:SupportedOnWindowsLinuxOsx()|}; // This call site is reachable on all platforms. 'Test.SupportedOnWindowsLinuxOsx()' is only supported on: 'Linux', 'macOS/OSX', 'windows'
+            {|#1:SupportedOnLinux()|}; // This call site is reachable on all platforms. 'Test.SupportedOnLinux()' is only supported on: 'linux'.
+        }
+
+        if (IsHttp3PlusAndroidEnabled()) // Android is not in the support list
+        {
+            {|#2:SupportedOnWindowsLinuxOsx()|}; // This call site is reachable on: 'Android'. 'Test.SupportedOnWindowsLinuxOsx()' is only supported on: 'Linux', 'macOS/OSX', 'windows'.        
+        }
+
+        if (_http3EnabledNotAndroid)
+        {
+            SupportedOnWindowsLinuxOsx();  
+            [|SupportedOnLinux()|];
+        }
+        
+        [|SupportedOnWindowsLinuxOsx()|];
+        Debug.Assert(LinuxAndWindowsSupported);
+        SupportedOnWindowsLinuxOsx();    
+        [|SupportedOnLinux()|];
+    }
+
+    [SupportedOSPlatform(""windows"")]
+    [SupportedOSPlatform(""Linux"")]
+    [SupportedOSPlatform(""OSX"")]
+    void SupportedOnWindowsLinuxOsx() { }
+
+    [SupportedOSPlatform(""linux"")]
+    void SupportedOnLinux() { }
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(0).
+                    WithArguments("Test.SupportedOnWindowsLinuxOsx()", Join("'Linux'", "'macOS/OSX'", "'windows'")),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(1).
+                    WithArguments("Test.SupportedOnLinux()", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(2).
+                    WithArguments("Test.SupportedOnWindowsLinuxOsx()", Join("'Linux'", "'macOS/OSX'", "'windows'"), "'Android'"));
+        }
+
+        [Fact]
+        public async Task GuardMembersWithUnsupportedGuardAttributesAsync()
+        {
+            var source = @"
+using System;
+using System.Diagnostics;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [UnsupportedOSPlatformGuard(""linux"")]
+    private readonly bool _linuxNotSupported;
+
+    [UnsupportedOSPlatformGuard(""linux"")]
+    [UnsupportedOSPlatformGuard(""Windows"")]
+    public bool LinuxAndWindowsNotSupported { get; }
+
+    [UnsupportedOSPlatformGuard(""linux"")]
+    [UnsupportedOSPlatformGuard(""ios"")]
+    [UnsupportedOSPlatformGuard(""Windows"")]
+    private bool IsLinuxWindowsIosNotSupported() => true;
+
+    [UnsupportedOSPlatformGuard(""linux"")]
+    [UnsupportedOSPlatformGuard(""ios"")]
+    [UnsupportedOSPlatformGuard(""Windows"")]
+    [UnsupportedOSPlatformGuard(""Android"")]
+    private readonly bool _linuxWindowsIosAndroidNotSupported;
+
+    void M1()
+    {
+        if (_linuxNotSupported)
+        {
+            UnsupportedOnLinux();
+            [|UnsupportedOnLinuxWindowsIos()|]; // This call site is reachable on all platforms. 'Test.UnsupportedOnLinuxWindowsIos()' is unsupported on: 'windows', 'ios'.
+        }
+
+        if (LinuxAndWindowsNotSupported)
+        {
+            UnsupportedOnLinux();
+            [|UnsupportedOnLinuxWindowsIos()|]; // This call site is reachable on all platforms. 'Test.UnsupportedOnLinuxWindowsIos()' is unsupported on: 'ios'.
+        }
+
+        if (_linuxWindowsIosAndroidNotSupported)
+        {
+            UnsupportedOnLinux();
+            UnsupportedOnLinuxWindowsIos();
+        }
+        else
+        {
+            [|UnsupportedOnLinux()|]; // This call site is reachable on: 'Windows', 'linux', 'Android'. 'Test.UnsupportedOnLinux()' is unsupported on: 'Linux'.
+            [|UnsupportedOnLinuxWindowsIos()|]; // This call site is reachable on: 'Android', 'Windows'. 'Test.UnsupportedOnLinuxWindowsIos()' is unsupported on: 'Linux', 'ios', 'windows'.
+        }
+
+        Debug.Assert(IsLinuxWindowsIosNotSupported());
+        UnsupportedOnLinux();
+        UnsupportedOnLinuxWindowsIos();
+    }
+
+
+    [UnsupportedOSPlatform(""Linux"")]
+    void UnsupportedOnLinux() { }
+
+    [UnsupportedOSPlatform(""windows"")]
+    [UnsupportedOSPlatform(""Linux"")]
+    [UnsupportedOSPlatform(""ios"")]
+    void UnsupportedOnLinuxWindowsIos() { }
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task GuardMembersWithVersionedSupportedUnsupportedGuardAttributesAsync()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [SupportedOSPlatformGuard(""Windows10.0"")]
+    private bool IsWindow10Supported() => true;
+
+    [SupportedOSPlatformGuard(""linux4.8"")]
+    [SupportedOSPlatformGuard(""Windows10.0"")]
+    [SupportedOSPlatformGuard(""Osx14.1"")]
+    private readonly bool _linuxAndWindows10MacOS14Supported;
+
+    [UnsupportedOSPlatformGuard(""linux"")]
+    [UnsupportedOSPlatformGuard(""ios9.0"")]
+    [UnsupportedOSPlatformGuard(""Windows8.0"")]
+    private bool LinuxWindows8Ios9NotSupported { get; }
+
+    void M1()
+    {
+        if (IsWindow10Supported())
+        {
+            {|#0:UnsupportedOnLinuxWindows10Ios91()|}; // This call site is reachable on: 'Windows' 10.0 and later. 'Test.UnsupportedOnLinuxWindows10Ios91()' is unsupported on: 'windows' 10.0 and later.
+            SupportedOnWindows10LinuxMacOS14();
+            SupportedOnWindows8();
+        }
+
+        if (_linuxAndWindows10MacOS14Supported)
+        {
+            [|UnsupportedOnLinuxWindows10Ios91()|]; // This call site is reachable on: 'Windows' 10.0 and later. 'Test.UnsupportedOnLinuxWindows10Ios91()' is unsupported on: 'windows' 10.0 and later, 'Linux', 'ios' 9.1 and later.
+            SupportedOnWindows10LinuxMacOS14();
+            [|SupportedOnWindows8()|]; // This call site is reachable on: 'linux'. 'Test.SupportedOnWindows8()' is only supported on: 'windows' 8.0 and later.
+        }
+
+        if (LinuxWindows8Ios9NotSupported)
+        {
+            UnsupportedOnLinuxWindows10Ios91();
+            {|#1:SupportedOnWindows10LinuxMacOS14()|}; // This call site is reachable on all platforms. 'Test.SupportedOnWindows10LinuxMacOS14()' is only supported on: 'linux' 4.8 and later, 'macOS/OSX' 14.0 and later, 'windows' 10.0 and later.
+            {|#2:SupportedOnWindows8()|}; // This call site is reachable on all platforms. 'Test.SupportedOnWindows8()' is only supported on: 'windows' 8.0 and later.
+        }
+    }
+
+    [UnsupportedOSPlatform(""windows10.0"")]
+    [UnsupportedOSPlatform(""Linux"")]
+    [UnsupportedOSPlatform(""ios9.1"")]
+    void UnsupportedOnLinuxWindows10Ios91() { }
+
+    [SupportedOSPlatform(""windows10.0"")]
+    [SupportedOSPlatform(""linux4.8"")]
+    [SupportedOSPlatform(""macOS14.0"")]
+    void SupportedOnWindows10LinuxMacOS14() { }
+
+    [SupportedOSPlatform(""windows8.0"")]
+    void SupportedOnWindows8() { }
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).WithArguments("Test.UnsupportedOnLinuxWindows10Ios91()",
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "windows", "10.0"),
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "Windows", "10.0")),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(1).WithArguments("Test.SupportedOnWindows10LinuxMacOS14()",
+                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "linux", "4.8"),
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "macOS/OSX", "14.0"),
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "windows", "10.0"))),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(2).WithArguments("Test.SupportedOnWindows8()",
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "windows", "8.0")));
+        }
+
+        [Fact]
+        public async Task GuardMembersWithSupportedUnsupportedVersionRangeGuardAttributesAsync()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [SupportedOSPlatformGuard(""Windows"")]
+    [UnsupportedOSPlatformGuard(""Windows10.0"")]
+    public bool SupportedUntilWindow10 => true;
+
+    [SupportedOSPlatformGuard(""linux"")]
+    [SupportedOSPlatformGuard(""Windows"")]
+    [UnsupportedOSPlatformGuard(""Windows10.0"")]
+    private bool IsSupportedUntilWindow10AndLinux() => false;
+
+    [UnsupportedOSPlatformGuard(""ios"")]
+    [SupportedOSPlatformGuard(""ios14.0"")]
+    [UnsupportedOSPlatformGuard(""ios18.0"")]
+    [UnsupportedOSPlatformGuard(""Windows8.0"")]
+    private readonly bool _windows8IosNotSupportedSupportedIos14_18;
+
+    void M1()
+    {
+        if (SupportedUntilWindow10)
+        {
+            {|#0:UnsupportedOnWindows8IosSupportsIos14_19()|}; // This call site is reachable on: 'Windows' 10.0 and before. 'Test.UnsupportedOnWindows8IosSupportsIos14_19()' is unsupported on: 'Windows' 8.0 and later.
+            SupportedOnWindowsUntil10AndLinux();
+            SupportedOnWindowsUntil10();
+        }
+
+        if (IsSupportedUntilWindow10AndLinux())
+        {
+            [|UnsupportedOnWindows8IosSupportsIos14_19()|]; // This call site is reachable on: 'linux', 'Windows' 10.0 and before. 'Test.UnsupportedOnWindows8IosSupportsIos14_19()' is supported on: 'ios' from version 14.0 to 19.0, 'Windows' 8.0 and later.
+            SupportedOnWindowsUntil10AndLinux();
+            {|#1:SupportedOnWindowsUntil10()|}; // This call site is reachable on: 'linux'. 'Test.SupportedOnWindowsUntil10()' is only supported on: 'Windows'.
+        }
+        else
+        {
+            [|UnsupportedOnWindows8IosSupportsIos14_19()|]; // This call site is reachable on all platforms. 'Test.UnsupportedOnWindows8IosSupportsIos14_19()' is supported on: 'ios' from version 14.0 to 19.0, 'Windows' 8.0 and later.
+            [|SupportedOnWindowsUntil10AndLinux()|]; // This call site is reachable on all platforms. 'Test.SupportedOnWindowsUntil10AndLinux()' is only supported on: 'linux', 'Windows' 10.0 and before.
+            [|SupportedOnWindowsUntil10()|]; // This call site is reachable on all platforms. 'Test.SupportedOnWindowsUntil10()' is only supported on: 'Windows' 10.0 and before.
+        }
+
+        if (_windows8IosNotSupportedSupportedIos14_18)
+        {
+            UnsupportedOnWindows8IosSupportsIos14_19();
+            [|SupportedOnWindowsUntil10AndLinux()|]; // This call site is reachable on: 'ios' 14.0 and later. 'Test.SupportedOnWindowsUntil10AndLinux()' is only supported on: 'linux', 'Windows'.
+            [|SupportedOnWindowsUntil10()|]; // This call site is reachable on: 'ios' 14.0 and later. 'Test.SupportedOnWindowsUntil10()' is only supported on: 'Windows'.      
+        }
+    }
+
+    [UnsupportedOSPlatform(""ios"")]
+    [SupportedOSPlatform(""ios14.0"")]
+    [UnsupportedOSPlatform(""ios19.0"")]
+    [UnsupportedOSPlatform(""Windows8.0"")]
+    void UnsupportedOnWindows8IosSupportsIos14_19() { }
+
+    [SupportedOSPlatform(""linux"")]
+    [SupportedOSPlatform(""Windows"")]
+    [UnsupportedOSPlatform(""Windows10.0"")]
+    void SupportedOnWindowsUntil10AndLinux() { }
+
+    [SupportedOSPlatform(""Windows"")]
+    [UnsupportedOSPlatform(""Windows10.0"")]
+    void SupportedOnWindowsUntil10() { }
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).WithArguments("Test.UnsupportedOnWindows8IosSupportsIos14_19()",
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "Windows", "8.0"),
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndBefore, "Windows", "10.0")),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(1).WithArguments("Test.SupportedOnWindowsUntil10()", "'Windows'", "'linux'"));
+        }
+
+        [Fact]
+        public async Task GuardAttributesFalsePositivesAsync()
+        {
+            var source = @"
+using System;
+using System.Diagnostics;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [SupportedOSPlatformGuard(""Windows10.0"")]
+    private string IsWindow10Supported() => ""true"";
+
+    [SupportedOSPlatformGuard(""linux"")]
+    [SupportedOSPlatformGuard(""Windows10.0"")]
+    private bool _linuxAndWindows10Supported;
+
+    [UnsupportedOSPlatformGuard(""linux"")]
+    [UnsupportedOSPlatformGuard(""ios9.0"")]
+    private bool LinuxIos9NotSupported { get; set;}
+
+    void M1()
+    {
+        if (IsWindow10Supported() == ""true"") // return type string, no effect
+        {
+            [|SupportedOnWindows10Linux()|];
+            [|SupportedOnWindows8()|];
+        }
+        _linuxAndWindows10Supported = true; // normal statements no effect
+        IsWindow10Supported();
+        [|SupportedOnWindows10Linux()|];
+        var value = _linuxAndWindows10Supported;
+        if (value)
+        {
+            IsWindow10Supported();
+            [|SupportedOnWindows8()|];
+            SupportedOnWindows10Linux();
+        }
+        if (_linuxAndWindows10Supported == true)
+        {
+            [|SupportedOnWindows8()|];
+            [|SupportedOnWindows10Linux()|]; // 39
+        }
+        var result = LinuxIos9NotSupported == true;  // not a guarding a block
+        [|UnsupportedOnLinuxIos91()|];
+
+        Debug.Assert(LinuxIos9NotSupported == false); // no effect when there is expression
+        [|UnsupportedOnLinuxIos91()|];
+
+        Debug.Assert(LinuxIos9NotSupported); // Assert should work
+        UnsupportedOnLinuxIos91();
+    }
+
+    [UnsupportedOSPlatform(""Linux"")]
+    [UnsupportedOSPlatform(""ios9.1"")]
+    void UnsupportedOnLinuxIos91() { }
+
+    [SupportedOSPlatform(""windows10.0"")]
+    [SupportedOSPlatform(""Linux"")]
+    void SupportedOnWindows10Linux() { }
+
+    [SupportedOSPlatform(""windows8.0"")]
+    void SupportedOnWindows8() { }
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task GuardMemberWithinPlatformSpecificTypeShouldNowWarnAsync()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+
+class Test
+{
+    void M1()
+    {
+        [|UnsupportedBrowserType.M1()|];
+        [|UnsupportedBrowserType.M2()|];
+        if (UnsupportedBrowserType.IsSupported)
+        {
+            UnsupportedBrowserType.M1();
+            UnsupportedBrowserType.M2();
+        }
+        var t = [|new UnsupportedBrowserType()|];
+
+        [|WindowsOnlyType.M1()|];
+        [|WindowsOnlyType.M2()|];
+        if (WindowsOnlyType.IsSupported)
+        {
+            WindowsOnlyType.M1();
+            WindowsOnlyType.M2();
+        }
+        var w = [|new WindowsOnlyType()|];
+    }
+}
+
+[UnsupportedOSPlatform(""browser"")]
+class UnsupportedBrowserType
+{
+    public static void M1() { }
+    [UnsupportedOSPlatformGuard(""browser"")]
+    public static bool IsSupported { get; }
+    public static void M2() { }
+}
+[SupportedOSPlatform(""windows"")]
+class WindowsOnlyType
+{
+    public static void M1() { }
+    [SupportedOSPlatformGuard(""windows"")]
+    public static bool IsSupported { get; }
+    public static void M2() { }
+}
+";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+#if DEBUG
+        [Fact]
+        public async Task IosGuardsMacCatalystAsync()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [SupportedOSPlatform(""ios"")]
+    private void IosSupported() { }
+
+    [SupportedOSPlatform(""maccatalyst"")]
+    internal void SupportsMacCatalyst() { }
+
+    [SupportedOSPlatform(""ios"")]
+    [SupportedOSPlatform(""Linux"")]
+    [SupportedOSPlatform(""maccatalyst"")]
+    void SupportedOnIOSLinuxMacCatalyst() { }
+
+    [UnsupportedOSPlatform(""maccatalyst"")]
+    static void UnsupportsMacCatalyst() { }
+
+    [UnsupportedOSPlatform(""ios"")]
+    static void UnsupportsIos() { }
+
+    [SupportedOSPlatform(""ios"")]
+    [UnsupportedOSPlatform(""MacCatalyst"")]
+    static void SupportsIOSNotMacCatalyst() { }
+
+    void M1()
+    {
+        if (MockOperatingSystem.IsIOS())
+        {
+            SupportedOnIOSLinuxMacCatalyst();
+            [|SupportsMacCatalyst()|]; // This call site is reachable on: 'IOS'. 'Test.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.
+            IosSupported();
+            [|SupportsIOSNotMacCatalyst()|]; // This call site is reachable on: 'maccatalyst'. 'Test.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+            [|UnsupportsIos()|];             // This call site is reachable on: 'maccatalyst'. 'Test.UnsupportsIos()' is unsupported on: 'ios', 'maccatalyst'.
+            [|UnsupportsMacCatalyst()|];     // This call site is reachable on: 'maccatalyst'. 'Test.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
+        }
+
+        if (MockOperatingSystem.IsMacCatalyst())
+        {          
+            SupportedOnIOSLinuxMacCatalyst();
+            SupportsMacCatalyst();
+            IosSupported();
+            [|SupportsIOSNotMacCatalyst()|]; // This call site is reachable on: 'MacCatalyst'. 'Test.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+            [|UnsupportsIos()|];             // This call site is reachable on: 'MacCatalyst'. 'Test.UnsupportsIos()' is unsupported on: 'maccatalyst'.
+            [|UnsupportsMacCatalyst()|];     // This call site is reachable on: 'MacCatalyst'. 'Test.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
+        }
+
+        if (MockOperatingSystem.IsIOS() && !MockOperatingSystem.IsMacCatalyst())
+        {            
+            SupportedOnIOSLinuxMacCatalyst();              
+            [|SupportsMacCatalyst()|];       // This call site is reachable on: 'IOS'. 'Test.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.     
+            IosSupported();
+            SupportsIOSNotMacCatalyst();
+            [|UnsupportsIos()|];             // This call site is reachable on: 'IOS'. 'Test.UnsupportsIos()' is unsupported on: 'ios'.
+            UnsupportsMacCatalyst();      
+        }
+    }
+}" + MockApisCsSource;
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task IOSSupportGuardAttributesInferMacCatalystAsync()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [SupportedOSPlatform(""ios"")]
+    private void IosSupported() { }
+
+    [SupportedOSPlatform(""maccatalyst"")]
+    internal void SupportsMacCatalyst() { }
+
+    [SupportedOSPlatform(""ios"")]
+    [SupportedOSPlatform(""Linux"")]
+    [SupportedOSPlatform(""maccatalyst"")]
+    void SupportedOnIOSLinuxMacCatalyst() { }
+
+    [UnsupportedOSPlatform(""maccatalyst"")]
+    static void UnsupportsMacCatalyst() { }
+
+    [UnsupportedOSPlatform(""ios"")]
+    static void UnsupportsIos() { }
+
+    [SupportedOSPlatform(""ios"")]
+    [UnsupportedOSPlatform(""MacCatalyst"")]
+    static void SupportsIOSNotMacCatalyst() { }
+
+    [SupportedOSPlatformGuard(""ios"")] // maccatalyst inferred
+    public bool WorksOnIOS => true;
+
+    [SupportedOSPlatformGuard(""maccatalyst"")] // annotation not needed
+    [SupportedOSPlatformGuard(""ios"")] // therefore same as above guard
+    public bool WorksOnMacCatalystAndIOS => true;
+
+    [UnsupportedOSPlatformGuard(""maccatalyst"")] // excludes inferred guard
+    [SupportedOSPlatformGuard(""ios"")] // therefore only for IOS
+    public bool WorksOnIOSNotMacCatalyst => true;
+
+    [SupportedOSPlatformGuard(""maccatalyst"")] // only for mac
+    public bool WorksOnMacCatalyst => true;
+
+    void M1()
+    {
+        if (WorksOnIOS)
+        {
+            SupportedOnIOSLinuxMacCatalyst();
+            [|SupportsMacCatalyst()|]; // This call site is reachable on: 'ios'. 'Test.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.
+            IosSupported();
+            [|SupportsIOSNotMacCatalyst()|]; // This call site is reachable on: 'maccatalyst'. 'Test.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+            [|UnsupportsIos()|];             // This call site is reachable on: 'ios'. 'Test.UnsupportsIos()' is unsupported on: 'ios', 'maccatalyst'.
+            [|UnsupportsMacCatalyst()|];     // This call site is reachable on: 'ios', 'maccatalyst'. 'Test.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
+        }
+
+        if (WorksOnMacCatalystAndIOS)
+        {
+            SupportedOnIOSLinuxMacCatalyst();
+            [|SupportsMacCatalyst()|]; // This call site is reachable on: 'ios'. 'Test.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.
+            IosSupported();
+            [|SupportsIOSNotMacCatalyst()|]; // This call site is reachable on: 'maccatalyst'. 'Test.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+            [|UnsupportsIos()|];             // This call site is reachable on: 'ios'. 'Test.UnsupportsIos()' is unsupported on: 'ios', 'maccatalyst'.
+            [|UnsupportsMacCatalyst()|];     // This call site is reachable on: 'ios', 'maccatalyst'. 'Test.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
+        }
+
+        if (WorksOnMacCatalyst)
+        {          
+            SupportedOnIOSLinuxMacCatalyst();
+            SupportsMacCatalyst();
+            IosSupported();
+            [|SupportsIOSNotMacCatalyst()|]; // This call site is reachable on: 'maccatalyst'. 'Test.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+            [|UnsupportsIos()|];             // This call site is reachable on: 'maccatalyst'. 'Test.UnsupportsIos()' is unsupported on: 'maccatalyst'.
+            [|UnsupportsMacCatalyst()|];     // This call site is reachable on: 'maccatalyst'. 'Test.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
+        }
+
+        if (WorksOnIOSNotMacCatalyst)
+        {            
+            SupportedOnIOSLinuxMacCatalyst();
+            [|SupportsMacCatalyst()|];       // This call site is reachable on all platforms. 'Test.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.    
+            IosSupported();                  
+            SupportsIOSNotMacCatalyst();
+            [|UnsupportsIos()|];             // This call site is reachable on all platforms. 'Test.UnsupportsIos()' is unsupported on: 'ios', 'maccatalyst'.
+            UnsupportsMacCatalyst(); 
+        }
+    }
+}" + MockApisCsSource;
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task IOSUnsupportGuardAttributesInferMacCatalystAsync()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [SupportedOSPlatform(""ios"")]
+    private void IosSupported() { }
+
+    [SupportedOSPlatform(""maccatalyst"")]
+    internal void SupportsMacCatalyst() { }
+
+    [SupportedOSPlatform(""ios"")]
+    [SupportedOSPlatform(""maccatalyst"")]
+    void SupportedOnIOSMacCatalyst() { }
+
+    [UnsupportedOSPlatform(""maccatalyst"")]
+    static void UnsupportsMacCatalyst() { }
+
+    [UnsupportedOSPlatform(""ios"")]
+    static void UnsupportsIos() { }
+
+    [SupportedOSPlatform(""ios"")]
+    [UnsupportedOSPlatform(""MacCatalyst"")]
+    static void SupportsIOSNotMacCatalyst() { }
+
+    [UnsupportedOSPlatformGuard(""ios"")] // // maccatalyst inferred
+    public bool DoesNotWorkOnIOS => true;
+
+    [UnsupportedOSPlatformGuard(""ios"")] // same as above guard
+    [UnsupportedOSPlatformGuard(""maccatalyst"")] // annotation has no effect
+    public bool DoesNotWorkOnIOSAndMacCatalyst => true;
+
+    [UnsupportedOSPlatformGuard(""maccatalyst"")] // only unsupported on macCatalyst
+    public bool DoesNotWorkOnMacCatalyst => true;
+
+    void M1()
+    {
+        if (DoesNotWorkOnIOS)
+        {
+            [|SupportedOnIOSMacCatalyst()|]; // This call site is reachable on all platforms. 'Test.SupportedOnIOSLinuxMacCatalyst()' is only supported on: 'ios', 'maccatalyst'.
+            [|SupportsMacCatalyst()|];       // This call site is reachable on all platforms. 'Test.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.
+            [|IosSupported()|];              // This call site is reachable on all platforms. 'Test.IosSupported()' is only supported on: 'ios', 'maccatalyst'.
+            [|SupportsIOSNotMacCatalyst()|]; // This call site is reachable on all platforms. 'Test.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+            UnsupportsIos();
+            UnsupportsMacCatalyst(); 
+        }
+
+        if (DoesNotWorkOnIOSAndMacCatalyst)
+        {
+            [|SupportedOnIOSMacCatalyst()|]; // This call site is reachable on all platforms. 'Test.SupportedOnIOSLinuxMacCatalyst()' is only supported on: 'ios', 'maccatalyst'.
+            [|SupportsMacCatalyst()|];       // This call site is reachable on all platforms. 'Test.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.
+            [|IosSupported()|];              // This call site is reachable on all platforms. 'Test.IosSupported()' is only supported on: 'ios', 'maccatalyst'.
+            [|SupportsIOSNotMacCatalyst()|]; // This call site is reachable on all platforms. 'Test.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+            UnsupportsIos();
+            UnsupportsMacCatalyst();
+        }
+
+        if (DoesNotWorkOnMacCatalyst)
+        {          
+            [|SupportedOnIOSMacCatalyst()|]; // This call site is reachable on all platforms. 'Test.SupportedOnIOSLinuxMacCatalyst()' is only supported on: 'ios', 'maccatalyst'.
+            [|SupportsMacCatalyst()|];       // This call site is reachable on all platforms. 'Test.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.
+            [|IosSupported()|];              // This call site is reachable on all platforms. 'Test.IosSupported()' is only supported on: 'ios', 'maccatalyst'.
+            [|SupportsIOSNotMacCatalyst()|]; // This call site is reachable on all platforms. 'Test.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+            [|UnsupportsIos()|];             // This call site is reachable on all platforms. 'Test.UnsupportsIos()' is unsupported on: 'ios'.
+            UnsupportsMacCatalyst();     // This call site is reachable on: 'MacCatalyst'. 'Test.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
+        }
+    }
+}" + MockApisCsSource;
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task OneOfSupportsNeedsGuard_AllOtherSuppressedByCallsite()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+[SupportedOSPlatform(""android23.0"")]
+[SupportedOSPlatform(""ios13.0"")]
+[SupportedOSPlatform(""windows8.1"")]
+[UnsupportedOSPlatform(""MacCatalyst13.0"")]
+class MyUsage
+{
+    public void M()
+    {
+        var t = [|new MyType()|]; // This call site is reachable on: 'android' 23.0 and later, 'ios' 13.0 and later, 'windows' 8.1 and later. 'MyType' is only supported on: 'windows' 10.0.10240 and later.
+
+        if (!OperatingSystem.IsWindows() || OperatingSystem.IsWindowsVersionAtLeast(10, 0, 10240))
+        {
+            t = new MyType();
+        }
+
+        if (!OperatingSystem.IsWindows())
+        {
+            t = new MyType();
+        }
+
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 10240))
+        {
+            t = new MyType();
+        }
+    }
+}
+[SupportedOSPlatform(""android23.0"")]
+[SupportedOSPlatform(""ios13.0"")]
+[SupportedOSPlatform(""windows10.0.10240"")]
+[UnsupportedOSPlatform(""MacCatalyst13.0"")]
+class MyType { }
+" + MockApisCsSource;
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task TwoOfSupportsNeedsGuard_AllOtherSuppressedByCallsite()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+[SupportedOSPlatform(""android23.0"")]
+[SupportedOSPlatform(""ios13.0"")]
+[SupportedOSPlatform(""tvos13.0"")]
+[SupportedOSPlatform(""windows8.1"")]
+class MyUsage
+{
+    public void M()
+    {
+        if (!OperatingSystem.IsWindows() || OperatingSystem.IsWindowsVersionAtLeast(10, 0, 10240))
+        {
+            var t = [|new MyType()|];
+        }
+
+        if (!OperatingSystem.IsWindows())
+        {
+            var t = [|new MyType()|];
+        }
+
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 10240))
+        {
+            var t = new MyType();
+        }
+    }
+}
+[SupportedOSPlatform(""android23.0"")]
+[SupportedOSPlatform(""ios13.0"")]
+[SupportedOSPlatform(""tvos15.0"")]
+[SupportedOSPlatform(""windows10.0.10240"")]
+class MyType { }";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task OneOfSupportsNeedsGuard_OneNotSuppressedByCallSite()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+[SupportedOSPlatform(""android23.0"")]
+[SupportedOSPlatform(""ios13.0"")]
+[SupportedOSPlatform(""windows8.1"")]
+class MyUsage
+{
+    public void M()
+    {
+        var t = [|new MyType()|];
+
+        if (!OperatingSystem.IsWindows() || OperatingSystem.IsWindowsVersionAtLeast(10, 0, 10240))
+        {
+            t = [|new MyType()|];
+        }
+
+        if (!OperatingSystem.IsWindows())
+        {
+            t = [|new MyType()|];
+        }
+
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 10240))
+        {
+            t = new MyType();
+        }
+    }
+}
+
+[SupportedOSPlatform(""ios13.0"")]
+[SupportedOSPlatform(""windows10.0.10240"")]
+class MyType { }";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task OneOfUnsupportsNeedsGuard()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+[UnsupportedOSPlatform(""android23.0"")]
+[UnsupportedOSPlatform(""ios13.0"")]
+[UnsupportedOSPlatform(""windows10.0.10240"")]
+[SupportedOSPlatform(""MacCatalyst13.0"")]
+class MyUsage
+{
+    public void M()
+    {
+        var t = [|new MyType()|]; // This call site is reachable on: 'windows' 10.0.10240 and before. 'MyType' is unsupported on: 'windows' 8.1 and later.
+        if (!OperatingSystem.IsWindows() || !OperatingSystem.IsWindowsVersionAtLeast(8, 1))
+        {
+            t = new MyType();
+        }
+
+        if (!OperatingSystem.IsWindows())
+        {
+            t = new MyType();
+        }
+
+        if (!OperatingSystem.IsWindowsVersionAtLeast(8, 1))
+        {
+            t = new MyType();
+        }
+    }
+}
+[UnsupportedOSPlatform(""android23.0"")]
+[UnsupportedOSPlatform(""ios13.0"")]
+[UnsupportedOSPlatform(""windows8.1"")]
+[SupportedOSPlatform(""MacCatalyst13.0"")]
+class MyType { }
+" + MockApisCsSource;
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        private readonly string MockApisCsSource = @"
+namespace System
+{
+    public class MockOperatingSystem
+    {
+        [SupportedOSPlatformGuard(""maccatalyst"")]
+        public static bool IsIOS() => true;
+        [SupportedOSPlatformGuard(""maccatalyst"")]
+        public static bool IsIOSVersionAtLeast(int major, int minor = 0, int build = 0) => false;
+        public static bool IsMacCatalyst() => false;
+        public static bool IsMacCatalystVersionAtLeast(int major, int minor = 0, int build = 0) => true;
+    }
+}
+";
+#endif
 
         private readonly string TargetTypesForTest = @"
 namespace PlatformCompatDemo.SupportedUnupported
@@ -3855,7 +4908,7 @@ namespace PlatformCompatDemo.SupportedUnupported
         
         [SupportedOSPlatform(""browser"")]
         public void FunctionSupportedOnBrowser() { }
-        }
+    }
 
     [UnsupportedOSPlatform(""windows10.0"")]
     public class TypeUnsupportedOnWindows10
@@ -3951,113 +5004,6 @@ namespace PlatformCompatDemo.SupportedUnupported
         [SupportedOSPlatform(""windows11.0"")] // more restrictive should be OK
         public void TypeSupportedOnWindows10AndBrowser_FunctionSupportedOnWindows11() { }
     }
-}
-";
-
-        private readonly string MockOperatingSystemApiSource = @"
-namespace System
-{
-    public sealed class OperatingSystemHelper
-    {
-#pragma warning disable CA1801, IDE0060 // Review unused parameters
-        public static bool IsOSPlatform(string platform) { return true; }
-        public static bool IsOSPlatformVersionAtLeast(string platform, int major, int minor = 0, int build = 0, int revision = 0) { return true; }
-        public static bool IsBrowser() { return true; }
-        public static bool IsLinux() { return true; }
-        public static bool IsFreeBSD() { return true; }
-        public static bool IsFreeBSDVersionAtLeast(int major, int minor = 0, int build = 0, int revision = 0) { return true; }
-        public static bool IsAndroid() { return true; }
-        public static bool IsAndroidVersionAtLeast(int major, int minor = 0, int build = 0, int revision = 0) { return true; }
-        public static bool IsIOS() { return true; }
-        public static bool IsIOSVersionAtLeast(int major, int minor = 0, int build = 0) { return true; }
-        public static bool IsMacOS() { return true; }
-        public static bool IsMacOSVersionAtLeast(int major, int minor = 0, int build = 0) { return true; }
-        public static bool IsTvOS() { return true; }
-        public static bool IsTvOSVersionAtLeast(int major, int minor = 0, int build = 0) { return true; }
-        public static bool IsWatchOS() { return true; }
-        public static bool IsWatchOSVersionAtLeast(int major, int minor = 0, int build = 0) { return true; }
-        public static bool IsWindows() { return true; }
-        public static bool IsWindowsVersionAtLeast(int major, int minor = 0, int build = 0, int revision = 0) { return true; }
-#pragma warning restore CA1801, IDE0060 // Review unused parameters
-    }
 }";
-
-        private readonly string MockRuntimeApiSourceVb = @"
-Namespace System
-    Public NotInheritable Class OperatingSystemHelper
-        Public Shared Function IsOSPlatform(ByVal platform As String) As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsOSPlatformVersionAtLeast(ByVal platform As String, ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0, ByVal Optional revision As Integer = 0) As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsBrowser() As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsLinux() As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsFreeBSD() As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsFreeBSDVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0, ByVal Optional revision As Integer = 0) As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsAndroid() As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsAndroidVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0, ByVal Optional revision As Integer = 0) As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsIOS() As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsIOSVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0) As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsMacOS() As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsMacOSVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0) As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsTvOS() As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsTvOSVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0) As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsWatchOS() As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsWatchOSVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0) As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsWindows() As Boolean
-            Return True
-        End Function
-
-        Public Shared Function IsWindowsVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0, ByVal Optional revision As Integer = 0) As Boolean
-            Return True
-        End Function
-    End Class
-End Namespace
-";
     }
 }

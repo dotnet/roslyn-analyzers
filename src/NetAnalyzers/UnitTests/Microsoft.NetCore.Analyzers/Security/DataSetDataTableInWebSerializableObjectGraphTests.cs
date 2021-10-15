@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Threading.Tasks;
@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Security.DataSetDataTableInWebSerializableObjectGraphAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Security.CSharpDataSetDataTableInWebSerializableObjectGraphAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
@@ -14,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     public class DataSetDataTableInWebSerializableObjectGraphTests
     {
         [Fact]
-        public async Task WebServiceDirectlyReferences()
+        public async Task WebServiceDirectlyReferencesAsync()
         {
             await VerifyWebServicesCSharpAsync(@"
 using System;
@@ -35,7 +35,7 @@ public class MyService : WebService
         }
 
         [Fact]
-        public async Task WebServiceIndirectlyReferences()
+        public async Task WebServiceIndirectlyReferencesAsync()
         {
             await VerifyWebServicesCSharpAsync(@"
 using System;
@@ -61,7 +61,7 @@ public class MyType
         }
 
         [Fact]
-        public async Task OperationContract()
+        public async Task OperationContractAsync()
         {
             await VerifyServiceModelCSharpAsync(@"
 using System;
@@ -90,7 +90,9 @@ public class MyClass
 
         private static async Task VerifyServiceModelCSharpAsync(string source, params DiagnosticResult[] expected)
         {
+#pragma warning disable CA5386 // Avoid hardcoding SecurityProtocolType value
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+#pragma warning restore CA5386 // Avoid hardcoding SecurityProtocolType value
             var csharpTest = new VerifyCS.Test
             {
                 ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default.AddAssemblies(
@@ -108,7 +110,9 @@ public class MyClass
 
         private static async Task VerifyWebServicesCSharpAsync(string source, params DiagnosticResult[] expected)
         {
+#pragma warning disable CA5386 // Avoid hardcoding SecurityProtocolType value
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+#pragma warning restore CA5386 // Avoid hardcoding SecurityProtocolType value
             var csharpTest = new VerifyCS.Test
             {
                 ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default.AddAssemblies(
@@ -125,8 +129,10 @@ public class MyClass
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(DataSetDataTableInWebSerializableObjectGraphAnalyzer.ObjectGraphContainsDangerousTypeDescriptor)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
     }
 }

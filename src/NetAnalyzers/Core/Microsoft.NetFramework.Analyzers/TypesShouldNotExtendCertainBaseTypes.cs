@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -12,6 +12,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.NetFramework.Analyzers
 {
+    using static MicrosoftNetFrameworkAnalyzersResources;
+
     /// <summary>
     /// CA1058: Types should not extend certain base types
     /// </summary>
@@ -20,19 +22,17 @@ namespace Microsoft.NetFramework.Analyzers
     {
         internal const string RuleId = "CA1058";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesTitle), MicrosoftNetFrameworkAnalyzersResources.ResourceManager, typeof(MicrosoftNetFrameworkAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesDescription), MicrosoftNetFrameworkAnalyzersResources.ResourceManager, typeof(MicrosoftNetFrameworkAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(TypesShouldNotExtendCertainBaseTypesTitle)),
+            "{0}",
+            DiagnosticCategory.Design,
+            RuleLevel.CandidateForRemoval,
+            description: CreateLocalizableResourceString(nameof(TypesShouldNotExtendCertainBaseTypesDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             "{0}",
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.CandidateForRemoval,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         private static readonly ImmutableDictionary<string, string> s_badBaseTypesToMessage = new Dictionary<string, string>
                                                     {
@@ -46,12 +46,12 @@ namespace Microsoft.NetFramework.Analyzers
                                                         {"System.Collections.Stack", MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack},
                                                     }.ToImmutableDictionary();
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(AnalyzeCompilationStart);
+            context.RegisterCompilationStartAction(AnalyzeCompilationStart);
         }
 
         private static void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
@@ -69,12 +69,12 @@ namespace Microsoft.NetFramework.Analyzers
 
                         if (namedTypeSymbol.BaseType != null &&
                             badBaseTypes.Contains(namedTypeSymbol.BaseType) &&
-                            namedTypeSymbol.MatchesConfiguredVisibility(saContext.Options, Rule, saContext.Compilation, saContext.CancellationToken))
+                            saContext.Options.MatchesConfiguredVisibility(Rule, namedTypeSymbol, saContext.Compilation))
                         {
                             string baseTypeName = namedTypeSymbol.BaseType.ToDisplayString();
                             Debug.Assert(s_badBaseTypesToMessage.ContainsKey(baseTypeName));
                             string message = string.Format(CultureInfo.CurrentCulture, s_badBaseTypesToMessage[baseTypeName], namedTypeSymbol.ToDisplayString(), baseTypeName);
-                            Diagnostic diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(), namedTypeSymbol.Locations.Skip(1), message);
+                            Diagnostic diagnostic = namedTypeSymbol.CreateDiagnostic(Rule, message);
                             saContext.ReportDiagnostic(diagnostic);
                         }
                     }

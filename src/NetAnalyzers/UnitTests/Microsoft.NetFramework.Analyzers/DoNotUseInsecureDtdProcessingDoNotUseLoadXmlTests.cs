@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -15,13 +15,17 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
         private static DiagnosticResult GetCA3075LoadXmlCSharpResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseDtdProcessingOverloads).WithLocation(line, column).WithArguments("LoadXml");
+#pragma warning restore RS0030 // Do not used banned APIs
 
         private static DiagnosticResult GetCA3075LoadXmlBasicResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseDtdProcessingOverloads).WithLocation(line, column).WithArguments("LoadXml");
+#pragma warning restore RS0030 // Do not used banned APIs
 
         [Fact]
-        public async Task UseXmlDocumentLoadXmlShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -61,7 +65,7 @@ End Module",
         }
 
         [Fact]
-        public async Task UseXmlDocumentLoadXmlInGetShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlInGetShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -105,7 +109,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDocumentLoadXmlInSetShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlInSetShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -161,7 +165,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDocumentLoadXmlInTryBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlInTryBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -211,7 +215,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDocumentLoadXmlInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlInCatchBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -260,7 +264,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDocumentLoadXmlInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlInFinallyBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -310,7 +314,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDocumentLoadXmlInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlInAsyncAwaitShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -364,7 +368,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentLoadXmlShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -405,7 +409,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentLoadXmlInSetShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlInSetShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -461,7 +465,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentLoadXmlInTryBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlInTryBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -511,7 +515,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentLoadXmlInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlInCatchBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -560,7 +564,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentLoadXmlInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlInFinallyBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -610,7 +614,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentLoadXmlInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlInAsyncAwaitShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -664,7 +668,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentLoadXmlInDelegateShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlInDelegateShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,

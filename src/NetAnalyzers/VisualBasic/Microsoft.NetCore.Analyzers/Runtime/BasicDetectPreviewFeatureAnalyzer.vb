@@ -131,10 +131,13 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                 If classStatement IsNot Nothing Then
                     Dim classBlock = TryCast(classStatement.Parent, ClassBlockSyntax)
                     If classBlock IsNot Nothing Then
-                        Dim classImplement = classBlock.Implements
                         Dim syntaxNode As SyntaxNode = Nothing
-                        If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(classImplement, previewInterfaceSymbol, syntaxNode) Then
+                        If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(classBlock.Inherits, previewInterfaceSymbol, syntaxNode) Then
                             Return syntaxNode
+                        Else
+                            If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(classBlock.Implements, previewInterfaceSymbol, syntaxNode) Then
+                                Return syntaxNode
+                            End If
                         End If
                     End If
                 End If
@@ -143,10 +146,13 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                 If structStatement IsNot Nothing Then
                     Dim structBlock = TryCast(structStatement.Parent, StructureBlockSyntax)
                     If structBlock IsNot Nothing Then
-                        Dim structImplement = structBlock.Implements
                         Dim syntaxNode As SyntaxNode = Nothing
-                        If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(structImplement, previewInterfaceSymbol, syntaxNode) Then
+                        If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(structBlock.Inherits, previewInterfaceSymbol, syntaxNode) Then
                             Return syntaxNode
+                        Else
+                            If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(structBlock.Implements, previewInterfaceSymbol, syntaxNode) Then
+                                Return syntaxNode
+                            End If
                         End If
                     End If
                 End If
@@ -155,10 +161,13 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                 If interfaceStatement IsNot Nothing Then
                     Dim interfaceBlock = TryCast(interfaceStatement.Parent, InterfaceBlockSyntax)
                     If interfaceBlock IsNot Nothing Then
-                        Dim interfaceImplement = interfaceBlock.Inherits
                         Dim syntaxNode As SyntaxNode = Nothing
-                        If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(interfaceImplement, previewInterfaceSymbol, syntaxNode) Then
+                        If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(interfaceBlock.Implements, previewInterfaceSymbol, syntaxNode) Then
                             Return syntaxNode
+                        Else
+                            If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(interfaceBlock.Inherits, previewInterfaceSymbol, syntaxNode) Then
+                                Return syntaxNode
+                            End If
                         End If
                     End If
                 End If

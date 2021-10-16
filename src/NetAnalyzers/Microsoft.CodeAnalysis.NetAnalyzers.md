@@ -1464,9 +1464,9 @@ When inside a Task-returning method, use the async version of methods, if they e
 |CodeFix|False|
 ---
 
-## [CA1850](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850): 
+## [CA1850](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850): Avoid constant arrays as arguments
 
-
+Having a constant array passed as an argument is not ideally performant. Extract constant arrays as 'static readonly'.
 
 |Item|Value|
 |-|-|

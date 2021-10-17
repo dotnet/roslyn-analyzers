@@ -113,7 +113,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // Get the type of the expression being iterated over.
             IOperation collectionOperation = operation.Collection;
             ITypeSymbol? typeOfCollection = collectionOperation.Type;
-            if (typeOfCollection.OriginalDefinition == configuredCancelableAsyncEnumerable)
+            if (Equals(typeOfCollection.OriginalDefinition, configuredCancelableAsyncEnumerable))
             {
                 // Operation should be conversion to IAsyncEnumerable
                 if (collectionOperation is IConversionOperation conversionOperation)

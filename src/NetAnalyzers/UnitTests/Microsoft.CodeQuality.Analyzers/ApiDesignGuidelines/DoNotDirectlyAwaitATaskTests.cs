@@ -787,7 +787,7 @@ public static class AsyncExtensions
         }
 
         [Fact, WorkItem(3703, "https://github.com/dotnet/roslyn-analyzers/issues/3703")]
-        public async Task CSharpAwaitForEachUsingLocal()
+        public async Task CSharpAwaitForEachUsingLocalConfigureAwait()
         {
             var code = @"
 using System.Collections.Generic;
@@ -812,6 +812,54 @@ public static class AsyncExtensions
                     ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "5.0.0"))),
                 LanguageVersion = CSharpLanguageVersion.CSharp8,
                 TestCode = code,
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(3703, "https://github.com/dotnet/roslyn-analyzers/issues/3703")]
+        public async Task CSharpAwaitForEachUsingLocal()
+        {
+            var code = @"
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+public static class AsyncExtensions
+{
+    public static async Task<int> Sum(this IAsyncEnumerable<int> items, CancellationToken cancellationToken)
+    {
+        var local = items;
+        int sum = 0;
+        await foreach (var item in [|local|])
+            sum += item;
+        return sum;
+    }
+}
+";
+            var fixedCode = @"
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+public static class AsyncExtensions
+{
+    public static async Task<int> Sum(this IAsyncEnumerable<int> items, CancellationToken cancellationToken)
+    {
+        var local = items;
+        int sum = 0;
+        await foreach (var item in local.ConfigureAwait(false))
+            sum += item;
+        return sum;
+    }
+}
+";
+
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
+                    ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "5.0.0"))),
+                LanguageVersion = CSharpLanguageVersion.CSharp8,
+                TestCode = code,
+                FixedCode = fixedCode,
             }.RunAsync();
         }
 

@@ -126,33 +126,23 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                .FindNode(location.SourceSpan);
                         if (node is not null)
                         {
-                            // Checking VariableDeclaratorSyntax.Initializer is CSharp specific
-                            // Do we need to move rule to CSharp.NetAnalyzers?
-                            if (node.ToString().Contains(ConfigureAwait))
+                            var declaration = localReferenceOperation.SemanticModel.GetOperationWalkingUpParentChain(node, context.CancellationToken);
+                            if (declaration is IVariableDeclaratorOperation variableDeclaratorOperation)
                             {
-                                return;
+                                IVariableInitializerOperation? initializerOperation = variableDeclaratorOperation.GetVariableInitializer();
+                                if (initializerOperation?.Value is IInvocationOperation invocationOperation)
+                                {
+                                    if (IsConfigureAwait(invocationOperation))
+                                    {
+                                        return;
+                                    }
+                                }
                             }
                         }
                     }
-                    else if (conversionOperation.Operand is IInvocationOperation)
+                    else if (conversionOperation.Operand is IInvocationOperation invocationOperation)
                     {
-                        // Cannot use pattern matching as we want a nullable declaration.
-#pragma warning disable IDE0020 // Use pattern matching
-                        IInvocationOperation? invocationOperation = (IInvocationOperation)conversionOperation.Operand;
-#pragma warning restore IDE0020 // Use pattern matching
-
-                        // Differentiate between
-                        // .WithCancellation(...).ConfigureAwait(...)
-                        // and .ConfigureAwait(...).WithCancellation(...)
-                        // Fall back to just string comparison as it could be either
-                        // the ConfiguredCancelableAsyncEnumerable member method or
-                        // the TaskAsyncEnumerableExtensions extension method.
-                        if (invocationOperation.TargetMethod.Name == "WithCancellation")
-                        {
-                            invocationOperation = invocationOperation.Instance as IInvocationOperation;
-                        }
-
-                        if (invocationOperation?.TargetMethod.Name == ConfigureAwait)
+                        if (IsConfigureAwait(invocationOperation))
                         {
                             return;
                         }
@@ -161,6 +151,22 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             context.ReportDiagnostic(collectionOperation.Syntax.CreateDiagnostic(Rule));
+        }
+
+        private static bool IsConfigureAwait(IInvocationOperation? invocationOperation)
+        {
+            // Differentiate between
+            // .WithCancellation(...).ConfigureAwait(...)
+            // and .ConfigureAwait(...).WithCancellation(...)
+            // Fall back to just string comparison as it could be either
+            // the ConfiguredCancelableAsyncEnumerable member method or
+            // the TaskAsyncEnumerableExtensions extension method.
+            if (invocationOperation?.TargetMethod.Name == "WithCancellation")
+            {
+                invocationOperation = invocationOperation.Instance as IInvocationOperation;
+            }
+
+            return invocationOperation?.TargetMethod.Name == ConfigureAwait;
         }
 
         private static void AnalyzeUsingOperation(OperationAnalysisContext context, INamedTypeSymbol configuredAsyncDisposable)

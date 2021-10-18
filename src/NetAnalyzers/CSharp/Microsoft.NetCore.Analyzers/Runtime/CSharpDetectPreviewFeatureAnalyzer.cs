@@ -302,5 +302,10 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
         private static bool IsIdentifierNameSyntax(TypeSyntax identifier, ISymbol previewInterfaceSymbol) => identifier is IdentifierNameSyntax identifierName && IsSyntaxToken(identifierName.Identifier, previewInterfaceSymbol) ||
           identifier is NullableTypeSyntax nullable && IsIdentifierNameSyntax(nullable.ElementType, previewInterfaceSymbol);
+
+        protected override SyntaxNode? GetPreviewImplementsClauseSyntaxNodeForMethodOrProperty(ISymbol methodSymbol, ISymbol previewSymbol)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

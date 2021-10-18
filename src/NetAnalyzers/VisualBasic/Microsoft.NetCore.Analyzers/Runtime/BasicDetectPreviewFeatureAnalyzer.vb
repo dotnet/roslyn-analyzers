@@ -13,7 +13,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
         Inherits DetectPreviewFeatureAnalyzer
 
         Private Function IsSyntaxToken(identifier As SyntaxToken, previewInterfaceSymbol As ISymbol) As Boolean
-            Return identifier.ValueText.Equals(previewInterfaceSymbol.Name)
+            Return identifier.ValueText.Equals(previewInterfaceSymbol.Name, StringComparison.OrdinalIgnoreCase)
         End Function
 
         Private Function GetElementTypeForNullableAndArrayTypeNodes(parameterType As TypeSyntax) As TypeSyntax
@@ -227,6 +227,48 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
             Return Nothing
         End Function
 
+        Private Function GetSyntaxNodeFromImplementsClause(implementsClause As ImplementsClauseSyntax, previewSymbol As ISymbol) As SyntaxNode
+            For Each parameter In implementsClause.InterfaceMembers
+                Dim interfacePart = TryCast(parameter.Left, IdentifierNameSyntax)
+                If interfacePart IsNot Nothing Then
+                    If IsSyntaxToken(interfacePart.Identifier, previewSymbol) Then
+                        Return interfacePart
+                    End If
+                End If
+
+                Dim methodPart = TryCast(parameter.Right, IdentifierNameSyntax)
+                If methodPart IsNot Nothing Then
+                    If IsSyntaxToken(methodPart.Identifier, previewSymbol) Then
+                        Return methodPart
+                    End If
+                End If
+            Next
+
+            Return Nothing
+        End Function
+
+        Protected Overrides Function GetPreviewImplementsClauseSyntaxNodeForMethodOrProperty(methodOrPropertySymbol As ISymbol, previewSymbol As ISymbol) As SyntaxNode
+            Dim methodSymbolDeclaringReferences = methodOrPropertySymbol.DeclaringSyntaxReferences
+
+            For Each syntaxReference In methodSymbolDeclaringReferences
+                Dim methodOrPropertyDefinition = syntaxReference.GetSyntax()
+                Dim methodDeclaration = TryCast(methodOrPropertyDefinition, MethodStatementSyntax)
+                If methodDeclaration IsNot Nothing Then
+                    Dim node = GetSyntaxNodeFromImplementsClause(methodDeclaration.ImplementsClause, previewSymbol)
+                    If node IsNot Nothing Then
+                        Return node
+                    End If
+                End If
+
+                Dim propertyDeclaration = TryCast(methodOrPropertyDefinition, PropertyStatementSyntax)
+                If propertyDeclaration IsNot Nothing Then
+                    Return GetSyntaxNodeFromImplementsClause(propertyDeclaration.ImplementsClause, previewSymbol)
+                End If
+            Next
+
+            Return Nothing
+        End Function
+
         Protected Overrides Function GetPreviewParameterSyntaxNodeForMethod(methodSymbol As IMethodSymbol, parameterSymbol As ISymbol) As SyntaxNode
             Dim methodSymbolDeclaringReferences = methodSymbol.DeclaringSyntaxReferences
 
@@ -255,7 +297,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                         End If
                     Next
                 End If
-
             Next
 
             Return Nothing

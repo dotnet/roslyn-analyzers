@@ -58,7 +58,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Dim prog = New Program()
                 End Sub
 
-                Public Sub {|#0:MarkedMethodInInterface|}() Implements IProgram.MarkedMethodInInterface
+                Public Sub MarkedMethodInInterface() Implements IProgram.{|#0:MarkedMethodInInterface|}
                     Throw New NotImplementedException()
                 End Sub
             End Class
@@ -90,7 +90,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 }
 
                 public void {|#0:UnmarkedMethodInMarkedInterface|}() { }
-
             }
 
             [RequiresPreviewFeatures]
@@ -116,21 +115,30 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Dim prog = New Program()
                 End Sub
 
-                Public Sub {|#0:MarkedMethodInInterface|}() Implements IProgram.MarkedMethodInInterface
+                Public Sub MarkedMethodInInterface() Implements IProgram.{|#0:MarkedMethodInInterface|}
                     Throw New NotImplementedException()
                 End Sub
+
+                Public ReadOnly Property Value As String Implements IProgram.{|#2:value|}
+                    {|#3:Get|}
+                        Return """"
+                    End Get
+                End Property
             End Class
 
             <RequiresPreviewFeatures>
-            Public Interface IProgram
+            Public Interface Iprogram
                 Sub MarkedMethodInInterface()
+                ReadOnly Property Value() As String 
             End Interface
         End Module
             ";
 
             var testVb = TestVB(vbInput);
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "IProgram.MarkedMethodInInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(1).WithArguments("Program", "IProgram", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "Iprogram.MarkedMethodInInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(1).WithArguments("Program", "Iprogram", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(2).WithArguments("Value", "Iprogram.Value", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(3).WithArguments("get_Value", "Iprogram.get_Value", DetectPreviewFeatureAnalyzer.DefaultURL));
             await testVb.RunAsync();
         }
 

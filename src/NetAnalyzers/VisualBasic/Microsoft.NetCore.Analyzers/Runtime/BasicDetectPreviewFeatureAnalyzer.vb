@@ -31,7 +31,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
             End While
 
             Return ret
-
         End Function
 
         Private Function IsIdentifierNameSyntax(identifier As TypeSyntax, previewInterfaceSymbol As ISymbol) As Boolean

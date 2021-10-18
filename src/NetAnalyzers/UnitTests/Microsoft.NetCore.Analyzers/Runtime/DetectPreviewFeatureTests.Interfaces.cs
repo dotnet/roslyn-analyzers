@@ -119,7 +119,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Throw New NotImplementedException()
                 End Sub
 
-                Public ReadOnly Property Value As String Implements IProgram.{|#2:value|}
+                Public ReadOnly Property Value As String Implements IProgram.{|#2:Value|}
                     {|#3:Get|}
                         Return """"
                     End Get
@@ -127,7 +127,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             End Class
 
             <RequiresPreviewFeatures>
-            Public Interface Iprogram
+            Public Interface IProgram
                 Sub MarkedMethodInInterface()
                 ReadOnly Property Value() As String 
             End Interface
@@ -135,10 +135,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             ";
 
             var testVb = TestVB(vbInput);
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "Iprogram.MarkedMethodInInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(1).WithArguments("Program", "Iprogram", DetectPreviewFeatureAnalyzer.DefaultURL));
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(2).WithArguments("Value", "Iprogram.Value", DetectPreviewFeatureAnalyzer.DefaultURL));
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(3).WithArguments("get_Value", "Iprogram.get_Value", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "IProgram.MarkedMethodInInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(1).WithArguments("Program", "IProgram", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(2).WithArguments("Value", "IProgram.Value", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(3).WithArguments("get_Value", "IProgram.get_Value", DetectPreviewFeatureAnalyzer.DefaultURL));
             await testVb.RunAsync();
         }
 

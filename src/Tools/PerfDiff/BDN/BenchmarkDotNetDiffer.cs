@@ -29,10 +29,9 @@ namespace PerfDiff
 
             // compare bdn results
             // TODO: let these be optional parameters
-            _ = Threshold.TryParse("15%", out var testThreshold);
-            _ = Threshold.TryParse("0.3ns", out var noiseThreshold);
+            _ = Threshold.TryParse("35%", out var testThreshold);
 
-            var notSame = FindRegressions(comparison, testThreshold, noiseThreshold);
+            var notSame = FindRegressions(comparison, testThreshold);
 
             if (!notSame.Any())
             {
@@ -174,7 +173,7 @@ namespace PerfDiff
             }
         }
 
-        private static (string id, Benchmark baseResult, Benchmark diffResult, EquivalenceTestConclusion conclusion)[] FindRegressions((string id, Benchmark baseResult, Benchmark diffResult)[] comparison, Threshold testThreshold, Threshold noiseThreshold)
+        private static (string id, Benchmark baseResult, Benchmark diffResult, EquivalenceTestConclusion conclusion)[] FindRegressions((string id, Benchmark baseResult, Benchmark diffResult)[] comparison, Threshold testThreshold)
         {
             var results = new List<(string id, Benchmark baseResult, Benchmark diffResult, EquivalenceTestConclusion conclusion)>();
             foreach ((string id, Benchmark baseResult, Benchmark diffResult) in comparison
@@ -185,10 +184,6 @@ namespace PerfDiff
 
                 var userTresholdResult = StatisticalTestHelper.CalculateTost(MannWhitneyTest.Instance, baseValues, diffValues, testThreshold);
                 if (userTresholdResult.Conclusion == EquivalenceTestConclusion.Same)
-                    continue;
-
-                var noiseResult = StatisticalTestHelper.CalculateTost(MannWhitneyTest.Instance, baseValues, diffValues, noiseThreshold);
-                if (noiseResult.Conclusion == EquivalenceTestConclusion.Same)
                     continue;
 
                 results.Add((id, baseResult, diffResult, conclusion: userTresholdResult.Conclusion));

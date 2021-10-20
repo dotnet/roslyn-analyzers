@@ -2717,6 +2717,16 @@
         <target state="translated">Zeichenliteral für die Suche nach einem einzelnen Zeichen verwenden</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseToLowerInvariantOrToUpperInvariantDescription">
+        <source>Using an invariant version yields consistent results regardless of the culture of an application.</source>
+        <target state="new">Using an invariant version yields consistent results regardless of the culture of an application.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseToLowerInvariantOrToUpperInvariantTitle">
+        <source>Use an invariant version</source>
+        <target state="new">Use an invariant version</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseValidPlatformStringDescription">
         <source>Platform compatibility analyzer requires a valid platform name and version.</source>
         <target state="translated">Das Analysetool für Plattformkompatibilität erfordert einen gültigen Plattformnamen und eine gültige Version.</target>

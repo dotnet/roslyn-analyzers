@@ -4,6 +4,7 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
+CA1311 | Globalization | Hidden | UseToLowerInvariantOrToUpperInvariant, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311)
 CA1849 | Performance | Disabled | UseAsyncMethodInAsyncContext, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849)
 CA5404 | Security | Disabled | DoNotDisableTokenValidationChecks, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5404)
 CA5405 | Security | Disabled | DoNotAlwaysSkipTokenValidationInDelegates, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5405)

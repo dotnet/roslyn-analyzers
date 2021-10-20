@@ -1822,4 +1822,10 @@
   <data name="UsesPreviewTypeParameterMessage" xml:space="preserve">
     <value>'{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</value>
   </data>
+  <data name="UseToLowerInvariantOrToUpperInvariantTitle" xml:space="preserve">
+    <value>Use an invariant version</value>
+  </data>
+  <data name="UseToLowerInvariantOrToUpperInvariantDescription" xml:space="preserve">
+    <value>Using an invariant version yields consistent results regardless of the culture of an application.</value>
+  </data>
 </root>

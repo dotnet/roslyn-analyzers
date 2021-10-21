@@ -14,7 +14,7 @@
     <MicrosoftCodeAnalysisExecutableVersion Condition="'$(MicrosoftCodeAnalysisExecutableVersion)' == ''">3.8.0</MicrosoftCodeAnalysisExecutableVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <VersionPrefix>3.3.3</VersionPrefix>
+    <VersionPrefix>3.3.4</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
     <NetAnalyzersVersionPrefix>7.0.0</NetAnalyzersVersionPrefix>
     <NetAnalyzersPreReleaseVersionLabel>preview1</NetAnalyzersPreReleaseVersionLabel>

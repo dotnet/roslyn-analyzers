@@ -747,6 +747,41 @@
         <target state="translated">Não passar literais como parâmetros localizados</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValue_Parameters_CodeFixTitle">
+        <source>Pass mutable value type by reference</source>
+        <target state="new">Pass mutable value type by reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValue_Parameters_Description">
+        <source>Passing mutable value types by value can result in mutations of the copy being lost.</source>
+        <target state="new">Passing mutable value types by value can result in mutations of the copy being lost.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValue_Parameters_Message">
+        <source>Do not pass mutable value type '{0}' by value</source>
+        <target state="new">Do not pass mutable value type '{0}' by value</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValue_Parameters_Title">
+        <source>Do not pass mutable value types by value</source>
+        <target state="new">Do not pass mutable value types by value</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValue_ReturnValues_Description">
+        <source>Returning mutable value types by value can result in mutations of the copy being lost.</source>
+        <target state="new">Returning mutable value types by value can result in mutations of the copy being lost.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValue_ReturnValues_Message">
+        <source>Do not return mutable value type {0} by value</source>
+        <target state="new">Do not return mutable value type {0} by value</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValue_ReturnValues_Title">
+        <source>Do not return mutable value types by value</source>
+        <target state="new">Do not return mutable value types by value</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesDescription">
         <source>An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.</source>
         <target state="translated">Uma exceção de tipo que não é suficientemente especificada nem reservada pelo tempo de execução nunca deve ser gerada pelo código do usuário. Isso torna o erro original difícil de ser detectado e depurado. Se esta instância de exceção puder ser gerada, use um tipo de exceção diferente.</target>

@@ -10,6 +10,8 @@ CA1842 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA1843 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1843> | Do not use 'WaitAll' with a single task |
 CA1848 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848> | Use the LoggerMessage delegates |
 CA2017 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
+CA2019 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019> | Do not pass mutable value types by value |
+CA2020 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020> | Do not return mutable value types by value |
 CA2253 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253> | Named placeholders should not be numeric values |
 CA2254 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2254> | Template should be a static expression |
 CA2255 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2255> | The 'ModuleInitializer' attribute should not be used in libraries |

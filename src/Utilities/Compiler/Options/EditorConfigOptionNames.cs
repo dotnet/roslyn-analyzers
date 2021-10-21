@@ -156,6 +156,8 @@ namespace Analyzer.Utilities
         /// </summary>
         public const string AdditionalRequiredGenericInterfaces = "additional_required_generic_interfaces";
 
+        public const string AdditionalMutableValueTypes = "additional_mutable_value_types";
+
         /// <summary>
         /// Names of types or namespaces (separated by '|'), such that the type or type's namespace doesn't count in the inheritance hierarchy tree.
         /// Configurable rules: CA1501 (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1501)

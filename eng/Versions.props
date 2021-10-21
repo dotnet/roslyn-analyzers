@@ -59,7 +59,7 @@
     <!-- Libs -->
     <BenchmarkDotNetVersion>0.13.0</BenchmarkDotNetVersion>
     <HumanizerVersion>2.2.0</HumanizerVersion>
-    <MicrosoftBuildLocatorVersion>1.1.2</MicrosoftBuildLocatorVersion>
+    <MicrosoftBuildLocatorVersion>1.4.1</MicrosoftBuildLocatorVersion>
     <MicrosoftDiagnosticsTracingTraceEventVersion>2.0.69</MicrosoftDiagnosticsTracingTraceEventVersion>
     <MicrosoftExtensionsLoggingVersion>6.0.0-preview.5.21301.5</MicrosoftExtensionsLoggingVersion>
     <MicrosoftNETCoreAppRefVersion>6.0.0-preview.4.21253.7</MicrosoftNETCoreAppRefVersion>

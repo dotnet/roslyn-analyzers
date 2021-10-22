@@ -672,6 +672,18 @@ A string comparison operation uses a method overload that does not set a StringC
 |CodeFix|False|
 ---
 
+## [CA1311](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311): Use an invariant version
+
+Using an invariant version yields consistent results regardless of the culture of an application.
+
+|Item|Value|
+|-|-|
+|Category|Globalization|
+|Enabled|True|
+|Severity|Hidden|
+|CodeFix|False|
+---
+
 ## [CA1401](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401): P/Invokes should not be visible
 
 A public or protected method in a public type has the System.Runtime.InteropServices.DllImportAttribute attribute (also implemented by the Declare keyword in Visual Basic). Such methods should not be exposed.

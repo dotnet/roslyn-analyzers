@@ -30,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Performance,
-            RuleLevel.BuildWarning,
+            RuleLevel.IdeSuggestion,
             description: s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);

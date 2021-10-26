@@ -73,7 +73,18 @@ class C
     }}
 }}
 ";
-            await VerifyCSDiagnosticAsync(source);
+            string expected = $@"
+using System;
+
+class C
+{{
+    void M(Span<{type}> span)
+    {{
+        span.Clear();
+    }}
+}}
+";
+            await VerifyCSCodeFixAsync(source, expected);
         }
 
         [Theory]
@@ -101,7 +112,7 @@ class C
     }}
 }}
 ";
-            await VerifyCSDiagnosticAsync(source);
+            await VerifyCSCodeFixAsync(source, source);
         }
 
         [Fact]
@@ -118,7 +129,18 @@ class C
     }
 }
 ";
-            await VerifyCSDiagnosticAsync(source);
+            string expected = @"
+using System;
+
+class C
+{
+    void M<T>(Span<T> span)
+    {
+        span.Clear();
+    }
+}
+";
+            await VerifyCSCodeFixAsync(source, expected);
         }
 
         [Fact]
@@ -137,7 +159,20 @@ class C
     }
 }
 ";
-            await VerifyCSDiagnosticAsync(source);
+            string expected = @"
+#nullable enable
+
+using System;
+
+class C
+{
+    void M<T>(Span<T?> span) where T : class
+    {
+        span.Clear();
+    }
+}
+";
+            await VerifyCSCodeFixAsync(source, expected);
         }
 
         [Fact]
@@ -154,7 +189,18 @@ class C
     }
 }
 ";
-            await VerifyCSDiagnosticAsync(source);
+            string expected = @"
+using System;
+
+class C
+{
+    void M<T>(Span<T?> span) where T : struct
+    {
+        span.Clear();
+    }
+}
+";
+            await VerifyCSCodeFixAsync(source, expected);
         }
 
         [Fact]
@@ -173,7 +219,20 @@ class C
     }
 }
 ";
-            await VerifyCSDiagnosticAsync(source);
+            string expected = @"
+#nullable enable
+
+using System;
+
+class C
+{
+    void M<T>(Span<T?> span) where T : class
+    {
+        span.Clear();
+    }
+}
+";
+            await VerifyCSCodeFixAsync(source, expected);
         }
 
         [Fact]
@@ -190,13 +249,12 @@ class C
     }
 }
 ";
-            await VerifyCSDiagnosticAsync(source);
+            await VerifyCSCodeFixAsync(source, source);
         }
 
         [Fact]
         public async Task TestCustomConversion()
         {
-
             string source = @"
 using System;
 
@@ -219,14 +277,13 @@ class C
     }
 }
 ";
-            await VerifyCSDiagnosticAsync(source);
+            await VerifyCSCodeFixAsync(source, source);
         }
 
         [Fact]
         public async Task TestDerived()
         {
             string source = @"
-
 using System;
 
 class Base { }
@@ -240,7 +297,21 @@ class C
     }
 }
 ";
-            await VerifyCSDiagnosticAsync(source);
+            string expected = @"
+using System;
+
+class Base { }
+class Derived : Base { }
+
+class C
+{
+    void M(Span<Base> span)
+    {
+        span.Clear();
+    }
+}
+";
+            await VerifyCSCodeFixAsync(source, expected);
         }
 
         private static Task VerifyCSCodeFixAsync(string source, string corrected)
@@ -251,18 +322,6 @@ class C
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 LanguageVersion = LanguageVersion.Preview,
                 FixedCode = corrected,
-            };
-
-            return test.RunAsync();
-        }
-
-        private static Task VerifyCSDiagnosticAsync(string source)
-        {
-            var test = new VerifyCS.Test
-            {
-                TestCode = source,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                LanguageVersion = LanguageVersion.Preview,
             };
 
             return test.RunAsync();

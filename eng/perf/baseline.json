@@ -1,5 +1,5 @@
 {
-  "release": "6.0",
-  "label": "roslyn analyzers baseline for release/6.0.1xx",
-  "sha": "c75737b7766a953f117b0e9d37c990b46dd4368c"
+  "release": "7.0",
+  "label": "roslyn analyzers baseline for release/7.0.1xx",
+  "sha": "428861b9a17cd012a69e7658878453794ab5e07f"
 }

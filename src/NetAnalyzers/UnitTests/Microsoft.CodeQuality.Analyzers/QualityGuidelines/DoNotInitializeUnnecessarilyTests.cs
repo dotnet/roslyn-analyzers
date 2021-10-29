@@ -312,7 +312,7 @@ public class Test
                     .WithLocation(3));
         }
 
-        private static VerifyCS.Test GetTestCS(string source, string corrected)
+        private static async Task TestCSAsync(string source, string corrected, params DiagnosticResult[] diagnosticResults)
         {
             var test = new VerifyCS.Test
             {
@@ -320,18 +320,8 @@ public class Test
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
                 FixedCode = corrected,
             };
-            return test;
-        }
 
-        private static async Task TestCSAsync(string source, string corrected, params DiagnosticResult[] diagnosticResults)
-        {
-            var test = GetTestCS(source, corrected);
-
-            for (int i = 0; i < diagnosticResults.Length; i++)
-            {
-                var expected = diagnosticResults[i];
-                test.ExpectedDiagnostics.Add(expected);
-            }
+            test.ExpectedDiagnostics.AddRange(diagnosticResults);
             await test.RunAsync();
         }
     }

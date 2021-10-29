@@ -33,11 +33,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             protected override SyntaxNode GetHashDataSyntaxNode(PreferHashDataOverComputeHashAnalyzer.ComputeType computeType, string? namespacePrefix, string hashTypeName, SyntaxNode computeHashNode)
             {
                 string identifier = hashTypeName;
-                if(namespacePrefix is not null)
+                if (namespacePrefix is not null)
                 {
                     identifier = namespacePrefix + "." + identifier;
                 }
-                
+
                 var argumentList = ((InvocationExpressionSyntax)computeHashNode).ArgumentList;
                 switch (computeType)
                 {

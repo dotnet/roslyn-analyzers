@@ -16,7 +16,7 @@
   <PropertyGroup>
     <VersionPrefix>3.3.3</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
-    <NetAnalyzersVersionPrefix>6.0.0</NetAnalyzersVersionPrefix>
+    <NetAnalyzersVersionPrefix>6.0.1</NetAnalyzersVersionPrefix>
     <NetAnalyzersPreReleaseVersionLabel>rtm</NetAnalyzersPreReleaseVersionLabel>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <!--

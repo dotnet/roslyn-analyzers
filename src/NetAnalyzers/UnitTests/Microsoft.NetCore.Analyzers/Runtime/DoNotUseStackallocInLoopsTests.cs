@@ -266,5 +266,24 @@ class TestClass {
                     }
                 }");
         }
+
+        [Fact]
+        public async Task Diagnostics_StackallocAsSourceOfForeachLoopButInAnotherLoop()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = LanguageVersion.CSharp8,
+                TestCode = @"
+                using System;
+                unsafe class TestClass {
+                    private static void SourceOfForeachLoopInAnotherLoop() {
+                        for (int i = 0; i < 10; i++)
+                        {
+                            foreach (char c in {|CA2014:stackalloc char[] { 'a', 'b', 'c' }|}) { }
+                        }
+                    }
+                }"
+            }.RunAsync();
+        }
     }
 }

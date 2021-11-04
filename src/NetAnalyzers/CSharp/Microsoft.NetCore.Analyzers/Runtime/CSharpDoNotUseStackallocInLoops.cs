@@ -41,7 +41,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                             ForEachStatementSyntax foreachStatement = (ForEachStatementSyntax)node;
                             if (foreachStatement.Expression.Contains(ctx.Node))
                             {
-                                return;
+                                continue;
                             }
                             goto case SyntaxKind.WhileStatement; // fall through
 

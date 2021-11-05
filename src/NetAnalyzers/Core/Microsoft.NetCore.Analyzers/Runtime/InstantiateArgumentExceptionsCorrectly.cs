@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Globalization;
@@ -10,6 +10,8 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
     /// CA2208: Instantiate argument exceptions correctly
     /// </summary>
@@ -19,48 +21,47 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string RuleId = "CA2208";
         internal const string MessagePosition = nameof(MessagePosition);
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(InstantiateArgumentExceptionsCorrectlyTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(InstantiateArgumentExceptionsCorrectlyDescription));
 
-        private static readonly LocalizableString s_localizableMessageNoArguments = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageNoArguments), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageIncorrectMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageIncorrectParameterName = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        internal static readonly DiagnosticDescriptor RuleNoArguments = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(InstantiateArgumentExceptionsCorrectlyMessageNoArguments)),
+            DiagnosticCategory.Usage,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor RuleNoArguments = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageNoArguments,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.IdeSuggestion,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor RuleIncorrectMessage = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage)),
+            DiagnosticCategory.Usage,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor RuleIncorrectMessage = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageIncorrectMessage,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.IdeSuggestion,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor RuleIncorrectParameterName = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName)),
+            DiagnosticCategory.Usage,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor RuleIncorrectParameterName = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageIncorrectParameterName,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.IdeSuggestion,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(RuleNoArguments, RuleIncorrectMessage, RuleIncorrectParameterName);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleNoArguments, RuleIncorrectMessage, RuleIncorrectParameterName);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 compilationContext =>
                 {
                     Compilation compilation = compilationContext.Compilation;
@@ -132,8 +133,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private static bool MatchesConfiguredVisibility(ISymbol owningSymbol, OperationAnalysisContext context) =>
-             owningSymbol.MatchesConfiguredVisibility(context.Options, RuleIncorrectParameterName, context.Compilation,
-                 context.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.All);
+             context.Options.MatchesConfiguredVisibility(RuleIncorrectParameterName, owningSymbol, context.Compilation,
+                 defaultRequiredVisibility: SymbolVisibilityGroup.All);
 
         private static bool HasParameters(ISymbol owningSymbol) => !owningSymbol.GetParameters().IsEmpty;
 

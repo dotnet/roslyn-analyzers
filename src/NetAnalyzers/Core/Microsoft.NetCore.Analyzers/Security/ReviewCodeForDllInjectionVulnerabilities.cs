@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
 using Microsoft.CodeAnalysis;
@@ -7,20 +7,22 @@ using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class ReviewCodeForDllInjectionVulnerabilities : SourceTriggeredTaintedDataAnalyzerBase
     {
         internal static readonly DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA3011",
-            nameof(MicrosoftNetCoreAnalyzersResources.ReviewCodeForDllInjectionVulnerabilitiesTitle),
-            nameof(MicrosoftNetCoreAnalyzersResources.ReviewCodeForDllInjectionVulnerabilitiesMessage),
+            nameof(ReviewCodeForDllInjectionVulnerabilitiesTitle),
+            nameof(ReviewCodeForDllInjectionVulnerabilitiesMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
             isDataflowRule: true,
             isReportedAtCompilationEnd: false);
 
-        protected override SinkKind SinkKind { get { return SinkKind.Dll; } }
+        protected override SinkKind SinkKind => SinkKind.Dll;
 
-        protected override DiagnosticDescriptor TaintedDataEnteringSinkDescriptor { get { return Rule; } }
+        protected override DiagnosticDescriptor TaintedDataEnteringSinkDescriptor => Rule;
     }
 }

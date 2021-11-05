@@ -1,7 +1,8 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.TestForEmptyStringsUsingStringLengthAnalyzer,
@@ -14,15 +15,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         #region Helper methods
 
         private DiagnosticResult CSharpResult(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         #endregion
 
         #region Diagnostic tests
 
         [Fact]
-        public async Task CA1820StaticEqualsTestCSharp()
+        public async Task CA1820StaticEqualsTestCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -54,7 +57,7 @@ class C
         }
 
         [Fact]
-        public async Task CA1820InstanceEqualsTestCSharp()
+        public async Task CA1820InstanceEqualsTestCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -82,7 +85,7 @@ class C
         }
 
         [Fact]
-        public async Task CA1820OperatorOverloadTestCSharp()
+        public async Task CA1820OperatorOverloadTestCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -106,5 +109,24 @@ class C
         }
 
         #endregion
+
+        [Fact, WorkItem(1508, "https://github.com/dotnet/roslyn-analyzers/issues/1508")]
+        public async Task CA1820_ExpressionTree_NoDiagnosticAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System.Linq;
+
+class C
+{
+    void M(IQueryable<string> strings)
+    {
+        var q1 = from s in strings
+                where s == """"
+                select s;
+
+        var q2 = strings.Where(s => s.Equals(""""));
+    }
+}");
+        }
     }
 }

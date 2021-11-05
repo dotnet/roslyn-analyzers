@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -11,28 +11,31 @@ using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
     /// For detecting deserialization of <see cref="T:System.Data.DataSet"/> or <see cref="T:System.Data.DataTable"/> in an
     /// web API / WCF API serializable object graph.
     /// </summary>
     [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DataSetDataTableInWebSerializableObjectGraphAnalyzer : DiagnosticAnalyzer
+    public abstract class DataSetDataTableInWebSerializableObjectGraphAnalyzer : DiagnosticAnalyzer
     {
         internal static readonly DiagnosticDescriptor ObjectGraphContainsDangerousTypeDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2356",
-                nameof(MicrosoftNetCoreAnalyzersResources.DataSetDataTableInWebDeserializableObjectGraphTitle),
-                nameof(MicrosoftNetCoreAnalyzersResources.DataSetDataTableInWebDeserializableObjectGraphMessage),
+                nameof(DataSetDataTableInWebDeserializableObjectGraphTitle),
+                nameof(DataSetDataTableInWebDeserializableObjectGraphMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
                 isDataflowRule: false,
                 isReportedAtCompilationEnd: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(ObjectGraphContainsDangerousTypeDescriptor);
 
-        public override void Initialize(AnalysisContext context)
+        protected abstract string ToString(TypedConstant typedConstant);
+
+        public sealed override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
 
@@ -115,7 +118,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                     ObjectGraphContainsDangerousTypeDescriptor,
                                                     parameterSymbol.DeclaringSyntaxReferences.First().GetSyntax().GetLocation(),
                                                     result.InsecureType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                                                    result.GetDisplayString()));
+                                                    result.GetDisplayString(typedConstant => ToString(typedConstant))));
                                         }
                                     }
                                 }

@@ -12,3 +12,4 @@ CA1856 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1857 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857> | A constant is expected for the parameter |
 CA1858 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858> | Use 'StartsWith' instead of 'IndexOf' |
 CA1859 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859> | Use concrete types when possible for improved performance |
+CA2021 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |

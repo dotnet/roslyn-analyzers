@@ -35,7 +35,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 string identifier = hashTypeName;
                 if (namespacePrefix is not null)
                 {
-                    identifier = namespacePrefix + "." + identifier;
+                    identifier = $"{namespacePrefix}.{identifier}";
                 }
 
                 var argumentList = ((InvocationExpressionSyntax)computeHashNode).ArgumentList;

@@ -88,7 +88,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="REPLACE.ME.Analyzers.nuspec" />
-    <None Include="ThirdPartyNotices.rtf" />
+    <None Include="ThirdPartyNotices.txt" />
     <Content Include="REPLACE.ME.Analyzers.props">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

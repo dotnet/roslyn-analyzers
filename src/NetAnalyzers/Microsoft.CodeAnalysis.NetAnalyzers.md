@@ -1464,7 +1464,19 @@ When inside a Task-returning method, use the async version of methods, if they e
 |CodeFix|False|
 ---
 
-## [CA1850](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850): Avoid constant arrays as arguments
+## [CA1850](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850): Prefer static 'HashData' method over 'ComputeHash'
+
+It is more efficient to use the static 'HashData' method over creating and managing a HashAlgorithm instance to call 'ComputeHash'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1851](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1851): Avoid constant arrays as arguments
 
 Having a constant array passed as an argument is not ideally performant. Extract constant arrays as 'static readonly'.
 

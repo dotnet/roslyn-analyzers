@@ -247,6 +247,9 @@
     <value>Avoid unsealed attributes</value>
   </data>
   <data name="AvoidConstArraysTitle" xml:space="preserve">
+    <value>Avoid constant arrays as arguments</value>
+  </data>
+  <data name="AvoidConstArraysCodeFixTitle" xml:space="preserve">
     <value>Extract to static readonly field</value>
   </data>
   <data name="AvoidConstArraysDescription" xml:space="preserve">

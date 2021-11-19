@@ -38,7 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, context.CancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
 
-            string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysTitle;
+            string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysCodeFixTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,

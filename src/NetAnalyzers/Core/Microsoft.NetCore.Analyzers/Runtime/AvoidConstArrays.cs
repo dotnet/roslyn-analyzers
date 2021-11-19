@@ -41,10 +41,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 INamedTypeSymbol? readonlySpanType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1);
                 INamedTypeSymbol? functionType = context.Compilation.GetOrCreateTypeByMetadataName("System.Func`2");
-                if (readonlySpanType is null || functionType is null)
-                {
-                    return;
-                }
 
                 // Analyzes an argument operation
                 context.RegisterOperationAction(context =>
@@ -102,14 +98,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         ITypeSymbol originalDefinition = argumentOperation.Parameter.Type.OriginalDefinition;
 
                         // Can't be a ReadOnlySpan, as those are already optimized
-                        if (originalDefinition.Equals(readonlySpanType))
+                        if (readonlySpanType is not null && originalDefinition.Equals(readonlySpanType))
                         {
                             return;
                         }
 
                         // Check if the parameter is a function so the name can be set to null
                         // Otherwise, the parameter name doesn't reflect the array creation as well
-                        isDirectlyInsideLambda = originalDefinition.Equals(functionType);
+                        if (functionType is not null)
+                        {
+                            isDirectlyInsideLambda = originalDefinition.Equals(functionType);
+                        }
                     }
 
                     // Must be literal array

@@ -451,7 +451,7 @@ namespace AnalyzerCodeGenerator
                 "install.ps1",
                 "uninstall.ps1",
                 "packages.config",
-                "ThirdPartyNoticestxt"
+                "ThirdPartyNotices.txt"
             };
 
             string[] renamedFiles = new string[]

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace AnalyzerCodeGenerator
         // 8: Title
         // FileName: Name.cs
         private const string _analyzerTemplate =
-@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
@@ -34,9 +34,9 @@ namespace {0}.Analyzers
     {{
         internal const string RuleId = ""{3}"";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof({1}AnalyzersResources.{2}Title), {1}AnalyzersResources.ResourceManager, typeof({1}AnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof({1}AnalyzersResources.{2}Title));
         {5}
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof({1}AnalyzersResources.{2}Description), {1}AnalyzersResources.ResourceManager, typeof({1}AnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof({1}AnalyzersResources.{2}Description));
         {6}
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create({7});
@@ -53,7 +53,7 @@ namespace {0}.Analyzers
         // 2: Name
         private const string _messageTemplate =
 @"
-        private static readonly LocalizableString s_localizableMessage{0} = new LocalizableResourceString(nameof({1}AnalyzersResources.{2}Message{0}), {1}AnalyzersResources.ResourceManager, typeof({1}AnalyzersResources));";
+        private static readonly LocalizableString s_localizableMessage{0} = CreateLocalizableResourceString(nameof({1}AnalyzersResources.{2}Message{0}));";
 
         // 0: MessageName
         // 1: Category
@@ -75,7 +75,7 @@ namespace {0}.Analyzers
         // 3: Title
         // Filename: CSharpName.cs
         private const string _csharpAnalyzerTemplate =
-@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
@@ -101,7 +101,7 @@ namespace {0}.Analyzers
         // 3: Title
         // Filename: BasicName.vb
         private const string _basicAnalyzerTemplate =
-@"' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+@"' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
@@ -123,7 +123,7 @@ End Namespace";
         // 1: Name
         // FileName: NameTests.cs 
         private const string _analyzerTestTemplate =
-@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Test.Utilities;
@@ -153,7 +153,7 @@ namespace {0}.Analyzers.UnitTests
         // 3: Title
         // FileName: Name.Fixer.cs
         private const string _codeFixTemplate =
-@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -173,7 +173,7 @@ namespace {0}.Analyzers
     /// </summary>
     public abstract class {1}Fixer : CodeFixProvider
     {{
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create({1}Analyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create({1}Analyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {{
@@ -196,7 +196,7 @@ namespace {0}.Analyzers
         // 3: Title
         // Filename: CSharpName.cs
         private const string _csharpCodeFixTemplate =
-@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
                                  
 using System.Composition;
 using System.Diagnostics;  
@@ -223,7 +223,7 @@ namespace {0}.Analyzers
         // 3: Title
         // Filename: BasicName.vb
         private const string _basicCodeFixTemplate =
-@"' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+@"' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 Imports System.Composition
 Imports System.Linq
@@ -248,7 +248,7 @@ End Namespace
         // 1: Name
         // FileName: NameTests.Fixer.cs 
         private const string _codeFixTestTemplate =
-@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -286,7 +286,7 @@ namespace {0}.Analyzers.UnitTests
         // 1: concatenation of a list of CategoryFieldTemplate.
         // FileName: DiagnosticCategory.cs  
         private const string _categotyTemplate =
-@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+@"// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 namespace {0}.Analyzers
 {{

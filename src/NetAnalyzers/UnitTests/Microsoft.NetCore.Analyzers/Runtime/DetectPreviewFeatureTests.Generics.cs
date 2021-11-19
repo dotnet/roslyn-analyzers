@@ -5,6 +5,9 @@ using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpDetectPreviewFeatureAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicDetectPreviewFeatureAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -51,17 +54,12 @@ namespace Preview_Feature_Scratch
 using System.Runtime.Versioning; using System;
 namespace Preview_Feature_Scratch
 {
-
     class Program
     {
         public bool GenericMethod<T>()
-            where T : {|#0:Foo|}
+            where T : {|#0:Foo|}, ICloneable
         {
             return true;
-        }
-
-        static void Main(string[] args)
-        {
         }
     }
 
@@ -69,12 +67,31 @@ namespace Preview_Feature_Scratch
     public class Foo
     {
     }
-
 }";
 
             var test = TestCS(csInput);
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(0).WithArguments("GenericMethod", "Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
             await test.RunAsync();
+
+            var vbInput = @" 
+Imports System.Runtime.Versioning
+Imports System
+
+Namespace Preview_Feature_Scratch
+    Class Program
+        Public Function GenericMethod(Of T As {{|#0:Foo|}, ICloneable})() As Boolean
+            Return True
+        End Function
+    End Class
+
+    <RequiresPreviewFeatures(""Lib is in preview."", Url:=""https://aka.ms/aspnet/kestrel/http3reqs"")>
+    Public Class Foo
+    End Class
+End Namespace
+";
+            var vbTest = TestVB(vbInput);
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(0).WithArguments("GenericMethod", "Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            await vbTest.RunAsync();
         }
 
         [Fact]

@@ -17,7 +17,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.AvoidMultipleEnumera
     {
         private const string RuleId = "CA1850";
 
-        internal static readonly DiagnosticDescriptor MultipleEnumerableDescriptor = DiagnosticDescriptorHelper.Create(
+        private static readonly DiagnosticDescriptor MultipleEnumerableDescriptor = DiagnosticDescriptorHelper.Create(
             RuleId,
             CreateLocalizableResourceString(nameof(AvoidMultipleEnumerationsTitle)),
             CreateLocalizableResourceString(nameof(AvoidMultipleEnumerationsMessage)),

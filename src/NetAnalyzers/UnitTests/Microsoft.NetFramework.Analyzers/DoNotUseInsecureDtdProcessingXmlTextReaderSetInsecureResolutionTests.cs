@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -15,13 +15,17 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
         private static DiagnosticResult GetCA3075XmlTextReaderSetInsecureResolutionCSharpResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(DoNotUseInsecureDtdProcessingAnalyzer.RuleXmlTextReaderSetInsecureResolution).WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         private static DiagnosticResult GetCA3075XmlTextReaderSetInsecureResolutionBasicResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(DoNotUseInsecureDtdProcessingAnalyzer.RuleXmlTextReaderSetInsecureResolution).WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         [Fact]
-        public async Task UseXmlTextReaderNoCtorShouldNotGenerateDiagnostic()
+        public async Task UseXmlTextReaderNoCtorShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -55,7 +59,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlTextReaderNoCtorSetResolverToNullShouldGenerateDiagnostic()
+        public async Task XmlTextReaderNoCtorSetResolverToNullShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -92,7 +96,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task XmlTextReaderNoCtorSetDtdProcessingToParseShouldGenerateDiagnostic()
+        public async Task XmlTextReaderNoCtorSetDtdProcessingToParseShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -129,7 +133,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task XmlTextReaderNoCtorSetBothToInsecureValuesShouldGenerateDiagnostics()
+        public async Task XmlTextReaderNoCtorSetBothToInsecureValuesShouldGenerateDiagnosticsAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -170,7 +174,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task XmlTextReaderNoCtorSetInSecureResolverInTryClauseShouldGenerateDiagnostic()
+        public async Task XmlTextReaderNoCtorSetInSecureResolverInTryClauseShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -215,7 +219,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task XmlTextReaderNoCtorSetInSecureResolverInCatchBlockShouldGenerateDiagnostic()
+        public async Task XmlTextReaderNoCtorSetInSecureResolverInCatchBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -258,7 +262,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task XmlTextReaderNoCtorSetInSecureResolverInFinallyBlockShouldGenerateDiagnostic()
+        public async Task XmlTextReaderNoCtorSetInSecureResolverInFinallyBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -302,7 +306,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task XmlTextReaderNoCtorSetDtdprocessingToParseInTryClauseShouldGenerateDiagnostic()
+        public async Task XmlTextReaderNoCtorSetDtdprocessingToParseInTryClauseShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -347,7 +351,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task XmlTextReaderNoCtorSetDtdprocessingToParseInCatchBlockShouldGenerateDiagnostic()
+        public async Task XmlTextReaderNoCtorSetDtdprocessingToParseInCatchBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -390,7 +394,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task XmlTextReaderNoCtorSetDtdprocessingToParseInFinallyBlockShouldGenerateDiagnostic()
+        public async Task XmlTextReaderNoCtorSetDtdprocessingToParseInFinallyBlockShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -434,7 +438,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task ConstructXmlTextReaderSetInsecureResolverInInitializerShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetInsecureResolverInInitializerShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -476,7 +480,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task ConstructXmlTextReaderSetDtdProcessingParseInInitializerShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetDtdProcessingParseInInitializerShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -518,7 +522,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task ConstructXmlTextReaderSetBothToInsecureValuesInInitializerShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetBothToInsecureValuesInInitializerShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -562,7 +566,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task XmlTextReaderDerivedTypeSetInsecureResolverShouldGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetInsecureResolverShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -610,7 +614,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task XmlTextReaderDerivedTypeSetDtdProcessingParseShouldGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetDtdProcessingParseShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -658,7 +662,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task XmlTextReaderCreatedAsTempSetSecureSettingsShouldNotGenerateDiagnostics()
+        public async Task XmlTextReaderCreatedAsTempSetSecureSettingsShouldNotGenerateDiagnosticsAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -702,7 +706,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlTextReaderCreatedAsTempSetInsecureResolverShouldGenerateDiagnostics()
+        public async Task XmlTextReaderCreatedAsTempSetInsecureResolverShouldGenerateDiagnosticsAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -750,7 +754,7 @@ End Namespace
         }
 
         [Fact]
-        public async Task XmlTextReaderCreatedAsTempSetDtdProcessingParseShouldGenerateDiagnostics()
+        public async Task XmlTextReaderCreatedAsTempSetDtdProcessingParseShouldGenerateDiagnosticsAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,

@@ -1,7 +1,8 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.AttributeStringLiteralsShouldParseCorrectlyAnalyzer,
@@ -15,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class AttributeStringLiteralsShouldParseCorrectlyTests
     {
         [Fact]
-        public async Task CA2243_BadAttributeStringLiterals_CSharp()
+        public async Task CA2243_BadAttributeStringLiterals_CSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -59,7 +60,7 @@ CA2243CSharpDefaultResultAt(31, 6, "BadAttributeStringLiterals.MyLiteralsAttribu
         }
 
         [Fact]
-        public async Task CA2243_BadGuids_CSharp()
+        public async Task CA2243_BadGuids_CSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -136,7 +137,7 @@ CA2243CSharpEmptyResultAt(39, 2, "GuidAttribute", "ThisIsAGuid", "Guid"));
         }
 
         [Fact]
-        public async Task CA2243_MiscSymbolsWithBadGuid_CSharp()
+        public async Task CA2243_MiscSymbolsWithBadGuid_CSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -193,7 +194,7 @@ CA2243CSharpDefaultResultAt(21, 20, "GuidAttribute", "GuidAttribute.GUID", "bad-
         }
 
         [Fact]
-        public async Task CA2243_NoDiagnostics_CSharp()
+        public async Task CA2243_NoDiagnostics_CSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -277,7 +278,7 @@ public static class ClassWithExceptionForUri
         }
 
         [Fact]
-        public async Task CA2243_BadAttributeStringLiterals_Basic()
+        public async Task CA2243_BadAttributeStringLiterals_BasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -351,7 +352,7 @@ CA2243BasicDefaultResultAt(12, 28, "BadAttributeStringLiterals.MyLiteralsAttribu
         }
 
         [Fact]
-        public async Task CA2243_BadGuids_Basic()
+        public async Task CA2243_BadGuids_BasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -421,7 +422,7 @@ CA2243BasicEmptyResultAt(32, 2, "GuidAttribute", "ThisIsAGuid", "Guid"));
         }
 
         [Fact]
-        public async Task CA2243_MiscSymbolsWithBadGuid_Basic()
+        public async Task CA2243_MiscSymbolsWithBadGuid_BasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -469,7 +470,7 @@ CA2243BasicDefaultResultAt(9, 35, "GuidAttribute", "GuidAttribute.GUID", "bad-gu
         }
 
         [Fact]
-        public async Task CA2243_NoDiagnostics_Basic()
+        public async Task CA2243_NoDiagnostics_BasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -587,24 +588,84 @@ End Class
 ");
         }
 
+        [Fact, WorkItem(3635, "https://github.com/dotnet/roslyn-analyzers/issues/3635")]
+        public async Task ObsoleteAttributeUrlFormat_NoDiagnosticAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+namespace System
+{
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
+    public class ObsoleteAttribute : Attribute
+    {
+        public string UrlFormat { get; set; }
+    }
+}
+
+namespace Something
+{
+    using System;
+
+    public class C
+    {
+        [Obsolete(UrlFormat = """")]
+        public void M1() {}
+
+        [Obsolete(UrlFormat = ""{0}"")]
+        public void M2() {}
+    }
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Namespace System
+    <AttributeUsage(AttributeTargets.All, AllowMultiple:=False)>
+    Public Class ObsoleteAttribute
+        Inherits Attribute
+
+        Public Property UrlFormat As String
+    End Class
+End Namespace
+
+Namespace Something
+    Public Class C
+        <Obsolete(UrlFormat:="""")>
+        Public Sub M1()
+        End Sub
+
+        <Obsolete(UrlFormat:=""{0}"")>
+        Public Sub M2()
+        End Sub
+    End Class
+End Namespace");
+        }
+
         private DiagnosticResult CA2243CSharpDefaultResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyCS.Diagnostic(AttributeStringLiteralsShouldParseCorrectlyAnalyzer.DefaultRule)
                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
         private DiagnosticResult CA2243BasicDefaultResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(AttributeStringLiteralsShouldParseCorrectlyAnalyzer.DefaultRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
 
         private DiagnosticResult CA2243CSharpEmptyResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyCS.Diagnostic(AttributeStringLiteralsShouldParseCorrectlyAnalyzer.EmptyRule)
                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
         private DiagnosticResult CA2243BasicEmptyResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(AttributeStringLiteralsShouldParseCorrectlyAnalyzer.EmptyRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
     }
 }

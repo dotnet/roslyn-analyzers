@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
@@ -20,17 +20,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class DisposableFieldsShouldBeDisposedTests
     {
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyCS.Diagnostic()
                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
 
         [Fact]
-        public async Task DisposableAllocationInConstructor_AssignedDirectly_Disposed_NoDiagnostic()
+        public async Task DisposableAllocationInConstructor_AssignedDirectly_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -81,7 +85,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocationInConstructor_AssignedDirectly_NotDisposed_Diagnostic()
+        public async Task DisposableAllocationInConstructor_AssignedDirectly_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -134,7 +138,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DisposableAllocationInMethod_AssignedDirectly_Disposed_NoDiagnostic()
+        public async Task DisposableAllocationInMethod_AssignedDirectly_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -185,7 +189,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocationInMethod_AssignedDirectly_NotDisposed_Diagnostic()
+        public async Task DisposableAllocationInMethod_AssignedDirectly_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -238,7 +242,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DisposableAllocationInFieldInitializer_AssignedDirectly_Disposed_NoDiagnostic()
+        public async Task DisposableAllocationInFieldInitializer_AssignedDirectly_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -286,7 +290,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocationInFieldInitializer_AssignedDirectly_NotDisposed_Diagnostic()
+        public async Task DisposableAllocationInFieldInitializer_AssignedDirectly_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -338,7 +342,7 @@ End Class",
         }
 
         [Fact]
-        public async Task StaticField_NotDisposed_NoDiagnostic()
+        public async Task StaticField_NotDisposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -382,7 +386,7 @@ End Class");
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public async Task AsyncDisposableAllocationInConstructor_AssignedDirectly_Disposed_NoDiagnostic()
+        public async Task AsyncDisposableAllocationInConstructor_AssignedDirectly_Disposed_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -446,7 +450,7 @@ End Class"
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public async Task AsyncDisposableAllocationInConstructor_AssignedDirectly_NotDisposed_Diagnostic()
+        public async Task AsyncDisposableAllocationInConstructor_AssignedDirectly_NotDisposed_DiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -516,7 +520,7 @@ End Class",
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public async Task DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_Disposed_NoDiagnostic()
+        public async Task DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_Disposed_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -579,7 +583,7 @@ End Class"
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public async Task DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_NotDisposed_Diagnostic()
+        public async Task DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_NotDisposed_DiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -648,7 +652,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedThroughLocal_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedThroughLocal_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -701,7 +705,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedThroughLocal_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_AssignedThroughLocal_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -756,7 +760,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedThroughParameter_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedThroughParameter_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -809,7 +813,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedThroughParameter_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_AssignedThroughParameter_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -864,7 +868,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DisposableSymbolWithoutAllocation_AssignedThroughParameter_Disposed_NoDiagnostic()
+        public async Task DisposableSymbolWithoutAllocation_AssignedThroughParameter_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -915,7 +919,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableSymbolWithoutAllocation_AssignedThroughParameter_NotDisposed_NoDiagnostic()
+        public async Task DisposableSymbolWithoutAllocation_AssignedThroughParameter_NotDisposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -968,7 +972,7 @@ End Class");
         [InlineData(PointsToAnalysisKind.None)]
         [InlineData(PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties)]
         [InlineData(PointsToAnalysisKind.Complete)]
-        public async Task DisposableAllocation_AssignedThroughField_Disposed_NoDiagnostic(PointsToAnalysisKind? pointsToAnalysisKind)
+        public async Task DisposableAllocation_AssignedThroughField_Disposed_NoDiagnosticAsync(PointsToAnalysisKind? pointsToAnalysisKind)
         {
             var editorConfig = pointsToAnalysisKind.HasValue ?
                 $"dotnet_code_quality.CA2213.points_to_analysis_kind = {pointsToAnalysisKind}" :
@@ -1006,8 +1010,11 @@ class C
 ";
             var csTest = new VerifyCS.Test()
             {
-                TestCode = csCode,
-                AnalyzerConfigDocument = editorConfig
+                TestState =
+                {
+                    Sources = { csCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
             };
 
             await csTest.RunAsync();
@@ -1041,8 +1048,11 @@ End Class
 ";
             var vbTest = new VerifyVB.Test()
             {
-                TestCode = vbCode,
-                AnalyzerConfigDocument = editorConfig
+                TestState =
+                {
+                    Sources = { vbCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
             };
 
             await vbTest.RunAsync();
@@ -1053,7 +1063,7 @@ End Class
         [InlineData(PointsToAnalysisKind.None)]
         [InlineData(PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties)]
         [InlineData(PointsToAnalysisKind.Complete)]
-        public async Task DisposableAllocation_AssignedThroughField_NotDisposed_Diagnostic(PointsToAnalysisKind? pointsToAnalysisKind)
+        public async Task DisposableAllocation_AssignedThroughField_NotDisposed_DiagnosticAsync(PointsToAnalysisKind? pointsToAnalysisKind)
         {
             var editorConfig = pointsToAnalysisKind.HasValue ?
                 $"dotnet_code_quality.CA2213.points_to_analysis_kind = {pointsToAnalysisKind}" :
@@ -1090,8 +1100,11 @@ class C
 ";
             var csTest = new VerifyCS.Test()
             {
-                TestCode = csCode,
-                AnalyzerConfigDocument = editorConfig
+                TestState =
+                {
+                    Sources = { csCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
             };
 
             await csTest.RunAsync();
@@ -1124,15 +1137,18 @@ End Class
 ";
             var vbTest = new VerifyVB.Test()
             {
-                TestCode = vbCode,
-                AnalyzerConfigDocument = editorConfig
+                TestState =
+                {
+                    Sources = { vbCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
             };
 
             await vbTest.RunAsync();
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedThroughInstanceInvocation_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedThroughInstanceInvocation_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1189,7 +1205,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedThroughInstanceInvocation_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_AssignedThroughInstanceInvocation_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1248,7 +1264,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedThroughStaticCreateInvocation_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedThroughStaticCreateInvocation_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1305,7 +1321,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedThroughStaticCreateInvocation_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_AssignedThroughStaticCreateInvocation_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1364,7 +1380,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedInDifferentType_DisposedInContainingType_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedInDifferentType_DisposedInContainingType_NoDiagnosticAsync()
         {
             // We don't track disposable field assignments in different type.
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -1425,7 +1441,7 @@ End Class
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedInDifferentType_DisposedInDifferentNonDisposableType_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedInDifferentType_DisposedInDifferentNonDisposableType_NoDiagnosticAsync()
         {
             // We don't track disposable field assignments in different type.
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -1495,7 +1511,7 @@ End Class
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedInDifferentType_NotDisposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedInDifferentType_NotDisposed_NoDiagnosticAsync()
         {
             // We don't track disposable field assignments in different type.
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -1552,7 +1568,7 @@ End Class
         }
 
         [Fact]
-        public async Task DisposableOwnershipTransferSpecialCases_Disposed_NoDiagnostic()
+        public async Task DisposableOwnershipTransferSpecialCases_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1662,7 +1678,7 @@ End Class
         }
 
         [Fact]
-        public async Task DisposableOwnershipTransferSpecialCases_NotDisposed_Diagnostic()
+        public async Task DisposableOwnershipTransferSpecialCases_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1754,7 +1770,7 @@ End Class
         }
 
         [Fact]
-        public async Task DisposableAllocation_DisposedWithConditionalAccess_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedWithConditionalAccess_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1798,7 +1814,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedToLocal_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedToLocal_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1844,7 +1860,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_AssignedToLocal_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_AssignedToLocal_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1892,7 +1908,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DisposableAllocation_IfElseStatement_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_IfElseStatement_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1976,7 +1992,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_IfElseStatement_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_IfElseStatement_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2065,7 +2081,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DisposableAllocation_EscapedField_NotDisposed_NoDiagnostic()
+        public async Task DisposableAllocation_EscapedField_NotDisposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2120,7 +2136,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_OptimisticPointsToAnalysis_NoDiagnostic()
+        public async Task DisposableAllocation_OptimisticPointsToAnalysis_NoDiagnosticAsync()
         {
             // Invoking an instance method may likely invalidate all the instance field analysis state, i.e.
             // reference type fields might be re-assigned to point to different objects in the called method.
@@ -2187,7 +2203,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_OptimisticPointsToAnalysis_WithReturn_NoDiagnostic()
+        public async Task DisposableAllocation_OptimisticPointsToAnalysis_WithReturn_NoDiagnosticAsync()
         {
             // Invoking an instance method may likely invalidate all the instance field analysis state, i.e.
             // reference type fields might be re-assigned to point to different objects in the called method.
@@ -2265,7 +2281,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_IfStatementInDispose_NoDiagnostic()
+        public async Task DisposableAllocation_IfStatementInDispose_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2318,7 +2334,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_DisposedinDisposeOverride_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedinDisposeOverride_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2377,7 +2393,7 @@ End Class
         }
 
         [Fact]
-        public async Task DisposableAllocation_DisposedWithDisposeBoolInvocation_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedWithDisposeBoolInvocation_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2428,7 +2444,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_DisposedInsideDisposeBool_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedInsideDisposeBool_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2488,7 +2504,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_DisposedWithDisposeCloseInvocation_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedWithDisposeCloseInvocation_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2539,7 +2555,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_AllDisposedMethodsMixed_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AllDisposedMethodsMixed_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2619,7 +2635,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableAllocation_DisposedInsideDisposeClose_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedInsideDisposeClose_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2679,7 +2695,7 @@ End Class");
         }
 
         [Fact]
-        public async Task SystemThreadingTask_SpecialCase_NotDisposed_NoDiagnostic()
+        public async Task SystemThreadingTask_SpecialCase_NotDisposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2717,7 +2733,7 @@ End Class");
         }
 
         [Fact, WorkItem(1796, "https://github.com/dotnet/roslyn-analyzers/issues/1796")]
-        public async Task DisposableAllocation_DisposedWithDisposeAsyncInvocation_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedWithDisposeAsyncInvocation_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2769,7 +2785,7 @@ End Class");
         }
 
         [Fact, WorkItem(1796, "https://github.com/dotnet/roslyn-analyzers/issues/1796")]
-        public async Task DisposableAllocation_DisposedInsideDisposeCoreAsync_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedInsideDisposeCoreAsync_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2841,7 +2857,7 @@ End Class");
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public async Task DisposableAllocation_DisposedInInvokedMethod_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedInInvokedMethod_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2894,7 +2910,7 @@ End Class");
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public async Task DisposableAllocation_NotDisposedInInvokedMethod_Diagnostic()
+        public async Task DisposableAllocation_NotDisposedInInvokedMethod_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2949,7 +2965,7 @@ End Class",
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public async Task DisposableAllocation_DisposedInInvokedMethod_DisposableTypeInMetadata_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedInInvokedMethod_DisposableTypeInMetadata_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2992,7 +3008,7 @@ End Class
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public async Task DisposableAllocation_NotDisposedInInvokedMethod_DisposableTypeInMetadata_Diagnostic()
+        public async Task DisposableAllocation_NotDisposedInInvokedMethod_DisposableTypeInMetadata_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3037,7 +3053,7 @@ End Class
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public async Task DisposableAllocation_DisposedInInvokedMethodMultipleLevelsDown_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedInInvokedMethodMultipleLevelsDown_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3094,7 +3110,7 @@ End Module
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public async Task DisposableAllocation_NotDisposedInInvokedMethodMultipleLevelsDown_Diagnostic()
+        public async Task DisposableAllocation_NotDisposedInInvokedMethodMultipleLevelsDown_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3153,7 +3169,7 @@ End Module
         }
 
         [Fact, WorkItem(2182, "https://github.com/dotnet/roslyn-analyzers/issues/2182")]
-        public async Task DisposableAllocation_NonReadOnlyField_NoDiagnostic()
+        public async Task DisposableAllocation_NonReadOnlyField_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3189,7 +3205,7 @@ public sealed class A : IDisposable
         }
 
         [Fact, WorkItem(2306, "https://github.com/dotnet/roslyn-analyzers/issues/2306")]
-        public async Task DisposableAllocationInConstructor_DisposedInGeneratedCodeFile_NoDiagnostic()
+        public async Task DisposableAllocationInConstructor_DisposedInGeneratedCodeFile_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3242,7 +3258,7 @@ End Class");
         }
 
         [Fact, WorkItem(2182, "https://github.com/dotnet/roslyn-analyzers/issues/2182")]
-        public async Task DisposableAllocation_FieldDisposedInOverriddenHelper_NoDiagnostic()
+        public async Task DisposableAllocation_FieldDisposedInOverriddenHelper_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3287,10 +3303,11 @@ class C : B
 
         [Theory]
         [InlineData("")]
-        [InlineData("dotnet_code_quality.excluded_symbol_names = B")]
-        [InlineData("dotnet_code_quality." + DisposableFieldsShouldBeDisposed.RuleId + ".excluded_symbol_names = B")]
-        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = B")]
-        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption(string editorConfigText)
+        [InlineData("dotnet_code_quality.excluded_symbol_names = BB")]
+        [InlineData("dotnet_code_quality.CA2213.excluded_symbol_names = BB")]
+        [InlineData("dotnet_code_quality.CA2213.excluded_symbol_names = B*")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = BB")]
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOptionAsync(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -3308,10 +3325,10 @@ class A : IDisposable
     }
 }
 
-class B : IDisposable
+class BB : IDisposable
 {
     private readonly A a;
-    public B()
+    public BB()
     {
         a = new A();
     }
@@ -3321,15 +3338,19 @@ class B : IDisposable
     }
 }
 "                    },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
             if (editorConfigText.Length == 0)
             {
                 csharpTest.ExpectedDiagnostics.Add(
-                    // Test0.cs(13,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-                    GetCSharpResultAt(13, 24, "B", "a", "A"));
+                    // Test0.cs(13,24): warning CA2213: 'BB' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+                    GetCSharpResultAt(13, 24, "BB", "a", "A"));
             }
 
             await csharpTest.RunAsync();
@@ -3349,7 +3370,7 @@ Class A
     End Sub
 End Class
 
-Class B
+Class BB
     Implements IDisposable
 
     Private ReadOnly a As A
@@ -3361,22 +3382,26 @@ Class B
     End Sub
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
             if (editorConfigText.Length == 0)
             {
                 basicTest.ExpectedDiagnostics.Add(
-                    // Test0.vb(13,22): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-                    GetBasicResultAt(13, 22, "B", "a", "A"));
+                    // Test0.vb(13,22): warning CA2213: 'BB' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+                    GetBasicResultAt(13, 22, "BB", "a", "A"));
             }
 
             await basicTest.RunAsync();
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public async Task CloseAsyncDisposable_NoDiagnostic()
+        public async Task CloseAsyncDisposable_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {

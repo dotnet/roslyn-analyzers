@@ -1,8 +1,9 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.CallGCSuppressFinalizeCorrectlyAnalyzer,
@@ -19,19 +20,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         private const string GCSuppressFinalizeMethodSignature_Basic = "GC.SuppressFinalize(Object)";
 
         private static DiagnosticResult GetCA1816CSharpResultAt(int line, int column, DiagnosticDescriptor rule, string containingMethodName, string gcSuppressFinalizeMethodName) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyCS.Diagnostic(rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(containingMethodName, gcSuppressFinalizeMethodName);
 
         private static DiagnosticResult GetCA1816BasicResultAt(int line, int column, DiagnosticDescriptor rule, string containingMethodName, string gcSuppressFinalizeMethodName) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyVB.Diagnostic(rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(containingMethodName, gcSuppressFinalizeMethodName);
 
         #region NoDiagnosticCases
 
         [Fact]
-        public async Task DisposableWithoutFinalizer_CSharp_NoDiagnostic()
+        public async Task DisposableWithoutFinalizer_CSharp_NoDiagnosticAsync()
         {
             var code = @"
 using System;
@@ -55,7 +60,7 @@ public class DisposableWithoutFinalizer : IDisposable
         }
 
         [Fact]
-        public async Task DisposableWithoutFinalizer_Basic_NoDiagnostic()
+        public async Task DisposableWithoutFinalizer_Basic_NoDiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -77,7 +82,7 @@ End Class";
         }
 
         [Fact]
-        public async Task DisposableWithFinalizer_CSharp_NoDiagnostic()
+        public async Task DisposableWithFinalizer_CSharp_NoDiagnosticAsync()
         {
             var code = @"
 using System;
@@ -106,7 +111,7 @@ public class DisposableWithFinalizer : IDisposable
         }
 
         [Fact]
-        public async Task DisposableWithFinalizer_Basic_NoDiagnostic()
+        public async Task DisposableWithFinalizer_Basic_NoDiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -136,7 +141,48 @@ End Class";
         }
 
         [Fact]
-        public async Task SealedDisposableWithoutFinalizer_CSharp_NoDiagnostic()
+        public async Task AsyncDisposableWithFinalizer_CSharp_NoDiagnosticAsync()
+        {
+            var code = @"
+using System;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+
+class MyAsyncDisposable : IAsyncDisposable
+{
+    [DllImport(""example.dll"")]
+    private static extern int GetHandle();
+
+    [DllImport(""example.dll"")]
+    private static extern void FreeHandle(int handle);
+
+    private readonly int handle;
+
+    public MyAsyncDisposable()
+    {
+        this.handle = GetHandle();
+    }
+
+    ~MyAsyncDisposable()
+    {
+        FreeHandle(this.handle);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await Task.Run(() => FreeHandle(this.handle)).ConfigureAwait(false);
+        GC.SuppressFinalize(this);
+    }
+}";
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = code
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task SealedDisposableWithoutFinalizer_CSharp_NoDiagnosticAsync()
         {
 
             var code = @"
@@ -161,7 +207,7 @@ public sealed class SealedDisposableWithoutFinalizer : IDisposable
         }
 
         [Fact]
-        public async Task SealedDisposableWithoutFinalizer_Basic_NoDiagnostic()
+        public async Task SealedDisposableWithoutFinalizer_Basic_NoDiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -183,7 +229,7 @@ End Class";
         }
 
         [Fact]
-        public async Task SealedDisposableWithFinalizer_CSharp_NoDiagnostic()
+        public async Task SealedDisposableWithFinalizer_CSharp_NoDiagnosticAsync()
         {
             var code = @"
 using System;
@@ -212,7 +258,7 @@ public sealed class SealedDisposableWithFinalizer : IDisposable
         }
 
         [Fact]
-        public async Task SealedDisposableWithFinalizer_Basic_NoDiagnostic()
+        public async Task SealedDisposableWithFinalizer_Basic_NoDiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -242,7 +288,7 @@ End Class";
         }
 
         [Fact]
-        public async Task InternalDisposableWithoutFinalizer_CSharp_NoDiagnostic()
+        public async Task InternalDisposableWithoutFinalizer_CSharp_NoDiagnosticAsync()
         {
             var code = @"
 using System;
@@ -266,7 +312,7 @@ internal class InternalDisposableWithoutFinalizer : IDisposable
         }
 
         [Fact]
-        public async Task InternalDisposableWithoutFinalizer_Basic_NoDiagnostic()
+        public async Task InternalDisposableWithoutFinalizer_Basic_NoDiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -288,7 +334,7 @@ End Class";
         }
 
         [Fact]
-        public async Task PrivateDisposableWithoutFinalizer_CSharp_NoDiagnostic()
+        public async Task PrivateDisposableWithoutFinalizer_CSharp_NoDiagnosticAsync()
         {
             var code = @"
 using System;
@@ -315,7 +361,7 @@ public static class NestedClassHolder
         }
 
         [Fact]
-        public async Task PrivateDisposableWithoutFinalizer_Basic_NoDiagnostic()
+        public async Task PrivateDisposableWithoutFinalizer_Basic_NoDiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -341,7 +387,7 @@ End Class";
         }
 
         [Fact]
-        public async Task SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFinalize_CSharp_NoDiagnostic()
+        public async Task SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFinalize_CSharp_NoDiagnosticAsync()
         {
             var code = @"
 using System;
@@ -364,7 +410,7 @@ public sealed class SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFin
         }
 
         [Fact]
-        public async Task SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFinalize_Basic_NoDiagnostic()
+        public async Task SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFinalize_Basic_NoDiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -385,7 +431,7 @@ End Class";
         }
 
         [Fact]
-        public async Task DisposableStruct_CSharp_NoDiagnostic()
+        public async Task DisposableStruct_CSharp_NoDiagnosticAsync()
         {
             var code = @"
 using System;
@@ -408,7 +454,7 @@ public struct DisposableStruct : IDisposable
         }
 
         [Fact]
-        public async Task DisposableStruct_Basic_NoDiagnostic()
+        public async Task DisposableStruct_Basic_NoDiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -429,7 +475,7 @@ End Structure";
         }
 
         [Fact]
-        public async Task SealedDisposableCallingGCSuppressFinalizeInConstructor_CSharp_NoDiagnostic()
+        public async Task SealedDisposableCallingGCSuppressFinalizeInConstructor_CSharp_NoDiagnosticAsync()
         {
             var code = @"
 using System;
@@ -448,7 +494,7 @@ public sealed class SealedDisposableCallingGCSuppressFinalizeInConstructor : Com
         }
 
         [Fact]
-        public async Task SealedDisposableCallingGCSuppressFinalizeInConstructor_Basic_NoDiagnostic()
+        public async Task SealedDisposableCallingGCSuppressFinalizeInConstructor_Basic_NoDiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -466,7 +512,7 @@ End Class";
         }
 
         [Fact]
-        public async Task Disposable_ImplementedExplicitly_NoDiagnostic()
+        public async Task Disposable_ImplementedExplicitly_NoDiagnosticAsync()
         {
             var csharpCode = @"
 using System;
@@ -507,7 +553,7 @@ End Class";
         #region DiagnosticCases
 
         [Fact]
-        public async Task SealedDisposableWithFinalizer_CSharp_Diagnostic()
+        public async Task SealedDisposableWithFinalizer_CSharp_DiagnosticAsync()
         {
             var code = @"
 using System;
@@ -548,7 +594,7 @@ using System.ComponentModel;
         }
 
         [Fact]
-        public async Task SealedDisposableWithFinalizer_Basic_Diagnostic()
+        public async Task SealedDisposableWithFinalizer_Basic_DiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -590,7 +636,7 @@ End Class";
         }
 
         [Fact]
-        public async Task DisposableWithFinalizer_CSharp_Diagnostic()
+        public async Task DisposableWithFinalizer_CSharp_DiagnosticAsync()
         {
             var code = @"
 using System;
@@ -626,7 +672,7 @@ public class DisposableWithFinalizer : IDisposable
         }
 
         [Fact]
-        public async Task DisposableWithFinalizer_Basic_Diagnostic()
+        public async Task DisposableWithFinalizer_Basic_DiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -664,7 +710,7 @@ End Class";
         }
 
         [Fact]
-        public async Task InternalDisposableWithFinalizer_CSharp_Diagnostic()
+        public async Task InternalDisposableWithFinalizer_CSharp_DiagnosticAsync()
         {
             var code = @"
 using System;
@@ -700,7 +746,7 @@ internal class InternalDisposableWithFinalizer : IDisposable
         }
 
         [Fact]
-        public async Task InternalDisposableWithFinalizer_Basic_Diagnostic()
+        public async Task InternalDisposableWithFinalizer_Basic_DiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -738,7 +784,7 @@ End Class";
         }
 
         [Fact]
-        public async Task PrivateDisposableWithFinalizer_CSharp_Diagnostic()
+        public async Task PrivateDisposableWithFinalizer_CSharp_DiagnosticAsync()
         {
             var code = @"
 using System;
@@ -777,7 +823,7 @@ public static class NestedClassHolder
         }
 
         [Fact]
-        public async Task PrivateDisposableWithFinalizer_Basic_Diagnostic()
+        public async Task PrivateDisposableWithFinalizer_Basic_DiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -819,7 +865,7 @@ End Class";
         }
 
         [Fact]
-        public async Task DisposableWithoutFinalizer_CSharp_Diagnostic()
+        public async Task DisposableWithoutFinalizer_CSharp_DiagnosticAsync()
         {
             var code = @"
 using System;
@@ -850,7 +896,7 @@ public class DisposableWithoutFinalizer : IDisposable
         }
 
         [Fact]
-        public async Task DisposableWithoutFinalizer_Basic_Diagnostic()
+        public async Task DisposableWithoutFinalizer_Basic_DiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -880,7 +926,7 @@ End Class";
         }
 
         [Fact]
-        public async Task DisposableComponent_CSharp_Diagnostic()
+        public async Task DisposableComponent_CSharp_DiagnosticAsync()
         {
             var code = @"
 using System;
@@ -905,7 +951,7 @@ public class DisposableComponent : Component, IDisposable
         }
 
         [Fact]
-        public async Task DisposableComponent_Basic_Diagnostic()
+        public async Task DisposableComponent_Basic_DiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -934,7 +980,7 @@ End Class";
         }
 
         [Fact]
-        public async Task NotADisposableClass_CSharp_Diagnostic()
+        public async Task NotADisposableClass_CSharp_DiagnosticAsync()
         {
             var code = @"
 using System;
@@ -958,7 +1004,7 @@ public class NotADisposableClass
         }
 
         [Fact]
-        public async Task NotADisposableClass_Basic_Diagnostic()
+        public async Task NotADisposableClass_Basic_DiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -981,7 +1027,7 @@ End Class";
         }
 
         [Fact]
-        public async Task DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces_CSharp_Diagnostic()
+        public async Task DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces_CSharp_DiagnosticAsync()
         {
             var code = @"
 using System;
@@ -1043,7 +1089,7 @@ public class DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces : IDispo
         }
 
         [Fact]
-        public async Task DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces_Basic_Diagnostic()
+        public async Task DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces_Basic_DiagnosticAsync()
         {
             var code = @"
 Imports System
@@ -1101,7 +1147,7 @@ End Class";
         }
 
         [Fact]
-        public async Task DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments_CSharp_Diagnostic()
+        public async Task DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments_CSharp_DiagnosticAsync()
         {
             var code = @"
 using System;
@@ -1138,7 +1184,7 @@ public class DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments : I
         }
 
         [Fact]
-        public async Task DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments_Basic_Diagnostic()
+        public async Task DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments_Basic_DiagnosticAsync()
         {
             var code = @"
 Imports System

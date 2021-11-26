@@ -52,35 +52,6 @@ jobs:
       continueOnError: true
       condition: always()
 
-- job: Windows_Desktop_Spanish_Unit_Tests
-  strategy:
-    maxParallel: 4
-  pool:
-    name: NetCore1ESPool-Public
-    demands: ImageOverride -equals Windows.10.Amd64.Server19H1.ES.Open
-  timeoutInMinutes: 40
-
-  steps:
-    - checkout: self
-      clean: true
-    - script: eng\common\cibuild.cmd -prepareMachine
-      displayName: Build and Test
-
-    - task: PublishTestResults@2
-      inputs:
-        testRunner: XUnit
-        testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\Debug\*.xml'
-        mergeTestResults: true
-        testRunTitle: 'Windows Desktop Spanish'
-      condition: always()
-    - task: PublishBuildArtifacts@1
-      displayName: Publish Logs
-      inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\Debug'
-        ArtifactName: 'Windows Desktop Spanish'
-      continueOnError: true
-      condition: not(succeeded())
-
 - job: Ubuntu
   strategy:
     maxParallel: 4

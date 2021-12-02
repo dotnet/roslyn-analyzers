@@ -159,9 +159,7 @@ namespace Analyzer.Utilities
             }
         }
 
-#pragma warning disable IDE0051 // Remove unused private members - Used in some projects that include this shared project.
         private static TEnum GetNonFlagsEnumOptionValue<TEnum>(
-#pragma warning restore IDE0051 // Remove unused private members
             this AnalyzerOptions options,
             string optionName,
             DiagnosticDescriptor rule,
@@ -169,13 +167,7 @@ namespace Analyzer.Utilities
             Compilation compilation,
             TEnum defaultValue)
             where TEnum : struct
-        {
-            var analyzerConfigOptions = options.GetOrComputeCategorizedAnalyzerConfigOptions(compilation);
-            return analyzerConfigOptions.GetOptionValue(
-                optionName, tree, rule,
-                tryParseValue: (string value, out TEnum result) => Enum.TryParse(value, ignoreCase: true, result: out result),
-                defaultValue: defaultValue);
-        }
+            => GetFlagsEnumOptionValue(options, optionName, rule, tree, compilation, defaultValue);
 
         public static bool GetBoolOptionValue(
             this AnalyzerOptions options,

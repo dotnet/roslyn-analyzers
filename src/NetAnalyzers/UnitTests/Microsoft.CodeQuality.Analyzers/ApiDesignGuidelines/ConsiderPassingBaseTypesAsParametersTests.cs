@@ -429,5 +429,119 @@ public class Z
 }";
             await VerifyCS.VerifyCodeFixAsync(src, src);
         }
+
+        [Fact]
+        public async Task InterfaceImplementation_NoDiagnostic()
+        {
+            var src = @"
+public class A
+{
+    public void Run() {}
+}
+
+public class B : A {}
+
+public interface IZ
+{
+    void M(B b);
+}
+
+public class Z : IZ
+{
+    public void M(B b)
+    {
+        b.Run();
+    }
+}";
+            await VerifyCS.VerifyCodeFixAsync(src, src);
+        }
+
+        [Fact]
+        public async Task MethodOverride_NoDiagnostic()
+        {
+            var src = @"
+public class A
+{
+    public void Run() {}
+}
+
+public class B : A {}
+
+public class Y
+{
+    public virtual void M(B [|b|])
+    {
+        b.Run();
+    }
+}
+
+public class Z : Y
+{
+    public override void M(B b)
+    {
+        base.M(b);
+    }
+}";
+            await VerifyCS.VerifyCodeFixAsync(src, src);
+        }
+
+        [Fact]
+        public async Task OverloadMoreGenericExists_NoDiagnostic()
+        {
+            var src = @"
+using System.IO;
+
+public class Z
+{
+    // Could be flagged but overload with Stream already exists.
+    public void ReadNextByte(FileStream stream)
+    {
+        while (stream.ReadByte() != -1) { /*...*/ }
+    }
+
+    public void ReadNextByte(Stream anyStream)
+    {
+        while (anyStream.ReadByte() != -1) { /*...*/ }
+    }
+}";
+            await VerifyCS.VerifyCodeFixAsync(src, src);
+        }
+
+        [Fact]
+        public async Task OverloadMultiParameters_FalseNegative()
+        {
+            var src = @"
+using System.IO;
+
+public class A
+{
+    public void Run() {}
+}
+public class B : A {}
+
+public class Z
+{
+    // Overload with both 'Stream' and 'A' does not exist so we could report but
+    // if the user does not fix all we will end up in a conflicting overload.
+    public void M1(FileStream stream, B b)
+    {
+        b.Run();
+        while (stream.ReadByte() != -1) { /*...*/ }
+    }
+
+    public void M1(FileStream [|stream|], A a)
+    {
+        a.Run();
+        while (stream.ReadByte() != -1) { /*...*/ }
+    }
+
+    public void M1(Stream stream, B [|b|])
+    {
+        b.Run();
+        while (stream.ReadByte() != -1) { /*...*/ }
+    }
+}";
+            await VerifyCS.VerifyCodeFixAsync(src, src);
+        }
     }
 }

@@ -907,7 +907,7 @@ Rule ID | Missing Help Link | Title |
                 startRulesSection,
                 endRulesSection,
                 addRuleEntry,
-                getSeverityString,
+                GetSeverityString,
                 commentStart: "# ",
                 commentEnd: string.Empty,
                 category,
@@ -951,23 +951,6 @@ Rule ID | Missing Help Link | Title |
                 result.AppendLine();
                 result.AppendLine($"# {rule.Id}: {rule.Title}");
                 result.AppendLine($@"dotnet_diagnostic.{rule.Id}.severity = {severity}");
-            }
-
-            static string getSeverityString(DiagnosticSeverity? severity)
-            {
-                if (!severity.HasValue)
-                {
-                    return "none";
-                }
-
-                return severity.Value switch
-                {
-                    DiagnosticSeverity.Error => "error",
-                    DiagnosticSeverity.Warning => "warning",
-                    DiagnosticSeverity.Info => "suggestion",
-                    DiagnosticSeverity.Hidden => "silent",
-                    _ => throw new NotImplementedException(severity.Value.ToString()),
-                };
             }
         }
 
@@ -1271,23 +1254,34 @@ Rule ID | Missing Help Link | Title |
                         {
                             isEnabledByDefault = isEnabledRuleForNonDefaultAnalysisMode;
                             var maxVersion = shippedReleaseData.Value.version;
+                            var foundReleaseTrackingEntry = false;
                             foreach (var shippedFile in shippedReleaseData.Value.shippedFiles)
                             {
-                                if (shippedFile.TryGetLatestReleaseTrackingLine(rule.Id, maxVersion, out _, out var releaseTrackingLine) &&
-                                    releaseTrackingLine.EnabledByDefault.HasValue &&
-                                    releaseTrackingLine.DefaultSeverity.HasValue)
+                                if (shippedFile.TryGetLatestReleaseTrackingLine(rule.Id, maxVersion, out _, out var releaseTrackingLine))
                                 {
-                                    isEnabledByDefault = releaseTrackingLine.EnabledByDefault.Value && !releaseTrackingLine.IsRemovedRule;
-                                    effectiveSeverity = releaseTrackingLine.DefaultSeverity.Value;
+                                    foundReleaseTrackingEntry = true;
 
-                                    if (isEnabledRuleForNonDefaultAnalysisMode && !releaseTrackingLine.IsRemovedRule)
+                                    if (releaseTrackingLine.EnabledByDefault.HasValue &&
+                                        releaseTrackingLine.DefaultSeverity.HasValue)
                                     {
-                                        isEnabledByDefault = true;
-                                        effectiveSeverity = DiagnosticSeverity.Warning;
-                                    }
+                                        isEnabledByDefault = releaseTrackingLine.EnabledByDefault.Value && !releaseTrackingLine.IsRemovedRule;
+                                        effectiveSeverity = releaseTrackingLine.DefaultSeverity.Value;
 
-                                    break;
+                                        if (isEnabledRuleForNonDefaultAnalysisMode && !releaseTrackingLine.IsRemovedRule)
+                                        {
+                                            isEnabledByDefault = true;
+                                            effectiveSeverity = DiagnosticSeverity.Warning;
+                                        }
+
+                                        break;
+                                    }
                                 }
+                            }
+
+                            if (!foundReleaseTrackingEntry)
+                            {
+                                // Rule is unshipped or first shipped in a version later than 'maxVersion', so mark it as disabled.
+                                isEnabledByDefault = false;
                             }
                         }
 
@@ -1304,26 +1298,26 @@ Rule ID | Missing Help Link | Title |
                         {
                             return GetSeverityString(null);
                         }
-
-                        static string GetSeverityString(DiagnosticSeverity? severity)
-                        {
-                            if (!severity.HasValue)
-                            {
-                                return "none";
-                            }
-
-                            return severity.Value switch
-                            {
-                                DiagnosticSeverity.Error => "error",
-                                DiagnosticSeverity.Warning => "warning",
-                                DiagnosticSeverity.Info => "suggestion",
-                                DiagnosticSeverity.Hidden => "silent",
-                                _ => throw new NotImplementedException(severity.Value.ToString()),
-                            };
-                        }
                     }
                 }
             }
+        }
+
+        private static string GetSeverityString(DiagnosticSeverity? severity)
+        {
+            if (!severity.HasValue)
+            {
+                return "none";
+            }
+
+            return severity.Value switch
+            {
+                DiagnosticSeverity.Error => "error",
+                DiagnosticSeverity.Warning => "warning",
+                DiagnosticSeverity.Info => "suggestion",
+                DiagnosticSeverity.Hidden => "silent",
+                _ => throw new NotImplementedException(severity.Value.ToString()),
+            };
         }
 
         private static void CreateTargetsFile(string targetsFileDir, string targetsFileName, string packageName, IOrderedEnumerable<string> categories)

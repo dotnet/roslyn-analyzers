@@ -14,7 +14,7 @@
     <MicrosoftCodeAnalysisExecutableVersion Condition="'$(MicrosoftCodeAnalysisExecutableVersion)' == ''">3.8.0</MicrosoftCodeAnalysisExecutableVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <VersionPrefix>3.3.3</VersionPrefix>
+    <VersionPrefix>3.3.4</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
     <NetAnalyzersVersionPrefix>7.0.0</NetAnalyzersVersionPrefix>
     <NetAnalyzersPreReleaseVersionLabel>preview1</NetAnalyzersPreReleaseVersionLabel>
@@ -45,7 +45,7 @@
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
     <MicrosoftCodeAnalysisVersionForTests>4.0.0-2.final</MicrosoftCodeAnalysisVersionForTests>
-    <DogfoodAnalyzersVersion>3.3.2</DogfoodAnalyzersVersion>
+    <DogfoodAnalyzersVersion>3.3.3</DogfoodAnalyzersVersion>
     <DogfoodNetAnalyzersVersion>5.0.4-preview1.21126.5</DogfoodNetAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyzersVersion>
@@ -59,7 +59,7 @@
     <!-- Libs -->
     <BenchmarkDotNetVersion>0.13.0</BenchmarkDotNetVersion>
     <HumanizerVersion>2.2.0</HumanizerVersion>
-    <MicrosoftBuildLocatorVersion>1.1.2</MicrosoftBuildLocatorVersion>
+    <MicrosoftBuildLocatorVersion>1.4.1</MicrosoftBuildLocatorVersion>
     <MicrosoftDiagnosticsTracingTraceEventVersion>2.0.69</MicrosoftDiagnosticsTracingTraceEventVersion>
     <MicrosoftExtensionsLoggingVersion>6.0.0-preview.5.21301.5</MicrosoftExtensionsLoggingVersion>
     <MicrosoftNETCoreAppRefVersion>6.0.0-preview.4.21253.7</MicrosoftNETCoreAppRefVersion>

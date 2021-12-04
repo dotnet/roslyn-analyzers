@@ -175,9 +175,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static ITypeSymbol FindDeclaringType(ISymbol symbol)
         {
             Debug.Assert(
-                symbol.Kind != SymbolKind.Method ||
-                symbol.Kind != SymbolKind.Property ||
-                symbol.Kind != SymbolKind.Event);
+                symbol.Kind == SymbolKind.Method ||
+                symbol.Kind == SymbolKind.Property ||
+                symbol.Kind == SymbolKind.Event);
 
             if (symbol.IsOverride)
             {

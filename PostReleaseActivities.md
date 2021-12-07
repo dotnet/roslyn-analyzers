@@ -16,8 +16,6 @@ Please follow the below steps after publishing analyzer NuGet packages from this
       1. Bump up the `VersionPrefix`. If the new version prefix is greater then or equals the current `AnalyzerUtilitiesVersionPrefix`, then update `AnalyzerUtilitiesVersionPrefix` to `$(VersionPrefix)`.
       2. Reset `PreReleaseVersionLabel` to `beta1`.
       3. Update `DogfoodNetAnalyzersVersion` and/or `DogfoodAnalyzersVersion` to the latest released package version.
-      4. For `Microsoft.CodeAnalysis.Analyzers` package, update [`MicrosoftCodeAnalysisAnalyzersVersion`](https://github.com/dotnet/roslyn/blob/95809b0b922439465a213922ef7eb81e9b5a223f/eng/Versions.props#L82) in dotnet/roslyn to reference the new package version.
-      5. For `Roslyn.Diagnostics.Analyzers` package, update [`RoslynDiagnosticsNugetPackageVersion`](https://github.com/dotnet/roslyn/blob/95809b0b922439465a213922ef7eb81e9b5a223f/eng/Versions.props#L30) in dotnet/roslyn to reference the new package version.
    5. Build the repo by invoking `eng\common\CIBuild.cmd` and fix/suppress any new CA diagnostics, as appropriate. This should also update the analyzer documentation files in the repo to use the new version prefix.
    6. Move all the entries from `AnalyzerReleases.Unshipped.md` to `AnalyzerReleases.Shipped.md` for various analyzer NuGet package projects under a new "Release" section in the shipped file.
    7. Create and submit a PR with the above changes.
@@ -28,3 +26,8 @@ Please follow the below steps after publishing analyzer NuGet packages from this
 2. Build.
 3. Ensure that nuget.exe is on path.
 4. Generate notes: Switch to the output directory, say `artifacts\bin\ReleaseNotesUtil\Debug\netcoreapp3.1` and execute `GenDiffNotes.cmd` to generate release notes.  Example command line for v2.9.4 to v2.9.5: `GenDiffNotes.cmd C:\scratch nuget.org 2.9.4 2.9.5`.
+
+## Followup items
+
+1. For `Microsoft.CodeAnalysis.Analyzers` package, update [`MicrosoftCodeAnalysisAnalyzersVersion`](https://github.com/dotnet/roslyn/blob/95809b0b922439465a213922ef7eb81e9b5a223f/eng/Versions.props#L82) in dotnet/roslyn to reference the new package version.
+2. For `Roslyn.Diagnostics.Analyzers` package, update [`RoslynDiagnosticsNugetPackageVersion`](https://github.com/dotnet/roslyn/blob/95809b0b922439465a213922ef7eb81e9b5a223f/eng/Versions.props#L30) in dotnet/roslyn to reference the new package version.

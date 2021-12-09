@@ -1464,18 +1464,6 @@ When inside a Task-returning method, use the async version of methods, if they e
 |CodeFix|False|
 ---
 
-## [CA1850](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850): Prefer static 'HashData' method over 'ComputeHash'
-
-It is more efficient to use the static 'HashData' method over creating and managing a HashAlgorithm instance to call 'ComputeHash'.
-
-|Item|Value|
-|-|-|
-|Category|Performance|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|True|
----
-
 ## [CA1851](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1851): Possible multiple enumerations of 'IEnumerable' collection
 
 Possible multiple enumerations of 'IEnumerable' collection in this method. To prevent unnecessary enumerations, consider caching it first by calling a method such as 'ToList' or 'ToArray'.

@@ -990,8 +990,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return false;
         }
 
-        private bool IsDebugAssertMethod(IMethodSymbol method)
-            => Equals(method, DebugAssertMethod);
+        private bool IsDebugAssertMethod(IMethodSymbol method) =>
+            DebugAssertMethod != null &&
+            method.ContainingSymbol.Equals(DebugAssertMethod.ContainingSymbol, SymbolEqualityComparer.Default) &&
+            method.Name == DebugAssertMethod.Name &&
+            method.ReturnType == DebugAssertMethod.ReturnType;
 
         protected bool IsAnyAssertMethod(IMethodSymbol method)
             => IsDebugAssertMethod(method) || IsContractCheckMethod(method);

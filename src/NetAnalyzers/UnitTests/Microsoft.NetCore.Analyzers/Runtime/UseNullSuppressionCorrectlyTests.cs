@@ -6,7 +6,7 @@ using NullSuppressionAnalyzer = Microsoft.NetCore.CSharp.Analyzers.Runtime.CShar
 using CSharpLanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpUseNullSuppressionCorrectlyAnalyzer,
-    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpUseNullSuppressionCorrectlyFixer>;
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -31,18 +31,6 @@ public class A
 }
 ",
                 ExpectedDiagnostics = { VerifyCS.Diagnostic(NullSuppressionAnalyzer.LiteralAlwaysNullRule).WithLocation(0) },
-                FixedCode = @"
-using System;
-
-public class A
-{
-    public void B()
-    {
-        string x = null;
-        Console.WriteLine(x.Length);
-    }
-}
-",
                 LanguageVersion = CSharpLanguageVersion.Default,
             }.RunAsync();
         }
@@ -66,18 +54,6 @@ public class A
 }
 ",
                 ExpectedDiagnostics = { VerifyCS.Diagnostic(NullSuppressionAnalyzer.LiteralAlwaysNullRule).WithLocation(0) },
-                FixedCode = @"
-using System;
-
-public class A
-{
-    public void B()
-    {
-        string x = default;
-        Console.WriteLine(x.Length);
-    }
-}
-",
                 LanguageVersion = CSharpLanguageVersion.Default,
             }.RunAsync();
         }
@@ -101,18 +77,6 @@ public class A
 }
 ",
                 ExpectedDiagnostics = { VerifyCS.Diagnostic(NullSuppressionAnalyzer.LiteralNeverNullRule).WithLocation(0) },
-                FixedCode = @"
-using System;
-
-public class A
-{
-    public void B()
-    {
-        DateTime x = default;
-        Console.WriteLine(x.Day);
-    }
-}
-",
                 LanguageVersion = CSharpLanguageVersion.Default,
             }.RunAsync();
         }
@@ -136,18 +100,28 @@ public class A
 }
 ",
                 ExpectedDiagnostics = { VerifyCS.Diagnostic(NullSuppressionAnalyzer.LiteralNeverNullRule).WithLocation(0) },
-                FixedCode = @"
+                LanguageVersion = CSharpLanguageVersion.Default,
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task IdentifySeparatedNullSuppressions()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
 using System;
 
 public class A
 {
     public void B()
     {
-        string x = ""hi"";
-        Console.WriteLine(x.Length);
+        string x = null;
+        Console.WriteLine({|#0:x!|}.Length);
     }
 }
 ",
+                ExpectedDiagnostics = { VerifyCS.Diagnostic(NullSuppressionAnalyzer.LiteralAlwaysNullRule).WithLocation(0) },
                 LanguageVersion = CSharpLanguageVersion.Default,
             }.RunAsync();
         }

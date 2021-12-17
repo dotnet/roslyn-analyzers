@@ -47,6 +47,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Debug.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DiagnosticDescriptorHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DoNotCatchGeneralUnlessRethrown.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ArrayBuilderExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\CompilationExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ISetExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\IPropertySymbolExtensions.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)SymbolDisplayStringCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SymbolByDisplayStringComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FxCopWellKnownDiagnosticTags.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SymbolEqualityComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnusedValue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WellKnownTypeNames.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WellKnownTypeProvider.cs" />

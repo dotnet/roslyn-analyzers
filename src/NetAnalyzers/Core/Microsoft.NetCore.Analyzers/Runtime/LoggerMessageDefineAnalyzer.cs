@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string CA2254RuleId = "CA2254";
         internal const string CA2017RuleId = "CA2017";
 
-        internal static DiagnosticDescriptor CA1727Rule = DiagnosticDescriptorHelper.Create(CA1727RuleId,
+        internal static readonly DiagnosticDescriptor CA1727Rule = DiagnosticDescriptorHelper.Create(CA1727RuleId,
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticUsePascalCasedLogMessageTokensTitle)),
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticUsePascalCasedLogMessageTokensMessage)),
                                                                          DiagnosticCategory.Naming,
@@ -35,7 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);
 
-        internal static DiagnosticDescriptor CA1848Rule = DiagnosticDescriptorHelper.Create(CA1848RuleId,
+        internal static readonly DiagnosticDescriptor CA1848Rule = DiagnosticDescriptorHelper.Create(CA1848RuleId,
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticUseCompiledLogMessagesTitle)),
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticUseCompiledLogMessagesMessage)),
                                                                          DiagnosticCategory.Performance,
@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);
 
-        internal static DiagnosticDescriptor CA2253Rule = DiagnosticDescriptorHelper.Create(CA2253RuleId,
+        internal static readonly DiagnosticDescriptor CA2253Rule = DiagnosticDescriptorHelper.Create(CA2253RuleId,
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticNumericsInFormatStringTitle)),
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticNumericsInFormatStringMessage)),
                                                                          DiagnosticCategory.Usage,
@@ -55,7 +55,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);
 
-        internal static DiagnosticDescriptor CA2254Rule = DiagnosticDescriptorHelper.Create(CA2254RuleId,
+        internal static readonly DiagnosticDescriptor CA2254Rule = DiagnosticDescriptorHelper.Create(CA2254RuleId,
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticConcatenationInFormatStringTitle)),
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticConcatenationInFormatStringMessage)),
                                                                          DiagnosticCategory.Usage,
@@ -65,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);
 
-        internal static DiagnosticDescriptor CA2017Rule = DiagnosticDescriptorHelper.Create(CA2017RuleId,
+        internal static readonly DiagnosticDescriptor CA2017Rule = DiagnosticDescriptorHelper.Create(CA2017RuleId,
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountMismatchTitle)),
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountMismatchMessage)),
                                                                          DiagnosticCategory.Reliability,
@@ -75,7 +75,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(CA1727Rule, CA1848Rule, CA2253Rule, CA2254Rule, CA2017Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(CA1727Rule, CA1848Rule, CA2253Rule, CA2254Rule, CA2017Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -229,29 +229,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             switch (argumentExpression)
             {
-                case ILiteralOperation { ConstantValue: { HasValue: false, Value: string constantValue } }:
+                case IOperation { ConstantValue: { HasValue: true, Value: string constantValue } }:
                     return constantValue;
-                case IInterpolatedStringOperation interpolated:
-                    var text = "";
-                    foreach (var interpolatedStringContent in interpolated.Parts)
-                    {
-                        if (interpolatedStringContent is IInterpolatedStringTextOperation textSyntax)
-                        {
-                            text += textSyntax.Text;
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
-                    return text;
-                case INameOfOperation { ConstantValue: { HasValue: true, Value: string constantValue } }:
-                    return constantValue;
-                case INameOfOperation:
-                    // return placeholder from here because actual value is not required for analysis and is hard to get
-                    return "NAMEOF";
-                case IParenthesizedOperation parenthesized:
-                    return TryGetFormatText(parenthesized.Operand);
                 case IBinaryOperation { OperatorKind: BinaryOperatorKind.Add } binary:
                     var leftText = TryGetFormatText(binary.LeftOperand);
                     var rightText = TryGetFormatText(binary.RightOperand);
@@ -263,11 +242,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     return null;
                 default:
-                    var constant = argumentExpression.ConstantValue;
-                    if (constant.HasValue && constant.Value is string constantString)
-                    {
-                        return constantString;
-                    }
                     return null;
             }
         }

@@ -4,6 +4,11 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
+<<<<<<< HEAD
 CA2259 | Usage | Info | UseNullSuppressionCorrectly, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/CA2259)
+=======
+CA1849 | Performance | Disabled | UseAsyncMethodInAsyncContext, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849)
+CA1850 | Performance | Info | PreferHashDataOverComputeHashAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850)
+>>>>>>> e101c379c6e3c7011562ee3af3e3de066da0048f
 CA5404 | Security | Disabled | DoNotDisableTokenValidationChecks, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5404)
 CA5405 | Security | Disabled | DoNotAlwaysSkipTokenValidationInDelegates, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5405)

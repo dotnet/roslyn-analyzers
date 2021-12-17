@@ -103,27 +103,5 @@ public class A
                 LanguageVersion = CSharpLanguageVersion.Default,
             }.RunAsync();
         }
-
-        [Fact]
-        public async Task IdentifySeparatedNullSuppressions()
-        {
-            await new VerifyCS.Test
-            {
-                TestCode = @"
-using System;
-
-public class A
-{
-    public void B()
-    {
-        string x = null;
-        Console.WriteLine({|#0:x!|}.Length);
-    }
-}
-",
-                ExpectedDiagnostics = { VerifyCS.Diagnostic(NullSuppressionAnalyzer.LiteralAlwaysNullRule).WithLocation(0) },
-                LanguageVersion = CSharpLanguageVersion.Default,
-            }.RunAsync();
-        }
     }
 }

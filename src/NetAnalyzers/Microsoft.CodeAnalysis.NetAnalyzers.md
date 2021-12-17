@@ -2160,6 +2160,18 @@ Providing a functional 'DynamicInterfaceCastableImplementationAttribute'-attribu
 |CodeFix|False|
 ---
 
+## [CA2259](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259): Use null suppression correctly
+
+Remove null suppression from any non-null literals and non-null default literals, as these literals are never null and therefore need no null suppression.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA2300](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2300): Do not use insecure deserializer BinaryFormatter
 
 The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rule CA2300, and enable rules CA2301 and CA2302.

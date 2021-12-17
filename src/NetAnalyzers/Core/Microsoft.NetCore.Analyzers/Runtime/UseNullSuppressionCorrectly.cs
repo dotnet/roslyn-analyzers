@@ -7,6 +7,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
     /// CA2259: Use null-suppression properly.
     /// </summary>
@@ -14,10 +16,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA2259";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseNullSuppressionCorrectlyTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionLiteralAlwaysNull = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseNullSuppressionCorrectlyLiteralAlwaysNullDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionLiteralNeverNull = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseNullSuppressionCorrectlyLiteralNeverNullDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseNullSuppressionCorrectlyMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(UseNullSuppressionCorrectlyTitle));
+        private static readonly LocalizableString s_localizableDescriptionLiteralAlwaysNull = CreateLocalizableResourceString(nameof(UseNullSuppressionCorrectlyLiteralAlwaysNullDescription));
+        private static readonly LocalizableString s_localizableDescriptionLiteralNeverNull = CreateLocalizableResourceString(nameof(UseNullSuppressionCorrectlyLiteralNeverNullDescription));
+        private static readonly LocalizableString s_localizableMessage = CreateLocalizableResourceString(nameof(UseNullSuppressionCorrectlyMessage));
 
         internal static readonly DiagnosticDescriptor LiteralAlwaysNullRule = DiagnosticDescriptorHelper.Create(RuleId,
             s_localizableTitle,
@@ -37,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(LiteralAlwaysNullRule, LiteralNeverNullRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(LiteralAlwaysNullRule, LiteralNeverNullRule);
 
         protected abstract ImmutableArray<TSyntaxKind> SyntaxKinds { get; }
 

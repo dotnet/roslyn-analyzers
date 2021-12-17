@@ -31,6 +31,10 @@ jobs:
   steps:
     - checkout: self
       clean: true
+    - script: |
+        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpType /t REG_DWORD /d 2
+        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpCount /t REG_DWORD /d 2
+        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpFolder /t REG_SZ /d "$(Build.SourcesDirectory)\artifacts\log\$(_configuration)"
     - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine /p:Coverage=$(_codeCoverage)
       displayName: Build and Test
 
@@ -63,6 +67,10 @@ jobs:
   steps:
     - checkout: self
       clean: true
+    - script: |
+        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpType /t REG_DWORD /d 2
+        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpCount /t REG_DWORD /d 2
+        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpFolder /t REG_SZ /d "$(Build.SourcesDirectory)\artifacts\log\$(_configuration)"
     - script: eng\common\cibuild.cmd -prepareMachine
       displayName: Build and Test
 

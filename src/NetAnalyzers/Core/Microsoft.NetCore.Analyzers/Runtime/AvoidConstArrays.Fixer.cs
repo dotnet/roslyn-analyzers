@@ -51,40 +51,36 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxGenerator generator, ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
         {
             IArrayCreationOperation arrayArgument = GetArrayCreationOperation(node, model, cancellationToken, out bool isInvoked);
-            IEnumerable<ISymbol> typeFields = model.GetEnclosingSymbol(node.SpanStart, cancellationToken).ContainingType
-                .GetMembers().Where(x => x is IFieldSymbol);
+            IEnumerable<ISymbol> members = model.GetEnclosingSymbol(node.SpanStart, cancellationToken).ContainingType.GetMembers();
 
             // Get a valid member name for the extracted constant
-            string newMemberName = GetExtractedMemberName(typeFields.Select(x => x.Name), properties["paramName"] ?? GetMemberNameFromType(arrayArgument));
+            string newMemberName = GetExtractedMemberName(
+                members.Where(x => x is IFieldSymbol).Select(x => x.Name),
+                properties["paramName"] ?? GetMemberNameFromType(arrayArgument));
 
-            // Get method containing the symbol that is being diagnosed. Should always be in a method
-            IOperation? containingMethodBody = arrayArgument.GetAncestor<IMethodBodyOperation>(OperationKind.MethodBody);
-            containingMethodBody ??= arrayArgument.GetAncestor<IBlockOperation>(OperationKind.Block); // VB methods have a different structure than CS methods
-
-            RoslynDebug.Assert(containingMethodBody != null);
+            // Get method containing the symbol that is being diagnosed.
+            IOperation? methodContext = arrayArgument.GetAncestor<IMethodBodyOperation>(OperationKind.MethodBody);
+            methodContext ??= arrayArgument.GetAncestor<IBlockOperation>(OperationKind.Block); // VB methods have a different structure than CS methods
 
             // Create the new member
             SyntaxNode newMember = generator.FieldDeclaration(
                 newMemberName,
                 generator.TypeExpression(arrayArgument.Type),
-                GetAccessibility(model.GetEnclosingSymbol(containingMethodBody!.Syntax.SpanStart, cancellationToken)),
+                GetAccessibility(methodContext is null ? null : model.GetEnclosingSymbol(methodContext.Syntax.SpanStart, cancellationToken)),
                 DeclarationModifiers.Static | DeclarationModifiers.ReadOnly,
                 arrayArgument.Syntax.WithoutTrailingTrivia() // don't include extra trivia before the end of the declaration
-            ).FormatForExtraction(containingMethodBody.Syntax); // any additional formatting
+            );
 
-            // Add the new extracted member
-            ISymbol lastFieldSymbol = typeFields.LastOrDefault();
-            if (lastFieldSymbol is not null)
+            // Add any additional formatting
+            if (methodContext is not null)
             {
-                // Insert after last field if any fields are present
-                SyntaxNode lastFieldNode = await lastFieldSymbol.DeclaringSyntaxReferences.First().GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
-                editor.InsertAfter(generator.GetDeclaration(lastFieldNode), newMember);
+                newMember = newMember.FormatForExtraction(methodContext.Syntax);
             }
-            else
-            {
-                // Insert before first method if no fields are present, as a method already exists
-                editor.InsertBefore(containingMethodBody.Syntax, newMember);
-            }
+
+            // Insert the new extracted member before the first member
+            SyntaxNode firstMemberNode = await members.First().DeclaringSyntaxReferences.First()
+                .GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
+            editor.InsertBefore(generator.GetDeclaration(firstMemberNode), newMember);
 
             // Replace argument with a reference to our new member
             SyntaxNode identifier = generator.IdentifierName(newMemberName);
@@ -151,9 +147,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 #pragma warning restore CA1308 // Normalize strings to uppercase
         }
 
-        private static Accessibility GetAccessibility(ISymbol originMethodSymbol)
+        private static Accessibility GetAccessibility(ISymbol? methodSymbol)
         {
-            if (Enum.TryParse(originMethodSymbol.GetResultantVisibility().ToString(), out Accessibility accessibility))
+            if (methodSymbol is not null && Enum.TryParse(methodSymbol.GetResultantVisibility().ToString(), out Accessibility accessibility))
             {
                 return accessibility == Accessibility.Public
                     ? Accessibility.Private // public accessibility not wanted for fields

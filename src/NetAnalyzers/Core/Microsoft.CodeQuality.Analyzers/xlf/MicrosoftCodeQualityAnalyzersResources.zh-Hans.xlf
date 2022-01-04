@@ -67,6 +67,9 @@
         <target state="translated">避免使用 out 参数</target>
         <note />
       </trans-unit>
+      <trans-unit id="CollectionsShouldImplementGenericInterfaceMultipleMessage">
+        <source>Type '{0}' directly or indirectly inherits '{1}' without implementing any of '{2}'. Publicly-visible types should implement the generic version to broaden usability.</source>
+        <target state="new">Type '{0}' directly or indirectly inherits '{1}' without implementing any of '{2}'. Publicly-visible types should implement the generic version to broaden usability.</target>
       <trans-unit id="ConsiderPassingBaseTypesAsParametersDescription">
         <source>Consider changing this type to its base type. This method appears to only require base class members in its implementation.</source>
         <target state="new">Consider changing this type to its base type. This method appears to only require base class members in its implementation.</target>

@@ -1311,6 +1311,8 @@
   <data name="OperatorOverloadsHaveNamedAlternatesCodeFixTitle" xml:space="preserve">
     <value>Add operator overload named alternate</value>
   </data>
+  <data name="CollectionsShouldImplementGenericInterfaceMultipleMessage" xml:space="preserve">
+    <value>Type '{0}' directly or indirectly inherits '{1}' without implementing any of '{2}'. Publicly-visible types should implement the generic version to broaden usability.</value>
   <data name="ConsiderPassingBaseTypesAsParametersDescription" xml:space="preserve">
     <value>Consider changing this type to its base type. This method appears to only require base class members in its implementation.</value>
   </data>

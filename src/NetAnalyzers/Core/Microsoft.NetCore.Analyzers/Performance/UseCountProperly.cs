@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Analyzer.Utilities;
@@ -309,10 +310,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
             ITypeSymbol? type = invocationOperation.GetInstanceType();
 
             string propertyName = Length;
-            if (type != null && !TypeContainsVisibleProperty(context, type, propertyName, SpecialType.System_Int32, SpecialType.System_UInt64, out _))
+            if (type != null && !TypeContainsVisiblePropertyWithoutCircularity(context, invocationOperation, type, propertyName, SpecialType.System_Int32, SpecialType.System_UInt64, out _))
             {
                 propertyName = Count;
-                if (!TypeContainsVisibleProperty(context, type, propertyName, SpecialType.System_Int32, SpecialType.System_UInt64, out _))
+                if (!TypeContainsVisiblePropertyWithoutCircularity(context, invocationOperation, type, propertyName, SpecialType.System_Int32, SpecialType.System_UInt64, out _))
                 {
                     return;
                 }
@@ -418,16 +419,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     else
                     {
                         if (allowedTypesForCA1836.Contains(type.OriginalDefinition) &&
-                            TypeContainsVisibleProperty(context, type, IsEmpty, SpecialType.System_Boolean, out ISymbol? isEmptyPropertySymbol) &&
-                            !IsPropertyGetOfIsEmptyUsingThisInstance(context, invocationOperation, isEmptyPropertySymbol!))
+                            TypeContainsVisiblePropertyWithoutCircularity(context, invocationOperation, type, IsEmpty, SpecialType.System_Boolean, out _))
                         {
                             ReportCA1836(context, operationKey!, shouldNegateIsEmpty, parent);
                         }
-                        else if (TypeContainsVisibleProperty(context, type, Length, SpecialType.System_Int32, SpecialType.System_UInt64, out _))
+                        else if (TypeContainsVisiblePropertyWithoutCircularity(context, invocationOperation, type, Length, SpecialType.System_Int32, SpecialType.System_UInt64, out _))
                         {
                             ReportCA1829(context, Length, invocationOperation);
                         }
-                        else if (TypeContainsVisibleProperty(context, type, Count, SpecialType.System_Int32, SpecialType.System_UInt64, out _))
+                        else if (TypeContainsVisiblePropertyWithoutCircularity(context, invocationOperation, type, Count, SpecialType.System_Int32, SpecialType.System_UInt64, out _))
                         {
                             ReportCA1829(context, Count, invocationOperation);
                         }
@@ -450,8 +450,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (type != null)
             {
                 if (allowedTypesForCA1836.Contains(type.OriginalDefinition) &&
-                    TypeContainsVisibleProperty(context, type, IsEmpty, SpecialType.System_Boolean, out ISymbol? isEmptyPropertySymbol) &&
-                    !IsPropertyGetOfIsEmptyUsingThisInstance(context, operation, isEmptyPropertySymbol!))
+                    TypeContainsVisiblePropertyWithoutCircularity(context, operation, type, IsEmpty, SpecialType.System_Boolean, out _))
                 {
                     ReportCA1836(context, operationKey!, shouldNegateIsEmpty, parent);
                 }
@@ -572,12 +571,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return true;
         }
 
-        private static bool TypeContainsVisibleProperty(OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType propertyType, out ISymbol? propertySymbol)
-            => TypeContainsVisibleProperty(context, type, propertyName, propertyType, propertyType, out propertySymbol);
+        private static bool TypeContainsVisiblePropertyWithoutCircularity(OperationAnalysisContext context, IOperation operation, ITypeSymbol type,
+            string propertyName, SpecialType propertyType, [NotNullWhen(true)] out ISymbol? propertySymbol)
+            => TypeContainsVisiblePropertyWithoutCircularity(context, operation, type, propertyName, propertyType, propertyType, out propertySymbol);
 
-        private static bool TypeContainsVisibleProperty(OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType lowerBound, SpecialType upperBound, out ISymbol? propertySymbol)
+        private static bool TypeContainsVisiblePropertyWithoutCircularity(OperationAnalysisContext context, IOperation operation, ITypeSymbol type,
+            string propertyName, SpecialType lowerBound, SpecialType upperBound, [NotNullWhen(true)] out ISymbol? propertySymbol)
         {
-            if (TypeContainsMember(context, type, propertyName, lowerBound, upperBound, out bool isPropertyValidAndVisible, out propertySymbol!))
+            if (TypeContainsMember(context, type, propertyName, lowerBound, upperBound, out bool isPropertyValidAndVisible, out propertySymbol) &&
+                !IsPropertyGetterUsingThisInstance(context, operation, propertySymbol))
             {
                 return isPropertyValidAndVisible;
             }
@@ -587,7 +589,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 foreach (var @interface in type.AllInterfaces)
                 {
-                    if (TypeContainsMember(context, @interface, propertyName, lowerBound, upperBound, out isPropertyValidAndVisible, out propertySymbol))
+                    if (TypeContainsMember(context, @interface, propertyName, lowerBound, upperBound, out isPropertyValidAndVisible, out propertySymbol) &&
+                        !IsPropertyGetterUsingThisInstance(context, operation, propertySymbol))
                     {
                         return isPropertyValidAndVisible;
                     }
@@ -598,7 +601,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 ITypeSymbol? currentType = type.BaseType;
                 while (currentType != null)
                 {
-                    if (TypeContainsMember(context, currentType, propertyName, lowerBound, upperBound, out isPropertyValidAndVisible, out propertySymbol))
+                    if (TypeContainsMember(context, currentType, propertyName, lowerBound, upperBound, out isPropertyValidAndVisible, out propertySymbol) &&
+                        !IsPropertyGetterUsingThisInstance(context, operation, propertySymbol))
                     {
                         return isPropertyValidAndVisible;
                     }
@@ -611,7 +615,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             static bool TypeContainsMember(
                 OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType lowerBound, SpecialType upperBound,
-                out bool isPropertyValidAndVisible, out ISymbol? propertySymbol)
+                out bool isPropertyValidAndVisible, [NotNullWhen(true)] out ISymbol? propertySymbol)
             {
                 if (type.GetMembers(propertyName).FirstOrDefault() is IPropertySymbol property)
                 {
@@ -670,17 +674,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return constant is 0 or 1;
         }
 
-        private static bool IsPropertyGetOfIsEmptyUsingThisInstance(OperationAnalysisContext context, IOperation operation, ISymbol isEmptyPropertySymbol)
+        /// <summary>
+        /// This ensures that we don't suggest any circularity.
+        /// </summary>
+        private static bool IsPropertyGetterUsingThisInstance(OperationAnalysisContext context, IOperation operation, ISymbol propertySymbol)
         {
             ISymbol containingSymbol = context.ContainingSymbol;
 
-            return containingSymbol is IMethodSymbol methodSymbol &&
-                // Is within the body of a property getter?
-                methodSymbol.MethodKind == MethodKind.PropertyGet &&
-                // Is the getter of the IsEmpty property.
-                methodSymbol.AssociatedSymbol == isEmptyPropertySymbol &&
+            // Is within the body of a property getter?
+            return containingSymbol is IMethodSymbol { MethodKind: MethodKind.PropertyGet } methodSymbol &&
+                // Is the getter of the given property.
+                SymbolEqualityComparer.Default.Equals(methodSymbol.AssociatedSymbol, propertySymbol) &&
                 // Is 'this' instance?
-                operation.GetInstanceType() == containingSymbol.ContainingType;
+                SymbolEqualityComparer.Default.Equals(operation.GetInstanceType(), containingSymbol.ContainingType);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

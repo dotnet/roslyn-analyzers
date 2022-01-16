@@ -2,7 +2,7 @@
 
 Rule ID | Missing Help Link | Title |
 --------|-------------------|-------|
-CA1011 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1011> |  |
+CA1011 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1011> | Consider using base type of parameter |
 CA1419 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419> | Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle' |
 CA1727 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727> | Use PascalCase for named placeholders |
 CA1842 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1842> | Do not use 'WhenAll' with a single task |

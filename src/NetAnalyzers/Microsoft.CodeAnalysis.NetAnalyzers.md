@@ -84,9 +84,9 @@ To broaden the usability of a type, implement one of the generic interfaces. Thi
 |CodeFix|False|
 ---
 
-## [CA1011](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1011): 
+## [CA1011](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1011): Consider using base type of parameter
 
-
+Consider changing this type to its base type. This method appears to only require base class members in its implementation.
 
 |Item|Value|
 |-|-|

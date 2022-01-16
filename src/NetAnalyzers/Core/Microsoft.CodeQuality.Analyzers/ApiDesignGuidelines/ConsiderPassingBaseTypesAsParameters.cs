@@ -23,11 +23,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal static readonly DiagnosticDescriptor Rule =
             DiagnosticDescriptorHelper.Create(
                 RuleId,
-                CreateLocalizableResourceString(ConsiderPassingBaseTypesAsParametersTitle),
-                CreateLocalizableResourceString(ConsiderPassingBaseTypesAsParametersMessage),
+                CreateLocalizableResourceString(nameof(ConsiderPassingBaseTypesAsParametersTitle)),
+                CreateLocalizableResourceString(nameof(ConsiderPassingBaseTypesAsParametersMessage)),
                 DiagnosticCategory.Design,
                 RuleLevel.IdeSuggestion,
-                description: CreateLocalizableResourceString(ConsiderPassingBaseTypesAsParametersDescription),
+                description: CreateLocalizableResourceString(nameof(ConsiderPassingBaseTypesAsParametersDescription)),
                 isPortedFxCopRule: true,
                 isDataflowRule: false);
 

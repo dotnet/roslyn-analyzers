@@ -78,19 +78,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         break;
 
                     case OperationKind.PropertyReference:
-                        AddDeclaringTypeSymbol(((IPropertyReferenceOperation)paramReference.Parent).Property);
-                        break;
-
                     case OperationKind.EventReference:
-                        AddDeclaringTypeSymbol(((IEventReferenceOperation)paramReference.Parent).Event);
-                        break;
-
                     case OperationKind.FieldReference:
-                        AddType(((IFieldReferenceOperation)paramReference.Parent).Field.ContainingType);
-                        break;
-
                     case OperationKind.MethodReference:
-                        AddType(((IMethodReferenceOperation)paramReference.Parent).Method.ContainingType);
+                        AddDeclaringTypeSymbol(((IMemberReferenceOperation)paramReference.Parent).Member);
                         break;
 
                     case OperationKind.Argument:
@@ -174,11 +165,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static ITypeSymbol FindDeclaringType(ISymbol symbol)
         {
-            Debug.Assert(
-                symbol.Kind == SymbolKind.Method ||
-                symbol.Kind == SymbolKind.Property ||
-                symbol.Kind == SymbolKind.Event);
-
             if (symbol.IsOverride)
             {
                 return FindDeclaringType(symbol.GetOverriddenMember());

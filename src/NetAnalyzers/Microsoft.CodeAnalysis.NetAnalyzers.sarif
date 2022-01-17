@@ -107,6 +107,26 @@
             ]
           }
         },
+        "CA1510": {
+          "id": "CA1510",
+          "shortDescription": "Enum values should be monotonically increasing",
+          "fullDescription": "Enum value '{0}' should be placed before '{1}'.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpEnumValuesShouldBeMonotonicallyIncreasing",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1802": {
           "id": "CA1802",
           "shortDescription": "Use literals where appropriate",

@@ -816,6 +816,18 @@ Invalid entry in code metrics rule specification file.
 |CodeFix|False|
 ---
 
+## [CA1510](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510): Enum values should be monotonically increasing
+
+Enum value '{0}' should be placed before '{1}'.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|False|
+|Severity|Warning|
+|CodeFix|False|
+---
+
 ## [CA1700](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1700): Do not name enum values 'Reserved'
 
 This rule assumes that an enumeration member that has a name that contains "reserved" is not currently used but is a placeholder to be renamed or removed in a future version. Renaming or removing a member is a breaking change.

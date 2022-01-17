@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -11,15 +10,14 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
     public abstract class AbstractAddMissingInterpolationTokenAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2259";
 
         internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-            new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AddMissingInterpolationTokenTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),
-#pragma warning disable RS1032 // Define diagnostic message correctly - the analyzer wants a period after the existing question mark.
-            new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AddMissingInterpolationTokenMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),
-#pragma warning restore RS1032 // Define diagnostic message correctly
+            CreateLocalizableResourceString(nameof(AddMissingInterpolationTokenTitle)),
+            CreateLocalizableResourceString(nameof(AddMissingInterpolationTokenMessage)),
             DiagnosticCategory.Usage,
             RuleLevel.IdeSuggestion,
             description: null,

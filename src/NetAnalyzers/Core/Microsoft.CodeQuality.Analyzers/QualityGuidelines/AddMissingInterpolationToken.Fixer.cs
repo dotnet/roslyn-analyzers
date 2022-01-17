@@ -24,11 +24,11 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var node = root.FindNode(context.Span, getInnermostNodeForTie: true);
             context.RegisterCodeFix(
-                new MyCodeAction(_ => AddToken(context.Document, root, node)),
+                new MyCodeAction(_ => AddTokenAsync(context.Document, root, node)),
                 context.Diagnostics);
         }
 
-        private Task<Document> AddToken(Document document, SyntaxNode root, SyntaxNode node)
+        private Task<Document> AddTokenAsync(Document document, SyntaxNode root, SyntaxNode node)
         {
             var newNode = GetReplacement(node);
             root = root.ReplaceNode(node, newNode);

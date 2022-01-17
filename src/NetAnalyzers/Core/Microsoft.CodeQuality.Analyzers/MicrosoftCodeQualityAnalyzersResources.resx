@@ -1314,4 +1314,10 @@
   <data name="CollectionsShouldImplementGenericInterfaceMultipleMessage" xml:space="preserve">
     <value>Type '{0}' directly or indirectly inherits '{1}' without implementing any of '{2}'. Publicly-visible types should implement the generic version to broaden usability.</value>
   </data>
+  <data name="EnumValuesShouldBeMonotonicallyIncreasingTitle" xml:space="preserve">
+    <value>Enum values should be monotonically increasing</value>
+  </data>
+  <data name="EnumValuesShouldBeMonotonicallyIncreasingMessage" xml:space="preserve">
+    <value>Enum value '{0}' should be placed before '{1}'.</value>
+  </data>
 </root>

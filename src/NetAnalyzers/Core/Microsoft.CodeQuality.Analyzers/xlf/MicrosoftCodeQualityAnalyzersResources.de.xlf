@@ -222,6 +222,16 @@
         <target state="translated">Enumerationswerte dürfen nicht dupliziert werden</target>
         <note />
       </trans-unit>
+      <trans-unit id="EnumValuesShouldBeMonotonicallyIncreasingMessage">
+        <source>Enum value '{0}' should be placed before '{1}'.</source>
+        <target state="new">Enum value '{0}' should be placed before '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnumValuesShouldBeMonotonicallyIncreasingTitle">
+        <source>Enum values should be monotonically increasing</source>
+        <target state="new">Enum values should be monotonically increasing</target>
+        <note />
+      </trans-unit>
       <trans-unit id="EventsShouldNotHaveBeforeOrAfterPrefixDescription">
         <source>Event names should describe the action that raises the event. To name related events that are raised in a specific sequence, use the present or past tense to indicate the relative position in the sequence of actions. For example, when naming a pair of events that is raised when closing a resource, you might name it 'Closing' and 'Closed', instead of 'BeforeClose' and 'AfterClose'.</source>
         <target state="translated">Ereignisnamen sollten die Aktion beschreiben, durch die das Ereignis ausgelöst wird. Um zusammenhängende Ereignisse zu benennen, die in einer bestimmten Sequenz ausgelöst werden, verwenden Sie das Präsens oder das Imperfekt, um die relative Position in der Sequenz von Aktionen anzugeben. Wenn Sie z. B. ein Ereignispaar benennen, das beim Schließen einer Ressource ausgelöst wird, könnten Sie es "Closing" und "Closed" nennen anstelle von "BeforeClose" und "AfterClose".</target>

@@ -4,6 +4,7 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
+CA1510 | Maintainability | Disabled | EnumValuesShouldBeMonotonicallyIncreasing, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510)
 CA1849 | Performance | Disabled | UseAsyncMethodInAsyncContext, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849)
 CA1850 | Performance | Info | PreferHashDataOverComputeHashAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850)
 CA5404 | Security | Disabled | DoNotDisableTokenValidationChecks, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5404)

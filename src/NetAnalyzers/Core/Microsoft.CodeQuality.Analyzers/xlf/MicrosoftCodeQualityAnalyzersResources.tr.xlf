@@ -222,6 +222,16 @@
         <target state="translated">Sabit liste değerleri yinelenmemeli</target>
         <note />
       </trans-unit>
+      <trans-unit id="EnumValuesShouldBeMonotonicallyIncreasingMessage">
+        <source>Enum value '{0}' should be placed before '{1}'.</source>
+        <target state="new">Enum value '{0}' should be placed before '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnumValuesShouldBeMonotonicallyIncreasingTitle">
+        <source>Enum values should be monotonically increasing</source>
+        <target state="new">Enum values should be monotonically increasing</target>
+        <note />
+      </trans-unit>
       <trans-unit id="EventsShouldNotHaveBeforeOrAfterPrefixDescription">
         <source>Event names should describe the action that raises the event. To name related events that are raised in a specific sequence, use the present or past tense to indicate the relative position in the sequence of actions. For example, when naming a pair of events that is raised when closing a resource, you might name it 'Closing' and 'Closed', instead of 'BeforeClose' and 'AfterClose'.</source>
         <target state="translated">Olay adları, olayı oluşturan eylemi açıklamalıdır. Belirli bir sırada oluşturulan ilgili olayları adlandırırken eylem sırasındaki göreli konumlarını belirtmek üzere şimdiki veya geçmiş zaman kullanın. Örneğin, bir kaynağı kapatırken oluşan bir olay çiftini adlandırırken, bu olayları 'BeforeClose' ve 'AfterClose' yerine 'Closing' ve 'Closed' olarak adlandırabilirsiniz.</target>

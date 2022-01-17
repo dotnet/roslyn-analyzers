@@ -2100,18 +2100,6 @@ Named placeholders in the logging message template should not be comprised of on
 |CodeFix|False|
 ---
 
-## [CA2253](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253): Possible missing interpolation token
-
-This string literal uses composite formatting but is not an interpolated string. Did you miss the '$' prefix?
-
-|Item|Value|
-|-|-|
-|Category|Usage|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|False|
----
-
 ## [CA2254](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2254): Template should be a static expression
 
 The logging message template should not vary between calls.
@@ -2170,6 +2158,18 @@ Providing a functional 'DynamicInterfaceCastableImplementationAttribute'-attribu
 |Enabled|True|
 |Severity|Warning|
 |CodeFix|False|
+---
+
+## [CA2259](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259): Possible missing interpolation token
+
+This string literal uses composite formatting but is not an interpolated string. Did you miss the '$' prefix?
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
 ---
 
 ## [CA2300](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2300): Do not use insecure deserializer BinaryFormatter

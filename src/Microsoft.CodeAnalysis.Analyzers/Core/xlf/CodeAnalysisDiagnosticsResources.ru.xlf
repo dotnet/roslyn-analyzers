@@ -8,14 +8,14 @@
         <note />
       </trans-unit>
       <trans-unit id="AddGeneratorAttribute_1">
-        <source>Apply Generator attribute for '{0}'.</source>
-        <target state="new">Apply Generator attribute for '{0}'.</target>
-        <note>"Generator" is a named type and should not be changed</note>
+        <source>Apply 'Generator' attribute for '{0}'.</source>
+        <target state="new">Apply 'Generator' attribute for '{0}'.</target>
+        <note>{Locked="Generator"}</note>
       </trans-unit>
       <trans-unit id="AddGeneratorAttribute_2">
-        <source>Apply Generator attribute for both '{0}' and '{1}'.</source>
-        <target state="new">Apply Generator attribute for both '{0}' and '{1}'.</target>
-        <note>"Generator" is a type name and should not be changed</note>
+        <source>Apply 'Generator' attribute for both '{0}' and '{1}'.</source>
+        <target state="new">Apply 'Generator' attribute for both '{0}' and '{1}'.</target>
+        <note>{Locked="Generator"}</note>
       </trans-unit>
       <trans-unit id="ClassIsNotDiagnosticAnalyzerMessage">
         <source>Inherit type '{0}' from DiagnosticAnalyzer or remove the DiagnosticAnalyzerAttribute(s)</source>
@@ -243,19 +243,19 @@
         <note />
       </trans-unit>
       <trans-unit id="MissingSourceGeneratorAttributeDescription">
-        <source>'{0}' implements 'ISourceGenerator' but does not have the 'Generator' attribute.</source>
-        <target state="new">'{0}' implements 'ISourceGenerator' but does not have the 'Generator' attribute.</target>
-        <note />
+        <source>A type implements 'ISourceGenerator' but does not have the 'Generator' attribute.</source>
+        <target state="new">A type implements 'ISourceGenerator' but does not have the 'Generator' attribute.</target>
+        <note>{Locked="ISourceGenerator"}{Locked="Generator"}</note>
       </trans-unit>
       <trans-unit id="MissingSourceGeneratorAttributeMessage">
         <source>Missing 'Generator' attribute</source>
         <target state="new">Missing 'Generator' attribute</target>
-        <note />
+        <note>{Locked="Generator"}</note>
       </trans-unit>
       <trans-unit id="MissingSourceGeneratorAttributeTitle">
         <source>Missing 'Generator' Attribute</source>
         <target state="new">Missing 'Generator' Attribute</target>
-        <note />
+        <note>{Locked="Generator"}</note>
       </trans-unit>
       <trans-unit id="MissingSymbolKindArgumentToRegisterActionMessage">
         <source>Specify at least one SymbolKind of interest when registering a symbol analyzer action</source>

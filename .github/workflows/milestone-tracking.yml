@@ -1,7 +1,10 @@
 name: Milestone tracking
 on:
-  pull_request:
+  pull_request_target:
     types: [closed]
+permissions:
+  issues: write
+  pull-requests: write
 jobs:
   add_milestone:
     runs-on: ubuntu-latest
@@ -9,6 +12,7 @@ jobs:
     steps:
     - name: Get milestone data
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         ORGANIZATION: dotnet
         REPOSITORY: roslyn-analyzers
         MILESTONE_NAME: vNext
@@ -25,18 +29,25 @@ jobs:
             }
           }' -f org=$ORGANIZATION -f repo=$REPOSITORY -f milestone="$MILESTONE_NAME" > milestone_data.json
 
-        cat milestone_data.json
-        echo 'MILESTONE_ID='$(jq 'if (((.data.repository.milestones.nodes | length) == 1) and .data.repository.milestones.nodes[0].title == "$MILESTONE_NAME") then .data.repository.milestones.nodes[0].id else null end' label_data.json) >> $GITHUB_ENV
+        echo 'MILESTONE_ID='$(jq -r 'if (((.data.repository.milestones.nodes | length) == 1) and .data.repository.milestones.nodes[0].title == $MILESTONE_NAME) then .data.repository.milestones.nodes[0].id else "" end' --arg MILESTONE_NAME "$MILESTONE_NAME" milestone_data.json) >> $GITHUB_ENV
 
     - name: Assign milestone
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PULL_REQUEST_ID: ${{ github.event.pull_request.node_id }}
+      if: ${{ env.MILESTONE_ID != '' }}
       run: |
-        echo $MILESTONE_ID
-
-        #gh api graphql -f query='
-        #  mutation($pull: ID!, $milestone: ID!) {
-        #    updatePullRequest(input: {pullRequestId: $pull, milestoneId: $milestone}) {
-        #      clientMutationId
-        #    }
-        #  }' -f pull=$PULL_REQUEST_ID -f milestone=$MILESTONE_ID
+        gh api graphql -f query='
+          mutation($pull: ID!, $milestone: ID!) {
+            updatePullRequest(input: {pullRequestId: $pull, milestoneId: $milestone}) {
+              pullRequest {
+                id
+                number
+                milestone {
+                  id
+                  number
+                  title
+                }
+              }
+            }
+          }' -f pull=$PULL_REQUEST_ID -f milestone=$MILESTONE_ID

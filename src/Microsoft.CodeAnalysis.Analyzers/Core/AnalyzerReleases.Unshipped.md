@@ -4,5 +4,4 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-RS1034 | MicrosoftCodeAnalysisPerformance | Warning | PreferIsKindAnalyzer
 RS1035 | MicrosoftCodeAnalysisCorrectness | Warning | SourceGeneratorAttributeAnalyzer

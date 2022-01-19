@@ -24,7 +24,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public sealed override void Initialize(AnalysisContext context)
         {
@@ -65,9 +65,6 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         /// <item><description>There is at least one non-literal expression.</description></item>
         /// </list>
         /// </summary>
-        /// <param name="node"></param>
-        /// <param name="model"></param>
-        /// <returns></returns>
         private protected abstract bool AreAllInterpolationsBindable(SyntaxNode node, SemanticModel model);
 
         private protected abstract SyntaxNode? ParseStringLiteralAsInterpolatedString(ILiteralOperation operation);

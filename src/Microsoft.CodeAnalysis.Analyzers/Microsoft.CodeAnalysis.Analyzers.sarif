@@ -445,7 +445,7 @@
         "RS1035": {
           "id": "RS1035",
           "shortDescription": "Missing 'Generator' Attribute",
-          "fullDescription": "'{0}' implements 'ISourceGenerator' but does not have the 'Generator' attribute.",
+          "fullDescription": "A type implements 'ISourceGenerator' but does not have the 'Generator' attribute.",
           "defaultLevel": "warning",
           "properties": {
             "category": "MicrosoftCodeAnalysisCorrectness",

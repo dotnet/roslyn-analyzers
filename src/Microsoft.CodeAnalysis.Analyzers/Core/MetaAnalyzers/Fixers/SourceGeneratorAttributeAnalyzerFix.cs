@@ -74,7 +74,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             {
                 // CSharp is the only language, which is the default paramterless 
                 // constructor for the Generator attribute
-                generatorAttribute = generator.Attribute(WellKnownTypeNames.MicrosoftCodeAnalysisGeneratorAttribute);
+                generatorAttribute = generator.Attribute(WellKnownTypeNames.MicrosoftCodeAnalysisGeneratorAttribute).WithAddImportsAnnotation();
             }
             else
             {
@@ -103,7 +103,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
                     arguments[i] = finalExpression;
                 }
 
-                generatorAttribute = generator.Attribute(WellKnownTypeNames.MicrosoftCodeAnalysisGeneratorAttribute, arguments);
+                generatorAttribute = generator.Attribute(WellKnownTypeNames.MicrosoftCodeAnalysisGeneratorAttribute, arguments).WithAddImportsAnnotation();
             }
 
             editor.ReplaceNode(node, generator.AddAttributes(node, generatorAttribute));

@@ -426,7 +426,7 @@ Prefer 'syntax.IsKind(kind)' to 'syntax.Kind() == kind' when checking syntax kin
 
 ## RS1035: Missing 'Generator' Attribute
 
-'{0}' implements 'ISourceGenerator' but does not have the 'Generator' attribute.
+A type implements 'ISourceGenerator' but does not have the 'Generator' attribute.
 
 |Item|Value|
 |-|-|

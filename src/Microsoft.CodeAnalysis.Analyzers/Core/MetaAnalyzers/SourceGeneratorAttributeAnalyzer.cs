@@ -5,6 +5,7 @@ using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
+using static Microsoft.CodeAnalysis.Analyzers.CodeAnalysisDiagnosticsResources;
 
 namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
@@ -13,11 +14,11 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
     {
         public static readonly DiagnosticDescriptor DiagnosticRule = new(
             DiagnosticIds.MissingSourceGeneratorAttributeId,
-            CodeAnalysisDiagnosticsResources.CreateLocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.MissingSourceGeneratorAttributeTitle)),
-            CodeAnalysisDiagnosticsResources.CreateLocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.MissingSourceGeneratorAttributeTitle)),
+            CreateLocalizableResourceString(nameof(MissingSourceGeneratorAttributeTitle)),
+            CreateLocalizableResourceString(nameof(MissingSourceGeneratorAttributeTitle)),
             DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
             DiagnosticSeverity.Warning,
-            description: CodeAnalysisDiagnosticsResources.CreateLocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.MissingSourceGeneratorAttributeDescription)),
+            description: CreateLocalizableResourceString(nameof(MissingSourceGeneratorAttributeDescription)),
             isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DiagnosticRule);

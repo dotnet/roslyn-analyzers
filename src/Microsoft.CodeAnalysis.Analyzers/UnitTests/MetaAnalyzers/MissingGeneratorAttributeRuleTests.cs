@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -20,10 +22,10 @@ namespace Microsoft.CodeAnalysis.Analyzers.UnitTests.MetaAnalyzers
             ReferenceAssemblies.Default.AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "3.10.0")));
 
         [Theory]
-        [InlineData("[Generator]", 0)]
-        [InlineData("[Generator(LanguageNames.VisualBasic)]", 1)]
-        [InlineData("[Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)]", 2)]
-        public async Task TestSimpleClass_CSharp(string attr, int index)
+        [InlineData("[Generator]", 0, SourceGeneratorAttributeAnalyzerFix.CSharpEquivalenceKey)]
+        [InlineData("[Generator(LanguageNames.VisualBasic)]", 1, SourceGeneratorAttributeAnalyzerFix.VisualBasicEquivalenceKey)]
+        [InlineData("[Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)]", 2, SourceGeneratorAttributeAnalyzerFix.CSharpVisualBasicEquivalenceKey)]
+        public async Task TestSimpleClass_CSharp(string attr, int index, string equivalenceKey)
         {
             var code = @"
 using Microsoft.CodeAnalysis;
@@ -48,7 +50,8 @@ public class CustomGenerator : ISourceGenerator
                 ReferenceAssemblies = ReferenceAssemblies,
                 TestCode = code,
                 FixedCode = fixedCode,
-                CodeActionIndex = index
+                CodeActionIndex = index,
+                CodeActionEquivalenceKey = equivalenceKey
             }.RunAsync();
         }
 
@@ -84,10 +87,10 @@ public class CustomGenerator : Microsoft.CodeAnalysis.ISourceGenerator
         }
 
         [Theory]
-        [InlineData("<Generator>", 0)]
-        [InlineData("<Generator(LanguageNames.VisualBasic)>", 1)]
-        [InlineData("<Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)>", 2)]
-        public async Task TestSimpleClass_VisualBasic(string attr, int index)
+        [InlineData("<Generator>", 0, SourceGeneratorAttributeAnalyzerFix.CSharpEquivalenceKey)]
+        [InlineData("<Generator(LanguageNames.VisualBasic)>", 1, SourceGeneratorAttributeAnalyzerFix.VisualBasicEquivalenceKey)]
+        [InlineData("<Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)>", 2, SourceGeneratorAttributeAnalyzerFix.CSharpVisualBasicEquivalenceKey)]
+        public async Task TestSimpleClass_VisualBasic(string attr, int index, string equivalenceKey)
         {
             var code = @"
 Imports Microsoft.CodeAnalysis 
@@ -125,7 +128,8 @@ End Class";
                 ReferenceAssemblies = ReferenceAssemblies,
                 TestCode = code,
                 FixedCode = fixedCode,
-                CodeActionIndex = index
+                CodeActionIndex = index,
+                CodeActionEquivalenceKey = equivalenceKey
             }.RunAsync();
         }
 
@@ -312,6 +316,150 @@ End Class";
             {
                 ReferenceAssemblies = ReferenceAssemblies,
                 TestCode = code,
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("[Generator]", 0, SourceGeneratorAttributeAnalyzerFix.CSharpEquivalenceKey)]
+        [InlineData("[Generator(LanguageNames.VisualBasic)]", 1, SourceGeneratorAttributeAnalyzerFix.VisualBasicEquivalenceKey)]
+        [InlineData("[Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)]", 2, SourceGeneratorAttributeAnalyzerFix.CSharpVisualBasicEquivalenceKey)]
+        public async Task TestFixAllCSharp(string attr, int index, string equivalenceKey)
+        {
+            var code1 = @"
+using Microsoft.CodeAnalysis;
+
+public class [|CustomGenerator1|] : ISourceGenerator
+{
+    public void Initialize(GeneratorInitializationContext context) {}
+    public void Execute(GeneratorExecutionContext context) {}
+}";
+
+            var code2 = @"
+using Microsoft.CodeAnalysis;
+
+public class [|CustomGenerator2|] : ISourceGenerator
+{
+    public void Initialize(GeneratorInitializationContext context) {}
+    public void Execute(GeneratorExecutionContext context) {}
+}";
+
+            var fixedCode1 = @$"
+using Microsoft.CodeAnalysis;
+
+{attr}
+public class CustomGenerator1 : ISourceGenerator
+{{
+    public void Initialize(GeneratorInitializationContext context) {{}}
+    public void Execute(GeneratorExecutionContext context) {{}}
+}}";
+
+            var fixedCode2 = @$"
+using Microsoft.CodeAnalysis;
+
+{attr}
+public class CustomGenerator2 : ISourceGenerator
+{{
+    public void Initialize(GeneratorInitializationContext context) {{}}
+    public void Execute(GeneratorExecutionContext context) {{}}
+}}";
+
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies,
+                TestState =
+                {
+                    Sources = {code1, code2 }
+                },
+                FixedState =
+                {
+                    Sources = {fixedCode1, fixedCode2}
+                },
+                CodeActionEquivalenceKey = equivalenceKey,
+                CodeActionIndex = index
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("<Generator>", 0, SourceGeneratorAttributeAnalyzerFix.CSharpEquivalenceKey)]
+        [InlineData("<Generator(LanguageNames.VisualBasic)>", 1, SourceGeneratorAttributeAnalyzerFix.VisualBasicEquivalenceKey)]
+        [InlineData("<Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)>", 2, SourceGeneratorAttributeAnalyzerFix.CSharpVisualBasicEquivalenceKey)]
+        public async Task TestFixAllVisualBasic(string attr, int index, string equivalenceKey)
+        {
+            var code1 = @"
+Imports Microsoft.CodeAnalysis 
+
+Public Class [|CustomGenerator1|]
+    Implements ISourceGenerator
+
+    Public Sub Initialize(context As GeneratorInitializationContext) Implements ISourceGenerator.Initialize
+
+    End Sub
+
+    Sub Execute(context As GeneratorExecutionContext) Implements ISourceGenerator.Execute
+
+    End Sub
+End Class";
+
+            var code2 = @"
+Imports Microsoft.CodeAnalysis 
+
+Public Class [|CustomGenerator2|]
+    Implements ISourceGenerator
+
+    Public Sub Initialize(context As GeneratorInitializationContext) Implements ISourceGenerator.Initialize
+
+    End Sub
+
+    Sub Execute(context As GeneratorExecutionContext) Implements ISourceGenerator.Execute
+
+    End Sub
+End Class";
+
+            var fixedCode1 = @$"
+Imports Microsoft.CodeAnalysis
+
+{attr}
+Public Class CustomGenerator1
+    Implements ISourceGenerator
+
+    Public Sub Initialize(context As GeneratorInitializationContext) Implements ISourceGenerator.Initialize
+
+    End Sub
+
+    Sub Execute(context As GeneratorExecutionContext) Implements ISourceGenerator.Execute
+
+    End Sub
+End Class";
+
+            var fixedCode2 = @$"
+Imports Microsoft.CodeAnalysis
+
+{attr}
+Public Class CustomGenerator2
+    Implements ISourceGenerator
+
+    Public Sub Initialize(context As GeneratorInitializationContext) Implements ISourceGenerator.Initialize
+
+    End Sub
+
+    Sub Execute(context As GeneratorExecutionContext) Implements ISourceGenerator.Execute
+
+    End Sub
+End Class";
+
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies,
+                TestState =
+                {
+                    Sources = {code1, code2}
+                },
+                FixedState =
+                {
+                    Sources = {fixedCode1, fixedCode2}
+                },
+                CodeActionIndex = index,
+                CodeActionEquivalenceKey = equivalenceKey
             }.RunAsync();
         }
     }

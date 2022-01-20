@@ -17,6 +17,10 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
     [Shared]
     public sealed class SourceGeneratorAttributeAnalyzerFix : CodeFixProvider
     {
+        public const string CSharpEquivalenceKey = "GeneratorFixCSharp";
+        public const string VisualBasicEquivalenceKey = "GeneratorFixVisualBasic";
+        public const string CSharpVisualBasicEquivalenceKey = "GeneratorFixCSharpVisualBasic";
+
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             DiagnosticIds.MissingSourceGeneratorAttributeId);
 
@@ -35,29 +39,29 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             {
                 AddFix(
                     string.Format(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_1, LanguageNames.CSharp),
-                    context, document, node, diagnostic, LanguageNames.CSharp);
+                    context, document, node, diagnostic, CSharpEquivalenceKey, LanguageNames.CSharp);
 
                 AddFix(
                     string.Format(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_1, LanguageNames.VisualBasic),
-                    context, document, node, diagnostic, LanguageNames.VisualBasic);
+                    context, document, node, diagnostic, VisualBasicEquivalenceKey, LanguageNames.VisualBasic);
 
                 AddFix(
                     string.Format(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_2, LanguageNames.CSharp, LanguageNames.VisualBasic),
-                    context, document, node, diagnostic, LanguageNames.CSharp, LanguageNames.VisualBasic);
+                    context, document, node, diagnostic, CSharpVisualBasicEquivalenceKey, LanguageNames.CSharp, LanguageNames.VisualBasic);
             }
         }
 
-        private static void AddFix(string title, CodeFixContext context, Document document, SyntaxNode node, Diagnostic diagnostic, params string[] languageNames)
+        private static void AddFix(string title, CodeFixContext context, Document document, SyntaxNode node, Diagnostic diagnostic, string equivalenceKey, params string[] languageNames)
         {
             var codeAction = CodeAction.Create(
                 title,
                 (cancellationToken) => FixDocumentAsync(document, node, languageNames, cancellationToken),
-                equivalenceKey: nameof(SourceGeneratorAttributeAnalyzerFix));
+                equivalenceKey: equivalenceKey);
 
             context.RegisterCodeFix(codeAction, diagnostic);
         }
 
-        public override FixAllProvider? GetFixAllProvider() => null;
+        public override FixAllProvider? GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
         private static async Task<Document> FixDocumentAsync(Document document, SyntaxNode node, string[] languageNames, CancellationToken cancellationToken)
         {

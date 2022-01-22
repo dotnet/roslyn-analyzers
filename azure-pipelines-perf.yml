@@ -28,6 +28,11 @@ jobs:
   steps:
     - checkout: self
       clean: true
+    - task: PowerShell@2
+      displayName: Restore
+      inputs:
+        filePath: eng\common\build.ps1
+        arguments: -configuration Release -prepareMachine -ci -restore -binaryLog
     - pwsh: eng\perf\PerfCore.ps1 -v diag -diff -ci 
       displayName: Validate Performance
     - task: PublishBuildArtifacts@1

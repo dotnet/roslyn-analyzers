@@ -64,7 +64,7 @@ You do not need to manually install this NuGet package to your project if you ar
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)</sub>
 
-This is a migration analyzer package for existing binary FxCop users. It contains all **the ported FxCop code analysis rules (CAxxxx)**. It's recommended to use Microsoft.CodeAnalysis.NetAnalyzers instead. The documentation for that can be found at https://docs.microsoft.com/visualstudio/code-quality/install-net-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-net-analyzers).
+This is a migration analyzer package for existing binary FxCop users. It contains all **the ported FxCop code analysis rules (CAxxxx)**. It's recommended to use Microsoft.CodeAnalysis.NetAnalyzers instead. The documentation for that can be found at [docs.microsoft.com/visualstudio/code-quality/install-net-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-net-analyzers).
 
 The documentation for all the ported and unported FxCop rules can be found at [docs.microsoft.com/en-us/visualstudio/code-quality/fxcop-rule-port-status](https://docs.microsoft.com/visualstudio/code-quality/fxcop-rule-port-status).
 

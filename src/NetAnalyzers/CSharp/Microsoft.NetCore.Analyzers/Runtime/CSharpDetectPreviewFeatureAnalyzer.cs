@@ -171,68 +171,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             return false;
         }
 
-        protected override SyntaxNode? GetConstraintSyntaxNodeForTypeConstrainedByPreviewTypes(ISymbol typeOrMethodSymbol, ISymbol previewInterfaceConstraintSymbol)
-        {
-            ImmutableArray<SyntaxReference> typeSymbolDeclaringReferences = typeOrMethodSymbol.DeclaringSyntaxReferences;
-
-            foreach (SyntaxReference? syntaxReference in typeSymbolDeclaringReferences)
-            {
-                SyntaxNode typeOrMethodDefinition = syntaxReference.GetSyntax();
-                if (typeOrMethodDefinition is ClassDeclarationSyntax classDeclaration)
-                {
-                    // For ex: class A<T> where T : IFoo, new() // where IFoo is preview
-                    SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses = classDeclaration.ConstraintClauses;
-                    if (TryGetConstraintClauseNode(constraintClauses, previewInterfaceConstraintSymbol, out SyntaxNode? ret))
-                    {
-                        return ret;
-                    }
-                }
-                else if (typeOrMethodDefinition is MethodDeclarationSyntax methodDeclaration)
-                {
-                    SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses = methodDeclaration.ConstraintClauses;
-                    if (TryGetConstraintClauseNode(constraintClauses, previewInterfaceConstraintSymbol, out SyntaxNode? ret))
-                    {
-                        return ret;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        private static bool TryGetConstraintClauseNode(SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses, ISymbol previewInterfaceConstraintSymbol, [NotNullWhen(true)] out SyntaxNode? syntaxNode)
-        {
-            foreach (TypeParameterConstraintClauseSyntax constraintClause in constraintClauses)
-            {
-                SeparatedSyntaxList<TypeParameterConstraintSyntax> constraints = constraintClause.Constraints;
-                foreach (TypeParameterConstraintSyntax? constraint in constraints)
-                {
-                    if (constraint is TypeConstraintSyntax typeConstraintSyntax)
-                    {
-                        TypeSyntax typeConstraintSyntaxType = typeConstraintSyntax.Type;
-                        typeConstraintSyntaxType = GetElementTypeForNullableAndArrayTypeNodes(typeConstraintSyntaxType);
-                        if (typeConstraintSyntaxType is GenericNameSyntax generic)
-                        {
-                            if (TryMatchGenericSyntaxNodeWithGivenSymbol(generic, previewInterfaceConstraintSymbol, out SyntaxNode? previewConstraint))
-                            {
-                                syntaxNode = previewConstraint;
-                                return true;
-                            }
-                        }
-
-                        if (IsIdentifierNameSyntax(typeConstraintSyntaxType, previewInterfaceConstraintSymbol))
-                        {
-                            syntaxNode = constraint;
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            syntaxNode = null;
-            return false;
-        }
-
         protected override SyntaxNode? GetPreviewInterfaceNodeForTypeImplementingPreviewInterface(ISymbol typeSymbol, ISymbol previewInterfaceSymbol)
         {
             SyntaxNode? ret = null;
@@ -241,25 +179,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             foreach (SyntaxReference? syntaxReference in typeSymbolDeclaringReferences)
             {
                 SyntaxNode typeSymbolDefinition = syntaxReference.GetSyntax();
-                if (typeSymbolDefinition is ClassDeclarationSyntax classDeclaration)
+                if (typeSymbolDefinition is TypeDeclarationSyntax { BaseList.Types: var baseListTypes })
                 {
-                    SeparatedSyntaxList<BaseTypeSyntax> baseListTypes = classDeclaration.BaseList.Types;
-                    if (TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseListTypes, previewInterfaceSymbol, out ret))
-                    {
-                        return ret;
-                    }
-                }
-                else if (typeSymbolDefinition is StructDeclarationSyntax structDeclaration)
-                {
-                    SeparatedSyntaxList<BaseTypeSyntax> baseListTypes = structDeclaration.BaseList.Types;
-                    if (TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseListTypes, previewInterfaceSymbol, out ret))
-                    {
-                        return ret;
-                    }
-                }
-                else if (typeSymbolDefinition is InterfaceDeclarationSyntax interfaceDeclaration)
-                {
-                    SeparatedSyntaxList<BaseTypeSyntax> baseListTypes = interfaceDeclaration.BaseList.Types;
                     if (TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseListTypes, previewInterfaceSymbol, out ret))
                     {
                         return ret;

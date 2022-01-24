@@ -212,7 +212,28 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         protected abstract SyntaxNode? GetPreviewInterfaceNodeForTypeImplementingPreviewInterface(ISymbol typeSymbol, ISymbol previewInterfaceSymbol);
 
-        protected abstract SyntaxNode? GetConstraintSyntaxNodeForTypeConstrainedByPreviewTypes(ISymbol typeOrMethodSymbol, ISymbol previewInterfaceConstraintSymbol);
+        private SyntaxNode? GetConstraintSyntaxNodeForTypeConstrainedByPreviewTypes(ISymbol typeOrMethodSymbol, ISymbol previewInterfaceConstraintSymbol)
+        {
+            var typeParameters = typeOrMethodSymbol switch
+            {
+                INamedTypeSymbol typeSymbol => typeSymbol.TypeParameters,
+                IMethodSymbol methodSymbol => methodSymbol.TypeParameters,
+                _ => throw new ArgumentException($"Unexpected symbol '{typeOrMethodSymbol.Kind}'")
+            };
+
+            foreach (var typeParameter in typeParameters)
+            {
+                foreach (var constraintType in typeParameter.ConstraintTypes)
+                {
+                    if (previewInterfaceConstraintSymbol.Equals(constraintType, SymbolEqualityComparer.Default /*DetectPreviewFeatureSymbolEqualityComparer*/))
+                    {
+                        return typeParameter.DeclaringSyntaxReferences[0].GetSyntax();
+                    }
+                }
+            }
+
+            return null;
+        }
 
         protected abstract SyntaxNode? GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(ISymbol methodOrPropertySymbol, ISymbol previewReturnTypeSymbol);
 

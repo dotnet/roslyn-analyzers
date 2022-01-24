@@ -175,10 +175,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
             Return Nothing
         End Function
 
-        Protected Overrides Function GetConstraintSyntaxNodeForTypeConstrainedByPreviewTypes(typeOrMethodSymbol As ISymbol, previewInterfaceConstraintSymbol As ISymbol) As SyntaxNode
-            Return Nothing
-        End Function
-
         Private Function TryGetNodeFromAsClauseForMethodOrProperty(asClause As AsClauseSyntax, previewReturnTypeSymbol As ISymbol) As SyntaxNode
             Dim simpleAsClause = TryCast(asClause, SimpleAsClauseSyntax)
             If simpleAsClause IsNot Nothing Then

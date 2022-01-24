@@ -45,7 +45,7 @@ using System.Runtime.Versioning; using System;
 namespace Preview_Feature_Scratch
 {
 
-    class AFoo<T> where T : {|#2:Foo|}, new()
+    class AFoo<{|#2:T|}> where T : Foo, new()
     {
         [RequiresPreviewFeatures]
         private Foo _value;
@@ -94,7 +94,7 @@ Imports System
 Imports System.Runtime.Versioning
 Imports System.Collections.Generic
 Module Preview_Feature_Scratch
-    Public Class {|#2:AFoo|}(Of T As Foo)
+    Public Class AFoo(Of {|#2:T As Foo|})
         <RequiresPreviewFeatures>
         Private _value As Foo
 
@@ -133,7 +133,7 @@ using System.Collections.Generic;
 namespace Preview_Feature_Scratch
 {
 
-    class AFoo<T> where T : {|#2:Foo|}, new()
+    class AFoo<{|#2:T|}> where T : Foo, new()
     {
         private List<{|#3:Foo|}> _value;
 
@@ -318,7 +318,7 @@ using System.Runtime.Versioning; using System;
 namespace Preview_Feature_Scratch
 {
 
-    class AFoo<T> where T : {|#0:Foo|}, new()
+    class AFoo<{|#0:T|}> where T : Foo, new()
     {
         private {|#1:Foo|} _value;
 

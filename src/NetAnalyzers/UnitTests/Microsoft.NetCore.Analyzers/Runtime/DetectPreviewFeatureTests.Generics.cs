@@ -54,8 +54,8 @@ namespace Preview_Feature_Scratch
 
     class Program
     {
-        public bool GenericMethod<T>()
-            where T : {|#0:Foo|}
+        public bool GenericMethod<{|#0:T|}>()
+            where T : Foo
         {
             return true;
         }
@@ -88,8 +88,8 @@ namespace Preview_Feature_Scratch
     class Program
     {
 #nullable enable
-        public bool GenericMethod<T>()
-            where T : {|#0:Foo?|}
+        public bool GenericMethod<{|#0:T|}>()
+            where T : Foo?
         {
             return true;
         }
@@ -121,8 +121,8 @@ namespace Preview_Feature_Scratch
 {
 
 #nullable enable
-    class Program<T>
-        where T : {|#0:Foo?|}
+    class Program<{|#0:T|}>
+        where T : Foo?
     {
         static void Main(string[] args)
         {
@@ -267,7 +267,7 @@ namespace Preview_Feature_Scratch
         }
     }
 
-class A<T> where T : {|#1:IFoo|}, new()
+class A<{|#1:T|}> where T : IFoo, new()
 {
     public A()
     {
@@ -312,7 +312,7 @@ namespace Preview_Feature_Scratch
         }
     }
 
-class A<T> where T : {|#1:IFoo|}, new()
+class A<{|#1:T|}> where T : IFoo, new()
 {
     public A()
     {
@@ -412,7 +412,7 @@ namespace Preview_Feature_Scratch
             A<Foo> aFooInstance = new A<Foo>();
         }
     }
-class A<T> where T : {|#1:IFoo|}, new()
+class A<{|#1:T|}> where T : IFoo, new()
 {
     public A()
     {

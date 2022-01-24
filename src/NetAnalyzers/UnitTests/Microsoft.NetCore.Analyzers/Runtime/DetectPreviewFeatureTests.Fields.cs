@@ -167,15 +167,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
             }
 
-            public class AGenericClass<T>
-                where T : {|#3:PreviewType|}
+            public class AGenericClass<{|#3:T|}>
+                where T : PreviewType
             {
 
             }
 
 #nullable enable
-            public class AGenericClassWithNullable<T>
-                where T : {|#6:PreviewType?|}
+            public class AGenericClassWithNullable<{|#6:T|}>
+                where T : PreviewType?
             {
                 private {|#7:PreviewType|}? _fieldNullable;
                 private {|#8:PreviewType|}[]? _fieldArrayNullable;

@@ -700,7 +700,7 @@ namespace Preview_Feature_Scratch
 {" +
     @"
 
-    class AFoo<T> where T : {|#2:Foo|}, new()
+    class AFoo<{|#2:T|}> where T : Foo, new()
     {
         public {|#1:Foo|}[] _fooArray;
 

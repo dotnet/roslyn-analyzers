@@ -60,10 +60,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(0).WithArguments("_genericPreviewFieldDictionary", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(3).WithArguments("_genericPreviewFieldDictionaryWithNullable", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(1).WithArguments("_genericPreviewField", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(2).WithArguments("_genericPreviewClassField", "AGenericPreviewClass", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(0).WithArguments("_genericPreviewFieldDictionary", "PreviewType", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(3).WithArguments("_genericPreviewFieldDictionaryWithNullable", "PreviewType", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(1).WithArguments("_genericPreviewField", "PreviewType", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(2).WithArguments("_genericPreviewClassField", "AGenericPreviewClass", DefaultURL));
             await test.RunAsync();
         }
 
@@ -104,9 +104,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(0).WithArguments("_field", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(2).WithArguments("_genericPreviewField", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(0).WithArguments("_field", "PreviewType", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("PreviewType", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(2).WithArguments("_genericPreviewField", "PreviewType", DefaultURL));
             await test.RunAsync();
 
             var vbInput = @" 
@@ -131,8 +131,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             ";
 
             var testVb = TestVB(vbInput);
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(0).WithArguments("_field", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(2).WithArguments("_genericPreviewField", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(0).WithArguments("_field", "PreviewType", DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(2).WithArguments("_genericPreviewField", "PreviewType", DefaultURL));
             await testVb.RunAsync();
         }
 
@@ -175,7 +175,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
 #nullable enable
             public class AGenericClassWithNullable<T>
-                where T : {|#6:PreviewType?|}
+                where T : {|#6:PreviewType|}?
             {
                 private {|#7:PreviewType|}? _fieldNullable;
                 private {|#8:PreviewType|}[]? _fieldArrayNullable;
@@ -185,16 +185,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(0).WithArguments("_field", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRuleWithCustomMessage).WithLocation(1).WithArguments("PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(2).WithArguments("_genericPreviewField", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(3).WithArguments("AGenericClass", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(4).WithArguments("_fieldArray", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(5).WithArguments("_fieldArrayOfArray", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(6).WithArguments("AGenericClassWithNullable", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(7).WithArguments("_fieldNullable", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(8).WithArguments("_fieldArrayNullable", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(9).WithArguments("_fieldArrayOfArrayNullable", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(0).WithArguments("_field", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRuleWithCustomMessage).WithLocation(1).WithArguments("PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(2).WithArguments("_genericPreviewField", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(3).WithArguments("AGenericClass", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(4).WithArguments("_fieldArray", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(5).WithArguments("_fieldArrayOfArray", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(6).WithArguments("AGenericClassWithNullable", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(7).WithArguments("_fieldNullable", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(8).WithArguments("_fieldArrayNullable", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRuleWithCustomMessage).WithLocation(9).WithArguments("_fieldArrayOfArrayNullable", "PreviewType", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
             await test.RunAsync();
         }
 
@@ -236,10 +236,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(0).WithArguments("_field", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(2).WithArguments("_genericPreviewField", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(3).WithArguments("_genericPreviewField", "AGenericClass", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(0).WithArguments("_field", "PreviewType", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("PreviewType", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(2).WithArguments("_genericPreviewField", "PreviewType", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(3).WithArguments("_genericPreviewField", "AGenericClass", DefaultURL));
             await test.RunAsync();
 
             var vbInput = @" 
@@ -269,10 +269,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         End Namespace";
 
             var vbTest = TestVB(vbInput);
-            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(0).WithArguments("_field", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(2).WithArguments("_genericPreviewField", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(3).WithArguments("_genericPreviewField", "AGenericClass", DetectPreviewFeatureAnalyzer.DefaultURL));
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(0).WithArguments("_field", "PreviewType", DefaultURL));
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("PreviewType", DefaultURL));
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(2).WithArguments("_genericPreviewField", "PreviewType", DefaultURL));
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(3).WithArguments("_genericPreviewField", "AGenericClass", DefaultURL));
             await vbTest.RunAsync();
         }
 
@@ -301,7 +301,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("_field", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("_field", DefaultURL));
             await test.RunAsync();
         }
     }

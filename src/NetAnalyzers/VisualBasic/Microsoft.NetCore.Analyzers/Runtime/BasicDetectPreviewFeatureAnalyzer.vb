@@ -4,13 +4,14 @@ Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.NetCore.Analyzers.Runtime
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
+Imports Microsoft.CodeAnalysis.VisualBasic
+Imports System.Collections.Concurrent
 
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicDetectPreviewFeatureAnalyzer
-
-        Inherits DetectPreviewFeatureAnalyzer
+        Inherits DetectPreviewFeatureAnalyzer(Of InheritsOrImplementsStatementSyntax, TypeBlockSyntax, TypeConstraintSyntax, TypeArgumentListSyntax)
 
         Private Function IsSyntaxToken(identifier As SyntaxToken, previewInterfaceSymbol As ISymbol) As Boolean
             Return identifier.ValueText.Equals(previewInterfaceSymbol.Name, StringComparison.OrdinalIgnoreCase)
@@ -105,42 +106,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
             previewInterfaceNode = Nothing
             Return False
-        End Function
-
-        Private Function TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseListTypes As SyntaxList(Of ImplementsStatementSyntax), previewInterfaceSymbol As ISymbol, ByRef previewInterfaceNode As SyntaxNode) As Boolean
-            For Each baseTypeSyntax In baseListTypes
-                Dim baseTypes = baseTypeSyntax.Types
-                For Each baseType In baseTypes
-                    If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseType, previewInterfaceSymbol, previewInterfaceNode) Then
-                        Return True
-                    End If
-                Next
-            Next
-
-            previewInterfaceNode = Nothing
-            Return False
-        End Function
-
-        Protected Overrides Function GetPreviewInterfaceNodeForTypeImplementingPreviewInterface(typeSymbol As ISymbol, previewInterfaceSymbol As ISymbol) As SyntaxNode
-            Dim typeSymbolDeclaringReferences = typeSymbol.DeclaringSyntaxReferences
-
-            For Each syntaxReference In typeSymbolDeclaringReferences
-                Dim typeSymbolDefinition = syntaxReference.GetSyntax()
-                Dim typeStatement = TryCast(typeSymbolDefinition, TypeStatementSyntax)
-                If typeStatement IsNot Nothing Then
-                    Dim typeBlock = TryCast(typeStatement.Parent, TypeBlockSyntax)
-                    If typeBlock IsNot Nothing Then
-                        Dim syntaxNode As SyntaxNode = Nothing
-                        If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(typeBlock.Inherits, previewInterfaceSymbol, syntaxNode) Then
-                            Return syntaxNode
-                        ElseIf TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(typeBlock.Implements, previewInterfaceSymbol, syntaxNode) Then
-                            Return syntaxNode
-                        End If
-                    End If
-                End If
-            Next
-
-            Return Nothing
         End Function
 
         Protected Overrides Function GetConstraintSyntaxNodeForTypeConstrainedByPreviewTypes(typeOrMethodSymbol As ISymbol, previewInterfaceConstraintSymbol As ISymbol) As SyntaxNode
@@ -286,6 +251,22 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
             Next
 
             Return Nothing
+        End Function
+
+        Protected Overrides Sub AnalyzeTypeSyntax(context As CompilationStartAnalysisContext, requiresPreviewFeaturesSymbols As ConcurrentDictionary(Of ISymbol, (isPreview As Boolean, message As String, url As String)), symbolIsAnnotatedAsPreview As Func(Of ISymbol, Boolean))
+            context.RegisterSyntaxNodeAction(
+                Sub(syntaxNodeContext)
+                    Dim node = DirectCast(syntaxNodeContext.Node, NameSyntax)
+                    AnalyzeTypeSyntax(syntaxNodeContext, node, requiresPreviewFeaturesSymbols, symbolIsAnnotatedAsPreview)
+                End Sub, SyntaxKind.CrefOperatorReference, SyntaxKind.GlobalName, SyntaxKind.QualifiedCrefOperatorReference, SyntaxKind.QualifiedName, SyntaxKind.GenericName, SyntaxKind.IdentifierName)
+        End Sub
+
+        Private Protected Overrides Function AdjustSyntaxNodeForGetSymbol(node As SyntaxNode) As SyntaxNode
+            Dim declarator = TryCast(node, VariableDeclaratorSyntax)
+            If declarator IsNot Nothing AndAlso declarator.Names.Count > 0 Then
+                Return declarator.Names(0)
+            End If
+            Return node
         End Function
     End Class
 

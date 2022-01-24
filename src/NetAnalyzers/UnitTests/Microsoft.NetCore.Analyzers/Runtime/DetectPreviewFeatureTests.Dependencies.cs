@@ -68,9 +68,9 @@ public class Program
     }
 }";
             var test = SetupDependencyAndTestCSWithOneSourceFile(csCurrentAssemblyCode, csDependencyCode);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("AMethod", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("Library", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(2).WithArguments("AProperty", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("AMethod", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("Library", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(2).WithArguments("AProperty", DefaultURL));
             await test.RunAsync();
         }
 
@@ -139,7 +139,7 @@ public class Program
     }
 }";
             var test = SetupDependencyAndTestCSWithOneSourceFile(csCurrentAssemblyCode, csDependencyCode);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("APreviewMethod", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("APreviewMethod", DefaultURL));
             await test.RunAsync();
         }
 
@@ -178,8 +178,8 @@ public class Program
     }
 }";
             var test = SetupDependencyAndTestCSWithOneSourceFile(csCurrentAssemblyCode, csDependencyCode);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("NestedClass3", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("APreviewMethod", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(0).WithArguments("NestedClass3", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("APreviewMethod", DefaultURL));
             await test.RunAsync();
         }
     }

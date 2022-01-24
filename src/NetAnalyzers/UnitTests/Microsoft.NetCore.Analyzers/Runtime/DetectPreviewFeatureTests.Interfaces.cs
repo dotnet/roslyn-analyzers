@@ -43,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             ";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "IProgram.MarkedMethodInInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "IProgram.MarkedMethodInInterface", DefaultURL));
             await test.RunAsync();
 
             var vbInput = @"
@@ -70,7 +70,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         End Namespace";
 
             var testVb = TestVB(vbInput);
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "IProgram.MarkedMethodInInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "IProgram.MarkedMethodInInterface", DefaultURL));
             await testVb.RunAsync();
         }
 
@@ -101,8 +101,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             ";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(0).WithArguments("UnmarkedMethodInMarkedInterface", "IProgram.UnmarkedMethodInMarkedInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(1).WithArguments("Program", "IProgram", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewMethodRule).WithLocation(0).WithArguments("UnmarkedMethodInMarkedInterface", "IProgram.UnmarkedMethodInMarkedInterface", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(1).WithArguments("Program", "IProgram", DefaultURL));
             await test.RunAsync();
 
             var vbInput = @" 
@@ -135,10 +135,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             ";
 
             var testVb = TestVB(vbInput);
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "IProgram.MarkedMethodInInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(1).WithArguments("Program", "IProgram", DetectPreviewFeatureAnalyzer.DefaultURL));
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(2).WithArguments("Value", "IProgram.Value", DetectPreviewFeatureAnalyzer.DefaultURL));
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(3).WithArguments("get_Value", "IProgram.get_Value", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(ImplementsPreviewMethodRule).WithLocation(0).WithArguments("MarkedMethodInInterface", "IProgram.MarkedMethodInInterface", DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(1).WithArguments("Program", "IProgram", DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(ImplementsPreviewMethodRule).WithLocation(2).WithArguments("Value", "IProgram.Value", DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(ImplementsPreviewMethodRule).WithLocation(3).WithArguments("get_Value", "IProgram.get_Value", DefaultURL));
             await testVb.RunAsync();
         }
 
@@ -166,7 +166,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             ";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Program", "IProgram", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Program", "IProgram", DefaultURL));
             await test.RunAsync();
 
             var vbInput = @" 
@@ -187,7 +187,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             ";
 
             var testVb = TestVB(vbInput);
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(1).WithArguments("Program", "IProgram", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(1).WithArguments("Program", "IProgram", DefaultURL));
             await testVb.RunAsync();
         }
 
@@ -211,7 +211,7 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("IZoo", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("IZoo", "IFoo", DefaultURL));
             await test.RunAsync();
 
             var vbInput = @" 
@@ -230,7 +230,7 @@ namespace Preview_Feature_Scratch
             ";
 
             var testVb = TestVB(vbInput);
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("IZoo", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("IZoo", "IFoo", DefaultURL));
             await testVb.RunAsync();
         }
     }

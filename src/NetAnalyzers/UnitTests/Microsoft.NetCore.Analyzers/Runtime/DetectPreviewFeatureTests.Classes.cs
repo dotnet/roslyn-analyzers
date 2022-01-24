@@ -54,7 +54,7 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("IZoo", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("IZoo", "IFoo", DefaultURL));
             await test.RunAsync();
         }
 
@@ -82,7 +82,7 @@ namespace Preview_Feature_Scratch
         ";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.OverridesPreviewMethodRule).WithLocation(0).WithArguments("UnmarkedVirtualMethodInPreviewClass", "UnmarkedPreviewClass.UnmarkedVirtualMethodInPreviewClass", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(OverridesPreviewMethodRule).WithLocation(0).WithArguments("UnmarkedVirtualMethodInPreviewClass", "UnmarkedPreviewClass.UnmarkedVirtualMethodInPreviewClass", DefaultURL));
             await test.RunAsync();
         }
 
@@ -158,10 +158,10 @@ namespace Preview_Feature_Scratch
         }}";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.DerivesFromPreviewClassRule).WithLocation(0).WithArguments("Program", "AbClass", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("FooBar", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.GeneralPreviewFeatureAttributeRule).WithLocation(2).WithArguments("BarImplemented", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.OverridesPreviewMethodRule).WithLocation(3).WithArguments("Bar", "AbClass.Bar", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DerivesFromPreviewClassRule).WithLocation(0).WithArguments("Program", "AbClass", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(1).WithArguments("FooBar", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(2).WithArguments("BarImplemented", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(OverridesPreviewMethodRule).WithLocation(3).WithArguments("Bar", "AbClass.Bar", DefaultURL));
             await test.RunAsync();
         }
 
@@ -181,7 +181,7 @@ public class AbClass
 {
 }
 ");
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.DerivesFromPreviewClassRule).WithLocation(0).WithArguments("Program", "AbClass", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DerivesFromPreviewClassRule).WithLocation(0).WithArguments("Program", "AbClass", DefaultURL));
             await test.RunAsync();
         }
 
@@ -222,8 +222,8 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Zoo", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(1).WithArguments("Foo", "IFoo.Foo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Zoo", "IFoo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewMethodRule).WithLocation(1).WithArguments("Foo", "IFoo.Foo", DefaultURL));
             await test.RunAsync();
         }
 
@@ -257,8 +257,8 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Zoo", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(1).WithArguments("Foo", "IFoo.Foo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Zoo", "IFoo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewMethodRule).WithLocation(1).WithArguments("Foo", "IFoo.Foo", DefaultURL));
             await test.RunAsync();
         }
 
@@ -299,10 +299,10 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Zoo", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(3).WithArguments("Zoo", "PreviewInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(1).WithArguments("Foo", "IFoo.Foo", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(2).WithArguments("Bar", "PreviewInterface.Bar", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Zoo", "IFoo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(3).WithArguments("Zoo", "PreviewInterface", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewMethodRule).WithLocation(1).WithArguments("Foo", "IFoo.Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewMethodRule).WithLocation(2).WithArguments("Bar", "PreviewInterface.Bar", DefaultURL));
             await test.RunAsync();
         }
 
@@ -341,9 +341,9 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Zoo", "IFoo", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(1).WithArguments("Foo", "IFoo.Foo", DetectPreviewFeatureAnalyzer.DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.DerivesFromPreviewClassRule).WithLocation(2).WithArguments("Zoo", "AbClass", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Zoo", "IFoo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(ImplementsPreviewMethodRule).WithLocation(1).WithArguments("Foo", "IFoo.Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DerivesFromPreviewClassRule).WithLocation(2).WithArguments("Zoo", "AbClass", DefaultURL));
             await test.RunAsync();
 
             var vbInput = @" 
@@ -375,9 +375,9 @@ Namespace Preview_Feature_Scratch
 End Namespace
 ";
             var vbTest = TestVB(vbInput);
-            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Zoo", "PreviewInterface", DetectPreviewFeatureAnalyzer.DefaultURL));
-            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.FieldOrEventIsPreviewTypeRule).WithLocation(1).WithArguments("_field", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
-            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.DerivesFromPreviewClassRule).WithLocation(2).WithArguments("Zoo", "PreviewType", DetectPreviewFeatureAnalyzer.DefaultURL));
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(ImplementsPreviewInterfaceRule).WithLocation(0).WithArguments("Zoo", "PreviewInterface", DefaultURL));
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(1).WithArguments("_field", "PreviewType", DefaultURL));
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DerivesFromPreviewClassRule).WithLocation(2).WithArguments("Zoo", "PreviewType", DefaultURL));
             await vbTest.RunAsync();
         }
     }

@@ -1,16 +1,22 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.NetCore.Analyzers.Runtime;
 
+// TODO: TypeArgument MyMethodCall<PreviewType>();
+// TODO: Preview attribute on method
+
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CSharpDetectPreviewFeatureAnalyzer : DetectPreviewFeatureAnalyzer
+    public class CSharpDetectPreviewFeatureAnalyzer : DetectPreviewFeatureAnalyzer<BaseListSyntax, BaseTypeDeclarationSyntax, TypeConstraintSyntax, TypeArgumentListSyntax>
     {
         protected override SyntaxNode? GetPreviewSyntaxNodeForFieldsOrEvents(ISymbol fieldOrEventSymbol, ISymbol previewSymbol)
         {
@@ -233,54 +239,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             return false;
         }
 
-        protected override SyntaxNode? GetPreviewInterfaceNodeForTypeImplementingPreviewInterface(ISymbol typeSymbol, ISymbol previewInterfaceSymbol)
-        {
-            SyntaxNode? ret = null;
-            ImmutableArray<SyntaxReference> typeSymbolDeclaringReferences = typeSymbol.DeclaringSyntaxReferences;
-
-            foreach (SyntaxReference? syntaxReference in typeSymbolDeclaringReferences)
-            {
-                SyntaxNode typeSymbolDefinition = syntaxReference.GetSyntax();
-                if (typeSymbolDefinition is TypeDeclarationSyntax { BaseList.Types: var baseListTypes })
-                {
-                    if (TryGetPreviewInterfaceNodeForTypeImplementingPreviewInterface(baseListTypes, previewInterfaceSymbol, out ret))
-                    {
-                        return ret;
-                    }
-                }
-            }
-
-            return ret;
-        }
-
-        private static bool TryGetPreviewInterfaceNodeForTypeImplementingPreviewInterface(SeparatedSyntaxList<BaseTypeSyntax> baseListTypes, ISymbol previewInterfaceSymbol, out SyntaxNode? previewInterfaceNode)
-        {
-            foreach (BaseTypeSyntax baseTypeSyntax in baseListTypes)
-            {
-                if (baseTypeSyntax is BaseTypeSyntax simpleBaseTypeSyntax)
-                {
-                    TypeSyntax type = simpleBaseTypeSyntax.Type;
-                    if (type is IdentifierNameSyntax identifier && IsSyntaxToken(identifier.Identifier, previewInterfaceSymbol))
-                    {
-                        previewInterfaceNode = simpleBaseTypeSyntax;
-                        return true;
-                    }
-
-                    if (type is GenericNameSyntax generic)
-                    {
-                        if (TryMatchGenericSyntaxNodeWithGivenSymbol(generic, previewInterfaceSymbol, out SyntaxNode? previewConstraint))
-                        {
-                            previewInterfaceNode = previewConstraint;
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            previewInterfaceNode = null;
-            return false;
-        }
-
         private static bool IsSyntaxToken(SyntaxToken identifier, ISymbol previewInterfaceSymbol) => identifier.ValueText == previewInterfaceSymbol.Name;
 
         private static bool IsIdentifierNameSyntax(TypeSyntax identifier, ISymbol previewInterfaceSymbol) => identifier is IdentifierNameSyntax identifierName && IsSyntaxToken(identifierName.Identifier, previewInterfaceSymbol) ||
@@ -289,6 +247,32 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
         protected override SyntaxNode? GetPreviewImplementsClauseSyntaxNodeForMethodOrProperty(ISymbol methodSymbol, ISymbol previewSymbol)
         {
             throw new System.NotImplementedException();
+        }
+
+        protected override void AnalyzeTypeSyntax(
+            CompilationStartAnalysisContext context,
+            ConcurrentDictionary<ISymbol, (bool isPreview, string? message, string? url)> requiresPreviewFeaturesSymbols,
+            Func<ISymbol, bool> symbolIsAnnotatedAsPreview)
+        {
+            context.RegisterSyntaxNodeAction(context =>
+            {
+                var node = (NameSyntax)context.Node;
+                AnalyzeTypeSyntax(context, node, requiresPreviewFeaturesSymbols, symbolIsAnnotatedAsPreview);
+            }, SyntaxKind.AliasQualifiedName, SyntaxKind.QualifiedName, SyntaxKind.GenericName, SyntaxKind.IdentifierName);
+        }
+
+        private protected override SyntaxNode AdjustSyntaxNodeForGetSymbol(SyntaxNode node)
+        {
+            if (node.IsKind(SyntaxKind.VariableDeclaration))
+            {
+                var variableDeclarationSyntax = (VariableDeclarationSyntax)node;
+                if (variableDeclarationSyntax.Variables.Count > 0)
+                {
+                    return variableDeclarationSyntax.Variables[0];
+                }
+            }
+
+            return node;
         }
     }
 }

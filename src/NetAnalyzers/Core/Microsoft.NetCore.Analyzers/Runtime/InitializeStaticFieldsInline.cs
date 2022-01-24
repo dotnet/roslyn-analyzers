@@ -68,7 +68,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (!isStaticCtorMandatory.Value &&
                         assignment.Target is IFieldReferenceOperation fieldReference &&
-                        fieldReference.Member.IsStatic)
+                        fieldReference.Member.IsStatic &&
+                        SymbolEqualityComparer.Default.Equals(fieldReference.Member.ContainingType, method.ContainingType))
                     {
                         if (assignment.GetAncestor<IAnonymousFunctionOperation>(OperationKind.AnonymousFunction) != null)
                         {

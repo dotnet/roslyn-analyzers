@@ -370,6 +370,41 @@ public class C2
             }.RunAsync();
         }
 
+        [Fact, WorkItem(5784, "https://github.com/dotnet/roslyn-analyzers/issues/5784")]
+        public async Task CA1810_InitializeMemberOfAnotherClass()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class C1
+{
+    internal static int Size = 0;
+}
+
+public class C2
+{
+    static C2()
+    {
+        C1.Size = 42;
+    }
+}
+");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C1
+    Friend Shared Size As Integer = 0
+End Class
+
+Public Class C2
+    Shared Sub New()
+        C1.Size = 42
+    End Sub
+End Class
+");
+        }
+
         #endregion
 
         #region Unit tests for analyzer diagnostic(s)

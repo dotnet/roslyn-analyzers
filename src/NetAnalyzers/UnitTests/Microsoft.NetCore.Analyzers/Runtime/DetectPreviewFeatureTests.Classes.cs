@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpDetectPreviewFeatureAnalyzer,
@@ -164,7 +165,7 @@ namespace Preview_Feature_Scratch
             await test.RunAsync();
         }
 
-        [Fact]
+        [Fact, WorkItem(5802, "https://github.com/dotnet/roslyn-analyzers/issues/5802")]
         public async Task TestPartialClassWithFirstDeclarationNotHavingBaseTypes()
         {
             var test = TestCS(@"

@@ -2160,6 +2160,18 @@ Providing a functional 'DynamicInterfaceCastableImplementationAttribute'-attribu
 |CodeFix|False|
 ---
 
+## [CA2259](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259): Possible missing interpolation token
+
+This string literal uses composite formatting but is not an interpolated string. Did you miss the '$' prefix?
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA2300](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2300): Do not use insecure deserializer BinaryFormatter
 
 The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rule CA2300, and enable rules CA2301 and CA2302.

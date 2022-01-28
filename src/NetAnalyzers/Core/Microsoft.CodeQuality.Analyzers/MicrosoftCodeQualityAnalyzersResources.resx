@@ -1311,6 +1311,15 @@
   <data name="OperatorOverloadsHaveNamedAlternatesCodeFixTitle" xml:space="preserve">
     <value>Add operator overload named alternate</value>
   </data>
+  <data name="AddMissingInterpolationTokenMessage" xml:space="preserve">
+    <value>This string literal uses composite formatting but is not an interpolated string. Did you miss the '$' prefix?</value>
+  </data>
+  <data name="AddMissingInterpolationTokenTitle" xml:space="preserve">
+    <value>Possible missing interpolation token</value>
+  </data>
+  <data name="AddMissingInterpolationTokenCodeFixTitle" xml:space="preserve">
+    <value>Add missing interpolation token</value>
+  </data>
   <data name="CollectionsShouldImplementGenericInterfaceMultipleMessage" xml:space="preserve">
     <value>Type '{0}' directly or indirectly inherits '{1}' without implementing any of '{2}'. Publicly-visible types should implement the generic version to broaden usability.</value>
   </data>

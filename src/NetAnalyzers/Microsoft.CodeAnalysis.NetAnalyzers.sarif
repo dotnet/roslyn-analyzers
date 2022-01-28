@@ -323,6 +323,25 @@
             ]
           }
         },
+        "CA2259": {
+          "id": "CA2259",
+          "shortDescription": "Possible missing interpolation token",
+          "fullDescription": "This string literal uses composite formatting but is not an interpolated string. Did you miss the '$' prefix?",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpAddMissingInterpolationToken",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2352": {
           "id": "CA2352",
           "shortDescription": "Unsafe DataSet or DataTable in serializable type can be vulnerable to remote code execution attacks",
@@ -5889,6 +5908,25 @@
             "category": "Usage",
             "isEnabledByDefault": true,
             "typeName": "BasicDetectPreviewFeatureAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2259": {
+          "id": "CA2259",
+          "shortDescription": "Possible missing interpolation token",
+          "fullDescription": "This string literal uses composite formatting but is not an interpolated string. Did you miss the '$' prefix?",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "BasicAddMissingInterpolationToken",
             "languages": [
               "Visual Basic"
             ],

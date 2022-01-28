@@ -10,9 +10,9 @@ Roslyn is the compiler platform for .NET. It consists of the compiler itself and
 
 ## What are Roslyn Analyzers?
 
-Roslyn analyzers analyze your code for style, quality and maintainability, design and other issues. The documentation for Roslyn Analyzers can be found at [docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules).
+Roslyn analyzers analyze your code for style, quality and maintainability, design and other issues. The documentation for Roslyn Analyzers can be found at [docs.microsoft.com/dotnet/fundamentals/code-analysis/overview](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/overview).
 
-Microsoft created a set of analyzers called [Microsoft.CodeAnalysis.NetAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers) that contains the most important "FxCop" rules from static code analysis, converted to Roslyn analyzers, in addition to more analyzers. These analyzers check your code for security, performance, and design issues, among others. The documentation for .NET analyzers can be found at [https://docs.microsoft.com/dotnet/fundamentals/code-analysis/overview](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/overview#code-quality-analysis).
+Microsoft created a set of analyzers called [Microsoft.CodeAnalysis.NetAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers) that contains the most important "FxCop" rules from static code analysis, converted to Roslyn analyzers, in addition to more analyzers. These analyzers check your code for security, performance, and design issues, among others. The documentation for .NET analyzers can be found [here](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/overview#code-quality-analysis).
 
 ## Main analyzers
 

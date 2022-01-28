@@ -44,7 +44,7 @@
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
-    <MicrosoftCodeAnalysisVersionForTests>4.0.1</MicrosoftCodeAnalysisVersionForTests>
+    <MicrosoftCodeAnalysisVersionForTests>4.1.0-3.22075.3</MicrosoftCodeAnalysisVersionForTests>
     <DogfoodAnalyzersVersion>3.3.3</DogfoodAnalyzersVersion>
     <DogfoodNetAnalyzersVersion>5.0.4-preview1.21126.5</DogfoodNetAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>

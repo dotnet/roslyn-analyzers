@@ -24,8 +24,8 @@ jobs:
         _configuration: Release
         _codeCoverage: False
   pool:
-    name: NetCorePublic-Pool
-    queue: BuildPool.Windows.10.Amd64.VS2019.Pre.Open
+    name: NetCore1ESPool-Svc-Public
+    demands: ImageOverride -equals Build.Windows.10.Amd64.VS2019.Pre.Open
   timeoutInMinutes: 40
 
   steps:
@@ -56,8 +56,8 @@ jobs:
   strategy:
     maxParallel: 4
   pool:
-    name: NetCorePublic-Pool
-    queue: BuildPool.Windows.Amd64.VS2019.Pre.ES.Open
+    name: NetCore1ESPool-Svc-Public
+    demands: ImageOverride -equals Build.Windows.Amd64.VS2019.Pre.ES.Open
   timeoutInMinutes: 40
 
   steps:

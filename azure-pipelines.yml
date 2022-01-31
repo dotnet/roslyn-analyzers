@@ -31,7 +31,19 @@ jobs:
   steps:
     - checkout: self
       clean: true
-    - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine /p:Coverage=$(_codeCoverage)
+    - task: PowerShell@2
+      displayName: Download procdump
+      enabled: false
+      inputs:
+        targetType: inline
+        script: |
+          mkdir $env:Agent_TempDirectory\procdump
+          Invoke-WebRequest -Uri https://download.sysinternals.com/files/Procdump.zip -UseBasicParsing -OutFile $env:Agent_TempDirectory\procdump\Procdump.zip | Out-Null
+          Expand-Archive -Path $env:Agent_TempDirectory\procdump\Procdump.zip $env:Agent_TempDirectory\procdump\
+          set PROCDUMP_PATH=$env:Agent_TempDirectory\procdump\
+          Write-Host ##vso[task.setvariable variable=PATH;]${env:Agent_TempDirectory}\procdump;${env:PATH};
+
+    - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine /p:Coverage=$(_codeCoverage) /p:TestRunnerAdditionalArguments="--blame --blame-hang-dump-type full --blame-hang-timeout 10min --blame-crash-dump-type full --blame-crash-collect-always"
       displayName: Build and Test
 
     - task: PublishTestResults@2

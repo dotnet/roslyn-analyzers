@@ -48,8 +48,8 @@ jobs:
 
     - task: PublishTestResults@2
       inputs:
-        testRunner: XUnit
-        testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)\*.xml'
+        testRunner: VSTest
+        testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)\*.trx'
         mergeTestResults: true
         testRunTitle: 'Windows $(_configuration)'
       condition: always()
@@ -75,13 +75,24 @@ jobs:
   steps:
     - checkout: self
       clean: true
+    - task: PowerShell@2
+      displayName: Download procdump
+      enabled: true
+      inputs:
+        targetType: inline
+        script: |
+          mkdir $env:Agent_TempDirectory\procdump
+          Invoke-WebRequest -Uri https://download.sysinternals.com/files/Procdump.zip -UseBasicParsing -OutFile $env:Agent_TempDirectory\procdump\Procdump.zip | Out-Null
+          Expand-Archive -Path $env:Agent_TempDirectory\procdump\Procdump.zip $env:Agent_TempDirectory\procdump\
+          set PROCDUMP_PATH=$env:Agent_TempDirectory\procdump\
+          Write-Host ##vso[task.setvariable variable=PATH;]${env:Agent_TempDirectory}\procdump;${env:PATH};
     - script: eng\common\cibuild.cmd -prepareMachine
       displayName: Build and Test
 
     - task: PublishTestResults@2
       inputs:
-        testRunner: XUnit
-        testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\Debug\*.xml'
+        testRunner: VSTest
+        testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\Debug\*.trx'
         mergeTestResults: true
         testRunTitle: 'Windows Desktop Spanish'
       condition: always()
@@ -113,8 +124,8 @@ jobs:
 
     - task: PublishTestResults@2
       inputs:
-        testRunner: XUnit
-        testResultsFiles: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_configuration)/*.xml'
+        testRunner: VSTest
+        testResultsFiles: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_configuration)/*.trx'
         mergeTestResults: true
         testRunTitle: 'Ubuntu $(_configuration)'
       condition: always()

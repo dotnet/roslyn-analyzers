@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -12,9 +12,12 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     public class DoNotUseInsecureDeserializerBinaryFormatterMethodsTests
     {
         [Fact]
-        public async Task UnsafeDeserialize_Diagnostic()
+        public async Task UnsafeDeserialize_DiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = @"
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -29,13 +32,20 @@ namespace Blah
         }
     }
 }",
-                GetCSharpResultAt(12, 20, "object BinaryFormatter.UnsafeDeserialize(Stream serializationStream, HeaderHandler handler)"));
+                ExpectedDiagnostics =
+                {
+                    GetCSharpResultAt(12, 20, "object BinaryFormatter.UnsafeDeserialize(Stream serializationStream, HeaderHandler handler)"),
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public async Task UnsafeDeserializeMethodResponse_Diagnostic()
+        public async Task UnsafeDeserializeMethodResponse_DiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = @"
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -50,11 +60,15 @@ namespace Blah
         }
     }
 }",
-                GetCSharpResultAt(12, 20, "object BinaryFormatter.UnsafeDeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage)"));
+                ExpectedDiagnostics =
+                {
+                    GetCSharpResultAt(12, 20, "object BinaryFormatter.UnsafeDeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage)"),
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public async Task Deserialize_Diagnostic()
+        public async Task Deserialize_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -75,9 +89,12 @@ namespace Blah
         }
 
         [Fact]
-        public async Task Deserialize_HeaderHandler_Diagnostic()
+        public async Task Deserialize_HeaderHandler_DiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = @"
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -92,13 +109,20 @@ namespace Blah
         }
     }
 }",
-                GetCSharpResultAt(12, 20, "object BinaryFormatter.Deserialize(Stream serializationStream, HeaderHandler handler)"));
+                ExpectedDiagnostics =
+                {
+                    GetCSharpResultAt(12, 20, "object BinaryFormatter.Deserialize(Stream serializationStream, HeaderHandler handler)"),
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public async Task DeserializeMethodResponse_Diagnostic()
+        public async Task DeserializeMethodResponse_DiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = @"
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -113,11 +137,15 @@ namespace Blah
         }
     }
 }",
-                GetCSharpResultAt(12, 20, "object BinaryFormatter.DeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage)"));
+                ExpectedDiagnostics =
+                {
+                    GetCSharpResultAt(12, 20, "object BinaryFormatter.DeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage)"),
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public async Task Deserialize_Reference_Diagnostic()
+        public async Task Deserialize_Reference_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -139,7 +167,7 @@ namespace Blah
         }
 
         [Fact]
-        public async Task Serialize_NoDiagnostic()
+        public async Task Serialize_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -161,7 +189,7 @@ namespace Blah
         }
 
         [Fact]
-        public async Task Serialize_Reference_NoDiagnostic()
+        public async Task Serialize_Reference_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -182,8 +210,10 @@ namespace Blah
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(DoNotUseInsecureDeserializerBinaryFormatterMethods.RealMethodUsedDescriptor)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
     }
 }

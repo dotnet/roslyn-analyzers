@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -14,8 +14,14 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class DoNotCallDangerousMethodsInDeserializationTests
     {
+#if NETCOREAPP
+        private const string NullableSuffixOnNetCoreApp = "?";
+#else
+        private const string NullableSuffixOnNetCoreApp = "";
+#endif
+
         [Fact]
-        public async Task TestOnDeserializingDiagnostic()
+        public async Task TestOnDeserializingDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -69,7 +75,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializedDiagnostic()
+        public async Task TestOnDeserializedDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -123,7 +129,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnMultiAttributesDiagnostic()
+        public async Task TestOnMultiAttributesDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -179,7 +185,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializedMediateInvocationDiagnostic()
+        public async Task TestOnDeserializedMediateInvocationDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -262,7 +268,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializedMultiMediateInvocationsDiagnostic()
+        public async Task TestOnDeserializedMultiMediateInvocationsDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -340,7 +346,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationImplicitlyDiagnostic()
+        public async Task TestOnDeserializationImplicitlyDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -371,7 +377,7 @@ public class TestClass : IDeserializationCallback
         }
 
         [Fact]
-        public async Task TestOnDeserializationWriteAllBytesDiagnostic()
+        public async Task TestOnDeserializationWriteAllBytesDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -427,7 +433,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationWriteAllLinesDiagnostic()
+        public async Task TestOnDeserializationWriteAllLinesDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -486,7 +492,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationWriteAllTextDiagnostic()
+        public async Task TestOnDeserializationWriteAllTextDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -545,7 +551,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationCopyDiagnostic()
+        public async Task TestOnDeserializationCopyDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -604,7 +610,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationMoveDiagnostic()
+        public async Task TestOnDeserializationMoveDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -664,7 +670,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationAppendAllLinesDiagnostic()
+        public async Task TestOnDeserializationAppendAllLinesDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -722,7 +728,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationAppendAllTextDiagnostic()
+        public async Task TestOnDeserializationAppendAllTextDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -780,7 +786,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationAppendTextDiagnostic()
+        public async Task TestOnDeserializationAppendTextDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -836,7 +842,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationDeleteDiagnostic()
+        public async Task TestOnDeserializationDeleteDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -892,7 +898,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationDeleteOfDirectoryDiagnostic()
+        public async Task TestOnDeserializationDeleteOfDirectoryDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -948,7 +954,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationDeleteOfFileInfoDiagnostic()
+        public async Task TestOnDeserializationDeleteOfFileInfoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1002,7 +1008,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationDeleteOfDirectoryInfoDiagnostic()
+        public async Task TestOnDeserializationDeleteOfDirectoryInfoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1056,7 +1062,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationDeleteOfLogStoreDiagnostic()
+        public async Task TestOnDeserializationDeleteOfLogStoreDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1139,7 +1145,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationGetLoadedModulesDiagnostic()
+        public async Task TestOnDeserializationGetLoadedModulesDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1195,7 +1201,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationLoadDiagnostic()
+        public async Task TestOnDeserializationLoadDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1256,7 +1262,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationLoadFileDiagnostic()
+        public async Task TestOnDeserializationLoadFileDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1313,7 +1319,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationLoadFromDiagnostic()
+        public async Task TestOnDeserializationLoadFromDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1370,7 +1376,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationLoadModuleDiagnostic()
+        public async Task TestOnDeserializationLoadModuleDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1398,7 +1404,7 @@ public class TestClass : IDeserializationCallback
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
                 "LoadModule",
-                "void TestClass.OnDeserialization(object sender) -> Module Assembly.LoadModule(string moduleName, byte[] rawModule)"));
+                $"void TestClass.OnDeserialization(object sender) -> Module Assembly.LoadModule(string moduleName, byte[]{NullableSuffixOnNetCoreApp} rawModule)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1431,7 +1437,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationLoadWithPartialNameDiagnostic()
+        public async Task TestOnDeserializationLoadWithPartialNameDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1456,7 +1462,7 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
                 "LoadWithPartialName",
-                "void TestClass.OnDeserialization(object sender) -> Assembly Assembly.LoadWithPartialName(string partialName)"));
+                $"void TestClass.OnDeserialization(object sender) -> Assembly{NullableSuffixOnNetCoreApp} Assembly.LoadWithPartialName(string partialName)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1487,7 +1493,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationReflectionOnlyLoadDiagnostic()
+        public async Task TestOnDeserializationReflectionOnlyLoadDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1543,7 +1549,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationReflectionOnlyLoadFromDiagnostic()
+        public async Task TestOnDeserializationReflectionOnlyLoadFromDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1600,7 +1606,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializationUnsafeLoadFromDiagnostic()
+        public async Task TestOnDeserializationUnsafeLoadFromDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1657,7 +1663,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestUsingGenericwithTypeSpecifiedDiagnostic()
+        public async Task TestUsingGenericwithTypeSpecifiedDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1699,7 +1705,7 @@ public class TestClass : IDeserializationCallback
         }
 
         [Fact]
-        public async Task TestUsingInterfaceDiagnostic()
+        public async Task TestUsingInterfaceDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1744,7 +1750,7 @@ public class TestClass : IDeserializationCallback
         }
 
         [Fact]
-        public async Task TestStaticDelegateFieldDiagnostic()
+        public async Task TestStaticDelegateFieldDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1784,7 +1790,7 @@ public class TestClass : IDeserializationCallback
         }
 
         [Fact]
-        public async Task TestDelegateFieldDiagnostic()
+        public async Task TestDelegateFieldDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1826,7 +1832,7 @@ public class TestClass : IDeserializationCallback
         }
 
         [Fact]
-        public async Task TestUsingAbstractClassDiagnostic()
+        public async Task TestUsingAbstractClassDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1871,7 +1877,7 @@ public class TestClass : IDeserializationCallback
         }
 
         [Fact]
-        public async Task TestFinalizeDiagnostic()
+        public async Task TestFinalizeDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1923,7 +1929,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestDisposeDiagnostic()
+        public async Task TestDisposeDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2027,7 +2033,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestFinalizeWhenSubClassWithSerializableDiagnostic()
+        public async Task TestFinalizeWhenSubClassWithSerializableDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2098,7 +2104,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task TestOnDeserializingNoDiagnostic()
+        public async Task TestOnDeserializingNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2143,7 +2149,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestOnDeserializedNoDiagnostic()
+        public async Task TestOnDeserializedNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2188,7 +2194,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestOnDeserializationNoDiagnostic()
+        public async Task TestOnDeserializationNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2233,7 +2239,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestOnDeserializingWithoutSerializableNoDiagnostic()
+        public async Task TestOnDeserializingWithoutSerializableNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2271,7 +2277,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestOnDeserializationWithoutSerializableNoDiagnostic()
+        public async Task TestOnDeserializationWithoutSerializableNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2308,7 +2314,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestOnDeserializationWithoutIDeserializationCallbackNoDiagnostic()
+        public async Task TestOnDeserializationWithoutIDeserializationCallbackNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2329,7 +2335,7 @@ public class TestClass
         }
 
         [Fact]
-        public async Task TestOnDeserializedWithEmptyMethodBodyNoDiagnostic()
+        public async Task TestOnDeserializedWithEmptyMethodBodyNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2364,7 +2370,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestWithoutOnDeserializingAttributesNoDiagnostic()
+        public async Task TestWithoutOnDeserializingAttributesNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2402,7 +2408,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestOnSerializedNoDiagnostic()
+        public async Task TestOnSerializedNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2441,7 +2447,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestFinalizeNoDiagnostic()
+        public async Task TestFinalizeNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2486,7 +2492,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestFinalizeWhenSubClassWithoutSerializableNoDiagnostic()
+        public async Task TestFinalizeWhenSubClassWithoutSerializableNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2541,7 +2547,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestDisposeNoDiagnostic()
+        public async Task TestDisposeNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2619,7 +2625,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestDisposeWithoutSerializableNoDiagnostic()
+        public async Task TestDisposeWithoutSerializableNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2688,7 +2694,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestDisposeNotImplementIDisposableNoDiagnostic()
+        public async Task TestDisposeNotImplementIDisposableNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2756,7 +2762,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TestUsingGenericwithTypeSpecifiedNoDiagnostic()
+        public async Task TestUsingGenericwithTypeSpecifiedNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2807,7 +2813,7 @@ public class TestClass : IDisposable
         }
 
         [Fact]
-        public async Task TestUsingInterfaceNoDiagnostic()
+        public async Task TestUsingInterfaceNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2864,7 +2870,7 @@ public class TestClass : IDisposable
         }
 
         [Fact]
-        public async Task TestUsingAbstractClassNoDiagnostic()
+        public async Task TestUsingAbstractClassNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2921,7 +2927,7 @@ public class TestClass : IDisposable
         }
 
         [Fact]
-        public async Task TestLocalFunctionDiagnostic()
+        public async Task TestLocalFunctionDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2955,7 +2961,7 @@ public class TestClass
         }
 
         [Fact]
-        public async Task TestLocalFunctionNoDiagnostic()
+        public async Task TestLocalFunctionNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2980,13 +2986,17 @@ public class TestClass
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
     }
 }

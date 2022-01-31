@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
@@ -9,6 +9,8 @@ using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA1043: Use Integral Or String Argument For Indexers
     /// </summary>
@@ -17,67 +19,90 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA1043";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseIntegralOrStringArgumentForIndexersTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(UseIntegralOrStringArgumentForIndexersTitle)),
+            CreateLocalizableResourceString(nameof(UseIntegralOrStringArgumentForIndexersMessage)),
+            DiagnosticCategory.Design,
+            RuleLevel.CandidateForRemoval,
+            description: CreateLocalizableResourceString(nameof(UseIntegralOrStringArgumentForIndexersDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseIntegralOrStringArgumentForIndexersMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseIntegralOrStringArgumentForIndexersDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        /// <summary>
+        /// PERF: ImmutableArray contains performs better than ImmutableHashSet for small arrays of primitive types.
+        /// See: https://github.com/dotnet/roslyn-analyzers/pull/3648#discussion_r428714894
+        /// </summary>
+        private static readonly ImmutableArray<SpecialType> s_allowedSpecialTypes =
+            ImmutableArray.Create(
+                SpecialType.System_String,
+                SpecialType.System_Int16,
+                SpecialType.System_Int32,
+                SpecialType.System_Int64,
+                SpecialType.System_Object,
+                SpecialType.System_UInt16,
+                SpecialType.System_UInt32,
+                SpecialType.System_UInt64
+            );
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.CandidateForRemoval,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        private static readonly SpecialType[] s_allowedTypes = new[] {
-                        SpecialType.System_String,
-                        SpecialType.System_Int16,
-                        SpecialType.System_Int32,
-                        SpecialType.System_Int64,
-                        SpecialType.System_Object,
-                        SpecialType.System_UInt16,
-                        SpecialType.System_UInt32,
-                        SpecialType.System_UInt64
-                        };
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property);
+            context.RegisterCompilationStartAction(context =>
+            {
+                var allowedTypes = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+
+                if (context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRange, out var rangeType))
+                {
+                    allowedTypes.Add(rangeType);
+                }
+
+                if (context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIndex, out var indexType))
+                {
+                    allowedTypes.Add(indexType);
+                }
+
+                context.RegisterSymbolAction(context => AnalyzeSymbol(context, allowedTypes.ToImmutableHashSet()), SymbolKind.Property);
+            });
         }
 
-        private void AnalyzeSymbol(SymbolAnalysisContext context)
+        private static void AnalyzeSymbol(SymbolAnalysisContext context, ImmutableHashSet<INamedTypeSymbol> allowedTypes)
         {
             var symbol = (IPropertySymbol)context.Symbol;
-            if (symbol.IsIndexer &&
-                !symbol.IsOverride &&
-                symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
+            if (!symbol.IsIndexer || symbol.IsOverride)
             {
-                if (symbol.GetParameters().Length == 1)
-                {
-                    ITypeSymbol paramType = symbol.GetParameters()[0].Type;
+                return;
+            }
 
-                    if (paramType.TypeKind == TypeKind.TypeParameter)
-                    {
-                        return;
-                    }
+            if (symbol.Parameters.Length != 1)
+            {
+                return;
+            }
 
-                    if (paramType.TypeKind == TypeKind.Enum)
-                    {
-                        paramType = ((INamedTypeSymbol)paramType).EnumUnderlyingType;
-                    }
+            ITypeSymbol paramType = symbol.Parameters[0].Type;
 
-                    if (!s_allowedTypes.Contains(paramType.SpecialType))
-                    {
-                        context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
-                    }
-                }
+            if (paramType.TypeKind == TypeKind.TypeParameter)
+            {
+                return;
+            }
+
+            if (paramType.TypeKind == TypeKind.Enum)
+            {
+                paramType = ((INamedTypeSymbol)paramType).EnumUnderlyingType;
+            }
+
+            if (s_allowedSpecialTypes.Contains(paramType.SpecialType) || allowedTypes.Contains(paramType))
+            {
+                return;
+            }
+
+            if (context.Options.MatchesConfiguredVisibility(Rule, symbol, context.Compilation))
+            {
+                context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
             }
         }
     }

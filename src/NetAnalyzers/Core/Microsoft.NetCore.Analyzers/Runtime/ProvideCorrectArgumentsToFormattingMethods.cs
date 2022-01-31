@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,8 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
     /// CA2241: Provide correct arguments to formatting methods
     /// </summary>
@@ -20,28 +22,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA2241";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(ProvideCorrectArgumentsToFormattingMethodsTitle)),
+            CreateLocalizableResourceString(nameof(ProvideCorrectArgumentsToFormattingMethodsMessage)),
+            DiagnosticCategory.Usage,
+            RuleLevel.BuildWarningCandidate,
+            description: CreateLocalizableResourceString(nameof(ProvideCorrectArgumentsToFormattingMethodsDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.BuildWarning,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(compilationContext =>
             {
                 var formatInfo = new StringFormatInfo(compilationContext.Compilation);
 
@@ -57,7 +55,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     IArgumentOperation formatStringArgument = invocation.Arguments[info.FormatStringIndex];
-                    if (!object.Equals(formatStringArgument?.Value?.Type, formatInfo.String) ||
+                    if (!Equals(formatStringArgument?.Value?.Type, formatInfo.String) ||
                         !(formatStringArgument?.Value?.ConstantValue.Value is string))
                     {
                         // wrong argument
@@ -67,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var stringFormat = (string)formatStringArgument.Value.ConstantValue.Value;
                     int expectedStringFormatArgumentCount = GetFormattingArguments(stringFormat);
 
-                    // explict parameter case
+                    // explicit parameter case
                     if (info.ExpectedStringFormatArgumentCount >= 0)
                     {
                         // __arglist is not supported here
@@ -95,7 +93,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (paramsArgument.Value is not IArrayCreationOperation arrayCreation ||
                         arrayCreation.GetElementType() is not ITypeSymbol elementType ||
-                        !object.Equals(elementType, formatInfo.Object) ||
+                        !Equals(elementType, formatInfo.Object) ||
                         arrayCreation.DimensionSizes.Length != 1)
                     {
                         // wrong format
@@ -261,7 +259,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     pos++;
                 }
 
-                // searching for embeded format string
+                // searching for embedded format string
                 if (ch == ':')
                 {
                     pos++;
@@ -348,9 +346,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // Check if this the underlying method is user configured string formatting method.
-                var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(Rule, context.Compilation, context.CancellationToken);
+                var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(Rule, context.Operation.Syntax.SyntaxTree, context.Compilation);
                 if (additionalStringFormatMethodsOption.Contains(method.OriginalDefinition) &&
                     TryGetFormatInfo(method, out info))
+                {
+                    return info;
+                }
+
+                // Check if the user configured automatic determination of formatting methods.
+                // If so, check if the method called has a 'string format' parameter followed by an params array.
+                var determineAdditionalStringFormattingMethodsAutomatically = context.Options.GetBoolOptionValue(EditorConfigOptionNames.TryDetermineAdditionalStringFormattingMethodsAutomatically,
+                        Rule, context.Operation.Syntax.SyntaxTree, context.Compilation, defaultValue: false);
+                if (determineAdditionalStringFormattingMethodsAutomatically &&
+                    TryGetFormatInfo(method, out info) &&
+                    info.ExpectedStringFormatArgumentCount == -1)
                 {
                     return info;
                 }
@@ -380,6 +389,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 int formatIndex = FindParameterIndexOfName(method.Parameters, Format);
                 if (formatIndex < 0 || formatIndex == method.Parameters.Length - 1)
+                {
+                    // no valid format string
+                    return false;
+                }
+
+                if (method.Parameters[formatIndex].Type.SpecialType != SpecialType.System_String)
                 {
                     // no valid format string
                     return false;

@@ -1,17 +1,18 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Editing;
-using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Editing;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -21,7 +22,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class InterfaceMethodsShouldBeCallableByChildTypesFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(InterfaceMethodsShouldBeCallableByChildTypesAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(InterfaceMethodsShouldBeCallableByChildTypesAnalyzer.RuleId);
 
         public override FixAllProvider GetFixAllProvider()
         {
@@ -71,10 +72,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (symbolToChange != null)
                 {
-                    string title = string.Format(MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix1, symbolToChange.Name);
+                    string title = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix1, symbolToChange.Name);
 
                     context.RegisterCodeFix(new MyCodeAction(title,
-                         async ct => await MakeProtected(context.Document, symbolToChange, checkSetter, ct).ConfigureAwait(false),
+                         async ct => await MakeProtectedAsync(context.Document, symbolToChange, checkSetter, ct).ConfigureAwait(false),
                          equivalenceKey: MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix1),
                     context.Diagnostics);
                 }
@@ -84,17 +85,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 ISymbol symbolToChange = methodSymbol.IsAccessorMethod() ? methodSymbol.AssociatedSymbol : methodSymbol;
                 if (symbolToChange != null)
                 {
-                    string title = string.Format(MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix2, symbolToChange.Name);
+                    string title = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix2, symbolToChange.Name);
 
                     context.RegisterCodeFix(new MyCodeAction(title,
-                         async ct => await ChangeToPublicInterfaceImplementation(context.Document, symbolToChange, ct).ConfigureAwait(false),
+                         async ct => await ChangeToPublicInterfaceImplementationAsync(context.Document, symbolToChange, ct).ConfigureAwait(false),
                          equivalenceKey: MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix2),
                     context.Diagnostics);
                 }
             }
 
-            context.RegisterCodeFix(new MyCodeAction(string.Format(MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix3, methodSymbol.ContainingType.Name),
-                     async ct => await MakeContainingTypeSealed(context.Document, methodSymbol, ct).ConfigureAwait(false),
+            context.RegisterCodeFix(new MyCodeAction(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix3, methodSymbol.ContainingType.Name),
+                     async ct => await MakeContainingTypeSealedAsync(context.Document, methodSymbol, ct).ConfigureAwait(false),
                          equivalenceKey: MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix3),
                 context.Diagnostics);
         }
@@ -116,7 +117,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return null;
         }
 
-        private static async Task<Document> MakeProtected(Document document, ISymbol symbolToChange, bool checkSetter, CancellationToken cancellationToken)
+        private static async Task<Document> MakeProtectedAsync(Document document, ISymbol symbolToChange, bool checkSetter, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
 
@@ -153,7 +154,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return editor.GetChangedDocuments().First();
         }
 
-        private static async Task<Document> ChangeToPublicInterfaceImplementation(Document document, ISymbol symbolToChange, CancellationToken cancellationToken)
+        private static async Task<Document> ChangeToPublicInterfaceImplementationAsync(Document document, ISymbol symbolToChange, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
 
@@ -197,7 +198,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             };
         }
 
-        private static async Task<Document> MakeContainingTypeSealed(Document document, IMethodSymbol methodSymbol, CancellationToken cancellationToken)
+        private static async Task<Document> MakeContainingTypeSealedAsync(Document document, IMethodSymbol methodSymbol, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
 

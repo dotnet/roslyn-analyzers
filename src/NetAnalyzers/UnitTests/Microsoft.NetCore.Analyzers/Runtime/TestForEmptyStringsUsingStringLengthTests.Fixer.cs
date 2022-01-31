@@ -1,6 +1,7 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.TestForEmptyStringsUsingStringLengthAnalyzer,
@@ -14,8 +15,134 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class TestForEmptyStringsUsingStringLengthFixerTests
     {
         private const int c_StringLengthCodeActionIndex = 1;
+
+        [Fact, WorkItem(3686, "https://github.com/dotnet/roslyn-analyzers/pull/3686")]
+        public async Task CA1820_FixTestEmptyStringsUsingIsNullOrEmpty_WhenStringIsLiteralAsync()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+public class A
+{
+    public bool Compare(string s)
+    {
+        return [|s == """"|];
+    }
+
+    public bool CompareEmptyIsLeft(string s)
+    {
+        return [|"""" == s|];
+    }
+}
+", @"
+public class A
+{
+    public bool Compare(string s)
+    {
+        return string.IsNullOrEmpty(s);
+    }
+
+    public bool CompareEmptyIsLeft(string s)
+    {
+        return string.IsNullOrEmpty(s);
+    }
+}
+");
+            await VerifyVB.VerifyCodeFixAsync(@"
+Public Class A
+    Public Function Compare(s As String) As Boolean
+        Return [|s = """"|]
+    End Function
+
+    Public Function CompareEmptyIsLeft(s As String) As Boolean
+        Return [|"""" = s|]
+    End Function
+End Class
+", @"
+Public Class A
+    Public Function Compare(s As String) As Boolean
+        Return String.IsNullOrEmpty(s)
+    End Function
+
+    Public Function CompareEmptyIsLeft(s As String) As Boolean
+        Return String.IsNullOrEmpty(s)
+    End Function
+End Class
+");
+        }
+
         [Fact]
-        public async Task CA1820_FixTestEmptyStringsUsingIsNullOrEmpty()
+        public async Task CA1820_FixTestEmptyStringsUsingStringLength_WhenStringIsLiteralAsync()
+        {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+public class A
+{
+    public bool Compare(string s)
+    {
+        return [|s == """"|];
+    }
+}
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
+public class A
+{
+    public bool Compare(string s)
+    {
+        return s.Length == 0;
+    }
+}
+",
+                    },
+                },
+                CodeActionIndex = c_StringLengthCodeActionIndex,
+                CodeActionEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+Public Class A
+    Public Function Compare(s As String) As Boolean
+        Return [|s = """"|]
+    End Function
+End Class
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
+Public Class A
+    Public Function Compare(s As String) As Boolean
+        Return s.Length = 0
+    End Function
+End Class
+",
+                    },
+                },
+                CodeActionIndex = c_StringLengthCodeActionIndex,
+                CodeActionEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task CA1820_FixTestEmptyStringsUsingIsNullOrEmptyAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -50,7 +177,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1820_FixTestEmptyStringsUsingStringLength()
+        public async Task CA1820_FixTestEmptyStringsUsingStringLengthAsync()
         {
             await new VerifyCS.Test
             {
@@ -84,10 +211,8 @@ public class A
 ",
                     },
                 },
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = c_StringLengthCodeActionIndex,
-                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = c_StringLengthCodeActionIndex,
+                CodeActionEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -118,15 +243,13 @@ End Class
 ",
                     },
                 },
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = c_StringLengthCodeActionIndex,
-                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = c_StringLengthCodeActionIndex,
+                CodeActionEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
             }.RunAsync();
         }
 
         [Fact]
-        public async Task CA1820_FixTestEmptyStringsUsingIsNullOrEmptyComparisonOnRight()
+        public async Task CA1820_FixTestEmptyStringsUsingIsNullOrEmptyComparisonOnRightAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -162,7 +285,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1820_FixTestEmptyStringsUsingStringLengthComparisonOnRight()
+        public async Task CA1820_FixTestEmptyStringsUsingStringLengthComparisonOnRightAsync()
         {
             await new VerifyCS.Test
             {
@@ -196,10 +319,8 @@ public class A
 ",
                     },
                 },
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = c_StringLengthCodeActionIndex,
-                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = c_StringLengthCodeActionIndex,
+                CodeActionEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -230,15 +351,13 @@ End Class
 ",
                     },
                 },
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = c_StringLengthCodeActionIndex,
-                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = c_StringLengthCodeActionIndex,
+                CodeActionEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
             }.RunAsync();
         }
 
         [Fact]
-        public async Task CA1820_FixInequalityTestEmptyStringsUsingIsNullOrEmpty()
+        public async Task CA1820_FixInequalityTestEmptyStringsUsingIsNullOrEmptyAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -273,7 +392,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1820_FixInequalityTestEmptyStringsUsingStringLength()
+        public async Task CA1820_FixInequalityTestEmptyStringsUsingStringLengthAsync()
         {
             await new VerifyCS.Test
             {
@@ -307,10 +426,8 @@ public class A
 ",
                     },
                 },
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = c_StringLengthCodeActionIndex,
-                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = c_StringLengthCodeActionIndex,
+                CodeActionEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -341,15 +458,13 @@ End Class
 ",
                     },
                 },
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = c_StringLengthCodeActionIndex,
-                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = c_StringLengthCodeActionIndex,
+                CodeActionEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
             }.RunAsync();
         }
 
         [Fact]
-        public async Task CA1820_FixInequalityTestEmptyStringsUsingIsNullOrEmptyComparisonOnRight()
+        public async Task CA1820_FixInequalityTestEmptyStringsUsingIsNullOrEmptyComparisonOnRightAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -384,7 +499,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1820_FixInequalityTestEmptyStringsUsingStringLengthComparisonOnRight()
+        public async Task CA1820_FixInequalityTestEmptyStringsUsingStringLengthComparisonOnRightAsync()
         {
             await new VerifyCS.Test
             {
@@ -418,10 +533,8 @@ public class A
 ",
                     },
                 },
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = c_StringLengthCodeActionIndex,
-                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = c_StringLengthCodeActionIndex,
+                CodeActionEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -452,15 +565,13 @@ End Class
 ",
                     },
                 },
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = c_StringLengthCodeActionIndex,
-                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = c_StringLengthCodeActionIndex,
+                CodeActionEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
             }.RunAsync();
         }
 
         [Fact]
-        public async Task CA1820_FixForComparisonWithEmptyStringInFunctionArgument()
+        public async Task CA1820_FixForComparisonWithEmptyStringInFunctionArgumentAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -514,7 +625,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1820_FixForComparisonWithEmptyStringInTernaryOperator()
+        public async Task CA1820_FixForComparisonWithEmptyStringInTernaryOperatorAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -559,7 +670,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1820_FixForComparisonWithEmptyStringInThrowStatement()
+        public async Task CA1820_FixForComparisonWithEmptyStringInThrowStatementAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -585,7 +696,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA1820_FixForComparisonWithEmptyStringInCatchFilterClause()
+        public async Task CA1820_FixForComparisonWithEmptyStringInCatchFilterClauseAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -613,7 +724,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA1820_FixForComparisonWithEmptyStringInYieldReturnStatement()
+        public async Task CA1820_FixForComparisonWithEmptyStringInYieldReturnStatementAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System.Collections.Generic;
@@ -643,7 +754,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA1820_FixForComparisonWithEmptyStringInSwitchStatement()
+        public async Task CA1820_FixForComparisonWithEmptyStringInSwitchStatementAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -677,7 +788,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA1820_FixForComparisonWithEmptyStringInForLoop()
+        public async Task CA1820_FixForComparisonWithEmptyStringInForLoopAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -709,7 +820,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA1820_FixForComparisonWithEmptyStringInWhileLoop()
+        public async Task CA1820_FixForComparisonWithEmptyStringInWhileLoopAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -739,7 +850,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA1820_FixForComparisonWithEmptyStringInDoWhileLoop()
+        public async Task CA1820_FixForComparisonWithEmptyStringInDoWhileLoopAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -771,7 +882,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA1820_MultilineFixTestEmptyStringsUsingIsNullOrEmpty()
+        public async Task CA1820_MultilineFixTestEmptyStringsUsingIsNullOrEmptyAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class A
@@ -814,7 +925,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1820_MultilineFixTestEmptyStringsUsingStringLength()
+        public async Task CA1820_MultilineFixTestEmptyStringsUsingStringLengthAsync()
         {
             await new VerifyCS.Test
             {
@@ -852,10 +963,8 @@ public class A
 ",
                     },
                 },
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = c_StringLengthCodeActionIndex,
-                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = c_StringLengthCodeActionIndex,
+                CodeActionEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -890,11 +999,115 @@ End Class
 ",
                     },
                 },
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = c_StringLengthCodeActionIndex,
-                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = c_StringLengthCodeActionIndex,
+                CodeActionEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
             }.RunAsync();
+        }
+
+        [Fact]
+        public async Task CA1820_FixTestEmptyStringsUsingStringLength_WhenStringEqualsMethodIsUsedWithStringEmptyAsync()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+public class A
+{
+    public bool Compare(string s)
+    {
+        return [|s.Equals(string.Empty)|];
+    }
+}
+", @"
+public class A
+{
+    public bool Compare(string s)
+    {
+        return string.IsNullOrEmpty(s);
+    }
+}
+");
+            await VerifyVB.VerifyCodeFixAsync(@"
+Public Class A
+    Public Function Compare(s As String) As Boolean
+        Return [|s.Equals(String.Empty)|]
+    End Function
+End Class
+", @"
+Public Class A
+    Public Function Compare(s As String) As Boolean
+        Return String.IsNullOrEmpty(s)
+    End Function
+End Class
+");
+        }
+
+        [Fact]
+        public async Task CA1820_FixTestEmptyStringsUsingStringLength_WhenStringEqualsMethodIsUsedWithEmptyLiteralAsync()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+public class A
+{
+    public bool Compare(string s)
+    {
+        return [|s.Equals("""")|];
+    }
+}
+", @"
+public class A
+{
+    public bool Compare(string s)
+    {
+        return string.IsNullOrEmpty(s);
+    }
+}
+");
+            await VerifyVB.VerifyCodeFixAsync(@"
+Public Class A
+    Public Function Compare(s As String) As Boolean
+        Return [|s.Equals("""")|]
+    End Function
+End Class
+", @"
+Public Class A
+    Public Function Compare(s As String) As Boolean
+        Return String.IsNullOrEmpty(s)
+    End Function
+End Class
+");
+        }
+
+        [Fact]
+        public async Task CA1820_FixTestEmptyStringsUsingStringLength_WhenNotStringEqualsMethodIsUsedAsync()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+public class A
+{
+    public bool Compare(string s)
+    {
+        return ![|s.Equals(string.Empty)|];
+    }
+}
+", @"
+public class A
+{
+    public bool Compare(string s)
+    {
+        return !string.IsNullOrEmpty(s);
+    }
+}
+");
+            await VerifyVB.VerifyCodeFixAsync(@"
+Public Class A
+    Public Function Compare(s As String) As Boolean
+        Return Not [|s.Equals(String.Empty)|]
+    End Function
+End Class
+", @"
+Public Class A
+    Public Function Compare(s As String) As Boolean
+        Return Not String.IsNullOrEmpty(s)
+    End Function
+End Class
+");
         }
     }
 }
+

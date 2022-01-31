@@ -1,8 +1,7 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -11,6 +10,8 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA1806: Do not ignore method results
     /// </summary>
@@ -61,73 +62,92 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 "ThrowsAnyAsync",
             });
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(DoNotIgnoreMethodResultsTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(DoNotIgnoreMethodResultsDescription));
 
-        private static readonly LocalizableString s_localizableMessageObjectCreation = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageObjectCreation), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageStringCreation = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageStringCreation), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageHResultOrErrorCode = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageHResultOrErrorCode), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessagePureMethod = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessagePureMethod), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageTryParse = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor ObjectCreationRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DoNotIgnoreMethodResultsMessageObjectCreation)),
+            DiagnosticCategory.Performance,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor ObjectCreationRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageObjectCreation,
-                                                                             DiagnosticCategory.Performance,
-                                                                             RuleLevel.IdeSuggestion,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor StringCreationRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DoNotIgnoreMethodResultsMessageStringCreation)),
+            DiagnosticCategory.Performance,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor StringCreationRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageStringCreation,
-                                                                             DiagnosticCategory.Performance,
-                                                                             RuleLevel.IdeSuggestion,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor HResultOrErrorCodeRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DoNotIgnoreMethodResultsMessageHResultOrErrorCode)),
+            DiagnosticCategory.Performance,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor HResultOrErrorCodeRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageHResultOrErrorCode,
-                                                                             DiagnosticCategory.Performance,
-                                                                             RuleLevel.IdeSuggestion,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor PureMethodRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DoNotIgnoreMethodResultsMessagePureMethod)),
+            DiagnosticCategory.Performance,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor PureMethodRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessagePureMethod,
-                                                                             DiagnosticCategory.Performance,
-                                                                             RuleLevel.IdeSuggestion,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor TryParseRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DoNotIgnoreMethodResultsMessageTryParse)),
+            DiagnosticCategory.Performance,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
+        internal static readonly DiagnosticDescriptor LinqMethodRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DoNotIgnoreMethodResultsMessageLinqMethod)),
+            DiagnosticCategory.Performance,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor TryParseRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageTryParse,
-                                                                             DiagnosticCategory.Performance,
-                                                                             RuleLevel.IdeSuggestion,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor UserDefinedMethodRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DoNotIgnoreMethodResultsMessageUserDefinedMethod)),
+            DiagnosticCategory.Performance,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ObjectCreationRule, StringCreationRule, HResultOrErrorCodeRule, TryParseRule, PureMethodRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(ObjectCreationRule, StringCreationRule, HResultOrErrorCodeRule, TryParseRule, PureMethodRule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol? expectedExceptionType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingExpectedExceptionAttribute);
                 INamedTypeSymbol? nunitAssertType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkAssert);
                 INamedTypeSymbol? xunitAssertType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.XunitAssert);
+                INamedTypeSymbol? linqEnumerableType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable);
 
                 compilationContext.RegisterOperationBlockStartAction(osContext =>
                 {
@@ -139,8 +159,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     osContext.RegisterOperationAction(opContext =>
                     {
                         IOperation expression = ((IExpressionStatementOperation)opContext.Operation).Operation;
+
+                        var userDefinedMethods = compilationContext.Options.GetAdditionalUseResultsMethodsOption(UserDefinedMethodRule, expression.Syntax.SyntaxTree, compilationContext.Compilation);
+
                         DiagnosticDescriptor? rule = null;
-                        string? targetMethodName = null;
+                        string targetMethodName = "";
                         switch (expression.Kind)
                         {
                             case OperationKind.ObjectCreation:
@@ -155,7 +178,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             case OperationKind.Invocation:
                                 IInvocationOperation invocationExpression = (IInvocationOperation)expression;
                                 IMethodSymbol targetMethod = invocationExpression.TargetMethod;
-                                if (targetMethod == null)
+                                if (targetMethod.ReturnsVoid)
                                 {
                                     break;
                                 }
@@ -176,6 +199,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                 {
                                     rule = PureMethodRule;
                                 }
+                                else if (targetMethod.ContainingType.Equals(linqEnumerableType))
+                                {
+                                    rule = LinqMethodRule;
+                                }
+                                else if (userDefinedMethods.Contains(targetMethod.OriginalDefinition))
+                                {
+                                    rule = UserDefinedMethodRule;
+                                }
 
                                 targetMethodName = targetMethod.Name;
                                 break;
@@ -188,7 +219,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                 return;
                             }
 
-                            Diagnostic diagnostic = Diagnostic.Create(rule, expression.Syntax.GetLocation(), method.Name, targetMethodName);
+                            Diagnostic diagnostic = expression.CreateDiagnostic(rule, method.Name, targetMethodName);
                             opContext.ReportDiagnostic(diagnostic);
                         }
                     }, OperationKind.ExpressionStatement);
@@ -275,7 +306,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 IMethodSymbol methodSymbol = (IMethodSymbol)operationContext.ContainingSymbol;
 
-                return methodSymbol.GetAttributes().Any(attr => Equals(attr.AttributeClass, expectedExceptionType));
+                return methodSymbol.HasAttribute(expectedExceptionType);
             }
             else
             {
@@ -314,7 +345,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         private static bool IsPureMethod(IMethodSymbol method, Compilation compilation)
         {
-            return method.GetAttributes().Any(attr => attr.AttributeClass.Equals(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsContractsPureAttribute)));
+            return method.HasAttribute(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsContractsPureAttribute));
         }
     }
 }

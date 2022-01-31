@@ -1,7 +1,8 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -11,32 +12,22 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseRSAWithSufficientKeySize : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5385";
-        private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.UseRSAWithSufficientKeySize),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.UseRSAWithSufficientKeySizeMessage),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.UseRSAWithSufficientKeySizeDescription),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
-                DiagnosticId,
-                s_Title,
-                s_Message,
-                DiagnosticCategory.Security,
-                RuleLevel.BuildWarning,
-                description: s_Description,
-                isPortedFxCopRule: false,
-                isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            DiagnosticId,
+            CreateLocalizableResourceString(nameof(UseRSAWithSufficientKeySize)),
+            CreateLocalizableResourceString(nameof(UseRSAWithSufficientKeySizeMessage)),
+            DiagnosticCategory.Security,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: CreateLocalizableResourceString(nameof(UseRSAWithSufficientKeySizeDescription)),
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
 
         private static readonly ImmutableHashSet<string> s_RSAAlgorithmNames =
             ImmutableHashSet.Create(
@@ -45,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 "System.Security.Cryptography.RSA",
                 "System.Security.Cryptography.AsymmetricAlgorithm");
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -94,7 +85,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         if (arguments.Length == 1 &&
                             arguments[0].Parameter.Type.SpecialType == SpecialType.System_Int32 &&
                             arguments[0].Value.ConstantValue.HasValue &&
-                            Convert.ToInt32(arguments[0].Value.ConstantValue.Value) < 2048)
+                            Convert.ToInt32(arguments[0].Value.ConstantValue.Value, CultureInfo.InvariantCulture) < 2048)
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 objectCreationOperation.CreateDiagnostic(
@@ -163,7 +154,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 arrayCreationOperation.Initializer.ElementValues.Any(
                                     s => s is IConversionOperation conversionOperation &&
                                         conversionOperation.Operand.ConstantValue.HasValue &&
-                                        Convert.ToInt32(conversionOperation.Operand.ConstantValue.Value) < 2048) /* Specify the key size is smaller than 2048 explicitly */ )
+                                        Convert.ToInt32(conversionOperation.Operand.ConstantValue.Value, CultureInfo.InvariantCulture) < 2048) /* Specify the key size is smaller than 2048 explicitly */ )
                             {
                                 operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(

@@ -1,13 +1,15 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA1056: Uri properties should not be strings
     /// </summary>
@@ -16,53 +18,46 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA1056";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UriPropertiesShouldNotBeStringsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(UriPropertiesShouldNotBeStringsTitle)),
+            CreateLocalizableResourceString(nameof(UriPropertiesShouldNotBeStringsMessage)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: CreateLocalizableResourceString(nameof(UriPropertiesShouldNotBeStringsDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UriPropertiesShouldNotBeStringsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UriPropertiesShouldNotBeStringsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
             // this is stateless analyzer, can run concurrently
-            analysisContext.EnableConcurrentExecution();
+            context.EnableConcurrentExecution();
 
             // this has no meaning on running on generated code which user can't control
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(c =>
+            context.RegisterCompilationStartAction(c =>
             {
-                var @string = c.Compilation.GetSpecialType(SpecialType.System_String);
                 var attribute = c.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
-                if (@string == null || attribute == null)
+                if (attribute == null)
                 {
                     // we don't have required types
                     return;
                 }
 
-                var analyzer = new PerCompilationAnalyzer(@string, attribute);
+                var analyzer = new PerCompilationAnalyzer(attribute);
                 c.RegisterSymbolAction(analyzer.Analyze, SymbolKind.Property);
             });
         }
 
         private class PerCompilationAnalyzer
         {
-            private readonly INamedTypeSymbol _string;
             private readonly INamedTypeSymbol _attribute;
 
-            public PerCompilationAnalyzer(INamedTypeSymbol @string, INamedTypeSymbol attribute)
+            public PerCompilationAnalyzer(INamedTypeSymbol attribute)
             {
-                _string = @string;
                 _attribute = attribute;
             }
 
@@ -71,7 +66,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var property = (IPropertySymbol)context.Symbol;
 
                 // check basic stuff that FxCop checks.
-                if (property.IsOverride || property.IsFromMscorlib(context.Compilation))
+                if (property.IsOverride || property.IsFromMscorlib(context.Compilation) || property.IsImplementationOfAnyInterfaceMember())
                 {
                     // Methods defined within mscorlib are excluded from this rule,
                     // since mscorlib cannot depend on System.Uri, which is defined
@@ -79,13 +74,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                if (!property.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
+                if (!context.Options.MatchesConfiguredVisibility(Rule, property, context.Compilation))
                 {
                     // only apply to methods that are exposed outside by default
                     return;
                 }
 
-                if (property.Type?.Equals(_string) != true)
+                if (property.Type?.SpecialType != SpecialType.System_String)
                 {
                     // not expected type
                     return;
@@ -99,7 +94,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (!property.SymbolNameContainsUriWords(context.CancellationToken))
                 {
-                    // property name doesnt contain uri word
+                    // property name doesn't contain uri word
                     return;
                 }
 

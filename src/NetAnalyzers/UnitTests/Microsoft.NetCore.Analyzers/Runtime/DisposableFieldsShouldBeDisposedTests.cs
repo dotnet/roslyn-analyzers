@@ -1,32 +1,42 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
-using Test.Utilities.MinimalImplementations;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.DisposableFieldsShouldBeDisposed,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.DisposableFieldsShouldBeDisposed,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.DisposeAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
-    public partial class DisposableFieldsShouldBeDisposedTests : DiagnosticAnalyzerTestBase
+    public class DisposableFieldsShouldBeDisposedTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer() => new DisposableFieldsShouldBeDisposed();
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new DisposableFieldsShouldBeDisposed();
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
+           => VerifyCS.Diagnostic()
+               .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
+               .WithArguments(arguments);
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, string containingType, string field, string fieldType) =>
-            GetCSharpResultAt(line, column, DisposableFieldsShouldBeDisposed.Rule, containingType, field, fieldType);
-
-        private DiagnosticResult GetBasicResultAt(int line, int column, string containingType, string field, string fieldType) =>
-            GetBasicResultAt(line, column, DisposableFieldsShouldBeDisposed.Rule, containingType, field, fieldType);
+        private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
+                .WithArguments(arguments);
 
         [Fact]
-        public void DisposableAllocationInConstructor_AssignedDirectly_Disposed_NoDiagnostic()
+        public async Task DisposableAllocationInConstructor_AssignedDirectly_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -51,7 +61,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -75,9 +85,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocationInConstructor_AssignedDirectly_NotDisposed_Diagnostic()
+        public async Task DisposableAllocationInConstructor_AssignedDirectly_NotDisposed_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -103,7 +113,7 @@ class B : IDisposable
             // Test0.cs(13,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
             GetCSharpResultAt(13, 24, "B", "a", "A"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -128,9 +138,9 @@ End Class",
         }
 
         [Fact]
-        public void DisposableAllocationInMethod_AssignedDirectly_Disposed_NoDiagnostic()
+        public async Task DisposableAllocationInMethod_AssignedDirectly_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -155,7 +165,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -179,9 +189,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocationInMethod_AssignedDirectly_NotDisposed_Diagnostic()
+        public async Task DisposableAllocationInMethod_AssignedDirectly_NotDisposed_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -207,7 +217,7 @@ class B : IDisposable
             // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
             GetCSharpResultAt(13, 15, "B", "a", "A"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -232,9 +242,9 @@ End Class",
         }
 
         [Fact]
-        public void DisposableAllocationInFieldInitializer_AssignedDirectly_Disposed_NoDiagnostic()
+        public async Task DisposableAllocationInFieldInitializer_AssignedDirectly_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -257,7 +267,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -280,9 +290,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocationInFieldInitializer_AssignedDirectly_NotDisposed_Diagnostic()
+        public async Task DisposableAllocationInFieldInitializer_AssignedDirectly_NotDisposed_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -307,7 +317,7 @@ class B : IDisposable
             // Test0.cs(14,24): warning CA2213: 'B' contains field 'a2' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
             GetCSharpResultAt(14, 24, "B", "a2", "A"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -332,9 +342,9 @@ End Class",
         }
 
         [Fact]
-        public void StaticField_NotDisposed_NoDiagnostic()
+        public async Task StaticField_NotDisposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -355,7 +365,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -376,9 +386,15 @@ End Class");
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public void AsyncDisposableAllocationInConstructor_AssignedDirectly_Disposed_NoDiagnostic()
+        public async Task AsyncDisposableAllocationInConstructor_AssignedDirectly_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(IAsyncDisposable.CSharp + @"
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+using System;
+using System.Threading.Tasks;
+
 class A : IAsyncDisposable
 {
     public ValueTask DisposeAsync()
@@ -400,9 +416,16 @@ class B : IDisposable
         a.DisposeAsync();
     }
 }
-");
+"
+            }.RunAsync();
 
-            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+Imports System
+Imports System.Threading.Tasks
+
 Class A
     Implements IAsyncDisposable
 
@@ -422,13 +445,20 @@ Class B
     Public Sub Dispose() Implements IDisposable.Dispose
         a.DisposeAsync()
     End Sub
-End Class");
+End Class"
+            }.RunAsync();
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public void AsyncDisposableAllocationInConstructor_AssignedDirectly_NotDisposed_Diagnostic()
+        public async Task AsyncDisposableAllocationInConstructor_AssignedDirectly_NotDisposed_DiagnosticAsync()
         {
-            VerifyCSharp(IAsyncDisposable.CSharp + @"
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+using System;
+using System.Threading.Tasks;
+
 class A : IAsyncDisposable
 {
     public ValueTask DisposeAsync()
@@ -450,10 +480,19 @@ class B : IDisposable
     }
 }
 ",
-            // Test0.cs(41,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetCSharpResultAt(41, 24, "B", "a", "A"));
+                ExpectedDiagnostics =
+                {
+                    GetCSharpResultAt(15, 24, "B", "a", "A"),
+                },
+            }.RunAsync();
 
-            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+Imports System
+Imports System.Threading.Tasks
+
 Class A
     Implements IAsyncDisposable
 
@@ -473,14 +512,23 @@ Class B
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class",
-            // Test0.vb(44,22): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetBasicResultAt(44, 22, "B", "a", "A"));
+                ExpectedDiagnostics =
+                {
+                    GetBasicResultAt(16, 22, "B", "a", "A"),
+                }
+            }.RunAsync();
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public void DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_Disposed_NoDiagnostic()
+        public async Task DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(IAsyncDisposable.CSharp + @"
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+using System;
+using System.Threading.Tasks;
+
 class A : IDisposable
 {
     public void Dispose()
@@ -502,9 +550,16 @@ class B : IAsyncDisposable
         return default(ValueTask);
     }
 }
-");
+"
+            }.RunAsync();
 
-            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+Imports System
+Imports System.Threading.Tasks
+
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
@@ -523,13 +578,20 @@ Class B
         a.Dispose()
         Return Nothing
     End Function
-End Class");
+End Class"
+            }.RunAsync();
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public void DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_NotDisposed_Diagnostic()
+        public async Task DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_NotDisposed_DiagnosticAsync()
         {
-            VerifyCSharp(IAsyncDisposable.CSharp + @"
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+using System;
+using System.Threading.Tasks;
+
 class A : IDisposable
 {
     public void Dispose()
@@ -551,10 +613,19 @@ class B : IAsyncDisposable
     }
 }
 ",
-            // Test0.cs(40,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetCSharpResultAt(40, 24, "B", "a", "A"));
+                ExpectedDiagnostics =
+                {
+                    GetCSharpResultAt(14, 24, "B", "a", "A"),
+                }
+            }.RunAsync();
 
-            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+Imports System
+Imports System.Threading.Tasks
+
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
@@ -573,14 +644,17 @@ Class B
         Return Nothing
     End Function
 End Class",
-            // Test0.vb(42,22): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetBasicResultAt(42, 22, "B", "a", "A"));
+                ExpectedDiagnostics =
+                {
+                    GetBasicResultAt(14, 22, "B", "a", "A"),
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedThroughLocal_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedThroughLocal_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -606,7 +680,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -631,9 +705,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedThroughLocal_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_AssignedThroughLocal_NotDisposed_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -660,7 +734,7 @@ class B : IDisposable
             // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
             GetCSharpResultAt(13, 15, "B", "a", "A"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -686,9 +760,9 @@ End Class",
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedThroughParameter_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedThroughParameter_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -714,7 +788,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -739,9 +813,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedThroughParameter_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_AssignedThroughParameter_NotDisposed_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -768,7 +842,7 @@ class B : IDisposable
             // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
             GetCSharpResultAt(13, 15, "B", "a", "A"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -794,9 +868,9 @@ End Class",
         }
 
         [Fact]
-        public void DisposableSymbolWithoutAllocation_AssignedThroughParameter_Disposed_NoDiagnostic()
+        public async Task DisposableSymbolWithoutAllocation_AssignedThroughParameter_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -821,7 +895,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -845,9 +919,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableSymbolWithoutAllocation_AssignedThroughParameter_NotDisposed_NoDiagnostic()
+        public async Task DisposableSymbolWithoutAllocation_AssignedThroughParameter_NotDisposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -871,7 +945,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -893,10 +967,190 @@ Class B
 End Class");
         }
 
-        [Fact]
-        public void DisposableAllocation_AssignedThroughInstanceInvocation_Disposed_NoDiagnostic()
+        [Theory]
+        [InlineData(null)]
+        [InlineData(PointsToAnalysisKind.None)]
+        [InlineData(PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties)]
+        [InlineData(PointsToAnalysisKind.Complete)]
+        public async Task DisposableAllocation_AssignedThroughField_Disposed_NoDiagnosticAsync(PointsToAnalysisKind? pointsToAnalysisKind)
         {
-            VerifyCSharp(@"
+            var editorConfig = pointsToAnalysisKind.HasValue ?
+                $"dotnet_code_quality.CA2213.points_to_analysis_kind = {pointsToAnalysisKind}" :
+                string.Empty;
+
+            var csCode = @"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class B : IDisposable
+{
+    private A a;
+    public void SomeMethod(C c)
+    {
+        c.Field = new A();
+        a = c.Field;
+    }
+
+    public void Dispose()
+    {
+        a.Dispose();
+    }
+}
+
+class C
+{
+    public A Field;
+}
+";
+            var csTest = new VerifyCS.Test()
+            {
+                TestState =
+                {
+                    Sources = { csCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
+            };
+
+            await csTest.RunAsync();
+
+            var vbCode = @"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class B
+    Implements IDisposable
+
+    Private a As A
+    Sub SomeMethod(c As C)
+        c.Field = New A()
+        a = c.Field
+    End Sub
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        a.Dispose()
+    End Sub
+End Class
+
+Class C
+    Public Field As A
+End Class
+";
+            var vbTest = new VerifyVB.Test()
+            {
+                TestState =
+                {
+                    Sources = { vbCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
+            };
+
+            await vbTest.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(PointsToAnalysisKind.None)]
+        [InlineData(PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties)]
+        [InlineData(PointsToAnalysisKind.Complete)]
+        public async Task DisposableAllocation_AssignedThroughField_NotDisposed_DiagnosticAsync(PointsToAnalysisKind? pointsToAnalysisKind)
+        {
+            var editorConfig = pointsToAnalysisKind.HasValue ?
+                $"dotnet_code_quality.CA2213.points_to_analysis_kind = {pointsToAnalysisKind}" :
+                string.Empty;
+
+            var csCode = @"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class B : IDisposable
+{
+    private A a;
+    public void SomeMethod(C c)
+    {
+        c.Field = new A();
+        a = c.Field;
+    }
+
+    public void Dispose()
+    {
+    }
+}
+
+class C
+{
+    public A Field;
+}
+";
+            var csTest = new VerifyCS.Test()
+            {
+                TestState =
+                {
+                    Sources = { csCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
+            };
+
+            await csTest.RunAsync();
+
+            var vbCode = @"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class B
+    Implements IDisposable
+
+    Private a As A
+    Sub SomeMethod(c As C)
+        c.Field = New A()
+        a = c.Field
+    End Sub
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class C
+    Public Field As A
+End Class
+";
+            var vbTest = new VerifyVB.Test()
+            {
+                TestState =
+                {
+                    Sources = { vbCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
+            };
+
+            await vbTest.RunAsync();
+        }
+
+        [Fact]
+        public async Task DisposableAllocation_AssignedThroughInstanceInvocation_Disposed_NoDiagnosticAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -923,7 +1177,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -951,9 +1205,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedThroughInstanceInvocation_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_AssignedThroughInstanceInvocation_NotDisposed_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -981,7 +1235,7 @@ class B : IDisposable
             // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
             GetCSharpResultAt(13, 15, "B", "a", "A"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1010,9 +1264,9 @@ End Class",
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedThroughStaticCreateInvocation_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedThroughStaticCreateInvocation_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1039,7 +1293,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1067,9 +1321,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedThroughStaticCreateInvocation_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_AssignedThroughStaticCreateInvocation_NotDisposed_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1097,7 +1351,7 @@ class B : IDisposable
             // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
             GetCSharpResultAt(13, 15, "B", "a", "A"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1126,10 +1380,10 @@ End Class",
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedInDifferentType_DisposedInContainingType_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedInDifferentType_DisposedInContainingType_NoDiagnosticAsync()
         {
             // We don't track disposable field assignments in different type.
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1158,7 +1412,7 @@ class WrapperB
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1187,10 +1441,10 @@ End Class
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedInDifferentType_DisposedInDifferentNonDisposableType_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedInDifferentType_DisposedInDifferentNonDisposableType_NoDiagnosticAsync()
         {
             // We don't track disposable field assignments in different type.
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1224,7 +1478,7 @@ class WrapperB
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1257,10 +1511,10 @@ End Class
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedInDifferentType_NotDisposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedInDifferentType_NotDisposed_NoDiagnosticAsync()
         {
             // We don't track disposable field assignments in different type.
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1287,7 +1541,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1314,9 +1568,9 @@ End Class
         }
 
         [Fact]
-        public void DisposableOwnershipTransferSpecialCases_Disposed_NoDiagnostic()
+        public async Task DisposableOwnershipTransferSpecialCases_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Resources;
@@ -1373,7 +1627,7 @@ class A : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Resources
@@ -1424,9 +1678,9 @@ End Class
         }
 
         [Fact]
-        public void DisposableOwnershipTransferSpecialCases_NotDisposed_Diagnostic()
+        public async Task DisposableOwnershipTransferSpecialCases_NotDisposed_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Resources;
@@ -1472,7 +1726,7 @@ class A : IDisposable
             // Test0.cs(11,29): warning CA2213: 'A' contains field 'rr' that is of IDisposable type 'IResourceReader', but it is never disposed. Change the Dispose method on 'A' to call Close or Dispose on this field.
             GetCSharpResultAt(11, 29, "A", "rr", "IResourceReader"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Resources
@@ -1516,9 +1770,9 @@ End Class
         }
 
         [Fact]
-        public void DisposableAllocation_DisposedWithConditionalAccess_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedWithConditionalAccess_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1539,7 +1793,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1560,9 +1814,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedToLocal_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedToLocal_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1584,7 +1838,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1606,9 +1860,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedToLocal_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_AssignedToLocal_NotDisposed_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1631,7 +1885,7 @@ class B : IDisposable
             // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
             GetCSharpResultAt(13, 15, "B", "a", "A"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1654,9 +1908,9 @@ End Class",
         }
 
         [Fact]
-        public void DisposableAllocation_IfElseStatement_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_IfElseStatement_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1701,7 +1955,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1738,9 +1992,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_IfElseStatement_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_IfElseStatement_NotDisposed_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1787,7 +2041,7 @@ class B : IDisposable
             // Test0.cs(14,15): warning CA2213: 'B' contains field 'b' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
             GetCSharpResultAt(14, 15, "B", "b", "A"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1827,9 +2081,9 @@ End Class",
         }
 
         [Fact]
-        public void DisposableAllocation_EscapedField_NotDisposed_NoDiagnostic()
+        public async Task DisposableAllocation_EscapedField_NotDisposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1856,7 +2110,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1882,7 +2136,7 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_OptimisticPointsToAnalysis_NoDiagnostic()
+        public async Task DisposableAllocation_OptimisticPointsToAnalysis_NoDiagnosticAsync()
         {
             // Invoking an instance method may likely invalidate all the instance field analysis state, i.e.
             // reference type fields might be re-assigned to point to different objects in the called method.
@@ -1890,7 +2144,7 @@ End Class");
             // A pessimistic points to analysis resets all the instance state and assumes the instance field might point to any object, hence has unknown state.
             // For dispose analysis, we want to perform an optimistic points to analysis as we assume a disposable field is not likely to be re-assigned to a separate object in helper method invocations in Dispose.
 
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1920,7 +2174,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1949,7 +2203,7 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_OptimisticPointsToAnalysis_WithReturn_NoDiagnostic()
+        public async Task DisposableAllocation_OptimisticPointsToAnalysis_WithReturn_NoDiagnosticAsync()
         {
             // Invoking an instance method may likely invalidate all the instance field analysis state, i.e.
             // reference type fields might be re-assigned to point to different objects in the called method.
@@ -1957,7 +2211,7 @@ End Class");
             // A pessimistic points to analysis resets all the instance state and assumes the instance field might point to any object, hence has unknown state.
             // For dispose analysis, we want to perform an optimistic points to analysis as we assume a disposable field is not likely to be re-assigned to a separate object in helper method invocations in Dispose.
 
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1993,7 +2247,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2027,9 +2281,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_IfStatementInDispose_NoDiagnostic()
+        public async Task DisposableAllocation_IfStatementInDispose_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2056,7 +2310,7 @@ public class Test : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2080,9 +2334,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_DisposedinDisposeOverride_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedinDisposeOverride_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2110,7 +2364,7 @@ class Derived : Base
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2139,9 +2393,9 @@ End Class
         }
 
         [Fact]
-        public void DisposableAllocation_DisposedWithDisposeBoolInvocation_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedWithDisposeBoolInvocation_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2166,7 +2420,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2190,9 +2444,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_DisposedInsideDisposeBool_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedInsideDisposeBool_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2222,7 +2476,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2250,9 +2504,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_DisposedWithDisposeCloseInvocation_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedWithDisposeCloseInvocation_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2277,7 +2531,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2301,9 +2555,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_AllDisposedMethodsMixed_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AllDisposedMethodsMixed_Disposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2344,7 +2598,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2381,9 +2635,9 @@ End Class");
         }
 
         [Fact]
-        public void DisposableAllocation_DisposedInsideDisposeClose_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedInsideDisposeClose_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2413,7 +2667,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2441,9 +2695,9 @@ End Class");
         }
 
         [Fact]
-        public void SystemThreadingTask_SpecialCase_NotDisposed_NoDiagnostic()
+        public async Task SystemThreadingTask_SpecialCase_NotDisposed_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Threading.Tasks;
 
@@ -2460,7 +2714,7 @@ public class A: IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Threading.Tasks
 
@@ -2479,9 +2733,9 @@ End Class");
         }
 
         [Fact, WorkItem(1796, "https://github.com/dotnet/roslyn-analyzers/issues/1796")]
-        public void DisposableAllocation_DisposedWithDisposeAsyncInvocation_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedWithDisposeAsyncInvocation_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Threading.Tasks;
 
@@ -2503,7 +2757,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Threading.Tasks
 
@@ -2531,9 +2785,9 @@ End Class");
         }
 
         [Fact, WorkItem(1796, "https://github.com/dotnet/roslyn-analyzers/issues/1796")]
-        public void DisposableAllocation_DisposedInsideDisposeCoreAsync_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedInsideDisposeCoreAsync_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Threading.Tasks;
 
@@ -2565,7 +2819,7 @@ class B : A
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Threading.Tasks
 
@@ -2603,9 +2857,9 @@ End Class");
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public void DisposableAllocation_DisposedInInvokedMethod_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedInInvokedMethod_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2631,7 +2885,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2656,9 +2910,9 @@ End Class");
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public void DisposableAllocation_NotDisposedInInvokedMethod_Diagnostic()
+        public async Task DisposableAllocation_NotDisposedInInvokedMethod_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2685,7 +2939,7 @@ class B : IDisposable
         // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
         GetCSharpResultAt(13, 15, "B", "a", "A"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2711,9 +2965,9 @@ End Class",
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public void DisposableAllocation_DisposedInInvokedMethod_DisposableTypeInMetadata_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedInInvokedMethod_DisposableTypeInMetadata_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 
@@ -2733,7 +2987,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 
@@ -2754,9 +3008,9 @@ End Class
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public void DisposableAllocation_NotDisposedInInvokedMethod_DisposableTypeInMetadata_Diagnostic()
+        public async Task DisposableAllocation_NotDisposedInInvokedMethod_DisposableTypeInMetadata_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 
@@ -2777,7 +3031,7 @@ class B : IDisposable
             // Test0.cs(7,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'FileStream', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
             GetCSharpResultAt(7, 24, "B", "a", "FileStream"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 
@@ -2799,9 +3053,9 @@ End Class
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public void DisposableAllocation_DisposedInInvokedMethodMultipleLevelsDown_NoDiagnostic()
+        public async Task DisposableAllocation_DisposedInInvokedMethodMultipleLevelsDown_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 
@@ -2829,7 +3083,7 @@ static class Helper
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 
@@ -2856,9 +3110,9 @@ End Module
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public void DisposableAllocation_NotDisposedInInvokedMethodMultipleLevelsDown_Diagnostic()
+        public async Task DisposableAllocation_NotDisposedInInvokedMethodMultipleLevelsDown_DiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 
@@ -2887,7 +3141,7 @@ static class Helper
             // Test0.cs(7,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'FileStream', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
             GetCSharpResultAt(7, 24, "B", "a", "FileStream"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 
@@ -2915,9 +3169,9 @@ End Module
         }
 
         [Fact, WorkItem(2182, "https://github.com/dotnet/roslyn-analyzers/issues/2182")]
-        public void DisposableAllocation_NonReadOnlyField_NoDiagnostic()
+        public async Task DisposableAllocation_NonReadOnlyField_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public sealed class B : IDisposable
@@ -2951,9 +3205,9 @@ public sealed class A : IDisposable
         }
 
         [Fact, WorkItem(2306, "https://github.com/dotnet/roslyn-analyzers/issues/2306")]
-        public void DisposableAllocationInConstructor_DisposedInGeneratedCodeFile_NoDiagnostic()
+        public async Task DisposableAllocationInConstructor_DisposedInGeneratedCodeFile_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2979,7 +3233,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -3004,9 +3258,9 @@ End Class");
         }
 
         [Fact, WorkItem(2182, "https://github.com/dotnet/roslyn-analyzers/issues/2182")]
-        public void DisposableAllocation_FieldDisposedInOverriddenHelper_NoDiagnostic()
+        public async Task DisposableAllocation_FieldDisposedInOverriddenHelper_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3049,22 +3303,19 @@ class C : B
 
         [Theory]
         [InlineData("")]
-        [InlineData("dotnet_code_quality.excluded_symbol_names = B")]
-        [InlineData("dotnet_code_quality." + DisposableFieldsShouldBeDisposed.RuleId + ".excluded_symbol_names = B")]
-        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = B")]
-        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        [InlineData("dotnet_code_quality.excluded_symbol_names = BB")]
+        [InlineData("dotnet_code_quality.CA2213.excluded_symbol_names = BB")]
+        [InlineData("dotnet_code_quality.CA2213.excluded_symbol_names = B*")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = BB")]
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOptionAsync(string editorConfigText)
         {
-            var expected = Array.Empty<DiagnosticResult>();
-            if (editorConfigText.Length == 0)
+            var csharpTest = new VerifyCS.Test
             {
-                expected = new DiagnosticResult[]
+                TestState =
                 {
-                    // Test0.cs(13,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-                    GetCSharpResultAt(13, 24, "B", "a", "A")
-                };
-            }
-
-            VerifyCSharp(@"
+                    Sources =
+                    {
+                        @"
 using System;
 
 class A : IDisposable
@@ -3074,10 +3325,10 @@ class A : IDisposable
     }
 }
 
-class B : IDisposable
+class BB : IDisposable
 {
     private readonly A a;
-    public B()
+    public BB()
     {
         a = new A();
     }
@@ -3086,19 +3337,31 @@ class B : IDisposable
     {
     }
 }
-", GetEditorConfigAdditionalFile(editorConfigText), expected);
+"                    },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
 
-            expected = Array.Empty<DiagnosticResult>();
+[*]
+{editorConfigText}
+") }
+                }
+            };
+
             if (editorConfigText.Length == 0)
             {
-                expected = new DiagnosticResult[]
-                {
-                    // Test0.vb(13,22): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-                    GetBasicResultAt(13, 22, "B", "a", "A")
-                };
+                csharpTest.ExpectedDiagnostics.Add(
+                    // Test0.cs(13,24): warning CA2213: 'BB' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+                    GetCSharpResultAt(13, 24, "BB", "a", "A"));
             }
 
-            VerifyBasic(@"
+            await csharpTest.RunAsync();
+
+            var basicTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Imports System
 
 Class A
@@ -3107,7 +3370,7 @@ Class A
     End Sub
 End Class
 
-Class B
+Class BB
     Implements IDisposable
 
     Private ReadOnly a As A
@@ -3117,7 +3380,94 @@ Class B
 
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
-End Class", GetEditorConfigAdditionalFile(editorConfigText), expected);
+End Class"
+                    },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
+                }
+            };
+
+            if (editorConfigText.Length == 0)
+            {
+                basicTest.ExpectedDiagnostics.Add(
+                    // Test0.vb(13,22): warning CA2213: 'BB' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+                    GetBasicResultAt(13, 22, "BB", "a", "A"));
+            }
+
+            await basicTest.RunAsync();
+        }
+
+        [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
+        public async Task CloseAsyncDisposable_NoDiagnosticAsync()
+        {
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+using System;
+using System.Threading.Tasks;
+
+class A : IAsyncDisposable
+{
+    public ValueTask DisposeAsync()
+    {
+        return default(ValueTask);
+    }
+
+    public Task CloseAsync() => null;
+}
+
+class B : IAsyncDisposable
+{
+    private A a;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (a != null)
+        {
+            await a.CloseAsync().ConfigureAwait(false);
+            a = null;
+        }
+    }
+}
+"
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+Imports System
+Imports System.Threading.Tasks
+
+Class A
+    Implements IAsyncDisposable
+
+    Public Function DisposeAsync() As ValueTask Implements IAsyncDisposable.DisposeAsync
+        Return Nothing
+    End Function
+
+    Public Function CloseAsync() As Task
+        Return Nothing
+    End Function
+End Class
+
+Class B
+    Implements IAsyncDisposable
+
+    Private a As A
+
+    Public Function DisposeAsync() As ValueTask Implements IAsyncDisposable.DisposeAsync
+        If a IsNot Nothing Then
+            a.CloseAsync().ConfigureAwait(False)
+            a = Nothing
+        End If
+    End Function
+End Class"
+            }.RunAsync();
         }
     }
 }

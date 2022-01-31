@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -183,6 +183,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
 
             if (this.InsecureTypeSymbols.Count == 0)
             {
+                results = ImmutableArray<InsecureObjectGraphResult>.Empty;
                 return false;
             }
 

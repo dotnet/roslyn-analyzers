@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Threading;
@@ -17,7 +17,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         public sealed override FixAllProvider GetFixAllProvider()
         {
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
+            // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
             return WellKnownFixAllProviders.BatchFixer;
         }
 
@@ -33,7 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var typeSymbol = model.GetDeclaredSymbol(typeDeclaration) as INamedTypeSymbol;
+            var typeSymbol = model.GetDeclaredSymbol(typeDeclaration, context.CancellationToken) as INamedTypeSymbol;
             if (typeSymbol?.TypeKind is not TypeKind.Class and
                 not TypeKind.Struct)
             {
@@ -46,12 +46,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,
-                    cancellationToken => OverrideObjectEquals(context.Document, typeDeclaration, typeSymbol, cancellationToken),
+                    cancellationToken => OverrideObjectEqualsAsync(context.Document, typeDeclaration, typeSymbol, cancellationToken),
                     equivalenceKey: title),
                 context.Diagnostics);
         }
 
-        private static async Task<Document> OverrideObjectEquals(Document document, SyntaxNode typeDeclaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
+        private static async Task<Document> OverrideObjectEqualsAsync(Document document, SyntaxNode typeDeclaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -12,35 +12,29 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
-    /// RS0014: Do not use Enumerable methods on indexable collections. Instead use the collection directly
+    /// CA1826: Do not use Enumerable methods on indexable collections. Instead use the collection directly
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer : DiagnosticAnalyzer
     {
-        private const string IReadOnlyListMetadataName = "System.Collections.Generic.IReadOnlyList`1";
-        private const string IListMetadataName = "System.Collections.Generic.IList`1";
-        private const string EnumerableMetadataName = "System.Linq.Enumerable";
-
         internal const string RuleId = "CA1826";
 
         internal const string MethodPropertyKey = "method";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTitle)),
+            CreateLocalizableResourceString(nameof(DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyMessage)),
+            DiagnosticCategory.Performance,
+            RuleLevel.IdeSuggestion,
+            description: CreateLocalizableResourceString(nameof(DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyDescription)),
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Performance,
-                                                                             RuleLevel.IdeSuggestion,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: false,
-                                                                             isDataflowRule: false);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -52,9 +46,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            var listType = context.Compilation.GetOrCreateTypeByMetadataName(IListMetadataName);
-            var readonlyListType = context.Compilation.GetOrCreateTypeByMetadataName(IReadOnlyListMetadataName);
-            var enumerableType = context.Compilation.GetOrCreateTypeByMetadataName(EnumerableMetadataName);
+            var listType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIList1);
+            var readonlyListType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIReadOnlyList1);
+            var enumerableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable);
             if (readonlyListType == null || enumerableType == null || listType == null)
             {
                 return;
@@ -63,7 +57,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.RegisterOperationAction(operationContext =>
             {
                 var invocation = (IInvocationOperation)operationContext.Operation;
-                if (!IsPossibleLinqInvocation(invocation))
+
+                var excludeOrDefaultMethods = operationContext.Options.GetBoolOptionValue(
+                    EditorConfigOptionNames.ExcludeOrDefaultMethods, Rule, invocation.Syntax.SyntaxTree,
+                    operationContext.Compilation, defaultValue: false);
+
+                if (!IsPossibleLinqInvocation(invocation, excludeOrDefaultMethods))
                 {
                     return;
                 }
@@ -85,8 +84,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                var properties = new Dictionary<string, string> { [MethodPropertyKey] = invocation.TargetMethod.Name }.ToImmutableDictionary();
-                operationContext.ReportDiagnostic(Diagnostic.Create(Rule, invocation.Syntax.GetLocation(), properties));
+                var properties = new Dictionary<string, string?> { [MethodPropertyKey] = invocation.TargetMethod.Name }.ToImmutableDictionary();
+                operationContext.ReportDiagnostic(invocation.CreateDiagnostic(Rule, properties));
             }, OperationKind.Invocation);
         }
 
@@ -140,11 +139,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 methodSymbol.Parameters.Length == 1;
         }
 
-        private static bool IsPossibleLinqInvocation(IInvocationOperation invocation)
+        private static bool IsPossibleLinqInvocation(IInvocationOperation invocation, bool excludeOrDefaultMethods)
         {
             return invocation.TargetMethod.Name switch
             {
-                "Last" or "LastOrDefault" or "First" or "FirstOrDefault" or "Count" => true,
+                "Last" or "First" or "Count" => true,
+                "LastOrDefault" or "FirstOrDefault" => !excludeOrDefaultMethods,
                 _ => false,
             };
         }

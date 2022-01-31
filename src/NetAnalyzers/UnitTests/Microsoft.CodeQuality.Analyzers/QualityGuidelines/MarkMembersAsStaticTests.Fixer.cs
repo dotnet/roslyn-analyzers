@@ -1,7 +1,7 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.QualityGuidelines.MarkMembersAsStaticAnalyzer,
@@ -15,7 +15,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
     public class MarkMembersAsStaticFixerTests
     {
         [Fact]
-        public async Task TestCSharp_SimpleMembers_NoReferences()
+        public async Task TestCSharp_SimpleMembers_NoReferencesAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class MembersTests
@@ -102,7 +102,7 @@ public class MembersTests
         }
 
         [Fact]
-        public async Task TestBasic_SimpleMembers_NoReferences()
+        public async Task TestBasic_SimpleMembers_NoReferencesAsync()
         {
             await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
@@ -184,8 +184,8 @@ Public Class MembersTests
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
-        public async Task TestCSharp_ReferencesInSameType_MemberReferences()
+        [Fact]
+        public async Task TestCSharp_ReferencesInSameType_MemberReferencesAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
@@ -240,7 +240,7 @@ public class C
         }
 
         [Fact]
-        public async Task TestBasic_ReferencesInSameType_MemberReferences()
+        public async Task TestBasic_ReferencesInSameType_MemberReferencesAsync()
         {
             await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
@@ -288,8 +288,8 @@ Public Class C
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
-        public async Task TestCSharp_ReferencesInSameType_Invocations()
+        [Fact]
+        public async Task TestCSharp_ReferencesInSameType_InvocationsAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class C
@@ -297,6 +297,8 @@ public class C
     private int x;
     private C fieldC;
     private C PropertyC { get; set; }
+    private static C staticFieldC;
+    private static C StaticPropertyC { get; set; }
 
     public int [|M1|]()
     {
@@ -306,7 +308,7 @@ public class C
     public void M2(C paramC)
     {
         var localC = fieldC;
-        x = M1() + paramC.M1() + localC.M1() + fieldC.M1() + PropertyC.M1() + fieldC.PropertyC.M1() + this.M1();
+        x = M1() + paramC.M1() + localC.M1() + fieldC.M1() + PropertyC.M1() + fieldC.PropertyC.M1() + this.M1() + C.staticFieldC.M1() + StaticPropertyC.M1();
     }
 }",
 @"
@@ -315,6 +317,8 @@ public class C
     private int x;
     private C fieldC;
     private C PropertyC { get; set; }
+    private static C staticFieldC;
+    private static C StaticPropertyC { get; set; }
 
     public static int M1()
     {
@@ -324,13 +328,13 @@ public class C
     public void M2(C paramC)
     {
         var localC = fieldC;
-        x = M1() + M1() + M1() + M1() + M1() + M1() + M1();
+        x = M1() + M1() + M1() + M1() + M1() + M1() + M1() + M1() + M1();
     }
 }");
         }
 
         [Fact]
-        public async Task TestBasic_ReferencesInSameType_Invocations()
+        public async Task TestBasic_ReferencesInSameType_InvocationsAsync()
         {
             await VerifyVB.VerifyCodeFixAsync(@"
 Public Class C
@@ -364,8 +368,8 @@ Public Class C
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
-        public async Task TestCSharp_ReferencesInSameFile_MemberReferences()
+        [Fact]
+        public async Task TestCSharp_ReferencesInSameFile_MemberReferencesAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
@@ -425,8 +429,8 @@ class C2
 }");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
-        public async Task TestCSharp_ReferencesInSameFile_Invocations()
+        [Fact]
+        public async Task TestCSharp_ReferencesInSameFile_InvocationsAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
@@ -480,8 +484,8 @@ class C2
 }");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
-        public async Task TestCSharp_ReferencesInMultipleFiles_MemberReferences()
+        [Fact]
+        public async Task TestCSharp_ReferencesInMultipleFiles_MemberReferencesAsync()
         {
             await new VerifyCS.Test
             {
@@ -592,8 +596,8 @@ class C3
             }.RunAsync();
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
-        public async Task TestCSharp_ReferencesInMultipleFiles_Invocations()
+        [Fact]
+        public async Task TestCSharp_ReferencesInMultipleFiles_InvocationsAsync()
         {
             await new VerifyCS.Test
             {
@@ -692,8 +696,8 @@ class C3
             }.RunAsync();
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
-        public async Task TestCSharp_ReferenceInArgument()
+        [Fact]
+        public async Task TestCSharp_ReferenceInArgumentAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class C
@@ -728,7 +732,7 @@ public class C
         }
 
         [Fact]
-        public async Task TestBasic_ReferenceInArgument()
+        public async Task TestBasic_ReferenceInArgumentAsync()
         {
             await VerifyVB.VerifyCodeFixAsync(@"
 Public Class C
@@ -758,8 +762,8 @@ Public Class C
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
-        public async Task TestCSharp_GenericMethod()
+        [Fact]
+        public async Task TestCSharp_GenericMethodAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class C
@@ -809,7 +813,7 @@ public class C2<T2>
     public void M2(C paramC)
     {
         // Explicit type argument
-        C.M1<int>(fieldC, 0);
+        C.M1(fieldC, 0);
 
         // Implicit type argument
         C.M1(fieldC, this);
@@ -818,7 +822,60 @@ public class C2<T2>
         }
 
         [Fact]
-        public async Task TestBasic_GenericMethod()
+        public async Task TestCSharp_GenericMethod_02Async()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+public class C
+{
+    private C fieldC;
+    public C [|M1|]<T>(C c)
+    {
+        return c;
+    }
+
+    public C M1<T>(T t)
+    {
+        return fieldC;
+    }
+}
+
+public class C2<T2>
+{
+    private C fieldC;
+    public void M2(C paramC)
+    {
+        // Explicit type argument
+        paramC.M1<int>(fieldC);
+    }
+}",
+@"
+public class C
+{
+    private C fieldC;
+    public static C M1<T>(C c)
+    {
+        return c;
+    }
+
+    public C M1<T>(T t)
+    {
+        return fieldC;
+    }
+}
+
+public class C2<T2>
+{
+    private C fieldC;
+    public void M2(C paramC)
+    {
+        // Explicit type argument
+        C.M1<int>(fieldC);
+    }
+}");
+        }
+
+        [Fact]
+        public async Task TestBasic_GenericMethodAsync()
         {
             await VerifyVB.VerifyCodeFixAsync(@"
 Public Class C
@@ -870,8 +927,8 @@ Public Class C2(Of T2)
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
-        public async Task TestCSharp_InvocationInInstance()
+        [Fact]
+        public async Task TestCSharp_InvocationInInstanceAsync()
         {
             // We don't make the replacement if instance has an invocation.
             await new VerifyCS.Test
@@ -913,20 +970,16 @@ public class C
     public C M2(C paramC)
     {
         var localC = fieldC;
-        return M1(paramC).M1(M1(localC));
+        return {|CS0176:M1(paramC).M1|}(M1(localC));
     }
 }",
-                    },
-                    ExpectedDiagnostics =
-                    {
-                        DiagnosticResult.CompilerError("CS0176").WithSpan(13, 16, 13, 29).WithMessage("Member 'C.M1(C)' cannot be accessed with an instance reference; qualify it with a type name instead"),
                     },
                 },
             }.RunAsync();
         }
 
         [Fact]
-        public async Task TestBasic_InvocationInInstance()
+        public async Task TestBasic_InvocationInInstanceAsync()
         {
             // We don't make the replacement if instance has an invocation.
             await VerifyVB.VerifyCodeFixAsync(@"
@@ -958,7 +1011,7 @@ End Class");
         }
 
         [Fact]
-        public async Task TestCSharp_ConversionInInstance()
+        public async Task TestCSharp_ConversionInInstanceAsync()
         {
             // We don't make the replacement if instance has a conversion.
             await new VerifyCS.Test
@@ -1009,7 +1062,7 @@ public class C
         }
 
         [Fact]
-        public async Task TestBasic_ConversionInInstance()
+        public async Task TestBasic_ConversionInInstanceAsync()
         {
             // We don't make the replacement if instance has a conversion.
             await VerifyVB.VerifyCodeFixAsync(@"
@@ -1040,8 +1093,8 @@ Public Class C
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
-        public async Task TestCSharp_FixAll()
+        [Fact]
+        public async Task TestCSharp_FixAllAsync()
         {
             await new VerifyCS.Test
             {
@@ -1151,7 +1204,7 @@ class C3
         }
 
         [Fact]
-        public async Task TestBasic_FixAll()
+        public async Task TestBasic_FixAllAsync()
         {
             await new VerifyVB.Test
             {
@@ -1247,7 +1300,7 @@ End Class",
         }
 
         [Fact]
-        public async Task TestCSharp_PropertyWithReferences()
+        public async Task TestCSharp_PropertyWithReferencesAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 public class C
@@ -1278,7 +1331,7 @@ public class C
         }
 
         [Fact]
-        public async Task TestBasic_PropertyWithReferences()
+        public async Task TestBasic_PropertyWithReferencesAsync()
         {
             await VerifyVB.VerifyCodeFixAsync(@"
 Public Class C
@@ -1316,6 +1369,150 @@ Public Class C
         Return fieldC
     End Function
 End Class");
+        }
+
+        [Fact, WorkItem(2888, "https://github.com/dotnet/roslyn-analyzers/issues/2888")]
+        public async Task CA1822_CSharp_AsyncModifierAsync()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System.Threading.Tasks;
+
+public class C
+{
+    public async Task<int> [|M1|]()
+    {
+        await Task.Delay(20).ConfigureAwait(false);
+        return 20;
+    }
+}",
+@"
+using System.Threading.Tasks;
+
+public class C
+{
+    public static async Task<int> M1()
+    {
+        await Task.Delay(20).ConfigureAwait(false);
+        return 20;
+    }
+}");
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System.Threading.Tasks
+
+Public Class C
+    Public Async Function [|M1|]() As Task(Of Integer)
+        Await Task.Delay(20).ConfigureAwait(False)
+        Return 20
+    End Function
+End Class",
+@"
+Imports System.Threading.Tasks
+
+Public Class C
+    Public Shared Async Function M1() As Task(Of Integer)
+        Await Task.Delay(20).ConfigureAwait(False)
+        Return 20
+    End Function
+End Class");
+        }
+
+        [Fact]
+        [WorkItem(4733, "https://github.com/dotnet/roslyn-analyzers/issues/4733")]
+        [WorkItem(5168, "https://github.com/dotnet/roslyn-analyzers/issues/5168")]
+        public async Task CA1822_PartialMethod_CannotBeStaticAsync()
+        {
+            string source = @"
+using System.Threading;
+using System.Threading.Tasks;
+
+public partial class Class1
+{
+    public partial Task Example(CancellationToken token = default);
+}
+
+partial class Class1
+{
+    private readonly int timeout;
+
+    public Class1(int timeout)
+    {
+        this.timeout = timeout;
+    }
+    
+    public async partial Task Example(CancellationToken token)
+    {
+        await Task.Delay(timeout, token);
+    }
+}
+";
+            await new VerifyCS.Test
+            {
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                TestCode = source,
+                FixedCode = source,
+            }.RunAsync();
+        }
+
+        [Fact]
+        [WorkItem(4733, "https://github.com/dotnet/roslyn-analyzers/issues/4733")]
+        [WorkItem(5168, "https://github.com/dotnet/roslyn-analyzers/issues/5168")]
+        public async Task CA1822_PartialMethod_CanBeStaticAsync()
+        {
+            string source = @"
+using System.Threading;
+using System.Threading.Tasks;
+
+public partial class Class1
+{
+    public partial Task Example(CancellationToken token = default);
+}
+
+partial class Class1
+{
+    private readonly int timeout;
+
+    public Class1(int timeout)
+    {
+        this.timeout = timeout;
+    }
+
+    public async partial Task [|Example|](CancellationToken token)
+    {
+        await Task.Delay(0);
+    }
+}
+";
+            // The fixed source shouldn't have diagnostics. Tracked by https://github.com/dotnet/roslyn-analyzers/issues/5171.
+            string fixedSource = @"
+using System.Threading;
+using System.Threading.Tasks;
+
+public partial class Class1
+{
+    public partial Task Example(CancellationToken token = default);
+}
+
+partial class Class1
+{
+    private readonly int timeout;
+
+    public Class1(int timeout)
+    {
+        this.timeout = timeout;
+    }
+
+    public static async partial Task {|CS0763:Example|}(CancellationToken token)
+    {
+        await Task.Delay(0);
+    }
+}
+";
+            await new VerifyCS.Test
+            {
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                TestCode = source,
+                FixedCode = fixedSource,
+            }.RunAsync();
         }
     }
 }

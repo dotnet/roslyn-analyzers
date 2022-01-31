@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -110,10 +110,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                             var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
 
                             // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
-                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    BinderDefinitelyNotSetDescriptor!, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
-                                owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    BinderMaybeNotSetDescriptor!, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            if (operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(BinderDefinitelyNotSetDescriptor!,
+                                    owningSymbol, operationBlockStartAnalysisContext.Compilation) &&
+                                operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(BinderMaybeNotSetDescriptor!,
+                                    owningSymbol, operationBlockStartAnalysisContext.Compilation))
                             {
                                 return;
                             }
@@ -191,8 +191,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
-                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                            cancellationToken: compilationAnalysisContext.CancellationToken));
+                                            rootOperationsNeedingAnalysis.First().Operation,
+                                            compilationAnalysisContext.Compilation,
+                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive));
                                 }
 
                                 if (allResults == null)

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Testing;
@@ -7,10 +7,10 @@ using Microsoft.CodeAnalysis.VisualBasic.Testing;
 using Microsoft.NetCore.CSharp.Analyzers.Runtime;
 using Microsoft.NetCore.VisualBasic.Analyzers.Runtime;
 using Xunit;
-using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.SerializationRulesDiagnosticAnalyzer,
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpMarkAllNonSerializableFieldsFixer>;
-using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.SerializationRulesDiagnosticAnalyzer,
     Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicMarkAllNonSerializableFieldsFixer>;
 
@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public partial class MarkAllNonSerializableFieldsFixerTests
     {
         [Fact]
-        public async Task CA2235WithNonSerializableFieldsWithFix()
+        public async Task CA2235WithNonSerializableFieldsWithFixAsync()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
@@ -63,7 +63,7 @@ End Class");
         }
 
         [Fact]
-        public async Task CA2235WithNonSerializableFieldsWithFix1()
+        public async Task CA2235WithNonSerializableFieldsWithFix1Async()
         {
             await new CSharpCodeFixTest<SerializationRulesDiagnosticAnalyzer, CSharpMarkAllNonSerializableFieldsFixer, XUnitVerifier>
             {
@@ -87,9 +87,7 @@ public class CA2235WithNonPublicNonSerializableFields
 {
     internal NonSerializableType s1;
 }",
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = 1,
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = 1,
             }.RunAsync();
 
             await new VisualBasicCodeFixTest<SerializationRulesDiagnosticAnalyzer, BasicMarkAllNonSerializableFieldsFixer, XUnitVerifier>
@@ -114,14 +112,12 @@ End Class
 Public Class CA2235WithNonPublicNonSerializableFields
     Friend s1 As NonSerializableType
 End Class",
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = 1,
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = 1,
             }.RunAsync();
         }
 
         [Fact]
-        public async Task CA2235WithNonSerializableFieldsWithFix2()
+        public async Task CA2235WithNonSerializableFieldsWithFix2Async()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
@@ -165,7 +161,7 @@ End Class");
         }
 
         [Fact]
-        public async Task CA2235WithNonSerializableFieldsWithFix3()
+        public async Task CA2235WithNonSerializableFieldsWithFix3Async()
         {
             await new CSharpCodeFixTest<SerializationRulesDiagnosticAnalyzer, CSharpMarkAllNonSerializableFieldsFixer, XUnitVerifier>
             {
@@ -173,7 +169,7 @@ End Class");
 using System;
 public partial class NonSerializableType { }
 
-public partial class NonSerializableType { public void baz() { } }
+public partial class NonSerializableType { public void method() { } }
 
 [Serializable]
 public class CA2235WithNonPublicNonSerializableFields
@@ -186,16 +182,14 @@ using System;
 [Serializable]
 public partial class NonSerializableType { }
 
-public partial class NonSerializableType { public void baz() { } }
+public partial class NonSerializableType { public void method() { } }
 
 [Serializable]
 public class CA2235WithNonPublicNonSerializableFields
 {
     internal NonSerializableType s1;
 }",
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = 1,
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = 1,
             }.RunAsync();
 
             await new VisualBasicCodeFixTest<SerializationRulesDiagnosticAnalyzer, BasicMarkAllNonSerializableFieldsFixer, XUnitVerifier>
@@ -206,7 +200,7 @@ Public Partial Class NonSerializableType
 End Class
 
 Public Class NonSerializableType
-    Sub foo()
+    Sub method()
     End Sub
 End Class
 
@@ -222,7 +216,7 @@ Public Partial Class NonSerializableType
 End Class
 
 Public Class NonSerializableType
-    Sub foo()
+    Sub method()
     End Sub
 End Class
 
@@ -230,9 +224,7 @@ End Class
 Public Class CA2235WithNonPublicNonSerializableFields
     Friend s1 As NonSerializableType
 End Class",
-#pragma warning disable CS0618 // Type or member is obsolete
-                CodeFixIndex = 1,
-#pragma warning restore CS0618 // Type or member is obsolete
+                CodeActionIndex = 1,
             }.RunAsync();
         }
     }

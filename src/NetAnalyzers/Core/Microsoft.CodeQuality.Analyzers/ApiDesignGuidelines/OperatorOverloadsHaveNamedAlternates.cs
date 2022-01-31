@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -10,6 +10,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA2225: Operator overloads have named alternates
     /// </summary>
@@ -24,55 +26,57 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private const string OpTrueText = "op_True";
         private const string OpFalseText = "op_False";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(OperatorOverloadsHaveNamedAlternatesTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(OperatorOverloadsHaveNamedAlternatesDescription));
 
-        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageDefault), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageProperty = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageProperty), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageMultiple = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageMultiple), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageVisibility = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageVisibility), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(OperatorOverloadsHaveNamedAlternatesMessageDefault)),
+            DiagnosticCategory.Usage,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageDefault,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor PropertyRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageProperty,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor MultipleRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageMultiple,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor VisibilityRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageVisibility,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor PropertyRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(OperatorOverloadsHaveNamedAlternatesMessageProperty)),
+            DiagnosticCategory.Usage,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, PropertyRule, MultipleRule, VisibilityRule);
+        internal static readonly DiagnosticDescriptor MultipleRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(OperatorOverloadsHaveNamedAlternatesMessageMultiple)),
+            DiagnosticCategory.Usage,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        internal static readonly DiagnosticDescriptor VisibilityRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(OperatorOverloadsHaveNamedAlternatesMessageVisibility)),
+            DiagnosticCategory.Usage,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DefaultRule, PropertyRule, MultipleRule, VisibilityRule);
+
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Method);
+            context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Method);
         }
 
         private static void AnalyzeSymbol(SymbolAnalysisContext symbolContext)
@@ -82,7 +86,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // FxCop compat: only analyze externally visible symbols by default.
             // Note all the descriptors/rules for this analyzer have the same ID and category and hence
             // will always have identical configured visibility.
-            if (!methodSymbol.MatchesConfiguredVisibility(symbolContext.Options, DefaultRule, symbolContext.CancellationToken))
+            if (!symbolContext.Options.MatchesConfiguredVisibility(DefaultRule, methodSymbol, symbolContext.Compilation))
             {
                 return;
             }
@@ -185,7 +189,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         internal static ExpectedAlternateMethodGroup? GetExpectedAlternateMethodGroup(string operatorName, ITypeSymbol returnType, ITypeSymbol? parameterType)
         {
-            // list of operator alternate names: https://docs.microsoft.com/visualstudio/code-quality/ca2225-operator-overloads-have-named-alternates
+            // list of operator alternate names: https://docs.microsoft.com/visualstudio/code-quality/ca2225
 
             // the most common case; create a static method with the already specified types
             static ExpectedAlternateMethodGroup createSingle(string methodName) => new(methodName);
@@ -227,9 +231,26 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 "op_UnaryNegation" => createSingle("Negate"),
                 "op_UnaryPlus" => createSingle("Plus"),
                 "op_Implicit"
-                or "op_Explicit" => new ExpectedAlternateMethodGroup(alternateMethod1: $"To{returnType.Name}", alternateMethod2: parameterType != null ? $"From{parameterType.Name}" : null),
+                or "op_Explicit" => new ExpectedAlternateMethodGroup(alternateMethod1: $"To{GetTypeName(returnType)}", alternateMethod2: parameterType != null ? $"From{GetTypeName(parameterType)}" : null),
                 _ => null,
             };
+
+            static string GetTypeName(ITypeSymbol typeSymbol)
+            {
+                if (typeSymbol.TypeKind != TypeKind.Array)
+                {
+                    return typeSymbol.Name;
+                }
+
+                var elementType = typeSymbol;
+                do
+                {
+                    elementType = ((IArrayTypeSymbol)elementType).ElementType;
+                }
+                while (elementType.TypeKind == TypeKind.Array);
+
+                return elementType.Name + "Array";
+            }
         }
 
         internal class ExpectedAlternateMethodGroup

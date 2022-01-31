@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -11,6 +11,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA1001: Types that own disposable fields should be disposable
     /// </summary>
@@ -20,29 +22,27 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal const string RuleId = "CA1001";
         internal const string Dispose = "Dispose";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(TypesThatOwnDisposableFieldsShouldBeDisposableTitle)),
+            CreateLocalizableResourceString(nameof(TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking)),
+            DiagnosticCategory.Design,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: CreateLocalizableResourceString(nameof(TypesThatOwnDisposableFieldsShouldBeDisposableDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                         s_localizableTitle,
-                                                                         s_localizableMessage,
-                                                                         DiagnosticCategory.Design,
-                                                                         RuleLevel.IdeHidden_BulkConfigurable,
-                                                                         description: s_localizableDescription,
-                                                                         isPortedFxCopRule: true,
-                                                                         isDataflowRule: false);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(compilationContext =>
             {
-                if (!compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable, out var disposableType))
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationContext.Compilation);
+                if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable, out _))
                 {
                     return;
                 }
@@ -58,7 +58,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             private readonly DisposeAnalysisHelper _disposeAnalysisHelper;
 
-            public DisposableFieldAnalyzer(Compilation compilation)
+            protected DisposableFieldAnalyzer(Compilation compilation)
             {
                 DisposeAnalysisHelper.TryGetOrCreate(compilation, out _disposeAnalysisHelper!);
                 RoslynDebug.Assert(_disposeAnalysisHelper != null);
@@ -67,35 +67,37 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             public void AnalyzeSymbol(SymbolAnalysisContext symbolContext)
             {
                 INamedTypeSymbol namedType = (INamedTypeSymbol)symbolContext.Symbol;
-                if (!_disposeAnalysisHelper.IsDisposable(namedType))
+                if (_disposeAnalysisHelper.IsDisposable(namedType))
                 {
-                    IEnumerable<IFieldSymbol> disposableFields = from member in namedType.GetMembers()
-                                                                 where member.Kind == SymbolKind.Field && !member.IsStatic
-                                                                 let field = member as IFieldSymbol
-                                                                 where _disposeAnalysisHelper.IsDisposable(field.Type)
-                                                                 select field;
+                    return;
+                }
 
-                    if (disposableFields.Any())
+                IEnumerable<IFieldSymbol> disposableFields = from member in namedType.GetMembers()
+                                                             where member.Kind == SymbolKind.Field && !member.IsStatic
+                                                             let field = member as IFieldSymbol
+                                                             where _disposeAnalysisHelper.IsDisposable(field.Type)
+                                                             select field;
+                if (!disposableFields.Any())
+                {
+                    return;
+                }
+
+                var disposableFieldsHashSet = new HashSet<ISymbol>(disposableFields);
+                IEnumerable<TTypeDeclarationSyntax> classDecls = GetClassDeclarationNodes(namedType, symbolContext.CancellationToken);
+                foreach (TTypeDeclarationSyntax classDecl in classDecls)
+                {
+                    SemanticModel model = symbolContext.Compilation.GetSemanticModel(classDecl.SyntaxTree);
+                    IEnumerable<string> disposableFieldNames = classDecl.DescendantNodes(n => !(n is TTypeDeclarationSyntax) || ReferenceEquals(n, classDecl))
+                        .SelectMany(n => GetDisposableFieldCreations(n, model, disposableFieldsHashSet, symbolContext.CancellationToken))
+                        .Where(field => !symbolContext.Options.IsConfiguredToSkipAnalysis(Rule, field.Type, namedType, symbolContext.Compilation))
+                        .Select(field => field.Name);
+
+                    if (disposableFieldNames.Any())
                     {
-                        var disposableFieldsHashSet = new HashSet<ISymbol>(disposableFields);
-                        IEnumerable<TTypeDeclarationSyntax> classDecls = GetClassDeclarationNodes(namedType, symbolContext.CancellationToken);
-                        foreach (TTypeDeclarationSyntax classDecl in classDecls)
-                        {
-                            SemanticModel model = symbolContext.Compilation.GetSemanticModel(classDecl.SyntaxTree);
-                            IEnumerable<SyntaxNode> syntaxNodes = classDecl.DescendantNodes(n => !(n is TTypeDeclarationSyntax) || ReferenceEquals(n, classDecl))
-                                .Where(n => IsDisposableFieldCreation(n,
-                                                                    model,
-                                                                    disposableFieldsHashSet,
-                                                                    symbolContext.CancellationToken));
-                            if (syntaxNodes.Any())
-                            {
-                                // Type '{0}' owns disposable field(s) '{1}' but is not disposable
-                                var arg1 = namedType.Name;
-                                var arg2 = string.Join(", ", disposableFieldsHashSet.Select(f => f.Name).Order());
-                                symbolContext.ReportDiagnostic(namedType.CreateDiagnostic(Rule, arg1, arg2));
-                                return;
-                            }
-                        }
+                        // Type '{0}' owns disposable field(s) '{1}' but is not disposable
+                        symbolContext.ReportDiagnostic(
+                            namedType.CreateDiagnostic(Rule, namedType.Name, string.Join("', '", disposableFieldNames.Order())));
+                        return;
                     }
                 }
             }
@@ -115,7 +117,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
             }
 
-            protected abstract bool IsDisposableFieldCreation(SyntaxNode node, SemanticModel model, HashSet<ISymbol> disposableFields, CancellationToken cancellationToken);
+            protected abstract IEnumerable<IFieldSymbol> GetDisposableFieldCreations(SyntaxNode node, SemanticModel model,
+                HashSet<ISymbol> disposableFields, CancellationToken cancellationToken);
         }
     }
 }

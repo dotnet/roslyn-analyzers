@@ -1,5 +1,5 @@
 @echo off
-REM GenDiffNotes.cmd scratchDir nugetSource fxCopAnalyzersOldVersion fxCopAnalyzersNewVersion
+REM GenDiffNotes.cmd scratchDir nugetSource netAnalyzersOldVersion netAnalyzersNewVersion
 REM Ex: GenDiffNotes.cmd C:\scratch nuget.org 2.6.3 2.9.0
 
 if [%1]==[] goto usage
@@ -17,8 +17,8 @@ set DIFFNOTES=%SCRATCHDIR%\%OLDVERSION%_%NEWVERSION%-notes.md
 @echo on
 mkdir %SCRATCHDIR%
 pushd %SCRATCHDIR%
-nuget.exe install -source %NUGETSOURCE% Microsoft.CodeAnalysis.FxCopAnalyzers -version %OLDVERSION%
-nuget.exe install -source %NUGETSOURCE% Microsoft.CodeAnalysis.FxCopAnalyzers -version %NEWVERSION%
+nuget.exe install -source %NUGETSOURCE% Microsoft.CodeAnalysis.NetAnalyzers -version %OLDVERSION%
+nuget.exe install -source %NUGETSOURCE% Microsoft.CodeAnalysis.NetAnalyzers -version %NEWVERSION%
 popd
 dotnet.exe ReleaseNotesUtil.dll getrulesjson %SCRATCHDIR% %OLDVERSION% %SCRATCHDIR%\%OLDVERSION%-rules.json
 dotnet.exe ReleaseNotesUtil.dll getrulesjson %SCRATCHDIR% %NEWVERSION% %SCRATCHDIR%\%NEWVERSION%-rules.json
@@ -37,5 +37,5 @@ if exist "%DIFFNOTES%" (
 goto :eof
 
 :usage
-echo Usage: %0 scratchDir nugetSource fxCopAnalyzersOldVersion fxCopAnalyzersNewVersion
-echo Example: %0 C:\scratch nuget.org 2.6.3 2.9.0
+echo Usage: %0 scratchDir nugetSource netAnalyzersOldVersion netAnalyzersNewVersion
+echo Example: %0 C:\scratch nuget.org 5.0.0 6.0.0

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -15,9 +15,11 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
         [Fact]
-        public async Task XmlReaderSettingsDefaultAsFieldShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsDefaultAsFieldShouldNotGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 namespace TestNamespace
@@ -34,7 +36,9 @@ namespace TestNamespace
 }
 ");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -50,9 +54,11 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsFieldSetDtdProcessingToParseWithNoCreateShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsFieldSetDtdProcessingToParseWithNoCreateShouldNotGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 namespace TestNamespace
@@ -67,7 +73,9 @@ namespace TestNamespace
 "
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -83,9 +91,11 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsFieldDefaultAndDtdProcessingToIgnoreShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsFieldDefaultAndDtdProcessingToIgnoreShouldNotGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 namespace TestNamespace
@@ -104,7 +114,9 @@ namespace TestNamespace
 "
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -120,9 +132,11 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputSetDtdProcessingToParseShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputSetDtdProcessingToParseShouldNotGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 namespace TestNamespace
@@ -137,7 +151,9 @@ namespace TestNamespace
 }
 ");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -150,9 +166,11 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInGetShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInGetShouldNotGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 public class TestClass
@@ -170,7 +188,9 @@ public class TestClass
 }
 ");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Public Class TestClass
@@ -186,9 +206,11 @@ End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInTryShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInTryShouldNotGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System;
 using System.Xml;
 
@@ -208,7 +230,9 @@ class TestClass6a
 }
 ");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Xml
 
@@ -227,9 +251,11 @@ End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInCatchShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInCatchShouldNotGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System;
 using System.Xml;
 
@@ -248,7 +274,9 @@ class TestClass6a
 }
 ");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Xml
 
@@ -266,9 +294,11 @@ End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInFinallyShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInFinallyShouldNotGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System;
 using System.Xml;
 
@@ -287,7 +317,9 @@ class TestClass6a
 }
 ");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Xml
 
@@ -306,9 +338,11 @@ End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInAsyncAwaitShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInAsyncAwaitShouldNotGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -330,7 +364,9 @@ class TestClass
 }
 ");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Threading.Tasks
 Imports System.Xml
 
@@ -351,9 +387,11 @@ End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInDelegateShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInDelegateShouldNotGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 class TestClass
@@ -369,7 +407,9 @@ class TestClass
 }
 ");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Class TestClass
@@ -386,9 +426,11 @@ End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputSetDtdProcessingToProhibitShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputSetDtdProcessingToProhibitShouldNotGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 namespace TestNamespace
@@ -405,7 +447,9 @@ namespace TestNamespace
 "
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -419,9 +463,11 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputSetPropertiesToSecureValuesShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputSetPropertiesToSecureValuesShouldNotGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 namespace TestNamespace
@@ -440,7 +486,9 @@ namespace TestNamespace
 "
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -456,7 +504,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task RealCodeSnippetFromCustomerPre452ShouldGenerateDiagnostic()
+        public async Task RealCodeSnippetFromCustomerPre452ShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net451.Default,
@@ -554,7 +602,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task RealCodeSnippetFromCustomerPost452ShouldNotGenerateDiagnostic()
+        public async Task RealCodeSnippetFromCustomerPost452ShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net452.Default,

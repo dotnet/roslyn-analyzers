@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
@@ -8,6 +8,8 @@ using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA1051: Do not declare visible instance fields
     /// </summary>
@@ -16,42 +18,62 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA1051";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotDeclareVisibleInstanceFieldsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotDeclareVisibleInstanceFieldsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotDeclareVisibleInstanceFieldsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-
         // TODO: Need to revisit the "RuleLevel" for this Rule.
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(DoNotDeclareVisibleInstanceFieldsTitle)),
+            CreateLocalizableResourceString(nameof(DoNotDeclareVisibleInstanceFieldsMessage)),
+            DiagnosticCategory.Design,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: CreateLocalizableResourceString(nameof(DoNotDeclareVisibleInstanceFieldsDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
+            context.RegisterCompilationStartAction(context =>
             {
-                var field = (IFieldSymbol)symbolAnalysisContext.Symbol;
+                var structLayoutAttributeType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesStructLayoutAttribute);
 
-                // Only report diagnostic on non-static, non-const, non-private fields.
-                // Additionally, by default only report externally visible fields for FxCop compat.
-                if (!field.IsStatic &&
-                    !field.IsConst &&
-                    field.DeclaredAccessibility != Accessibility.Private &&
-                    field.MatchesConfiguredVisibility(symbolAnalysisContext.Options, Rule, symbolAnalysisContext.CancellationToken))
+                context.RegisterSymbolAction(symbolAnalysisContext =>
                 {
-                    symbolAnalysisContext.ReportDiagnostic(field.CreateDiagnostic(Rule));
-                }
-            }, SymbolKind.Field);
+                    var field = (IFieldSymbol)symbolAnalysisContext.Symbol;
+
+                    // Only report diagnostic on non-static, non-const, non-private fields.
+                    if (field.IsStatic ||
+                        field.IsConst ||
+                        field.DeclaredAccessibility == Accessibility.Private)
+                    {
+                        return;
+                    }
+
+                    // Do not report on types marked with StructLayoutAttribute
+                    // See https://github.com/dotnet/roslyn-analyzers/issues/4149
+                    if (field.ContainingType.HasAttribute(structLayoutAttributeType))
+                    {
+                        return;
+                    }
+
+                    var excludeStructs = symbolAnalysisContext.Options.GetBoolOptionValue(EditorConfigOptionNames.ExcludeStructs, Rule,
+                        field, symbolAnalysisContext.Compilation, defaultValue: false);
+                    if (excludeStructs &&
+                        field.ContainingType?.TypeKind == TypeKind.Struct)
+                    {
+                        return;
+                    }
+
+                    // Additionally, by default only report externally visible fields for FxCop compat.
+                    if (symbolAnalysisContext.Options.MatchesConfiguredVisibility(Rule, field, symbolAnalysisContext.Compilation))
+                    {
+                        symbolAnalysisContext.ReportDiagnostic(field.CreateDiagnostic(Rule));
+                    }
+                }, SymbolKind.Field);
+            });
         }
     }
 }

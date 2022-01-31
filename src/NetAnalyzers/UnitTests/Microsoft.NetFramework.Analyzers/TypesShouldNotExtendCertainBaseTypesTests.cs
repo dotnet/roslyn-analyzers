@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -16,7 +17,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     public class TypesShouldNotExtendCertainBaseTypesTests
     {
         [Fact]
-        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_NoDiagnostic()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -28,7 +29,7 @@ class C : Attribute
         }
 
         [Fact]
-        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_ApplicationException()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_ApplicationExceptionAsync()
         {
             var source = @"
 using System;
@@ -46,7 +47,7 @@ public class C1 : ApplicationException
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_ApplicationException_Internal()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_ApplicationException_InternalAsync()
         {
             var source = @"
 using System;
@@ -60,7 +61,7 @@ class C1 : ApplicationException
         }
 
         [Fact]
-        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_XmlDocument()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_XmlDocumentAsync()
         {
             var source = @"
 using System.Xml;
@@ -78,7 +79,7 @@ public class C1 : XmlDocument
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_XmlDocument_Internal()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_XmlDocument_InternalAsync()
         {
             var source = @"
 using System.Xml;
@@ -92,7 +93,7 @@ class C1 : XmlDocument
         }
 
         [Fact]
-        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_Collection()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_CollectionAsync()
         {
             var source = @"
 using System.Collections;
@@ -134,7 +135,7 @@ public class C6 : Stack
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_Collection_Internal()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_Collection_InternalAsync()
         {
             var source = @"
 using System.Collections;
@@ -170,7 +171,7 @@ public class C6
         }
 
         [Fact]
-        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_NoDiagnostic()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_NoDiagnosticAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -183,7 +184,7 @@ End Class
         }
 
         [Fact]
-        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_ApplicationException()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_ApplicationExceptionAsync()
         {
             var source = @"
 Imports System
@@ -202,10 +203,8 @@ End Class
             await VerifyVB.VerifyAnalyzerAsync(source, expected);
         }
 
-
-
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_ApplicationException_Internal()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_ApplicationException_InternalAsync()
         {
             var source = @"
 Imports System
@@ -221,7 +220,7 @@ End Class
         }
 
         [Fact]
-        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_XmlDocument()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_XmlDocumentAsync()
         {
             var source = @"
 Imports System.Xml
@@ -240,7 +239,7 @@ End Class
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_XmlDocument_Internal()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_XmlDocument_InternalAsync()
         {
             var source = @"
 Imports System.Xml
@@ -255,7 +254,7 @@ End Class
         }
 
         [Fact]
-        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_Collection()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_CollectionAsync()
         {
             var source = @"
 Imports System.Collections
@@ -304,7 +303,7 @@ End Class
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_Collection_Internal()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_Collection_InternalAsync()
         {
             var source = @"
 Imports System.Collections
@@ -345,98 +344,130 @@ End Class
 
         private static DiagnosticResult GetCSharpCollectionBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetBasicCollectionBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyVB.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetCSharpDictionaryBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetBasicDictionaryBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyVB.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetCSharpQueueResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetBasicQueueResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyVB.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetCSharpReadOnlyCollectionResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetBasicReadOnlyCollectionBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyVB.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetCSharpSortedListResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetBasicSortedListResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyVB.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetCSharpStackResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetBasicStackResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyVB.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetCSharpApplicationExceptionResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetBasicApplicationExceptionResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyVB.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetCSharpXmlDocumentResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private static DiagnosticResult GetBasicXmlDocumentResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
-            string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument, declaredTypeName, badBaseTypeName);
-            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument, declaredTypeName, badBaseTypeName);
+#pragma warning disable RS0030 // Do not used banned APIs
+            return VerifyVB.Diagnostic().WithLocation(line, column).WithArguments(message);
+#pragma warning restore RS0030 // Do not used banned APIs
         }
     }
 }

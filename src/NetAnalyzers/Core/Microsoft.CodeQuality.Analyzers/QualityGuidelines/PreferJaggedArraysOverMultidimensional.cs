@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
@@ -9,6 +9,8 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA1814: Prefer jagged arrays over multidimensional
     /// </summary>
@@ -17,49 +19,50 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     {
         internal const string RuleId = "CA1814";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PreferJaggedArraysOverMultidimensionalTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(PreferJaggedArraysOverMultidimensionalTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(PreferJaggedArraysOverMultidimensionalDescription));
 
-        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PreferJaggedArraysOverMultidimensionalMessageDefault), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageReturn = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PreferJaggedArraysOverMultidimensionalMessageReturn), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageBody = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PreferJaggedArraysOverMultidimensionalMessageBody), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PreferJaggedArraysOverMultidimensionalDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(PreferJaggedArraysOverMultidimensionalMessageDefault)),
+            DiagnosticCategory.Performance,
+            RuleLevel.CandidateForRemoval,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageDefault,
-                                                                             DiagnosticCategory.Performance,
-                                                                             RuleLevel.CandidateForRemoval,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor ReturnRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageReturn,
-                                                                             DiagnosticCategory.Performance,
-                                                                             RuleLevel.CandidateForRemoval,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor BodyRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageBody,
-                                                                             DiagnosticCategory.Performance,
-                                                                             RuleLevel.CandidateForRemoval,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor ReturnRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(PreferJaggedArraysOverMultidimensionalMessageReturn)),
+            DiagnosticCategory.Performance,
+            RuleLevel.CandidateForRemoval,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, ReturnRule, BodyRule);
+        internal static readonly DiagnosticDescriptor BodyRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(PreferJaggedArraysOverMultidimensionalMessageBody)),
+            DiagnosticCategory.Performance,
+            RuleLevel.CandidateForRemoval,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DefaultRule, ReturnRule, BodyRule);
+
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
-            analysisContext.RegisterSymbolAction(AnalyzeProperty, SymbolKind.Property);
-            analysisContext.RegisterSymbolAction(AnalyzeMethod, SymbolKind.Method);
-            analysisContext.RegisterOperationAction(AnalyzeObjectCreation, OperationKind.ArrayCreation);
+            context.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
+            context.RegisterSymbolAction(AnalyzeProperty, SymbolKind.Property);
+            context.RegisterSymbolAction(AnalyzeMethod, SymbolKind.Method);
+            context.RegisterOperationAction(AnalyzeObjectCreation, OperationKind.ArrayCreation);
         }
 
         private static void AnalyzeField(SymbolAnalysisContext context)
@@ -76,33 +79,39 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         {
             var property = (IPropertySymbol)context.Symbol;
 
-            // If its an override then don't report it as it can only be fixed in the base type.
-            if (!property.IsOverride)
+            // Bail-out when override as it can only be fixed in the base type.
+            if (property.IsOverride)
             {
-                if (IsMultiDimensionalArray(property.Type))
-                {
-                    context.ReportDiagnostic(property.CreateDiagnostic(DefaultRule, property.Name));
-                }
-
-                AnalyzeParameters(context, property.Parameters);
+                return;
             }
+
+            if (IsMultiDimensionalArray(property.Type) &&
+                !property.IsImplementationOfAnyInterfaceMember())
+            {
+                context.ReportDiagnostic(property.CreateDiagnostic(DefaultRule, property.Name));
+            }
+
+            AnalyzeParameters(context, property, property.Parameters);
         }
 
         private static void AnalyzeMethod(SymbolAnalysisContext context)
         {
             var method = (IMethodSymbol)context.Symbol;
 
-            // If its an override then don't report it as it can only be fixed in the base type.
+            // Bail-out when override as it can only be fixed in the base type.
             // If its a getter\setter then we will report on the property instead so skip analyzing the method.
-            if (!method.IsOverride && method.AssociatedSymbol == null)
+            if (method.IsOverride || method.AssociatedSymbol != null)
             {
-                if (IsMultiDimensionalArray(method.ReturnType))
-                {
-                    context.ReportDiagnostic(method.CreateDiagnostic(ReturnRule, method.Name, method.ReturnType));
-                }
-
-                AnalyzeParameters(context, method.Parameters);
+                return;
             }
+
+            if (IsMultiDimensionalArray(method.ReturnType) &&
+                !method.IsImplementationOfAnyInterfaceMember())
+            {
+                context.ReportDiagnostic(method.CreateDiagnostic(ReturnRule, method.Name, method.ReturnType));
+            }
+
+            AnalyzeParameters(context, method, method.Parameters);
         }
 
         private static void AnalyzeObjectCreation(OperationAnalysisContext context)
@@ -115,11 +124,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
         }
 
-        private static void AnalyzeParameters(SymbolAnalysisContext context, ImmutableArray<IParameterSymbol> parameters)
+        private static void AnalyzeParameters(SymbolAnalysisContext context, ISymbol containingSymbol, ImmutableArray<IParameterSymbol> parameters)
         {
             foreach (IParameterSymbol parameter in parameters)
             {
-                if (IsMultiDimensionalArray(parameter.Type))
+                if (IsMultiDimensionalArray(parameter.Type) &&
+                    !containingSymbol.IsImplementationOfAnyInterfaceMember())
                 {
                     context.ReportDiagnostic(parameter.CreateDiagnostic(DefaultRule, parameter.Name));
                 }

@@ -1,12 +1,12 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
-    Microsoft.NetFramework.CSharp.Analyzers.CSharpDoNotUseInsecureDtdProcessingInApiDesignAnalyzer,
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingInApiDesignAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
-    Microsoft.NetFramework.VisualBasic.Analyzers.BasicDoNotUseInsecureDtdProcessingInApiDesignAnalyzer,
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingInApiDesignAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
@@ -14,7 +14,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     public partial class DoNotUseInsecureDtdProcessingInApiDesignAnalyzerTests
     {
         [Fact]
-        public async Task NonXmlTextReaderDerivedTypeWithNoConstructorShouldNotGenerateDiagnostic()
+        public async Task NonXmlTextReaderDerivedTypeWithNoConstructorShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -47,7 +47,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task NonXmlTextReaderDerivedTypeWithConstructorShouldNotGenerateDiagnostic()
+        public async Task NonXmlTextReaderDerivedTypeWithConstructorShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -85,7 +85,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task TextReaderDerivedTypeWithNoConstructorShouldNotGenerateDiagnostic()
+        public async Task TextReaderDerivedTypeWithNoConstructorShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -109,7 +109,7 @@ End Namespace"
         }
 
         [Fact]
-        public async Task TextReaderDerivedTypeWithMethodAndNoConstructorShouldNotGenerateDiagnostic()
+        public async Task TextReaderDerivedTypeWithMethodAndNoConstructorShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         #region Diagnostic Tests
 
         [Fact]
-        public async Task CA1813CSharpDiagnosticProviderTestFired()
+        public async Task CA1813CSharpDiagnosticProviderTestFiredAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -38,7 +38,7 @@ public class C
         }
 
         [Fact]
-        public async Task CA1813CSharpDiagnosticProviderTestFiredWithScope()
+        public async Task CA1813CSharpDiagnosticProviderTestFiredWithScopeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -57,7 +57,7 @@ public class Outer
         }
 
         [Fact]
-        public async Task CA1813CSharpDiagnosticProviderTestNotFired()
+        public async Task CA1813CSharpDiagnosticProviderTestNotFiredAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -72,7 +72,7 @@ public sealed class AttributeClass: Attribute
         }
 
         [Fact]
-        public async Task CA1813VisualBasicDiagnosticProviderTestFired()
+        public async Task CA1813VisualBasicDiagnosticProviderTestFiredAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -92,7 +92,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1813VisualBasicDiagnosticProviderTestFiredwithScope()
+        public async Task CA1813VisualBasicDiagnosticProviderTestFiredwithScopeAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -110,7 +110,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1813VisualBasicDiagnosticProviderTestNotFired()
+        public async Task CA1813VisualBasicDiagnosticProviderTestNotFiredAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -129,11 +129,15 @@ End Class
         #endregion
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyCS.Diagnostic()
                .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         private static DiagnosticResult GetBasicResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
     }
 }

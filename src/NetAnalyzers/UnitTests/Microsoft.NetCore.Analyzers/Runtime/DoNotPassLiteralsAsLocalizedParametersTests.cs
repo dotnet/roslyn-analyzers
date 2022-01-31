@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
@@ -21,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class DoNotPassLiteralsAsLocalizedParametersTests
     {
         [Fact]
-        public async Task NonLocalizableParameter_NoDiagnostic()
+        public async Task NonLocalizableParameter_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -65,7 +65,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_NonLiteralArgument_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_NonLiteralArgument_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -103,7 +103,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_EmptyStringLiteralArgument_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_EmptyStringLiteralArgument_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -143,7 +143,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_NonEmptyStringLiteralArgument_AllControlChars_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_NonEmptyStringLiteralArgument_AllControlChars_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -184,7 +184,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_MultipleLineStringLiteralArgument_Method_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_MultipleLineStringLiteralArgument_Method_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -200,13 +200,13 @@ public class Test
 {
     public void M1(C c)
     {
-        var str = ""a\na"";
+        var str = ""a\r\na"";
         c.M(str);
     }
 }
-",
+".NormalizeLineEndings(),
                 // Test0.cs(16,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a a".
-                GetCSharpResultAt(16, 13, "void Test.M1(C c)", "param", "void C.M(string param)", "a a"));
+                GetCSharpResultAt(16, 13, "void Test.M1(C c)", "param", "void C.M(string param)", "a  a"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports Microsoft.VisualBasic
@@ -223,13 +223,13 @@ Public Class Test
         c.M(str)
     End Sub
 End Class
-",
+".NormalizeLineEndings(),
                 // Test0.vb(13,13): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'param' of a call to 'Sub C.M(param As String)'. Retrieve the following string(s) from a resource table instead: "a a".
-                GetBasicResultAt(13, 13, "Sub Test.M1(c As C)", "param", "Sub C.M(param As String)", "a a"));
+                GetBasicResultAt(13, 13, "Sub Test.M1(c As C)", "param", "Sub C.M(param As String)", "a  a"));
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_Method_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_Method_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -273,7 +273,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_Constructor_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_Constructor_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -317,7 +317,7 @@ End Class
         }
 
         [Fact]
-        public async Task PropertyWithLocalizableAttribute_StringLiteralArgument_Diagnostic()
+        public async Task PropertyWithLocalizableAttribute_StringLiteralArgument_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -360,7 +360,7 @@ End Class
         }
 
         [Fact]
-        public async Task PropertySetterWithLocalizableAttribute_StringLiteralArgument_Diagnostic()
+        public async Task PropertySetterWithLocalizableAttribute_StringLiteralArgument_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -411,7 +411,7 @@ End Class
         }
 
         [Fact]
-        public async Task PropertySetterParameterWithLocalizableAttribute_StringLiteralArgument_Diagnostic()
+        public async Task PropertySetterParameterWithLocalizableAttribute_StringLiteralArgument_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -463,7 +463,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_MultipleStringLiteralArguments_Method_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_MultipleStringLiteralArguments_Method_DiagnosticAsync()
         {
             const string editorConfigText = "dotnet_code_quality.CA1303.use_naming_heuristic = true";
 
@@ -494,7 +494,11 @@ public class Test
 }
 ",
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
                     ExpectedDiagnostics =
                     {
                         // Test0.cs(17,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param, string message)'. Retrieve the following string(s) from a resource table instead: "a".
@@ -528,7 +532,11 @@ Public Class Test
 End Class
 ",
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
                     ExpectedDiagnostics =
                     {
                         // Test0.vb(13,13): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'param' of a call to 'Sub C.M(param As String, message As String)'. Retrieve the following string(s) from a resource table instead: "a".
@@ -541,7 +549,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableFalseAttribute_StringLiteralArgument_NoDiagnostic()
+        public async Task ParameterWithLocalizableFalseAttribute_StringLiteralArgument_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -581,7 +589,7 @@ End Class
         }
 
         [Fact]
-        public async Task ContainingSymbolWithLocalizableTrueAttribute_Diagnostic()
+        public async Task ContainingSymbolWithLocalizableTrueAttribute_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -627,7 +635,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableFalseAttribute_ContainingSymbolWithLocalizableTrueAttribute_NoDiagnostic()
+        public async Task ParameterWithLocalizableFalseAttribute_ContainingSymbolWithLocalizableTrueAttribute_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -669,7 +677,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableTrueAttribute_ContainingSymbolWithLocalizableFalseAttribute_Diagnostic()
+        public async Task ParameterWithLocalizableTrueAttribute_ContainingSymbolWithLocalizableFalseAttribute_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -715,7 +723,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_OverriddenMethod_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_OverriddenMethod_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -788,7 +796,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_MultiplePossibleLiterals_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_MultiplePossibleLiterals_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -832,7 +840,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_MultiplePossibleLiterals_Ordering_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_MultiplePossibleLiterals_Ordering_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -876,7 +884,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_DefaultValue_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_DefaultValue_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -914,7 +922,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_ConstantField_StringLiteralArgument_Method_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_ConstantField_StringLiteralArgument_Method_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -959,7 +967,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_XmlStringLiteralArgument_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_XmlStringLiteralArgument_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -999,7 +1007,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_XmlStringLiteralArgument_Filtering_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_XmlStringLiteralArgument_Filtering_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -1043,7 +1051,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_SpecialCases_ConditionalMethod_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_SpecialCases_ConditionalMethod_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Diagnostics;
@@ -1085,7 +1093,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_SpecialCases_XmlWriterMethod_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_SpecialCases_XmlWriterMethod_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -1127,7 +1135,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_SpecialCases_SystemConsoleWriteMethods_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_SpecialCases_SystemConsoleWriteMethods_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1177,7 +1185,7 @@ End Class
         }
 
         [Fact]
-        public async Task ParameterWithLocalizableAttribute_SpecialCases_SystemWebUILiteralControl_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_SpecialCases_SystemWebUILiteralControl_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -1239,7 +1247,7 @@ End Class
         [InlineData("CollectionAssert")]
         [InlineData("StringAssert")]
         [Theory]
-        public async Task ParameterWithLocalizableAttribute_SpecialCases_UnitTestApis_NoDiagnostic(string assertClassName)
+        public async Task ParameterWithLocalizableAttribute_SpecialCases_UnitTestApis_NoDiagnosticAsync(string assertClassName)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
 using System.ComponentModel;
@@ -1303,7 +1311,7 @@ End Class
         [InlineData("Caption", true)]
         [InlineData("Caption", null)]
         [Theory]
-        public async Task ParameterWithLocalizableName_StringLiteralArgument_Method_Diagnostic(string parameterName, bool? useNameHeuristic)
+        public async Task ParameterWithLocalizableName_StringLiteralArgument_Method_DiagnosticAsync(string parameterName, bool? useNameHeuristic)
         {
             // The null case represents the default value which is 'false'
             string editorConfigText = useNameHeuristic != null
@@ -1334,7 +1342,11 @@ public class Test
 }}
 ",
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
                 },
             };
 
@@ -1365,7 +1377,11 @@ Public Class Test
 End Class
 ",
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
                 },
             };
 
@@ -1396,7 +1412,7 @@ End Class
         [InlineData("Caption", true)]
         [InlineData("Caption", null)]
         [Theory]
-        public async Task PropertyWithLocalizableName_StringLiteralArgument_Diagnostic(string propertyName, bool? useNameHeuristic)
+        public async Task PropertyWithLocalizableName_StringLiteralArgument_DiagnosticAsync(string propertyName, bool? useNameHeuristic)
         {
             // The null case represents the default value which is 'false'
             string editorConfigText = useNameHeuristic != null
@@ -1425,7 +1441,11 @@ public class Test
 }}
 ",
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
                 },
             };
 
@@ -1455,7 +1475,11 @@ Public Class Test
 End Class
 ",
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
                 },
             };
 
@@ -1468,7 +1492,7 @@ End Class
         }
 
         [Fact, WorkItem(1919, "https://github.com/dotnet/roslyn-analyzers/issues/1919")]
-        public async Task ShouldBeLocalizedRegressionTest()
+        public async Task ShouldBeLocalizedRegressionTestAsync()
         {
             await new VerifyCS.Test
             {
@@ -1495,7 +1519,10 @@ internal static class Program
     }
 }",
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.CA1303.use_naming_heuristic = true"), },
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.CA1303.use_naming_heuristic = true"), },
                     ExpectedDiagnostics =
                     {
                         // Test0.cs(6,45): warning CA1303: Method 'void Program.Main()' passes a literal string as parameter 'text' of a call to 'decimal DerivedClass.Generic<decimal>(string text)'. Retrieve the following string(s) from a resource table instead: "number".
@@ -1506,7 +1533,7 @@ internal static class Program
         }
 
         [Fact, WorkItem(1919, "https://github.com/dotnet/roslyn-analyzers/issues/1919")]
-        public async Task ShouldBeLocalizedRegressionTest_02()
+        public async Task ShouldBeLocalizedRegressionTest_02Async()
         {
             await new VerifyCS.Test
             {
@@ -1532,7 +1559,10 @@ internal static class Program
     }
 }",
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.CA1303.use_naming_heuristic = true"), },
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.CA1303.use_naming_heuristic = true"), },
                     ExpectedDiagnostics =
                     {
                         // Test0.cs(6,45): warning CA1303: Method 'void Program.Main()' passes a literal string as parameter 'text' of a call to 'decimal DerivedClass.Generic<decimal>(string text)'. Retrieve the following string(s) from a resource table instead: "number".
@@ -1553,7 +1583,9 @@ internal static class Program
         [InlineData(@"dotnet_code_quality.excluded_symbol_names = M:C.M(System.String)|M:C.M2(System.String)")]
         // Match by type documentation ID with "T:" prefix
         [InlineData(@"dotnet_code_quality.excluded_symbol_names = T:C")]
-        public async Task ShouldBeLocalized_MethodExcludedByConfiguration_NoDiagnostic(string editorConfigText)
+        // Match by method name and wildcard
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = M*")]
+        public async Task ShouldBeLocalized_MethodExcludedByConfiguration_NoDiagnosticAsync(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -1585,7 +1617,11 @@ public class Test
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
@@ -1618,7 +1654,15 @@ public class Test
         [InlineData(@"dotnet_code_quality.excluded_symbol_names = T:System.Exception")]
         // Match by namespace documentation ID with "N:" prefix
         [InlineData(@"dotnet_code_quality.excluded_symbol_names = N:System")]
-        public async Task ShouldBeLocalized_ConstructorExcludedByConfiguration_NoDiagnostic(string editorConfigText)
+        // Match by type name and wildcard
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = Except*")]
+        // Match by constructor documentation ID with "M:" prefix and wildcard
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = M:System.Exception*")]
+        // Match by type documentation ID with "T:" prefix and wildcard
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = T:System.E*")]
+        // Match by namespace documentation ID with "N:" prefix and wildcard
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = N:Sys*")]
+        public async Task ShouldBeLocalized_ConstructorExcludedByConfiguration_NoDiagnosticAsync(string editorConfigText)
         {
             var editorConfigTextWithNamingHeuristic = editorConfigText + @"
 dotnet_code_quality.CA1303.use_naming_heuristic = true";
@@ -1641,7 +1685,11 @@ public class Test
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigTextWithNamingHeuristic) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigTextWithNamingHeuristic}
+") }
                 }
             };
 
@@ -1672,7 +1720,11 @@ public class Test
         [InlineData(@"dotnet_code_quality.excluded_type_names_with_derived_types = System.Exception")]
         // Match by type documentation ID with "T:" prefix
         [InlineData(@"dotnet_code_quality.excluded_type_names_with_derived_types = T:System.Exception")]
-        public async Task ShouldBeLocalized_SubTypesExcludedByConfiguration_NoDiagnostic(string editorConfigText)
+        // Match by type name and wildcard
+        [InlineData(@"dotnet_code_quality.excluded_type_names_with_derived_types = Except*")]
+        // Match by type documentation ID with "T:" prefix and wildcard
+        [InlineData(@"dotnet_code_quality.excluded_type_names_with_derived_types = T:System.Except*")]
+        public async Task ShouldBeLocalized_SubTypesExcludedByConfiguration_NoDiagnosticAsync(string editorConfigText)
         {
             var editorConfigTextWithNamingHeuristic = editorConfigText + @"
 dotnet_code_quality.CA1303.use_naming_heuristic = true";
@@ -1697,7 +1749,11 @@ public class Test
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigTextWithNamingHeuristic) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigTextWithNamingHeuristic}
+") }
                 }
             };
 
@@ -1726,9 +1782,9 @@ public class Test
         [Theory]
         [InlineData("")]
         [InlineData("dotnet_code_quality.excluded_symbol_names = M1")]
-        [InlineData("dotnet_code_quality." + DoNotPassLiteralsAsLocalizedParameters.RuleId + ".excluded_symbol_names = M1")]
+        [InlineData("dotnet_code_quality.CA1303.excluded_symbol_names = M1")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = M1")]
-        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOptionAsync(string editorConfigText)
         {
             var editorConfigTextWithNamingHeuristic = editorConfigText + @"
 dotnet_code_quality.CA1303.use_naming_heuristic = true";
@@ -1753,7 +1809,10 @@ public class Test
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigTextWithNamingHeuristic) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigTextWithNamingHeuristic}") }
                 }
             };
 
@@ -1784,7 +1843,7 @@ public class Test
         [InlineData(PointsToAnalysisKind.None)]
         [InlineData(PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties)]
         [InlineData(PointsToAnalysisKind.Complete)]
-        public async Task TestPointsToAnalysisKind(PointsToAnalysisKind? pointsToAnalysisKind)
+        public async Task TestPointsToAnalysisKindAsync(PointsToAnalysisKind? pointsToAnalysisKind)
         {
             var editorConfig = pointsToAnalysisKind.HasValue ?
                 $"dotnet_code_quality.CA1303.points_to_analysis_kind = {pointsToAnalysisKind}" :
@@ -1805,22 +1864,25 @@ public class Test
     private string str;
     public void M1(C c)
     {
-        str = ""a\na"";
+        str = ""a\r\na"";
         c.M(str);
     }
 }
-";
+".NormalizeLineEndings();
             var csTest = new VerifyCS.Test()
             {
-                TestCode = csCode,
-                AnalyzerConfigDocument = editorConfig
+                TestState =
+                {
+                    Sources = { csCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
             };
 
             if (pointsToAnalysisKind == PointsToAnalysisKind.Complete)
             {
                 csTest.ExpectedDiagnostics.Add(
                     // Test0.cs(17,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a a".
-                    GetCSharpResultAt(17, 13, "void Test.M1(C c)", "param", "void C.M(string param)", "a a"));
+                    GetCSharpResultAt(17, 13, "void Test.M1(C c)", "param", "void C.M(string param)", "a  a"));
             }
 
             await csTest.RunAsync();
@@ -1841,31 +1903,38 @@ Public Class Test
         c.M(str)
     End Sub
 End Class
-";
+".NormalizeLineEndings();
             var vbTest = new VerifyVB.Test()
             {
-                TestCode = vbCode,
-                AnalyzerConfigDocument = editorConfig
+                TestState =
+                {
+                    Sources = { vbCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
             };
 
             if (pointsToAnalysisKind == PointsToAnalysisKind.Complete)
             {
                 vbTest.ExpectedDiagnostics.Add(
                     // Test0.vb(14,13): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'param' of a call to 'Sub C.M(param As String)'. Retrieve the following string(s) from a resource table instead: "a a".
-                    GetBasicResultAt(14, 13, "Sub Test.M1(c As C)", "param", "Sub C.M(param As String)", "a a"));
+                    GetBasicResultAt(14, 13, "Sub Test.M1(c As C)", "param", "Sub C.M(param As String)", "a  a"));
             }
 
             await vbTest.RunAsync();
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyCS.Diagnostic()
                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
     }
 }

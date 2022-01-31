@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     public class ApprovedCipherModeTests
     {
         [Fact]
-        public async Task TestECBMode()
+        public async Task TestECBModeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -43,7 +43,7 @@ End Module",
         }
 
         [Fact]
-        public async Task TestOFBMode()
+        public async Task TestOFBModeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -71,7 +71,7 @@ End Module",
         }
 
         [Fact]
-        public async Task TestCFBMode()
+        public async Task TestCFBModeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -99,7 +99,7 @@ End Module",
         }
 
         [Fact]
-        public async Task TestCBCMode()
+        public async Task TestCBCModeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -127,7 +127,7 @@ End Module"
         }
 
         [Fact]
-        public async Task TestCTSMode()
+        public async Task TestCTSModeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -155,13 +155,17 @@ End Module"
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
     }
 }

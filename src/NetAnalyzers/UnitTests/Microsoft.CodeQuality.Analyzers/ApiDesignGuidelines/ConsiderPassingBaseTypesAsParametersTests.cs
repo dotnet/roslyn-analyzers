@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class ConsiderPassingBaseTypesAsParametersTests
     {
         [Fact]
-        public async Task Unused_NoDiagnostic()
+        public async Task Unused()
         {
             var src = @"
 public class A {}
@@ -97,6 +97,34 @@ public class Z
 }
 ";
             await VerifyCS.VerifyCodeFixAsync(src, VerifyCS.Diagnostic().WithLocation(0).WithArguments("a", "A", "IA"), src);
+        }
+
+        [Fact]
+        public async Task MethodCall_TypeWithGenericInterface()
+        {
+            var src = @"
+using System.Collections.Generic;
+
+public class Z
+{
+    public void UsesOnlyInterface(List<int> {|#0:l|})
+    {
+        var x = l.Count;
+    }
+
+    public void UsesDeclaredType(List<int> l)
+    {
+        l.BinarySearch(0);
+    }
+
+    public void UsesDeclaredAndInterfaceTypes(List<int> l)
+    {
+        var x = l.Count;
+        l.BinarySearch(0);
+    }
+}
+";
+            await VerifyCS.VerifyCodeFixAsync(src, VerifyCS.Diagnostic().WithLocation(0).WithArguments("l", "List<int>", "ICollection<int>"), src);
         }
 
         [Fact]
@@ -539,6 +567,69 @@ public class Z
     {
         b.Run();
         while (stream.ReadByte() != -1) { /*...*/ }
+    }
+}";
+            await VerifyCS.VerifyCodeFixAsync(src, src);
+        }
+
+        [Fact]
+        public async Task TypeIsReferredThroughVariableCreationAsync()
+        {
+            var src = @"
+using System.IO;
+
+public class Base
+{
+}
+
+public class Derived : Base
+{
+    public void SomeDerivedTypeMethod() {}
+}
+
+public class C
+{
+    void M(Derived d)
+    {
+        Derived d2 = d;
+        d2.SomeDerivedTypeMethod();
+    }
+
+    void M2(Derived d)
+    {
+        Derived d2 = d;
+    }
+}";
+            await VerifyCS.VerifyCodeFixAsync(src, src);
+        }
+
+        [Fact]
+        public async Task DownCastAsync()
+        {
+            var src = @"
+using System.IO;
+
+public class Base
+{
+}
+
+public class Derived : Base
+{
+}
+
+public class FurtherDerived : Derived
+{
+    public void MethodOnFurtherDerived() {}
+}
+
+public class C
+{
+    void M(Derived d)
+    {
+        if (true)
+        {
+            ((FurtherDerived)d).MethodOnFurtherDerived();
+        }
     }
 }";
             await VerifyCS.VerifyCodeFixAsync(src, src);

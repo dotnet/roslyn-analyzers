@@ -53,10 +53,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 methodSymbol.Parameters.Length == 0 ||
                 methodSymbol.IsImplementationOfAnyInterfaceMember() ||
                 methodSymbol.HasEventHandlerSignature(eventArgsTypeSymbol) ||
-                !context.Options.MatchesConfiguredVisibility(Rule, methodSymbol, context.Compilation,
-                    defaultRequiredVisibility: SymbolVisibilityGroup.All) ||
-                context.Options.IsConfiguredToSkipAnalysis(Rule, methodSymbol,
-                    context.Compilation))
+                !context.Options.MatchesConfiguredVisibility(Rule, methodSymbol, context.Compilation, SymbolVisibilityGroup.Public) ||
+                context.Options.IsConfiguredToSkipAnalysis(Rule, methodSymbol, context.Compilation))
             {
                 return;
             }
@@ -106,7 +104,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
 
                 void AddDeclaringTypeSymbol(ISymbol symbol)
-                    => AddType(FindDeclaringType(symbol));
+                    => AddType(FindDeclaringType(symbol.OriginalDefinition));
             }, OperationKind.ParameterReference);
 
             context.RegisterOperationBlockEndAction(context =>
@@ -133,6 +131,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
                 finally
                 {
+                    foreach (var item in typesUsedPerParameter.Values)
+                    {
+                        item.Free(context.CancellationToken);
+                    }
                     typesUsedPerParameter.Free(context.CancellationToken);
                 }
 
@@ -170,7 +172,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return FindDeclaringType(symbol.GetOverriddenMember());
             }
 
-            var interfaceMembers = ExplicitOrImplicitInterfaceImplementations(symbol);
+            var interfaceMembers = symbol.GetExplicitOrImplicitInterfaceImplementations();
             if (interfaceMembers.Length == 1)
             {
                 return interfaceMembers[0].ContainingType;
@@ -182,26 +184,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 // as declaring this type so let's assume it is defined on the containing type.
                 return symbol.ContainingType;
             }
-        }
-
-        // Borrowed from Microsoft.CodeAnalysis.Workspaces/ISymbolExtensions.cs with a small tweak
-        // which consist in passing the member name.
-        private static ImmutableArray<ISymbol> ExplicitOrImplicitInterfaceImplementations(ISymbol symbol)
-        {
-            if (symbol.Kind != SymbolKind.Method &&
-                symbol.Kind != SymbolKind.Property &&
-                symbol.Kind != SymbolKind.Event)
-            {
-                return ImmutableArray<ISymbol>.Empty;
-            }
-
-            var containingType = symbol.ContainingType;
-            var query = from iface in containingType.AllInterfaces
-                        from interfaceMember in iface.GetMembers(symbol.Name)
-                        let impl = containingType.FindImplementationForInterfaceMember(interfaceMember)
-                        where symbol.Equals(impl)
-                        select interfaceMember;
-            return query.ToImmutableArray();
         }
 
         private static ITypeSymbol FindMostGenericType(ITypeSymbol originalType, ImmutableArray<ITypeSymbol> constraints)

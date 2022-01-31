@@ -792,5 +792,25 @@ namespace Analyzer.Utilities.Extensions
 #endif
                 _ => false,
             };
+
+        // Borrowed from Microsoft.CodeAnalysis.Workspaces/ISymbolExtensions.cs with a small tweak
+        // which consist in passing the member name.
+        public static ImmutableArray<ISymbol> GetExplicitOrImplicitInterfaceImplementations(this ISymbol symbol)
+        {
+            if (symbol.Kind != SymbolKind.Method &&
+                symbol.Kind != SymbolKind.Property &&
+                symbol.Kind != SymbolKind.Event)
+            {
+                return ImmutableArray<ISymbol>.Empty;
+            }
+
+            var containingType = symbol.ContainingType;
+            var query = from iface in containingType.AllInterfaces
+                        from interfaceMember in iface.GetMembers(symbol.Name)
+                        let impl = containingType.FindImplementationForInterfaceMember(interfaceMember)
+                        where symbol.Equals(impl)
+                        select interfaceMember;
+            return query.ToImmutableArray();
+        }
     }
 }

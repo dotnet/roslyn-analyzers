@@ -393,7 +393,11 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             [NotNullWhen(returnValue: true)] out IMethodSymbol? creationMethod,
             [NotNullWhen(returnValue: true)] out ImmutableArray<IArgumentOperation> creationArguments)
         {
-            (creationMethod, creationArguments) = fieldInitializer.Value switch
+            var value = fieldInitializer.Value;
+            if (value is IConversionOperation { IsImplicit: true } conversion)
+                value = conversion.Operand;
+
+            (creationMethod, creationArguments) = value switch
             {
                 IObjectCreationOperation objectCreation when IsDescriptorConstructor(objectCreation.Constructor)
                     => (objectCreation.Constructor, objectCreation.Arguments),

@@ -436,7 +436,7 @@ class MyAnalyzer : DiagnosticAnalyzer
 
     // Disable by default descriptor.
     private static readonly DiagnosticDescriptor descriptor2 =
-        new DiagnosticDescriptor({|RS2001:""Id2""|}, ""Title2"", ""Message2"", ""Category2"", DiagnosticSeverity.Warning, isEnabledByDefault: false);
+        new({|RS2001:""Id2""|}, ""Title2"", ""Message2"", ""Category2"", DiagnosticSeverity.Warning, isEnabledByDefault: false);
 
     // Descriptor with help - ensure that just adding a help link does not require a new analyzer release entry.
     private static readonly DiagnosticDescriptor descriptor3 =
@@ -919,6 +919,7 @@ class MyAnalyzer : DiagnosticAnalyzer
 }";
             await VerifyCSharpAsync(source, shippedText, unshippedText);
         }
+
         #region Helpers
 
         private const string DefaultUnshippedHeader = ReleaseTrackingHelper.TableTitleNewRules + BlankLine + BlankLine +

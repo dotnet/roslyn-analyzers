@@ -41,11 +41,10 @@ jobs:
           Invoke-WebRequest -Uri https://download.sysinternals.com/files/Procdump.zip -UseBasicParsing -OutFile $env:Agent_TempDirectory\procdump\Procdump.zip | Out-Null
           Expand-Archive -Path $env:Agent_TempDirectory\procdump\Procdump.zip $env:Agent_TempDirectory\procdump\
           set PROCDUMP_PATH=$env:Agent_TempDirectory\procdump\
+          Write-Host ##vso[task.setvariable variable=PROCDUMP_PATH;]${env:Agent_TempDirectory}\procdump
           Write-Host ##vso[task.setvariable variable=PATH;]${env:Agent_TempDirectory}\procdump;${env:PATH};
-
     - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine /p:Coverage=$(_codeCoverage)
       displayName: Build and Test
-
     - task: PublishTestResults@2
       inputs:
         testRunner: VSTest
@@ -57,10 +56,17 @@ jobs:
       displayName: Upload coverage to codecov.io
       condition: and(succeeded(), eq(variables['_codeCoverage'], True))
     - task: PublishBuildArtifacts@1
-      displayName: Publish Logs
+      displayName: 'Publish Artifact: Logs'
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
-        ArtifactName: 'Windows $(_configuration)'
+        ArtifactName: 'Windows $(_configuration) Logs'
+      continueOnError: true
+      condition: always()
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: TestResults'
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)'
+        ArtifactName: 'FullOnWindows $(_configuration) Test Logs'
       continueOnError: true
       condition: always()
 

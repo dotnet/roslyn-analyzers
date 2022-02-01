@@ -1,0 +1,28 @@
+name: Enable auto merge
+on:
+  pull_request_target:
+    types: [opened, ready_for_review]
+permissions:
+  contents: write
+jobs:
+  add_milestone:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'dotnet/roslyn-analyzers' && github.event.pull_request.user.login == 'dotnet-bot' && startsWith(github.event.pull_request.title, 'Localized file check-in') }}
+    steps:
+    - name: Enable pull request auto-merge
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PULL_REQUEST_ID: ${{ github.event.pull_request.node_id }}
+      run: |
+        gh api graphql -f query='
+          mutation($pull: ID!) {
+            enablePullRequestAutoMerge(input: {pullRequestId: $pull}) {
+              pullRequest {
+                id
+                number
+                autoMergeRequest {
+                  mergeMethod
+                }
+              }
+            }
+          }' -f pull=$PULL_REQUEST_ID

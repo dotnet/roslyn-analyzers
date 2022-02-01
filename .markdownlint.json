@@ -3,6 +3,9 @@
   "MD013": false,
   "MD024": false,
   "MD026": false,
+  "MD033": {
+    "allowed_elements": [ "sub" ]
+  },
   "MD041": false,
   "MD046": {
     "style": "fenced"

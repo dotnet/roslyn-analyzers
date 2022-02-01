@@ -1,4 +1,4 @@
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information. -->
 <Project>
   <Import Project="..\Directory.Build.props"/>
 
@@ -39,6 +39,7 @@
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="$(MicrosoftCodeAnalysisAnalyzersVersion)" />
         <PackageReference Include="Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers" Version="$(MicrosoftCodeAnalysisPerformanceSensitiveAnalyzersVersion)" />
         <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="$(MicrosoftCodeAnalysisPublicApiAnalyzersVersion)" />
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="$(MicrosoftVisualStudioThreadingAnalyzersVersion)" />
         <PackageReference Include="Roslyn.Diagnostics.Analyzers" Version="$(RoslynDiagnosticsAnalyzersVersion)" />
       </ItemGroup>
 

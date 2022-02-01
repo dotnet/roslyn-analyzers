@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.PooledObjects;
@@ -251,6 +250,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             IDisposableNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
             IAsyncDisposableNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIAsyncDisposable);
             TaskNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
+            MemoryStreamNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIOMemoryStream);
             ValueTaskNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksValueTask);
             GenericTaskNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask1);
             MonitorNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingMonitor);
@@ -827,8 +827,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             // If so, we return the abstract value for the task wrapping the underlying return value.
             if (OwningSymbol is IMethodSymbol method &&
                 method.IsAsync &&
-                method.ReturnType.OriginalDefinition.Equals(GenericTaskNamedType) &&
-                !method.ReturnType.Equals(returnValueOperation.Type))
+                SymbolEqualityComparer.Default.Equals(method.ReturnType.OriginalDefinition, GenericTaskNamedType) &&
+                !SymbolEqualityComparer.Default.Equals(method.ReturnType, returnValueOperation.Type))
             {
                 var location = AbstractLocation.CreateAllocationLocation(returnValueOperation, method.ReturnType, DataFlowAnalysisContext.InterproceduralAnalysisData?.CallStack);
                 implicitTaskPointsToValue = PointsToAbstractValue.Create(location, mayBeNull: false);
@@ -968,7 +968,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         private bool IsContractCheckArgument(IArgumentOperation operation)
             => operation.Parent is IInvocationOperation invocation &&
                invocation.Arguments[0] == operation &&
-               (IsDebugAssertMethod(invocation.TargetMethod) || IsContractCheckMethod(invocation.TargetMethod));
+               (IsAnyDebugAssertMethod(invocation.TargetMethod) || IsContractCheckMethod(invocation.TargetMethod));
 
         private bool IsContractCheckMethod(IMethodSymbol method)
         {
@@ -991,11 +991,19 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return false;
         }
 
-        private bool IsDebugAssertMethod(IMethodSymbol method)
-            => Equals(method, DebugAssertMethod);
+        /// <summary>
+        /// Checks if the method is an overload of the <see cref="Debug.Assert(bool)"/> method.
+        /// </summary>
+        /// <param name="method">The IMethodSymbol to test.</param>
+        /// <returns>True if the method is an overlaod of the <see cref="Debug.Assert(bool)"/> method.</returns>
+        private bool IsAnyDebugAssertMethod(IMethodSymbol method) =>
+            DebugAssertMethod != null &&
+            method.ContainingSymbol.Equals(DebugAssertMethod.ContainingSymbol, SymbolEqualityComparer.Default) &&
+            method.Name == DebugAssertMethod.Name &&
+            method.ReturnType == DebugAssertMethod.ReturnType;
 
         protected bool IsAnyAssertMethod(IMethodSymbol method)
-            => IsDebugAssertMethod(method) || IsContractCheckMethod(method);
+            => IsAnyDebugAssertMethod(method) || IsContractCheckMethod(method);
 
         #region Helper methods to get or cache analysis data for visited operations.
 
@@ -1737,7 +1745,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 
                 foreach (var interfaceType in methodSymbol.ContainingType.AllInterfaces)
                 {
-                    if (interfaceType.OriginalDefinition.Equals(GenericIEquatableNamedType))
+                    if (SymbolEqualityComparer.Default.Equals(interfaceType.OriginalDefinition, GenericIEquatableNamedType))
                     {
                         var equalsMember = interfaceType.GetMembers("Equals").OfType<IMethodSymbol>().FirstOrDefault();
                         if (equalsMember != null && methodSymbol.IsOverrideOrImplementationOfInterfaceMember(equalsMember))
@@ -2145,7 +2153,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             // Bail out if configured not to execute interprocedural analysis.
             var skipInterproceduralAnalysis = !isLambdaOrLocalFunction && InterproceduralAnalysisKind == InterproceduralAnalysisKind.None ||
                 DataFlowAnalysisContext.InterproceduralAnalysisPredicate?.SkipInterproceduralAnalysis(invokedMethod, isLambdaOrLocalFunction) == true ||
-                DataFlowAnalysisContext.AnalyzerOptions.IsConfiguredToSkipAnalysis(s_dummyDataflowAnalysisDescriptor, invokedMethod, OwningSymbol, WellKnownTypeProvider.Compilation, CancellationToken.None);
+                DataFlowAnalysisContext.AnalyzerOptions.IsConfiguredToSkipAnalysis(s_dummyDataflowAnalysisDescriptor, invokedMethod, OwningSymbol, WellKnownTypeProvider.Compilation);
 
             // Also bail out for non-source methods and methods where we are not sure about the actual runtime target method.
             if (skipInterproceduralAnalysis ||
@@ -2167,7 +2175,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             }
 
             // Check if we are already at the maximum allowed interprocedural call chain length.
-            int currentMethodCallCount = currentMethodsBeingAnalyzed.Where(m => !(m.OwningSymbol is IMethodSymbol ms && ms.IsLambdaOrLocalFunctionOrDelegate())).Count();
+            int currentMethodCallCount = currentMethodsBeingAnalyzed.Count(m => !(m.OwningSymbol is IMethodSymbol ms && ms.IsLambdaOrLocalFunctionOrDelegate()));
             int currentLambdaOrLocalFunctionCallCount = currentMethodsBeingAnalyzed.Count - currentMethodCallCount;
 
             if (currentMethodCallCount >= MaxInterproceduralMethodCallChain ||
@@ -3137,7 +3145,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     HandleEnterLockOperation(arguments[0].Value);
                 }
                 else if (InterlockedNamedType != null &&
-                    targetMethod.ContainingType.OriginalDefinition.Equals(InterlockedNamedType))
+                    SymbolEqualityComparer.Default.Equals(targetMethod.ContainingType.OriginalDefinition, InterlockedNamedType))
                 {
                     ProcessInterlockedOperation(targetMethod, arguments, InterlockedNamedType);
                 }
@@ -4008,6 +4016,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         /// <see cref="INamedTypeSymbol"/> for <see cref="System.Threading.Tasks.Task"/>
         /// </summary>
         protected INamedTypeSymbol? TaskNamedType { get; }
+
+        /// <summary>
+        /// <see cref="INamedTypeSymbol"/> for <see cref="System.IO.MemoryStream"/>
+        /// </summary>
+        protected INamedTypeSymbol? MemoryStreamNamedType { get; }
 
         /// <summary>
         /// <see cref="INamedTypeSymbol"/> for System.Threading.Tasks.ValueTask/>

@@ -31,7 +31,7 @@
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
     <!-- Toolset -->
-    <MicrosoftVSSDKBuildToolsVersion>16.9.1050</MicrosoftVSSDKBuildToolsVersion>
+    <MicrosoftVSSDKBuildToolsVersion>17.0.1056-Dev17PIAs-g9dffd635</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftVSSDKVSDConfigToolVersion>16.0.2032702</MicrosoftVSSDKVSDConfigToolVersion>
     <CodecovVersion>1.12.3</CodecovVersion>
     <CoverletVersion>2.9.0</CoverletVersion>

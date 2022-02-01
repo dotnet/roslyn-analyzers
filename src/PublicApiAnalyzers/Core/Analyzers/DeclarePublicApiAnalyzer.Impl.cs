@@ -596,7 +596,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             {
                 var accessibilityPrefix = symbol.DeclaredAccessibility switch
                 {
-                    Accessibility.Protected or Accessibility.ProtectedOrInternal => "protected",
+                    Accessibility.Protected or Accessibility.ProtectedOrInternal => "protected ",
                     _ => ""
                 };
 

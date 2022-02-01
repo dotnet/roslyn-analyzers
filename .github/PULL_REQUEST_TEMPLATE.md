@@ -13,7 +13,7 @@ If your Pull Request is doing one of the following:
 Then, make sure to run `msbuild /t:pack /v:m` in the repository root; otherwise, the CI build will fail.
 
 - This command must be run from a Visual Studio Developer Command Prompt
-- Alternatively, `dotnet msbuild /t:Pack /v:m` can be used from a standard terminal window
+- Alternatively, `dotnet msbuild RoslynAnalyzers.sln -t:pack -v:m` can be used from a standard terminal window
 
 Note: Consider merging the PR base branch (`2.9.x`, `main`, or `release/*`) into your branch before you run the pack command to reduce merge conflicts.
 

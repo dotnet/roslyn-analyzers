@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <Import Project="eng/Testing.props"/>
 
   <PropertyGroup>
     <!-- Do not ship packages by default -->

@@ -180,21 +180,22 @@ $CountMissingSymbols = {
 
       Write-Host -NoNewLine "`t Checking file " $FileName "... "
   
-    if ($SymbolsOnMSDL -ne $null -and $SymbolsOnSymWeb -ne $null) {
-      Write-Host "Symbols found on MSDL ($SymbolsOnMSDL) and SymWeb ($SymbolsOnSymWeb)"
-    }
-    else {
-      $MissingSymbols++
-
-      if ($SymbolsOnMSDL -eq $null -and $SymbolsOnSymWeb -eq $null) {
-        Write-Host 'No symbols found on MSDL or SymWeb!'
+      if ($SymbolsOnMSDL -ne $null -and $SymbolsOnSymWeb -ne $null) {
+        Write-Host "Symbols found on MSDL ($SymbolsOnMSDL) and SymWeb ($SymbolsOnSymWeb)"
       }
       else {
-        if ($SymbolsOnMSDL -eq $null) {
-          Write-Host 'No symbols found on MSDL!'
+        $MissingSymbols++
+
+        if ($SymbolsOnMSDL -eq $null -and $SymbolsOnSymWeb -eq $null) {
+          Write-Host 'No symbols found on MSDL or SymWeb!'
         }
         else {
-          Write-Host 'No symbols found on SymWeb!'
+          if ($SymbolsOnMSDL -eq $null) {
+            Write-Host 'No symbols found on MSDL!'
+          }
+          else {
+            Write-Host 'No symbols found on SymWeb!'
+          }
         }
       }
     }

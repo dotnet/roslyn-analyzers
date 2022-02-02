@@ -24,8 +24,8 @@ jobs:
         _configuration: Release
         _codeCoverage: False
   pool:
-    name: NetCorePublic-Pool
-    queue: BuildPool.Windows.10.Amd64.VS2019.Pre.Open
+    name: NetCore1ESPool-Public
+    demands: ImageOverride -equals Build.Windows.Amd64.VS2022.Pre.Open
   timeoutInMinutes: 40
 
   steps:
@@ -41,11 +41,10 @@ jobs:
           Invoke-WebRequest -Uri https://download.sysinternals.com/files/Procdump.zip -UseBasicParsing -OutFile $env:Agent_TempDirectory\procdump\Procdump.zip | Out-Null
           Expand-Archive -Path $env:Agent_TempDirectory\procdump\Procdump.zip $env:Agent_TempDirectory\procdump\
           set PROCDUMP_PATH=$env:Agent_TempDirectory\procdump\
+          Write-Host ##vso[task.setvariable variable=PROCDUMP_PATH;]${env:Agent_TempDirectory}\procdump
           Write-Host ##vso[task.setvariable variable=PATH;]${env:Agent_TempDirectory}\procdump;${env:PATH};
-
     - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine /p:Coverage=$(_codeCoverage)
       displayName: Build and Test
-
     - task: PublishTestResults@2
       inputs:
         testRunner: VSTest
@@ -57,52 +56,19 @@ jobs:
       displayName: Upload coverage to codecov.io
       condition: and(succeeded(), eq(variables['_codeCoverage'], True))
     - task: PublishBuildArtifacts@1
-      displayName: Publish Logs
+      displayName: 'Publish Artifact: Logs'
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
-        ArtifactName: 'Windows $(_configuration)'
+        ArtifactName: 'Windows $(_configuration) Logs'
       continueOnError: true
-      condition: always()
-
-- job: Windows_Desktop_Spanish_Unit_Tests
-  strategy:
-    maxParallel: 4
-  pool:
-    name: NetCorePublic-Pool
-    queue: BuildPool.Windows.Amd64.VS2019.Pre.ES.Open
-  timeoutInMinutes: 40
-
-  steps:
-    - checkout: self
-      clean: true
-    - task: PowerShell@2
-      displayName: Download procdump
-      enabled: true
-      inputs:
-        targetType: inline
-        script: |
-          mkdir $env:Agent_TempDirectory\procdump
-          Invoke-WebRequest -Uri https://download.sysinternals.com/files/Procdump.zip -UseBasicParsing -OutFile $env:Agent_TempDirectory\procdump\Procdump.zip | Out-Null
-          Expand-Archive -Path $env:Agent_TempDirectory\procdump\Procdump.zip $env:Agent_TempDirectory\procdump\
-          set PROCDUMP_PATH=$env:Agent_TempDirectory\procdump\
-          Write-Host ##vso[task.setvariable variable=PATH;]${env:Agent_TempDirectory}\procdump;${env:PATH};
-    - script: eng\common\cibuild.cmd -prepareMachine
-      displayName: Build and Test
-
-    - task: PublishTestResults@2
-      inputs:
-        testRunner: VSTest
-        testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\Debug\*.trx'
-        mergeTestResults: true
-        testRunTitle: 'Windows Desktop Spanish'
       condition: always()
     - task: PublishBuildArtifacts@1
-      displayName: Publish Logs
+      displayName: 'Publish Artifact: TestResults'
       inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\Debug'
-        ArtifactName: 'Windows Desktop Spanish'
+        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)'
+        ArtifactName: 'FullOnWindows $(_configuration) Test Logs'
       continueOnError: true
-      condition: not(succeeded())
+      condition: always()
 
 - job: Ubuntu
   strategy:
@@ -113,8 +79,8 @@ jobs:
       Release:
         _configuration: Release
   pool:
-    name: NetCorePublic-Pool
-    queue: BuildPool.Ubuntu.1804.amd64.Open
+    name: NetCore1ESPool-Public
+    demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
   timeoutInMinutes: 40
   steps:
     - checkout: self

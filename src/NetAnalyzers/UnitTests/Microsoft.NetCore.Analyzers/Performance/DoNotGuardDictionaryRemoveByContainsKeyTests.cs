@@ -225,6 +225,22 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task NotDictionaryRemove_NoDiagnostic_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+        private bool Remove(string key) => false;
+
+        public MyClass()
+        {
+            if (MyDictionary.ContainsKey(""Key""))
+	            Remove(""Key"");
+        }" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
         public async Task AdditionalStatements_ReportsDiagnostic_CS()
         {
             string source = CSUsings + CSNamespaceAndClassStart + @"

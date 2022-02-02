@@ -1543,7 +1543,7 @@
   <data name="DoNotGuardDictionaryRemoveByContainsKeyTitle" xml:space="preserve">
     <value>Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'</value>
   </data>
-  <data name="RemoveRedundantGuardCall" xml:space="preserve">
+  <data name="RemoveRedundantGuardCallCodeFixTitle" xml:space="preserve">
     <value>Remove redundant guard call</value>
   </data>
   <data name="BufferBlockCopyLengthMessage" xml:space="preserve">

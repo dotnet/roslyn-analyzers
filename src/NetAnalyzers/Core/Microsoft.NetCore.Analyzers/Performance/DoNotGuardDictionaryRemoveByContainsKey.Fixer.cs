@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
+            var node = root.FindNode(context.Span, getInnermostNodeForTie: true);
 
             if (node is null)
             {
@@ -36,22 +36,22 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             if (!TryParseLocationInfo(diagnostic, DoNotGuardDictionaryRemoveByContainsKey.ConditionalOperation, out var conditionalOperationSpan) ||
                 !TryParseLocationInfo(diagnostic, DoNotGuardDictionaryRemoveByContainsKey.ChildStatementOperation, out var childStatementOperationSpan) ||
-                root.FindNode(conditionalOperationSpan) is not SyntaxNode conditionalOperation ||
-                root.FindNode(childStatementOperationSpan) is not SyntaxNode childStatementOperation)
+                root.FindNode(conditionalOperationSpan) is not SyntaxNode conditionalSyntax ||
+                root.FindNode(childStatementOperationSpan) is not SyntaxNode childStatementSyntax)
             {
                 return;
             }
 
             // we only offer a fixer if 'Remove' is the _only_ statement
-            if (!OperationSupportedByFixer(conditionalOperation))
+            if (!SyntaxSupportedByFixer(conditionalSyntax))
                 return;
 
             context.RegisterCodeFix(new DoNotGuardDictionaryRemoveByContainsKeyCodeAction(_ =>
-                Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalOperation, childStatementOperation))),
+                Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalSyntax, childStatementSyntax))),
                 diagnostic);
         }
 
-        protected abstract bool OperationSupportedByFixer(SyntaxNode conditionalOperation);
+        protected abstract bool SyntaxSupportedByFixer(SyntaxNode conditionalSyntax);
 
         protected abstract Document ReplaceConditionWithChild(Document document, SyntaxNode root,
                                                               SyntaxNode conditionalOperationNode,
@@ -64,7 +64,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (!diagnostic.Properties.TryGetValue(propertyKey, out var locationInfo))
                 return false;
 
-            var parts = locationInfo.Split(new[] { DoNotGuardDictionaryRemoveByContainsKey.AdditionalDocumentLocationInfoSeparator }, StringSplitOptions.None);
+            var parts = locationInfo.Split(DoNotGuardDictionaryRemoveByContainsKey.AdditionalDocumentLocationInfoSeparatorArray, StringSplitOptions.None);
             if (parts.Length != 2 ||
                 !int.TryParse(parts[0], out var spanStart) ||
                 !int.TryParse(parts[1], out var spanLength))
@@ -79,7 +79,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private class DoNotGuardDictionaryRemoveByContainsKeyCodeAction : DocumentChangeAction
         {
             public DoNotGuardDictionaryRemoveByContainsKeyCodeAction(Func<CancellationToken, Task<Document>> action)
-            : base(MicrosoftNetCoreAnalyzersResources.RemoveRedundantGuardCall, action,
+            : base(MicrosoftNetCoreAnalyzersResources.RemoveRedundantGuardCallCodeFixTitle, action,
                    DoNotGuardDictionaryRemoveByContainsKey.RuleId)
             { }
         }

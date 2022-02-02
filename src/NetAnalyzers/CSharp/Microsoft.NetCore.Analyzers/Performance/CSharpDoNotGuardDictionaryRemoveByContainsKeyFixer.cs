@@ -14,12 +14,12 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpDoNotGuardDictionaryRemoveByContainsKeyFixer : DoNotGuardDictionaryRemoveByContainsKeyFixer
     {
-        protected override bool OperationSupportedByFixer(SyntaxNode conditionalOperation)
+        protected override bool SyntaxSupportedByFixer(SyntaxNode conditionalSyntax)
         {
-            if (conditionalOperation is ConditionalExpressionSyntax conditionalExpressionSyntax)
+            if (conditionalSyntax is ConditionalExpressionSyntax conditionalExpressionSyntax)
                 return conditionalExpressionSyntax.WhenTrue.ChildNodes().Count() == 1;
 
-            if (conditionalOperation is IfStatementSyntax)
+            if (conditionalSyntax is IfStatementSyntax)
                 return true;
 
             return false;

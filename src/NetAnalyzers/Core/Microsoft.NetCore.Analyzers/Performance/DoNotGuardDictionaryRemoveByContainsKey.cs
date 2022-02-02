@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -8,39 +9,32 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-using Resx = Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
-
 namespace Microsoft.NetCore.Analyzers.Performance
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotGuardDictionaryRemoveByContainsKey : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1851";
 
-        private static readonly LocalizableString s_localizableTitle =
-            new LocalizableResourceString(nameof(Resx.DoNotGuardDictionaryRemoveByContainsKeyTitle), Resx.ResourceManager, typeof(Resx));
-        private static readonly LocalizableString s_localizableMessage =
-            new LocalizableResourceString(nameof(Resx.DoNotGuardDictionaryRemoveByContainsKeyMessage), Resx.ResourceManager, typeof(Resx));
-        private static readonly LocalizableString s_localizableDescription =
-            new LocalizableResourceString(nameof(Resx.DoNotGuardDictionaryRemoveByContainsKeyDescription), Resx.ResourceManager, typeof(Resx));
-
         public const string AdditionalDocumentLocationInfoSeparator = ";;";
-
+        public static readonly string[] AdditionalDocumentLocationInfoSeparatorArray = new[] { AdditionalDocumentLocationInfoSeparator };
         public const string ConditionalOperation = nameof(ConditionalOperation);
         public const string ChildStatementOperation = nameof(ChildStatementOperation);
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            s_localizableTitle,
-            s_localizableMessage,
+            CreateLocalizableResourceString(nameof(DoNotGuardDictionaryRemoveByContainsKeyTitle)),
+            CreateLocalizableResourceString(nameof(DoNotGuardDictionaryRemoveByContainsKeyMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
-            s_localizableDescription,
+            CreateLocalizableResourceString(nameof(DoNotGuardDictionaryRemoveByContainsKeyDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false,
             additionalCustomTags: WellKnownDiagnosticTags.Unnecessary);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -51,14 +45,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            var compilation = context.Compilation;
-
-            if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericDictionary2, out var dictionaryType))
+            if (!TryGetDictionaryTypeAndContainsKeyeMethod(context.Compilation, out var dictionaryType, out var containsKeyMethod))
+            {
                 return;
+            }
 
-            context.RegisterOperationAction(AnalyzeOperation, OperationKind.Conditional);
+            context.RegisterOperationAction(context => AnalyzeOperation(context, dictionaryType, containsKeyMethod), OperationKind.Conditional);
 
-            static void AnalyzeOperation(OperationAnalysisContext context)
+            static void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol dictionaryType, IMethodSymbol containsKeyMethod)
             {
                 var conditionalOperation = (IConditionalOperation)context.Operation;
 
@@ -66,8 +60,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 switch (conditionalOperation.Condition)
                 {
-                    case IInvocationOperation:
-                        invocationOperation = (IInvocationOperation)conditionalOperation.Condition;
+                    case IInvocationOperation iOperation:
+                        invocationOperation = iOperation;
                         break;
                     case IUnaryOperation unaryOperation when unaryOperation.OperatorKind == UnaryOperatorKind.Not:
                         if (unaryOperation.Operand is IInvocationOperation operand)
@@ -77,7 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         return;
                 }
 
-                if (invocationOperation == null || invocationOperation.TargetMethod.Name != "ContainsKey")
+                if (invocationOperation == null || !invocationOperation.TargetMethod.OriginalDefinition.Equals(containsKeyMethod, SymbolEqualityComparer.Default))
                 {
                     return;
                 }
@@ -90,7 +84,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     switch (conditionalOperation.WhenTrue.Children.First())
                     {
                         case IInvocationOperation childInvocationOperation:
-                            if (childInvocationOperation.TargetMethod.Name == "Remove")
+                            if (childInvocationOperation.TargetMethod.Name == "Remove" &&
+                                childInvocationOperation.TargetMethod.OriginalDefinition.ContainingType.Equals(dictionaryType, SymbolEqualityComparer.Default))
                             {
                                 properties[ChildStatementOperation] = CreateLocationInfo(childInvocationOperation.Syntax.Parent);
 
@@ -105,7 +100,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                              */
 
                             var nestedInvocationOperation = childStatementOperation.Children.OfType<IInvocationOperation>()
-                                                                                   .FirstOrDefault(op => op.TargetMethod.Name == "Remove");
+                                                               .FirstOrDefault(op => op.TargetMethod.Name == "Remove" &&
+                                                                op.TargetMethod.OriginalDefinition.ContainingType.Equals(dictionaryType, SymbolEqualityComparer.Default));
 
                             if (nestedInvocationOperation != null)
                             {
@@ -119,6 +115,29 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             break;
                     }
                 }
+            }
+            static bool TryGetDictionaryTypeAndContainsKeyeMethod(Compilation compilation, [NotNullWhen(true)] out INamedTypeSymbol? dictionaryType, [NotNullWhen(true)] out IMethodSymbol? containsKeyMethod)
+            {
+                containsKeyMethod = null;
+
+                if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericDictionary2, out dictionaryType))
+                {
+                    return false;
+                }
+
+                foreach (var m in dictionaryType.GetMembers().OfType<IMethodSymbol>())
+                {
+                    if (m.ReturnType.SpecialType == SpecialType.System_Boolean &&
+                        m.Parameters.Length == 1 &&
+                        m.Name == "ContainsKey" &&
+                        m.Parameters[0].Name == "key")
+                    {
+                        containsKeyMethod = m;
+                        return true;
+                    }
+                }
+
+                return false;
             }
         }
 

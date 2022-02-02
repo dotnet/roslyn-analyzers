@@ -13,7 +13,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
     Public NotInheritable Class BasicDoNotGuardDictionaryRemoveByContainsKeyFixer
         Inherits DoNotGuardDictionaryRemoveByContainsKeyFixer
 
-        Protected Overrides Function OperationSupportedByFixer(conditionalOperation As SyntaxNode) As Boolean
+        Protected Overrides Function SyntaxSupportedByFixer(conditionalOperation As SyntaxNode) As Boolean
             If TypeOf conditionalOperation Is IfStatementSyntax Then
                 Return True
             End If

@@ -2097,7 +2097,7 @@
         <target state="translated">Supprimer un appel redondant</target>
         <note />
       </trans-unit>
-      <trans-unit id="RemoveRedundantGuardCall">
+      <trans-unit id="RemoveRedundantGuardCallCodeFixTitle">
         <source>Remove redundant guard call</source>
         <target state="new">Remove redundant guard call</target>
         <note />

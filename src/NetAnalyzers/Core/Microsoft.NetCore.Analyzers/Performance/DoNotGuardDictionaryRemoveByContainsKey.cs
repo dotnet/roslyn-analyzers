@@ -12,7 +12,9 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Performance
 {
     using static MicrosoftNetCoreAnalyzersResources;
-
+    /// <summary>
+    /// Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotGuardDictionaryRemoveByContainsKey : DiagnosticAnalyzer
     {
@@ -45,7 +47,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (!TryGetDictionaryTypeAndContainsKeyeMethod(context.Compilation, out var dictionaryType, out var containsKeyMethod))
+            if (!TryGetDictionaryTypeAndContainsKeyMethod(context.Compilation, out var dictionaryType, out var containsKeyMethod))
             {
                 return;
             }
@@ -116,7 +118,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
                 }
             }
-            static bool TryGetDictionaryTypeAndContainsKeyeMethod(Compilation compilation, [NotNullWhen(true)] out INamedTypeSymbol? dictionaryType, [NotNullWhen(true)] out IMethodSymbol? containsKeyMethod)
+            static bool TryGetDictionaryTypeAndContainsKeyMethod(Compilation compilation, [NotNullWhen(true)] out INamedTypeSymbol? dictionaryType, [NotNullWhen(true)] out IMethodSymbol? containsKeyMethod)
             {
                 containsKeyMethod = null;
 
@@ -125,11 +127,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return false;
                 }
 
-                foreach (var m in dictionaryType.GetMembers().OfType<IMethodSymbol>())
+                foreach (var m in dictionaryType.GetMembers("ContainsKey").OfType<IMethodSymbol>())
                 {
                     if (m.ReturnType.SpecialType == SpecialType.System_Boolean &&
                         m.Parameters.Length == 1 &&
-                        m.Name == "ContainsKey" &&
                         m.Parameters[0].Name == "key")
                     {
                         containsKeyMethod = m;

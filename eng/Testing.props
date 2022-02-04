@@ -4,6 +4,5 @@
     <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --blame-hang-dump-type full</TestRunnerAdditionalArguments>
     <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --blame-hang-timeout 10min</TestRunnerAdditionalArguments>
     <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --blame-crash-dump-type full</TestRunnerAdditionalArguments>
-    <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --blame-crash-collect-always</TestRunnerAdditionalArguments>
   </PropertyGroup>
 </Project>

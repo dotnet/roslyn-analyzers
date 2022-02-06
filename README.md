@@ -86,7 +86,7 @@ This package contains common code quality improvement rules that are not specifi
 
 This package contains rules for correct usage of APIs that are present in *.NetCore/.NetStandard* framework libraries. For example, [CA1309](https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison) (UseOrdinalStringComparison) flags usages of string compare APIs that don't specify a `StringComparison` argument. [Getting started with NetCore Analyzers](docs/NetCore_GettingStarted.md)
 
-**NOTE:** This analyzer package is applicable for both *.NetCore/.NetStandard* and _Desktop .NetFramework_ projects. If the API whose usage is being checked exists only in *.NetCore/.NetStandard* libraries, then the analyzer will bail out silently for *Desktop .NetFramework* projects. Otherwise, if the API exists in both *.NetCore/.NetStandard* and *Desktop .NetFramework* libraries, the analyzer will run correctly for both  *.NetCore/.NetStandard* and *Desktop .NetFramework* projects.
+**NOTE:** This analyzer package is applicable for both *.NetCore/.NetStandard* and *Desktop .NetFramework* projects. If the API whose usage is being checked exists only in *.NetCore/.NetStandard* libraries, then the analyzer will bail out silently for *Desktop .NetFramework* projects. Otherwise, if the API exists in both *.NetCore/.NetStandard* and *Desktop .NetFramework* libraries, the analyzer will run correctly for both  *.NetCore/.NetStandard* and *Desktop .NetFramework* projects.
 
 #### Microsoft.NetFramework.Analyzers
 
@@ -94,7 +94,7 @@ This package contains rules for correct usage of APIs that are present in *.NetC
 
 This package contains rules for correct usage of APIs that are present only in *Desktop .NetFramework* libraries.
 
-**NOTE:** The analyzers in this package will silently bail out if installed on a *.NetCore/.NetStandard* project that do not have the underlying API whose usage is being checked. If future versions of _.NetCore/.NetStandard_ libraries include these APIs, the analyzers will automatically light up on *.NetCore/.NetStandard* projects that target these libraries.
+**NOTE:** The analyzers in this package will silently bail out if installed on a *.NetCore/.NetStandard* project that do not have the underlying API whose usage is being checked. If future versions of *.NetCore/.NetStandard* libraries include these APIs, the analyzers will automatically light up on *.NetCore/.NetStandard* projects that target these libraries.
 
 ## Other Analyzer Packages
 

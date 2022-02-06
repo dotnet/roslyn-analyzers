@@ -42,7 +42,7 @@ This is the **primary analyzer package** for this repo that contains all **the .
 
 You do not need to manually install this NuGet package to your project if you are using .NET5 SDK or later. These analyzers are enabled by default for projects targeting .NET5 or later. For projects targeting earlier .NET frameworks, you can enable them in your MSBuild project file by setting one of the following properties:
 
-1. _EnableNETAnalyzers_
+1. *EnableNETAnalyzers*
 
    ```xml
    <PropertyGroup>
@@ -50,7 +50,7 @@ You do not need to manually install this NuGet package to your project if you ar
    </PropertyGroup>
    ```
 
-2. _AnalysisLevel_
+2. *AnalysisLevel*
 
    ```xml
    <PropertyGroup>
@@ -68,7 +68,7 @@ This is a migration analyzer package for existing binary FxCop users. It contain
 
 The documentation for all the ported and unported FxCop rules can be found at [docs.microsoft.com/en-us/visualstudio/code-quality/fxcop-rule-port-status](https://docs.microsoft.com/visualstudio/code-quality/fxcop-rule-port-status).
 
-This analyzer package contains all the ported FxCop rules that are applicable for both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects. You **do not need to install any separate analyzer package from this repo to get target-framework specific FxCop rules**.
+This analyzer package contains all the ported FxCop rules that are applicable for both *.NetCore/.NetStandard* and *Desktop .NetFramework* projects. You **do not need to install any separate analyzer package from this repo to get target-framework specific FxCop rules**.
 
 #### The following are subpackages or NuGet dependencies that are automatically installed when you install the Microsoft.CodeAnalysis.FxCopAnalyzers package:
 
@@ -84,17 +84,17 @@ This package contains common code quality improvement rules that are not specifi
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.NetCore.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers)</sub>
 
-This package contains rules for correct usage of APIs that are present in _.NetCore/.NetStandard_ framework libraries. For example, [CA1309](https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison) (UseOrdinalStringComparison) flags usages of string compare APIs that don't specify a `StringComparison` argument. [Getting started with NetCore Analyzers](docs/NetCore_GettingStarted.md)
+This package contains rules for correct usage of APIs that are present in *.NetCore/.NetStandard* framework libraries. For example, [CA1309](https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison) (UseOrdinalStringComparison) flags usages of string compare APIs that don't specify a `StringComparison` argument. [Getting started with NetCore Analyzers](docs/NetCore_GettingStarted.md)
 
-**NOTE:** This analyzer package is applicable for both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects. If the API whose usage is being checked exists only in _.NetCore/.NetStandard_ libraries, then the analyzer will bail out silently for _Desktop .NetFramework_ projects. Otherwise, if the API exists in both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ libraries, the analyzer will run correctly for both  _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects.
+**NOTE:** This analyzer package is applicable for both *.NetCore/.NetStandard* and _Desktop .NetFramework_ projects. If the API whose usage is being checked exists only in *.NetCore/.NetStandard* libraries, then the analyzer will bail out silently for *Desktop .NetFramework* projects. Otherwise, if the API exists in both *.NetCore/.NetStandard* and *Desktop .NetFramework* libraries, the analyzer will run correctly for both  *.NetCore/.NetStandard* and *Desktop .NetFramework* projects.
 
 #### Microsoft.NetFramework.Analyzers
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.NetFramework.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers)</sub>
 
-This package contains rules for correct usage of APIs that are present only in _Desktop .NetFramework_ libraries.
+This package contains rules for correct usage of APIs that are present only in *Desktop .NetFramework* libraries.
 
-**NOTE:** The analyzers in this package will silently bail out if installed on a _.NetCore/.NetStandard_ project that do not have the underlying API whose usage is being checked. If future versions of _.NetCore/.NetStandard_ libraries include these APIs, the analyzers will automatically light up on _.NetCore/.NetStandard_ projects that target these libraries.
+**NOTE:** The analyzers in this package will silently bail out if installed on a *.NetCore/.NetStandard* project that do not have the underlying API whose usage is being checked. If future versions of _.NetCore/.NetStandard_ libraries include these APIs, the analyzers will automatically light up on *.NetCore/.NetStandard* projects that target these libraries.
 
 ## Other Analyzer Packages
 
@@ -112,7 +112,7 @@ This package contains rules for correct usage of APIs from the [Microsoft.CodeAn
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet7&package=Roslyn.Diagnostics.Analyzers&protocolType=NuGet)
 
-This package contains rules that are very specific to the .NET Compiler Platform ("Roslyn") project, i.e. [dotnet/roslyn](https://github.com/dotnet/roslyn) repo. This analyzer package is _not intended for general consumption_ outside the Roslyn repo. [More info about rules in this package](src/Roslyn.Diagnostics.Analyzers/Roslyn.Diagnostics.Analyzers.md)
+This package contains rules that are very specific to the .NET Compiler Platform ("Roslyn") project, i.e. [dotnet/roslyn](https://github.com/dotnet/roslyn) repo. This analyzer package is *not intended for general consumption* outside the Roslyn repo. [More info about rules in this package](src/Roslyn.Diagnostics.Analyzers/Roslyn.Diagnostics.Analyzers.md)
 
 ### Microsoft.CodeAnalysis.BannedApiAnalyzers
 

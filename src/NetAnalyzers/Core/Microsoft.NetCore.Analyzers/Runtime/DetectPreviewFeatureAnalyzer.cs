@@ -389,24 +389,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                      ConcurrentDictionary<ISymbol, (bool isPreview, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                                      INamedTypeSymbol previewFeatureAttribute,
                                                                      [NotNullWhen(true)] out ISymbol? previewSymbol,
-                                                                     out SyntaxNode? previewSyntaxNode,
-                                                                     bool checkTypeParametersForPreviewFeatures = true,
-                                                                     ISymbol? methodOrFieldOrEventSymbolForGenericParameterSyntaxNode = null)
+                                                                     bool checkTypeParametersForPreviewFeatures = true)
         {
             if (symbol is INamedTypeSymbol typeSymbol && typeSymbol.Arity > 0)
             {
                 ISymbol? previewTypeArgument = GetPreviewSymbolForGenericTypesFromTypeArguments(typeSymbol.TypeArguments, requiresPreviewFeaturesSymbols, previewFeatureAttribute);
                 if (previewTypeArgument != null)
                 {
-                    if (methodOrFieldOrEventSymbolForGenericParameterSyntaxNode != null)
-                    {
-                        previewSyntaxNode = GetPreviewSyntaxNodeFromSymbols(methodOrFieldOrEventSymbolForGenericParameterSyntaxNode, previewTypeArgument);
-                    }
-                    else
-                    {
-                        previewSyntaxNode = null;
-                    }
-
                     previewSymbol = previewTypeArgument;
                     return true;
                 }
@@ -414,7 +403,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (checkTypeParametersForPreviewFeatures)
                 {
                     ImmutableArray<ITypeParameterSymbol> typeParameters = typeSymbol.TypeParameters;
-                    if (TypeParametersHavePreviewAttribute(typeSymbol, typeParameters, requiresPreviewFeaturesSymbols, previewFeatureAttribute, out previewSymbol, out previewSyntaxNode))
+                    if (TypeParametersHavePreviewAttribute(typeSymbol, typeParameters, requiresPreviewFeaturesSymbols, previewFeatureAttribute, out previewSymbol, out _))
                     {
                         return true;
                     }
@@ -426,7 +415,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 ISymbol? previewTypeArgument = GetPreviewSymbolForGenericTypesFromTypeArguments(methodSymbol.TypeArguments, requiresPreviewFeaturesSymbols, previewFeatureAttribute);
                 if (previewTypeArgument != null)
                 {
-                    previewSyntaxNode = null;
                     previewSymbol = previewTypeArgument;
                     return true;
                 }
@@ -434,7 +422,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (checkTypeParametersForPreviewFeatures)
                 {
                     ImmutableArray<ITypeParameterSymbol> typeParameters = methodSymbol.TypeParameters;
-                    if (TypeParametersHavePreviewAttribute(methodSymbol, typeParameters, requiresPreviewFeaturesSymbols, previewFeatureAttribute, out previewSymbol, out previewSyntaxNode))
+                    if (TypeParametersHavePreviewAttribute(methodSymbol, typeParameters, requiresPreviewFeaturesSymbols, previewFeatureAttribute, out previewSymbol, out _))
                     {
                         return true;
                     }
@@ -442,7 +430,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             previewSymbol = null;
-            previewSyntaxNode = null;
             return false;
         }
 
@@ -618,7 +605,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                 requiresPreviewFeaturesSymbols,
                                                                 previewFeatureAttributeSymbol,
                                                                 out referencedPreviewSymbol,
-                                                                out SyntaxNode? _,
                                                                 checkTypeParametersForPreviewFeatures: false))
             {
                 return true;

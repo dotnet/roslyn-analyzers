@@ -3758,16 +3758,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return ValueDomain.UnknownOrMayBeValue;
         }
 
-        public override TAbstractAnalysisValue VisitAwait(IAwaitOperation operation, object? argument)
-        {
-            var value = base.VisitAwait(operation, argument);
-
-            var pointsToValue = GetPointsToAbstractValue(operation.Operation);
-            return TryGetTaskWrappedValue(pointsToValue, out var awaitedValue) ?
-                awaitedValue :
-                value;
-        }
-
         #region Overrides for lowered IOperations
 
         [ExcludeFromCodeCoverage]

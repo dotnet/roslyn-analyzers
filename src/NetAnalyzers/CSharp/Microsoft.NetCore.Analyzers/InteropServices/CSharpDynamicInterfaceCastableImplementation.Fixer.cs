@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
-using Analyzer.Utilities.Lightup;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
@@ -113,7 +112,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
             SyntaxNode[] defaultMethodBodyStatements,
             bool includeAccessibility)
         {
-            if (!property.SetMethod.IsInitOnly())
+            if (!property.SetMethod.IsInitOnly)
             {
                 return generator.WithSetAccessorStatements(declaration, defaultMethodBodyStatements);
             }

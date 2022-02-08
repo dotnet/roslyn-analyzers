@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Runtime;
-using NullableAnnotation = Analyzer.Utilities.Lightup.NullableAnnotation;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
@@ -70,11 +69,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             var typeName = TypeNameVisitor.GetTypeSyntaxForSymbol(type.ElementType);
             if (type.ElementType.IsReferenceType)
             {
-                var additionalAnnotation = type.NullableAnnotation() switch
+                var additionalAnnotation = type.NullableAnnotation switch
                 {
-                    NullableAnnotation.None => NullableSyntaxAnnotationEx.Oblivious,
-                    NullableAnnotation.Annotated => NullableSyntaxAnnotationEx.AnnotatedOrNotAnnotated,
-                    NullableAnnotation.NotAnnotated => NullableSyntaxAnnotationEx.AnnotatedOrNotAnnotated,
+                    CodeAnalysis.NullableAnnotation.None => NullableSyntaxAnnotationEx.Oblivious,
+                    CodeAnalysis.NullableAnnotation.Annotated => NullableSyntaxAnnotationEx.AnnotatedOrNotAnnotated,
+                    CodeAnalysis.NullableAnnotation.NotAnnotated => NullableSyntaxAnnotationEx.AnnotatedOrNotAnnotated,
                     _ => null,
                 };
 

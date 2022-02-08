@@ -57,7 +57,7 @@
     - `cd artifacts\bin\Microsoft.CodeAnalysis.CSharp.NetAnalyzers\Release\netstandard2.0`
 2. Copy the two DLLs and replace the NuGet cache entries used by `dotnet/runtime` and `dotnet/roslyn-analyzers`. They might be in `"runtime/.packages/..."` or `"%USERPROFILE%/.nuget/packages/... "`. You can check the exact path by building something in runtime with /bl and checking the binlog file.
     - Example: `copy /y *.dll %USERPROFILE%\.nuget\packages\Microsoft.CodeAnalysis.NetAnalyzers\%RUNTIMEPACKAGEVERSION%\analyzers\dotnet\cs`
-	- Note that `RUNTIMEPACKAGEVERSION` value is different for runtime and roslyn-analyzers repo
+    - Note that `RUNTIMEPACKAGEVERSION` value is different for runtime and roslyn-analyzers repo
 3. Build the roslyn-analyzers with `build.cmd`, now new analyzers will be used from updated nuget packages and you would see the warnings if diagnostics found.
 4. If failures found, review each of the failures and determine the course of action for each.
     - Improve analyzer to reduce false positives, fix valid warnings, in a very rare edge cases suppress them.

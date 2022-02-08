@@ -25,14 +25,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             Document doc = context.Document;
-            SyntaxNode root = await doc.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var root = await doc.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
             // Get the target syntax node from the incoming span.  For a field like:
             //     private string _value = null;
             // the node will be for the `= null;` portion.  For a property like:
             //     private string Value { get; } = "hello";
             // the node will be for the `= "hello"`.
-            if (root.FindNode(context.Span) is SyntaxNode node)
+            if (root!.FindNode(context.Span) is SyntaxNode node)
             {
                 string title = MicrosoftCodeQualityAnalyzersResources.DoNotInitializeUnnecessarilyFix;
                 context.RegisterCodeFix(
@@ -45,15 +45,15 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         {
                             // For a property, we also need to get rid of the semicolon that follows the initializer.
                             var newProp = prop.TrackNodes(node);
-                            var newTrailingTrivia = newProp.Initializer.GetTrailingTrivia()
+                            var newTrailingTrivia = newProp.Initializer!.GetTrailingTrivia()
                                                     .AddRange(newProp.SemicolonToken.LeadingTrivia)
                                                     .AddRange(newProp.SemicolonToken.TrailingTrivia);
                             newProp = newProp.WithSemicolonToken(default)
                                         .WithTrailingTrivia(newTrailingTrivia)
                                         .WithAdditionalAnnotations(Formatter.Annotation);
 
-                            newProp = newProp.RemoveNode(newProp.GetCurrentNode(node), SyntaxRemoveOptions.KeepExteriorTrivia);
-                            editor.ReplaceNode(prop, newProp);
+                            newProp = newProp.RemoveNode(newProp.GetCurrentNode(node)!, SyntaxRemoveOptions.KeepExteriorTrivia);
+                            editor.ReplaceNode(prop, newProp!);
                         }
                         else
                         {

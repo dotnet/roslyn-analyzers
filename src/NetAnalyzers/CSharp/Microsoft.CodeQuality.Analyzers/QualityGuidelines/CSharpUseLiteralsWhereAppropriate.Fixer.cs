@@ -15,7 +15,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpUseLiteralsWhereAppropriateFixer : UseLiteralsWhereAppropriateFixer
     {
-        protected override SyntaxNode? GetFieldDeclaration(SyntaxNode syntaxNode)
+        protected override SyntaxNode? GetFieldDeclaration(SyntaxNode? syntaxNode)
         {
             while (syntaxNode is not null and not FieldDeclarationSyntax)
             {

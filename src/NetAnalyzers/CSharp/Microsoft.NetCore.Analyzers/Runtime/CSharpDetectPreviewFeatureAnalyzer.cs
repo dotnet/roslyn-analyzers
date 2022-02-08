@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
             foreach (SyntaxReference? fieldOrEventReference in fieldOrEventReferences)
             {
-                SyntaxNode definition = fieldOrEventReference.GetSyntax();
+                var definition = fieldOrEventReference.GetSyntax();
 
                 while (definition is VariableDeclaratorSyntax)
                 {
@@ -74,8 +74,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                     ParameterListSyntax? parameters = methodDeclaration.ParameterList;
                     foreach (ParameterSyntax? parameter in parameters.Parameters)
                     {
-                        TypeSyntax parameterType = parameter.Type;
-                        parameterType = GetElementTypeForNullableAndArrayTypeNodes(parameterType);
+                        var parameterType = parameter.Type;
+                        parameterType = GetElementTypeForNullableAndArrayTypeNodes(parameterType!);
 
                         if (IsIdentifierNameSyntax(parameterType, parameterSymbol))
                         {

@@ -69,7 +69,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
 
             if (kind == SyntaxKind.VariableDeclarator)
             {
-                EqualsValueClauseSyntax initializer = ((VariableDeclaratorSyntax)node).Initializer;
+                var initializer = ((VariableDeclaratorSyntax)node).Initializer;
                 if (initializer != null)
                 {
                     return initializer.Value;
@@ -153,7 +153,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
                 ParameterListSyntax paramList = methodDecl.ParameterList;
                 if (paramIndex < paramList.Parameters.Count)
                 {
-                    EqualsValueClauseSyntax equalsValueNode = paramList.Parameters[paramIndex].Default;
+                    var equalsValueNode = paramList.Parameters[paramIndex].Default;
                     if (equalsValueNode != null)
                     {
                         return equalsValueNode.Value;

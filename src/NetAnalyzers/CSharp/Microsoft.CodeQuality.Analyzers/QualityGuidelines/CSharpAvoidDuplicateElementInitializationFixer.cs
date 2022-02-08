@@ -36,7 +36,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
             }
 
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            if (root.FindNode(diagnostic.AdditionalLocations[0].SourceSpan) is not ExpressionSyntax elementInitializer ||
+            if (root!.FindNode(diagnostic.AdditionalLocations[0].SourceSpan) is not ExpressionSyntax elementInitializer ||
                 elementInitializer.Parent is not InitializerExpressionSyntax objectInitializer)
             {
                 return;

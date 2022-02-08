@@ -29,7 +29,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 }
                 // The argument in the specified index does not have a name but is part of a nullable expression
                 else if (args[index].Syntax is IdentifierNameSyntax identifierNameNode &&
-                    identifierNameNode.Identifier.Value.Equals(name) &&
+                    identifierNameNode.Identifier.Value!.Equals(name) &&
                     identifierNameNode.Parent is PostfixUnaryExpressionSyntax nullableExpression)
                 {
                     return nullableExpression;
@@ -58,7 +58,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
         {
             foreach (SyntaxNode import in importList)
             {
-                if (import is UsingDirectiveSyntax { Name: IdentifierNameSyntax { Identifier: { Text: nameof(System) } } })
+                if (import is UsingDirectiveSyntax { Name: IdentifierNameSyntax { Identifier.Text: nameof(System) } })
                 {
                     return true;
                 }
@@ -102,7 +102,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 return postfixUnaryExpression;
             }
 
-            return invocation.Instance.Syntax;
+            return invocation.Instance!.Syntax;
         }
 
         protected override SyntaxNode GetNamedArgument(SyntaxGenerator generator, SyntaxNode node, bool isNamed, string newName)

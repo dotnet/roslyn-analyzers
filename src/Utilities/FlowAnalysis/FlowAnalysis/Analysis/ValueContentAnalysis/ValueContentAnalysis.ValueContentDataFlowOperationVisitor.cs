@@ -216,7 +216,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
             {
                 var leftValue = Visit(operation.LeftOperand, argument);
                 var rightValue = Visit(operation.RightOperand, argument);
-                return leftValue.MergeBinaryOperation(rightValue, operation.OperatorKind, operation.LeftOperand.Type, operation.RightOperand.Type, operation.Type);
+                return leftValue.MergeBinaryOperation(rightValue, operation.OperatorKind, operation.LeftOperand.Type!, operation.RightOperand.Type!, operation.Type!);
             }
 
             public override ValueContentAbstractValue ComputeValueForCompoundAssignment(
@@ -226,7 +226,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
                 ITypeSymbol targetType,
                 ITypeSymbol assignedValueType)
             {
-                return targetValue.MergeBinaryOperation(assignedValue, operation.OperatorKind, targetType, assignedValueType, operation.Type);
+                return targetValue.MergeBinaryOperation(assignedValue, operation.OperatorKind, targetType, assignedValueType, operation.Type!);
             }
 
             public override ValueContentAbstractValue ComputeValueForIncrementOrDecrementOperation(IIncrementOrDecrementOperation operation, ValueContentAbstractValue targetValue)
@@ -234,7 +234,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
                 var incrementValue = ValueContentAbstractValue.ContainsOneIntergralLiteralState;
                 var incrementValueType = WellKnownTypeProvider.Compilation.GetSpecialType(SpecialType.System_Int32);
                 var operationKind = operation.Kind == OperationKind.Increment ? BinaryOperatorKind.Add : BinaryOperatorKind.Subtract;
-                return targetValue.MergeBinaryOperation(incrementValue, operationKind, operation.Target.Type, incrementValueType, operation.Type);
+                return targetValue.MergeBinaryOperation(incrementValue, operationKind, operation.Target.Type!, incrementValueType, operation.Type!);
             }
 
             public override ValueContentAbstractValue VisitObjectCreation(IObjectCreationOperation operation, object? argument)
@@ -282,7 +282,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
                 for (int i = 1; i < operation.Parts.Length; i++)
                 {
                     var newValue = Visit(operation.Parts[i], argument);
-                    mergedValue = mergedValue.MergeBinaryOperation(newValue, BinaryOperatorKind.Add, leftType: operation.Type, rightType: operation.Type, resultType: operation.Type);
+                    mergedValue = mergedValue.MergeBinaryOperation(newValue, BinaryOperatorKind.Add, leftType: operation.Type!, rightType: operation.Type!, resultType: operation.Type!);
                 }
 
                 return mergedValue;

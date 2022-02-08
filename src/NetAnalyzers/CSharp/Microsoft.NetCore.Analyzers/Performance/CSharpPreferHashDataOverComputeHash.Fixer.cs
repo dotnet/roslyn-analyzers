@@ -112,9 +112,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             protected override SyntaxNode FixHashCreateNode(SyntaxNode root, SyntaxNode createNode)
             {
                 var currentCreateNode = root.GetCurrentNode(createNode);
-                switch (currentCreateNode.Parent)
+                switch (currentCreateNode!.Parent)
                 {
-                    case { Parent: UsingStatementSyntax usingStatement } when usingStatement.Declaration.Variables.Count == 1:
+                    case { Parent: UsingStatementSyntax usingStatement } when usingStatement.Declaration!.Variables.Count == 1:
                         {
                             root = MoveStatementsOutOfUsingStatementWithFormatting(root, usingStatement);
                             break;
@@ -168,13 +168,13 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                         return statement;
                     });
 
-                var parent = usingStatement.Parent;
+                var parent = usingStatement.Parent!;
                 root = root.TrackNodes(parent);
                 var newParent = parent.TrackNodes(usingStatement);
-                newParent = newParent.InsertNodesBefore(newParent.GetCurrentNode(usingStatement), statements);
-                newParent = newParent.RemoveNode(newParent.GetCurrentNode(usingStatement), SyntaxRemoveOptions.KeepNoTrivia)
+                newParent = newParent.InsertNodesBefore(newParent.GetCurrentNode(usingStatement)!, statements);
+                newParent = newParent.RemoveNode(newParent.GetCurrentNode(usingStatement)!, SyntaxRemoveOptions.KeepNoTrivia)!
                     .WithAdditionalAnnotations(Formatter.Annotation);
-                root = root.ReplaceNode(root.GetCurrentNode(parent), newParent);
+                root = root.ReplaceNode(root.GetCurrentNode(parent)!, newParent);
                 return root;
             }
 
@@ -188,7 +188,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 string? ns = null;
                 if (createNode is not null)
                 {
-                    var initliazerValue = ((VariableDeclaratorSyntax)createNode).Initializer.Value;
+                    var initliazerValue = ((VariableDeclaratorSyntax)createNode).Initializer!.Value;
                     if (initliazerValue is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: MemberAccessExpressionSyntax originalType } })
                     {
                         ns = originalType.Expression.ToFullString();

@@ -2690,7 +2690,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return ValueDomain.UnknownOrMayBeValue;
         }
 
-        public override TAbstractAnalysisValue Visit(IOperation operation, object? argument)
+        public override TAbstractAnalysisValue Visit(IOperation? operation, object? argument)
         {
             if (operation != null)
             {

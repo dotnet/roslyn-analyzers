@@ -31,7 +31,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Resources
 
         Private Shared Function CheckBasicAttribute(attribute As AttributeSyntax) As Boolean
             Return (attribute?.Name?.GetLastToken().Text.Equals(GeneratedCodeAttribute, StringComparison.Ordinal) = True AndAlso
-                attribute.ArgumentList.Arguments.Count > 0).GetValueOrDefault()
+                attribute.ArgumentList IsNot Nothing AndAlso attribute.ArgumentList.Arguments.Count > 0).GetValueOrDefault()
         End Function
     End Class
 End Namespace

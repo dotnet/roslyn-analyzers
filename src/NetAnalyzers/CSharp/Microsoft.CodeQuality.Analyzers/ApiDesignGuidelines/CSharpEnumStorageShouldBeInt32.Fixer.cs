@@ -17,7 +17,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
         protected override SyntaxNode? GetTargetNode(SyntaxNode node)
         {
             var enumDecl = (EnumDeclarationSyntax)node;
-            return (enumDecl.BaseList.Types.FirstOrDefault() as SimpleBaseTypeSyntax)?.Type;
+            return (enumDecl.BaseList!.Types.FirstOrDefault() as SimpleBaseTypeSyntax)?.Type;
         }
     }
 }

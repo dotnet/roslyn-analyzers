@@ -19,9 +19,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             Document doc = context.Document;
-            SyntaxNode root = await doc.GetSyntaxRootAsync().ConfigureAwait(false);
+            var root = await doc.GetSyntaxRootAsync().ConfigureAwait(false);
 
-            if (root.FindNode(context.Span) is not InvocationExpressionSyntax invocation)
+            if (root!.FindNode(context.Span) is not InvocationExpressionSyntax invocation)
                 return;
             if (invocation.Expression is not MemberAccessExpressionSyntax containsMemberAccess)
                 return;

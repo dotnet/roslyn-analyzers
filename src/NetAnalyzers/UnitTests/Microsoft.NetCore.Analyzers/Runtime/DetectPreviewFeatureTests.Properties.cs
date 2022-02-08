@@ -94,7 +94,7 @@ Imports System
 Imports System.Runtime.Versioning
 Imports System.Collections.Generic
 Module Preview_Feature_Scratch
-    Public Class AFoo(Of T As {|#2:Foo|})
+    Public Class AFoo(Of T As {{|#2:Foo|}, New})
         <RequiresPreviewFeatures>
         Private _value As Foo
 

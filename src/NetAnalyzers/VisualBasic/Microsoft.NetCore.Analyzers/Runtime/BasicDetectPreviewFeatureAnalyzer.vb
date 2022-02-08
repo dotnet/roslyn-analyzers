@@ -201,8 +201,11 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
                 Dim multipleConstraint = TryCast(typeParameter.TypeParameterConstraintClause, TypeParameterMultipleConstraintClauseSyntax)
                 If multipleConstraint IsNot Nothing Then
-                    For Each constriant In multipleConstraint.Constraints
-                        Return GetTypeConstraints(constriant, previewSymbol)
+                    For Each constraint In multipleConstraint.Constraints
+                        Dim constraintSyntax = GetTypeConstraints(constraint, previewSymbol)
+                        If constraintSyntax IsNot Nothing Then
+                            Return constraintSyntax
+                        End If
                     Next
                 End If
             Next

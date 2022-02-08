@@ -95,6 +95,53 @@ End Namespace
         }
 
         [Fact]
+        public async Task TestGenericMethodHavingConstraintsWithPreviewInterface()
+        {
+            var csInput = @" 
+using System.Runtime.Versioning; using System;
+namespace Preview_Feature_Scratch
+{
+    class Program
+    {
+        public bool GenericMethod<T>()
+            where T : ICloneable, {|#0:IFoo|}
+        {
+            return true;
+        }
+    }
+
+    [RequiresPreviewFeatures(""Lib is in preview."", Url = ""https://aka.ms/aspnet/kestrel/http3reqs"")]
+    public interface IFoo
+    {
+    }
+}";
+
+            var test = TestCS(csInput);
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(0).WithArguments("GenericMethod", "IFoo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            await test.RunAsync();
+
+            var vbInput = @" 
+Imports System.Runtime.Versioning
+Imports System
+
+Namespace Preview_Feature_Scratch
+    Class Program
+        Public Function GenericMethod(Of T As {ICloneable, {|#0:IFoo|}})() As Boolean
+            Return True
+        End Function
+    End Class
+
+    <RequiresPreviewFeatures(""Lib is in preview."", Url:=""https://aka.ms/aspnet/kestrel/http3reqs"")>
+    Public Interface IFoo
+    End Interface
+End Namespace
+";
+            var vbTest = TestVB(vbInput);
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(0).WithArguments("GenericMethod", "IFoo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            await vbTest.RunAsync();
+        }
+
+        [Fact]
         public async Task TestGenericMethodWithNullablePreviewClass()
         {
             var csInput = @" 

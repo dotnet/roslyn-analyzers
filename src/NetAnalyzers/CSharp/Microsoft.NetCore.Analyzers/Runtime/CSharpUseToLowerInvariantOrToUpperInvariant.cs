@@ -21,9 +21,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             {
                 return ((MemberAccessExpressionSyntax)invocation.Expression).Name.GetLocation();
             }
-            else if (invocation.Expression.IsKind(SyntaxKind.ConditionalAccessExpression))
+            else if (invocation.Expression.IsKind(SyntaxKind.MemberBindingExpression))
             {
-                return ((ConditionalAccessExpressionSyntax)invocation.Expression).WhenNotNull.GetLocation();
+                return ((MemberBindingExpressionSyntax)invocation.Expression).Name.GetLocation();
             }
             return invocation.GetLocation();
         }

@@ -8,7 +8,7 @@ Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
-    Public Class BasicUseToLowerInvariantOrToUpperInvariant
+    Public Class BasicUseToLowerInvariantOrToUpperInvariantAnalyzer
         Inherits UseToLowerInvariantOrToUpperInvariantAnalyzer
 
         Protected Overrides Function GetMethodNameLocation(invocationNode As SyntaxNode) As Location
@@ -17,8 +17,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
             Dim invocation = CType(invocationNode, InvocationExpressionSyntax)
             If invocation.Expression.IsKind(SyntaxKind.SimpleMemberAccessExpression) Then
                 Return DirectCast(invocation.Expression, MemberAccessExpressionSyntax).Name.GetLocation()
-            ElseIf invocation.Expression.IsKind(SyntaxKind.ConditionalAccessExpression) Then
-                Return DirectCast(invocation.Expression, ConditionalAccessExpressionSyntax).WhenNotNull.GetLocation()
             End If
 
             Return invocation.GetLocation()

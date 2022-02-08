@@ -7,7 +7,7 @@ using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpUseToLowerInvariantOrToUpperInvariantAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicUseToLowerInvariantOrToUpperInvariant,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicUseToLowerInvariantOrToUpperInvariantAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
@@ -47,7 +47,7 @@ class C
 }
 ",
         CSharpResult(7, 11),
-        CSharpResult(8, 11)
+        CSharpResult(8, 12)
 );
         }
 
@@ -83,7 +83,7 @@ class C
 }
 ",
         CSharpResult(7, 11),
-        CSharpResult(8, 11)
+        CSharpResult(8, 12)
 );
         }
 

@@ -107,7 +107,8 @@ using System.Collections.Generic;
 
 public class Z
 {
-    public void UsesOnlyInterface(List<int> {|#0:l|})
+    // TODO: False negative, we should raise a diagnostic suggesting one of potential bases.
+    public void UsesOnlyInterface(List<int> l)
     {
         var x = l.Count;
     }
@@ -124,7 +125,7 @@ public class Z
     }
 }
 ";
-            await VerifyCS.VerifyCodeFixAsync(src, VerifyCS.Diagnostic().WithLocation(0).WithArguments("l", "List<int>", "ICollection<int>"), src);
+            await VerifyCS.VerifyCodeFixAsync(src, src);
         }
 
         [Fact]
@@ -580,6 +581,7 @@ using System.IO;
 
 public class Base
 {
+    public void SomeBaseTypeMethod() {}
 }
 
 public class Derived : Base
@@ -598,6 +600,14 @@ public class C
     void M2(Derived d)
     {
         Derived d2 = d;
+    }
+
+    void M3(Derived d)
+    {
+       d.SomeBaseTypeMethod();
+
+       Derived d2 = d;
+       d2.SomeDerivedTypeMethod();
     }
 }";
             await VerifyCS.VerifyCodeFixAsync(src, src);

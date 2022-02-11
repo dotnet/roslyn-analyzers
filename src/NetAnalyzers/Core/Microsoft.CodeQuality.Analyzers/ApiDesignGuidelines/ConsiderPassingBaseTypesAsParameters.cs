@@ -104,7 +104,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
 
                 void AddDeclaringTypeSymbol(ISymbol symbol)
-                    => AddType(FindDeclaringType(symbol.OriginalDefinition));
+                    => AddType(FindDeclaringType(symbol));
             }, OperationKind.ParameterReference);
 
             context.RegisterOperationBlockEndAction(context =>
@@ -116,9 +116,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     foreach (var (parameter, usedTypesPool) in typesUsedPerParameter)
                     {
                         var usedTypes = usedTypesPool.ToImmutableArray();
+
                         // If type is unused, we ignore it. There is another rule to detect
                         // unused parameters.
-
                         if (usedTypes.Length == 1)
                         {
                             ReportIfTypesAreDifferent(parameter, usedTypes[0], overloads);
@@ -169,21 +169,28 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (symbol.IsOverride)
             {
-                return FindDeclaringType(symbol.GetOverriddenMember());
+                var overridenMember = symbol.GetOverriddenMember();
+
+                // It's possible to have GetOverriddenMember() even when IsOverride returns
+                // true so to play defensive we act as it's declared on current type so we
+                // won't suggest any base type.
+                return overridenMember == null
+                    ? symbol.ContainingType
+                    : FindDeclaringType(overridenMember);
             }
 
             var interfaceMembers = symbol.GetExplicitOrImplicitInterfaceImplementations();
-            if (interfaceMembers.Length == 1)
+            return interfaceMembers.Length switch
             {
-                return interfaceMembers[0].ContainingType;
-            }
-            else
-            {
-                // When reaching this point, either we found no interface member, which means the
-                // member is declared directly on the type OR more than one interface was found
-                // as declaring this type so let's assume it is defined on the containing type.
-                return symbol.ContainingType;
-            }
+                // Member is not overridden nor interface implementation so it must be
+                // implemented on the containing type.
+                0 => symbol.ContainingType,
+                1 => interfaceMembers[0].ContainingType,
+                // False negative: more than one interface were found as declaring this
+                // type so let's assume it is defined on the containing type. Ideally,
+                // we would want to collect the type and make multiple offers to users.
+                _ => symbol.ContainingType,
+            };
         }
 
         private static ITypeSymbol FindMostGenericType(ITypeSymbol originalType, ImmutableArray<ITypeSymbol> constraints)

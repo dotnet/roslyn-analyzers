@@ -21,14 +21,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// Detect the use of [RequiresPreviewFeatures] in assemblies that have not opted into preview features
     /// </summary>
     public abstract class DetectPreviewFeatureAnalyzer<
-        TBaseListSyntax,
+        TBaseTypeOrImplementsOrInherits,
         TBaseTypeDeclarationSyntax,
         TTypeConstraintSyntax,
-        TTypeArgumentList> : DiagnosticAnalyzer
-        where TBaseListSyntax : SyntaxNode
+        TTypeArgumentList,
+        TParameterSyntax> : DiagnosticAnalyzer
+        where TBaseTypeOrImplementsOrInherits : SyntaxNode
         where TBaseTypeDeclarationSyntax : SyntaxNode
         where TTypeConstraintSyntax : SyntaxNode
         where TTypeArgumentList : SyntaxNode
+        where TParameterSyntax : SyntaxNode
     {
         internal const string RuleId = "CA2252";
         internal const string DefaultURL = "https://aka.ms/dotnet-warnings/preview-features";
@@ -220,12 +222,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         protected abstract SyntaxNode? GetConstraintSyntaxNodeForTypeConstrainedByPreviewTypes(ISymbol typeOrMethodSymbol, ISymbol previewInterfaceConstraintSymbol);
 
-        protected abstract SyntaxNode? GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(ISymbol methodOrPropertySymbol, ISymbol previewReturnTypeSymbol);
-
-        protected abstract SyntaxNode? GetPreviewParameterSyntaxNodeForMethod(IMethodSymbol methodSymbol, ISymbol parameterSymbol);
-
-        protected abstract SyntaxNode? GetPreviewSyntaxNodeForFieldsOrEvents(ISymbol fieldOrEventSymbol, ISymbol previewSymbol);
-
         protected abstract SyntaxNode? GetPreviewImplementsClauseSyntaxNodeForMethodOrProperty(ISymbol methodOrPropertySymbol, ISymbol previewSymbol);
 
         public override void Initialize(AnalysisContext context)
@@ -370,21 +366,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
-        private SyntaxNode? GetPreviewSyntaxNodeFromSymbols(ISymbol symbol,
-                                                            ISymbol previewType)
-        {
-            switch (symbol)
-            {
-                case IFieldSymbol:
-                case IEventSymbol:
-                    return GetPreviewSyntaxNodeForFieldsOrEvents(symbol, previewType);
-                case IMethodSymbol methodSymbol:
-                    return GetPreviewParameterSyntaxNodeForMethod(methodSymbol, previewType);
-                default:
-                    return null;
-            }
-        }
-
         private bool SymbolContainsGenericTypesWithPreviewAttributes(ISymbol symbol,
                                                                      ConcurrentDictionary<ISymbol, (bool isPreview, string? message, string? url)> requiresPreviewFeaturesSymbols,
                                                                      INamedTypeSymbol previewFeatureAttribute,
@@ -485,68 +466,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     string overriddenName = overridden.ContainingSymbol != null ? overridden.ContainingSymbol.Name + "." + overridden.Name : overridden.Name;
                     ReportDiagnosticWithCustomMessageIfItExists(context, overridden, propertyOrMethodSymbol, requiresPreviewFeaturesSymbols, OverridesPreviewMethodRule, OverridesPreviewMethodRuleWithCustomMessage, propertyOrMethodSymbol.Name, overriddenName);
-                }
-            }
-
-            if (propertyOrMethodSymbol is IMethodSymbol method)
-            {
-                ITypeSymbol methodReturnType = method.ReturnType;
-                while (methodReturnType is IArrayTypeSymbol array)
-                {
-                    methodReturnType = array.ElementType;
-                }
-
-                if (SymbolIsAnnotatedAsPreview(methodReturnType, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
-                {
-                    SyntaxNode? returnTypeNode = GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(method.IsPropertyGetter() ? method.AssociatedSymbol : method, methodReturnType);
-                    if (returnTypeNode != null)
-                    {
-                        ReportDiagnosticWithCustomMessageIfItExists(context.ReportDiagnostic, returnTypeNode, methodReturnType, requiresPreviewFeaturesSymbols, MethodReturnsPreviewTypeRule, MethodReturnsPreviewTypeRuleWithCustomMessage, propertyOrMethodSymbol.Name, methodReturnType.Name);
-                    }
-                    else
-                    {
-                        ReportDiagnosticWithCustomMessageIfItExists(context, methodReturnType, method, requiresPreviewFeaturesSymbols, MethodReturnsPreviewTypeRule, MethodReturnsPreviewTypeRuleWithCustomMessage, propertyOrMethodSymbol.Name, methodReturnType.Name);
-                    }
-                }
-
-                if (methodReturnType is INamedTypeSymbol typeSymbol && typeSymbol.Arity > 0)
-                {
-                    ISymbol? innerPreviewSymbol = GetPreviewSymbolForGenericTypesFromTypeArguments(typeSymbol.TypeArguments, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol);
-                    if (innerPreviewSymbol != null)
-                    {
-                        SyntaxNode? returnTypeNode = GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(method.IsPropertyGetter() ? method.AssociatedSymbol : method, innerPreviewSymbol);
-                        if (returnTypeNode != null)
-                        {
-                            ReportDiagnosticWithCustomMessageIfItExists(context.ReportDiagnostic, returnTypeNode, innerPreviewSymbol, requiresPreviewFeaturesSymbols, MethodReturnsPreviewTypeRule, MethodReturnsPreviewTypeRuleWithCustomMessage, propertyOrMethodSymbol.Name, innerPreviewSymbol.Name);
-                        }
-                        else
-                        {
-                            ReportDiagnosticWithCustomMessageIfItExists(context, innerPreviewSymbol, method, requiresPreviewFeaturesSymbols, MethodReturnsPreviewTypeRule, MethodReturnsPreviewTypeRuleWithCustomMessage, propertyOrMethodSymbol.Name, innerPreviewSymbol.Name);
-                        }
-                    }
-                }
-
-                ImmutableArray<IParameterSymbol> parameters = method.Parameters;
-                foreach (IParameterSymbol parameter in parameters)
-                {
-                    var parameterType = parameter.Type;
-                    while (parameterType is IArrayTypeSymbol array)
-                    {
-                        parameterType = array.ElementType;
-                    }
-
-                    if (SymbolIsAnnotatedAsPreview(parameterType, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
-                    {
-                        SyntaxNode? previewParameterNode = GetPreviewParameterSyntaxNodeForMethod(method, parameterType);
-                        if (previewParameterNode != null)
-                        {
-                            ReportDiagnosticWithCustomMessageIfItExists(context.ReportDiagnostic, previewParameterNode, parameterType, requiresPreviewFeaturesSymbols, MethodUsesPreviewTypeAsParameterRule, MethodUsesPreviewTypeAsParameterRuleWithCustomMessage, propertyOrMethodSymbol.Name, parameterType.Name);
-                        }
-                        else
-                        {
-                            ReportDiagnosticWithCustomMessageIfItExists(context, parameterType, parameter, requiresPreviewFeaturesSymbols, MethodUsesPreviewTypeAsParameterRule, MethodUsesPreviewTypeAsParameterRuleWithCustomMessage, propertyOrMethodSymbol.Name, parameterType.Name);
-                        }
-                    }
                 }
             }
         }
@@ -799,7 +718,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        protected static void ReportDiagnosticWithCustomMessageIfItExists(Action<Diagnostic> reportDiagnostic,
+        private static void ReportDiagnosticWithCustomMessageIfItExists(Action<Diagnostic> reportDiagnostic,
                                                                         SyntaxNode node,
                                                                         ISymbol previewSymbol,
                                                                         ConcurrentDictionary<ISymbol, (bool isPreview, string? message, string? url)> requiresPreviewFeaturesSymbols,
@@ -822,6 +741,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 else
                 {
                     reportDiagnostic(node.CreateDiagnostic(diagnosticDescriptor, diagnosticMessageArgument0, diagnosticMessageArgument1, url));
+                }
+            }
+        }
+
+        private static void ReportDiagnosticWithCustomMessageIfItExists(Action<Diagnostic> reportDiagnostic,
+                                                                SyntaxNode node,
+                                                                ISymbol previewSymbol,
+                                                                ConcurrentDictionary<ISymbol, (bool isPreview, string? message, string? url)> requiresPreviewFeaturesSymbols,
+                                                                DiagnosticDescriptor diagnosticDescriptor,
+                                                                DiagnosticDescriptor diagnosticDescriptorWithPlaceholdersForCustomMessage,
+                                                                string diagnosticMessageArgument0)
+        {
+            if (!requiresPreviewFeaturesSymbols.TryGetValue(previewSymbol, out (bool isPreview, string? message, string? url) existing))
+            {
+                Debug.Fail($"Should never reach this line. This means the symbol {previewSymbol.Name} was not processed in this analyzer");
+            }
+            else
+            {
+                string url = existing.url ?? DefaultURL;
+                if (existing.message is string customMessage)
+                {
+                    reportDiagnostic(node.CreateDiagnostic(diagnosticDescriptorWithPlaceholdersForCustomMessage, diagnosticMessageArgument0, url, customMessage));
+                }
+                else
+                {
+                    reportDiagnostic(node.CreateDiagnostic(diagnosticDescriptor, diagnosticMessageArgument0, url));
                 }
             }
         }
@@ -956,7 +901,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // We're only concerned about types(class/struct/interface) directly implementing preview interfaces. Implemented interfaces(direct/base) will report their diagnostics independently
-                if (type.TypeKind is TypeKind.Interface or TypeKind.Class && node.FirstAncestorOrSelf<TBaseListSyntax>() is not null)
+                if (type.TypeKind is TypeKind.Interface or TypeKind.Class && node.Parent is TBaseTypeOrImplementsOrInherits)
                 {
                     var (rule, ruleWithCustomMessage) = type.TypeKind switch
                     {
@@ -970,19 +915,30 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     ReportDiagnosticWithCustomMessageIfItExists(context.ReportDiagnostic, node, type, requiresPreviewFeaturesSymbols, FieldOrEventIsPreviewTypeRule, FieldOrEventIsPreviewTypeRuleWithCustomMessage, enclosingSymbol?.Name ?? string.Empty, type.Name);
                 }
-                else if (node.FirstAncestorOrSelf<TTypeConstraintSyntax>() is not null)
+                else if (IsInReturnType(node))
+                {
+                    ReportDiagnosticWithCustomMessageIfItExists(context.ReportDiagnostic, node, type, requiresPreviewFeaturesSymbols, MethodReturnsPreviewTypeRule, MethodReturnsPreviewTypeRuleWithCustomMessage, enclosingSymbol?.Name ?? string.Empty, type.Name);
+                }
+                else if (node.FirstAncestorOrSelf<TTypeConstraintSyntax>() is not null ||
+                    node.FirstAncestorOrSelf<TTypeArgumentList>() is not null)
                 {
                     // C#: method, types, delegates, local functions
                     // VB: DeclarationStatementSyntax
-                    var symbolUsingPreviewType = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
                     ReportDiagnosticWithCustomMessageIfItExists(context.ReportDiagnostic, node, type, requiresPreviewFeaturesSymbols, UsesPreviewTypeParameterRule, UsesPreviewTypeParameterRuleWithCustomMessage, enclosingSymbol?.Name ?? string.Empty, type.Name);
+                }
+                else if (enclosingSymbol?.Kind == SymbolKind.Parameter && enclosingSymbol.ContainingSymbol is IMethodSymbol { MethodKind: not MethodKind.LambdaMethod })
+                {
+                    ReportDiagnosticWithCustomMessageIfItExists(context.ReportDiagnostic, node, type, requiresPreviewFeaturesSymbols, MethodUsesPreviewTypeAsParameterRule, MethodUsesPreviewTypeAsParameterRuleWithCustomMessage, enclosingSymbol.ContainingSymbol.Name, type.Name);
                 }
                 else
                 {
-                    //context.ReportDiagnostic(node.CreateDiagnostic(GeneralPreviewFeatureAttributeRule));
+                    //ReportDiagnosticWithCustomMessageIfItExists(context.ReportDiagnostic, node, type, requiresPreviewFeaturesSymbols, GeneralPreviewFeatureAttributeRule, GeneralPreviewFeatureAttributeRuleWithCustomMessage, type.Name);
                 }
             }
         }
+
+        protected abstract bool IsParameter(SyntaxNode node);
+        protected abstract bool IsInReturnType(SyntaxNode node);
 
         private static bool ShouldSkipSymbol(ISymbol symbol, Func<ISymbol, bool> symbolIsAnnotatedAsPreview)
         {

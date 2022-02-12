@@ -16,43 +16,8 @@ using Microsoft.NetCore.Analyzers.Runtime;
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CSharpDetectPreviewFeatureAnalyzer : DetectPreviewFeatureAnalyzer<BaseListSyntax, BaseTypeDeclarationSyntax, TypeConstraintSyntax, TypeArgumentListSyntax>
+    public sealed class CSharpDetectPreviewFeatureAnalyzer : DetectPreviewFeatureAnalyzer<BaseTypeSyntax, BaseTypeDeclarationSyntax, TypeConstraintSyntax, TypeArgumentListSyntax, ParameterSyntax>
     {
-        protected override SyntaxNode? GetPreviewSyntaxNodeForFieldsOrEvents(ISymbol fieldOrEventSymbol, ISymbol previewSymbol)
-        {
-            ImmutableArray<SyntaxReference> fieldOrEventReferences = fieldOrEventSymbol.DeclaringSyntaxReferences;
-
-            foreach (SyntaxReference? fieldOrEventReference in fieldOrEventReferences)
-            {
-                SyntaxNode definition = fieldOrEventReference.GetSyntax();
-
-                while (definition is VariableDeclaratorSyntax)
-                {
-                    definition = definition.Parent;
-                }
-
-                if (definition is VariableDeclarationSyntax fieldDeclaration)
-                {
-                    TypeSyntax parameterType = fieldDeclaration.Type;
-                    parameterType = GetElementTypeForNullableAndArrayTypeNodes(parameterType);
-
-                    if (IsIdentifierNameSyntax(parameterType, previewSymbol))
-                    {
-                        return parameterType;
-                    }
-                    else if (parameterType is GenericNameSyntax genericName)
-                    {
-                        if (TryMatchGenericSyntaxNodeWithGivenSymbol(genericName, previewSymbol, out SyntaxNode? previewNode))
-                        {
-                            return previewNode;
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
-
         private static TypeSyntax GetElementTypeForNullableAndArrayTypeNodes(TypeSyntax parameterType)
         {
             while (parameterType is NullableTypeSyntax nullable)
@@ -66,84 +31,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
 
             return parameterType;
-        }
-
-        protected override SyntaxNode? GetPreviewParameterSyntaxNodeForMethod(IMethodSymbol methodSymbol, ISymbol parameterSymbol)
-        {
-            ImmutableArray<SyntaxReference> methodSymbolDeclaringReferences = methodSymbol.DeclaringSyntaxReferences;
-
-            foreach (SyntaxReference? syntaxReference in methodSymbolDeclaringReferences)
-            {
-                SyntaxNode methodDefinition = syntaxReference.GetSyntax();
-                if (methodDefinition is MethodDeclarationSyntax methodDeclaration)
-                {
-                    ParameterListSyntax? parameters = methodDeclaration.ParameterList;
-                    foreach (ParameterSyntax? parameter in parameters.Parameters)
-                    {
-                        TypeSyntax parameterType = parameter.Type;
-                        parameterType = GetElementTypeForNullableAndArrayTypeNodes(parameterType);
-
-                        if (IsIdentifierNameSyntax(parameterType, parameterSymbol))
-                        {
-                            return parameterType;
-                        }
-                        else if (parameterType is GenericNameSyntax genericName)
-                        {
-                            if (TryMatchGenericSyntaxNodeWithGivenSymbol(genericName, parameterSymbol, out SyntaxNode? previewNode))
-                            {
-                                return previewNode;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        // Handles both generic and non-generic return types
-        protected override SyntaxNode? GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(ISymbol methodOrPropertySymbol, ISymbol previewReturnTypeSymbol)
-        {
-            ImmutableArray<SyntaxReference> methodOrPropertySymbolDeclaringReferences = methodOrPropertySymbol.DeclaringSyntaxReferences;
-
-            foreach (SyntaxReference? syntaxReference in methodOrPropertySymbolDeclaringReferences)
-            {
-                SyntaxNode methodOrPropertyDefinition = syntaxReference.GetSyntax();
-                if (methodOrPropertyDefinition is PropertyDeclarationSyntax propertyDeclaration)
-                {
-                    TypeSyntax returnType = propertyDeclaration.Type;
-                    returnType = GetElementTypeForNullableAndArrayTypeNodes(returnType);
-                    if (IsIdentifierNameSyntax(returnType, previewReturnTypeSymbol))
-                    {
-                        return returnType;
-                    }
-                    else if (returnType is GenericNameSyntax genericName)
-                    {
-                        if (TryMatchGenericSyntaxNodeWithGivenSymbol(genericName, previewReturnTypeSymbol, out SyntaxNode? previewNode))
-                        {
-                            return previewNode;
-                        }
-                    }
-                }
-                else if (methodOrPropertyDefinition is MethodDeclarationSyntax methodDeclaration)
-                {
-                    TypeSyntax returnType = methodDeclaration.ReturnType;
-                    returnType = GetElementTypeForNullableAndArrayTypeNodes(returnType);
-                    if (IsIdentifierNameSyntax(returnType, previewReturnTypeSymbol))
-                    {
-                        return returnType;
-                    }
-                    else if (returnType is GenericNameSyntax genericName)
-                    {
-                        if (TryMatchGenericSyntaxNodeWithGivenSymbol(genericName, previewReturnTypeSymbol, out SyntaxNode? previewNode))
-                        {
-                            return previewNode;
-                        }
-                    }
-                }
-            }
-
-            return null;
         }
 
         private static bool TryMatchGenericSyntaxNodeWithGivenSymbol(GenericNameSyntax genericName, ISymbol previewReturnTypeSymbol, [NotNullWhen(true)] out SyntaxNode? syntaxNode)
@@ -258,7 +145,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             {
                 var node = (NameSyntax)context.Node;
                 AnalyzeTypeSyntax(context, node, requiresPreviewFeaturesSymbols, symbolIsAnnotatedAsPreview);
-            }, SyntaxKind.AliasQualifiedName, SyntaxKind.QualifiedName, SyntaxKind.GenericName, SyntaxKind.IdentifierName);
+            }, SyntaxKind.GenericName, SyntaxKind.IdentifierName);
         }
 
         private protected override SyntaxNode AdjustSyntaxNodeForGetSymbol(SyntaxNode node)
@@ -273,6 +160,43 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
 
             return node;
+        }
+
+        protected override bool IsInReturnType(SyntaxNode node)
+        {
+            var parent = node.Parent;
+            while (parent is not null)
+            {
+                if (parent is LocalFunctionStatementSyntax localFunction)
+                {
+                    return localFunction.ReturnType.Span.Contains(node.Span);
+                }
+                else if (parent is MethodDeclarationSyntax method)
+                {
+                    return method.ReturnType.Span.Contains(node.Span);
+                }
+                else if (parent is OperatorDeclarationSyntax @operator)
+                {
+                    return @operator.ReturnType.Span.Contains(node.Span);
+                }
+                else if (parent is BasePropertyDeclarationSyntax property)
+                {
+                    return property.Type.Span.Contains(node.Span);
+                }
+                else if (parent is MemberDeclarationSyntax)
+                {
+                    return false;
+                }
+
+                parent = parent.Parent;
+            }
+
+            return false;
+        }
+
+        protected override bool IsParameter(SyntaxNode node)
+        {
+            return node.Parent.IsKind(SyntaxKind.Parameter);
         }
     }
 }

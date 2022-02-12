@@ -13,7 +13,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    using AnalyzerType = DetectPreviewFeatureAnalyzer<SyntaxNode, SyntaxNode, SyntaxNode, SyntaxNode>;
+    using AnalyzerType = DetectPreviewFeatureAnalyzer<SyntaxNode, SyntaxNode, SyntaxNode, SyntaxNode, SyntaxNode>;
 
     public partial class DetectPreviewFeatureUnitTests
     {
@@ -497,7 +497,7 @@ namespace Preview_Feature_Scratch
     {
         static void Main(string[] args)
         {
-            A aObject = {|#0:new()|};
+            A aObject = [|#0:new()|};
         }
     }
 

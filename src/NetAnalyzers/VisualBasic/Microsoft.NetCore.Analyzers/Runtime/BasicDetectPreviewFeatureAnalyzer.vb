@@ -11,27 +11,10 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicDetectPreviewFeatureAnalyzer
-        Inherits DetectPreviewFeatureAnalyzer(Of InheritsOrImplementsStatementSyntax, TypeBlockSyntax, TypeConstraintSyntax, TypeArgumentListSyntax)
+        Inherits DetectPreviewFeatureAnalyzer(Of InheritsOrImplementsStatementSyntax, TypeBlockSyntax, TypeConstraintSyntax, TypeArgumentListSyntax, ParameterSyntax)
 
         Private Function IsSyntaxToken(identifier As SyntaxToken, previewInterfaceSymbol As ISymbol) As Boolean
             Return identifier.ValueText.Equals(previewInterfaceSymbol.Name, StringComparison.OrdinalIgnoreCase)
-        End Function
-
-        Private Function GetElementTypeForNullableAndArrayTypeNodes(parameterType As TypeSyntax) As TypeSyntax
-            Dim ret As TypeSyntax = parameterType
-            Dim loopVariable = TryCast(parameterType, NullableTypeSyntax)
-            While loopVariable IsNot Nothing
-                ret = loopVariable.ElementType
-                loopVariable = TryCast(ret, NullableTypeSyntax)
-            End While
-
-            Dim arrayLoopVariable = TryCast(ret, ArrayTypeSyntax)
-            While arrayLoopVariable IsNot Nothing
-                ret = arrayLoopVariable.ElementType
-                arrayLoopVariable = TryCast(ret, ArrayTypeSyntax)
-            End While
-
-            Return ret
         End Function
 
         Private Function IsIdentifierNameSyntax(identifier As TypeSyntax, previewInterfaceSymbol As ISymbol) As Boolean
@@ -45,66 +28,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                 Return True
             End If
 
-            Return False
-        End Function
-
-        Private Function TryMatchGenericSyntaxNodeWithGivenSymbol(genericName As GenericNameSyntax, previewReturnTypeSymbol As ISymbol, ByRef syntaxNode As SyntaxNode) As Boolean
-            If IsSyntaxToken(genericName.Identifier, previewReturnTypeSymbol) Then
-                syntaxNode = genericName
-                Return True
-            End If
-
-            Dim typeArgumentList = genericName.TypeArgumentList
-            For Each typeArgument In typeArgumentList.Arguments
-                Dim typeArgumentElementType = GetElementTypeForNullableAndArrayTypeNodes(typeArgument)
-                Dim innerGenericName = TryCast(typeArgumentElementType, GenericNameSyntax)
-                If innerGenericName IsNot Nothing Then
-                    If TryMatchGenericSyntaxNodeWithGivenSymbol(innerGenericName, previewReturnTypeSymbol, syntaxNode) Then
-                        Return True
-                    End If
-                End If
-
-                If IsIdentifierNameSyntax(typeArgumentElementType, previewReturnTypeSymbol) Then
-                    syntaxNode = typeArgumentElementType
-                    Return True
-                End If
-            Next
-
-            syntaxNode = Nothing
-            Return False
-        End Function
-
-        Private Function TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseListTypes As SyntaxList(Of InheritsStatementSyntax), previewInterfaceSymbol As ISymbol, ByRef previewInterfaceNode As SyntaxNode) As Boolean
-            For Each baseTypeSyntax In baseListTypes
-                Dim baseTypes = baseTypeSyntax.Types
-                For Each baseType In baseTypes
-                    If TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseType, previewInterfaceSymbol, previewInterfaceNode) Then
-                        Return True
-                    End If
-                Next
-            Next
-
-            previewInterfaceNode = Nothing
-            Return False
-        End Function
-
-        Private Function TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseType As TypeSyntax, previewInterfaceSymbol As ISymbol, ByRef previewInterfaceNode As SyntaxNode) As Boolean
-            Dim identifier = TryCast(baseType, IdentifierNameSyntax)
-            If identifier IsNot Nothing AndAlso IsSyntaxToken(identifier.Identifier, previewInterfaceSymbol) Then
-                previewInterfaceNode = baseType
-                Return True
-            End If
-
-            Dim generic = TryCast(baseType, GenericNameSyntax)
-            If generic IsNot Nothing Then
-                Dim previewConstraint As SyntaxNode = Nothing
-                If TryMatchGenericSyntaxNodeWithGivenSymbol(generic, previewInterfaceSymbol, previewConstraint) Then
-                    previewInterfaceNode = previewConstraint
-                    Return True
-                End If
-            End If
-
-            previewInterfaceNode = Nothing
             Return False
         End Function
 
@@ -155,54 +78,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
             Return Nothing
         End Function
 
-        Private Function TryGetNodeFromAsClauseForMethodOrProperty(asClause As AsClauseSyntax, previewReturnTypeSymbol As ISymbol) As SyntaxNode
-            Dim simpleAsClause = TryCast(asClause, SimpleAsClauseSyntax)
-            If simpleAsClause IsNot Nothing Then
-                Dim returnType = simpleAsClause.Type
-                returnType = GetElementTypeForNullableAndArrayTypeNodes(returnType)
-                If IsIdentifierNameSyntax(returnType, previewReturnTypeSymbol) Then
-                    Return returnType
-                End If
-
-                Dim genericName = TryCast(returnType, GenericNameSyntax)
-                If genericName IsNot Nothing Then
-                    Dim previewNode As SyntaxNode = Nothing
-                    If TryMatchGenericSyntaxNodeWithGivenSymbol(genericName, previewReturnTypeSymbol, previewNode) Then
-                        Return previewNode
-                    End If
-                End If
-            End If
-
-            Return Nothing
-        End Function
-
-        Protected Overrides Function GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(methodOrPropertySymbol As ISymbol, previewReturnTypeSymbol As ISymbol) As SyntaxNode
-            Dim methodOrPropertySymbolDeclaringReferences = methodOrPropertySymbol.DeclaringSyntaxReferences
-
-            For Each syntaxReference In methodOrPropertySymbolDeclaringReferences
-                Dim methodOrPropertyDefinition = syntaxReference.GetSyntax()
-                Dim propertyDeclaration = TryCast(methodOrPropertyDefinition, PropertyStatementSyntax)
-                If propertyDeclaration IsNot Nothing Then
-                    Dim asClause = propertyDeclaration.AsClause
-                    Dim retNode = TryGetNodeFromAsClauseForMethodOrProperty(asClause, previewReturnTypeSymbol)
-                    If retNode IsNot Nothing Then
-                        Return retNode
-                    End If
-                End If
-
-                Dim methodDeclaration = TryCast(methodOrPropertyDefinition, MethodStatementSyntax)
-                If methodDeclaration IsNot Nothing Then
-                    Dim asClause = methodDeclaration.AsClause
-                    Dim retNode = TryGetNodeFromAsClauseForMethodOrProperty(asClause, previewReturnTypeSymbol)
-                    If retNode IsNot Nothing Then
-                        Return retNode
-                    End If
-                End If
-            Next
-
-            Return Nothing
-        End Function
-
         Private Function GetSyntaxNodeFromImplementsClause(implementsClause As ImplementsClauseSyntax, previewSymbol As ISymbol) As SyntaxNode
             For Each parameter In implementsClause.InterfaceMembers
                 Dim interfacePart = TryCast(parameter.Left, IdentifierNameSyntax)
@@ -245,58 +120,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
             Return Nothing
         End Function
 
-        Protected Overrides Function GetPreviewParameterSyntaxNodeForMethod(methodSymbol As IMethodSymbol, parameterSymbol As ISymbol) As SyntaxNode
-            Dim methodSymbolDeclaringReferences = methodSymbol.DeclaringSyntaxReferences
-
-            For Each syntaxReference In methodSymbolDeclaringReferences
-                Dim methodDefinition = syntaxReference.GetSyntax()
-                Dim methodDeclaration = TryCast(methodDefinition, MethodStatementSyntax)
-                If methodDeclaration IsNot Nothing Then
-                    Dim parameters = methodDeclaration.ParameterList
-                    For Each parameter In parameters.Parameters
-                        Dim asClause = parameter.AsClause
-                        Dim retNode = TryGetNodeFromAsClauseForMethodOrProperty(asClause, parameterSymbol)
-                        If retNode IsNot Nothing Then
-                            Return retNode
-                        End If
-                    Next
-                End If
-
-                Dim setAccessorStatement = TryCast(methodDefinition, AccessorStatementSyntax)
-                If setAccessorStatement IsNot Nothing Then
-                    Dim parameters = setAccessorStatement.ParameterList
-                    For Each parameter In parameters.Parameters
-                        Dim asClause = parameter.AsClause
-                        Dim retNode = TryGetNodeFromAsClauseForMethodOrProperty(asClause, parameterSymbol)
-                        If retNode IsNot Nothing Then
-                            Return retNode
-                        End If
-                    Next
-                End If
-            Next
-
-            Return Nothing
-        End Function
-
-        Protected Overrides Function GetPreviewSyntaxNodeForFieldsOrEvents(fieldOrEventSymbol As ISymbol, previewSymbol As ISymbol) As SyntaxNode
-            Dim fieldOrEventReferences = fieldOrEventSymbol.DeclaringSyntaxReferences
-
-            For Each fieldOrEventReference In fieldOrEventReferences
-                Dim definition = fieldOrEventReference.GetSyntax()
-
-                Dim declaration = TryCast(definition.Parent, VariableDeclaratorSyntax)
-                If declaration IsNot Nothing Then
-                    Dim asClause = declaration.AsClause
-                    Dim retNode = TryGetNodeFromAsClauseForMethodOrProperty(asClause, previewSymbol)
-                    If retNode IsNot Nothing Then
-                        Return retNode
-                    End If
-                End If
-            Next
-
-            Return Nothing
-        End Function
-
         Protected Overrides Sub AnalyzeTypeSyntax(context As CompilationStartAnalysisContext, requiresPreviewFeaturesSymbols As ConcurrentDictionary(Of ISymbol, (isPreview As Boolean, message As String, url As String)), symbolIsAnnotatedAsPreview As Func(Of ISymbol, Boolean))
             context.RegisterSyntaxNodeAction(
                 Sub(syntaxNodeContext)
@@ -311,6 +134,20 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                 Return declarator.Names(0)
             End If
             Return node
+        End Function
+
+        Protected Overrides Function IsInReturnType(node As SyntaxNode) As Boolean
+            Dim simpleAsClause = node.FirstAncestorOrSelf(Of SimpleAsClauseSyntax)()
+            Return simpleAsClause IsNot Nothing AndAlso CanHaveReturnType(simpleAsClause.Parent)
+        End Function
+
+        Private Shared Function CanHaveReturnType(node As SyntaxNode) As Boolean
+            Return node.IsKind(SyntaxKind.FunctionStatement) OrElse node.IsKind(SyntaxKind.DeclareFunctionStatement) OrElse node.IsKind(SyntaxKind.DelegateFunctionStatement) _
+                OrElse node.IsKind(SyntaxKind.EventStatement) OrElse node.IsKind(SyntaxKind.OperatorStatement) OrElse node.IsKind(SyntaxKind.PropertyStatement)
+        End Function
+
+        Protected Overrides Function IsParameter(node As SyntaxNode) As Boolean
+            Return node.Parent.IsKind(SyntaxKind.SimpleAsClause) AndAlso node.Parent.Parent.IsKind(SyntaxKind.Parameter)
         End Function
     End Class
 

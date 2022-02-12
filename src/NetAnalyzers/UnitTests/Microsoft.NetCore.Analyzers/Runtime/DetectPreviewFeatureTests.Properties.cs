@@ -45,7 +45,7 @@ using System.Runtime.Versioning; using System;
 namespace Preview_Feature_Scratch
 {
 
-    class AFoo<T> where T : {|#2:Foo|}, new()
+    class AFoo<T> where T : {|#1:Foo|}, new()
     {
         [RequiresPreviewFeatures]
         private Foo _value;
@@ -54,15 +54,15 @@ namespace Preview_Feature_Scratch
         {
             get
             {
-                return {|#4:_value|};
+                return {|#3:_value|};
             }
-            {|#1:set|}
+            set
             {
-                {|#5:_value|} = value;
+                {|#4:_value|} = value;
             }
         }
 
-        public {|#3:Foo|} AnotherGetter => {|#6:_value|};
+        public {|#2:Foo|} AnotherGetter => {|#5:_value|};
     }
 
     class Program
@@ -80,13 +80,12 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(0).WithArguments("get_Value", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodUsesPreviewTypeAsParameterRule).WithLocation(1).WithArguments("set_Value", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(2).WithArguments("AFoo", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(3).WithArguments("get_AnotherGetter", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(0).WithArguments("Value", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(1).WithArguments("AFoo", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(2).WithArguments("AnotherGetter", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(3).WithArguments("_value", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(4).WithArguments("_value", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(5).WithArguments("_value", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(6).WithArguments("_value", DefaultURL));
             await test.RunAsync();
 
             var vbInput = @" 
@@ -116,7 +115,7 @@ End Module
             ";
 
             var testVb = TestVB(vbInput);
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(0).WithArguments("get_Value", "Foo", DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(0).WithArguments("Value", "Foo", DefaultURL));
             testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(MethodUsesPreviewTypeAsParameterRule).WithLocation(1).WithArguments("set_Value", "Foo", DefaultURL));
             testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(2).WithArguments("AFoo", "Foo", DefaultURL));
             testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(4).WithArguments("_value", DefaultURL));
@@ -143,7 +142,7 @@ namespace Preview_Feature_Scratch
             {
                 return _value;
             }
-            {|#1:set|}
+            set
             {
                 _value = value;
             }
@@ -157,7 +156,7 @@ namespace Preview_Feature_Scratch
             {
                 return _valueNullable;
             }
-            {|#5:set|}
+            set
             {
                 _valueNullable = value;
             }
@@ -172,13 +171,11 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(0).WithArguments("get_Value", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(1).WithArguments("set_Value", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(0).WithArguments("Value", "Foo", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(2).WithArguments("AFoo", "Foo", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(3).WithArguments("_value", "Foo", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(6).WithArguments("_valueNullable", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(4).WithArguments("get_ValueNullable", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(5).WithArguments("set_ValueNullable", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(4).WithArguments("ValueNullable", "Foo", DefaultURL));
             await test.RunAsync();
         }
 
@@ -283,7 +280,7 @@ namespace Preview_Feature_Scratch
             {
                 return _valueNullable;
             }
-            {|#7:set|}
+            set
             {
                 _valueNullable = value;
             }
@@ -302,8 +299,7 @@ namespace Preview_Feature_Scratch
 
             var test = TestCS(csInput);
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(5).WithArguments("_valueNullable", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(6).WithArguments("get_ValueNullable", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodUsesPreviewTypeAsParameterRule).WithLocation(7).WithArguments("set_ValueNullable", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(6).WithArguments("ValueNullable", "Foo", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(8).WithArguments("_valueNullableArray", "Foo", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(9).WithArguments("_valueNullableArrayInitialized", "Foo", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRule).WithLocation(10).WithArguments("Foo", DefaultURL));
@@ -328,13 +324,13 @@ namespace Preview_Feature_Scratch
             {
                 return _value;
             }
-            {|#3:set|}
+            set
             {
                 _value = value;
             }
         }
 
-        public {|#4:Foo|} AnotherGetter => _value;
+        public {|#3:Foo|} AnotherGetter => _value;
     }
 
     [RequiresPreviewFeatures]
@@ -346,9 +342,8 @@ namespace Preview_Feature_Scratch
             var test = TestCS(csInput);
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("AFoo", "Foo", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(FieldOrEventIsPreviewTypeRule).WithLocation(1).WithArguments("_value", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(2).WithArguments("get_Value", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodUsesPreviewTypeAsParameterRule).WithLocation(3).WithArguments("set_Value", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(4).WithArguments("get_AnotherGetter", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(2).WithArguments("Value", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(3).WithArguments("AnotherGetter", "Foo", DefaultURL));
             await test.RunAsync();
         }
 

@@ -35,7 +35,7 @@ namespace Preview_Feature_Scratch
             return foo;
         }
 
-        public Dictionary<int, {|#4:Foo?|}[]> GetterNullableArray(Dictionary<int, {|#5:Foo?|}[]> foo)
+        public Dictionary<int, {|#4:Foo|}?[]> GetterNullableArray(Dictionary<int, {|#5:Foo|}?[]> foo)
         {
             return foo;
         }
@@ -54,12 +54,12 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("Getter", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("foo", "Foo", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(1).WithArguments("Getter", "Foo", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(2).WithArguments("GetterNullable", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(3).WithArguments("GetterNullable", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(3).WithArguments("foo", "Foo", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(4).WithArguments("GetterNullableArray", "Foo", DefaultURL));
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(5).WithArguments("GetterNullableArray", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(5).WithArguments("foo", "Foo", DefaultURL));
             await test.RunAsync();
 
             var vbInput = @" 
@@ -81,7 +81,7 @@ namespace Preview_Feature_Scratch
             ";
 
             var testVb = TestVB(vbInput);
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("Getter", "Foo", DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("foo", "Foo", DefaultURL));
             testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(1).WithArguments("Getter", "Foo", DefaultURL));
             await testVb.RunAsync();
         }
@@ -114,7 +114,7 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("Getter", "Foo", DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("foo", "Foo", DefaultURL));
             test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(1).WithArguments("Getter", "Foo", DefaultURL));
             await test.RunAsync();
 
@@ -139,7 +139,7 @@ Namespace Preview_Feature_Scratch
 End Namespace
 ";
             var testVb = TestVB(vbInput);
-            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("Getter", "Foo", DefaultURL));
+            testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(UsesPreviewTypeParameterRule).WithLocation(0).WithArguments("foo", "Foo", DefaultURL));
             testVb.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(MethodReturnsPreviewTypeRule).WithLocation(1).WithArguments("Getter", "Foo", DefaultURL));
             await testVb.RunAsync();
         }
@@ -383,7 +383,7 @@ namespace Preview_Feature_Scratch
 
             public class C
             {
-                public void M1<T>(Preview_Feature_Scratch.T {|#0:t|}) // Doesn't use the type parameter. The location detection logic for syntax node doesn't work here.
+                public void M1<T>(Preview_Feature_Scratch.{|#0:T|} t) // Doesn't use the type parameter. The location detection logic for syntax node doesn't work here.
                 {
                 }
 

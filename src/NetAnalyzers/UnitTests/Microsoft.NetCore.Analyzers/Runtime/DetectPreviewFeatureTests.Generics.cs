@@ -31,7 +31,7 @@ namespace Preview_Feature_Scratch
         static void Main(string[] args)
         {
             Program program = new Program();
-            {|#0:program.GenericMethod<Foo>()|};
+            program.GenericMethod<{|#0:Foo|}>();
         }
     }
 
@@ -43,7 +43,7 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(GeneralPreviewFeatureAttributeRuleWithCustomMessage).WithLocation(0).WithArguments("Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(0).WithArguments("Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
             await test.RunAsync();
         }
 
@@ -70,7 +70,7 @@ namespace Preview_Feature_Scratch
 }";
 
             var test = TestCS(csInput);
-            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(0).WithArguments("GenericMethod", "Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(0).WithArguments("GenericMethod", "Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
             await test.RunAsync();
 
             var vbInput = @" 
@@ -90,7 +90,7 @@ Namespace Preview_Feature_Scratch
 End Namespace
 ";
             var vbTest = TestVB(vbInput);
-            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(0).WithArguments("GenericMethod", "Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(0).WithArguments("GenericMethod", "Foo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
             await vbTest.RunAsync();
         }
 
@@ -137,7 +137,7 @@ Namespace Preview_Feature_Scratch
 End Namespace
 ";
             var vbTest = TestVB(vbInput);
-            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(DetectPreviewFeatureAnalyzer.UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(0).WithArguments("GenericMethod", "IFoo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
+            vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic(UsesPreviewTypeParameterRuleWithCustomMessage).WithLocation(0).WithArguments("GenericMethod", "IFoo", "https://aka.ms/aspnet/kestrel/http3reqs", "Lib is in preview."));
             await vbTest.RunAsync();
         }
 
@@ -153,7 +153,7 @@ namespace Preview_Feature_Scratch
     {
 #nullable enable
         public bool GenericMethod<T>()
-            where T : {|#0:Foo?|}
+            where T : {|#0:Foo|}?
         {
             return true;
         }
@@ -186,7 +186,7 @@ namespace Preview_Feature_Scratch
 
 #nullable enable
     class Program<T>
-        where T : {|#0:Foo?|}
+        where T : {|#0:Foo|}?
     {
         static void Main(string[] args)
         {

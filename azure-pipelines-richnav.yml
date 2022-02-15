@@ -15,7 +15,7 @@ stages:
         jobs:
         - job: Debug_Build
           pool:
-            name: NetCore1ESPublic-Pool
+            name: NetCore1ESPool-Public
             demands: ImageOverride -equals Build.Windows.10.Amd64.VS2022.Pre.Open
           variables:
             - name: _BuildConfig

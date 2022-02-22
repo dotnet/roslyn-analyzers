@@ -66,6 +66,8 @@ stages:
                     /p:DotnetPublishUsingPipelines=true
           displayName: Build and Test
 
+        - template: eng\common\templates\steps\generate-sbom.yml
+
         # Archive NuGet packages to DevOps.
         - task: PublishBuildArtifacts@1
           displayName: Publish Artifact Packages

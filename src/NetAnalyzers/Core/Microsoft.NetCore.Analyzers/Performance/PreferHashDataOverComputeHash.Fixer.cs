@@ -90,7 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
             public override string EquivalenceKey => nameof(MicrosoftNetCoreAnalyzersResources.PreferHashDataCodefixTitle);
 
-            protected override async Task<Solution> GetChangedSolutionAsync(CancellationToken cancellationToken)
+            protected override async Task<Solution?> GetChangedSolutionAsync(CancellationToken cancellationToken)
             {
                 var newSolution = _solution;
                 foreach (KeyValuePair<Project, ImmutableArray<Diagnostic>> pair in _diagnosticsToFix)
@@ -101,7 +101,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     IEnumerable<IGrouping<SyntaxTree, Diagnostic>> groupedDiagnostics =
                         diagnostics
                             .Where(d => d.Location.IsInSource)
-                            .GroupBy(d => d.Location.SourceTree);
+                            .GroupBy(d => d.Location.SourceTree!);
 
                     foreach (IGrouping<SyntaxTree, Diagnostic> grouping in groupedDiagnostics)
                     {
@@ -111,15 +111,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         {
                             continue;
                         }
-                        SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-                        var hashInstanceTargets = CollectTargets(root, grouping, cancellationToken);
+                        var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+                        var hashInstanceTargets = CollectTargets(root!, grouping, cancellationToken);
 
                         if (hashInstanceTargets is null)
                         {
                             continue;
                         }
 
-                        root = _helper.TrackTargets(root, hashInstanceTargets);
+                        root = _helper.TrackTargets(root!, hashInstanceTargets);
 
                         root = FixDocumentRoot(root, hashInstanceTargets);
                         root = Formatter.Format(root, Formatter.Annotation, newSolution.Workspace, cancellationToken: cancellationToken);
@@ -271,7 +271,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
                 var hashTypeName = diagnostic.Properties[PreferHashDataOverComputeHashAnalyzer.TargetHashTypeDiagnosticPropertyKey];
 
-                computeHashHolder = new ComputeHashSyntaxHolder(computeHashNode, computeType, hashTypeName);
+                computeHashHolder = new ComputeHashSyntaxHolder(computeHashNode, computeType, hashTypeName!);
                 return true;
             }
 
@@ -391,7 +391,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 foreach (var disposeNode in hashInstanceTarget.DisposeNodes)
                 {
                     var trackedDisposeNode = root.GetCurrentNode(disposeNode);
-                    root = RemoveNodeWithFormatting(root, trackedDisposeNode);
+                    root = RemoveNodeWithFormatting(root, trackedDisposeNode!);
                 }
                 return root;
             }
@@ -406,11 +406,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     option |= SyntaxRemoveOptions.KeepTrailingTrivia;
                 }
-                var parent = nodeToRemove.Parent;
+                var parent = nodeToRemove.Parent!;
                 root = root.TrackNodes(parent);
-                var newParent = parent.RemoveNode(nodeToRemove, option)
+                var newParent = parent.RemoveNode(nodeToRemove, option)!
                     .WithAdditionalAnnotations(Formatter.Annotation);
-                root = root.ReplaceNode(root.GetCurrentNode(parent), newParent);
+                root = root.ReplaceNode(root.GetCurrentNode(parent)!, newParent);
                 return root;
             }
 

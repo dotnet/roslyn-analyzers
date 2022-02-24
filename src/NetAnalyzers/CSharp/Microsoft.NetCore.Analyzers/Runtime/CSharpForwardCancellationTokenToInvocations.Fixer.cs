@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Runtime;
-using NullableAnnotation = Analyzer.Utilities.Lightup.NullableAnnotation;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
@@ -30,8 +29,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             // then the node.Parent.Parent is the actual invocation (and it will contain the dot as well)
 
             var operation = node.Parent.IsKind(SyntaxKind.MemberBindingExpression)
-                ? model.GetOperation(node.Parent.Parent, ct)
-                : model.GetOperation(node.Parent, ct);
+                ? model.GetOperation(node.Parent.Parent!, ct)
+                : model.GetOperation(node.Parent!, ct);
 
             invocation = operation as IInvocationOperation;
 
@@ -70,11 +69,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             var typeName = TypeNameVisitor.GetTypeSyntaxForSymbol(type.ElementType);
             if (type.ElementType.IsReferenceType)
             {
-                var additionalAnnotation = type.NullableAnnotation() switch
+                var additionalAnnotation = type.NullableAnnotation switch
                 {
-                    NullableAnnotation.None => NullableSyntaxAnnotationEx.Oblivious,
-                    NullableAnnotation.Annotated => NullableSyntaxAnnotationEx.AnnotatedOrNotAnnotated,
-                    NullableAnnotation.NotAnnotated => NullableSyntaxAnnotationEx.AnnotatedOrNotAnnotated,
+                    CodeAnalysis.NullableAnnotation.None => NullableSyntaxAnnotationEx.Oblivious,
+                    CodeAnalysis.NullableAnnotation.Annotated => NullableSyntaxAnnotationEx.AnnotatedOrNotAnnotated,
+                    CodeAnalysis.NullableAnnotation.NotAnnotated => NullableSyntaxAnnotationEx.AnnotatedOrNotAnnotated,
                     _ => null,
                 };
 

@@ -3,7 +3,6 @@
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
@@ -57,9 +56,12 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
                 _fixer = fixer;
             }
 
-            protected override string CodeActionTitle => CodeAnalysisDiagnosticsResources.PreferIsKindFix;
+            protected override string GetFixAllTitle(FixAllContext fixAllContext)
+            {
+                return CodeAnalysisDiagnosticsResources.PreferIsKindFix;
+            }
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document?> FixAllAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 var editor = await DocumentEditor.CreateAsync(document, fixAllContext.CancellationToken).ConfigureAwait(false);
                 foreach (var diagnostic in diagnostics)
@@ -71,7 +73,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
                     _fixer.FixDiagnostic(editor, nodeToFix);
                 }
 
-                return editor.GetChangedRoot();
+                return editor.GetChangedDocument();
             }
         }
     }

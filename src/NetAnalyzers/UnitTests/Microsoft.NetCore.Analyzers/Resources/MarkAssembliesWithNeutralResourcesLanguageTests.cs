@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System.Security.Policy;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
@@ -95,6 +96,37 @@ End Class", VerifyVB.Diagnostic());
         public async Task TestBasicvalidAttributeAsync()
         {
             await VerifyBasicWithDependenciesAsync(@"<Assembly: System.Resources.NeutralResourcesLanguage(""en"")>");
+        }
+
+        [Fact]
+        public async Task TestCSharpAttributeWithoutArguments()
+        {
+            var source = @"
+using System;
+
+public class GeneratedCodeAttribute : Attribute { }
+
+[GeneratedCodeAttribute]
+public class C { }
+";
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task TestBasicAttributeWithoutArguments()
+        {
+            var source = @"
+Imports System
+
+Public Class GeneratedCodeAttribute
+    Inherits Attribute
+End Class
+
+<GeneratedCodeAttribute>
+Public Class C
+End Class
+";
+            await VerifyVB.VerifyCodeFixAsync(source, source);
         }
 
         private async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)

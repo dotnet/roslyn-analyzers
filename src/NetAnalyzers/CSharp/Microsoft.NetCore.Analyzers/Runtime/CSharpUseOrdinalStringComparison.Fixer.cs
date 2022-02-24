@@ -49,11 +49,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
         {
             if (identifier?.Parent?.FirstAncestorOrSelf<InvocationExpressionSyntax>() is InvocationExpressionSyntax invokeParent)
             {
-                SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-                if (model.GetSymbolInfo((IdentifierNameSyntax)identifier!, cancellationToken).Symbol is IMethodSymbol methodSymbol && CanAddStringComparison(methodSymbol, model))
+                var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                if (model!.GetSymbolInfo((IdentifierNameSyntax)identifier, cancellationToken).Symbol is IMethodSymbol methodSymbol && CanAddStringComparison(methodSymbol, model!))
                 {
                     // append a new StringComparison.Ordinal argument
-                    SyntaxNode newArg = generator.Argument(CreateOrdinalMemberAccess(generator, model))
+                    SyntaxNode newArg = generator.Argument(CreateOrdinalMemberAccess(generator, model!))
                         .WithAdditionalAnnotations(Formatter.Annotation);
                     InvocationExpressionSyntax newInvoke = invokeParent.AddArgumentListArguments((ArgumentSyntax)newArg).WithAdditionalAnnotations(Formatter.Annotation);
                     SyntaxNode newRoot = root.ReplaceNode(invokeParent, newInvoke);

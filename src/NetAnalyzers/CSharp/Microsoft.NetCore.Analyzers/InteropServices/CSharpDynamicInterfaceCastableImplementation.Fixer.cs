@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
-using Analyzer.Utilities.Lightup;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
@@ -20,11 +19,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpDynamicInterfaceCastableImplementationFixer : DynamicInterfaceCastableImplementationFixer
     {
-        // Manually define the InitKeyword and InitAccessorDeclaration values since we compile against too old of a Roslyn to use it directly.
-        // We only generate init accessors if they already exist, so we don't need to worry about these being unrecognized.
-        private const SyntaxKind InitKeyword = (SyntaxKind)8443;
-        private const SyntaxKind InitAccessorDeclaration = (SyntaxKind)9060;
-
         protected override async Task<Document> ImplementInterfacesOnDynamicCastableImplementationAsync(
             SyntaxNode declaration,
             Document document,
@@ -32,7 +26,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
 
-            var type = (INamedTypeSymbol)editor.SemanticModel.GetDeclaredSymbol(declaration, cancellationToken);
+            var type = (INamedTypeSymbol)editor.SemanticModel.GetDeclaredSymbol(declaration, cancellationToken)!;
             var generator = editor.Generator;
 
             var defaultMethodBodyStatements = generator.DefaultMethodBody(editor.SemanticModel.Compilation).ToArray();
@@ -113,7 +107,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
             SyntaxNode[] defaultMethodBodyStatements,
             bool includeAccessibility)
         {
-            if (!property.SetMethod.IsInitOnly())
+            if (!property.SetMethod!.IsInitOnly)
             {
                 return generator.WithSetAccessorStatements(declaration, defaultMethodBodyStatements);
             }
@@ -128,9 +122,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
 
             SyntaxNode? oldInitAccessor = null;
 
-            foreach (var accessor in propDecl.AccessorList.Accessors)
+            foreach (var accessor in propDecl.AccessorList!.Accessors)
             {
-                if (accessor.IsKind(InitAccessorDeclaration))
+                if (accessor.IsKind(SyntaxKind.InitAccessorDeclaration))
                 {
                     oldInitAccessor = accessor;
                     break;
@@ -142,12 +136,12 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
                 propDecl = propDecl.WithAccessorList(propDecl.AccessorList.RemoveNode(oldInitAccessor, SyntaxRemoveOptions.KeepNoTrivia));
             }
 
-            return propDecl.WithAccessorList(propDecl.AccessorList.AddAccessors(
+            return propDecl.WithAccessorList(propDecl.AccessorList!.AddAccessors(
                 SyntaxFactory.AccessorDeclaration(
-                        InitAccessorDeclaration,
+                        SyntaxKind.InitAccessorDeclaration,
                         setAccessor.AttributeLists,
                         setAccessor.Modifiers,
-                        SyntaxFactory.Token(InitKeyword),
+                        SyntaxFactory.Token(SyntaxKind.InitKeyword),
                         setAccessor.Body,
                         setAccessor.ExpressionBody,
                         setAccessor.SemicolonToken)));

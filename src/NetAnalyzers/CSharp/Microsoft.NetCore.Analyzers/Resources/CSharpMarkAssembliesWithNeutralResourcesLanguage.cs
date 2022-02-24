@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Resources
                     return;
                 }
 
-                if (!CheckResxGeneratedFile(context.SemanticModel, attributeSyntax, attributeSyntax.ArgumentList.Arguments[0].Expression, generatedCode, context.CancellationToken))
+                if (!CheckResxGeneratedFile(context.SemanticModel, attributeSyntax, attributeSyntax.ArgumentList!.Arguments[0].Expression, generatedCode, context.CancellationToken))
                 {
                     return;
                 }
@@ -37,7 +37,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Resources
         private static bool CheckAttribute(AttributeSyntax attribute)
         {
             return attribute?.Name?.GetLastToken().Text?.Equals(GeneratedCodeAttribute, StringComparison.Ordinal) == true &&
-                attribute.ArgumentList.Arguments.Count > 0;
+                attribute.ArgumentList is { Arguments.Count: > 0 };
         }
     }
 }

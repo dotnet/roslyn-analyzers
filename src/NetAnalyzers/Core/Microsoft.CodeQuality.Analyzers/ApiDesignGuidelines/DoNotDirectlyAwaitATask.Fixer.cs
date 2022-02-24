@@ -86,9 +86,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             public static readonly CustomFixAllProvider Instance = new();
 
-            protected override string CodeActionTitle => MicrosoftCodeQualityAnalyzersResources.AppendConfigureAwaitFalse;
+            protected override string GetFixAllTitle(FixAllContext fixAllContext)
+            {
+                return MicrosoftCodeQualityAnalyzersResources.AppendConfigureAwaitFalse;
+            }
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document?> FixAllAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 var useConfigureAwaitTrue = fixAllContext.CodeActionEquivalenceKey == nameof(AppendConfigureAwaitTrue);
                 var editor = await DocumentEditor.CreateAsync(document, fixAllContext.CancellationToken).ConfigureAwait(false);
@@ -98,7 +101,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     FixDiagnostic(editor, expression, argument: useConfigureAwaitTrue);
                 }
 
-                return editor.GetChangedRoot();
+                return editor.GetChangedDocument();
             }
         }
     }

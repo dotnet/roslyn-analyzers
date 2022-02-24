@@ -32,7 +32,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
 
         protected override SyntaxNode GetDeclarationNode(SyntaxNode node)
             => node.IsKind(SyntaxKind.IdentifierName)
-                ? node.Parent
+                ? node.Parent!
                 : node;
     }
 }

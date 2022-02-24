@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             context.RegisterSyntaxNodeAction(ctx =>
             {
                 // We found a stackalloc.  Walk up from it to see if it's in a loop at any level.
-                for (SyntaxNode node = ctx.Node; node != null; node = node.Parent)
+                for (var node = ctx.Node; node != null; node = node.Parent)
                 {
                     switch (node.Kind())
                     {

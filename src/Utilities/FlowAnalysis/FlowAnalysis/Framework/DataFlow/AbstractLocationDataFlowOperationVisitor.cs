@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 
         protected override TAbstractAnalysisValue ComputeAnalysisValueForEscapedRefOrOutArgument(IArgumentOperation operation, TAbstractAnalysisValue defaultValue)
         {
-            Debug.Assert(operation.Parameter.RefKind is RefKind.Ref or RefKind.Out);
+            Debug.Assert(operation.Parameter!.RefKind is RefKind.Ref or RefKind.Out);
 
             if (operation.Value.Type != null)
             {
@@ -151,14 +151,14 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         {
             var value = base.VisitTypeParameterObjectCreation(operation, argument);
             PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(operation);
-            return HandleInstanceCreation(operation, instanceLocation, value);
+            return HandleInstanceCreation(operation, instanceLocation, value!);
         }
 
         public override TAbstractAnalysisValue VisitDynamicObjectCreation(IDynamicObjectCreationOperation operation, object? argument)
         {
             var value = base.VisitDynamicObjectCreation(operation, argument);
             PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(operation);
-            return HandleInstanceCreation(operation, instanceLocation, value);
+            return HandleInstanceCreation(operation, instanceLocation, value!);
         }
 
         public override TAbstractAnalysisValue VisitAnonymousObjectCreation(IAnonymousObjectCreationOperation operation, object? argument)
@@ -172,7 +172,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         {
             var value = base.VisitArrayCreation(operation, argument);
             PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(operation);
-            return HandleInstanceCreation(operation, instanceLocation, value);
+            return HandleInstanceCreation(operation, instanceLocation, value!);
         }
 
         public override TAbstractAnalysisValue VisitDelegateCreation(IDelegateCreationOperation operation, object? argument)
@@ -186,7 +186,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         {
             var value = base.VisitReDimClause(operation, argument);
             PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(operation);
-            return HandleInstanceCreation(operation, instanceLocation, value);
+            return HandleInstanceCreation(operation, instanceLocation, value!);
         }
 
         #endregion

@@ -135,7 +135,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             // Verify that the current invocation is not passing an explicit token already
             if (AnyArgument(invocation.Arguments,
-                            a => a.Parameter.Type.Equals(cancellationTokenType) && !a.IsImplicit))
+                            a => cancellationTokenType.Equals(a.Parameter?.Type) && !a.IsImplicit))
             {
                 return false;
             }
@@ -192,7 +192,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             [NotNullWhen(returnValue: true)] out string? cancellationTokenParameterName)
         {
             shouldFix = 1;
-            IOperation currentOperation = invocation.Parent;
+            var currentOperation = invocation.Parent;
             while (currentOperation != null)
             {
                 ancestor = null;
@@ -298,7 +298,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // Need to check among all arguments in case the user is passing them named and unordered (despite the ct being defined as the last parameter)
                 return AnyArgument(
                     arguments,
-                    a => a.Parameter.Type.Equals(cancellationTokenType) && a.ArgumentKind == ArgumentKind.DefaultValue);
+                    a => a.Parameter!.Type.Equals(cancellationTokenType) && a.ArgumentKind == ArgumentKind.DefaultValue);
             }
             return false;
         }
@@ -317,7 +317,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (paramsArgument?.Value is IArrayCreationOperation arrayOperation)
                 {
                     // Do not offer a diagnostic if the user already passed a ct to the params
-                    return arrayOperation.Initializer.ElementValues.IsEmpty;
+                    return arrayOperation.Initializer!.ElementValues.IsEmpty;
                 }
             }
 

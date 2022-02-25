@@ -1835,7 +1835,7 @@
     <value>'{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</value>
   </data>
   <data name="ConstantExpectedApplicationTitle" xml:space="preserve">
-    <value>Incorerct use of ConstantExpectedAttribute</value>
+    <value>Incorrect use of ConstantExpectedAttribute</value>
   </data>
   <data name="ConstantExpectedApplicationDescription" xml:space="preserve">
     <value>ConstantExpectedAttribute is not applied correctly on the paramter.</value>
@@ -1847,7 +1847,7 @@
     <value>The parameter expects a constant for best performance.</value>
   </data>
   <data name="ConstantExpectedInvalidTypeMessage" xml:space="preserve">
-    <value>The '{0}' parameter cannot have be annotaed with ConstantExpected.</value>
+    <value>The '{0}' parameter cannot have be annotated with ConstantExpected.</value>
   </data>
   <data name="ConstantExpectedIncompatibleConstantTypeMessage" xml:space="preserve">
     <value>The '{0}' condition does not match parameter type of '{1}'.</value>

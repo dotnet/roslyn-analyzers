@@ -188,8 +188,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedApplicationTitle">
-        <source>Incorerct use of ConstantExpectedAttribute</source>
-        <target state="new">Incorerct use of ConstantExpectedAttribute</target>
+        <source>Incorrect use of ConstantExpectedAttribute</source>
+        <target state="new">Incorrect use of ConstantExpectedAttribute</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedAttributeNotSameTypeMessage">
@@ -218,8 +218,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedInvalidTypeMessage">
-        <source>The '{0}' parameter cannot have be annotaed with ConstantExpected.</source>
-        <target state="new">The '{0}' parameter cannot have be annotaed with ConstantExpected.</target>
+        <source>The '{0}' parameter cannot have be annotated with ConstantExpected.</source>
+        <target state="new">The '{0}' parameter cannot have be annotated with ConstantExpected.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedInvertedRangeMessage">

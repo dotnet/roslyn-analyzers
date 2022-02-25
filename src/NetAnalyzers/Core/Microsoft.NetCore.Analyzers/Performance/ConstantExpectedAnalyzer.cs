@@ -134,6 +134,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             RegisterAttributeSyntax(context);
             return;
         }
+
         private static void OnMethodSymbol(SymbolAnalysisContext context)
         {
             var methodSymbol = (IMethodSymbol)context.Symbol;
@@ -446,7 +447,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return true;
             }
 
-            if (methodSymbol.ContainingType != null)
+            if (methodSymbol.ContainingType is not null)
             {
                 foreach (INamedTypeSymbol interfaceSymbol in methodSymbol.ContainingType.AllInterfaces)
                 {

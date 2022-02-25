@@ -74,14 +74,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         return true;
                     }
 
-                    if (isInvalid)
-                    {
-                        errorFlags |= ErrorKind.MinIsIncompatible;
-                    }
-                    else
-                    {
-                        errorFlags |= ErrorKind.MinIsOutOfRange;
-                    }
+                    errorFlags |= isInvalid ? ErrorKind.MinIsIncompatible : ErrorKind.MinIsOutOfRange;
                     return false;
                 }
 
@@ -92,14 +85,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         return true;
                     }
 
-                    if (isInvalid)
-                    {
-                        errorFlags |= ErrorKind.MaxIsIncompatible;
-                    }
-                    else
-                    {
-                        errorFlags |= ErrorKind.MaxIsOutOfRange;
-                    }
+                    errorFlags |= isInvalid ? ErrorKind.MaxIsIncompatible : ErrorKind.MaxIsOutOfRange;
                     return false;
                 }
                 public bool TryConvert(object val, out T value) => _tryTransform(val, out value, out _);

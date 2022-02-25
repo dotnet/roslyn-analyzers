@@ -104,6 +104,16 @@ namespace Microsoft.NetCore.Analyzers.Performance
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
+        internal static readonly DiagnosticDescriptor AttributeExpectedRule = DiagnosticDescriptorHelper.Create(
+            CA1861,
+            s_localizableUsageTitle,
+            CreateLocalizableResourceString(nameof(ConstantExpectedAttributExpectedMessage)),
+            DiagnosticCategory.Performance,
+            RuleLevel.BuildWarning,
+            description: s_localizableUsageDescription,
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
+
         internal static readonly DiagnosticDescriptor AttributeNotSameTypeRule = DiagnosticDescriptorHelper.Create(
             CA1861,
             s_localizableUsageTitle,
@@ -115,7 +125,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             isDataflowRule: false);
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             InvalidTypeRule, IncompatibleConstantTypeRule, IncompatibleConstantForMinMaxRule, InvalidBoundsRule, InvertedRangeRule,
-            ConstantOutOfBoundsRule, ConstantNotConstantRule, AttributeOutOfBoundsRule, AttributeNotSameTypeRule);
+            ConstantOutOfBoundsRule, ConstantNotConstantRule, AttributeOutOfBoundsRule, AttributeExpectedRule, AttributeNotSameTypeRule);
 
         protected abstract DiagnosticHelper Helper { get; }
 
@@ -129,8 +139,39 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterOperationAction(OnInvocation, OperationKind.Invocation);
+            context.RegisterSymbolAction(context => OnMethodSymbol(context), SymbolKind.Method);
             RegisterAttributeSyntax(context);
             return;
+        }
+        private static void OnMethodSymbol(SymbolAnalysisContext context)
+        {
+            var methodSymbol = (IMethodSymbol)context.Symbol;
+            if (TryGetMethodInterface(methodSymbol, out var interfaceMethodSymbol))
+            {
+                CheckAttribute(context, methodSymbol.Parameters, interfaceMethodSymbol.Parameters);
+            }
+            else if (methodSymbol.OverriddenMethod is not null)
+            {
+                CheckAttribute(context, methodSymbol.Parameters, methodSymbol.OverriddenMethod.Parameters);
+            }
+
+            static void CheckAttribute(SymbolAnalysisContext context, ImmutableArray<IParameterSymbol> parameters, ImmutableArray<IParameterSymbol> baseParameters)
+            {
+                for (var i = 0; i < parameters.Length; i++)
+                {
+                    var parameter = parameters[i];
+                    if (!IsConstantCompatible(parameter.Type))
+                    {
+                        continue;
+                    }
+                    var baseParameter = baseParameters[i];
+                    if (HasConstantExpectedAttributeData(baseParameter) && !HasConstantExpectedAttributeData(parameter))
+                    {
+                        var diagnostic = parameter.DeclaringSyntaxReferences[0].GetSyntax().CreateDiagnostic(AttributeExpectedRule);
+                        context.ReportDiagnostic(diagnostic);
+                    }
+                }
+            }
         }
 
         private static void OnInvocation(OperationAnalysisContext context)
@@ -299,6 +340,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return constantExpectedAttributeData is not null;
         }
 
+        private static bool HasConstantExpectedAttributeData(IParameterSymbol parameter)
+        {
+            return parameter.GetAttributes()
+                .Any(attrData => IsConstantExpectedAttribute(attrData.AttributeClass));
+        }
+
         private static bool IsConstantExpectedAttribute(INamedTypeSymbol namedType)
         {
             return namedType.Name.Equals(ConstantExpectedAttribute, StringComparison.Ordinal) &&
@@ -396,6 +443,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             return (minConstant, maxConstant);
+
             static object? ToObject(TypedConstant typedConstant)
             {
                 if (typedConstant.IsNull)
@@ -404,6 +452,59 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
                 return typedConstant.Kind == TypedConstantKind.Array ? typedConstant.Values : typedConstant.Value;
             }
+        }
+
+        private static bool TryGetMethodInterface(IMethodSymbol methodSymbol, [NotNullWhen(true)] out IMethodSymbol? interfaceMethodSymbol)
+        {
+            var explicitInterface = methodSymbol.ExplicitInterfaceImplementations
+                .FirstOrDefault(exInterface => methodSymbol.IsImplementationOfInterfaceMember(exInterface));
+            if (explicitInterface is not null)
+            {
+                interfaceMethodSymbol = explicitInterface;
+                return true;
+            }
+
+            if (methodSymbol.ContainingType != null)
+            {
+                foreach (INamedTypeSymbol interfaceSymbol in methodSymbol.ContainingType.AllInterfaces)
+                {
+                    foreach (var interfaceMember in interfaceSymbol.GetMembers().OfType<IMethodSymbol>())
+                    {
+                        if (methodSymbol.IsImplementationOfInterfaceMember(interfaceMember))
+                        {
+                            interfaceMethodSymbol = interfaceMember;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            interfaceMethodSymbol = null;
+            return false;
+        }
+
+        private static bool IsConstantCompatible(ITypeSymbol type)
+        {
+            return type.SpecialType switch
+            {
+                SpecialType.System_Char => true,
+                SpecialType.System_Byte => true,
+                SpecialType.System_UInt16 => true,
+                SpecialType.System_UInt32 => true,
+                SpecialType.System_UInt64 => true,
+                SpecialType.System_UIntPtr => true,
+                SpecialType.System_SByte => true,
+                SpecialType.System_Int16 => true,
+                SpecialType.System_Int32 => true,
+                SpecialType.System_Int64 => true,
+                SpecialType.System_IntPtr => true,
+                SpecialType.System_Single => true,
+                SpecialType.System_Double => true,
+                SpecialType.System_Boolean => true,
+                SpecialType.System_String => true,
+                SpecialType.None when type.TypeKind == TypeKind.TypeParameter => true,
+                _ => false,
+            };
         }
 
         protected abstract class DiagnosticHelper

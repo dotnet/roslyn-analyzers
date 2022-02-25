@@ -192,6 +192,11 @@
         <target state="new">Incorrect use of ConstantExpectedAttribute</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConstantExpectedAttributExpectedMessage">
+        <source>The ConstantExpectedAttribute expected for the parameter due to the interface/base method.</source>
+        <target state="new">The ConstantExpectedAttribute expected for the parameter due to the interface/base method.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ConstantExpectedAttributeNotSameTypeMessage">
         <source>The ConstantExpectedAttribute does not have the same '{0}' type as the ConstantExpectedAttribute in the invoked method parameter.</source>
         <target state="new">The ConstantExpectedAttribute does not have the same '{0}' type as the ConstantExpectedAttribute in the invoked method parameter.</target>

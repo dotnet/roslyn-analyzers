@@ -25,7 +25,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         private void OnAttributeNode(SyntaxNodeAnalysisContext context)
         {
             var attributeSyntax = (AttributeSyntax)context.Node;
-            var sm = context.SemanticModel;
             if (!attributeSyntax.Name.IsEquivalentTo(_constantExpectedIdentifier) && !attributeSyntax.Name.IsEquivalentTo(_constantExpectedAttributeIdentifier))
             {
                 return;

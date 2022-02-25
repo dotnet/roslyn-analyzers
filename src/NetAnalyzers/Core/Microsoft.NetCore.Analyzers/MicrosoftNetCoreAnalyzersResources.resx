@@ -1870,6 +1870,9 @@
   <data name="ConstantExpectedAttributeOutOfBoundsMessage" xml:space="preserve">
     <value>The ConstantExpectedAttribute does not fit within the parameter value bounds of '{0}' to '{1}'.</value>
   </data>
+  <data name="ConstantExpectedAttributExpectedMessage" xml:space="preserve">
+    <value>The ConstantExpectedAttribute expected for the parameter due to the interface/base method.</value>
+  </data>
   <data name="ConstantExpectedAttributeNotSameTypeMessage" xml:space="preserve">
     <value>The ConstantExpectedAttribute does not have the same '{0}' type as the ConstantExpectedAttribute in the invoked method parameter.</value>
   </data>

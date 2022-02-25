@@ -14,21 +14,20 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
     {
         [Theory]
         [InlineData("char", "char.MinValue", "char.MaxValue")]
-        [InlineData("byte", "byte.MinValue", "byte.MaxValue")]
-        [InlineData("ushort", "ushort.MinValue", "ushort.MaxValue")]
-        [InlineData("uint", "uint.MinValue", "uint.MaxValue")]
-        [InlineData("ulong", "ulong.MinValue", "ulong.MaxValue")]
-        [InlineData("nuint", "uint.MinValue", "uint.MaxValue")]
         [InlineData("sbyte", "sbyte.MinValue", "sbyte.MaxValue")]
         [InlineData("short", "short.MinValue", "short.MaxValue")]
         [InlineData("int", "int.MinValue", "int.MaxValue")]
         [InlineData("long", "long.MinValue", "long.MaxValue")]
         [InlineData("nint", "int.MinValue", "int.MaxValue")]
+        [InlineData("byte", "byte.MinValue", "byte.MaxValue")]
+        [InlineData("ushort", "ushort.MinValue", "ushort.MaxValue")]
+        [InlineData("uint", "uint.MinValue", "uint.MaxValue")]
+        [InlineData("ulong", "ulong.MinValue", "ulong.MaxValue")]
+        [InlineData("nuint", "uint.MinValue", "uint.MaxValue")]
         [InlineData("float", "float.MinValue", "float.MaxValue")]
         [InlineData("double", "double.MinValue", "double.MaxValue")]
         public static async Task TestConstantExpectedSupportedUnmanagedTypesAsync(string type, string minValue, string maxValue)
         {
-
             string csInput = @$"
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -65,7 +64,6 @@ public class Test
         [Fact]
         public static async Task TestConstantExpectedSupportedComplexTypesAsync()
         {
-
             string csInput = @"
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -91,10 +89,63 @@ public class Test
             await TestCSAsync(csInput);
         }
 
-        [Fact]
-        public static async Task TestConstantExpectedUnsupportedTypesAsync()
+        [Theory]
+        [InlineData("char")]
+        [InlineData("sbyte")]
+        [InlineData("short")]
+        [InlineData("int")]
+        [InlineData("long")]
+        [InlineData("nint")]
+        [InlineData("byte")]
+        [InlineData("ushort")]
+        [InlineData("uint")]
+        [InlineData("ulong")]
+        [InlineData("nuint")]
+        [InlineData("float")]
+        [InlineData("double")]
+        [InlineData("string")]
+        public static async Task TestConstantExpectedSupportedComplex2TypesAsync(string type)
         {
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
 
+public class Test
+{{
+    public interface ITest<T>
+    {{
+        T Method(T operand1, [ConstantExpected] T operand2);
+    }}
+    public interface ITest2<T>
+    {{
+        T Method(T operand1, [ConstantExpected] T operand2);
+    }}
+    public abstract class AbstractTest<T>
+    {{
+        public abstract T Method2(T operand1, [ConstantExpected] T operand2);
+    }}
+
+    public class Generic : AbstractTest<{type}>, ITest<{type}>, ITest2<{type}>
+    {{
+        public {type} Method({type} operand1, {{|#0:{type} operand2|}}) => throw new NotImplementedException();
+        {type} ITest2<{type}>.Method({type} operand1, {{|#1:{type} operand2|}}) => throw new NotImplementedException();
+        public override {type} Method2({type} operand1, {{|#2:{type} operand2|}}) => throw new NotImplementedException();
+    }}
+}}
+";
+            await TestCSAsync(csInput,
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.AttributeExpectedRule)
+                        .WithLocation(0),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.AttributeExpectedRule)
+                        .WithLocation(1),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.AttributeExpectedRule)
+                        .WithLocation(2));
+        }
+
+        [Fact]
+        public static async Task TestConstantExpectedSupportedComplex3TypesAsync()
+        {
             string csInput = @"
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -102,45 +153,101 @@ using System.Diagnostics.CodeAnalysis;
 
 public class Test
 {
-    public static void TestMethodObject([{|#0:ConstantExpected|}] object val)
+    public interface ITest<T>
     {
+        T Method(T operand1, [ConstantExpected] T operand2);
     }
-    public static void TestMethodCustomClass([{|#1:ConstantExpected|}] Test val)
+    public interface ITest2<T>
     {
+        T Method(T operand1, [ConstantExpected] T operand2);
     }
-    public static void TestMethodDecimal([{|#2:ConstantExpected|}] decimal val)
+    public abstract class AbstractTest<T>
     {
+        public abstract T Method2(T operand1, [ConstantExpected] T operand2);
     }
-    public static void TestMethodByteArray([{|#3:ConstantExpected|}] byte[] val)
+    public class GenericForward<T> : AbstractTest<T>, ITest<T>, ITest2<T>
     {
-    }
-    public static void TestMethodGenericArray<T>([{|#4:ConstantExpected|}] T[] val)
-    {
-    }
-    public static void TestMethodValueTuple([{|#5:ConstantExpected|}] ValueTuple<int, long> val)
-    {
+        public T Method(T operand1, {|#0:T operand2|}) => throw new NotImplementedException();
+        T ITest2<T>.Method(T operand1, {|#1:T operand2|}) => throw new NotImplementedException();
+        public override T Method2(T operand1, {|#2:T operand2|}) => throw new NotImplementedException();
     }
 }
 ";
             await TestCSAsync(csInput,
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.AttributeExpectedRule)
+                        .WithLocation(0),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.AttributeExpectedRule)
+                        .WithLocation(1),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.AttributeExpectedRule)
+                        .WithLocation(2));
+        }
+
+        [Theory]
+        [InlineData("", "", "object", "object")]
+        [InlineData("", "", "Test", "Test")]
+        [InlineData("", "", "Guid", "System.Guid")]
+        [InlineData("", "", "decimal", "decimal")]
+        [InlineData("", "", "byte[]", "byte[]")]
+        [InlineData("", "", "(int, long)", "(int, long)")]
+        [InlineData("<T>", "", "T[]", "T[]")]
+        [InlineData("", "<T>", "T[]", "T[]")]
+        public static async Task TestConstantExpectedUnsupportedTypesAsync(string classGeneric, string methodGeneric, string type, string diagnosticType)
+        {
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
+
+public class Test{classGeneric}
+{{
+    public static void TestMethod{methodGeneric}([{{|#0:ConstantExpected|}}] {type} val)
+    {{
+    }}
+}}
+";
+            await TestCSAsync(csInput,
                 VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidTypeRule)
                         .WithLocation(0)
-                        .WithArguments("object"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidTypeRule)
-                        .WithLocation(1)
-                        .WithArguments("Test"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidTypeRule)
-                        .WithLocation(2)
-                        .WithArguments("decimal"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidTypeRule)
-                        .WithLocation(3)
-                        .WithArguments("byte[]"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidTypeRule)
-                        .WithLocation(4)
-                        .WithArguments("T[]"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidTypeRule)
-                        .WithLocation(5)
-                        .WithArguments("(int, long)"));
+                        .WithArguments(diagnosticType));
+        }
+
+        [Theory]
+        [InlineData("object")]
+        [InlineData("Test")]
+        [InlineData("Guid")]
+        [InlineData("decimal")]
+        [InlineData("byte[]")]
+        [InlineData("(int, long)")]
+        public static async Task TestConstantExpectedUnsupportedIgnoredComplexTypesAsync(string type)
+        {
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
+
+public class Test
+{{
+    public interface ITest<T>
+    {{
+        T Method(T operand1, [ConstantExpected] T operand2);
+    }}
+    public interface ITest2<T>
+    {{
+        T Method(T operand1, [ConstantExpected] T operand2);
+    }}
+    public abstract class AbstractTest<T>
+    {{
+        public abstract T Method2(T operand1, [ConstantExpected] T operand2);
+    }}
+    public class Generic : AbstractTest<{type}>, ITest<{type}>, ITest2<{type}>
+    {{
+        public {type} Method({type} operand1, {type} operand2) => throw new NotImplementedException();
+        {type} ITest2<{type}>.Method({type} operand1, {type} operand2) => throw new NotImplementedException();
+        public override {type} Method2({type} operand1, {type} operand2) => throw new NotImplementedException();
+    }}
+}}
+";
+            await TestCSAsync(csInput);
         }
 
         [Theory]
@@ -194,6 +301,42 @@ public class Test
         }
 
         [Theory]
+        [InlineData("", "", "string", "true", "false", "string")]
+        [InlineData("<T>", "", "T", "\"min\"", "false", "generic")]
+        [InlineData("", "<T>", "T", "\"min\"", "false", "generic")]
+        public static async Task TestConstantExpectedIncompatibleConstantMinMaxTypeErrorAsync(string classGeneric, string methodGeneric, string type, string badMinValue, string badMaxValue, string diagnosticText)
+        {
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
+
+public class Test{classGeneric}
+{{
+    public static void TestMethod1{methodGeneric}([{{|#0:ConstantExpected(Min = {badMinValue})|}}] {type} val)
+    {{
+    }}
+    public static void TestMethod2{methodGeneric}([{{|#1:ConstantExpected(Min = {badMinValue}, Max = {badMaxValue})|}}] {type} val)
+    {{
+    }}
+    public static void TestMethod3{methodGeneric}([{{|#2:ConstantExpected(Max = {badMaxValue})|}}] {type} val)
+    {{
+    }}
+}}
+";
+            await TestCSAsync(csInput,
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantForMinMaxRule)
+                        .WithLocation(0)
+                        .WithArguments(diagnosticText),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantForMinMaxRule)
+                        .WithLocation(1)
+                        .WithArguments(diagnosticText),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantForMinMaxRule)
+                        .WithLocation(2)
+                        .WithArguments(diagnosticText));
+        }
+
+        [Theory]
         [InlineData("char", "'Z'", "'A'")]
         [InlineData("sbyte", "1", "0")]
         [InlineData("short", "1", "0")]
@@ -226,149 +369,24 @@ public class Test
                         .WithLocation(0));
         }
 
-        [Fact]
-        public static async Task TestConstantExpectedIncompatibleConstantMinMaxTypeErrorAsync()
-        {
-            string csInput = @"
-using System;
-using System.Diagnostics.CodeAnalysis;
-#nullable enable
-
-public class Test
-{
-    public static void TestMethodString1([{|#0:ConstantExpected(Min = true)|}] string val)
-    {
-    }
-    public static void TestMethodString2([{|#1:ConstantExpected(Min = true, Max = 5f)|}] string val)
-    {
-    }
-    public static void TestMethodString3([{|#2:ConstantExpected(Max = 10.0)|}] string val)
-    {
-    }
-
-    public static void TestMethodGeneric1<T>([{|#3:ConstantExpected(Min = ""min"")|}] T val)
-    {
-    }    
-    public static void TestMethodGeneric2<T>([{|#4:ConstantExpected(Min = ""min"", Max = '1')|}] T val)
-    {
-    }    
-    public static void TestMethodGeneric3<T>([{|#5:ConstantExpected(Max = ulong.MaxValue)|}] T val)
-    {
-    }    
-    public static class GenenricClass<T>
-    {
-        public static void TestMethodGeneric1([{|#6:ConstantExpected(Min = ""min"")|}] T val)
-        {
-        }
-        public static void TestMethodGeneric2([{|#7:ConstantExpected(Min = ""min"", Max = ""a"")|}] T val)
-        {
-        }
-        public static void TestMethodGeneric3([{|#8:ConstantExpected(Max = ""a"")|}] T val)
-        {
-        }
-    }
-}
-";
-            await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantForMinMaxRule)
-                        .WithLocation(0)
-                        .WithArguments("string"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantForMinMaxRule)
-                        .WithLocation(1)
-                        .WithArguments("string"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantForMinMaxRule)
-                        .WithLocation(2)
-                        .WithArguments("string"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantForMinMaxRule)
-                        .WithLocation(3)
-                        .WithArguments("generic"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantForMinMaxRule)
-                        .WithLocation(4)
-                        .WithArguments("generic"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantForMinMaxRule)
-                        .WithLocation(5)
-                        .WithArguments("generic"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantForMinMaxRule)
-                        .WithLocation(6)
-                        .WithArguments("generic"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantForMinMaxRule)
-                        .WithLocation(7)
-                        .WithArguments("generic"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantForMinMaxRule)
-                        .WithLocation(8)
-                        .WithArguments("generic"));
-        }
-
-        [Fact]
-        public static async Task TestConstantExpectedInvalidBoundsAsync()
-        {
-            string[][] setArray = {
-                new[]
-                {
-                    "byte", byte.MinValue.ToString(), byte.MaxValue.ToString(),
-                    "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue"
-                },
-                new[]
-                {
-                    "ushort", ushort.MinValue.ToString(), ushort.MaxValue.ToString(),
-                    "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue"
-                },
-                new[]
-                {
-                    "uint", uint.MinValue.ToString(), uint.MaxValue.ToString(),
-                    "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue"
-                },
-                new[]
-                {
-                    "ulong", ulong.MinValue.ToString(), ulong.MaxValue.ToString(),
-                    "long.MinValue", "long.MinValue", "-1", "-1"
-                },
-                new[]
-                {
-                    "nuint", uint.MinValue.ToString(), uint.MaxValue.ToString(),
-                    "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue"
-                },
-                new[]
-                {
-                    "sbyte", sbyte.MinValue.ToString(), sbyte.MaxValue.ToString(),
-                    "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue"
-                },
-                new[]
-                {
-                    "short", short.MinValue.ToString(), short.MaxValue.ToString(),
-                    "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue"
-                },
-                new[]
-                {
-                    "int", int.MinValue.ToString(), int.MaxValue.ToString(),
-                    "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue"
-                },
-                new[]
-                {
-                    "long", long.MinValue.ToString(), long.MaxValue.ToString(),
-                    "ulong.MaxValue", "ulong.MaxValue", "ulong.MaxValue", "ulong.MaxValue"
-                },
-                new[]
-                {
-                    "nint", int.MinValue.ToString(), int.MaxValue.ToString(),
-                    "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue"
-                },
-                new[]
-                {
-                    "float", float.MinValue.ToString(), float.MaxValue.ToString(),
-                    "double.MinValue", "double.MinValue", "double.MaxValue", "double.MaxValue"
-                }
-            };
-
-            foreach (string[] set in setArray)
-            {
-                await TestTheoryAsync(set[0], set[1], set[2], set[3], set[4], set[5], set[6]);
-            }
-
-            static async Task TestTheoryAsync(string type, string min, string max, string min1, string min2, string max2,
+        [Theory]
+        [InlineData("sbyte", sbyte.MinValue, sbyte.MaxValue, "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue")]
+        [InlineData("short", short.MinValue, short.MaxValue, "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue")]
+        [InlineData("int", int.MinValue, int.MaxValue, "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue")]
+        [InlineData("long", long.MinValue, long.MaxValue, "ulong.MaxValue", "ulong.MaxValue", "ulong.MaxValue", "ulong.MaxValue")]
+        [InlineData("nint", int.MinValue, int.MaxValue, "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue")]
+        [InlineData("byte", byte.MinValue, byte.MaxValue, "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue")]
+        [InlineData("ushort", ushort.MinValue, ushort.MaxValue, "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue")]
+        [InlineData("uint", uint.MinValue, uint.MaxValue, "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue")]
+        [InlineData("ulong", ulong.MinValue, ulong.MaxValue, "long.MinValue", "long.MinValue", "-1", "-1")]
+        [InlineData("nuint", uint.MinValue, uint.MaxValue, "long.MinValue", "long.MinValue", "long.MaxValue", "long.MaxValue")]
+        [InlineData("float", float.MinValue, float.MaxValue, "double.MinValue", "double.MinValue", "double.MaxValue", "double.MaxValue")]
+        public static async Task TestConstantExpectedInvalidBoundsAsync(string type, object min, object max, string min1, string min2, string max2,
                 string max3)
-            {
-                string csInput = @$"
+        {
+            string minString = min.ToString();
+            string maxString = max.ToString();
+            string csInput = @$"
 using System;
 using System.Diagnostics.CodeAnalysis;
 #nullable enable
@@ -392,53 +410,51 @@ public class Test
     }}
 }}
 ";
-                await TestCSAsync(csInput,
-                    VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
-                        .WithLocation(0)
-                        .WithArguments("Min", min, max),
-                    VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
-                        .WithLocation(1)
-                        .WithArguments("Min", min, max),
-                    VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
-                        .WithLocation(2)
-                        .WithArguments("Max", min, max),
-                    VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
-                        .WithLocation(3)
-                        .WithArguments("Max", min, max),
-                    VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantTypeRule)
-                        .WithLocation(4)
-                        .WithArguments("Min", type),
-                    VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
-                        .WithLocation(5)
-                        .WithArguments("Max", min, max),
-                    VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
-                        .WithLocation(6)
-                        .WithArguments("Min", min, max),
-                    VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantTypeRule)
-                        .WithLocation(7)
-                        .WithArguments("Max", type));
-            }
+            await TestCSAsync(csInput,
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
+                    .WithLocation(0)
+                    .WithArguments("Min", minString, maxString),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
+                    .WithLocation(1)
+                    .WithArguments("Min", minString, maxString),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
+                    .WithLocation(2)
+                    .WithArguments("Max", minString, maxString),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
+                    .WithLocation(3)
+                    .WithArguments("Max", minString, maxString),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantTypeRule)
+                    .WithLocation(4)
+                    .WithArguments("Min", type),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
+                    .WithLocation(5)
+                    .WithArguments("Max", minString, maxString),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
+                    .WithLocation(6)
+                    .WithArguments("Min", minString, maxString),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.IncompatibleConstantTypeRule)
+                    .WithLocation(7)
+                    .WithArguments("Max", type));
         }
 
         [Theory]
         [InlineData("char", "'A'", "'Z'", "'A'", "(char)('A'+'\\u0001')")]
-        [InlineData("byte", "10", "20", "10", "2*5")]
-        [InlineData("ushort", "10", "20", "10", "2*5")]
-        [InlineData("uint", "10", "20", "10", "2*5")]
-        [InlineData("ulong", "10", "20", "10", "2*5")]
-        [InlineData("nuint", "10", "20", "10", "2*5")]
         [InlineData("sbyte", "10", "20", "10", "2*5")]
         [InlineData("short", "10", "20", "10", "2*5")]
         [InlineData("int", "10", "20", "10", "2*5")]
         [InlineData("long", "10", "20", "10", "2*5")]
         [InlineData("nint", "10", "20", "10", "2*5")]
+        [InlineData("byte", "10", "20", "10", "2*5")]
+        [InlineData("ushort", "10", "20", "10", "2*5")]
+        [InlineData("uint", "10", "20", "10", "2*5")]
+        [InlineData("ulong", "10", "20", "10", "2*5")]
+        [InlineData("nuint", "10", "20", "10", "2*5")]
         [InlineData("float", "10", "20", "10", "2*5")]
         [InlineData("double", "10", "20", "10", "2*5")]
         [InlineData("bool", "true", "true", "true", "!false")]
         [InlineData("string", "null", "null", "\"true\"", "\"false\"")]
         public static async Task TestArgumentConstantAsync(string type, string minValue, string maxValue, string value, string expression)
         {
-
             string csInput = @$"
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -478,37 +494,50 @@ public class Test
             await TestCSAsync(csInput);
         }
 
-        [Fact]
-        public static async Task TestArgumentNotConstantAsync()
+        [Theory]
+        [InlineData("char")]
+        [InlineData("sbyte")]
+        [InlineData("short")]
+        [InlineData("int")]
+        [InlineData("long")]
+        [InlineData("nint")]
+        [InlineData("byte")]
+        [InlineData("ushort")]
+        [InlineData("uint")]
+        [InlineData("ulong")]
+        [InlineData("nuint")]
+        [InlineData("float")]
+        [InlineData("double")]
+        [InlineData("string")]
+        public static async Task TestArgumentNotConstantAsync(string type)
         {
-
-            string csInput = @"
+            string csInput = @$"
 using System;
 using System.Diagnostics.CodeAnalysis;
 #nullable enable
 
 public class Test
-{
-    public static void TestMethod(int nonConstant)
-    {
-        TestMethodWithConstant({|#0:nonConstant|});
-        TestMethodGeneric<int>({|#1:nonConstant|});
-        GenenricClass<int>.TestMethodGeneric({|#2:nonConstant|});
-    }
-    public static void TestMethodWithConstant([ConstantExpected] int val)
-    {
-    }
+{{
+    public static void TestMethod({type} nonConstant)
+    {{
+        TestMethodWithConstant({{|#0:nonConstant|}});
+        TestMethodGeneric<{type}>({{|#1:nonConstant|}});
+        GenenricClass<{type}>.TestMethodGeneric({{|#2:nonConstant|}});
+    }}
+    public static void TestMethodWithConstant([ConstantExpected] {type} val)
+    {{
+    }}
     public static void TestMethodGeneric<T>([ConstantExpected] T val)
-    {
-    }
+    {{
+    }}
     
     public static class GenenricClass<T>
-    {
+    {{
         public static void TestMethodGeneric([ConstantExpected] T val)
-        {
-        }
-    }
-}
+        {{
+        }}
+    }}
+}}
 ";
             await TestCSAsync(csInput,
                 VerifyCS.Diagnostic(ConstantExpectedAnalyzer.ConstantNotConstantRule)
@@ -519,77 +548,47 @@ public class Test
                         .WithLocation(2));
         }
 
-        [Fact]
-        public static async Task TestArgumentStringNotConstantAsync()
+        [Theory]
+        [InlineData("char", "'B'", "'C'", "'D'")]
+        [InlineData("sbyte", "3", "4", "5")]
+        [InlineData("short", "3", "4", "5")]
+        [InlineData("int", "3", "4", "5")]
+        [InlineData("long", "3", "4", "5")]
+        [InlineData("nint", "3", "4", "5")]
+        [InlineData("byte", "3", "4", "5")]
+        [InlineData("ushort", "3", "4", "5")]
+        [InlineData("uint", "3", "4", "5")]
+        [InlineData("ulong", "3", "4", "5")]
+        [InlineData("nuint", "3", "4", "5")]
+        [InlineData("float", "3", "4", "5")]
+        [InlineData("double", "3", "4", "5")]
+        public static async Task TestArgumentOutOfBoundsConstantAsync(string type, string min, string max, string testValue)
         {
-
-            string csInput = @"
+            string csInput = @$"
 using System;
 using System.Diagnostics.CodeAnalysis;
 #nullable enable
 
 public class Test
-{
-    public static void TestMethod(string nonConstant)
-    {
-        TestMethodWithConstant({|#0:nonConstant|});
-        TestMethodGeneric<string>({|#1:nonConstant|});
-        GenenricClass<string>.TestMethodGeneric({|#2:nonConstant|});
-    }
-    public static void TestMethodWithConstant([ConstantExpected] string val)
-    {
-    }
-    public static void TestMethodGeneric<T>([ConstantExpected] T val)
-    {
-    }
-    
-    public static class GenenricClass<T>
-    {
-        public static void TestMethodGeneric([ConstantExpected] T val)
-        {
-        }
-    }
-}
-";
-            await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.ConstantNotConstantRule)
-                    .WithLocation(0),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.ConstantNotConstantRule)
-                    .WithLocation(1),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.ConstantNotConstantRule)
-                    .WithLocation(2));
-        }
-
-        [Fact]
-        public static async Task TestArgumentOutOfRangeConstantAsync()
-        {
-
-            string csInput = @"
-using System;
-using System.Diagnostics.CodeAnalysis;
-#nullable enable
-
-public class Test
-{
+{{
     public static void TestMethod()
-    {
-        TestMethodWithConstant({|#0:11|});
-    }
-    public static void TestMethodWithConstant([ConstantExpected(Min=0, Max=10)] int val)
-    {
-    }
-}
+    {{
+        TestMethodWithConstant({{|#0:{testValue}|}});
+    }}
+    public static void TestMethodWithConstant([ConstantExpected(Min={min}, Max={max})] {type} val)
+    {{
+    }}
+}}
 ";
             await TestCSAsync(csInput,
                 VerifyCS.Diagnostic(ConstantExpectedAnalyzer.ConstantOutOfBoundsRule)
                         .WithLocation(0)
-                        .WithArguments("0", "10"));
+                        .WithArguments(min.Trim('\''), max.Trim('\'')));
         }
 
         [Fact]
         public static async Task TestArgumentInvalidGenericTypeParameterConstantAsync()
         {
-
             string csInput = @"
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -617,36 +616,45 @@ public class Test
             await TestCSAsync(csInput);
         }
 
-        [Fact]
-        public static async Task TestConstantCompositionAsync()
+        [Theory]
+        [InlineData("char", "'B'", "'C'")]
+        [InlineData("sbyte", "3", "4")]
+        [InlineData("short", "3", "4")]
+        [InlineData("int", "3", "4")]
+        [InlineData("long", "3", "4")]
+        [InlineData("nint", "3", "4")]
+        [InlineData("byte", "3", "4")]
+        [InlineData("ushort", "3", "4")]
+        [InlineData("uint", "3", "4")]
+        [InlineData("ulong", "3", "4")]
+        [InlineData("nuint", "3", "4")]
+        [InlineData("float", "3", "4")]
+        [InlineData("double", "3", "4")]
+        public static async Task TestConstantCompositionAsync(string type, string min, string max)
         {
-
-            string csInput = @"
+            string csInput = @$"
 using System;
 using System.Diagnostics.CodeAnalysis;
 #nullable enable
 
 public class Test
-{
-    public static void TestMethod([ConstantExpected] int constant)
-    {
+{{
+    public static void TestMethod([ConstantExpected] {type} constant)
+    {{
         TestMethodWithConstant(constant);
-    }
-    public static void TestMethodWithConstant([ConstantExpected] int val)
-    {
-    }
-    public static void TestMethod2([ConstantExpected(Min = 10, Max = 20)] int constant)
-    {
+    }}
+    public static void TestMethodWithConstant([ConstantExpected] {type} val)
+    {{
+    }}
+    public static void TestMethodConstrained([ConstantExpected(Min = {min}, Max = {max})] {type} constant)
+    {{
         TestMethodWithConstant(constant);
-        TestMethod2WithConstrainedConstant(constant);
-    }
-    public static void TestMethod2WithConstant([ConstantExpected] int val)
-    {
-    }
-    public static void TestMethod2WithConstrainedConstant([ConstantExpected(Min = 10, Max = 20)] int val)
-    {
-    }
-}
+        TestMethodWithConstrainedConstant(constant);
+    }}
+    public static void TestMethodWithConstrainedConstant([ConstantExpected(Min = {min}, Max = {max})] {type} val)
+    {{
+    }}
+}}
 ";
             await TestCSAsync(csInput);
         }
@@ -654,7 +662,6 @@ public class Test
         [Fact]
         public static async Task TestConstantCompositionStringAsync()
         {
-
             string csInput = @"
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -674,10 +681,47 @@ public class Test
             await TestCSAsync(csInput);
         }
 
-        [Fact]
-        public static async Task TestConstantCompositionOutOfRangeAsync()
+        [Theory]
+        [InlineData("char", "'B'", "'C'", "'D'")]
+        [InlineData("sbyte", "3", "4", "5")]
+        [InlineData("short", "3", "4", "5")]
+        [InlineData("int", "3", "4", "5")]
+        [InlineData("long", "3", "4", "5")]
+        [InlineData("nint", "3", "4", "5")]
+        [InlineData("byte", "3", "4", "5")]
+        [InlineData("ushort", "3", "4", "5")]
+        [InlineData("uint", "3", "4", "5")]
+        [InlineData("ulong", "3", "4", "5")]
+        [InlineData("nuint", "3", "4", "5")]
+        [InlineData("float", "3", "4", "5")]
+        [InlineData("double", "3", "4", "5")]
+        public static async Task TestConstantCompositionOutOfBoundsAsync(string type, string min, string max, string outOfBoundMax)
         {
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
 
+public class Test
+{{
+    public static void TestMethodConstrained([{{|#0:ConstantExpected(Min = {min}, Max = {outOfBoundMax})|}}] {type} constant)
+    {{
+        TestMethodWithConstrainedConstant(constant);
+    }}
+    public static void TestMethodWithConstrainedConstant([ConstantExpected(Min = {min}, Max = {max})] {type} val)
+    {{
+    }}
+}}
+";
+            await TestCSAsync(csInput,
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.AttributeOutOfBoundsRule)
+                        .WithLocation(0)
+                        .WithArguments(min.Trim('\''), max.Trim('\'')));
+        }
+
+        [Fact]
+        public static async Task TestConstantCompositionNotSameTypeAsync()
+        {
             string csInput = @"
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -696,13 +740,6 @@ public class Test
     public static void TestMethodWithConstant([ConstantExpected] int val)
     {
     }
-    public static void TestMethod2([{|#2:ConstantExpected(Min = 10, Max = 21)|}] int constant)
-    {
-        TestMethod2WithConstrainedConstant(constant);
-    }
-    public static void TestMethod2WithConstrainedConstant([ConstantExpected(Min = 10, Max = 20)] int val)
-    {
-    }
 }
 ";
             await TestCSAsync(csInput,
@@ -711,10 +748,7 @@ public class Test
                         .WithArguments("int"),
                 VerifyCS.Diagnostic(ConstantExpectedAnalyzer.AttributeNotSameTypeRule)
                         .WithLocation(1)
-                        .WithArguments("int"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.AttributeOutOfBoundsRule)
-                        .WithLocation(2)
-                        .WithArguments("10", "20"));
+                        .WithArguments("int"));
         }
 
         private static async Task TestCSAsync(string source, params DiagnosticResult[] diagnosticResults)

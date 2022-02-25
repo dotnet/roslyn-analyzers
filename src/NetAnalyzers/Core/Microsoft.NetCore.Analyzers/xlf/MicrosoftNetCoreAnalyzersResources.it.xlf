@@ -182,6 +182,71 @@
         <target state="translated">, </target>
         <note>Separator used for separating list of platform names: {API} is only supported on: {‘windows’, ‘browser’, ‘linux’}</note>
       </trans-unit>
+      <trans-unit id="ConstantExpectedApplicationDescription">
+        <source>ConstantExpectedAttribute is not applied correctly on the paramter.</source>
+        <target state="new">ConstantExpectedAttribute is not applied correctly on the paramter.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedApplicationTitle">
+        <source>Incorerct use of ConstantExpectedAttribute</source>
+        <target state="new">Incorerct use of ConstantExpectedAttribute</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedAttributeNotSameTypeMessage">
+        <source>The ConstantExpectedAttribute does not have the same '{0}' type as the ConstantExpectedAttribute in the invoked method parameter.</source>
+        <target state="new">The ConstantExpectedAttribute does not have the same '{0}' type as the ConstantExpectedAttribute in the invoked method parameter.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedAttributeOutOfBoundsMessage">
+        <source>The ConstantExpectedAttribute does not fit within the parameter value bounds of '{0}' to '{1}'.</source>
+        <target state="new">The ConstantExpectedAttribute does not fit within the parameter value bounds of '{0}' to '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedIncompatibleConstantMinMaxMessage">
+        <source>The Min/Max condition can only be null for '{0}' types.</source>
+        <target state="new">The Min/Max condition can only be null for '{0}' types.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedIncompatibleConstantTypeMessage">
+        <source>The '{0}' condition does not match parameter type of '{1}'.</source>
+        <target state="new">The '{0}' condition does not match parameter type of '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedInvalidBoundsMessage">
+        <source>The '{0}' condition does not fit within the parameter value bounds of '{1}' to '{2}'.</source>
+        <target state="new">The '{0}' condition does not fit within the parameter value bounds of '{1}' to '{2}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedInvalidTypeMessage">
+        <source>The '{0}' parameter cannot have be annotaed with ConstantExpected.</source>
+        <target state="new">The '{0}' parameter cannot have be annotaed with ConstantExpected.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedInvertedRangeMessage">
+        <source>The Min and Max conditions are inverted.</source>
+        <target state="new">The Min and Max conditions are inverted.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedNotConstantMessage">
+        <source>The argument should be a constant.</source>
+        <target state="new">The argument should be a constant.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedOutOfBoundsMessage">
+        <source>The constant does not fit within the parameter value bounds of '{0}' to '{1}'.</source>
+        <target state="new">The constant does not fit within the parameter value bounds of '{0}' to '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedUsageDescription">
+        <source>The parameter expects a constant for best performance.</source>
+        <target state="new">The parameter expects a constant for best performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedUsageTitle">
+        <source>Constant is expected for the parameter</source>
+        <target state="new">Constant is expected for the parameter</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DataSetDataTableInDeserializableObjectGraphMessage">
         <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}</source>
         <target state="translated">Quando si deserializza input non attendibile, la deserializzazione di un oggetto {0} non è sicura. '{1}' è {0} o deriva da esso</target>

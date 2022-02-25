@@ -14,40 +14,40 @@ namespace Microsoft.NetCore.Analyzers.Performance
     {
         private sealed class UnmanagedHelper<T> where T : unmanaged
         {
-            private static readonly UnmanagedHelper<T>.ConstantExpectedParameterFactory? _instance;
-            private static UnmanagedHelper<T>.ConstantExpectedParameterFactory Instance => _instance ?? throw new InvalidOperationException("unsupported type");
+            private static readonly ConstantExpectedParameterFactory? _instance;
+            private static ConstantExpectedParameterFactory Instance => _instance ?? throw new InvalidOperationException("unsupported type");
 
             static UnmanagedHelper()
             {
                 if (typeof(T) == typeof(long))
                 {
                     var helper = new UnmanagedHelper<long>.TransformHelper(TryConvertInt64, TryTransformInt64);
-                    _instance = new UnmanagedHelper<T>.ConstantExpectedParameterFactory((UnmanagedHelper<T>.TransformHelper)(object)helper);
+                    _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(ulong))
                 {
                     var helper = new UnmanagedHelper<ulong>.TransformHelper(TryConvertUInt64, TryTransformUInt64);
-                    _instance = new ConstantExpectedParameterFactory((UnmanagedHelper<T>.TransformHelper)(object)helper);
+                    _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(float))
                 {
                     var helper = new UnmanagedHelper<float>.TransformHelper(TryConvertSingle, TryTransformSingle);
-                    _instance = new ConstantExpectedParameterFactory((UnmanagedHelper<T>.TransformHelper)(object)helper);
+                    _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(double))
                 {
                     var helper = new UnmanagedHelper<double>.TransformHelper(TryConvertDouble, TryTransformDouble);
-                    _instance = new ConstantExpectedParameterFactory((UnmanagedHelper<T>.TransformHelper)(object)helper);
+                    _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(char))
                 {
                     var helper = new UnmanagedHelper<char>.TransformHelper(TryConvertChar, TryTransformChar);
-                    _instance = new ConstantExpectedParameterFactory((UnmanagedHelper<T>.TransformHelper)(object)helper);
+                    _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(bool))
                 {
                     var helper = new UnmanagedHelper<bool>.TransformHelper(TryConvertBoolean, TryTransformBoolean);
-                    _instance = new ConstantExpectedParameterFactory((UnmanagedHelper<T>.TransformHelper)(object)helper);
+                    _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
             }
 
@@ -264,51 +264,50 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static bool TryConvertInt64(object? constant, out long value)
         {
-            if (constant is null)
+            if (constant is not null)
             {
-                value = default;
-                return false;
+                value = Convert.ToInt64(constant);
+                return true;
             }
-            value = Convert.ToInt64(constant);
-            return true;
+            value = default;
+            return false;
         }
 
         private static bool TryTransformInt64(object constant, out long value, out bool isInvalid)
         {
             bool isValidSigned = TryConvertSignedInteger(constant, out value);
             isInvalid = false;
-            if (!isValidSigned)
+            if (isValidSigned)
             {
-                bool isValidUnsigned = TryConvertUnsignedInteger(constant, out _);
-                if (!isValidUnsigned)
-                {
-                    isInvalid = true;
-                }
+                return isValidSigned;
             }
-
+            if (!TryConvertUnsignedInteger(constant, out _))
+            {
+                isInvalid = true;
+            }
             return isValidSigned;
         }
         private static bool TryConvertUInt64(object? constant, out ulong value)
         {
-            if (constant is null)
+            if (constant is not null)
             {
-                value = default;
-                return false;
+                value = Convert.ToUInt64(constant);
+                return true;
             }
-            value = Convert.ToUInt64(constant);
-            return true;
+            value = default;
+            return false;
         }
         private static bool TryTransformUInt64(object constant, out ulong value, out bool isInvalid)
         {
             bool isValidUnsigned = TryConvertUnsignedInteger(constant, out value);
             isInvalid = false;
-            if (!isValidUnsigned)
+            if (isValidUnsigned)
             {
-                bool isValidSigned = TryConvertSignedInteger(constant, out _);
-                if (!isValidSigned)
-                {
-                    isInvalid = true;
-                }
+                return isValidUnsigned;
+            }
+            if (!TryConvertSignedInteger(constant, out _))
+            {
+                isInvalid = true;
             }
             return isValidUnsigned;
         }
@@ -336,13 +335,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
         }
         private static bool TryConvertChar(object? constant, out char value)
         {
-            if (constant is null)
+            if (constant is not null)
             {
-                value = default;
-                return false;
+                value = Convert.ToChar(constant);
+                return true;
             }
-            value = Convert.ToChar(constant);
-            return true;
+            value = default;
+            return false;
         }
 
         private static bool TryTransformBoolean(object constant, out bool value, out bool isInvalid)
@@ -359,13 +358,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
         }
         private static bool TryConvertBoolean(object? constant, out bool value)
         {
-            if (constant is null)
+            if (constant is not null)
             {
-                value = default;
-                return false;
+                value = (bool)constant;
+                return true;
             }
-            value = (bool)constant;
-            return true;
+            value = default;
+            return false;
         }
 
         private static bool TryTransformSingle(object constant, out float value, out bool isInvalid)
@@ -389,15 +388,16 @@ namespace Microsoft.NetCore.Analyzers.Performance
             isInvalid = false;
             return true;
         }
+
         private static bool TryConvertSingle(object? constant, out float value)
         {
-            if (constant is null)
+            if (constant is not null)
             {
-                value = default;
-                return false;
+                value = Convert.ToSingle(constant);
+                return true;
             }
-            value = Convert.ToSingle(constant);
-            return true;
+            value = default;
+            return false;
         }
 
         private static bool TryTransformDouble(object constant, out double value, out bool isInvalid)
@@ -423,13 +423,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
         }
         private static bool TryConvertDouble(object? constant, out double value)
         {
-            if (constant is null)
+            if (constant is not null)
             {
-                value = default;
-                return false;
+                value = Convert.ToDouble(constant);
+                return true;
             }
-            value = Convert.ToDouble(constant);
-            return true;
+            value = default;
+            return false;
         }
     }
 }

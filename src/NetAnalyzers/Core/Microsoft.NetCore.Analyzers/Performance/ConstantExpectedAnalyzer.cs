@@ -171,7 +171,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         protected abstract void RegisterAttributeSyntax(CompilationStartAnalysisContext context);
 
-        protected void OnParameterWithConstantExecptedAttribute(IParameterSymbol parameter, Action<Diagnostic> reportAction)
+        protected void OnParameterWithConstantExpectedAttribute(IParameterSymbol parameter, Action<Diagnostic> reportAction)
         {
             if (!ValidateConstantExpectedParameter(parameter, out ImmutableArray<Diagnostic> diagnostics))
             {
@@ -301,15 +301,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static bool IsConstantExpectedAttribute(INamedTypeSymbol namedType)
         {
-            if (!namedType.Name.Equals(ConstantExpectedAttribute, StringComparison.Ordinal))
-            {
-                return false;
-            }
-            if (!namedType.GetMembers().OfType<IPropertySymbol>().All(s => s.Name.Equals("Min", StringComparison.Ordinal) || s.Name.Equals("Max", StringComparison.Ordinal)))
-            {
-                return false;
-            }
-            return true;
+            return namedType.Name.Equals(ConstantExpectedAttribute, StringComparison.Ordinal) &&
+                   namedType.GetMembers().OfType<IPropertySymbol>()
+                       .All(s => s.Name.Equals("Min", StringComparison.Ordinal) ||
+                                 s.Name.Equals("Max", StringComparison.Ordinal));
         }
 
         private abstract class ConstantExpectedParameter
@@ -407,11 +402,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     return null;
                 }
-                if (typedConstant.Kind == TypedConstantKind.Array)
-                {
-                    return typedConstant.Values;
-                }
-                return typedConstant.Value;
+                return typedConstant.Kind == TypedConstantKind.Array ? typedConstant.Values : typedConstant.Value;
             }
         }
 

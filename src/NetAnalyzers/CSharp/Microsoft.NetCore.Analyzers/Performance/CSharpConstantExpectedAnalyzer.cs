@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             var parameter = (ParameterSyntax)attributeSyntax.Parent.Parent;
             var parameterSymbol = context.SemanticModel.GetDeclaredSymbol(parameter);
 
-            OnParameterWithConstantExecptedAttribute(parameterSymbol, context.ReportDiagnostic);
+            OnParameterWithConstantExpectedAttribute(parameterSymbol, context.ReportDiagnostic);
         }
 
         private sealed class CSharpDiagnosticHelper : DiagnosticHelper

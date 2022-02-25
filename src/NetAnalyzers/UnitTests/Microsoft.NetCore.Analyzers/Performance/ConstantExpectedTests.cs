@@ -219,10 +219,10 @@ public class Test
                         .WithArguments("Max", "0", "255"),
                 VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
                         .WithLocation(3)
-                        .WithArguments("Min", "-3.4028235E+38", "3.4028235E+38"),
+                        .WithArguments("Min", float.MinValue.ToString(), float.MaxValue.ToString()),
                 VerifyCS.Diagnostic(ConstantExpectedAnalyzer.InvalidBoundsRule)
                         .WithLocation(4)
-                        .WithArguments("Max", "-3.4028235E+38", "3.4028235E+38"));
+                        .WithArguments("Max", float.MinValue.ToString(), float.MaxValue.ToString()));
         }
 
         [Fact]

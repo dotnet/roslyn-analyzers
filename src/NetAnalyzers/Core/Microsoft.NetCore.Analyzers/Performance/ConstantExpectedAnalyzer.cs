@@ -15,8 +15,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
     using static MicrosoftNetCoreAnalyzersResources;
     public abstract partial class ConstantExpectedAnalyzer : DiagnosticAnalyzer
     {
-        internal const string CA1860 = nameof(CA1860);
-        internal const string CA1861 = nameof(CA1861);
         protected static readonly string ConstantExpectedAttribute = nameof(ConstantExpectedAttribute);
         protected static readonly string ConstantExpected = nameof(ConstantExpected);
         private static readonly LocalizableString s_localizableApplicationTitle = CreateLocalizableResourceString(nameof(ConstantExpectedApplicationTitle));
@@ -24,108 +22,101 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private static readonly LocalizableString s_localizableUsageTitle = CreateLocalizableResourceString(nameof(ConstantExpectedUsageTitle));
         private static readonly LocalizableString s_localizableUsageDescription = CreateLocalizableResourceString(nameof(ConstantExpectedUsageDescription));
 
-        internal static readonly DiagnosticDescriptor InvalidTypeRule = DiagnosticDescriptorHelper.Create(
-            CA1860,
-            s_localizableApplicationTitle,
-            CreateLocalizableResourceString(nameof(ConstantExpectedInvalidTypeMessage)),
-            DiagnosticCategory.Performance,
-            RuleLevel.BuildError,
-            description: s_localizableApplicationDescription,
-            isPortedFxCopRule: false,
-            isDataflowRule: false);
+        internal static class CA1860
+        {
+            internal const string Id = nameof(CA1860);
+            internal const RuleLevel Level = RuleLevel.BuildError;
+            internal static readonly DiagnosticDescriptor UnsupportedTypeRule = DiagnosticDescriptorHelper.Create(
+                Id,
+                s_localizableApplicationTitle,
+                CreateLocalizableResourceString(nameof(ConstantExpectedNotSupportedMessage)),
+                DiagnosticCategory.Performance,
+                Level,
+                description: s_localizableApplicationDescription,
+                isPortedFxCopRule: false,
+                isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor IncompatibleConstantTypeRule = DiagnosticDescriptorHelper.Create(
-            CA1860,
-            s_localizableApplicationTitle,
-            CreateLocalizableResourceString(nameof(ConstantExpectedIncompatibleConstantTypeMessage)),
-            DiagnosticCategory.Performance,
-            RuleLevel.BuildError,
-            description: s_localizableApplicationDescription,
-            isPortedFxCopRule: false,
-            isDataflowRule: false);
+            internal static readonly DiagnosticDescriptor IncompatibleConstantTypeRule = DiagnosticDescriptorHelper.Create(
+                Id,
+                s_localizableApplicationTitle,
+                CreateLocalizableResourceString(nameof(ConstantExpectedIncompatibleConstantTypeMessage)),
+                DiagnosticCategory.Performance,
+                Level,
+                description: s_localizableApplicationDescription,
+                isPortedFxCopRule: false,
+                isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor IncompatibleConstantForMinMaxRule = DiagnosticDescriptorHelper.Create(
-            CA1860,
-            s_localizableApplicationTitle,
-            CreateLocalizableResourceString(nameof(ConstantExpectedIncompatibleConstantMinMaxMessage)),
-            DiagnosticCategory.Performance,
-            RuleLevel.BuildError,
-            description: s_localizableApplicationDescription,
-            isPortedFxCopRule: false,
-            isDataflowRule: false);
+            internal static readonly DiagnosticDescriptor InvalidBoundsRule = DiagnosticDescriptorHelper.Create(
+                Id,
+                s_localizableApplicationTitle,
+                CreateLocalizableResourceString(nameof(ConstantExpectedInvalidBoundsMessage)),
+                DiagnosticCategory.Performance,
+                Level,
+                description: s_localizableApplicationDescription,
+                isPortedFxCopRule: false,
+                isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor InvalidBoundsRule = DiagnosticDescriptorHelper.Create(
-            CA1860,
-            s_localizableApplicationTitle,
-            CreateLocalizableResourceString(nameof(ConstantExpectedInvalidBoundsMessage)),
-            DiagnosticCategory.Performance,
-            RuleLevel.BuildError,
-            description: s_localizableApplicationDescription,
-            isPortedFxCopRule: false,
-            isDataflowRule: false);
+            internal static readonly DiagnosticDescriptor InvertedRangeRule = DiagnosticDescriptorHelper.Create(
+                Id,
+                s_localizableApplicationTitle,
+                CreateLocalizableResourceString(nameof(ConstantExpectedInvertedRangeMessage)),
+                DiagnosticCategory.Performance,
+                Level,
+                description: s_localizableApplicationDescription,
+                isPortedFxCopRule: false,
+                isDataflowRule: false);
+        }
 
-        internal static readonly DiagnosticDescriptor InvertedRangeRule = DiagnosticDescriptorHelper.Create(
-            CA1860,
-            s_localizableApplicationTitle,
-            CreateLocalizableResourceString(nameof(ConstantExpectedInvertedRangeMessage)),
-            DiagnosticCategory.Performance,
-            RuleLevel.BuildError,
-            description: s_localizableApplicationDescription,
-            isPortedFxCopRule: false,
-            isDataflowRule: false);
+        internal static class CA1861
+        {
+            internal const string Id = nameof(CA1861);
+            internal const RuleLevel Level = RuleLevel.BuildWarning;
 
-        internal static readonly DiagnosticDescriptor ConstantOutOfBoundsRule = DiagnosticDescriptorHelper.Create(
-            CA1861,
-            s_localizableUsageTitle,
-            CreateLocalizableResourceString(nameof(ConstantExpectedOutOfBoundsMessage)),
-            DiagnosticCategory.Performance,
-            RuleLevel.BuildWarning,
-            description: s_localizableUsageDescription,
-            isPortedFxCopRule: false,
-            isDataflowRule: false);
+            internal static readonly DiagnosticDescriptor ConstantOutOfBoundsRule = DiagnosticDescriptorHelper.Create(
+                Id,
+                s_localizableUsageTitle,
+                CreateLocalizableResourceString(nameof(ConstantExpectedOutOfBoundsMessage)),
+                DiagnosticCategory.Performance,
+                Level,
+                description: s_localizableUsageDescription,
+                isPortedFxCopRule: false,
+                isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor ConstantNotConstantRule = DiagnosticDescriptorHelper.Create(
-            CA1861,
-            s_localizableUsageTitle,
-            CreateLocalizableResourceString(nameof(ConstantExpectedNotConstantMessage)),
-            DiagnosticCategory.Performance,
-            RuleLevel.BuildWarning,
-            description: s_localizableUsageDescription,
-            isPortedFxCopRule: false,
-            isDataflowRule: false);
+            internal static readonly DiagnosticDescriptor ConstantNotConstantRule = DiagnosticDescriptorHelper.Create(
+                Id,
+                s_localizableUsageTitle,
+                CreateLocalizableResourceString(nameof(ConstantExpectedNotConstantMessage)),
+                DiagnosticCategory.Performance,
+                Level,
+                description: s_localizableUsageDescription,
+                isPortedFxCopRule: false,
+                isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor AttributeOutOfBoundsRule = DiagnosticDescriptorHelper.Create(
-            CA1861,
-            s_localizableUsageTitle,
-            CreateLocalizableResourceString(nameof(ConstantExpectedAttributeOutOfBoundsMessage)),
-            DiagnosticCategory.Performance,
-            RuleLevel.BuildWarning,
-            description: s_localizableUsageDescription,
-            isPortedFxCopRule: false,
-            isDataflowRule: false);
+            internal static readonly DiagnosticDescriptor ConstantInvalidConstantRule = DiagnosticDescriptorHelper.Create(
+                Id,
+                s_localizableUsageTitle,
+                CreateLocalizableResourceString(nameof(ConstantExpectedInvalidMessage)),
+                DiagnosticCategory.Performance,
+                Level,
+                description: s_localizableUsageDescription,
+                isPortedFxCopRule: false,
+                isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor AttributeExpectedRule = DiagnosticDescriptorHelper.Create(
-            CA1861,
-            s_localizableUsageTitle,
-            CreateLocalizableResourceString(nameof(ConstantExpectedAttributExpectedMessage)),
-            DiagnosticCategory.Performance,
-            RuleLevel.BuildWarning,
-            description: s_localizableUsageDescription,
-            isPortedFxCopRule: false,
-            isDataflowRule: false);
-
-        internal static readonly DiagnosticDescriptor AttributeNotSameTypeRule = DiagnosticDescriptorHelper.Create(
-            CA1861,
-            s_localizableUsageTitle,
-            CreateLocalizableResourceString(nameof(ConstantExpectedAttributeNotSameTypeMessage)),
-            DiagnosticCategory.Performance,
-            RuleLevel.BuildWarning,
-            description: s_localizableUsageDescription,
-            isPortedFxCopRule: false,
-            isDataflowRule: false);
+            internal static readonly DiagnosticDescriptor AttributeExpectedRule = DiagnosticDescriptorHelper.Create(
+                Id,
+                s_localizableUsageTitle,
+                CreateLocalizableResourceString(nameof(ConstantExpectedAttributExpectedMessage)),
+                DiagnosticCategory.Performance,
+                Level,
+                description: s_localizableUsageDescription,
+                isPortedFxCopRule: false,
+                isDataflowRule: false);
+        }
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            InvalidTypeRule, IncompatibleConstantTypeRule, IncompatibleConstantForMinMaxRule, InvalidBoundsRule, InvertedRangeRule,
-            ConstantOutOfBoundsRule, ConstantNotConstantRule, AttributeOutOfBoundsRule, AttributeExpectedRule, AttributeNotSameTypeRule);
+            CA1860.UnsupportedTypeRule, CA1860.IncompatibleConstantTypeRule,
+            CA1860.InvalidBoundsRule, CA1860.InvertedRangeRule,
+            CA1861.ConstantOutOfBoundsRule, CA1861.ConstantInvalidConstantRule,
+            CA1861.ConstantNotConstantRule, CA1861.AttributeExpectedRule);
 
         protected abstract DiagnosticHelper Helper { get; }
 
@@ -167,7 +158,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     var baseParameter = baseParameters[i];
                     if (HasConstantExpectedAttributeData(baseParameter) && !HasConstantExpectedAttributeData(parameter))
                     {
-                        var diagnostic = parameter.DeclaringSyntaxReferences[0].GetSyntax().CreateDiagnostic(AttributeExpectedRule);
+                        var diagnostic = parameter.DeclaringSyntaxReferences[0].GetSyntax().CreateDiagnostic(CA1861.AttributeExpectedRule);
                         context.ReportDiagnostic(diagnostic);
                     }
                 }
@@ -188,7 +179,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 if (v is IParameterReferenceOperation parameterReference &&
                     TryCreateConstantExpectedParameter(parameterReference.Parameter, out var currConstantParameter))
                 {
-                    if (!argConstantParameter.ValidateParameterIsWithinRange(currConstantParameter, out var parameterCheckDiagnostic))
+                    if (!argConstantParameter.ValidateParameterIsWithinRange(currConstantParameter, argument, out var parameterCheckDiagnostic))
                     {
                         context.ReportDiagnostic(parameterCheckDiagnostic);
                     }
@@ -198,7 +189,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 if (!constantValue.HasValue)
                 {
                     var location = argument.Syntax.GetLocation();
-                    context.ReportDiagnostic(Diagnostic.Create(ConstantNotConstantRule, location));
+                    context.ReportDiagnostic(Diagnostic.Create(CA1861.ConstantNotConstantRule, location));
                     continue;
                 }
 
@@ -308,28 +299,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 case SpecialType.System_Boolean:
                     return UnmanagedHelper<bool>.Validate(parameterSymbol, attributeData, false, true, Helper, out diagnostics);
                 case SpecialType.System_String:
-                    return StringConstantExpectedParameter.Validate(attributeData, out diagnostics);
+                    return Validate(parameterSymbol, attributeData, Helper, out diagnostics);
                 case SpecialType.None when parameterSymbol.Type.TypeKind == TypeKind.TypeParameter:
-                    return ValidateGenericConstantCase(attributeData, out diagnostics);
+                    return Validate(parameterSymbol, attributeData, Helper, out diagnostics);
                 default:
                     diagnostics = Helper.ParameterIsInvalid(parameterSymbol.Type.ToDisplayString(), attributeData.ApplicationSyntaxReference.GetSyntax());
                     return false;
             }
-        }
-        private bool ValidateGenericConstantCase(AttributeData attributeData, out ImmutableArray<Diagnostic> diagnostics)
-        {
-            var (min, max) = GetAttributeConstants(attributeData);
-            // Ensure min max is unassigned/null
-            if (min is not null || max is not null)
-            {
-                diagnostics = ImmutableArray.Create(
-                    Diagnostic.Create(IncompatibleConstantForMinMaxRule,
-                    attributeData.ApplicationSyntaxReference.GetSyntax().GetLocation(),
-                    "generic"));
-                return false;
-            }
-            diagnostics = ImmutableArray<Diagnostic>.Empty;
-            return true;
         }
 
         private static bool TryGetConstantExpectedAttributeData(IParameterSymbol parameter, [NotNullWhen(true)] out AttributeData? attributeData)
@@ -356,28 +332,26 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private abstract class ConstantExpectedParameter
         {
-            protected ConstantExpectedParameter(IParameterSymbol parameter, SyntaxNode attributeSyntax)
+            protected ConstantExpectedParameter(IParameterSymbol parameter)
             {
                 Parameter = parameter;
-                AttributeSyntax = attributeSyntax;
             }
 
             public IParameterSymbol Parameter { get; }
-            public SyntaxNode AttributeSyntax { get; }
 
             public abstract bool ValidateValue(IArgumentOperation argument, object? constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics);
-            public abstract bool ValidateParameterIsWithinRange(ConstantExpectedParameter subsetCandidate, [NotNullWhen(false)] out Diagnostic? validationDiagnostics);
+            public abstract bool ValidateParameterIsWithinRange(ConstantExpectedParameter subsetCandidate, IArgumentOperation argument, [NotNullWhen(false)] out Diagnostic? validationDiagnostics);
         }
 
         private sealed class StringConstantExpectedParameter : ConstantExpectedParameter
         {
-            public StringConstantExpectedParameter(IParameterSymbol parameter, SyntaxNode attributeSyntax) : base(parameter, attributeSyntax) { }
+            public StringConstantExpectedParameter(IParameterSymbol parameter) : base(parameter) { }
 
-            public override bool ValidateParameterIsWithinRange(ConstantExpectedParameter subsetCandidate, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
+            public override bool ValidateParameterIsWithinRange(ConstantExpectedParameter subsetCandidate, IArgumentOperation argument, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
             {
                 if (subsetCandidate is not StringConstantExpectedParameter)
                 {
-                    validationDiagnostics = Diagnostic.Create(AttributeNotSameTypeRule, subsetCandidate.AttributeSyntax.GetLocation(), Parameter.Type.ToDisplayString());
+                    validationDiagnostics = Diagnostic.Create(CA1861.ConstantInvalidConstantRule, argument.Syntax.GetLocation(), Parameter.Type.ToDisplayString());
                     return false;
                 }
                 validationDiagnostics = null;
@@ -388,7 +362,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 if (constant is not string and not null)
                 {
-                    validationDiagnostics = argument.CreateDiagnostic(ConstantNotConstantRule);
+                    validationDiagnostics = argument.CreateDiagnostic(CA1861.ConstantInvalidConstantRule, Parameter.Type.ToDisplayString());
                     return false;
                 }
                 validationDiagnostics = null;
@@ -397,32 +371,40 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             public static bool TryCreate(IParameterSymbol parameterSymbol, AttributeData attributeData, [NotNullWhen(true)] out ConstantExpectedParameter? parameter)
             {
-                if (!IsMinMaxValid(attributeData))
+                if (!IsMinMaxValid(attributeData, out _))
                 {
                     parameter = null;
                     return false;
                 }
-                parameter = new StringConstantExpectedParameter(parameterSymbol, attributeData.ApplicationSyntaxReference.GetSyntax());
+                parameter = new StringConstantExpectedParameter(parameterSymbol);
                 return true;
             }
+        }
 
-            public static bool Validate(AttributeData attributeData, out ImmutableArray<Diagnostic> diagnostics)
+        private static bool Validate(IParameterSymbol parameterSymbol, AttributeData attributeData, DiagnosticHelper helper, out ImmutableArray<Diagnostic> diagnostics)
+        {
+            if (!IsMinMaxValid(attributeData, out ErrorKind errorFlags))
             {
-                if (!IsMinMaxValid(attributeData))
-                {
-                    diagnostics = ImmutableArray.Create(Diagnostic.Create(IncompatibleConstantForMinMaxRule, attributeData.ApplicationSyntaxReference.GetSyntax().GetLocation(), "string"));
-                    return false;
-                }
-                diagnostics = ImmutableArray<Diagnostic>.Empty;
-                return true;
+                diagnostics = helper.GetError(errorFlags, parameterSymbol, attributeData.ApplicationSyntaxReference.GetSyntax(), "null", "null");
+                return false;
             }
+            diagnostics = ImmutableArray<Diagnostic>.Empty;
+            return true;
+        }
 
-            private static bool IsMinMaxValid(AttributeData attributeData)
+        private static bool IsMinMaxValid(AttributeData attributeData, out ErrorKind errorFlags)
+        {
+            (object? min, object? max) = GetAttributeConstants(attributeData);
+            errorFlags = 0;
+            if (min is not null)
             {
-                (object? min, object? max) = GetAttributeConstants(attributeData);
-
-                return min is null && max is null;
+                errorFlags |= ErrorKind.MinIsIncompatible;
             }
+            if (max is not null)
+            {
+                errorFlags |= ErrorKind.MaxIsIncompatible;
+            }
+            return min is null && max is null;
         }
 
         public static (object? MinConstant, object? MaxConstant) GetAttributeConstants(AttributeData attributeData)
@@ -512,17 +494,17 @@ namespace Microsoft.NetCore.Analyzers.Performance
             public abstract Location? GetMinLocation(SyntaxNode attributeSyntax);
             public abstract Location? GetMaxLocation(SyntaxNode attributeSyntax);
 
-            public ImmutableArray<Diagnostic> ParameterIsInvalid(string expectedTypeName, SyntaxNode attributeSyntax) => ImmutableArray.Create(Diagnostic.Create(InvalidTypeRule, attributeSyntax.GetLocation(), expectedTypeName));
+            public ImmutableArray<Diagnostic> ParameterIsInvalid(string expectedTypeName, SyntaxNode attributeSyntax) => ImmutableArray.Create(Diagnostic.Create(CA1860.UnsupportedTypeRule, attributeSyntax.GetLocation(), expectedTypeName));
 
-            public Diagnostic MinIsIncompatible(string expectedTypeName, SyntaxNode attributeSyntax) => Diagnostic.Create(IncompatibleConstantTypeRule, GetMinLocation(attributeSyntax)!, "Min", expectedTypeName);
+            public Diagnostic MinIsIncompatible(string expectedTypeName, SyntaxNode attributeSyntax) => Diagnostic.Create(CA1860.IncompatibleConstantTypeRule, GetMinLocation(attributeSyntax)!, "Min", expectedTypeName);
 
-            public Diagnostic MaxIsIncompatible(string expectedTypeName, SyntaxNode attributeSyntax) => Diagnostic.Create(IncompatibleConstantTypeRule, GetMaxLocation(attributeSyntax)!, "Max", expectedTypeName);
+            public Diagnostic MaxIsIncompatible(string expectedTypeName, SyntaxNode attributeSyntax) => Diagnostic.Create(CA1860.IncompatibleConstantTypeRule, GetMaxLocation(attributeSyntax)!, "Max", expectedTypeName);
 
-            public Diagnostic MinIsOutOfRange(SyntaxNode attributeSyntax, string typeMinValue, string typeMaxValue) => Diagnostic.Create(InvalidBoundsRule, GetMinLocation(attributeSyntax)!, "Min", typeMinValue, typeMaxValue);
+            public Diagnostic MinIsOutOfRange(SyntaxNode attributeSyntax, string typeMinValue, string typeMaxValue) => Diagnostic.Create(CA1860.InvalidBoundsRule, GetMinLocation(attributeSyntax)!, "Min", typeMinValue, typeMaxValue);
 
-            public Diagnostic MaxIsOutOfRange(SyntaxNode attributeSyntax, string typeMinValue, string typeMaxValue) => Diagnostic.Create(InvalidBoundsRule, GetMaxLocation(attributeSyntax)!, "Max", typeMinValue, typeMaxValue);
+            public Diagnostic MaxIsOutOfRange(SyntaxNode attributeSyntax, string typeMinValue, string typeMaxValue) => Diagnostic.Create(CA1860.InvalidBoundsRule, GetMaxLocation(attributeSyntax)!, "Max", typeMinValue, typeMaxValue);
 
-            public static Diagnostic MinMaxIsInverted(SyntaxNode attributeSyntax) => Diagnostic.Create(InvertedRangeRule, attributeSyntax.GetLocation());
+            public static Diagnostic MinMaxIsInverted(SyntaxNode attributeSyntax) => Diagnostic.Create(CA1860.InvertedRangeRule, attributeSyntax.GetLocation());
 
             public ImmutableArray<Diagnostic> GetError(ErrorKind errorFlags, IParameterSymbol parameterSymbol, SyntaxNode attributeSyntax, string typeMinValue, string typeMaxValue)
             {

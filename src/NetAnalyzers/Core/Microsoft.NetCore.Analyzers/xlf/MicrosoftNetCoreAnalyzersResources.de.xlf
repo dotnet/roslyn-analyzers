@@ -197,54 +197,44 @@
         <target state="new">The ConstantExpectedAttribute expected for the parameter due to the interface/base method.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ConstantExpectedAttributeNotSameTypeMessage">
-        <source>The ConstantExpectedAttribute does not have the same '{0}' type as the ConstantExpectedAttribute in the invoked method parameter.</source>
-        <target state="new">The ConstantExpectedAttribute does not have the same '{0}' type as the ConstantExpectedAttribute in the invoked method parameter.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ConstantExpectedAttributeOutOfBoundsMessage">
-        <source>The ConstantExpectedAttribute does not fit within the parameter value bounds of '{0}' to '{1}'.</source>
-        <target state="new">The ConstantExpectedAttribute does not fit within the parameter value bounds of '{0}' to '{1}'.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ConstantExpectedIncompatibleConstantMinMaxMessage">
-        <source>The Min/Max condition can only be null for '{0}' types.</source>
-        <target state="new">The Min/Max condition can only be null for '{0}' types.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ConstantExpectedIncompatibleConstantTypeMessage">
-        <source>The '{0}' condition does not match parameter type of '{1}'.</source>
-        <target state="new">The '{0}' condition does not match parameter type of '{1}'.</target>
+        <source>The '{0}' value is not compatible with parameter type of '{1}'.</source>
+        <target state="new">The '{0}' value is not compatible with parameter type of '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedInvalidBoundsMessage">
-        <source>The '{0}' condition does not fit within the parameter value bounds of '{1}' to '{2}'.</source>
-        <target state="new">The '{0}' condition does not fit within the parameter value bounds of '{1}' to '{2}'.</target>
+        <source>The '{0}' value does not fit within the parameter value bounds of '{1}' to '{2}'.</source>
+        <target state="new">The '{0}' value does not fit within the parameter value bounds of '{1}' to '{2}'.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ConstantExpectedInvalidTypeMessage">
-        <source>The '{0}' parameter cannot have be annotated with ConstantExpected.</source>
-        <target state="new">The '{0}' parameter cannot have be annotated with ConstantExpected.</target>
+      <trans-unit id="ConstantExpectedInvalidMessage">
+        <source>The constant is not of the same '{0}' type as the parameter</source>
+        <target state="new">The constant is not of the same '{0}' type as the parameter</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedInvertedRangeMessage">
-        <source>The Min and Max conditions are inverted.</source>
-        <target state="new">The Min and Max conditions are inverted.</target>
+        <source>The Min and Max value are inverted.</source>
+        <target state="new">The Min and Max value are inverted.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedNotConstantMessage">
-        <source>The argument should be a constant.</source>
-        <target state="new">The argument should be a constant.</target>
+        <source>The argument should be a constant for optimal performance.</source>
+        <target state="new">The argument should be a constant for optimal performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedNotSupportedMessage">
+        <source>The '{0}' parameter is not supported for ConstantExpectedAttribute.</source>
+        <target state="new">The '{0}' parameter is not supported for ConstantExpectedAttribute.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedOutOfBoundsMessage">
-        <source>The constant does not fit within the parameter value bounds of '{0}' to '{1}'.</source>
-        <target state="new">The constant does not fit within the parameter value bounds of '{0}' to '{1}'.</target>
+        <source>The constant does not fit within the value bounds of '{0}' to '{1}'.</source>
+        <target state="new">The constant does not fit within the value bounds of '{0}' to '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedUsageDescription">
-        <source>The parameter expects a constant for best performance.</source>
-        <target state="new">The parameter expects a constant for best performance.</target>
+        <source>The parameter expects a constant for optimal performance.</source>
+        <target state="new">The parameter expects a constant for optimal performance.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedUsageTitle">

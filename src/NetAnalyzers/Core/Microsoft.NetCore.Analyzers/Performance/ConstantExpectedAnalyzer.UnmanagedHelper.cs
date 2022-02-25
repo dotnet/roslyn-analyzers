@@ -21,32 +21,32 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 if (typeof(T) == typeof(long))
                 {
-                    var helper = new UnmanagedHelper<long>.TransformHelper(TryConvertInt64, TryTransformInt64);
+                    var helper = new UnmanagedHelper<long>.TransformHelper(TryTransformInt64);
                     _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(ulong))
                 {
-                    var helper = new UnmanagedHelper<ulong>.TransformHelper(TryConvertUInt64, TryTransformUInt64);
+                    var helper = new UnmanagedHelper<ulong>.TransformHelper(TryTransformUInt64);
                     _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(float))
                 {
-                    var helper = new UnmanagedHelper<float>.TransformHelper(TryConvertSingle, TryTransformSingle);
+                    var helper = new UnmanagedHelper<float>.TransformHelper(TryTransformSingle);
                     _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(double))
                 {
-                    var helper = new UnmanagedHelper<double>.TransformHelper(TryConvertDouble, TryTransformDouble);
+                    var helper = new UnmanagedHelper<double>.TransformHelper(TryTransformDouble);
                     _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(char))
                 {
-                    var helper = new UnmanagedHelper<char>.TransformHelper(TryConvertChar, TryTransformChar);
+                    var helper = new UnmanagedHelper<char>.TransformHelper(TryTransformChar);
                     _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(bool))
                 {
-                    var helper = new UnmanagedHelper<bool>.TransformHelper(TryConvertBoolean, TryTransformBoolean);
+                    var helper = new UnmanagedHelper<bool>.TransformHelper(TryTransformBoolean);
                     _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
             }
@@ -57,15 +57,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 => Instance.Validate(parameterSymbol, attributeData, typeMin, typeMax, diagnosticHelper, out diagnostics);
 
             public delegate bool TryTransform(object constant, out T value, out bool isInvalid);
-            public delegate bool TryConvert(object? constant, out T value);
             public sealed class TransformHelper
             {
                 private readonly TryTransform _tryTransform;
-                private readonly TryConvert _convert;
 
-                public TransformHelper(TryConvert convert, TryTransform tryTransform)
+                public TransformHelper(TryTransform tryTransform)
                 {
-                    _convert = convert;
                     _tryTransform = tryTransform;
                 }
 
@@ -105,7 +102,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
                     return false;
                 }
-                public bool TryConvert(object? val, out T value) => _convert(val, out value);
+                public bool TryConvert(object val, out T value) => _tryTransform(val, out value, out _);
             }
 
             public sealed class ConstantExpectedParameterFactory
@@ -136,7 +133,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         return false;
                     }
 
-                    parameter = new UnmanagedConstantExpectedParameter(parameterSymbol, attributeData.ApplicationSyntaxReference.GetSyntax(), minValue, maxValue, _helper);
+                    parameter = new UnmanagedConstantExpectedParameter(parameterSymbol, minValue, maxValue, _helper);
                     return true;
                 }
 
@@ -179,7 +176,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             public sealed class UnmanagedConstantExpectedParameter : ConstantExpectedParameter
             {
                 private readonly TransformHelper _helper;
-                public UnmanagedConstantExpectedParameter(IParameterSymbol parameter, SyntaxNode attributeSyntax, T min, T max, TransformHelper helper) : base(parameter, attributeSyntax)
+                public UnmanagedConstantExpectedParameter(IParameterSymbol parameter, T min, T max, TransformHelper helper) : base(parameter)
                 {
                     Min = min;
                     Max = max;
@@ -189,12 +186,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 public T Min { get; }
                 public T Max { get; }
 
-                public override bool ValidateParameterIsWithinRange(ConstantExpectedParameter subsetCandidate, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
+                public override bool ValidateParameterIsWithinRange(ConstantExpectedParameter subsetCandidate, IArgumentOperation argument, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
                 {
                     if (Parameter.Type.SpecialType != subsetCandidate.Parameter.Type.SpecialType ||
                         subsetCandidate is not UnmanagedConstantExpectedParameter subsetCandidateTParameter)
                     {
-                        validationDiagnostics = Diagnostic.Create(AttributeNotSameTypeRule, subsetCandidate.AttributeSyntax.GetLocation(), Parameter.Type.ToDisplayString());
+                        validationDiagnostics = Diagnostic.Create(CA1861.ConstantInvalidConstantRule, argument.Syntax.GetLocation(), Parameter.Type.ToDisplayString());
                         return false;
                     }
 
@@ -204,22 +201,23 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         validationDiagnostics = null;
                         return true;
                     }
-                    validationDiagnostics = Diagnostic.Create(AttributeOutOfBoundsRule, subsetCandidateTParameter.AttributeSyntax.GetLocation(), Min.ToString(), Max.ToString());
+                    validationDiagnostics = Diagnostic.Create(CA1861.ConstantOutOfBoundsRule, argument.Syntax.GetLocation(), Min.ToString(), Max.ToString());
                     return false;
                 }
 
                 public override bool ValidateValue(IArgumentOperation argument, object? constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
                 {
-                    if (_helper.TryConvert(constant, out T value))
+                    if (constant is not null && _helper.TryConvert(constant, out T value))
                     {
                         if (!_helper.IsLessThan(value, Min) && !_helper.IsLessThan(Max, value))
                         {
                             validationDiagnostics = null;
                             return true;
                         }
+                        validationDiagnostics = argument.CreateDiagnostic(CA1861.ConstantOutOfBoundsRule, Min.ToString(), Max.ToString());
+                        return false;
                     }
-
-                    validationDiagnostics = argument.CreateDiagnostic(ConstantOutOfBoundsRule, Min.ToString(), Max.ToString());
+                    validationDiagnostics = argument.CreateDiagnostic(CA1861.ConstantInvalidConstantRule, Parameter.Type.ToDisplayString());
                     return false;
                 }
             }
@@ -262,17 +260,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return true;
         }
 
-        private static bool TryConvertInt64(object? constant, out long value)
-        {
-            if (constant is not null)
-            {
-                value = Convert.ToInt64(constant);
-                return true;
-            }
-            value = default;
-            return false;
-        }
-
         private static bool TryTransformInt64(object constant, out long value, out bool isInvalid)
         {
             bool isValidSigned = TryConvertSignedInteger(constant, out value);
@@ -286,16 +273,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 isInvalid = true;
             }
             return isValidSigned;
-        }
-        private static bool TryConvertUInt64(object? constant, out ulong value)
-        {
-            if (constant is not null)
-            {
-                value = Convert.ToUInt64(constant);
-                return true;
-            }
-            value = default;
-            return false;
         }
         private static bool TryTransformUInt64(object constant, out ulong value, out bool isInvalid)
         {
@@ -318,30 +295,16 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 if (constant is string or bool)
                 {
-                    value = default;
-                    isInvalid = true;
-                    return false;
+                    return Invalid(out value, out isInvalid);
                 }
                 value = Convert.ToChar(constant);
             }
             catch
             {
-                value = default;
-                isInvalid = true;
-                return false;
+                return Invalid(out value, out isInvalid);
             }
             isInvalid = false;
             return true;
-        }
-        private static bool TryConvertChar(object? constant, out char value)
-        {
-            if (constant is not null)
-            {
-                value = Convert.ToChar(constant);
-                return true;
-            }
-            value = default;
-            return false;
         }
 
         private static bool TryTransformBoolean(object constant, out bool value, out bool isInvalid)
@@ -352,83 +315,35 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 isInvalid = false;
                 return true;
             }
-            isInvalid = true;
-            value = default;
-            return false;
-        }
-        private static bool TryConvertBoolean(object? constant, out bool value)
-        {
-            if (constant is not null)
-            {
-                value = (bool)constant;
-                return true;
-            }
-            value = default;
-            return false;
+            return Invalid(out value, out isInvalid);
         }
 
         private static bool TryTransformSingle(object constant, out float value, out bool isInvalid)
         {
-            try
+            if (constant is string or bool)
             {
-                if (constant is string or bool)
-                {
-                    value = default;
-                    isInvalid = true;
-                    return false;
-                }
-                value = Convert.ToSingle(constant);
+                return Invalid(out value, out isInvalid);
             }
-            catch
-            {
-                value = default;
-                isInvalid = true;
-                return false;
-            }
+            value = Convert.ToSingle(constant);
             isInvalid = false;
             return true;
-        }
-
-        private static bool TryConvertSingle(object? constant, out float value)
-        {
-            if (constant is not null)
-            {
-                value = Convert.ToSingle(constant);
-                return true;
-            }
-            value = default;
-            return false;
         }
 
         private static bool TryTransformDouble(object constant, out double value, out bool isInvalid)
         {
-            try
+            if (constant is string or bool)
             {
-                if (constant is string or bool)
-                {
-                    value = default;
-                    isInvalid = true;
-                    return false;
-                }
-                value = Convert.ToDouble(constant);
+                return Invalid(out value, out isInvalid);
             }
-            catch
-            {
-                value = default;
-                isInvalid = true;
-                return false;
-            }
+            value = Convert.ToDouble(constant);
             isInvalid = false;
             return true;
         }
-        private static bool TryConvertDouble(object? constant, out double value)
+
+        private static bool Invalid<T>(out T value, out bool isInvalid) where T : unmanaged
         {
-            if (constant is not null)
-            {
-                value = Convert.ToDouble(constant);
-                return true;
-            }
             value = default;
+            isInvalid = true;
             return false;
         }
     }

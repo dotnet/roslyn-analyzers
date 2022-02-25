@@ -1844,36 +1844,30 @@
     <value>Constant is expected for the parameter</value>
   </data>
   <data name="ConstantExpectedUsageDescription" xml:space="preserve">
-    <value>The parameter expects a constant for best performance.</value>
+    <value>The parameter expects a constant for optimal performance.</value>
   </data>
-  <data name="ConstantExpectedInvalidTypeMessage" xml:space="preserve">
-    <value>The '{0}' parameter cannot have be annotated with ConstantExpected.</value>
+  <data name="ConstantExpectedNotSupportedMessage" xml:space="preserve">
+    <value>The '{0}' parameter is not supported for ConstantExpectedAttribute.</value>
   </data>
   <data name="ConstantExpectedIncompatibleConstantTypeMessage" xml:space="preserve">
-    <value>The '{0}' condition does not match parameter type of '{1}'.</value>
-  </data>
-  <data name="ConstantExpectedIncompatibleConstantMinMaxMessage" xml:space="preserve">
-    <value>The Min/Max condition can only be null for '{0}' types.</value>
+    <value>The '{0}' value is not compatible with parameter type of '{1}'.</value>
   </data>
   <data name="ConstantExpectedInvalidBoundsMessage" xml:space="preserve">
-    <value>The '{0}' condition does not fit within the parameter value bounds of '{1}' to '{2}'.</value>
+    <value>The '{0}' value does not fit within the parameter value bounds of '{1}' to '{2}'.</value>
   </data>
   <data name="ConstantExpectedInvertedRangeMessage" xml:space="preserve">
-    <value>The Min and Max conditions are inverted.</value>
+    <value>The Min and Max value are inverted.</value>
   </data>
   <data name="ConstantExpectedOutOfBoundsMessage" xml:space="preserve">
-    <value>The constant does not fit within the parameter value bounds of '{0}' to '{1}'.</value>
+    <value>The constant does not fit within the value bounds of '{0}' to '{1}'.</value>
+  </data>
+  <data name="ConstantExpectedInvalidMessage" xml:space="preserve">
+    <value>The constant is not of the same '{0}' type as the parameter</value>
   </data>
   <data name="ConstantExpectedNotConstantMessage" xml:space="preserve">
-    <value>The argument should be a constant.</value>
-  </data>
-  <data name="ConstantExpectedAttributeOutOfBoundsMessage" xml:space="preserve">
-    <value>The ConstantExpectedAttribute does not fit within the parameter value bounds of '{0}' to '{1}'.</value>
+    <value>The argument should be a constant for optimal performance.</value>
   </data>
   <data name="ConstantExpectedAttributExpectedMessage" xml:space="preserve">
     <value>The ConstantExpectedAttribute expected for the parameter due to the interface/base method.</value>
-  </data>
-  <data name="ConstantExpectedAttributeNotSameTypeMessage" xml:space="preserve">
-    <value>The ConstantExpectedAttribute does not have the same '{0}' type as the ConstantExpectedAttribute in the invoked method parameter.</value>
   </data>
 </root>

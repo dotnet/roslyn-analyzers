@@ -1490,7 +1490,7 @@ ConstantExpectedAttribute is not applied correctly on the paramter.
 
 ## [CA1861](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Constant is expected for the parameter
 
-The parameter expects a constant for best performance.
+The parameter expects a constant for optimal performance.
 
 |Item|Value|
 |-|-|

@@ -1476,6 +1476,30 @@ It is more efficient to use the static 'HashData' method over creating and manag
 |CodeFix|True|
 ---
 
+## [CA1860](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Incorrect use of ConstantExpectedAttribute
+
+ConstantExpectedAttribute is not applied correctly on the paramter.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Error|
+|CodeFix|False|
+---
+
+## [CA1861](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Constant is expected for the parameter
+
+The parameter expects a constant for best performance.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
 ## [CA2000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
 
 If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.

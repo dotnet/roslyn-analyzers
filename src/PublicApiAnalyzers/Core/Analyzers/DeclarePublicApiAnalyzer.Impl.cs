@@ -57,11 +57,13 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
         {
             public string Name { get; }
             public string NameWithNullability { get; }
+            public string AccessibilityPrefix { get; }
 
-            public ApiName(string name, string nameWithNullability)
+            public ApiName(string name, string nameWithNullability, string accessibilityPrefix)
             {
                 Name = name;
                 NameWithNullability = nameWithNullability;
+                AccessibilityPrefix = accessibilityPrefix;
             }
         }
 
@@ -253,7 +255,21 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                         if (!hasPublicApiEntryWithoutNullability && !hasPublicApiEntryWithoutNullabilityButOblivious)
                         {
-                            reportDeclareNewApi(symbol, isImplicitlyDeclaredConstructor, withObliviousIfNeeded(publicApiName.NameWithNullability));
+                            var nameWithoutAccessibility = publicApiName.NameWithNullability[publicApiName.AccessibilityPrefix.Length..];
+
+                            var hasPublicApiEntryWithoutAccessibility =
+                                _publicApiMap.TryGetValue(nameWithoutAccessibility, out _) ||
+                                _publicApiMap.TryGetValue(WithObliviousMarker(nameWithoutAccessibility), out _);
+
+                            if (hasPublicApiEntryWithoutAccessibility)
+                            {
+                                // The API exists but has missing accessibility.
+                                // reportMissingAccessibility(...) // TODO:
+                            }
+                            else
+                            {
+                                reportDeclareNewApi(symbol, isImplicitlyDeclaredConstructor, withObliviousIfNeeded(publicApiName.NameWithNullability));
+                            }
                         }
                         else
                         {
@@ -270,7 +286,17 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     var hasPublicApiEntryWithoutNullability = _publicApiMap.TryGetValue(publicApiName.Name, out foundApiLine);
                     if (!hasPublicApiEntryWithoutNullability)
                     {
-                        reportDeclareNewApi(symbol, isImplicitlyDeclaredConstructor, publicApiName.Name);
+                        var nameWithoutAccessibility = publicApiName.Name[publicApiName.AccessibilityPrefix.Length..];
+                        var hasPublicApiEntryWithoutAccessibility = _publicApiMap.TryGetValue(publicApiName.Name[publicApiName.AccessibilityPrefix.Length..], out _);
+                        if (hasPublicApiEntryWithoutAccessibility)
+                        {
+                            // The API exists but has missing accessibility.
+                            // reportMissingAccessibility(...) // TODO:
+                        }
+                        else
+                        {
+                            reportDeclareNewApi(symbol, isImplicitlyDeclaredConstructor, publicApiName.Name);
+                        }
                     }
 
                     if (publicApiName.Name != publicApiName.NameWithNullability)
@@ -568,9 +594,16 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             private ApiName GetPublicApiName(ISymbol symbol)
             {
+                var accessibilityPrefix = symbol.DeclaredAccessibility switch
+                {
+                    Accessibility.Protected or Accessibility.ProtectedOrInternal => "protected ",
+                    _ => ""
+                };
+
                 return new ApiName(
                     getPublicApiString(symbol, s_publicApiFormat),
-                    getPublicApiString(symbol, s_publicApiFormatWithNullability));
+                    getPublicApiString(symbol, s_publicApiFormatWithNullability),
+                    accessibilityPrefix);
 
                 string getPublicApiString(ISymbol symbol, SymbolDisplayFormat format)
                 {
@@ -596,7 +629,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                     if (memberType != null)
                     {
-                        publicApiName = publicApiName + " -> " + memberType.ToDisplayString(format);
+                        publicApiName = $"{accessibilityPrefix}{publicApiName} -> {memberType.ToDisplayString(format)}";
                     }
 
                     if (((symbol as INamespaceSymbol)?.IsGlobalNamespace).GetValueOrDefault())

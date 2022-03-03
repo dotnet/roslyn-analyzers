@@ -10,9 +10,9 @@ Roslyn is the compiler platform for .NET. It consists of the compiler itself and
 
 ## What are Roslyn Analyzers?
 
-Roslyn analyzers analyze your code for style, quality and maintainability, design and other issues. The documentation for Roslyn Analyzers can be found at [docs.microsoft.com/visualstudio/code-quality/roslyn-analyzers-overview](https://docs.microsoft.com/visualstudio/code-quality/roslyn-analyzers-overview).
+Roslyn analyzers analyze your code for style, quality and maintainability, design and other issues. The documentation for Roslyn Analyzers can be found at [docs.microsoft.com/dotnet/fundamentals/code-analysis/overview](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/overview).
 
-Microsoft created a set of analyzers called [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers) that contains the most important "FxCop" rules from static code analysis, converted to Roslyn analyzers. These analyzers check your code for security, performance, and design issues, among others. The documentation for FxCop analyzers in Visual Studio can be found at [docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers).
+Microsoft created a set of analyzers called [Microsoft.CodeAnalysis.NetAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers) that contains the most important "FxCop" rules from static code analysis, converted to Roslyn analyzers, in addition to more analyzers. These analyzers check your code for security, performance, and design issues, among others. The documentation for .NET analyzers can be found [here](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/overview#code-quality-analysis).
 
 ## Main analyzers
 
@@ -42,7 +42,7 @@ This is the **primary analyzer package** for this repo that contains all **the .
 
 You do not need to manually install this NuGet package to your project if you are using .NET5 SDK or later. These analyzers are enabled by default for projects targeting .NET5 or later. For projects targeting earlier .NET frameworks, you can enable them in your MSBuild project file by setting one of the following properties:
 
-1. _EnableNETAnalyzers_
+1. *EnableNETAnalyzers*
 
    ```xml
    <PropertyGroup>
@@ -50,7 +50,7 @@ You do not need to manually install this NuGet package to your project if you ar
    </PropertyGroup>
    ```
 
-2. _AnalysisLevel_
+2. *AnalysisLevel*
 
    ```xml
    <PropertyGroup>
@@ -64,13 +64,11 @@ You do not need to manually install this NuGet package to your project if you ar
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)</sub>
 
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&view=overview&package=Microsoft.CodeAnalysis.FxCopAnalyzers&protocolType=NuGet)
-
-This is a migration analyzer package for existing binary FxCop users. It contains all **the ported FxCop code analysis rules (CAxxxx)**. The documentation for FxCop Analyzers and FAQs about migrating from legacy post-build static analysis also known as "FxCop" to FxCop Analyzers can be found at [docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers).
+This is a migration analyzer package for existing binary FxCop users. It contains all **the ported FxCop code analysis rules (CAxxxx)**. It's recommended to use Microsoft.CodeAnalysis.NetAnalyzers instead. The documentation for that can be found at [docs.microsoft.com/visualstudio/code-quality/install-net-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-net-analyzers).
 
 The documentation for all the ported and unported FxCop rules can be found at [docs.microsoft.com/en-us/visualstudio/code-quality/fxcop-rule-port-status](https://docs.microsoft.com/visualstudio/code-quality/fxcop-rule-port-status).
 
-This analyzer package contains all the ported FxCop rules that are applicable for both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects. You **do not need to install any separate analyzer package from this repo to get target-framework specific FxCop rules**.
+This analyzer package contains all the ported FxCop rules that are applicable for both *.NetCore/.NetStandard* and *Desktop .NetFramework* projects. You **do not need to install any separate analyzer package from this repo to get target-framework specific FxCop rules**.
 
 #### The following are subpackages or NuGet dependencies that are automatically installed when you install the Microsoft.CodeAnalysis.FxCopAnalyzers package:
 
@@ -80,29 +78,23 @@ This analyzer package contains all the ported FxCop rules that are applicable fo
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeQuality.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers)</sub>
 
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&package=Microsoft.CodeQuality.Analyzers&protocolType=NuGet)
-
 This package contains common code quality improvement rules that are not specific to usage of any particular API. For example, [CA1801](https://docs.microsoft.com/visualstudio/code-quality/ca1801-review-unused-parameters) (ReviewUnusedParameters) flags parameters that are unused and is part of this package.
 
 #### Microsoft.NetCore.Analyzers
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.NetCore.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers)</sub>
 
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&package=Microsoft.NetCore.Analyzers&protocolType=NuGet)
+This package contains rules for correct usage of APIs that are present in *.NetCore/.NetStandard* framework libraries. For example, [CA1309](https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison) (UseOrdinalStringComparison) flags usages of string compare APIs that don't specify a `StringComparison` argument. [Getting started with NetCore Analyzers](docs/NetCore_GettingStarted.md)
 
-This package contains rules for correct usage of APIs that are present in _.NetCore/.NetStandard_ framework libraries. For example, [CA1309](https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison) (UseOrdinalStringComparison) flags usages of string compare APIs that don't specify a `StringComparison` argument. [Getting started with NetCore Analyzers](docs/NetCore_GettingStarted.md)
-
-**NOTE:** This analyzer package is applicable for both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects. If the API whose usage is being checked exists only in _.NetCore/.NetStandard_ libraries, then the analyzer will bail out silently for _Desktop .NetFramework_ projects. Otherwise, if the API exists in both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ libraries, the analyzer will run correctly for both  _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects.
+**NOTE:** This analyzer package is applicable for both *.NetCore/.NetStandard* and *Desktop .NetFramework* projects. If the API whose usage is being checked exists only in *.NetCore/.NetStandard* libraries, then the analyzer will bail out silently for *Desktop .NetFramework* projects. Otherwise, if the API exists in both *.NetCore/.NetStandard* and *Desktop .NetFramework* libraries, the analyzer will run correctly for both  *.NetCore/.NetStandard* and *Desktop .NetFramework* projects.
 
 #### Microsoft.NetFramework.Analyzers
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.NetFramework.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers)</sub>
 
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&package=Microsoft.NetFramework.Analyzers&protocolType=NuGet)
+This package contains rules for correct usage of APIs that are present only in *Desktop .NetFramework* libraries.
 
-This package contains rules for correct usage of APIs that are present only in _Desktop .NetFramework_ libraries.
-
-**NOTE:** The analyzers in this package will silently bail out if installed on a _.NetCore/.NetStandard_ project that do not have the underlying API whose usage is being checked. If future versions of _.NetCore/.NetStandard_ libraries include these APIs, the analyzers will automatically light up on _.NetCore/.NetStandard_ projects that target these libraries.
+**NOTE:** The analyzers in this package will silently bail out if installed on a *.NetCore/.NetStandard* project that do not have the underlying API whose usage is being checked. If future versions of *.NetCore/.NetStandard* libraries include these APIs, the analyzers will automatically light up on *.NetCore/.NetStandard* projects that target these libraries.
 
 ## Other Analyzer Packages
 
@@ -120,7 +112,7 @@ This package contains rules for correct usage of APIs from the [Microsoft.CodeAn
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet7&package=Roslyn.Diagnostics.Analyzers&protocolType=NuGet)
 
-This package contains rules that are very specific to the .NET Compiler Platform ("Roslyn") project, i.e. [dotnet/roslyn](https://github.com/dotnet/roslyn) repo. This analyzer package is _not intended for general consumption_ outside the Roslyn repo. [More info about rules in this package](src/Roslyn.Diagnostics.Analyzers/Roslyn.Diagnostics.Analyzers.md)
+This package contains rules that are very specific to the .NET Compiler Platform ("Roslyn") project, i.e. [dotnet/roslyn](https://github.com/dotnet/roslyn) repo. This analyzer package is *not intended for general consumption* outside the Roslyn repo. [More info about rules in this package](src/Roslyn.Diagnostics.Analyzers/Roslyn.Diagnostics.Analyzers.md)
 
 ### Microsoft.CodeAnalysis.BannedApiAnalyzers
 
@@ -155,10 +147,10 @@ For instructions on using this tutorial, see [Instructions](https://github.com/d
    2. .NET Core cross-platform development
    3. Visual Studio extension development
 2. Clone this repository
-3. Install .NET Core SDK version specified in `.\global.json` with `"dotnet":` from [here](https://dotnet.microsoft.com/download/dotnet-core).
+3. Install .NET SDK version specified in `.\global.json` with `"dotnet":` from [here](https://dotnet.microsoft.com/download/dotnet-core).
 4. Open a command prompt and go to the directory of the Roslyn Analyzer Repo
 5. Run the restore and build command: `build.cmd`(in the command prompt) or `.\build.cmd`(in PowerShell).
-6. Execute tests: `test.cmd`(in the command prompt) or `.\test.cmd`(in PowerShell).
+6. Execute tests: `test.cmd` (in the command prompt) or `.\test.cmd` (in PowerShell).
 
 ## Submitting Pull Requests
 

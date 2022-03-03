@@ -11,6 +11,7 @@ namespace Reference.Assemblies
         public static PortableExecutableReference MicrosoftVisualBasicCore { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.MicrosoftVisualBasicCore).GetReference(filePath: "Microsoft.VisualBasic.Core.dll", display: "Microsoft.VisualBasic.Core (net60)");
         public static PortableExecutableReference MicrosoftVisualBasic { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.MicrosoftVisualBasic).GetReference(filePath: "Microsoft.VisualBasic.dll", display: "Microsoft.VisualBasic (net60)");
         public static PortableExecutableReference MicrosoftWin32Primitives { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.MicrosoftWin32Primitives).GetReference(filePath: "Microsoft.Win32.Primitives.dll", display: "Microsoft.Win32.Primitives (net60)");
+        public static PortableExecutableReference MicrosoftWin32Registry { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.MicrosoftWin32Registry).GetReference(filePath: "Microsoft.Win32.Registry.dll", display: "Microsoft.Win32.Registry (net60)");
         public static PortableExecutableReference mscorlib { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.mscorlib).GetReference(filePath: "mscorlib.dll", display: "mscorlib (net60)");
         public static PortableExecutableReference netstandard { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.netstandard).GetReference(filePath: "netstandard.dll", display: "netstandard (net60)");
         public static PortableExecutableReference SystemAppContext { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemAppContext).GetReference(filePath: "System.AppContext.dll", display: "System.AppContext (net60)");
@@ -55,12 +56,14 @@ namespace Reference.Assemblies
         public static PortableExecutableReference SystemIOCompressionFileSystem { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIOCompressionFileSystem).GetReference(filePath: "System.IO.Compression.FileSystem.dll", display: "System.IO.Compression.FileSystem (net60)");
         public static PortableExecutableReference SystemIOCompressionZipFile { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIOCompressionZipFile).GetReference(filePath: "System.IO.Compression.ZipFile.dll", display: "System.IO.Compression.ZipFile (net60)");
         public static PortableExecutableReference SystemIO { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIO).GetReference(filePath: "System.IO.dll", display: "System.IO (net60)");
+        public static PortableExecutableReference SystemIOFileSystemAccessControl { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIOFileSystemAccessControl).GetReference(filePath: "System.IO.FileSystem.AccessControl.dll", display: "System.IO.FileSystem.AccessControl (net60)");
         public static PortableExecutableReference SystemIOFileSystem { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIOFileSystem).GetReference(filePath: "System.IO.FileSystem.dll", display: "System.IO.FileSystem (net60)");
         public static PortableExecutableReference SystemIOFileSystemDriveInfo { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIOFileSystemDriveInfo).GetReference(filePath: "System.IO.FileSystem.DriveInfo.dll", display: "System.IO.FileSystem.DriveInfo (net60)");
         public static PortableExecutableReference SystemIOFileSystemPrimitives { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIOFileSystemPrimitives).GetReference(filePath: "System.IO.FileSystem.Primitives.dll", display: "System.IO.FileSystem.Primitives (net60)");
         public static PortableExecutableReference SystemIOFileSystemWatcher { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIOFileSystemWatcher).GetReference(filePath: "System.IO.FileSystem.Watcher.dll", display: "System.IO.FileSystem.Watcher (net60)");
         public static PortableExecutableReference SystemIOIsolatedStorage { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIOIsolatedStorage).GetReference(filePath: "System.IO.IsolatedStorage.dll", display: "System.IO.IsolatedStorage (net60)");
         public static PortableExecutableReference SystemIOMemoryMappedFiles { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIOMemoryMappedFiles).GetReference(filePath: "System.IO.MemoryMappedFiles.dll", display: "System.IO.MemoryMappedFiles (net60)");
+        public static PortableExecutableReference SystemIOPipesAccessControl { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIOPipesAccessControl).GetReference(filePath: "System.IO.Pipes.AccessControl.dll", display: "System.IO.Pipes.AccessControl (net60)");
         public static PortableExecutableReference SystemIOPipes { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIOPipes).GetReference(filePath: "System.IO.Pipes.dll", display: "System.IO.Pipes (net60)");
         public static PortableExecutableReference SystemIOUnmanagedMemoryStream { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemIOUnmanagedMemoryStream).GetReference(filePath: "System.IO.UnmanagedMemoryStream.dll", display: "System.IO.UnmanagedMemoryStream (net60)");
         public static PortableExecutableReference SystemLinq { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemLinq).GetReference(filePath: "System.Linq.dll", display: "System.Linq (net60)");
@@ -77,7 +80,6 @@ namespace Reference.Assemblies
         public static PortableExecutableReference SystemNetNetworkInformation { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemNetNetworkInformation).GetReference(filePath: "System.Net.NetworkInformation.dll", display: "System.Net.NetworkInformation (net60)");
         public static PortableExecutableReference SystemNetPing { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemNetPing).GetReference(filePath: "System.Net.Ping.dll", display: "System.Net.Ping (net60)");
         public static PortableExecutableReference SystemNetPrimitives { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemNetPrimitives).GetReference(filePath: "System.Net.Primitives.dll", display: "System.Net.Primitives (net60)");
-        public static PortableExecutableReference SystemNetQuic { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemNetQuic).GetReference(filePath: "System.Net.Quic.dll", display: "System.Net.Quic (net60)");
         public static PortableExecutableReference SystemNetRequests { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemNetRequests).GetReference(filePath: "System.Net.Requests.dll", display: "System.Net.Requests (net60)");
         public static PortableExecutableReference SystemNetSecurity { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemNetSecurity).GetReference(filePath: "System.Net.Security.dll", display: "System.Net.Security (net60)");
         public static PortableExecutableReference SystemNetServicePoint { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemNetServicePoint).GetReference(filePath: "System.Net.ServicePoint.dll", display: "System.Net.ServicePoint (net60)");
@@ -117,14 +119,18 @@ namespace Reference.Assemblies
         public static PortableExecutableReference SystemRuntimeSerializationJson { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemRuntimeSerializationJson).GetReference(filePath: "System.Runtime.Serialization.Json.dll", display: "System.Runtime.Serialization.Json (net60)");
         public static PortableExecutableReference SystemRuntimeSerializationPrimitives { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemRuntimeSerializationPrimitives).GetReference(filePath: "System.Runtime.Serialization.Primitives.dll", display: "System.Runtime.Serialization.Primitives (net60)");
         public static PortableExecutableReference SystemRuntimeSerializationXml { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemRuntimeSerializationXml).GetReference(filePath: "System.Runtime.Serialization.Xml.dll", display: "System.Runtime.Serialization.Xml (net60)");
+        public static PortableExecutableReference SystemSecurityAccessControl { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecurityAccessControl).GetReference(filePath: "System.Security.AccessControl.dll", display: "System.Security.AccessControl (net60)");
         public static PortableExecutableReference SystemSecurityClaims { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecurityClaims).GetReference(filePath: "System.Security.Claims.dll", display: "System.Security.Claims (net60)");
         public static PortableExecutableReference SystemSecurityCryptographyAlgorithms { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecurityCryptographyAlgorithms).GetReference(filePath: "System.Security.Cryptography.Algorithms.dll", display: "System.Security.Cryptography.Algorithms (net60)");
+        public static PortableExecutableReference SystemSecurityCryptographyCng { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecurityCryptographyCng).GetReference(filePath: "System.Security.Cryptography.Cng.dll", display: "System.Security.Cryptography.Cng (net60)");
         public static PortableExecutableReference SystemSecurityCryptographyCsp { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecurityCryptographyCsp).GetReference(filePath: "System.Security.Cryptography.Csp.dll", display: "System.Security.Cryptography.Csp (net60)");
         public static PortableExecutableReference SystemSecurityCryptographyEncoding { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecurityCryptographyEncoding).GetReference(filePath: "System.Security.Cryptography.Encoding.dll", display: "System.Security.Cryptography.Encoding (net60)");
+        public static PortableExecutableReference SystemSecurityCryptographyOpenSsl { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecurityCryptographyOpenSsl).GetReference(filePath: "System.Security.Cryptography.OpenSsl.dll", display: "System.Security.Cryptography.OpenSsl (net60)");
         public static PortableExecutableReference SystemSecurityCryptographyPrimitives { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecurityCryptographyPrimitives).GetReference(filePath: "System.Security.Cryptography.Primitives.dll", display: "System.Security.Cryptography.Primitives (net60)");
         public static PortableExecutableReference SystemSecurityCryptographyX509Certificates { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecurityCryptographyX509Certificates).GetReference(filePath: "System.Security.Cryptography.X509Certificates.dll", display: "System.Security.Cryptography.X509Certificates (net60)");
         public static PortableExecutableReference SystemSecurity { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecurity).GetReference(filePath: "System.Security.dll", display: "System.Security (net60)");
         public static PortableExecutableReference SystemSecurityPrincipal { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecurityPrincipal).GetReference(filePath: "System.Security.Principal.dll", display: "System.Security.Principal (net60)");
+        public static PortableExecutableReference SystemSecurityPrincipalWindows { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecurityPrincipalWindows).GetReference(filePath: "System.Security.Principal.Windows.dll", display: "System.Security.Principal.Windows (net60)");
         public static PortableExecutableReference SystemSecuritySecureString { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemSecuritySecureString).GetReference(filePath: "System.Security.SecureString.dll", display: "System.Security.SecureString (net60)");
         public static PortableExecutableReference SystemServiceModelWeb { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemServiceModelWeb).GetReference(filePath: "System.ServiceModel.Web.dll", display: "System.ServiceModel.Web (net60)");
         public static PortableExecutableReference SystemServiceProcess { get; } = AssemblyMetadata.CreateFromImage(Net60Resources.SystemServiceProcess).GetReference(filePath: "System.ServiceProcess.dll", display: "System.ServiceProcess (net60)");
@@ -166,6 +172,7 @@ namespace Reference.Assemblies
             MicrosoftVisualBasicCore,
             MicrosoftVisualBasic,
             MicrosoftWin32Primitives,
+            MicrosoftWin32Registry,
             mscorlib,
             netstandard,
             SystemAppContext,
@@ -210,12 +217,14 @@ namespace Reference.Assemblies
             SystemIOCompressionFileSystem,
             SystemIOCompressionZipFile,
             SystemIO,
+            SystemIOFileSystemAccessControl,
             SystemIOFileSystem,
             SystemIOFileSystemDriveInfo,
             SystemIOFileSystemPrimitives,
             SystemIOFileSystemWatcher,
             SystemIOIsolatedStorage,
             SystemIOMemoryMappedFiles,
+            SystemIOPipesAccessControl,
             SystemIOPipes,
             SystemIOUnmanagedMemoryStream,
             SystemLinq,
@@ -232,7 +241,6 @@ namespace Reference.Assemblies
             SystemNetNetworkInformation,
             SystemNetPing,
             SystemNetPrimitives,
-            SystemNetQuic,
             SystemNetRequests,
             SystemNetSecurity,
             SystemNetServicePoint,
@@ -272,14 +280,18 @@ namespace Reference.Assemblies
             SystemRuntimeSerializationJson,
             SystemRuntimeSerializationPrimitives,
             SystemRuntimeSerializationXml,
+            SystemSecurityAccessControl,
             SystemSecurityClaims,
             SystemSecurityCryptographyAlgorithms,
+            SystemSecurityCryptographyCng,
             SystemSecurityCryptographyCsp,
             SystemSecurityCryptographyEncoding,
+            SystemSecurityCryptographyOpenSsl,
             SystemSecurityCryptographyPrimitives,
             SystemSecurityCryptographyX509Certificates,
             SystemSecurity,
             SystemSecurityPrincipal,
+            SystemSecurityPrincipalWindows,
             SystemSecuritySecureString,
             SystemServiceModelWeb,
             SystemServiceProcess,

@@ -26,14 +26,15 @@
     <DotNetFinalVersionKind Condition="'$(StabilizePackageVersion)' == 'true'">release</DotNetFinalVersionKind>
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
+    <UseVSTestRunner>true</UseVSTestRunner>
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
     <!-- Toolset -->
-    <MicrosoftVSSDKBuildToolsVersion>16.9.1050</MicrosoftVSSDKBuildToolsVersion>
+    <MicrosoftVSSDKBuildToolsVersion>17.0.1056-Dev17PIAs-g9dffd635</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftVSSDKVSDConfigToolVersion>16.0.2032702</MicrosoftVSSDKVSDConfigToolVersion>
     <CodecovVersion>1.12.3</CodecovVersion>
-    <CoverletVersion>2.9.0</CoverletVersion>
+    <CoverletVersion>3.1.2</CoverletVersion>
     <ReportGeneratorVersion>4.3.6</ReportGeneratorVersion>
     <!-- Use the correct compiler version -->
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
@@ -44,7 +45,7 @@
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
-    <MicrosoftCodeAnalysisVersionForTests>4.0.0-2.final</MicrosoftCodeAnalysisVersionForTests>
+    <MicrosoftCodeAnalysisVersionForTests>4.0.1</MicrosoftCodeAnalysisVersionForTests>
     <DogfoodAnalyzersVersion>3.3.3</DogfoodAnalyzersVersion>
     <DogfoodNetAnalyzersVersion>5.0.4-preview1.21126.5</DogfoodNetAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
@@ -55,14 +56,14 @@
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
     <MicrosoftVisualStudioThreadingAnalyzersVersion>17.0.26-alpha</MicrosoftVisualStudioThreadingAnalyzersVersion>
     <!-- Roslyn Testing -->
-    <MicrosoftCodeAnalysisTestingVersion>1.1.1-beta1.21351.1</MicrosoftCodeAnalysisTestingVersion>
+    <MicrosoftCodeAnalysisTestingVersion>1.1.1-beta1.22081.4</MicrosoftCodeAnalysisTestingVersion>
     <!-- Libs -->
     <BenchmarkDotNetVersion>0.13.0</BenchmarkDotNetVersion>
     <HumanizerVersion>2.2.0</HumanizerVersion>
     <MicrosoftBuildLocatorVersion>1.4.1</MicrosoftBuildLocatorVersion>
     <MicrosoftDiagnosticsTracingTraceEventVersion>2.0.69</MicrosoftDiagnosticsTracingTraceEventVersion>
     <MicrosoftExtensionsLoggingVersion>6.0.0-preview.5.21301.5</MicrosoftExtensionsLoggingVersion>
-    <MicrosoftNETCoreAppRefVersion>6.0.0-preview.4.21253.7</MicrosoftNETCoreAppRefVersion>
+    <MicrosoftNETCoreAppRefVersion>6.0.2</MicrosoftNETCoreAppRefVersion>
     <MicrosoftVisualBasicVersion>10.1.0</MicrosoftVisualBasicVersion>
     <MicrosoftVisualStudioCompositionVersion>16.1.8</MicrosoftVisualStudioCompositionVersion>
     <NewtonsoftJsonVersion>12.0.1</NewtonsoftJsonVersion>

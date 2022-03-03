@@ -26,3 +26,8 @@ Please follow the below steps after publishing analyzer NuGet packages from this
 2. Build.
 3. Ensure that nuget.exe is on path.
 4. Generate notes: Switch to the output directory, say `artifacts\bin\ReleaseNotesUtil\Debug\netcoreapp3.1` and execute `GenDiffNotes.cmd` to generate release notes.  Example command line for v2.9.4 to v2.9.5: `GenDiffNotes.cmd C:\scratch nuget.org 2.9.4 2.9.5`.
+
+## Followup items
+
+1. For `Microsoft.CodeAnalysis.Analyzers` package, update [`MicrosoftCodeAnalysisAnalyzersVersion`](https://github.com/dotnet/roslyn/blob/95809b0b922439465a213922ef7eb81e9b5a223f/eng/Versions.props#L82) in dotnet/roslyn to reference the new package version.
+2. For `Roslyn.Diagnostics.Analyzers` package, update [`RoslynDiagnosticsNugetPackageVersion`](https://github.com/dotnet/roslyn/blob/95809b0b922439465a213922ef7eb81e9b5a223f/eng/Versions.props#L30) in dotnet/roslyn to reference the new package version.

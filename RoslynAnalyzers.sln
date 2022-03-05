@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28531.58
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Roslyn.Diagnostics.Analyzers", "Roslyn.Diagnostics.Analyzers", "{72AAA528-FD70-45DA-82F8-1D29FC27F81F}"
 EndProject
@@ -195,6 +195,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerfDiff", "src\Tools\PerfD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PerfDiff", "PerfDiff", "{BEE4B62A-86BD-4613-8F94-F40364350643}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Analyzer.CSharp.Utilities", "src\Utilities\Compiler.CSharp\Analyzer.CSharp.Utilities.shproj", "{BE5FE32C-DA73-4EC5-809E-E11B05ACA398}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{046419a7-c60d-40ff-ad7e-2bae461b7ce5}*SharedItemsImports = 5
@@ -222,6 +224,7 @@ Global
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{b475c173-a39d-4a75-93ff-69c3d2742cad}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{b969f316-815c-47b9-82b3-67fdd9ed694f}*SharedItemsImports = 5
 		src\Utilities\FlowAnalysis\FlowAnalysis.Utilities.projitems*{b969f316-815c-47b9-82b3-67fdd9ed694f}*SharedItemsImports = 5
+		src\Utilities\Compiler.CSharp\Analyzer.CSharp.Utilities.projitems*{be5fe32c-da73-4ec5-809e-e11b05aca398}*SharedItemsImports = 13
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{cade5623-cc57-43a2-9d2a-b7ab29225406}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{cade5623-cc57-43a2-9d2a-b7ab29225406}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{d8762a0a-3832-47be-bcf6-8b1060be6b28}*SharedItemsImports = 5
@@ -587,6 +590,7 @@ Global
 		{4FE82B4D-4AF1-4076-9E85-529205866A80} = {CE87A0B7-E19B-4230-A73C-60F6D65EB7DC}
 		{AE549290-1702-4ECE-AE57-5FF4E85492C6} = {BEE4B62A-86BD-4613-8F94-F40364350643}
 		{BEE4B62A-86BD-4613-8F94-F40364350643} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
+		{BE5FE32C-DA73-4EC5-809E-E11B05ACA398} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

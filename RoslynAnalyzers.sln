@@ -229,6 +229,7 @@ Global
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{cade5623-cc57-43a2-9d2a-b7ab29225406}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{d8762a0a-3832-47be-bcf6-8b1060be6b28}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{d8762a0a-3832-47be-bcf6-8b1060be6b28}*SharedItemsImports = 5
+		src\Utilities\Compiler.CSharp\Analyzer.CSharp.Utilities.projitems*{dc277d4d-9479-4b55-95bb-9fdb8a682de1}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{ec946164-1e17-410b-b7d9-7de7e6268d63}*SharedItemsImports = 13
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{f2985136-dcb2-492f-a66d-32968a0266f1}*SharedItemsImports = 5
 		src\Utilities\FlowAnalysis\FlowAnalysis.Utilities.projitems*{fcb56cba-fa35-46a8-86b7-bae5433197d9}*SharedItemsImports = 13

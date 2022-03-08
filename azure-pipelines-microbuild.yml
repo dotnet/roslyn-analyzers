@@ -40,8 +40,8 @@ stages:
       jobs:
       - job: Signed_Build
         pool:
-          name: NetCoreInternal-Pool
-          queue: BuildPool.Windows.10.Amd64.VS2019.Pre
+          name: NetCore1ESPool-Internal
+          demands: ImageOverride -equals Build.Windows.Amd64.VS2022.Pre
         variables:
           - group: DotNet-Blob-Feed
           - group: Publish-Build-Assets
@@ -52,7 +52,7 @@ stages:
         steps:
         - checkout: self
           clean: true
-        - script: eng\common\CIBuild.cmd 
+        - script: eng\common\CIBuild.cmd
                     -configuration $(_BuildConfig)
                     /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
                     /p:DotNetSignType=$(_SignType)

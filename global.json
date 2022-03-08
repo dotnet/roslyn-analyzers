@@ -3,8 +3,7 @@
     "dotnet": "6.0.100",
     "runtimes": {
       "dotnet": [
-        "3.1.7",
-        "5.0.12"
+        "3.1.7"
       ]
     },
     "vs": {
@@ -18,6 +17,6 @@
     "rollForward": "patch"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "7.0.0-beta.21569.2"
+    "Microsoft.DotNet.Arcade.Sdk": "7.0.0-beta.22154.3"
   }
 }

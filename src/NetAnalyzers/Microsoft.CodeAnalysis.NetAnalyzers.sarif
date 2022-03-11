@@ -5551,7 +5551,7 @@
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]
-        }
+          }
         },
         "CA5405": {
           "id": "CA5405",
@@ -5571,7 +5571,7 @@
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]
-      }
+          }
         }
       }
     },

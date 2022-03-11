@@ -9,7 +9,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     public abstract class UseAssignableTypeForForeachVariable : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA2250";
+        internal const string RuleId = "CA2259";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseAssignableTypeForForeachVariableTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseAssignableTypeForForeachVariableMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));

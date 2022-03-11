@@ -2,4 +2,4 @@
 
 Rule ID | Missing Help Link | Title |
 --------|-------------------|-------|
-CA2250 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250> | Use implicitly assignable foreach variable type |
+CA2259 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259> | Use implicitly assignable foreach variable type |

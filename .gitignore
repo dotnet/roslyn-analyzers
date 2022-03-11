@@ -6,6 +6,7 @@
 *.user
 .vs/
 .vscode/
+.idea/
 
 # Build results
 artifacts/
@@ -16,6 +17,7 @@ obj/
 .dotnet/
 .tools/
 .packages/
+temp/
 
 # Per-user project properties
 launchSettings.json

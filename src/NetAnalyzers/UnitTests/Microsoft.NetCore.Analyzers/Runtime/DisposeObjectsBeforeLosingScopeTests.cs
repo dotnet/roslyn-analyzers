@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -59,21 +59,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         private string GetEditorConfigContentToDisableInterproceduralAnalysis(DisposeAnalysisKind disposeAnalysisKind)
         {
-            var text = $@"dotnet_code_quality.interprocedural_analysis_kind = None
+            var text = $@"[*]
+                          dotnet_code_quality.interprocedural_analysis_kind = None
                           dotnet_code_quality.dispose_analysis_kind = {disposeAnalysisKind}";
             return text;
         }
 
         private string GetEditorConfigContent(DisposeAnalysisKind disposeAnalysisKind)
-            => $@"dotnet_code_quality.dispose_analysis_kind = {disposeAnalysisKind}";
+            => $@"[*]
+                  dotnet_code_quality.dispose_analysis_kind = {disposeAnalysisKind}";
 
         private string GetEditorConfigContent(PointsToAnalysisKind? pointsToAnalysisKind)
             => pointsToAnalysisKind.HasValue ?
-                $"dotnet_code_quality.CA2000.points_to_analysis_kind = {pointsToAnalysisKind}" :
+                $@"[*]
+                   dotnet_code_quality.CA2000.points_to_analysis_kind = {pointsToAnalysisKind}" :
                 string.Empty;
 
         [Fact]
-        public async Task LocalWithDisposableInitializer_DisposeCall_NoDiagnostic()
+        public async Task LocalWithDisposableInitializer_DisposeCall_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -113,7 +116,7 @@ End Class");
         }
 
         [Fact]
-        public async Task LocalWithDisposableInitializer_NoDisposeCall_Diagnostic()
+        public async Task LocalWithDisposableInitializer_NoDisposeCall_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -155,7 +158,7 @@ End Class",
         }
 
         [Fact]
-        public async Task LocalWithDisposableAssignment_DisposeCall_NoDiagnostic()
+        public async Task LocalWithDisposableAssignment_DisposeCall_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -205,7 +208,7 @@ End Class");
         }
 
         [Fact]
-        public async Task LocalWithDisposableAssignment_NoDisposeCall_Diagnostic()
+        public async Task LocalWithDisposableAssignment_NoDisposeCall_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -249,7 +252,7 @@ End Class",
         }
 
         [Fact]
-        public async Task ParameterWithDisposableAssignment_DisposeCall_NoDiagnostic()
+        public async Task ParameterWithDisposableAssignment_DisposeCall_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -289,7 +292,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ParameterWithDisposableAssignment_NoDisposeCall_Diagnostic()
+        public async Task ParameterWithDisposableAssignment_NoDisposeCall_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -331,7 +334,7 @@ End Class",
         }
 
         [Fact]
-        public async Task OutAndRefParametersWithDisposableAssignment_NoDisposeCall_NoDiagnostic()
+        public async Task OutAndRefParametersWithDisposableAssignment_NoDisposeCall_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -370,7 +373,7 @@ End Class");
         }
 
         [Fact]
-        public async Task OutDisposableArgument_NoDisposeCall_Diagnostic()
+        public async Task OutDisposableArgument_NoDisposeCall_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -425,7 +428,7 @@ class Test
         }
 
         [Fact]
-        public async Task OutDisposableArgument_DisposeCall_NoDiagnostic()
+        public async Task OutDisposableArgument_DisposeCall_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -477,7 +480,7 @@ class Test
         }
 
         [Fact]
-        public async Task TryGetSpecialCase_OutDisposableArgument_NoDisposeCall_NoDiagnostic()
+        public async Task TryGetSpecialCase_OutDisposableArgument_NoDisposeCall_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -508,7 +511,7 @@ class MyCollection
         }
 
         [Fact, WorkItem(2245, "https://github.com/dotnet/roslyn-analyzers/issues/2245")]
-        public async Task OutDisposableArgument_StoredIntoField_NoDiagnostic()
+        public async Task OutDisposableArgument_StoredIntoField_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -537,7 +540,7 @@ class Test
         }
 
         [Fact, WorkItem(2245, "https://github.com/dotnet/roslyn-analyzers/issues/2245")]
-        public async Task OutDisposableArgument_WithinTryXXXInvocation_DisposedOnSuccessPath_NoDiagnostic()
+        public async Task OutDisposableArgument_WithinTryXXXInvocation_DisposedOnSuccessPath_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -572,7 +575,7 @@ public class C
         }
 
         [Fact, WorkItem(2245, "https://github.com/dotnet/roslyn-analyzers/issues/2245")]
-        public async Task OutDisposableArgument_WithinTryXXXInvocation_NotDisposed_Diagnostic()
+        public async Task OutDisposableArgument_WithinTryXXXInvocation_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -599,7 +602,7 @@ public class C
         }
 
         [Fact]
-        public async Task LocalWithMultipleDisposableAssignment_DisposeCallOnSome_Diagnostic()
+        public async Task LocalWithMultipleDisposableAssignment_DisposeCallOnSome_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -653,7 +656,7 @@ End Class",
         }
 
         [Fact]
-        public async Task FieldWithDisposableAssignment_NoDiagnostic()
+        public async Task FieldWithDisposableAssignment_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -705,7 +708,7 @@ End Class");
         }
 
         [Fact]
-        public async Task PropertyWithDisposableAssignment_NoDiagnostic()
+        public async Task PropertyWithDisposableAssignment_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -757,7 +760,7 @@ End Class");
         }
 
         [Fact]
-        public async Task Interprocedural_DisposedInHelper_MethodInvocation_NoDiagnostic()
+        public async Task Interprocedural_DisposedInHelper_MethodInvocation_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -834,7 +837,7 @@ End Class
         }
 
         [Fact]
-        public async Task Interprocedural_DisposeOwnershipTransfer_MethodInvocation_NoDiagnostic()
+        public async Task Interprocedural_DisposeOwnershipTransfer_MethodInvocation_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -915,7 +918,7 @@ End Class
         }
 
         [Fact]
-        public async Task Interprocedural_NoDisposeOwnershipTransfer_MethodInvocation_Diagnostic()
+        public async Task Interprocedural_NoDisposeOwnershipTransfer_MethodInvocation_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1014,7 +1017,7 @@ End Class
         }
 
         [Fact, WorkItem(2136, "https://github.com/dotnet/roslyn-analyzers/issues/2136")]
-        public async Task Interprocedural_DisposedInHelper_ConstructorInvocation_NoDiagnostic()
+        public async Task Interprocedural_DisposedInHelper_ConstructorInvocation_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1087,7 +1090,7 @@ End Class
         }
 
         [Fact, WorkItem(2136, "https://github.com/dotnet/roslyn-analyzers/issues/2136")]
-        public async Task Interprocedural_DisposeOwnershipTransfer_ConstructorInvocation_NoDiagnostic()
+        public async Task Interprocedural_DisposeOwnershipTransfer_ConstructorInvocation_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1162,7 +1165,7 @@ End Class
         }
 
         [Fact, WorkItem(2136, "https://github.com/dotnet/roslyn-analyzers/issues/2136")]
-        public async Task Interprocedural_NoDisposeOwnershipTransfer_ConstructorInvocation_Diagnostic()
+        public async Task Interprocedural_NoDisposeOwnershipTransfer_ConstructorInvocation_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1253,7 +1256,7 @@ End Class
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public async Task Configured_DisposeOwnershipTransfer_AtConstructorInvocation(bool disposeOwnershipTransferAtConstructor)
+        public async Task Configured_DisposeOwnershipTransfer_AtConstructorInvocationAsync(bool disposeOwnershipTransferAtConstructor)
         {
             var editorConfigText = disposeOwnershipTransferAtConstructor ?
                         $@"dotnet_code_quality.interprocedural_analysis_kind = None
@@ -1290,7 +1293,11 @@ class DisposableOwnerType
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
@@ -1332,7 +1339,11 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
@@ -1351,7 +1362,7 @@ End Class
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public async Task Configured_DisposeOwnershipTransfer_AtMethodCall(bool disposeOwnershipTransferAtMethodCall)
+        public async Task Configured_DisposeOwnershipTransfer_AtMethodCallAsync(bool disposeOwnershipTransferAtMethodCall)
         {
             var editorConfigText = disposeOwnershipTransferAtMethodCall ?
                         $@"dotnet_code_quality.interprocedural_analysis_kind = None
@@ -1385,7 +1396,11 @@ class Test
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
@@ -1425,7 +1440,11 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
@@ -1446,7 +1465,7 @@ End Class
         [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
         [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
         [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
-        internal async Task DocsMicrosoft_Sample(DisposeAnalysisKind disposeAnalysisKind)
+        internal async Task DocsMicrosoft_SampleAsync(DisposeAnalysisKind disposeAnalysisKind)
         {
             // See https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2000
 
@@ -1525,7 +1544,11 @@ public class SerialPort : IDisposable
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             };
 
@@ -1601,7 +1624,11 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             };
 
@@ -1618,7 +1645,7 @@ End Class
         }
 
         [Fact, WorkItem(1404, "https://github.com/dotnet/roslyn-analyzers/issues/1404#issuecomment-446715696")]
-        public async Task DisposableCreationInLoop()
+        public async Task DisposableCreationInLoopAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1654,7 +1681,7 @@ End Class
         [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
         [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
         [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
-        internal async Task ExceptionInFinally(DisposeAnalysisKind disposeAnalysisKind)
+        internal async Task ExceptionInFinallyAsync(DisposeAnalysisKind disposeAnalysisKind)
         {
             var vbTest = new VerifyVB.Test
             {
@@ -1696,7 +1723,10 @@ Public Class A
 End Class
 "
                     },
-                    AdditionalFiles = { (".editorconfig", GetEditorConfigContent(disposeAnalysisKind)) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{GetEditorConfigContent(disposeAnalysisKind)}") }
                 }
             };
 
@@ -1713,7 +1743,7 @@ End Class
         }
 
         [Fact]
-        public async Task LocalWithDisposableAssignment_DisposeBoolCall_NoDiagnostic()
+        public async Task LocalWithDisposableAssignment_DisposeBoolCall_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1772,7 +1802,7 @@ End Class");
         }
 
         [Fact]
-        public async Task LocalWithDisposableAssignment_CloseCall_NoDiagnostic()
+        public async Task LocalWithDisposableAssignment_CloseCall_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1831,7 +1861,7 @@ End Class");
         }
 
         [Fact, WorkItem(1796, "https://github.com/dotnet/roslyn-analyzers/issues/1796")]
-        public async Task LocalWithDisposableAssignment_DisposeAsyncCall_NoDiagnostic()
+        public async Task LocalWithDisposableAssignment_DisposeAsyncCall_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1889,7 +1919,7 @@ End Class");
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public async Task LocalWithAsyncDisposableAssignment_DisposeAsyncCall_NoDiagnostic()
+        public async Task LocalWithAsyncDisposableAssignment_DisposeAsyncCall_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -1942,7 +1972,7 @@ End Class"
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public async Task LocalWithAsyncDisposableAssignment_NoDisposeAsyncCall_Diagnostic()
+        public async Task LocalWithAsyncDisposableAssignment_NoDisposeAsyncCall_DiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -2001,7 +2031,7 @@ End Class",
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public async Task LocalWithAsyncDisposableAndDisposableAssignment_Disposed_NoDiagnostic()
+        public async Task LocalWithAsyncDisposableAndDisposableAssignment_Disposed_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -2073,7 +2103,7 @@ End Class"
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public async Task LocalWithAsyncDisposableAndDisposableAssignment_NotDisposed_Diagnostic()
+        public async Task LocalWithAsyncDisposableAndDisposableAssignment_NotDisposed_DiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -2140,7 +2170,7 @@ End Class",
         }
 
         [Fact, WorkItem(3305, "https://github.com/dotnet/roslyn-analyzers/issues/3305")]
-        public async Task LocalWithRefStructDisposableAssignment_NotDisposed_Diagnostic()
+        public async Task LocalWithRefStructDisposableAssignment_NotDisposed_DiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -2171,7 +2201,7 @@ class Test
         }
 
         [Fact, WorkItem(3305, "https://github.com/dotnet/roslyn-analyzers/issues/3305")]
-        public async Task LocalWithRefStructDisposableAssignment_Internal_NotDisposed_Diagnostic()
+        public async Task LocalWithRefStructDisposableAssignment_Internal_NotDisposed_DiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -2202,7 +2232,7 @@ class Test
         }
 
         [Fact, WorkItem(3305, "https://github.com/dotnet/roslyn-analyzers/issues/3305")]
-        public async Task LocalWithRefStructDisposableAssignment_Disposed_NoDiagnostic()
+        public async Task LocalWithRefStructDisposableAssignment_Disposed_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -2229,7 +2259,7 @@ class Test
         }
 
         [Fact]
-        public async Task ArrayElementWithDisposableAssignment_NoDiagnostic()
+        public async Task ArrayElementWithDisposableAssignment_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2270,7 +2300,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ArrayElementWithDisposableAssignment_ConstantIndex_NoDiagnostic()
+        public async Task ArrayElementWithDisposableAssignment_ConstantIndex_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2313,7 +2343,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ArrayElementWithDisposableAssignment_NonConstantIndex_NoDiagnostic()
+        public async Task ArrayElementWithDisposableAssignment_NonConstantIndex_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2356,7 +2386,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ArrayElementWithDisposableAssignment_NonConstantIndex_02_NoDiagnostic()
+        public async Task ArrayElementWithDisposableAssignment_NonConstantIndex_02_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2401,7 +2431,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ArrayInitializer_ElementWithDisposableAssignment_NoDiagnostic()
+        public async Task ArrayInitializer_ElementWithDisposableAssignment_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2441,7 +2471,7 @@ End Class");
         }
 
         [Fact, WorkItem(37528, "https://github.com/dotnet/roslyn/issues/37528")]
-        public async Task ArrayInitializer_MultipleElementsWithDisposableAssignment_NoDiagnostic()
+        public async Task ArrayInitializer_MultipleElementsWithDisposableAssignment_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2481,7 +2511,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ArrayInitializer_ElementWithDisposableAssignment_ConstantIndex_NoDiagnostic()
+        public async Task ArrayInitializer_ElementWithDisposableAssignment_ConstantIndex_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2523,7 +2553,7 @@ End Class");
         }
 
         [Fact, WorkItem(37528, "https://github.com/dotnet/roslyn/issues/37528")]
-        public async Task ArrayInitializer_MultipleElementsWithDisposableAssignment_ConstantIndices_NoDiagnostic()
+        public async Task ArrayInitializer_MultipleElementsWithDisposableAssignment_ConstantIndices_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2567,7 +2597,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ArrayInitializer_ElementWithDisposableAssignment_NonConstantIndex_NoDiagnostic()
+        public async Task ArrayInitializer_ElementWithDisposableAssignment_NonConstantIndex_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2613,7 +2643,7 @@ End Class");
         [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
         [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
         [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
-        internal async Task CollectionInitializer_ElementWithDisposableAssignment_NoDiagnostic(DisposeAnalysisKind disposeAnalysisKind)
+        internal async Task CollectionInitializer_ElementWithDisposableAssignment_NoDiagnosticAsync(DisposeAnalysisKind disposeAnalysisKind)
         {
             var editorConfigFile = GetEditorConfigContent(disposeAnalysisKind);
 
@@ -2644,7 +2674,11 @@ class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
 
@@ -2671,7 +2705,11 @@ Class Test
     End Sub
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
         }
@@ -2681,7 +2719,7 @@ End Class"
         [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
         [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
         [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
-        internal async Task CollectionInitializer_ElementWithDisposableAssignment_ConstantIndex_NoDiagnostic(DisposeAnalysisKind disposeAnalysisKind)
+        internal async Task CollectionInitializer_ElementWithDisposableAssignment_ConstantIndex_NoDiagnosticAsync(DisposeAnalysisKind disposeAnalysisKind)
         {
             var editorConfigFile = GetEditorConfigContent(disposeAnalysisKind);
 
@@ -2713,7 +2751,11 @@ class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
 
@@ -2741,7 +2783,11 @@ Class Test
     End Sub
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
         }
@@ -2751,7 +2797,7 @@ End Class"
         [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
         [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
         [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
-        internal async Task CollectionInitializer_ElementWithDisposableAssignment_NonConstantIndex_NoDiagnostic(DisposeAnalysisKind disposeAnalysisKind)
+        internal async Task CollectionInitializer_ElementWithDisposableAssignment_NonConstantIndex_NoDiagnosticAsync(DisposeAnalysisKind disposeAnalysisKind)
         {
             var editorConfigFile = GetEditorConfigContent(disposeAnalysisKind);
 
@@ -2783,7 +2829,11 @@ class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
 
@@ -2811,7 +2861,11 @@ Class Test
     End Sub
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
         }
@@ -2821,7 +2875,7 @@ End Class"
         [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
         [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
         [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
-        internal async Task CollectionAdd_SpecialCases_ElementWithDisposableAssignment_NoDiagnostic(DisposeAnalysisKind disposeAnalysisKind)
+        internal async Task CollectionAdd_SpecialCases_ElementWithDisposableAssignment_NoDiagnosticAsync(DisposeAnalysisKind disposeAnalysisKind)
         {
             var editorConfigFile = GetEditorConfigContent(disposeAnalysisKind);
 
@@ -2886,7 +2940,11 @@ class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
 
@@ -2959,7 +3017,11 @@ Class Test
     End Sub
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
         }
@@ -2969,7 +3031,7 @@ End Class"
         [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
         [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
         [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
-        internal async Task CollectionAdd_IReadOnlyCollection_SpecialCases_ElementWithDisposableAssignment_NoDiagnostic(DisposeAnalysisKind disposeAnalysisKind)
+        internal async Task CollectionAdd_IReadOnlyCollection_SpecialCases_ElementWithDisposableAssignment_NoDiagnosticAsync(DisposeAnalysisKind disposeAnalysisKind)
         {
             var editorConfigFile = GetEditorConfigContent(disposeAnalysisKind);
 
@@ -3035,7 +3097,11 @@ class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
 
@@ -3101,13 +3167,17 @@ Class Test
     End Sub
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
         }
 
         [Fact]
-        public async Task MemberInitializerWithDisposableAssignment_NoDiagnostic()
+        public async Task MemberInitializerWithDisposableAssignment_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3153,7 +3223,7 @@ End Class");
         }
 
         [Fact]
-        public async Task StructImplementingIDisposable_NoDiagnostic()
+        public async Task StructImplementingIDisposable_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3193,7 +3263,7 @@ End Class");
         }
 
         [Fact]
-        public async Task NonUserDefinedConversions_NoDiagnostic()
+        public async Task NonUserDefinedConversions_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3249,7 +3319,7 @@ End Class");
         }
 
         [Fact]
-        public async Task NonUserDefinedConversions_Diagnostic()
+        public async Task NonUserDefinedConversions_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3307,7 +3377,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UserDefinedConversions_NoDiagnostic()
+        public async Task UserDefinedConversions_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 
@@ -3391,7 +3461,7 @@ End Class");
         }
 
         [Fact]
-        public async Task LocalWithDisposableAssignment_ByRef_DisposedInCallee_NoDiagnostic()
+        public async Task LocalWithDisposableAssignment_ByRef_DisposedInCallee_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3444,7 +3514,7 @@ End Class");
         }
 
         [Fact]
-        public async Task LocalWithDisposableAssignment_ByRefEscape_AbstractVirtualMethod_NoDiagnostic()
+        public async Task LocalWithDisposableAssignment_ByRefEscape_AbstractVirtualMethod_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3503,7 +3573,7 @@ End Class");
         }
 
         [Fact]
-        public async Task LocalWithDisposableAssignment_OutRefKind_NotDisposed_Diagnostic()
+        public async Task LocalWithDisposableAssignment_OutRefKind_NotDisposed_DiagnosticAsync()
         {
             // Local/parameter passed as out is not considered escaped.
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -3538,7 +3608,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalWithDefaultOfDisposableAssignment_NoDiagnostic()
+        public async Task LocalWithDefaultOfDisposableAssignment_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3578,7 +3648,7 @@ End Module");
         }
 
         [Fact]
-        public async Task NullCoalesce_NoDiagnostic()
+        public async Task NullCoalesce_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3628,7 +3698,7 @@ End Class");
         }
 
         [Fact]
-        public async Task NullCoalesce_Diagnostic()
+        public async Task NullCoalesce_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3680,7 +3750,7 @@ End Class",
         }
 
         [Fact]
-        public async Task WhileLoop_DisposeOnBackEdge_NoDiagnostic()
+        public async Task WhileLoop_DisposeOnBackEdge_NoDiagnosticAsync()
         {
             // Need precise CFG to avoid false reports.
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -3737,7 +3807,7 @@ End Module");
         }
 
         [Fact, WorkItem(1648, "https://github.com/dotnet/roslyn-analyzers/issues/1648")]
-        public async Task WhileLoop_MissingDisposeOnExit_Diagnostic()
+        public async Task WhileLoop_MissingDisposeOnExit_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3798,7 +3868,7 @@ End Module",
         }
 
         [Fact]
-        public async Task WhileLoop_MissingDisposeOnEntry_Diagnostic()
+        public async Task WhileLoop_MissingDisposeOnEntry_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3867,7 +3937,7 @@ End Module",
         }
 
         [Fact]
-        public async Task DoWhileLoop_DisposeOnBackEdge_NoDiagnostic()
+        public async Task DoWhileLoop_DisposeOnBackEdge_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3923,7 +3993,7 @@ End Module");
         }
 
         [Fact]
-        public async Task DoWhileLoop_MissingDisposeOnExit_Diagnostic()
+        public async Task DoWhileLoop_MissingDisposeOnExit_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3978,7 +4048,7 @@ End Module",
         }
 
         [Fact]
-        public async Task DoWhileLoop_MissingDisposeOnEntry_Diagnostic()
+        public async Task DoWhileLoop_MissingDisposeOnEntry_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4046,7 +4116,7 @@ End Module",
         }
 
         [Fact]
-        public async Task ForLoop_DisposeOnBackEdge_NoDiagnostic()
+        public async Task ForLoop_DisposeOnBackEdge_NoDiagnosticAsync()
         {
             // Need precise CFG to avoid false reports.
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -4114,7 +4184,7 @@ End Module",
         }
 
         [Fact]
-        public async Task ForLoop_MissingDisposeOnExit_Diagnostic()
+        public async Task ForLoop_MissingDisposeOnExit_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4175,7 +4245,7 @@ End Module",
         }
 
         [Fact]
-        public async Task ForLoop_MissingDisposeOnEntry_Diagnostic()
+        public async Task ForLoop_MissingDisposeOnEntry_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4229,7 +4299,7 @@ End Module",
         }
 
         [Fact]
-        public async Task IfStatement_NoDiagnostic()
+        public async Task IfStatement_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4304,7 +4374,7 @@ End Class");
         }
 
         [Fact]
-        public async Task IfStatement_02_NoDiagnostic()
+        public async Task IfStatement_02_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4404,7 +4474,7 @@ End Class");
         }
 
         [Fact]
-        public async Task IfStatement_Diagnostic()
+        public async Task IfStatement_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4543,7 +4613,7 @@ End Class",
         }
 
         [Fact]
-        public async Task IfStatement_02_Diagnostic()
+        public async Task IfStatement_02_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4713,7 +4783,7 @@ End Class",
         }
 
         [Fact]
-        public async Task UsingStatement_NoDiagnostic()
+        public async Task UsingStatement_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4784,7 +4854,7 @@ End Class");
         }
 
         [Fact, WorkItem(2201, "https://github.com/dotnet/roslyn-analyzers/issues/2201")]
-        public async Task UsingStatementInTryCatch_NoDiagnostic()
+        public async Task UsingStatementInTryCatch_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -4820,7 +4890,7 @@ End Class");
         }
 
         [Fact, WorkItem(2201, "https://github.com/dotnet/roslyn-analyzers/issues/2201")]
-        public async Task NestedTryFinallyInTryCatch_NoDiagnostic()
+        public async Task NestedTryFinallyInTryCatch_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -4864,7 +4934,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ReturnStatement_NoDiagnostic()
+        public async Task ReturnStatement_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4941,7 +5011,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ReturnStatement_02_NoDiagnostic()
+        public async Task ReturnStatement_02_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5000,7 +5070,7 @@ End Class");
         }
 
         [Fact, WorkItem(2583, "https://github.com/dotnet/roslyn-analyzers/issues/2583")]
-        public async Task ReturnStatement_03_NoDiagnostic()
+        public async Task ReturnStatement_03_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5030,7 +5100,7 @@ public class C
         }
 
         [Fact, WorkItem(2583, "https://github.com/dotnet/roslyn-analyzers/issues/2583")]
-        public async Task ReturnStatement_04_NoDiagnostic()
+        public async Task ReturnStatement_04_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5062,7 +5132,7 @@ public class C
         }
 
         [Fact, WorkItem(2583, "https://github.com/dotnet/roslyn-analyzers/issues/2583")]
-        public async Task ReturnStatement_05_NoDiagnostic()
+        public async Task ReturnStatement_05_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5090,7 +5160,7 @@ public class C
         }
 
         [Fact]
-        public async Task LocalFunctionInvocation_EmptyBody_Diagnostic()
+        public async Task LocalFunctionInvocation_EmptyBody_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5125,7 +5195,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalFunctionInvocation_DisposesCapturedValue_NoDiagnostic()
+        public async Task LocalFunctionInvocation_DisposesCapturedValue_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5158,7 +5228,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalFunctionInvocation_CapturedValueAssignedNewDisposable_Diagnostic()
+        public async Task LocalFunctionInvocation_CapturedValueAssignedNewDisposable_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5193,7 +5263,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalFunctionInvocation_ChangesCapturedValueContextSensitive_Diagnostic()
+        public async Task LocalFunctionInvocation_ChangesCapturedValueContextSensitive_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5228,7 +5298,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalFunction_DisposableCreationNotDisposed_Diagnostic()
+        public async Task LocalFunction_DisposableCreationNotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5261,7 +5331,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalFunction_DisposableCreation_InvokedMultipleTimes_NotDisposed_Diagnostic()
+        public async Task LocalFunction_DisposableCreation_InvokedMultipleTimes_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5295,7 +5365,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalFunction_DisposableCreationReturned_NotDisposed_Diagnostic()
+        public async Task LocalFunction_DisposableCreationReturned_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5331,7 +5401,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalFunction_DisposableCreationReturned_Disposed_NoDiagnostic()
+        public async Task LocalFunction_DisposableCreationReturned_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5363,7 +5433,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalFunction_DisposableCreationAssignedToRefOutParameter_NotDisposed_Diagnostic()
+        public async Task LocalFunction_DisposableCreationAssignedToRefOutParameter_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5401,7 +5471,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalFunction_DisposableCreationAssignedToRefOutParameter_Disposed_NoDiagnostic()
+        public async Task LocalFunction_DisposableCreationAssignedToRefOutParameter_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5437,7 +5507,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalFunction_DisposableCreationAssignedToRefOutParameter_MultipleCalls_Diagnostic()
+        public async Task LocalFunction_DisposableCreationAssignedToRefOutParameter_MultipleCalls_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5477,7 +5547,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalFunction_DisposableCreation_MultipleLevelsBelow_NotDisposed_Diagnostic()
+        public async Task LocalFunction_DisposableCreation_MultipleLevelsBelow_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5520,7 +5590,7 @@ class Test
         }
 
         [Fact]
-        public async Task LocalFunction_DisposableCreation_MultipleLevelsBelow_Nested_NotDisposed_Diagnostic()
+        public async Task LocalFunction_DisposableCreation_MultipleLevelsBelow_Nested_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5563,7 +5633,7 @@ class Test
         }
 
         [Fact]
-        public async Task LambdaInvocation_EmptyBody_Diagnostic()
+        public async Task LambdaInvocation_EmptyBody_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5620,7 +5690,7 @@ End Module",
         }
 
         [Fact]
-        public async Task LambdaInvocation_DisposesCapturedValue_NoDiagnostic()
+        public async Task LambdaInvocation_DisposesCapturedValue_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5674,7 +5744,7 @@ End Module");
         }
 
         [Fact]
-        public async Task LambdaInvocation_CapturedValueAssignedNewDisposable_Diagnostic()
+        public async Task LambdaInvocation_CapturedValueAssignedNewDisposable_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5732,7 +5802,7 @@ End Module",
         }
 
         [Fact]
-        public async Task LambdaInvocation_ChangesCapturedValueContextSensitive_Diagnostic()
+        public async Task LambdaInvocation_ChangesCapturedValueContextSensitive_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5789,7 +5859,7 @@ End Module",
         }
 
         [Fact]
-        public async Task Lambda_DisposableCreationNotDisposed_Diagnostic()
+        public async Task Lambda_DisposableCreationNotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5820,7 +5890,7 @@ class Test
         }
 
         [Fact]
-        public async Task Lambda_DisposableCreation_InvokedMultipleTimes_NotDisposed_Diagnostic()
+        public async Task Lambda_DisposableCreation_InvokedMultipleTimes_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5852,7 +5922,7 @@ class Test
         }
 
         [Fact]
-        public async Task Lambda_DisposableCreationReturned_NotDisposed_Diagnostic()
+        public async Task Lambda_DisposableCreationReturned_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5886,7 +5956,7 @@ class Test
         }
 
         [Fact]
-        public async Task Lambda_DisposableCreationReturned_Disposed_NoDiagnostic()
+        public async Task Lambda_DisposableCreationReturned_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5916,7 +5986,7 @@ class Test
         }
 
         [Fact]
-        public async Task Lambda_DisposableCreationAssignedToRefOutParameter_NotDisposed_Diagnostic()
+        public async Task Lambda_DisposableCreationAssignedToRefOutParameter_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5953,7 +6023,7 @@ class Test
         }
 
         [Fact]
-        public async Task Lambda_DisposableCreationAssignedToRefOutParameter_Disposed_NoDiagnostic()
+        public async Task Lambda_DisposableCreationAssignedToRefOutParameter_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5988,7 +6058,7 @@ class Test
         }
 
         [Fact]
-        public async Task Lambda_DisposableCreationAssignedToRefOutParameter_MultipleCalls_Diagnostic()
+        public async Task Lambda_DisposableCreationAssignedToRefOutParameter_MultipleCalls_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6027,7 +6097,7 @@ class Test
         }
 
         [Fact]
-        public async Task Lambda_DisposableCreation_MultipleLevelsBelow_NotDisposed_Diagnostic()
+        public async Task Lambda_DisposableCreation_MultipleLevelsBelow_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6068,7 +6138,7 @@ class Test
         }
 
         [Fact]
-        public async Task Lambda_DisposableCreation_MultipleLevelsBelow_Nested_NotDisposed_Diagnostic()
+        public async Task Lambda_DisposableCreation_MultipleLevelsBelow_Nested_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6109,7 +6179,7 @@ class Test
         }
 
         [Fact]
-        public async Task Lambda_InvokedFromInterprocedural_NoDiagnostic()
+        public async Task Lambda_InvokedFromInterprocedural_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6139,7 +6209,7 @@ class Test
         [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
         [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
         [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
-        internal async Task Lambda_MayBeInvokedFromInterprocedural_Diagnostic(DisposeAnalysisKind disposeAnalysisKind)
+        internal async Task Lambda_MayBeInvokedFromInterprocedural_DiagnosticAsync(DisposeAnalysisKind disposeAnalysisKind)
         {
             var editorConfigFile = GetEditorConfigContent(disposeAnalysisKind);
 
@@ -6182,7 +6252,11 @@ class Test
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             };
 
@@ -6201,7 +6275,7 @@ class Test
         }
 
         [Fact]
-        public async Task DelegateInvocation_EmptyBody_NoArguments_Diagnostic()
+        public async Task DelegateInvocation_EmptyBody_NoArguments_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6258,7 +6332,7 @@ End Module",
         }
 
         [Fact]
-        public async Task DelegateInvocation_PassedAsArgumentButNotDisposed_Diagnostic()
+        public async Task DelegateInvocation_PassedAsArgumentButNotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6315,7 +6389,7 @@ End Module",
         }
 
         [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
-        public async Task DelegateInvocation_DisposesCapturedValue_NoDiagnostic()
+        public async Task DelegateInvocation_DisposesCapturedValue_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6367,7 +6441,7 @@ End Module");
         }
 
         [Fact]
-        public async Task PointsTo_ReferenceTypeCopyDisposed_NoDiagnostic()
+        public async Task PointsTo_ReferenceTypeCopyDisposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6412,7 +6486,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DynamicObjectCreation_Diagnostic()
+        public async Task DynamicObjectCreation_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6445,7 +6519,7 @@ class Test
         }
 
         [Fact]
-        public async Task DynamicObjectCreation_NoDiagnostic()
+        public async Task DynamicObjectCreation_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6477,7 +6551,7 @@ class Test
         }
 
         [Fact]
-        public async Task SpecialDisposableObjectCreationApis_Diagnostic()
+        public async Task SpecialDisposableObjectCreationApis_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6515,7 +6589,7 @@ End Class
         }
 
         [Fact]
-        public async Task SpecialDisposableObjectCreationApis_NoDiagnostic()
+        public async Task SpecialDisposableObjectCreationApis_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6552,7 +6626,7 @@ End Class
         }
 
         [Fact]
-        public async Task InvocationInstanceReceiverOrArgument_Diagnostic()
+        public async Task InvocationInstanceReceiverOrArgument_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6617,7 +6691,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DisposableCreationInArgument_Diagnostic()
+        public async Task DisposableCreationInArgument_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6669,7 +6743,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DisposableCreationNotAssignedToAVariable_Diagnostic()
+        public async Task DisposableCreationNotAssignedToAVariable_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6728,7 +6802,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DisposableCreationPassedToDisposableConstructor_NoDiagnostic()
+        public async Task DisposableCreationPassedToDisposableConstructor_NoDiagnosticAsync()
         {
             // Dispose ownership transfer
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -6844,7 +6918,7 @@ End Class
         }
 
         [Fact]
-        public async Task DisposableCreationPassedToDisposableConstructor_SpecialCases_NoDiagnostic()
+        public async Task DisposableCreationPassedToDisposableConstructor_SpecialCases_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -7064,7 +7138,7 @@ End Class
         }
 
         [Fact, WorkItem(1580, "https://github.com/dotnet/roslyn-analyzers/issues/1580")]
-        public async Task DisposableCreationPassedToDisposableConstructor_SpecialCases_ExceptionPath_Diagnostic()
+        public async Task DisposableCreationPassedToDisposableConstructor_SpecialCases_ExceptionPath_DiagnosticAsync()
         {
             // Disable interprocedural analysis to test special ctor invocation cases from metadata.
             var editorConfigFile = GetEditorConfigContentToDisableInterproceduralAnalysis(DisposeAnalysisKind.AllPaths);
@@ -7193,7 +7267,11 @@ class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") },
                     ExpectedDiagnostics =
                     {
                         // Test0.cs(34,25): warning CA2000: Use recommended dispose pattern to ensure that object created by 'new FileStream(filePath, fileMode)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
@@ -7303,7 +7381,11 @@ Class Test
 End Class
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") },
                     ExpectedDiagnostics =
                     {
                         // Test0.vb(30,32): warning CA2000: Use recommended dispose pattern to ensure that object created by 'New FileStream(filePath, fileMode)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
@@ -7322,7 +7404,7 @@ End Class
         }
 
         [Fact, WorkItem(1580, "https://github.com/dotnet/roslyn-analyzers/issues/1580")]
-        public async Task DisposableCreationPassedToDisposableConstructor_SpecialCases_InterproceduralAnalysis_ExceptionPath_Diagnostic()
+        public async Task DisposableCreationPassedToDisposableConstructor_SpecialCases_InterproceduralAnalysis_ExceptionPath_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -7547,7 +7629,7 @@ End Class
         [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
         [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
         [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
-        internal async Task DisposableObjectNotDisposed_ExceptionPath_Diagnostic(DisposeAnalysisKind disposeAnalysisKind)
+        internal async Task DisposableObjectNotDisposed_ExceptionPath_DiagnosticAsync(DisposeAnalysisKind disposeAnalysisKind)
         {
             var editorConfigFile = GetEditorConfigContent(disposeAnalysisKind);
 
@@ -7630,7 +7712,11 @@ class Test
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             };
             csharpTest.ExpectedDiagnostics.AddRange(builder);
@@ -7706,7 +7792,11 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             };
             vbTest.ExpectedDiagnostics.AddRange(builder);
@@ -7714,7 +7804,7 @@ End Class
         }
 
         [Fact]
-        public async Task DisposableObjectOnlyDisposedOnExceptionPath_Diagnostic()
+        public async Task DisposableObjectOnlyDisposedOnExceptionPath_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -7869,7 +7959,7 @@ End Class
         }
 
         [Fact]
-        public async Task DisposableObjectDisposed_FinallyPath_NoDiagnostic()
+        public async Task DisposableObjectDisposed_FinallyPath_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -7992,7 +8082,7 @@ End Class
         }
 
         [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
-        public async Task DisposableObjectInErrorCode_NotDisposed_BailOut_NoDiagnostic()
+        public async Task DisposableObjectInErrorCode_NotDisposed_BailOut_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -8017,7 +8107,7 @@ class B : IDisposable
         }
 
         [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
-        public async Task DisposableObjectInErrorCode_02_NotDisposed_BailOut_NoDiagnostic()
+        public async Task DisposableObjectInErrorCode_02_NotDisposed_BailOut_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -8050,7 +8140,7 @@ class Test
         }
 
         [Fact]
-        public async Task DelegateCreation_Disposed_NoDiagnostic()
+        public async Task DelegateCreation_Disposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -8107,12 +8197,9 @@ End Class");
         [InlineData(PointsToAnalysisKind.None)]
         [InlineData(PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties)]
         [InlineData(PointsToAnalysisKind.Complete)]
-        public async Task MemberReferenceInQueryFromClause_Disposed_NoDiagnostic(PointsToAnalysisKind? analysisKind)
+        public async Task MemberReferenceInQueryFromClause_Disposed_NoDiagnosticAsync(PointsToAnalysisKind? analysisKind)
         {
-            await new VerifyCS.Test()
-            {
-                AnalyzerConfigDocument = GetEditorConfigContent(analysisKind),
-                TestCode = @"
+            var source = @"
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -8150,12 +8237,19 @@ class Test
         y.Dispose();
     }
 }
-",
+";
+            await new VerifyCS.Test()
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    AnalyzerConfigFiles = { ("/.editorconfig", GetEditorConfigContent(analysisKind)) },
+                }
             }.RunAsync();
         }
 
         [Fact]
-        public async Task SystemThreadingTask_SpecialCase_NotDisposed_NoDiagnostic()
+        public async Task SystemThreadingTask_SpecialCase_NotDisposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading.Tasks;
@@ -8195,7 +8289,7 @@ End Class");
         }
 
         [Fact]
-        public async Task MultipleReturnStatements_AllInstancesReturned_NoDiagnostic()
+        public async Task MultipleReturnStatements_AllInstancesReturned_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -8257,7 +8351,7 @@ End Class
         }
 
         [Fact]
-        public async Task MultipleReturnStatements_AllInstancesEscapedWithOutParameter_NoDiagnostic()
+        public async Task MultipleReturnStatements_AllInstancesEscapedWithOutParameter_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -8317,7 +8411,7 @@ End Class
         }
 
         [Fact]
-        public async Task MultipleReturnStatements_AllButOneInstanceReturned_Diagnostic()
+        public async Task MultipleReturnStatements_AllButOneInstanceReturned_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -8448,7 +8542,7 @@ End Class
         }
 
         [Fact]
-        public async Task MultipleReturnStatements_AllButOneInstanceEscapedWithOutParameter_Diagnostic()
+        public async Task MultipleReturnStatements_AllButOneInstanceEscapedWithOutParameter_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -8570,7 +8664,7 @@ End Class
         }
 
         [Fact, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
-        public async Task DisposableAllocation_AssignedToTuple_Escaped_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedToTuple_Escaped_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -8632,7 +8726,7 @@ End Class
         [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
         [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
         [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
-        internal async Task DisposableAllocation_AssignedToTuple_Escaped_SpecialCases_NoDiagnostic(DisposeAnalysisKind disposeAnalysisKind)
+        internal async Task DisposableAllocation_AssignedToTuple_Escaped_SpecialCases_NoDiagnosticAsync(DisposeAnalysisKind disposeAnalysisKind)
         {
             var editorConfigFile = GetEditorConfigContent(disposeAnalysisKind);
 
@@ -8706,7 +8800,11 @@ public class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
         }
@@ -8716,7 +8814,7 @@ public class Test
         [InlineData(PointsToAnalysisKind.None)]
         [InlineData(PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties)]
         [InlineData(PointsToAnalysisKind.Complete)]
-        public async Task DisposableAllocation_AssignedToTuple_NotDisposed_SpecialCases_Diagnostic(PointsToAnalysisKind? pointsToAnalysisKind)
+        public async Task DisposableAllocation_AssignedToTuple_NotDisposed_SpecialCases_DiagnosticAsync(PointsToAnalysisKind? pointsToAnalysisKind)
         {
             var source = @"
 using System;
@@ -8786,8 +8884,11 @@ public class Test
 ";
             var test = new VerifyCS.Test()
             {
-                TestCode = source,
-                AnalyzerConfigDocument = GetEditorConfigContent(pointsToAnalysisKind)
+                TestState =
+                {
+                    Sources = { source },
+                    AnalyzerConfigFiles = { ("/.editorconfig", GetEditorConfigContent(pointsToAnalysisKind)) },
+                }
             };
 
             if (pointsToAnalysisKind != PointsToAnalysisKind.None)
@@ -8813,7 +8914,7 @@ public class Test
         }
 
         [Fact, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
-        public async Task DisposableAllocation_EscapedTupleLiteral_SpecialCases_NoDiagnostic()
+        public async Task DisposableAllocation_EscapedTupleLiteral_SpecialCases_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -8873,7 +8974,7 @@ public class Test
         [InlineData(PointsToAnalysisKind.None)]
         [InlineData(PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties)]
         [InlineData(PointsToAnalysisKind.Complete)]
-        public async Task DisposableAllocation_AddedToTupleLiteral_SpecialCases_Diagnostic(PointsToAnalysisKind? pointsToAnalysisKind)
+        public async Task DisposableAllocation_AddedToTupleLiteral_SpecialCases_DiagnosticAsync(PointsToAnalysisKind? pointsToAnalysisKind)
         {
             var csCode = @"
 using System;
@@ -8924,8 +9025,11 @@ public class Test
 
             var csTest = new VerifyCS.Test()
             {
-                TestCode = csCode,
-                AnalyzerConfigDocument = GetEditorConfigContent(pointsToAnalysisKind)
+                TestState =
+                {
+                    Sources = { csCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", GetEditorConfigContent(pointsToAnalysisKind)) },
+                }
             };
 
             if (pointsToAnalysisKind != PointsToAnalysisKind.None)
@@ -8957,7 +9061,7 @@ public class Test
         [InlineData(PointsToAnalysisKind.None)]
         [InlineData(PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties)]
         [InlineData(PointsToAnalysisKind.Complete)]
-        public async Task DisposableAllocation_AssignedToTuple_NotDisposed_Diagnostic(PointsToAnalysisKind? pointsToAnalysisKind)
+        public async Task DisposableAllocation_AssignedToTuple_NotDisposed_DiagnosticAsync(PointsToAnalysisKind? pointsToAnalysisKind)
         {
             var csCode = @"
 using System;
@@ -8986,8 +9090,11 @@ public class Test
 }";
             var csTest = new VerifyCS.Test()
             {
-                TestCode = csCode,
-                AnalyzerConfigDocument = GetEditorConfigContent(pointsToAnalysisKind)
+                TestState =
+                {
+                    Sources = { csCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", GetEditorConfigContent(pointsToAnalysisKind)) },
+                }
             };
 
             if (pointsToAnalysisKind != PointsToAnalysisKind.None)
@@ -9029,8 +9136,11 @@ End Class
 ";
             var vbTest = new VerifyVB.Test()
             {
-                TestCode = vbCode,
-                AnalyzerConfigDocument = GetEditorConfigContent(pointsToAnalysisKind)
+                TestState =
+                {
+                    Sources = { vbCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", GetEditorConfigContent(pointsToAnalysisKind)) },
+                }
             };
 
             if (pointsToAnalysisKind != PointsToAnalysisKind.None)
@@ -9048,7 +9158,7 @@ End Class
         }
 
         [Fact, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
-        public async Task DisposableAllocation_AssignedToTuple_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedToTuple_Disposed_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -9127,7 +9237,7 @@ End Class
         }
 
         [Fact, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
-        public async Task DisposableAllocation_AssignedToTuple_Item1_Disposed_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedToTuple_Item1_Disposed_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -9193,7 +9303,7 @@ End Class
         }
 
         [Fact, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
-        public async Task DisposableAllocation_DeconstructionAssignmentToTuple_DeconstructMethod_Diagnostic()
+        public async Task DisposableAllocation_DeconstructionAssignmentToTuple_DeconstructMethod_DiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -9268,7 +9378,7 @@ public class Test
         }
 
         [Fact, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
-        public async Task DisposableAllocation_RefArgument_Diagnostic()
+        public async Task DisposableAllocation_RefArgument_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -9296,7 +9406,7 @@ public class Test
         }
 
         [Fact]
-        public async Task DisposableAllocation_IncrementOperator_RegressionTest()
+        public async Task DisposableAllocation_IncrementOperator_RegressionTestAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -9323,7 +9433,7 @@ public class Test
         }
 
         [Fact]
-        public async Task DifferentDisposePatternsInFinally_NoDiagnostic()
+        public async Task DifferentDisposePatternsInFinally_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -9784,7 +9894,7 @@ End Class
         }
 
         [Fact]
-        public async Task DifferentDisposePatternsInFinally_Diagnostic()
+        public async Task DifferentDisposePatternsInFinally_DiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -10082,7 +10192,10 @@ class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", GetEditorConfigContent(DisposeAnalysisKind.AllPaths)) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{GetEditorConfigContent(DisposeAnalysisKind.AllPaths)}") },
                     ExpectedDiagnostics =
                     {
                         // Test0.cs(17,15): warning CA2000: Use recommended dispose pattern to ensure that object created by 'new A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
@@ -10325,7 +10438,10 @@ Class Test
 End Class
 "
                     },
-                    AdditionalFiles = { (".editorconfig", GetEditorConfigContent(DisposeAnalysisKind.AllPaths)) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{GetEditorConfigContent(DisposeAnalysisKind.AllPaths)}") },
                     ExpectedDiagnostics =
                     {
                         // Test0.vb(16,22): warning CA2000: Use recommended dispose pattern to ensure that object created by 'New A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
@@ -10352,7 +10468,7 @@ End Class
         }
 
         [Fact]
-        public async Task DisposableObjectsCopyValues_NoDiagnostic()
+        public async Task DisposableObjectsCopyValues_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10396,7 +10512,7 @@ class Test
         }
 
         [Fact]
-        public async Task DisposableObjectsCopyValues_NoDiagnostic_02()
+        public async Task DisposableObjectsCopyValues_NoDiagnostic_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10472,7 +10588,7 @@ class DataflowAnalysis<TContext>
         [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
         [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
         [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
-        internal async Task ExceptionFromCatch_Diagnostic(DisposeAnalysisKind disposeAnalysisKind)
+        internal async Task ExceptionFromCatch_DiagnosticAsync(DisposeAnalysisKind disposeAnalysisKind)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -10517,7 +10633,10 @@ class MyException: Exception
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", GetEditorConfigContent(disposeAnalysisKind)) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{GetEditorConfigContent(disposeAnalysisKind)}") }
                 }
             };
 
@@ -10534,7 +10653,7 @@ class MyException: Exception
         }
 
         [Fact]
-        public async Task InvocationOfLambdaCachedOntoField_InterproceduralAnalysis()
+        public async Task InvocationOfLambdaCachedOntoField_InterproceduralAnalysisAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10574,7 +10693,7 @@ class A : IDisposable
         }
 
         [Fact]
-        public async Task InvocationOfLocalFunctionCachedOntoField_InterproceduralAnalysis()
+        public async Task InvocationOfLocalFunctionCachedOntoField_InterproceduralAnalysisAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10616,7 +10735,7 @@ class A : IDisposable
         }
 
         [Fact]
-        public async Task InvocationOfMethodDelegate_PriorInterproceduralCallChain()
+        public async Task InvocationOfMethodDelegate_PriorInterproceduralCallChainAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10652,7 +10771,7 @@ class A : IDisposable
         }
 
         [Fact]
-        public async Task RecursiveInvocationWithConditionalAccess_InterproceduralAnalysis()
+        public async Task RecursiveInvocationWithConditionalAccess_InterproceduralAnalysisAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10675,7 +10794,7 @@ class A : IDisposable
         }
 
         [Fact]
-        public async Task StaticExtensionMethodInvokedAsDelegate_InterproceduralAnalysis()
+        public async Task StaticExtensionMethodInvokedAsDelegate_InterproceduralAnalysisAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10715,7 +10834,7 @@ internal static class AExtensions
         }
 
         [Fact]
-        public async Task InfiniteAnalysesIterationBug_InterproceduralAnalysis()
+        public async Task InfiniteAnalysesIterationBug_InterproceduralAnalysisAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10797,7 +10916,7 @@ public class CustomType : IDisposable
         }
 
         [Fact, WorkItem(2212, "https://github.com/dotnet/roslyn-analyzers/issues/2212")]
-        public async Task ReturnDisposableObjectWrappenInTask_NoDiagnostic()
+        public async Task ReturnDisposableObjectWrappenInTask_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10832,7 +10951,7 @@ End Class");
         }
 
         [Fact, WorkItem(2212, "https://github.com/dotnet/roslyn-analyzers/issues/2212")]
-        public async Task AwaitedButNotDisposed_Diagnostic()
+        public async Task AwaitedButNotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10881,7 +11000,7 @@ End Class",
         }
 
         [Fact, WorkItem(2212, "https://github.com/dotnet/roslyn-analyzers/issues/2212")]
-        public async Task AwaitedButNotDisposed_TaskWrappingField_NoDiagnostic()
+        public async Task AwaitedButNotDisposed_TaskWrappingField_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10929,7 +11048,7 @@ End Class");
         }
 
         [Fact, WorkItem(2347, "https://github.com/dotnet/roslyn-analyzers/issues/2347")]
-        public async Task ReturnDisposableObjectInAsyncMethod_DisposedInCaller_NoDiagnostic()
+        public async Task ReturnDisposableObjectInAsyncMethod_DisposedInCaller_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10956,7 +11075,7 @@ class C : IDisposable
         }
 
         [Fact, WorkItem(2347, "https://github.com/dotnet/roslyn-analyzers/issues/2347")]
-        public async Task ReturnDisposableObjectInAsyncMethod_NotDisposedInCaller_Diagnostic()
+        public async Task ReturnDisposableObjectInAsyncMethod_NotDisposedInCaller_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -10984,7 +11103,7 @@ class C : IDisposable
         }
 
         [Fact, WorkItem(37065, "https://github.com/dotnet/roslyn/issues/37065")]
-        public async Task ReturnDisposableObjectInAsyncMethod_DisposedInCallerInUsing_NoDiagnostic()
+        public async Task ReturnDisposableObjectInAsyncMethod_DisposedInCallerInUsing_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -11009,7 +11128,7 @@ public class C
         }
 
         [Fact, WorkItem(2361, "https://github.com/dotnet/roslyn-analyzers/issues/2361")]
-        public async Task ExpressionBodiedMethod_ReturnsDisposableObject_NoDiagnostic()
+        public async Task ExpressionBodiedMethod_ReturnsDisposableObject_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -11021,7 +11140,7 @@ class C
         }
 
         [Fact, WorkItem(2361, "https://github.com/dotnet/roslyn-analyzers/issues/2361")]
-        public async Task ReturnsDisposableObject_NotDisposed_Diagnostic()
+        public async Task ReturnsDisposableObject_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -11040,7 +11159,7 @@ class C
         }
 
         [Fact]
-        public async Task PointsToAnalysisAssert_UninitializedLocalPassedToInvocation()
+        public async Task PointsToAnalysisAssert_UninitializedLocalPassedToInvocationAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -11067,7 +11186,7 @@ class C : IDisposable
         }
 
         [Fact, WorkItem(2497, "https://github.com/dotnet/roslyn-analyzers/issues/2497")]
-        public async Task UsingStatementInCatch()
+        public async Task UsingStatementInCatchAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -11092,7 +11211,7 @@ class C : IDisposable
         }
 
         [Fact, WorkItem(2497, "https://github.com/dotnet/roslyn-analyzers/issues/2497")]
-        public async Task TryFinallyStatementInCatch()
+        public async Task TryFinallyStatementInCatchAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -11123,7 +11242,7 @@ class C : IDisposable
         }
 
         [Fact, WorkItem(2497, "https://github.com/dotnet/roslyn-analyzers/issues/2497")]
-        public async Task UsingStatementInFinally()
+        public async Task UsingStatementInFinallyAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -11148,7 +11267,7 @@ class C : IDisposable
         }
 
         [Fact, WorkItem(2506, "https://github.com/dotnet/roslyn-analyzers/issues/2506")]
-        public async Task ErroroneousCodeWithBrokenIfCondition_BailOut_NoDiagnostic()
+        public async Task ErroroneousCodeWithBrokenIfCondition_BailOut_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -11166,7 +11285,7 @@ class C : IDisposable
         }
 
         [Fact, WorkItem(2506, "https://github.com/dotnet/roslyn-analyzers/issues/2506")]
-        public async Task ErroroneousCodeWithBrokenIfCondition_Interprocedural_BailOut_NoDiagnostic()
+        public async Task ErroroneousCodeWithBrokenIfCondition_Interprocedural_BailOut_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -11191,7 +11310,7 @@ class C : IDisposable
         }
 
         [Fact, WorkItem(2529, "https://github.com/dotnet/roslyn-analyzers/issues/2529")]
-        public async Task MultilineDisposableCreation_SingleLine_Diagnostic()
+        public async Task MultilineDisposableCreation_SingleLine_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -11219,7 +11338,7 @@ class Test
         }
 
         [Fact]
-        public async Task DisposableObject_NotDisposed_DisposeOwnershipTransferAtMethodCall_NoDiagnostic()
+        public async Task DisposableObject_NotDisposed_DisposeOwnershipTransferAtMethodCall_NoDiagnosticAsync()
         {
             var editorConfigText = $@"dotnet_code_quality.interprocedural_analysis_kind = None
                                       dotnet_code_quality.dispose_ownership_transfer_at_method_call = true";
@@ -11248,13 +11367,17 @@ class C : IDisposable
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
 }
             }.RunAsync();
         }
 
         [Fact]
-        public async Task OutArgument_Disposed_DisposeOwnershipTransferAtMethodCall_NoDiagnostic()
+        public async Task OutArgument_Disposed_DisposeOwnershipTransferAtMethodCall_NoDiagnosticAsync()
         {
             var editorConfigText = $@"dotnet_code_quality.interprocedural_analysis_kind = None
                                       dotnet_code_quality.dispose_ownership_transfer_at_method_call = true";
@@ -11296,14 +11419,18 @@ public class C
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             }.RunAsync();
         }
 
         [Fact]
         [WorkItem(2637, "https://github.com/dotnet/roslyn-analyzers/issues/2637")]
-        public async Task DisposableObject_NotDisposed_ReturnedObject_NoDiagnostic()
+        public async Task DisposableObject_NotDisposed_ReturnedObject_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -11338,7 +11465,7 @@ public static class CA2000Issue
 
         [Fact]
         [WorkItem(2637, "https://github.com/dotnet/roslyn-analyzers/issues/2637")]
-        public async Task DisposableObject_NotDisposed_ReturnedObject_NoDiagnostic_02()
+        public async Task DisposableObject_NotDisposed_ReturnedObject_NoDiagnostic_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -11373,7 +11500,7 @@ public static class CA2000Issue
 
         [Fact]
         [WorkItem(2637, "https://github.com/dotnet/roslyn-analyzers/issues/2637")]
-        public async Task DisposableObject_NotDisposed_SomePaths_Diagnostic()
+        public async Task DisposableObject_NotDisposed_SomePaths_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -11409,7 +11536,7 @@ public static class CA2000Issue
 
         [Fact]
         [WorkItem(2637, "https://github.com/dotnet/roslyn-analyzers/issues/2637")]
-        public async Task DisposableObject_NotDisposed_SomePaths_Diagnostic_02()
+        public async Task DisposableObject_NotDisposed_SomePaths_Diagnostic_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -11445,7 +11572,7 @@ public static class CA2000Issue
 
         [Fact]
         [WorkItem(36643, "https://github.com/dotnet/roslyn/issues/36643")]
-        public async Task DisposableObject_StoredInField_NotDisposed_NoDiagnostic()
+        public async Task DisposableObject_StoredInField_NotDisposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -11466,7 +11593,7 @@ public class C
 
         [Fact]
         [WorkItem(36643, "https://github.com/dotnet/roslyn/issues/36643")]
-        public async Task DisposableObject_StoredInField_NotDisposed_NoDiagnostic_02()
+        public async Task DisposableObject_StoredInField_NotDisposed_NoDiagnostic_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -11488,7 +11615,7 @@ public class C
 
         [Fact]
         [WorkItem(36643, "https://github.com/dotnet/roslyn/issues/36643")]
-        public async Task DisposableObject_StoredInLocal_NotDisposed_Diagnostic()
+        public async Task DisposableObject_StoredInLocal_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -11515,7 +11642,7 @@ public class C
         [InlineData("dotnet_code_quality.CA2000.excluded_symbol_names = M1")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = M1")]
         [InlineData("dotnet_code_quality.CA2000.excluded_symbol_names = M*")]
-        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOptionAsync(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -11542,7 +11669,11 @@ class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
@@ -11578,7 +11709,11 @@ Class Test
     End Sub
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
@@ -11598,7 +11733,7 @@ End Class"
         [InlineData("")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = M2")]
         [InlineData("dotnet_code_quality.interproceduraldataflow.excluded_symbol_names = M2")]
-        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption_InterproceduralDataflow(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption_InterproceduralDataflowAsync(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -11628,7 +11763,11 @@ class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
@@ -11669,7 +11808,11 @@ Class Test
     End Sub
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
@@ -11687,7 +11830,7 @@ End Class"
 
         [Fact]
         [WorkItem(2746, "https://github.com/dotnet/roslyn-analyzers/issues/2746#issuecomment-518959894")]
-        public async Task DisposableObject_ReturnOperationWithInvocation_NotDisposed_Diagnostic()
+        public async Task DisposableObject_ReturnOperationWithInvocation_NotDisposed_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -11729,7 +11872,7 @@ public class Consumer
 
         [Fact]
         [WorkItem(2782, "https://github.com/dotnet/roslyn-analyzers/issues/2782")]
-        public async Task DisposableObject_CoalesceAssignment_NotDisposed_Diagnostic()
+        public async Task DisposableObject_CoalesceAssignment_NotDisposed_DiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -11771,7 +11914,7 @@ namespace ConsoleApp1
 
         [Fact]
         [WorkItem(2782, "https://github.com/dotnet/roslyn-analyzers/issues/2782")]
-        public async Task DisposableObject_CoalesceAssignment_NotDisposed_Diagnostic_02()
+        public async Task DisposableObject_CoalesceAssignment_NotDisposed_Diagnostic_02Async()
         {
             await new VerifyCS.Test
             {
@@ -11812,7 +11955,7 @@ namespace ConsoleApp1
 
         [Fact]
         [WorkItem(2746, "https://github.com/dotnet/roslyn-analyzers/issues/2746")]
-        public async Task DisposableObject_FieldAsOutArgument_NotDisposed_NoDiagnostic()
+        public async Task DisposableObject_FieldAsOutArgument_NotDisposed_NoDiagnosticAsync()
         {
             var editorConfigFile = GetEditorConfigContentToDisableInterproceduralAnalysis(DisposeAnalysisKind.AllPaths);
 
@@ -11852,14 +11995,18 @@ class B : IDisposable
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
         }
 
         [Fact]
         [WorkItem(2746, "https://github.com/dotnet/roslyn-analyzers/issues/2746")]
-        public async Task DisposableObject_FieldAsRefArgument_NotDisposed_NoDiagnostic()
+        public async Task DisposableObject_FieldAsRefArgument_NotDisposed_NoDiagnosticAsync()
         {
             var editorConfigFile = GetEditorConfigContentToDisableInterproceduralAnalysis(DisposeAnalysisKind.AllPaths);
 
@@ -11899,14 +12046,18 @@ class B : IDisposable
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
         }
 
         [Fact]
         [WorkItem(2681, "https://github.com/dotnet/roslyn-analyzers/issues/2681")]
-        public async Task DisposableObject_InterlockedAssignmentToField_NotDisposed_NoDiagnostic()
+        public async Task DisposableObject_InterlockedAssignmentToField_NotDisposed_NoDiagnosticAsync()
         {
             var editorConfigFile = GetEditorConfigContentToDisableInterproceduralAnalysis(DisposeAnalysisKind.AllPaths);
 
@@ -11947,14 +12098,18 @@ class Test
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigFile) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigFile}
+") }
                 }
             }.RunAsync();
         }
 
         [Fact]
         [WorkItem(3082, "https://github.com/dotnet/roslyn-analyzers/issues/3082")]
-        public async Task DisposableObject_DictionaryAddVariants_NotDisposed_NoDiagnostic()
+        public async Task DisposableObject_DictionaryAddVariants_NotDisposed_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -12023,7 +12178,7 @@ class Test
         [InlineData("dotnet_code_quality.excluded_symbol_names = N:MyNamespace")]
         [InlineData("dotnet_code_quality.CA2000.excluded_type_names_with_derived_types = T:MyNamespace.A")]
         [InlineData("dotnet_code_quality.excluded_type_names_with_derived_types = T:MyNamespace.A")]
-        public async Task LocalInvocationOfAnExcludedType_NoDiagnostic(string editorConfigText)
+        public async Task LocalInvocationOfAnExcludedType_NoDiagnosticAsync(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -12057,7 +12212,11 @@ namespace MyNamespace
     }
 }",
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") },
                 }
             };
 
@@ -12101,7 +12260,11 @@ Namespace MyNamespace
     End Class
 End Namespace",
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") },
                 }
             };
 
@@ -12119,7 +12282,7 @@ End Namespace",
         }
 
         [Fact, WorkItem(3297, "https://github.com/dotnet/roslyn-analyzers/issues/3297")]
-        public async Task NameOfInsideTheScope_Diagnostic()
+        public async Task NameOfInsideTheScope_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -12155,7 +12318,7 @@ class Test
         }
 
         [Fact, WorkItem(3212, "https://github.com/dotnet/roslyn-analyzers/issues/3212")]
-        public async Task StringReader_NoDiagnostic()
+        public async Task StringReader_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
@@ -12179,7 +12342,7 @@ End Class");
         }
 
         [Fact, WorkItem(3212, "https://github.com/dotnet/roslyn-analyzers/issues/3212")]
-        public async Task StringReader_CustomSymbolExclusion_NoDiagnostic()
+        public async Task StringReader_CustomSymbolExclusion_NoDiagnosticAsync()
         {
             string editorConfigText = $"dotnet_code_quality.{DisposeObjectsBeforeLosingScope.RuleId}.excluded_symbol_names = T:A";
 
@@ -12209,7 +12372,11 @@ public class C
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") },
                 }
             }.RunAsync();
 
@@ -12236,13 +12403,17 @@ Public Class C
     End Sub
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") },
                 }
             }.RunAsync();
         }
 
         [Fact(Skip = "The throw statement prevents the analysis"), WorkItem(3356, "https://github.com/dotnet/roslyn-analyzers/issues/3356")]
-        public async Task Dispose_UnconditionalThrowStatement_NoDiagnostic()
+        public async Task Dispose_UnconditionalThrowStatement_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -12284,7 +12455,7 @@ End Class",
         }
 
         [Fact]
-        public async Task Dispose_ConditionalThrowStatement_Diagnostic()
+        public async Task Dispose_ConditionalThrowStatement_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -12328,7 +12499,7 @@ End Class",
         }
 
         [Fact]
-        public async Task Dispose_UsingDeclaration_NoDiagnostic()
+        public async Task Dispose_UsingDeclaration_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -12363,7 +12534,7 @@ public class Class1
         }
 
         [Fact, WorkItem(3873, "https://github.com/dotnet/roslyn-analyzers/issues/3873")]
-        public async Task Dispose_ConditionalControlFlow_NoDiagnostic()
+        public async Task Dispose_ConditionalControlFlow_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -12400,7 +12571,7 @@ namespace CA2000Test
         }
 
         [Fact, WorkItem(3873, "https://github.com/dotnet/roslyn-analyzers/issues/3873")]
-        public async Task Dispose_ConditionalControlFlow_NoDiagnostic_02()
+        public async Task Dispose_ConditionalControlFlow_NoDiagnostic_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -12427,6 +12598,23 @@ class Program
         return disposables[0] ?? new Process();
     }
 }");
+        }
+
+        [Fact, WorkItem(4147, "https://github.com/dotnet/roslyn-analyzers/issues/4147")]
+        public async Task Dispose_ValueIsObviouslyMemoryStream_NoDiagnosticAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+    using System;
+    using System.IO;
+
+    class Program
+    {
+        public void TestCa2000()
+        {
+            var ms = new MemoryStream();
+            return;
+        }
+    }");
         }
     }
 }

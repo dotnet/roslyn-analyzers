@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
+using Roslyn.Utilities;
 
 namespace Analyzer.Utilities
 {
@@ -15,11 +16,11 @@ namespace Analyzer.Utilities
         private const string DotnetCodeQualityKeyPrefix = "dotnet_code_quality.";
         private const string BuildPropertyKeyPrefix = "build_property.";
 
-        private readonly ConcurrentDictionary<string, (bool found, object? value)> _computedOptionValuesMap;
+        private readonly ConcurrentDictionary<OptionKey, (bool found, object? value)> _computedOptionValuesMap;
 
         protected AbstractCategorizedAnalyzerConfigOptions()
         {
-            _computedOptionValuesMap = new ConcurrentDictionary<string, (bool found, object? value)>();
+            _computedOptionValuesMap = new ConcurrentDictionary<OptionKey, (bool found, object? value)>();
         }
 
         public abstract bool IsEmpty { get; }
@@ -43,24 +44,7 @@ namespace Analyzer.Utilities
                 _ => throw new NotImplementedException()
             };
 
-        protected static bool HasSupportedKeyPrefix(string key, [NotNullWhen(returnValue: true)] out string? keyPrefix)
-        {
-            if (key.StartsWith(DotnetCodeQualityKeyPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                keyPrefix = DotnetCodeQualityKeyPrefix;
-                return true;
-            }
-
-            if (key.StartsWith(BuildPropertyKeyPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                keyPrefix = BuildPropertyKeyPrefix;
-                return true;
-            }
-
-            keyPrefix = null;
-            return false;
-        }
-
+        [PerformanceSensitive("https://github.com/dotnet/roslyn-analyzers/issues/4905", AllowCaptures = false)]
         public bool TryGetOptionValue<T>(string optionName, OptionKind kind, DiagnosticDescriptor? rule, TryParseValue<T> tryParseValue, T defaultValue, out T value)
         {
             if (this.IsEmpty)
@@ -69,11 +53,10 @@ namespace Analyzer.Utilities
                 return false;
             }
 
-            var keyPrefix = rule != null ? $"{rule.Id}." : string.Empty;
-            var key = $"{keyPrefix}{optionName}";
+            var key = OptionKey.GetOrCreate(rule?.Id, optionName);
             if (!_computedOptionValuesMap.TryGetValue(key, out var computedValue))
             {
-                computedValue = _computedOptionValuesMap.GetOrAdd(key, _ => ComputeOptionValue(optionName, kind, rule, tryParseValue));
+                computedValue = _computedOptionValuesMap.GetOrAdd(key, ComputeOptionValue(optionName, kind, rule, tryParseValue));
             }
 
             if (computedValue.found)
@@ -92,15 +75,12 @@ namespace Analyzer.Utilities
         {
             var optionKeyPrefix = MapOptionKindToKeyPrefix(kind);
 
-            T? optionValue;
-            if (rule != null)
+            if (rule != null
+                && (TryGetSpecificOptionValue(rule.Id, optionKeyPrefix, out T? optionValue)
+                || TryGetSpecificOptionValue(rule.Category, optionKeyPrefix, out optionValue)
+                || TryGetAnySpecificOptionValue(rule.CustomTags, optionKeyPrefix, out optionValue)))
             {
-                if (TryGetSpecificOptionValue(rule.Id, optionKeyPrefix, out optionValue) ||
-                    TryGetSpecificOptionValue(rule.Category, optionKeyPrefix, out optionValue) ||
-                    TryGetAnySpecificOptionValue(rule.CustomTags, optionKeyPrefix, out optionValue))
-                {
-                    return (true, optionValue);
-                }
+                return (true, optionValue);
             }
 
             if (TryGetGeneralOptionValue(optionKeyPrefix, out optionValue))

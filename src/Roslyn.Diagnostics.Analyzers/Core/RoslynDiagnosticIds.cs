@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 namespace Roslyn.Diagnostics.Analyzers
 {
@@ -53,6 +53,8 @@ namespace Roslyn.Diagnostics.Analyzers
         public const string NamedTypeFullNameNotNullSuppressionRuleId = "RS0047";
         public const string PublicApiFileMissing = "RS0048";
         public const string TemporaryArrayAsRefRuleId = "RS0049";
+
+        public const string RemovedApiIsNotActuallyRemovedRuleId = "RS0050";
 
         //public const string WrapStatementsRuleId = "RS0100"; // Now ported to dotnet/roslyn https://github.com/dotnet/roslyn/pull/50358
         //public const string BlankLinesRuleId = "RS0101"; // Now ported to dotnet/roslyn https://github.com/dotnet/roslyn/pull/50358

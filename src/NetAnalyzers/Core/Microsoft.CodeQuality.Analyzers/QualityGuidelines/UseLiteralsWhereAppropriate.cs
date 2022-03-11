@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -10,38 +10,39 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA1802: Use literals where appropriate
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class UseLiteralsWhereAppropriateAnalyzer : DiagnosticAnalyzer
+    public abstract class UseLiteralsWhereAppropriateAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1802";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseLiteralsWhereAppropriateTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(UseLiteralsWhereAppropriateTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(UseLiteralsWhereAppropriateDescription));
 
-        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseLiteralsWhereAppropriateMessageDefault), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageEmptyString = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseLiteralsWhereAppropriateMessageEmptyString), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseLiteralsWhereAppropriateDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(UseLiteralsWhereAppropriateMessageDefault)),
+            DiagnosticCategory.Performance,
+            RuleLevel.CandidateForRemoval,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageDefault,
-                                                                             DiagnosticCategory.Performance,
-                                                                             RuleLevel.CandidateForRemoval,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor EmptyStringRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageEmptyString,
-                                                                             DiagnosticCategory.Performance,
-                                                                             RuleLevel.CandidateForRemoval,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor EmptyStringRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(UseLiteralsWhereAppropriateMessageEmptyString)),
+            DiagnosticCategory.Performance,
+            RuleLevel.CandidateForRemoval,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, EmptyStringRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DefaultRule, EmptyStringRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -70,13 +71,19 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         lastField.IsConst ||
                         !lastField.IsReadOnly ||
                         !fieldInitializerValue.ConstantValue.HasValue ||
-                        !context.Options.MatchesConfiguredVisibility(DefaultRule, lastField, context.Compilation, context.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.Internal | SymbolVisibilityGroup.Private) ||
-                        !context.Options.MatchesConfiguredModifiers(DefaultRule, lastField, context.Compilation, context.CancellationToken, defaultRequiredModifiers: SymbolModifiers.Static))
+                        !context.Options.MatchesConfiguredVisibility(DefaultRule, lastField, context.Compilation, defaultRequiredVisibility: SymbolVisibilityGroup.Internal | SymbolVisibilityGroup.Private) ||
+                        !context.Options.MatchesConfiguredModifiers(DefaultRule, lastField, context.Compilation, defaultRequiredModifiers: SymbolModifiers.Static))
                     {
                         return;
                     }
 
                     var initializerValue = fieldInitializerValue.ConstantValue.Value;
+
+                    if (fieldInitializerValue.Kind == OperationKind.InterpolatedString &&
+                        !IsConstantInterpolatedStringSupported(fieldInitializerValue.Syntax.SyntaxTree.Options))
+                    {
+                        return;
+                    }
 
                     // Though null is const we don't fire the diagnostic to be FxCop Compact
                     if (initializerValue != null &&
@@ -95,5 +102,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 OperationKind.FieldInitializer);
             });
         }
+
+        protected abstract bool IsConstantInterpolatedStringSupported(ParseOptions compilation);
     }
 }

@@ -32,4 +32,10 @@
     <!-- TODO: Remove this exclusion and fix related issues, tracked by https://github.com/dotnet/roslyn-analyzers/issues/3915 -->
     <Rule Id="RS0041" Action="None" />
   </Rules>
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.NetAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.NetAnalyzers">
+    <!-- 🐢 Avoid dead conditional code: https://github.com/dotnet/roslyn-analyzers/issues/4914 -->
+    <Rule Id="CA1508" Action="None" />
+    <!-- 🐢 Dispose objects before losing scope: https://github.com/dotnet/roslyn-analyzers/issues/4915 -->
+    <Rule Id="CA2000" Action="None" />
+  </Rules>
 </RuleSet>

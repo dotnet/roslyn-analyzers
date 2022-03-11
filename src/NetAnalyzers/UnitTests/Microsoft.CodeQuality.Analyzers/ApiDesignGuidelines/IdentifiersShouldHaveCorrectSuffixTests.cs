@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Threading.Tasks;
@@ -17,7 +17,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class IdentifiersShouldHaveCorrectSuffixTests
     {
         [Fact]
-        public async Task CA1710_AllScenarioDiagnostics_CSharp()
+        public async Task CA1710_AllScenarioDiagnostics_CSharpAsync()
         {
             await new VerifyCS.Test
             {
@@ -216,7 +216,10 @@ public class DataTableWithWrongSuffix : DataTable
         : base(info, context) { }
 }",
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.CA1710.exclude_indirect_base_types = false") },
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.CA1710.exclude_indirect_base_types = false") },
                     ExpectedDiagnostics =
                     {
                         GetCA1710CSharpResultAt(line: 16, column: 14, typeName: "EventsItemsDerived", suffix: "EventArgs"),
@@ -250,7 +253,7 @@ public class DataTableWithWrongSuffix : DataTable
         }
 
         [Fact]
-        public async Task CA1710_NoDiagnostics_CSharp()
+        public async Task CA1710_NoDiagnostics_CSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -428,7 +431,7 @@ public class MyCollectionDataTable : DataTable, IEnumerable
         }
 
         [Fact]
-        public async Task CA1710_AllScenarioDiagnostics_VisualBasic()
+        public async Task CA1710_AllScenarioDiagnostics_VisualBasicAsync()
         {
             await new VerifyVB.Test
             {
@@ -759,7 +762,10 @@ Public Class WronglyNamedType
 
 End Class",
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.CA1710.exclude_indirect_base_types = false") },
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.CA1710.exclude_indirect_base_types = false") },
                     ExpectedDiagnostics =
                     {
                         GetCA1710BasicResultAt(line: 13, column: 14, typeName: "AnotherDataStructure", suffix: "Queue", isSpecial: true),
@@ -792,7 +798,7 @@ End Class",
         }
 
         [Fact]
-        public async Task CA1710_NoDiagnostics_VisualBasic()
+        public async Task CA1710_NoDiagnostics_VisualBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1101,7 +1107,7 @@ End Class");
         }
 
         [Fact, WorkItem(1822, "https://github.com/dotnet/roslyn-analyzers/issues/1822")]
-        public async Task CA1710_SystemAction_CSharp()
+        public async Task CA1710_SystemAction_CSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1113,7 +1119,7 @@ public class C
         }
 
         [Fact, WorkItem(1822, "https://github.com/dotnet/roslyn-analyzers/issues/1822")]
-        public async Task CA1710_CustomDelegate_CSharp()
+        public async Task CA1710_CustomDelegate_CSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1126,7 +1132,7 @@ public class C
         }
 
         [Fact, WorkItem(2955, "https://github.com/dotnet/roslyn-analyzers/issues/2955")]
-        public async Task CA1710_IReadOnlyDictionary()
+        public async Task CA1710_IReadOnlyDictionaryAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1152,7 +1158,7 @@ public class C : IReadOnlyDictionary<int, string>
         }
 
         [Fact, WorkItem(2955, "https://github.com/dotnet/roslyn-analyzers/issues/2955")]
-        public async Task CA1710_IReadOnlyCollection()
+        public async Task CA1710_IReadOnlyCollectionAsync()
         {
             await new VerifyCS.Test
             {
@@ -1173,7 +1179,10 @@ public class C : IReadOnlyCollection<int>
     IEnumerator IEnumerable.GetEnumerator() => throw new System.NotImplementedException();
 }",
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.CA1710.exclude_indirect_base_types = false") },
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.CA1710.exclude_indirect_base_types = false") },
                     ExpectedDiagnostics =
                     {
                         GetCA1710CSharpResultAt(6, 14, "C", "Collection"),
@@ -1194,7 +1203,7 @@ public class C : IReadOnlyCollection<int>
         // In case of duplicated entries, only the first is kept
         [InlineData("dotnet_code_quality.CA1710.additional_required_suffixes = MyNamespace.SomeClass->FirstSuffix|MyNamespace.SomeClass->SecondSuffix")]
         [InlineData("dotnet_code_quality.CA1710.additional_required_suffixes = T:MyNamespace.SomeClass->FirstSuffix|T:MyNamespace.SomeClass->SecondSuffix")]
-        public async Task CA1710_AdditionalSuffixes(string editorConfigText)
+        public async Task CA1710_AdditionalSuffixesAsync(string editorConfigText)
         {
             editorConfigText = $@"dotnet_code_quality.CA1710.exclude_indirect_base_types = false
 {editorConfigText}";
@@ -1227,7 +1236,11 @@ public class SomeOtherClass
 }
 
 public class SomeOtherSubClass : SomeOtherClass {}"},
-                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+")  },
                 }
             };
 
@@ -1295,7 +1308,11 @@ Public Class SomeOtherSubClass
     Inherits SomeOtherClass
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+")  },
                 }
             };
 
@@ -1333,7 +1350,7 @@ End Class"
         [InlineData("dotnet_code_quality.CA1710.additional_required_suffixes = T:MyNamespace.SomeClass->Suffix1->Suffix2")]
         // no suffix
         [InlineData("dotnet_code_quality.CA1710.additional_required_suffixes = T:MyNamespace.SomeClass")]
-        public async Task CA1710_InvalidSyntaxNoSuffix(string editorConfigText)
+        public async Task CA1710_InvalidSyntaxNoSuffixAsync(string editorConfigText)
         {
             await new VerifyCS.Test
             {
@@ -1350,7 +1367,11 @@ namespace MyNamespace
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+")  },
                 }
             }.RunAsync();
 
@@ -1368,13 +1389,17 @@ Namespace MyNamespace
     End Class
 End Namespace"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+")  },
                 }
             }.RunAsync();
         }
 
         [Fact, WorkItem(3065, "https://github.com/dotnet/roslyn-analyzers/issues/3065")]
-        public async Task CA1710_UserMappingWinsOverHardcoded()
+        public async Task CA1710_UserMappingWinsOverHardcodedAsync()
         {
             var editorConfigText = @"dotnet_code_quality.CA1710.exclude_indirect_base_types = false
 dotnet_code_quality.CA1710.additional_required_suffixes = T:System.Collections.Generic.IDictionary`2->MySuffix";
@@ -1393,7 +1418,11 @@ public class SomeClass : Dictionary<string, string>
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+")  },
                     ExpectedDiagnostics =
                     {
                         GetCA1710CSharpResultAt(4, 14, "SomeClass", "MySuffix"),
@@ -1414,7 +1443,11 @@ Public Class SomeClass
     Inherits Dictionary(Of String, String)
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+")  },
                     ExpectedDiagnostics =
                     {
                         GetCA1710BasicResultAt(4, 14, "SomeClass", "MySuffix"),
@@ -1424,7 +1457,7 @@ End Class"
         }
 
         [Fact, WorkItem(1818, "https://github.com/dotnet/roslyn-analyzers/issues/1818")]
-        public async Task CA1710_DefaultValueForExclusion()
+        public async Task CA1710_DefaultValueForExclusionAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections;
@@ -1462,7 +1495,7 @@ End Class");
         [InlineData("dotnet_code_quality.CA1710.additional_required_suffixes = T:System.Data.IDataReader->{ } ")]
         [InlineData("dotnet_code_quality.CA1710.additional_required_suffixes = T:System.Data.IDataReader-> { } ")]
         [InlineData("dotnet_code_quality.CA1710.additional_required_suffixes = T:System.Data.IDataReader-> {     } ")]
-        public async Task CA1710_AllowEmptySuffix(string editorConfigText)
+        public async Task CA1710_AllowEmptySuffixAsync(string editorConfigText)
         {
             await new VerifyCS.Test
             {
@@ -1518,7 +1551,11 @@ public class SomeClass : IDataReader
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+")  },
                 }
             }.RunAsync();
 
@@ -1709,7 +1746,120 @@ Public Class SomeClass
 
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+")  },
+                }
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(5035, "https://github.com/dotnet/roslyn-analyzers/issues/5035")]
+        public async Task CA1710_AllowEmptySuffix2Async()
+        {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System.Collections;
+using System.Collections.Generic;
+
+public class C : IReadOnlyDictionary<string, object>
+{
+    public object this[string key] => throw new System.NotImplementedException();
+
+    public IEnumerable<string> Keys => throw new System.NotImplementedException();
+
+    public IEnumerable<object> Values => throw new System.NotImplementedException();
+
+    public int Count => throw new System.NotImplementedException();
+
+    public bool ContainsKey(string key)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public bool TryGetValue(string key, out object value)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        throw new System.NotImplementedException();
+    }
+}
+"
+                    },
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.CA1710.additional_required_suffixes = T:System.Collections.Generic.IReadOnlyDictionary`2->{}
+")  },
+                }
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(5035, "https://github.com/dotnet/roslyn-analyzers/issues/5035")]
+        public async Task CA1710_AllowEmptySuffix3Async()
+        {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System.Collections;
+using System.Collections.Generic;
+
+public class C : IReadOnlyDictionary<string, object>, ICollection<KeyValuePair<string, object>>
+{
+    public object this[string key] => throw new System.NotImplementedException();
+
+    public IEnumerable<string> Keys => throw new System.NotImplementedException();
+
+    public IEnumerable<object> Values => throw new System.NotImplementedException();
+
+    public int Count => throw new System.NotImplementedException();
+
+    public bool IsReadOnly => throw new System.NotImplementedException();
+
+    public void Add(KeyValuePair<string, object> item) => throw new System.NotImplementedException();
+
+    public void Clear() => throw new System.NotImplementedException();
+
+    public bool Contains(KeyValuePair<string, object> item) => throw new System.NotImplementedException();
+
+    public bool ContainsKey(string key) => throw new System.NotImplementedException();
+
+    public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex) => throw new System.NotImplementedException();
+
+    public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => throw new System.NotImplementedException();
+
+    public bool Remove(KeyValuePair<string, object> item) => throw new System.NotImplementedException();
+
+    public bool TryGetValue(string key, out object value) => throw new System.NotImplementedException();
+
+    IEnumerator IEnumerable.GetEnumerator() => throw new System.NotImplementedException();
+}
+"
+                    },
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.CA1710.additional_required_suffixes = T:System.Collections.Generic.IReadOnlyDictionary`2->{}
+")  },
+                    ExpectedDiagnostics = { GetCA1710CSharpResultAt(5, 14, "C", "Collection") }
                 }
             }.RunAsync();
         }
@@ -1723,7 +1873,7 @@ End Class"
                       dotnet_code_quality.CA1710.additional_required_suffixes = SomeClass->Suffix1")]
         [InlineData(@"dotnet_code_quality.CA1710.exclude_indirect_base_types = false
                       dotnet_code_quality.CA1710.additional_required_suffixes = SomeClass->Suffix1")]
-        public async Task CA1710_ExcludeIndirectTypes(string editorConfigText)
+        public async Task CA1710_ExcludeIndirectTypesAsync(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -1751,7 +1901,11 @@ public class SomeClass {}
 public class SomeSubClass : SomeClass {}
 public class SomeSubSubClass : SomeSubClass {}"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+")  },
                     ExpectedDiagnostics = { GetCA1710CSharpResultAt(7, 14, "C", "Exception") },
                 }
             };
@@ -1822,7 +1976,11 @@ Public Class SomeSubSubClass
     Inherits SomeSubClass
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+")  },
                     ExpectedDiagnostics = { GetCA1710BasicResultAt(7, 14, "C", "Exception") },
                 }
             };
@@ -1856,7 +2014,7 @@ End Class"
         }
 
         [Fact, WorkItem(3414, "https://github.com/dotnet/roslyn-analyzers/issues/3414")]
-        public async Task CA1710_Interfaces()
+        public async Task CA1710_InterfacesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public interface I
@@ -1865,7 +2023,7 @@ public interface I
         }
 
         [Fact]
-        public async Task EventArgsNotInheritingFromSystemEventArgs_Diagnostic()
+        public async Task EventArgsNotInheritingFromSystemEventArgs_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 // Reproduce UWP specific EventArgs

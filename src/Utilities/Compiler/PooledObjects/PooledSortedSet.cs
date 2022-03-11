@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -55,7 +55,7 @@ namespace Analyzer.Utilities.PooledObjects
         /// <summary>
         /// Gets a pooled instance of a <see cref="PooledSortedSet{T}"/> with an optional comparer.
         /// </summary>
-        /// <param name="comparer">Comparer to use, or null for the element type's default comparer.</param>
+        /// <param name="comparer">Singleton (or at least a bounded number) comparer to use, or null for the element type's default comparer.</param>
         /// <returns>An empty <see cref="PooledSortedSet{T}"/>.</returns>
         public static PooledSortedSet<T> GetInstance(IComparer<T>? comparer = null)
         {

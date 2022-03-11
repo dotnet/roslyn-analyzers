@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -7,24 +7,28 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.NetAnalyzers;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
-    public abstract class UseOrdinalStringComparisonAnalyzer : DiagnosticAnalyzer
+    using static MicrosoftNetCoreAnalyzersResources;
+
+    public abstract class UseOrdinalStringComparisonAnalyzer : AbstractGlobalizationDiagnosticAnalyzer
     {
         internal const string RuleId = "CA1309";
 
-        private static readonly LocalizableString s_localizableMessageAndTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseOrdinalStringComparisonTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseOrdinalStringComparisonDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableMessageAndTitle,
-                                                                             s_localizableMessageAndTitle,
-                                                                             DiagnosticCategory.Globalization,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        private static readonly LocalizableString s_localizableMessageAndTitle = CreateLocalizableResourceString(nameof(UseOrdinalStringComparisonTitle));
+
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableMessageAndTitle,
+            s_localizableMessageAndTitle,
+            DiagnosticCategory.Globalization,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: CreateLocalizableResourceString(nameof(UseOrdinalStringComparisonDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
         internal const string CompareMethodName = "Compare";
         internal const string EqualsMethodName = "Equals";
@@ -35,52 +39,45 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         protected abstract Location GetMethodNameLocation(SyntaxNode invocationNode);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext context)
+        protected override void InitializeWorker(CompilationStartAnalysisContext context)
         {
-            context.EnableConcurrentExecution();
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-
-            context.RegisterCompilationStartAction(
-                (context) =>
+            INamedTypeSymbol? stringComparisonType = context.Compilation.GetOrCreateTypeByMetadataName(StringComparisonTypeName);
+            if (stringComparisonType != null)
+            {
+                context.RegisterOperationAction(operationContext =>
                 {
-                    INamedTypeSymbol? stringComparisonType = context.Compilation.GetOrCreateTypeByMetadataName(StringComparisonTypeName);
-                    if (stringComparisonType != null)
+                    var operation = (IInvocationOperation)operationContext.Operation;
+                    IMethodSymbol methodSymbol = operation.TargetMethod;
+                    if (methodSymbol != null &&
+                        methodSymbol.ContainingType.SpecialType == SpecialType.System_String &&
+                        IsEqualsOrCompare(methodSymbol.Name))
                     {
-                        context.RegisterOperationAction(operationContext =>
+                        if (!IsAcceptableOverload(methodSymbol, stringComparisonType))
+                        {
+                            // wrong overload
+                            operationContext.ReportDiagnostic(Diagnostic.Create(Rule, GetMethodNameLocation(operation.Syntax)));
+                        }
+                        else
+                        {
+                            IArgumentOperation lastArgument = operation.Arguments.Last();
+                            if (lastArgument.Value.Kind == OperationKind.FieldReference)
                             {
-                                var operation = (IInvocationOperation)operationContext.Operation;
-                                IMethodSymbol methodSymbol = operation.TargetMethod;
-                                if (methodSymbol != null &&
-                                    methodSymbol.ContainingType.SpecialType == SpecialType.System_String &&
-                                    IsEqualsOrCompare(methodSymbol.Name))
+                                IFieldSymbol fieldSymbol = ((IFieldReferenceOperation)lastArgument.Value).Field;
+                                if (fieldSymbol != null &&
+                                    fieldSymbol.ContainingType.Equals(stringComparisonType) &&
+                                    !IsOrdinalOrOrdinalIgnoreCase(fieldSymbol.Name))
                                 {
-                                    if (!IsAcceptableOverload(methodSymbol, stringComparisonType))
-                                    {
-                                        // wrong overload
-                                        operationContext.ReportDiagnostic(Diagnostic.Create(Rule, GetMethodNameLocation(operation.Syntax)));
-                                    }
-                                    else
-                                    {
-                                        IArgumentOperation lastArgument = operation.Arguments.Last();
-                                        if (lastArgument.Value.Kind == OperationKind.FieldReference)
-                                        {
-                                            IFieldSymbol fieldSymbol = ((IFieldReferenceOperation)lastArgument.Value).Field;
-                                            if (fieldSymbol != null &&
-                                                fieldSymbol.ContainingType.Equals(stringComparisonType) &&
-                                                !IsOrdinalOrOrdinalIgnoreCase(fieldSymbol.Name))
-                                            {
-                                                // right overload, wrong value
-                                                operationContext.ReportDiagnostic(lastArgument.Syntax.CreateDiagnostic(Rule));
-                                            }
-                                        }
-                                    }
+                                    // right overload, wrong value
+                                    operationContext.ReportDiagnostic(lastArgument.Syntax.CreateDiagnostic(Rule));
                                 }
-                            },
-                            OperationKind.Invocation);
+                            }
+                        }
                     }
-                });
+                },
+                    OperationKind.Invocation);
+            }
         }
 
         private static bool IsEqualsOrCompare(string methodName)

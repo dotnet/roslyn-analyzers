@@ -1,4 +1,4 @@
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information. -->
 <Project>  
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -19,7 +19,7 @@
     <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
     <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
-    <PackageLicenseExpression Condition="'$(PackageLicenseExpression)' == ''">Apache-2.0</PackageLicenseExpression>
+    <PackageLicenseExpression Condition="'$(PackageLicenseExpression)' == ''">MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -36,6 +36,8 @@
       <_GeneratedRulesetsDir>$(IntermediateOutputPath)Rulesets</_GeneratedRulesetsDir>
       <_GeneratedEditorconfigsDir>$(IntermediateOutputPath)Editorconfig</_GeneratedEditorconfigsDir>
       <_GeneratedGlobalAnalyzerConfigsDir>$(IntermediateOutputPath)GlobalAnalyzerConfigs</_GeneratedGlobalAnalyzerConfigsDir>
+      <_ValidateOffline Condition="'$(DotNetBuildFromSource)' == 'true'">true</_ValidateOffline>
+      <_ValidateOffline Condition="'$(_ValidateOffline)' == ''">false</_ValidateOffline>
       <ContainsPortedFxCopRules Condition="'$(ContainsPortedFxCopRules)' == ''">false</ContainsPortedFxCopRules>
       <GeneratePackagePropsFile Condition="'$(GeneratePackagePropsFile)' == ''">true</GeneratePackagePropsFile>
       <GenerateDisableNETAnalyzersPackagePropsFile Condition=" '$(GenerateDisableNETAnalyzersPackagePropsFile)' == '' and '$(ContainsPortedFxCopRules)' == 'true'">true</GenerateDisableNETAnalyzersPackagePropsFile>
@@ -86,8 +88,16 @@
       <AnalyzerConfigurationFileDir>$(RepoRoot)docs</AnalyzerConfigurationFileDir>
       <AnalyzerConfigurationFileName>Analyzer Configuration.md</AnalyzerConfigurationFileName>
     </PropertyGroup>
-    
-    <MSBuild Projects="$(RepoRoot)src\Tools\GenerateDocumentationAndConfigFiles\GenerateDocumentationAndConfigFiles.csproj" Targets="Build">
+
+    <PropertyGroup>
+      <!--
+        Source build's runtime environment is incomplete, so we call through a stub project to force assembly resolution
+        to choose versions from the available subset.
+      -->
+      <GenerateDocumentationAndConfigFilesProjectSuffix Condition="'$(DotNetBuildFromSource)' == 'true'">ForBrokenRuntime</GenerateDocumentationAndConfigFilesProjectSuffix>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(RepoRoot)src\Tools\GenerateDocumentationAndConfigFiles$(GenerateDocumentationAndConfigFilesProjectSuffix)\GenerateDocumentationAndConfigFiles$(GenerateDocumentationAndConfigFilesProjectSuffix).csproj" Targets="Build">
       <Output TaskParameter="TargetOutputs" PropertyName="_GenerateDocumentationAndConfigFilesPath"/>
     </MSBuild>
 
@@ -98,9 +108,9 @@
 
     <!-- Only run validate only in CI builds. Running them in local builds will prevent refreshing auto-generated files. -->
     <Exec Condition="'$(ContinuousIntegrationBuild)' == 'true'"
-          Command='"$(DotNetExecutable)" "$(_GenerateDocumentationAndConfigFilesPath)" "-validateOnly:true" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) "$(ReleaseTrackingOptOut)"' />
+          Command='"$(DotNetExecutable)" --roll-forward major "$(_GenerateDocumentationAndConfigFilesPath)" "-validateOnly:true" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) "$(ReleaseTrackingOptOut)" $(_ValidateOffline)' />
 
-    <Exec Command='"$(DotNetExecutable)" "$(_GenerateDocumentationAndConfigFilesPath)" "-validateOnly:false" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) "$(ReleaseTrackingOptOut)"' />
+    <Exec Command='"$(DotNetExecutable)" --roll-forward major "$(_GenerateDocumentationAndConfigFilesPath)" "-validateOnly:false" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) "$(ReleaseTrackingOptOut)" $(_ValidateOffline)' />
 
     <ItemGroup Condition="Exists('$(PackageTargetsFileDir)\$(PackageTargetsFileName)')">
       <AnalyzerNupkgFile Include="$(PackageTargetsFileDir)\$(PackageTargetsFileName)"/>
@@ -109,7 +119,7 @@
   
   <PropertyGroup>
     <!-- Ideally, we would extract this from the MSBuild task, but we need this as the Target Output before that task is executed -->
-    <_GenerateAnalyzerNuspecPath>$(ArtifactsBinDir)GenerateAnalyzerNuspec\$(Configuration)\netcoreapp3.1\GenerateAnalyzerNuspec.dll</_GenerateAnalyzerNuspecPath>
+    <_GenerateAnalyzerNuspecPath>$(ArtifactsBinDir)GenerateAnalyzerNuspec\$(Configuration)\net6.0\GenerateAnalyzerNuspec.dll</_GenerateAnalyzerNuspecPath>
   </PropertyGroup>
 
   <Target Name="BuildGenerateAnalyzerNuspecFile"
@@ -136,7 +146,7 @@
       <_NuspecMetadata Include="copyright=$(Copyright)" />
       <_NuspecMetadata Include="license=$(PackageLicenseExpression)" />
       <_NuspecMetadata Include="projectUrl=$(PackageProjectUrl)" />
-      <_NuspecMetadata Include="iconUrl=$(PackageIconUrl)" />
+      <_NuspecMetadata Include="icon=$(PackageIcon)" />
       <_NuspecMetadata Include="releaseNotes=$(PackageReleaseNotes)" />
       <_NuspecMetadata Include="tags=$(PackageTags)" />
       <_NuspecMetadata Include="serviceable=$(Serviceable)" />
@@ -146,6 +156,6 @@
       <_NuspecMetadata Include="repositoryUrl=$(PrivateRepositoryUrl)" />
     </ItemGroup>
 
-    <Exec Command='"$(DotNetExecutable)" "$(_GenerateAnalyzerNuspecPath)" "$(NuspecFile)" "$(AssetsDir)$(EscapeDirectorySuffix)" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFrameworksForPackage)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(AnalyzerConfigurationFileDir)" "$(AnalyzerConfigurationFileName)" "$(_GeneratedGlobalAnalyzerConfigsDir)"' />
+    <Exec Command='"$(DotNetExecutable)" --roll-forward major "$(_GenerateAnalyzerNuspecPath)" "$(NuspecFile)" "$(AssetsDir)$(EscapeDirectorySuffix)" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFrameworksForPackage)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(AnalyzerConfigurationFileDir)" "$(AnalyzerConfigurationFileName)" "$(_GeneratedGlobalAnalyzerConfigsDir)"' />
   </Target>
 </Project>

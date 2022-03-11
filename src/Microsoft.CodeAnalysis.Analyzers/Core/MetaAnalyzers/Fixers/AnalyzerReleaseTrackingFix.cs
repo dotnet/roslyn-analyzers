@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -29,11 +29,11 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
 " + CommonAnalyzerReleaseTrackingContent;
         internal const string UnshippedAnalyzerReleaseTrackingFileDefaultContent = @"; Unshipped analyzer release
 " + CommonAnalyzerReleaseTrackingContent;
-        private const string CommonAnalyzerReleaseTrackingContent = @"; https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md
+        private const string CommonAnalyzerReleaseTrackingContent = @"; https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md
 
 ";
 
-        public override ImmutableArray<string> FixableDiagnosticIds =>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(DiagnosticIds.DeclareDiagnosticIdInAnalyzerReleaseRuleId, DiagnosticIds.UpdateDiagnosticIdInAnalyzerReleaseRuleId, DiagnosticIds.EnableAnalyzerReleaseTrackingRuleId);
 
         public override FixAllProvider GetFixAllProvider()
@@ -280,12 +280,10 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
                                 builder.AppendLine();
                             }
                         }
-                        else if (currentTableKind == RuleEntryTableKind.Changed)
+                        else if (currentTableKind == RuleEntryTableKind.Changed
+                            && AddAllEntries(changedRuleEntriesToAdd, builder, prependNewLine: false))
                         {
-                            if (AddAllEntries(changedRuleEntriesToAdd, builder, prependNewLine: false))
-                            {
-                                builder.AppendLine();
-                            }
+                            builder.AppendLine();
                         }
                     }
 

@@ -1,8 +1,9 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.PreferIsKindAnalyzer,
@@ -18,7 +19,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.UnitTests.MetaAnalyzers
         [Theory]
         [InlineData("==")]
         [InlineData("!=")]
-        public async Task TestSimpleReturn_CS(string @operator)
+        public async Task TestSimpleReturn_CSAsync(string @operator)
         {
             var source =
 $@"using Microsoft.CodeAnalysis;
@@ -59,7 +60,7 @@ class C
         [Theory]
         [InlineData("=")]
         [InlineData("<>")]
-        public async Task TestSimpleReturn_VB(string @operator)
+        public async Task TestSimpleReturn_VBAsync(string @operator)
         {
             var source =
 $@"Imports Microsoft.CodeAnalysis
@@ -94,7 +95,7 @@ End Class
         }
 
         [Fact]
-        public async Task TestCompoundExpression_CS()
+        public async Task TestCompoundExpression_CSAsync()
         {
             var source =
 @"using Microsoft.CodeAnalysis;
@@ -125,7 +126,7 @@ class C
         }
 
         [Fact]
-        public async Task TestCompoundExpression_VB()
+        public async Task TestCompoundExpression_VBAsync()
         {
             var source =
 @"Imports Microsoft.CodeAnalysis
@@ -154,7 +155,7 @@ End Class
         [Theory]
         [InlineData("==")]
         [InlineData("!=")]
-        public async Task TestCompoundExpression2_CS(string @operator)
+        public async Task TestCompoundExpression2_CSAsync(string @operator)
         {
             var source =
 $@"using Microsoft.CodeAnalysis;
@@ -197,7 +198,7 @@ class C
         [Theory]
         [InlineData("=")]
         [InlineData("<>")]
-        public async Task TestCompoundExpression2_VB(string @operator)
+        public async Task TestCompoundExpression2_VBAsync(string @operator)
         {
             var source =
 $@"Imports Microsoft.CodeAnalysis
@@ -236,7 +237,7 @@ End Class
         [Theory]
         [InlineData("==")]
         [InlineData("!=")]
-        public async Task TestCalledAsStaticMethod_CS(string @operator)
+        public async Task TestCalledAsStaticMethod_CSAsync(string @operator)
         {
             var source =
 $@"using Microsoft.CodeAnalysis;
@@ -289,7 +290,7 @@ class C
         [Theory]
         [InlineData("=")]
         [InlineData("<>")]
-        public async Task TestCalledAsStaticMethod_VB(string @operator)
+        public async Task TestCalledAsStaticMethod_VBAsync(string @operator)
         {
             var source =
 $@"Imports Microsoft.CodeAnalysis
@@ -338,7 +339,7 @@ End Class
         [Theory]
         [InlineData("=")]
         [InlineData("<>")]
-        public async Task TestVBWithoutParens(string @operator)
+        public async Task TestVBWithoutParensAsync(string @operator)
         {
             var source =
 $@"Imports Microsoft.CodeAnalysis
@@ -373,7 +374,7 @@ End Class
         }
 
         [Fact]
-        public async Task TestSwitchStatement_CS()
+        public async Task TestSwitchStatement_CSAsync()
         {
             var source =
 @"using Microsoft.CodeAnalysis;
@@ -399,7 +400,7 @@ class C
         }
 
         [Fact]
-        public async Task TestSwitchStatement_VB()
+        public async Task TestSwitchStatement_VBAsync()
         {
             var source =
 @"Imports Microsoft.CodeAnalysis
@@ -417,6 +418,103 @@ Class C
 End Class
 ";
 
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        [WorkItem(4946, "https://github.com/dotnet/roslyn-analyzers/issues/4946")]
+        public async Task TestSingleNullConditionalAccess_CSAsync()
+        {
+            var source =
+@"using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+
+class C
+{
+    bool Method(SyntaxNode node)
+    {
+        return [|node?.Kind()|] == SyntaxKind.None;
+    }
+}
+";
+
+            var fixedSource =
+@"using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+
+class C
+{
+    bool Method(SyntaxNode node)
+    {
+        return node.IsKind(SyntaxKind.None);
+    }
+}
+";
+
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        [WorkItem(4946, "https://github.com/dotnet/roslyn-analyzers/issues/4946")]
+        public async Task TestSingleNullConditionalAccess_VBAsync()
+        {
+            var source =
+@"Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.VisualBasic
+
+Class C
+    Function Method(node As SyntaxNode) As Boolean
+        Return [|node?.Kind()|] = SyntaxKind.None
+    End Function
+End Class
+";
+            var fixedSource =
+@"Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.VisualBasic
+
+Class C
+    Function Method(node As SyntaxNode) As Boolean
+        Return node.IsKind(SyntaxKind.None)
+    End Function
+End Class
+";
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        [WorkItem(4946, "https://github.com/dotnet/roslyn-analyzers/issues/4946")]
+        public async Task TestSingleNullConditionalAccess_SyntaxToken_CSAsync()
+        {
+            var source =
+@"using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+
+class C
+{
+    bool Method(SyntaxToken? token)
+    {
+        return token?.Kind() == SyntaxKind.None;
+    }
+}
+";
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        [WorkItem(4946, "https://github.com/dotnet/roslyn-analyzers/issues/4946")]
+        public async Task TestSingleNullConditionalAccess_SyntaxToken_VBAsync()
+        {
+            var source =
+@"Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.VisualBasic
+
+Class C
+    Function Method(token As SyntaxToken?) As Boolean
+        Return token?.Kind() = SyntaxKind.None
+    End Function
+End Class
+";
             await VerifyVB.VerifyCodeFixAsync(source, source);
         }
     }

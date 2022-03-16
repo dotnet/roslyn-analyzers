@@ -3831,7 +3831,7 @@
         "CA2259": {
           "id": "CA2259",
           "shortDescription": "'ThreadStatic' only affects static fields",
-          "fullDescription": "'ThreadStatic' only affects static fields.  When applied to instance fields, it has no impact on behavior.",
+          "fullDescription": "'ThreadStatic' only affects static fields. When applied to instance fields, it has no impact on behavior.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259",
           "properties": {

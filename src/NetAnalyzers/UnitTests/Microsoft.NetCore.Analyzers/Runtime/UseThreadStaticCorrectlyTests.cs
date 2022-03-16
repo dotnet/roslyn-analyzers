@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.UseThreadStaticCorrectly,
@@ -32,6 +34,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 {{
                     [ThreadStatic]
                     {visibility} static {type} t_value;
+
+                    [field: ThreadStatic]
+                    {visibility} static {type} Prop {{ get; set; }}
+
+                    [field: ThreadStatic]
+                    {visibility} static event EventHandler Ev;
                 }}
                 ");
         }
@@ -69,16 +77,25 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         [InlineData("", "int")]
         public async Task InstanceField_Diagnostic_CSharp(string visibility, string type)
         {
-            await VerifyCS.VerifyAnalyzerAsync(
-                @$"
+            await new VerifyCS.Test
+            {
+                LanguageVersion = LanguageVersion.CSharp10,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                TestCode = @$"
                 using System;
 
                 class C
                 {{
                     [ThreadStatic]
                     {visibility} {type} {{|CA2259:t_value|}};
+
+                    [field: ThreadStatic]
+                    string {{|CA2259:Prop|}} {{ get; set; }}
                 }}
-                ");
+
+                record R([field: ThreadStatic] string {{|CA2259:Value|}});
+                "
+            }.RunAsync();
         }
 
         [Theory]

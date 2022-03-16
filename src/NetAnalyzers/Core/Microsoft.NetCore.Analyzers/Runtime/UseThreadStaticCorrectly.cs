@@ -56,12 +56,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // Warn on any [ThreadStatic] instance field.
                 context.RegisterSymbolAction(context =>
                 {
-                    var field = (IFieldSymbol)context.Symbol;
-                    if (field.HasAttribute(threadStaticAttributeType) && !field.IsStatic)
+                    ISymbol symbol = context.Symbol;
+
+                    // If it's a static symbol, nothing to see here.
+                    if (symbol.IsStatic)
                     {
-                        context.ReportDiagnostic(field.CreateDiagnostic(ThreadStaticOnNonStaticFieldRule));
+                        return;
                     }
-                }, SymbolKind.Field);
+
+                    // If it's an auto-prop, find its backing field if there is one.
+                    // If it's a field, it's the symbol we'll check.
+                    if (!symbol.IsPropertyWithBackingField(out IFieldSymbol? fieldSymbol))
+                    {
+                        fieldSymbol = symbol as IFieldSymbol;
+                    }
+
+                    // Once we have the field, see if it's attributed with [ThreadStatic].
+                    if (fieldSymbol?.HasAttribute(threadStaticAttributeType) == true)
+                    {
+                        context.ReportDiagnostic(symbol.CreateDiagnostic(ThreadStaticOnNonStaticFieldRule));
+                    }
+                }, SymbolKind.Field, SymbolKind.Property);
 
                 // Warn on any [ThreadStatic] field inline initialization.
                 context.RegisterOperationAction(context =>
@@ -72,6 +87,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (field.IsStatic && field.HasAttribute(threadStaticAttributeType))
                         {
                             context.ReportDiagnostic(fieldInit.CreateDiagnostic(ThreadStaticInitializedInlineRule));
+                            break;
                         }
                     }
 

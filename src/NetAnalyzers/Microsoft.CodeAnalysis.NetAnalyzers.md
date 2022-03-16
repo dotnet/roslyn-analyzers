@@ -2186,7 +2186,7 @@ Providing a functional 'DynamicInterfaceCastableImplementationAttribute'-attribu
 
 ## [CA2259](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259): 'ThreadStatic' only affects static fields
 
-'ThreadStatic' only affects static fields.  When applied to instance fields, it has no impact on behavior.
+'ThreadStatic' only affects static fields. When applied to instance fields, it has no impact on behavior.
 
 |Item|Value|
 |-|-|

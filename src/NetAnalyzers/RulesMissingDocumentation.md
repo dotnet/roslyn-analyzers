@@ -14,3 +14,8 @@ CA2254 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA2256 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2256> | All members declared in parent interfaces must have an implementation in a DynamicInterfaceCastableImplementation-attributed interface |
 CA2257 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2257> | Members defined on an interface with the 'DynamicInterfaceCastableImplementationAttribute' should be 'static' |
 CA2258 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2258> | Providing a 'DynamicInterfaceCastableImplementation' interface in Visual Basic is unsupported |
+CA1420 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1420> | Property, type, or attribute requires runtime marshalling |
+CA1421 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421> | This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied |
+CA1851 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1851> | Possible multiple enumerations of 'IEnumerable' collection |
+CA2019 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019> | Improper 'ThreadStatic' field initialization |
+CA2259 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259> | 'ThreadStatic' only affects static fields |

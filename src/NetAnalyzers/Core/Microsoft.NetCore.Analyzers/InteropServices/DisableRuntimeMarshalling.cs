@@ -381,10 +381,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         }
                     }
 
+                    var seenTypesWithCurrentType = seenTypes.Add(type.OriginalDefinition);
+
                     foreach (var member in type.GetMembers())
                     {
                         if (member is IFieldSymbol { IsStatic: false, Type.IsValueType: true } valueTypeField
-                            && TypeIsAutoLayoutOrContainsAutoLayout(valueTypeField.Type, seenTypes.Add(type.OriginalDefinition)))
+                            && TypeIsAutoLayoutOrContainsAutoLayout(valueTypeField.Type, seenTypesWithCurrentType))
                         {
                             _isAutoLayoutOrContainsAutoLayoutCache.TryAdd(type, true);
                             return true;

@@ -3,9 +3,9 @@
   <file datatype="xml" source-language="en" target-language="tr" original="../MicrosoftCodeQualityAnalyzersResources.resx">
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
-        <source>Append .ConfigureAwait(true)</source>
-        <target state="translated">Ekle .ConfigureAwait(true)</target>
-        <note />
+        <source>Append '.ConfigureAwait(true)'</source>
+        <target state="needs-review-translation">Ekle .ConfigureAwait(true)</target>
+        <note>{Locked=".ConfigureAwait(true)"}</note>
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
@@ -28,8 +28,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveParametersOnGenericTypesMessage">
-        <source>Consider a design where '{0}' has no more than {1} type parameters</source>
-        <target state="translated">'{0}' öğesinin {1} tür parametresinden fazlasına sahip olmadığı bir tasarım kullanabilirsiniz</target>
+        <source>Consider a design where '{0}' has no more than '{1}' type parameters</source>
+        <target state="needs-review-translation">'{0}' öğesinin {1} tür parametresinden fazlasına sahip olmadığı bir tasarım kullanabilirsiniz</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveParametersOnGenericTypesTitle">
@@ -64,18 +64,18 @@
       </trans-unit>
       <trans-unit id="AvoidOutParametersDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
-        <target state="translated">Türleri başvuruya göre geçirmek ('out' veya 'ref' kullanılarak) için işaretçiler konusunda deneyim, değer ve başvuru türleri arasındaki farkları anlamak ve birden çok dönüş değeri içeren yöntemleri işlemeyi bilmek gerekir. Ayrıca 'out' ve 'ref' parametreleri arasındaki fark yaygın olarak anlaşılmadı.</target>
-        <note />
+        <target state="needs-review-translation">Türleri başvuruya göre geçirmek ('out' veya 'ref' kullanılarak) için işaretçiler konusunda deneyim, değer ve başvuru türleri arasındaki farkları anlamak ve birden çok dönüş değeri içeren yöntemleri işlemeyi bilmek gerekir. Ayrıca 'out' ve 'ref' parametreleri arasındaki fark yaygın olarak anlaşılmadı.</target>
+        <note>{Locked="out"}{Locked="ref"}</note>
       </trans-unit>
       <trans-unit id="AvoidOutParametersMessage">
         <source>Avoid 'out' parameters as they are not designed for general audience</source>
-        <target state="translated">Genel hedef kitle için tasarlanmadığından 'out' parametrelerini kullanmaktan kaçının</target>
-        <note />
+        <target state="needs-review-translation">Genel hedef kitle için tasarlanmadığından 'out' parametrelerini kullanmaktan kaçının</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="AvoidOutParametersTitle">
-        <source>Avoid out parameters</source>
-        <target state="translated">out parametrelerinden kaçının</target>
-        <note />
+        <source>Avoid 'out' parameters</source>
+        <target state="needs-review-translation">out parametrelerinden kaçının</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMultipleMessage">
         <source>Type '{0}' directly or indirectly inherits '{1}' without implementing any of '{2}'. Publicly-visible types should implement the generic version to broaden usability.</source>
@@ -83,9 +83,9 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="translated">System.Exception veya System.SystemException gibi genel bir ifade veya izin verilmeyen bir özel durum türü bir catch ifadesinde yakalandı ya da genel bir catch ifadesi kullanıldı. Genel özel durumlar yakalanmamalıdır.</target>
-        <note />
+        <source>A general exception such as 'System.Exception' or 'System.SystemException' or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">System.Exception veya System.SystemException gibi genel bir ifade veya izin verilmeyen bir özel durum türü bir catch ifadesinde yakalandı ya da genel bir catch ifadesi kullanıldı. Genel özel durumlar yakalanmamalıdır.</target>
+        <note>{Locked="System.Exception"}{Locked="System.SystemException"}</note>
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception</source>
@@ -104,8 +104,8 @@
       </trans-unit>
       <trans-unit id="DoNotDeclareProtectedMembersInSealedTypesMessage">
         <source>'{0}' is a new protected member in the 'NonInheritable' class '{1}'</source>
-        <target state="translated">'{0}', '{1}' adlı 'NonInheritable' sınıfında yeni bir korumalı üye</target>
-        <note />
+        <target state="needs-review-translation">'{0}', '{1}' adlı 'NonInheritable' sınıfında yeni bir korumalı üye</target>
+        <note>{Locked="NonInheritable"}</note>
       </trans-unit>
       <trans-unit id="DoNotDeclareProtectedMembersInSealedTypesTitle">
         <source>Do not declare protected member in sealed type</source>
@@ -143,14 +143,14 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsDescription">
-        <source>System.Collections.Generic.List&lt;T&gt; is a generic collection that's designed for performance and not inheritance. List&lt;T&gt; does not contain virtual members that make it easier to change the behavior of an inherited class.</source>
-        <target state="translated">System.Collections.Generic.List&lt;T&gt;, devralma için değil performans için tasarlanmış genel amaçlı bir koleksiyondur. List&lt;T&gt;, devralınan bir sınıfın davranışını değiştirmeyi kolaylaştıran sanal üyeler içermez.</target>
-        <note />
+        <source>'System.Collections.Generic.List&lt;T&gt;' is a generic collection that's designed for performance and not inheritance. 'List&lt;T&gt;' does not contain virtual members that make it easier to change the behavior of an inherited class.</source>
+        <target state="needs-review-translation">System.Collections.Generic.List&lt;T&gt;, devralma için değil performans için tasarlanmış genel amaçlı bir koleksiyondur. List&lt;T&gt;, devralınan bir sınıfın davranışını değiştirmeyi kolaylaştıran sanal üyeler içermez.</target>
+        <note>{Locked="System.Collections.Generic.List&lt;T&gt;"}{Locked="List&lt;T&gt;"}</note>
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsMessage">
         <source>Change '{0}' in '{1}' to use 'Collection&lt;T&gt;', 'ReadOnlyCollection&lt;T&gt;' or 'KeyedCollection&lt;K,V&gt;'</source>
-        <target state="translated">'Collection&lt;T&gt;', 'ReadOnlyCollection&lt;T&gt;' veya 'KeyedCollection&lt;K,V&gt;' kullanmak için '{1}' içindeki '{0}' öğesini değiştirin</target>
-        <note />
+        <target state="needs-review-translation">'Collection&lt;T&gt;', 'ReadOnlyCollection&lt;T&gt;' veya 'KeyedCollection&lt;K,V&gt;' kullanmak için '{1}' içindeki '{0}' öğesini değiştirin</target>
+        <note>{Locked="Collection&lt;T&gt;"}{Locked="ReadOnlyCollection&lt;T&gt;"}{Locked="KeyedCollection&lt;K,V&gt;"}</note>
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsTitle">
         <source>Do not expose generic lists</source>
@@ -174,8 +174,8 @@
       </trans-unit>
       <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesDescription">
         <source>For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object. If the operator is providing meaningful value equality, the type should implement the generic 'System.IEquatable' interface.</source>
-        <target state="translated">Başvuru türleri için, eşitlik işlecinin varsayılan uygulaması neredeyse her zaman doğrudur. Varsayılan olarak, iki başvuru yalnızca aynı nesneye işaret ettiklerinde eşittir. İşleç anlamlı bir değer eşitliği sağlıyorsa tür genel 'System.IEquatable' arabirimini uygulamalıdır.</target>
-        <note />
+        <target state="needs-review-translation">Başvuru türleri için, eşitlik işlecinin varsayılan uygulaması neredeyse her zaman doğrudur. Varsayılan olarak, iki başvuru yalnızca aynı nesneye işaret ettiklerinde eşittir. İşleç anlamlı bir değer eşitliği sağlıyorsa tür genel 'System.IEquatable' arabirimini uygulamalıdır.</target>
+        <note>{Locked="'System.IEquatable"}</note>
       </trans-unit>
       <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesMessage">
         <source>'{0}' should not overload the equality operator</source>
@@ -188,9 +188,9 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassTypesByReferenceDescription">
-        <source>Passing types by reference (using out or ref) requires experience with pointers, understanding how value types and reference types differ, and handling methods that have multiple return values. Also, the difference between out and ref parameters is not widely understood.</source>
-        <target state="translated">Türleri başvuruya göre geçirmek (out veya ref kullanılarak) için işaretçiler konusunda deneyim sahibi olmak, değer ve başvuru türleri arasındaki farkları anlamak ve birden çok dönüş değeri içeren metotları işlemeyi bilmek gerekir. Ayrıca out ve ref parametreleri arasındaki fark genelde kapsamlı bir şekilde anlaşılmaz.</target>
-        <note />
+        <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods that have multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
+        <target state="needs-review-translation">Türleri başvuruya göre geçirmek (out veya ref kullanılarak) için işaretçiler konusunda deneyim sahibi olmak, değer ve başvuru türleri arasındaki farkları anlamak ve birden çok dönüş değeri içeren metotları işlemeyi bilmek gerekir. Ayrıca out ve ref parametreleri arasındaki fark genelde kapsamlı bir şekilde anlaşılmaz.</target>
+        <note>{Locked="out"}{Locked="ref"}</note>
       </trans-unit>
       <trans-unit id="DoNotPassTypesByReferenceMessage">
         <source>Consider a design that does not require that '{0}' be a reference parameter</source>
@@ -253,8 +253,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
-        <target state="translated">'{0}' türünden sonlandırıcıyı kaldırın, Dispose(bool disposing) metodunu geçersiz kılın ve sonlandırma mantığını 'disposing' değerinin false olduğu kod yoluna yerleştirin. Aksi takdirde, '{1}' Temel türü de bir sonlandırıcı sağladığından yinelenen Dispose çağrılarına yol açabilir.</target>
+        <source>Remove the finalizer from type '{0}', override 'Dispose(bool disposing)', and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
+        <target state="needs-review-translation">'{0}' türünden sonlandırıcıyı kaldırın, Dispose(bool disposing) metodunu geçersiz kılın ve sonlandırma mantığını 'disposing' değerinin false olduğu kod yoluna yerleştirin. Aksi takdirde, '{1}' Temel türü de bir sonlandırıcı sağladığından yinelenen Dispose çağrılarına yol açabilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticConcatenationInFormatStringDescription">
@@ -334,8 +334,8 @@
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageCodeFix">
         <source>Apply 'AttributeUsageAttribute'</source>
-        <target state="translated">'AttributeUsageAttribute' uygula</target>
-        <note />
+        <target state="needs-review-translation">'AttributeUsageAttribute' uygula</target>
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesCodeFixTitle">
         <source>Add operator overload named alternate</source>
@@ -353,8 +353,8 @@
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableDescription">
-        <source>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</source>
-        <target state="translated">Bir sınıf, System.IDisposable türü olan bir örnek alanını bildirip uygular ve sınıf tarafından IDisposable uygulanmaz. IDisposable alanı bildiren bir sınıf dolaylı olarak yönetilmeyen bir kaynağa sahip olur ve IDisposable arabirimini uygulamalıdır.</target>
+        <source>A class declares and implements an instance field that is a 'System.IDisposable' type, and the class does not implement 'IDisposable'. A class that declares an 'IDisposable' field indirectly owns an unmanaged resource and should implement the 'IDisposable' interface.</source>
+        <target state="needs-review-translation">Bir sınıf, System.IDisposable türü olan bir örnek alanını bildirip uygular ve sınıf tarafından IDisposable uygulanmaz. IDisposable alanı bildiren bir sınıf dolaylı olarak yönetilmeyen bir kaynağa sahip olur ve IDisposable arabirimini uygulamalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
@@ -378,23 +378,23 @@
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueDescription">
-        <source>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the FlagsAttribute attribute applied defines a zero-valued member, its name should be ""None"" to indicate that no values have been set in the enumeration.</source>
-        <target state="translated">Başlatılmamış bir sabit listesinin varsayılan değeri, diğer değer türleri gibi sıfır olmalıdır. Bir nonflags-attributed sabit listesi, sabit listesinin varsayılan değerinin geçerli bir değer olması için sıfır değerini kullanarak bir üye tanımlamalıdır. FlagsAttribute özniteliği uygulanmış bir sabit listesi sıfır değerli bir üye tanımlarsa, sabit listesinde değer ayarlanmadığını göstermek için adı ""None"" olmalıdır.</target>
+        <source>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the 'FlagsAttribute' attribute applied defines a zero-valued member, its name should be 'None' to indicate that no values have been set in the enumeration.</source>
+        <target state="needs-review-translation">Başlatılmamış bir sabit listesinin varsayılan değeri, diğer değer türleri gibi sıfır olmalıdır. Bir nonflags-attributed sabit listesi, sabit listesinin varsayılan değerinin geçerli bir değer olması için sıfır değerini kullanarak bir üye tanımlamalıdır. FlagsAttribute özniteliği uygulanmış bir sabit listesi sıfır değerli bir üye tanımlarsa, sabit listesinde değer ayarlanmadığını göstermek için adı ""None"" olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueMessageFlagsRename">
-        <source>In enum {0}, change the name of {1} to 'None'</source>
-        <target state="translated">{0} sabit listesinde {1} öğesinin adını 'None' olarak değiştirin</target>
+        <source>In enum '{0}', change the name of '{1}' to 'None'</source>
+        <target state="needs-review-translation">{0} sabit listesinde {1} öğesinin adını 'None' olarak değiştirin</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueMessageFlagsMultipleZeros">
-        <source>Remove all members that have the value zero from {0} except for one member that is named 'None'</source>
-        <target state="translated">{0} öğesinden 'None' olarak adlandırılmış tek üye dışındaki sıfır değerine sahip tüm üyeleri kaldırın</target>
+        <source>Remove all members that have the value zero from '{0}' except for one member that is named 'None'</source>
+        <target state="needs-review-translation">{0} öğesinden 'None' olarak adlandırılmış tek üye dışındaki sıfır değerine sahip tüm üyeleri kaldırın</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue">
-        <source>Add a member to {0} that has a value of zero with a suggested name of 'None'</source>
-        <target state="translated">{0} öğesine, değeri sıfır ve önerilen adı 'None' olan bir üye ekleyin</target>
+        <source>Add a member to '{0}' that has a value of zero with a suggested name of 'None'</source>
+        <target state="needs-review-translation">{0} öğesine, değeri sıfır ve önerilen adı 'None' olan bir üye ekleyin</target>
         <note />
       </trans-unit>
       <trans-unit id="AbstractTypesShouldNotHaveConstructorsTitle">
@@ -413,19 +413,19 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantTitle">
-        <source>Mark assemblies with CLSCompliant</source>
-        <target state="translated">Bütünleştirilmiş kodları CLSCompliant ile işaretleyin</target>
-        <note />
+        <source>Mark assemblies with 'CLSCompliant'</source>
+        <target state="needs-review-translation">Bütünleştirilmiş kodları CLSCompliant ile işaretleyin</target>
+        <note>{Locked="CLSCompliant"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantDescription">
-        <source>The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using CLSCompliantAttribute . If this attribute is not present on an assembly, the assembly is not compliant.</source>
-        <target state="translated">Ortak Dil Belirtimi (CLS), farklı programlama dillerinde kullanılacaksa bütünleştirilmiş kodların uyması gereken adlandırma kısıtlamalarını, veri türlerini ve kuralları tanımlar. İyi bir tasarım için tüm bütünleştirilmiş kodlar CLSCompliantAttribute kullanarak CLS uyumluluğunu açıkça belirtmelidir. Bütünleştirilmiş kodda bu öznitelik yoksa bütünleştirilmiş kod uyumlu değildir.</target>
-        <note />
+        <source>The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using 'CLSCompliantAttribute' . If this attribute is not present on an assembly, the assembly is not compliant.</source>
+        <target state="needs-review-translation">Ortak Dil Belirtimi (CLS), farklı programlama dillerinde kullanılacaksa bütünleştirilmiş kodların uyması gereken adlandırma kısıtlamalarını, veri türlerini ve kuralları tanımlar. İyi bir tasarım için tüm bütünleştirilmiş kodlar CLSCompliantAttribute kullanarak CLS uyumluluğunu açıkça belirtmelidir. Bütünleştirilmiş kodda bu öznitelik yoksa bütünleştirilmiş kod uyumlu değildir.</target>
+        <note>{Locked="CLSCompliantAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantMessage">
-        <source>Mark assemblies with CLSCompliant</source>
-        <target state="translated">Bütünleştirilmiş kodları CLSCompliant ile işaretleyin</target>
-        <note />
+        <source>Mark assemblies with 'CLSCompliant'</source>
+        <target state="needs-review-translation">Bütünleştirilmiş kodları CLSCompliant ile işaretleyin</target>
+        <note>{Locked="CLSCompliant"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithAssemblyVersionTitle">
         <source>Mark assemblies with assembly version</source>
@@ -443,44 +443,44 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleTitle">
-        <source>Mark assemblies with ComVisible</source>
-        <target state="translated">Bütünleştirilmiş kodları ComVisible ile işaretleyin</target>
-        <note />
+        <source>Mark assemblies with 'ComVisible'</source>
+        <target state="needs-review-translation">Bütünleştirilmiş kodları ComVisible ile işaretleyin</target>
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleDescription">
-        <source>ComVisibleAttribute determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
-        <target state="translated">ComVisibleAttribute, COM istemcilerinin yönetilen koda nasıl erişeceğini belirler. İyi bir tasarım için bütünleştirilmiş kodlar COM görünürlüğünü açıkça belirtmelidir. COM görünürlüğü bütünleştirilmiş kodun tamamı için ayarlanabilir ve sonra tek tek türler ve tür üyeleri için geçersiz kılınabilir. Bu öznitelik yoksa, bütünleştirilmiş kodun içeriğini COM istemcileri görebilir.</target>
-        <note />
+        <source>'ComVisibleAttribute' determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
+        <target state="needs-review-translation">ComVisibleAttribute, COM istemcilerinin yönetilen koda nasıl erişeceğini belirler. İyi bir tasarım için bütünleştirilmiş kodlar COM görünürlüğünü açıkça belirtmelidir. COM görünürlüğü bütünleştirilmiş kodun tamamı için ayarlanabilir ve sonra tek tek türler ve tür üyeleri için geçersiz kılınabilir. Bu öznitelik yoksa, bütünleştirilmiş kodun içeriğini COM istemcileri görebilir.</target>
+        <note>{Locked="ComVisibleAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageNoAttribute">
-        <source>Because {0} exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true).</source>
-        <target state="translated">{0} öğesi dışarıdan görünen türleri kullanıma sunduğundan, bunu bütünleştirilmiş kod düzeyinde ComVisible(false) ile işaretleyin, sonra bütünleştirilmiş kodda bulunan ve COM istemcilerinin kullanımına sunulması gereken tüm türleri ComVisible(true) ile işaretleyin.</target>
-        <note />
+        <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'.</source>
+        <target state="needs-review-translation">{0} öğesi dışarıdan görünen türleri kullanıma sunduğundan, bunu bütünleştirilmiş kod düzeyinde ComVisible(false) ile işaretleyin, sonra bütünleştirilmiş kodda bulunan ve COM istemcilerinin kullanımına sunulması gereken tüm türleri ComVisible(true) ile işaretleyin.</target>
+        <note>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageAttributeTrue">
-        <source>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level.</source>
-        <target state="translated">{0} öğesindeki ComVisible özniteliğini false olarak değiştirmeyi ve tür düzeyinde kabul etmeyi deneyin.</target>
-        <note />
+        <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level.</source>
+        <target state="needs-review-translation">{0} öğesindeki ComVisible özniteliğini false olarak değiştirmeyi ve tür düzeyinde kabul etmeyi deneyin.</target>
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageTitle">
-        <source>Mark attributes with AttributeUsageAttribute</source>
-        <target state="translated">Öznitelikleri AttributeUsageAttribute ile işaretleyin</target>
-        <note />
+        <source>Mark attributes with 'AttributeUsageAttribute'</source>
+        <target state="needs-review-translation">Öznitelikleri AttributeUsageAttribute ile işaretleyin</target>
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageDescription">
-        <source>When you define a custom attribute, mark it by using AttributeUsageAttribute to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.</source>
-        <target state="translated">Özel bir öznitelik tanımladığınızda, özel özniteliğin kaynak kodunun neresinde uygulanabileceğini belirtmek için bunu AttributeUsageAttribute kullanarak işaretleyin. Bir özniteliğin anlamı ve amaçlanan kullanımı, koddaki geçerli konumlarını belirler.</target>
-        <note />
+        <source>When you define a custom attribute, mark it by using 'AttributeUsageAttribute' to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.</source>
+        <target state="needs-review-translation">Özel bir öznitelik tanımladığınızda, özel özniteliğin kaynak kodunun neresinde uygulanabileceğini belirtmek için bunu AttributeUsageAttribute kullanarak işaretleyin. Bir özniteliğin anlamı ve amaçlanan kullanımı, koddaki geçerli konumlarını belirler.</target>
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageDefault">
-        <source>Specify AttributeUsage on {0}</source>
-        <target state="translated">{0} üzerinde AttributeUsage belirtin</target>
-        <note />
+        <source>Specify AttributeUsage on '{0}'</source>
+        <target state="needs-review-translation">{0} üzerinde AttributeUsage belirtin</target>
+        <note>{Locked="AttributeUsage"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageInherited">
-        <source>Even though attribute {0} inherits AttributeUsage from its base type, you should consider explicitly specifying AttributeUsage on the type to improve code readability and documentation.</source>
-        <target state="translated">{0} özniteliği AttributeUsage’ı temel türünden devralsa da kodun okunabilirliğini e belgeleri geliştirmek için AttributeUsage’ı açıkça belirtmeyi göz önünde bulundurmalısınız.</target>
-        <note />
+        <source>Even though attribute '{0}' inherits 'AttributeUsage' from its base type, you should consider explicitly specifying 'AttributeUsage' on the type to improve code readability and documentation.</source>
+        <target state="needs-review-translation">{0} özniteliği AttributeUsage’ı temel türünden devralsa da kodun okunabilirliğini e belgeleri geliştirmek için AttributeUsage’ı açıkça belirtmeyi göz önünde bulundurmalısınız.</target>
+        <note>{Locked="AttributeUsage"}</note>
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsTitle">
         <source>Define accessors for attribute arguments</source>
@@ -493,18 +493,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsMessageDefault">
-        <source>Add a public read-only property accessor for positional argument {0} of Attribute {1}</source>
-        <target state="translated">{1} Özniteliğinin {0} konumsal bağımsız değişkeni için genel bir salt okunur özellik erişimcisi ekleyin</target>
+        <source>Add a public read-only property accessor for positional argument '{0}' of Attribute '{1}'</source>
+        <target state="needs-review-translation">{1} Özniteliğinin {0} konumsal bağımsız değişkeni için genel bir salt okunur özellik erişimcisi ekleyin</target>
         <note />
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsMessageRemoveSetter">
-        <source>Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}</source>
-        <target state="translated">{1} konumsal bağımsız değişkenine karşılık geldiğinden, {0} öğesinden özellik ayarlayıcısını kaldırın veya erişilebilirliğini azaltın</target>
+        <source>Remove the property setter from '{0}' or reduce its accessibility because it corresponds to positional argument '{1}'</source>
+        <target state="needs-review-translation">{1} konumsal bağımsız değişkenine karşılık geldiğinden, {0} öğesinden özellik ayarlayıcısını kaldırın veya erişilebilirliğini azaltın</target>
         <note />
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility">
-        <source>If {0} is the property accessor for positional argument {1}, make it public</source>
-        <target state="translated">{0}, {1} konumsal bağımsız değişkeninin özellik erişimcisiyse bunu genel yapın</target>
+        <source>If '{0}' is the property accessor for positional argument '{1}', make it public</source>
+        <target state="needs-review-translation">{0}, {1} konumsal bağımsız değişkeninin özellik erişimcisiyse bunu genel yapın</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePropertiesWhereAppropriateTitle">
@@ -513,8 +513,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UsePropertiesWhereAppropriateDescription">
-        <source>A public or protected method has a name that starts with ""Get"", takes no parameters, and returns a value that is not an array. The method might be a good candidate to become a property.</source>
-        <target state="translated">Genel veya korumalı bir yöntem, ""Get"" ile başlayan bir ada sahip olur, parametre almaz ve dizi olmayan bir değer döndürür. Yöntem, bir özelliğe dönüşmek için iyi bir aday olabilir.</target>
+        <source>A public or protected method has a name that starts with 'Get', takes no parameters, and returns a value that is not an array. The method might be a good candidate to become a property.</source>
+        <target state="needs-review-translation">Genel veya korumalı bir yöntem, ""Get"" ile başlayan bir ada sahip olur, parametre almaz ve dizi olmayan bir değer döndürür. Yöntem, bir özelliğe dönüşmek için iyi bir aday olabilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePropertiesWhereAppropriateMessage">
@@ -523,19 +523,19 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsTitle">
-        <source>Mark enums with FlagsAttribute</source>
-        <target state="translated">Sabit listelerini FlagsAttribute ile işaretleyin</target>
-        <note />
+        <source>Mark enums with 'FlagsAttribute'</source>
+        <target state="needs-review-translation">Sabit listelerini FlagsAttribute ile işaretleyin</target>
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsDescription">
-        <source>An enumeration is a value type that defines a set of related named constants. Apply FlagsAttribute to an enumeration when its named constants can be meaningfully combined.</source>
-        <target state="translated">Sabit listesi, bir ilgili adlandırılmış sabitler kümesini tanımlayan bir değer türüdür. Bir sabit listesinin adlandırılmış sabitleri anlamlı bir şekilde birleştirilebiliyorsa sabit listesine FlagsAttribute uygulayın.</target>
-        <note />
+        <source>An enumeration is a value type that defines a set of related named constants. Apply 'FlagsAttribute' to an enumeration when its named constants can be meaningfully combined.</source>
+        <target state="needs-review-translation">Sabit listesi, bir ilgili adlandırılmış sabitler kümesini tanımlayan bir değer türüdür. Bir sabit listesinin adlandırılmış sabitleri anlamlı bir şekilde birleştirilebiliyorsa sabit listesine FlagsAttribute uygulayın.</target>
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsMessage">
-        <source>Mark enums with FlagsAttribute</source>
-        <target state="translated">Sabit listelerini FlagsAttribute ile işaretleyin</target>
-        <note />
+        <source>Mark enums with 'FlagsAttribute'</source>
+        <target state="needs-review-translation">Sabit listelerini FlagsAttribute ile işaretleyin</target>
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesTitle">
         <source>Interface methods should be callable by child types</source>
@@ -558,18 +558,18 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesDescription">
-        <source>A public or protected type implements the System.IComparable interface. It does not override Object.Equals nor does it overload the language-specific operator for equality, inequality, less than, less than or equal, greater than or greater than or equal.</source>
-        <target state="translated">Genel veya korumalı bir tür, System.IComparable arabirimini uygular. Object.Equals’ı geçersiz kılmaz veya eşitlik, eşitsizlik, küçüktür, küçük eşittir, büyüktür ya da büyük eşittir için dile özgü işleci aşırı yüklemez.</target>
+        <source>A public or protected type implements the 'System.IComparable' interface. It does not override 'Object.Equals' nor does it overload the language-specific operator for equality, inequality, less than, less than or equal, greater than or greater than or equal.</source>
+        <target state="needs-review-translation">Genel veya korumalı bir tür, System.IComparable arabirimini uygular. Object.Equals’ı geçersiz kılmaz veya eşitlik, eşitsizlik, küçüktür, küçük eşittir, büyüktür ya da büyük eşittir için dile özgü işleci aşırı yüklemez.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageEquals">
-        <source>{0} should override Equals since it implements IComparable</source>
-        <target state="translated">{0}, IComparable'ı uyguladığından Equals'ı geçersiz kılmalıdır</target>
+        <source>'{0}' should override 'Equals' since it implements 'IComparable'</source>
+        <target state="needs-review-translation">{0}, IComparable'ı uyguladığından Equals'ı geçersiz kılmalıdır</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageOperator">
-        <source>{0} should define operator(s) '{1}' since it implements IComparable</source>
-        <target state="translated">{0}, IComparable'ı uyguladığından '{1}' işleçlerini tanımlamalıdır</target>
+        <source>'{0}' should define operator(s) '{1}' since it implements 'IComparable'</source>
+        <target state="needs-review-translation">{0}, IComparable'ı uyguladığından '{1}' işleçlerini tanımlamalıdır</target>
         <note>1 is a comma-separated list</note>
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassTitle">
@@ -578,8 +578,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassDescription">
-        <source>Platform Invocation methods, such as those that are marked by using the System.Runtime.InteropServices.DllImportAttribute attribute, or methods that are defined by using the Declare keyword in Visual Basic, access unmanaged code. These methods should be of the NativeMethods, SafeNativeMethods, or UnsafeNativeMethods class.</source>
-        <target state="translated">System.Runtime.InteropServices.DllImportAttribute özniteliği kullanılarak işaretlenmiş olanlar gibi Platform Çağırma yöntemleri veya Visual Basic’te Declare anahtar sözcüğü kullanılarak tanımlanmış yöntemler yönetilmeyen koda erişir. Bu yöntemler NativeMethods, SafeNativeMethods veya UnsafeNativeMethods sınıfında olmalıdır.</target>
+        <source>Platform Invocation methods, such as those that are marked by using the 'System.Runtime.InteropServices.DllImportAttribute' attribute, or methods that are defined by using the 'Declare' keyword in Visual Basic, access unmanaged code. These methods should be of the 'NativeMethods', 'SafeNativeMethods', or 'UnsafeNativeMethods' class.</source>
+        <target state="needs-review-translation">System.Runtime.InteropServices.DllImportAttribute özniteliği kullanılarak işaretlenmiş olanlar gibi Platform Çağırma yöntemleri veya Visual Basic’te Declare anahtar sözcüğü kullanılarak tanımlanmış yöntemler yönetilmeyen koda erişir. Bu yöntemler NativeMethods, SafeNativeMethods veya UnsafeNativeMethods sınıfında olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassMessage">
@@ -608,18 +608,18 @@
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldHaveCorrectPrefixDescription">
-        <source>The name of an externally visible interface does not start with an uppercase ""I"". The name of a generic type parameter on an externally visible type or method does not start with an uppercase ""T"".</source>
-        <target state="translated">Dışarıdan görünen bir arabirimin adı büyük ""I"" harfiyle başlamaz. Dışarıdan görünen bir tür veya yöntemdeki genel türde bir parametrenin adı büyük ""T"" harfiyle başlamaz.</target>
+        <source>The name of an externally visible interface does not start with an uppercase 'I'. The name of a generic type parameter on an externally visible type or method does not start with an uppercase 'T'.</source>
+        <target state="needs-review-translation">Dışarıdan görünen bir arabirimin adı büyük ""I"" harfiyle başlamaz. Dışarıdan görünen bir tür veya yöntemdeki genel türde bir parametrenin adı büyük ""T"" harfiyle başlamaz.</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldHaveCorrectPrefixMessageInterface">
-        <source>Prefix interface name {0} with 'I'</source>
-        <target state="translated">{0} arabirim adının önüne 'I' ekleyin</target>
+        <source>Prefix interface name '{0}' with 'I'</source>
+        <target state="needs-review-translation">{0} arabirim adının önüne 'I' ekleyin</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldHaveCorrectPrefixMessageTypeParameter">
-        <source>Prefix generic type parameter name {0} with 'T'</source>
-        <target state="translated">Genel türdeki {0} parametre adının önüne 'T' ekleyin</target>
+        <source>Prefix generic type parameter name '{0}' with 'T'</source>
+        <target state="needs-review-translation">Genel türdeki {0} parametre adının önüne 'T' ekleyin</target>
         <note />
       </trans-unit>
       <trans-unit id="NonConstantFieldsShouldNotBeVisibleTitle">
@@ -638,19 +638,19 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsTitle">
-        <source>Do not mark enums with FlagsAttribute</source>
-        <target state="translated">Sabit listelerini FlagsAttribute ile işaretlemeyin</target>
-        <note />
+        <source>Do not mark enums with 'FlagsAttribute'</source>
+        <target state="needs-review-translation">Sabit listelerini FlagsAttribute ile işaretlemeyin</target>
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsDescription">
-        <source>An externally visible enumeration is marked by using FlagsAttribute, and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.</source>
-        <target state="translated">Dışarıdan görünen bir sabit listesi FlagsAttribute kullanılarak işaretlenir ve ikinin üssü olmayan bir veya daha fazla değere ya da sabit listesindeki diğer tanımlı değerlerin bir birleşimine sahip olur.</target>
-        <note />
+        <source>An externally visible enumeration is marked by using 'FlagsAttribute', and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.</source>
+        <target state="needs-review-translation">Dışarıdan görünen bir sabit listesi FlagsAttribute kullanılarak işaretlenir ve ikinin üssü olmayan bir veya daha fazla değere ya da sabit listesindeki diğer tanımlı değerlerin bir birleşimine sahip olur.</target>
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsMessage">
-        <source>Do not mark enums with FlagsAttribute</source>
-        <target state="translated">Sabit listelerini FlagsAttribute ile işaretlemeyin</target>
-        <note />
+        <source>Do not mark enums with 'FlagsAttribute'</source>
+        <target state="needs-review-translation">Sabit listelerini FlagsAttribute ile işaretlemeyin</target>
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
         <source>Operator overloads have named alternates</source>
@@ -663,23 +663,23 @@
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesMessageDefault">
-        <source>Provide a method named '{0}' as a friendly alternate for operator {1}</source>
-        <target state="translated">{1} işleci için kolay bir alternatif olarak '{0}' adlı bir metot sağlayın</target>
+        <source>Provide a method named '{0}' as a friendly alternate for operator '{1}'</source>
+        <target state="needs-review-translation">{1} işleci için kolay bir alternatif olarak '{0}' adlı bir metot sağlayın</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesMessageProperty">
-        <source>Provide a property named '{0}' as a friendly alternate for operator {1}</source>
-        <target state="translated">{1} işleci için kolay bir alternatif olarak '{0}' adlı bir özellik sağlayın</target>
+        <source>Provide a property named '{0}' as a friendly alternate for operator '{1}'</source>
+        <target state="needs-review-translation">{1} işleci için kolay bir alternatif olarak '{0}' adlı bir özellik sağlayın</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesMessageMultiple">
-        <source>Provide a method named '{0}' or '{1}' as an alternate for operator {2}</source>
-        <target state="translated">{2} işleci için bir alternatif olarak '{0}' veya '{1}' adlı bir metot sağlayın</target>
+        <source>Provide a method named '{0}' or '{1}' as an alternate for operator '{2}'</source>
+        <target state="needs-review-translation">{2} işleci için bir alternatif olarak '{0}' veya '{1}' adlı bir metot sağlayın</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesMessageVisibility">
-        <source>Mark {0} as public because it is a friendly alternate for operator {1}</source>
-        <target state="translated">{0}, {1} işleci için kolay bir alternatif olduğundan öğeyi genel olarak işaretleyin</target>
+        <source>Mark '{0}' as public because it is a friendly alternate for operator '{1}'</source>
+        <target state="needs-review-translation">{0}, {1} işleci için kolay bir alternatif olduğundan öğeyi genel olarak işaretleyin</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorsShouldHaveSymmetricalOverloadsTitle">
@@ -713,18 +713,18 @@
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
-        <source>Overload operator equals on overriding value type Equals</source>
-        <target state="translated">Aşırı yükleme işleci, Equals geçersiz kılma değer türüne eşittir</target>
+        <source>Overload operator equals on overriding value type 'Equals'</source>
+        <target state="needs-review-translation">Aşırı yükleme işleci, Equals geçersiz kılma değer türüne eşittir</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsDescription">
-        <source>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.</source>
-        <target state="translated">Çoğu programlama dilinde, değer türleri için eşitlik işlecinin (==) varsayılan bir uygulaması yoktur. Programlama diliniz işleç aşırı yüklemelerini destekliyorsa eşitlik işlecini uygulamayı denemelisiniz. Bu işlecin davranışı Equals ile aynı olmalıdır.</target>
+        <source>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of 'Equals'.</source>
+        <target state="needs-review-translation">Çoğu programlama dilinde, değer türleri için eşitlik işlecinin (==) varsayılan bir uygulaması yoktur. Programlama diliniz işleç aşırı yüklemelerini destekliyorsa eşitlik işlecini uygulamayı denemelisiniz. Bu işlecin davranışı Equals ile aynı olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage">
-        <source>Implement the equality operators and make their behavior identical to that of the Equals method</source>
-        <target state="translated">Eşitlik işleçlerini uygula ve işleç davranışlarını Equals metodununkiyle aynı yap</target>
+        <source>Implement the equality operators and make their behavior identical to that of the 'Equals' method</source>
+        <target state="needs-review-translation">Eşitlik işleçlerini uygula ve işleç davranışlarını Equals metodununkiyle aynı yap</target>
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsTitle">
@@ -733,8 +733,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsDescription">
-        <source>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.</source>
-        <target state="translated">Adı "uri", "URI", "urn", "URN", "url" veya "URL" içeren bir dize parametresine sahip bir yönteme çağrı yapılır. Yöntemin bildirim türü, bir System.Uri parametresine sahip karşılık gelen bir yöntem aşırı yüklemesi içerir.</target>
+        <source>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a 'System.Uri' parameter.</source>
+        <target state="needs-review-translation">Adı "uri", "URI", "urn", "URN", "url" veya "URL" içeren bir dize parametresine sahip bir yönteme çağrı yapılır. Yöntemin bildirim türü, bir System.Uri parametresine sahip karşılık gelen bir yöntem aşırı yüklemesi içerir.</target>
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsMessage">
@@ -743,24 +743,24 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
-        <source>Implement IEquatable when overriding Object.Equals</source>
-        <target state="translated">Object.Equals’ı geçersiz kılarken IEquatable uygulayın</target>
+        <source>Implement 'IEquatable' when overriding 'Object.Equals'</source>
+        <target state="needs-review-translation">Object.Equals’ı geçersiz kılarken IEquatable uygulayın</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
-        <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">{0} türü Equals metodunu geçersiz kıldığından IEquatable&lt;T&gt; uygulamalıdır</target>
+        <source>Type '{0}' should implement 'IEquatable&lt;T&gt;' because it overrides Equals</source>
+        <target state="needs-review-translation">{0} türü Equals metodunu geçersiz kıldığından IEquatable&lt;T&gt; uygulamalıdır</target>
         <note />
       </trans-unit>
       <trans-unit id="CancellationTokenParametersMustComeLastTitle">
-        <source>CancellationToken parameters must come last</source>
-        <target state="translated">CancellationToken parametreleri en sonda olmalıdır</target>
-        <note />
+        <source>'CancellationToken' parameters must come last</source>
+        <target state="needs-review-translation">CancellationToken parametreleri en sonda olmalıdır</target>
+        <note>{Locked="CancellationToken"}</note>
       </trans-unit>
       <trans-unit id="CancellationTokenParametersMustComeLastMessage">
-        <source>Method '{0}' should take CancellationToken as the last parameter</source>
-        <target state="translated">'{0}' yöntemi, son parametre olarak CancellationToken’ı almalıdır</target>
-        <note />
+        <source>Method '{0}' should take 'CancellationToken' as the last parameter</source>
+        <target state="needs-review-translation">'{0}' yöntemi, son parametre olarak CancellationToken’ı almalıdır</target>
+        <note>{Locked="CancellationToken"}</note>
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainTypeNamesTitle">
         <source>Identifier contains type name</source>
@@ -793,39 +793,39 @@
         <note />
       </trans-unit>
       <trans-unit id="AddAssemblyLevelComVisibleFalse">
-        <source>Because {0} exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true)</source>
-        <target state="translated">{0} öğesi dışarıdan görünen türleri kullanıma sunduğundan, bunu bütünleştirilmiş kod düzeyinde ComVisible(false) ile işaretleyin, sonra bütünleştirilmiş kodda bulunan ve COM istemcilerinin kullanımına sunulması gereken tüm türleri ComVisible(true) ile işaretleyin</target>
-        <note />
+        <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'</source>
+        <target state="needs-review-translation">{0} öğesi dışarıdan görünen türleri kullanıma sunduğundan, bunu bütünleştirilmiş kod düzeyinde ComVisible(false) ile işaretleyin, sonra bütünleştirilmiş kodda bulunan ve COM istemcilerinin kullanımına sunulması gereken tüm türleri ComVisible(true) ile işaretleyin</target>
+        <note>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</note>
       </trans-unit>
       <trans-unit id="ChangeAssemblyLevelComVisibleToFalse">
-        <source>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level</source>
-        <target state="translated">{0} öğesindeki ComVisible özniteliğini false olarak değiştirmeyi ve tür düzeyinde kabul etmeyi deneyin</target>
-        <note />
+        <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level</source>
+        <target state="needs-review-translation">{0} öğesindeki ComVisible özniteliğini false olarak değiştirmeyi ve tür düzeyinde kabul etmeyi deneyin</target>
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="ImplementComparable">
-        <source>Implement Equality and Comparison methods and operators</source>
-        <target state="translated">Equality ve Comparison yöntemlerini ve işleçlerini uygulayın</target>
+        <source>Implement equality and comparison methods and operators</source>
+        <target state="needs-review-translation">Equality ve Comparison yöntemlerini ve işleçlerini uygulayın</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementEquatable">
-        <source>Implement IEquatable</source>
-        <target state="translated">IEquatable Uygulayın</target>
-        <note />
+        <source>Implement 'IEquatable'</source>
+        <target state="needs-review-translation">IEquatable Uygulayın</target>
+        <note>{Locked="IEquatable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableInterface">
-        <source>Implement IDisposable Interface</source>
-        <target state="translated">IDisposable Arabirimi Uygulayın</target>
-        <note />
+        <source>Implement 'IDisposable' interface</source>
+        <target state="needs-review-translation">IDisposable Arabirimi Uygulayın</target>
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsCodeFix">
-        <source>Remove FlagsAttribute from enum.</source>
-        <target state="translated">Sabit listesinden FlagsAttribute öğesini kaldırın.</target>
-        <note />
+        <source>Remove 'FlagsAttribute' from enum.</source>
+        <target state="needs-review-translation">Sabit listesinden FlagsAttribute öğesini kaldırın.</target>
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsCodeFix">
-        <source>Apply FlagsAttribute to enum.</source>
-        <target state="translated">Sabit listesine FlagsAttribute öğesini uygulayın.</target>
-        <note />
+        <source>Apply 'FlagsAttribute' to enum.</source>
+        <target state="needs-review-translation">Sabit listesine FlagsAttribute öğesini uygulayın.</target>
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="EnumsShouldZeroValueFlagsMultipleZeroCodeFix">
         <source>Remove all members that have the value zero except for one member that is named 'None'.</source>
@@ -878,8 +878,8 @@
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">
-        <source>Enum Storage should be Int32</source>
-        <target state="translated">Sabit Listesi Depolama Alanı Int32 olmalıdır</target>
+        <source>Enum Storage should be 'Int32'</source>
+        <target state="needs-review-translation">Sabit Listesi Depolama Alanı Int32 olmalıdır</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Description">
@@ -888,8 +888,8 @@
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Message">
-        <source>If possible, make the underlying type of {0} System.Int32 instead of {1}</source>
-        <target state="translated">Mümkünse {0} temel türünü {1} yerine System.Int32 yapın</target>
+        <source>If possible, make the underlying type of '{0}' 'System.Int32' instead of '{1}'</source>
+        <target state="needs-review-translation">Mümkünse {0} temel türünü {1} yerine System.Int32 yapın</target>
         <note />
       </trans-unit>
       <trans-unit id="UseEventsWhereAppropriateTitle">
@@ -918,13 +918,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementStandardExceptionConstructorsMessageMissingConstructor">
-        <source>Add the following constructor to {0}: {1}</source>
-        <target state="translated">{0} öğesine şu oluşturucuyu ekleyin: {1}</target>
+        <source>Add the following constructor to '{0}': '{1}'</source>
+        <target state="needs-review-translation">{0} öğesine şu oluşturucuyu ekleyin: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementStandardExceptionConstructorsMessageAccessibility">
-        <source>Change the accessibility of {0} to {1}.</source>
-        <target state="translated">{0} öğesinin erişilebilirliğini {1} olarak değiştirin.</target>
+        <source>Change the accessibility of '{0}' to '{1}.'</source>
+        <target state="needs-review-translation">{0} öğesinin erişilebilirliğini {1} olarak değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="NestedTypesShouldNotBeVisibleTitle">
@@ -938,13 +938,13 @@
         <note />
       </trans-unit>
       <trans-unit id="NestedTypesShouldNotBeVisibleMessageDefault">
-        <source>Do not nest type {0}. Alternatively, change its accessibility so that it is not externally visible.</source>
-        <target state="translated">{0} türünü iç içe tür olarak kullanmayın. Alternatif olarak, erişilebilirliğini dışarıdan görünmeyecek şekilde değiştirin.</target>
+        <source>Do not nest type '{0}'. Alternatively, change its accessibility so that it is not externally visible.</source>
+        <target state="needs-review-translation">{0} türünü iç içe tür olarak kullanmayın. Alternatif olarak, erişilebilirliğini dışarıdan görünmeyecek şekilde değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="NestedTypesShouldNotBeVisibleMessageVisualBasicModule">
-        <source>Do not nest type {0}. Alternatively, change its accessibility so that it is not externally visible. If this type is defined in a Visual Basic Module, it will be considered a nested type to other .NET languages. In that case, consider moving the type outside of the Module.</source>
-        <target state="translated">{0} türünü iç içe tür olarak kullanmayın. Alternatif olarak, erişilebilirliğini dışarıdan görünmeyecek şekilde değiştirin. Bu tür bir Visual Basic Modülünde tanımlanırsa, diğer .NET dilleri tarafından iç içe bir tür olarak değerlendirilir. Bu durumda, türü Modülün dışına taşımayı deneyin.</target>
+        <source>Do not nest type '{0}'. Alternatively, change its accessibility so that it is not externally visible. If this type is defined in a Visual Basic Module, it will be considered a nested type to other .NET languages. In that case, consider moving the type outside of the Module.</source>
+        <target state="needs-review-translation">{0} türünü iç içe tür olarak kullanmayın. Alternatif olarak, erişilebilirliğini dışarıdan görünmeyecek şekilde değiştirin. Bu tür bir Visual Basic Modülünde tanımlanırsa, diğer .NET dilleri tarafından iç içe bir tür olarak değerlendirilir. Bu durumda, türü Modülün dışına taşımayı deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidEmptyInterfacesTitle">
@@ -963,18 +963,18 @@
         <note />
       </trans-unit>
       <trans-unit id="ProvideObsoleteAttributeMessageTitle">
-        <source>Provide ObsoleteAttribute message</source>
-        <target state="translated">ObsoleteAttribute iletisi sağlayın</target>
+        <source>Provide 'ObsoleteAttribute' message</source>
+        <target state="needs-review-translation">ObsoleteAttribute iletisi sağlayın</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideObsoleteAttributeMessageDescription">
-        <source>A type or member is marked by using a System.ObsoleteAttribute attribute that does not have its ObsoleteAttribute.Message property specified. When a type or member that is marked by using ObsoleteAttribute is compiled, the Message property of the attribute is displayed. This gives the user information about the obsolete type or member.</source>
-        <target state="translated">Bir tür veya üye, ObsoleteAttribute.Message özelliği belirtilmemiş bir System.ObsoleteAttribute özniteliği kullanılarak işaretlenir. ObsoleteAttribute kullanılarak işaretlenmiş bir tür veya üye derlendiğinde, özniteliğin Message özelliği görüntülenir. Bu, kullanıcıya eski tür veya üye hakkında bilgi verir.</target>
+        <source>A type or member is marked by using a 'System.ObsoleteAttribute' attribute that does not have its 'ObsoleteAttribute.Message' property specified. When a type or member that is marked by using 'ObsoleteAttribute' is compiled, the 'Message' property of the attribute is displayed. This gives the user information about the obsolete type or member.</source>
+        <target state="needs-review-translation">Bir tür veya üye, ObsoleteAttribute.Message özelliği belirtilmemiş bir System.ObsoleteAttribute özniteliği kullanılarak işaretlenir. ObsoleteAttribute kullanılarak işaretlenmiş bir tür veya üye derlendiğinde, özniteliğin Message özelliği görüntülenir. Bu, kullanıcıya eski tür veya üye hakkında bilgi verir.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideObsoleteAttributeMessageMessage">
-        <source>Provide a message for the ObsoleteAttribute that marks {0} as Obsolete</source>
-        <target state="translated">{0} öğesini Obsolete olarak işaretleyen ObsoleteAttribute için bir ileti sağlayın</target>
+        <source>Provide a message for the 'ObsoleteAttribute' that marks '{0}' as 'Obsolete'</source>
+        <target state="needs-review-translation">{0} öğesini Obsolete olarak işaretleyen ObsoleteAttribute için bir ileti sağlayın</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertiesShouldNotBeWriteOnlyTitle">
@@ -988,13 +988,13 @@
         <note />
       </trans-unit>
       <trans-unit id="PropertiesShouldNotBeWriteOnlyMessageAddGetter">
-        <source>Because property {0} is write-only, either add a property getter with an accessibility that is greater than or equal to its setter or convert this property into a method</source>
-        <target state="translated">{0} özelliği sadece yazılabilir olduğundan, erişilebilirliği en az özellik ayarlayıcısı kadar olan bir özellik alıcısı ekleyin ya da bu özelliği bir metoda dönüştürün</target>
+        <source>Because property '{0}' is write-only, either add a property getter with an accessibility that is greater than or equal to its setter or convert this property into a method</source>
+        <target state="needs-review-translation">{0} özelliği sadece yazılabilir olduğundan, erişilebilirliği en az özellik ayarlayıcısı kadar olan bir özellik alıcısı ekleyin ya da bu özelliği bir metoda dönüştürün</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertiesShouldNotBeWriteOnlyMessageMakeMoreAccessible">
-        <source>Because the property getter for {0} is less visible than its setter, either increase the accessibility of its getter or decrease the accessibility of its setter</source>
-        <target state="translated">{0} için özellik alıcısı, ayarlayıcısından daha az görünür olduğundan alıcının erişilebilirliğini artırın veya ayarlayıcının erişilebilirliğini azaltın</target>
+        <source>Because the property getter for '{0}' is less visible than its setter, either increase the accessibility of its getter or decrease the accessibility of its setter</source>
+        <target state="needs-review-translation">{0} için özellik alıcısı, ayarlayıcısından daha az görünür olduğundan alıcının erişilebilirliğini artırın veya ayarlayıcının erişilebilirliğini azaltın</target>
         <note />
       </trans-unit>
       <trans-unit id="DeclareTypesInNamespacesTitle">
@@ -1063,8 +1063,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UriPropertiesShouldNotBeStringsDescription">
-        <source>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.</source>
-        <target state="translated">Bu kural, özelliğin bir Tekdüzen Kaynak Tanımlayıcısını (URI) temsil ettiğini varsayar. Bir URI’nin dize temsili ayrıştırma ve kodlama hatalarına meyilli olduğundan, güvenlik açıklarına yol açabilir. System.Uri sınıfı bu hizmetleri güvenli bir biçimde sağlar.</target>
+        <source>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The 'System.Uri' class provides these services in a safe and secure manner.</source>
+        <target state="needs-review-translation">Bu kural, özelliğin bir Tekdüzen Kaynak Tanımlayıcısını (URI) temsil ettiğini varsayar. Bir URI’nin dize temsili ayrıştırma ve kodlama hatalarına meyilli olduğundan, güvenlik açıklarına yol açabilir. System.Uri sınıfı bu hizmetleri güvenli bir biçimde sağlar.</target>
         <note />
       </trans-unit>
       <trans-unit id="UriPropertiesShouldNotBeStringsMessage">
@@ -1073,24 +1073,24 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyTitle">
-        <source>Implement IDisposable Correctly</source>
-        <target state="translated">IDisposable’ı Doğru Uygulayın</target>
-        <note />
+        <source>Implement 'IDisposable' correctly</source>
+        <target state="needs-review-translation">IDisposable’ı Doğru Uygulayın</target>
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyDescription">
-        <source>All IDisposable types should implement the Dispose pattern correctly.</source>
-        <target state="translated">Tüm IDisposable türleri, Dispose desenini doğru uygulamalıdır.</target>
-        <note />
+        <source>All 'IDisposable' types should implement the dispose pattern correctly.</source>
+        <target state="needs-review-translation">Tüm IDisposable türleri, Dispose desenini doğru uygulamalıdır.</target>
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
-        <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'</source>
-        <target state="translated">IDisposable zaten '{1}' temel türü tarafından uygulandığından bunu '{0}' tarafından uygulanan arabirimler listesinden kaldırın</target>
+        <source>Remove 'IDisposable' from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'</source>
+        <target state="needs-review-translation">IDisposable zaten '{1}' temel türü tarafından uygulandığından bunu '{0}' tarafından uygulanan arabirimler listesinden kaldırın</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
-        <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true</source>
-        <target state="translated">'{0}' öğesini kaldırın, Dispose(bool disposing) metodunu geçersiz kılın ve atma mantığını 'disposing' değerinin true olduğu kod yoluna yerleştirin</target>
-        <note />
+        <source>Remove '{0}', override 'Dispose(bool disposing)', and put the dispose logic in the code path where 'disposing' is true</source>
+        <target state="needs-review-translation">'{0}' öğesini kaldırın, Dispose(bool disposing) metodunu geçersiz kılın ve atma mantığını 'disposing' değerinin true olduğu kod yoluna yerleştirin</target>
+        <note>{Locked="Dispose(bool disposing)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed</source>
@@ -1108,18 +1108,18 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
-        <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns</source>
-        <target state="translated">'{0}' metodunu Dispose(true) çağrısı yapacak, sonra geçerli nesne örneğinde (Visual Basic'te 'this' veya 'Me') GC.SuppressFinalize çağrısı yapacak ve sonra dönüş yapacak şekilde değiştirin</target>
-        <note />
+        <source>Modify '{0}' so that it calls 'Dispose(true)', then calls 'GC.SuppressFinalize' on the current object instance ('this' or 'Me' in Visual Basic), and then returns</source>
+        <target state="needs-review-translation">'{0}' metodunu Dispose(true) çağrısı yapacak, sonra geçerli nesne örneğinde (Visual Basic'te 'this' veya 'Me') GC.SuppressFinalize çağrısı yapacak ve sonra dönüş yapacak şekilde değiştirin</target>
+        <note>{Locked="this"}{Locked="Me"}{Locked="GC.SuppressFinalize"}{Locked="Dispose(true)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
-        <source>Modify '{0}' so that it calls Dispose(false) and then returns</source>
-        <target state="translated">'{0}' metodunu Dispose(false) çağrısı yapacak ve sonra dönüş yapacak şekilde değiştirin</target>
-        <note />
+        <source>Modify '{0}' so that it calls 'Dispose(false)' and then returns</source>
+        <target state="needs-review-translation">'{0}' metodunu Dispose(false) çağrısı yapacak ve sonra dönüş yapacak şekilde değiştirin</target>
+        <note>{Locked="Dispose(false)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
-        <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="translated">'{0}' üzerinde geçersiz kılınabilen bir Dispose(bool) uygulaması sağlayın veya türü mühürlü olarak işaretleyin. Bir Dispose(false) çağrısı yalnızca yerel kaynakları temizlemelidir. Bir Dispose(true) çağrısı hem yönetilen hem yerel kaynakları temizlemelidir.</target>
+        <source>Provide an overridable implementation of 'Dispose(bool)' on '{0}' or mark the type as sealed. A call to 'Dispose(false)' should only clean up native resources. A call to 'Dispose(true)' should clean up both managed and native resources.</source>
+        <target state="needs-review-translation">'{0}' üzerinde geçersiz kılınabilen bir Dispose(bool) uygulaması sağlayın veya türü mühürlü olarak işaretleyin. Bir Dispose(false) çağrısı yalnızca yerel kaynakları temizlemelidir. Bir Dispose(true) çağrısı hem yönetilen hem yerel kaynakları temizlemelidir.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">
@@ -1128,8 +1128,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicDescription">
-        <source>An internal exception is visible only inside its own internal scope. After the exception falls outside the internal scope, only the base exception can be used to catch the exception. If the internal exception is inherited from T:System.Exception, T:System.SystemException, or T:System.ApplicationException, the external code will not have sufficient information to know what to do with the exception.</source>
-        <target state="translated">Bir iç özel durum yalnızca kendi iç kapsamı içinde görünür. Özel durum iç kapsamın dışında kaldığında, özel durumun yakalanması için yalnızca temel özel durum kullanılabilir. İç özel durum T:System.Exception, T:System.SystemException veya T:System.ApplicationException öğesinden devralınırsa, dış kod özel durumla ne yapılacağı konusunda yeterli bilgiye sahip olmaz.</target>
+        <source>An internal exception is visible only inside its own internal scope. After the exception falls outside the internal scope, only the base exception can be used to catch the exception. If the internal exception is inherited from 'System.Exception', 'System.SystemException', or 'System.ApplicationException', the external code will not have sufficient information to know what to do with the exception.</source>
+        <target state="needs-review-translation">Bir iç özel durum yalnızca kendi iç kapsamı içinde görünür. Özel durum iç kapsamın dışında kaldığında, özel durumun yakalanması için yalnızca temel özel durum kullanılabilir. İç özel durum T:System.Exception, T:System.SystemException veya T:System.ApplicationException öğesinden devralınırsa, dış kod özel durumla ne yapılacağı konusunda yeterli bilgiye sahip olmaz.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicMessage">
@@ -1148,18 +1148,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInUnexpectedLocationsMessagePropertyGetter">
-        <source>{0} creates an exception of type {1}, an exception type that should not be raised in a property. If this exception instance might be raised, use a different exception type, convert this property into a method, or change this property's logic so that it no longer raises an exception.</source>
-        <target state="translated">{0}, bir özellikte tetiklenmemesi gereken {1} türünde bir özel durum oluşturuyor. Bu özel durum tetiklenebilirse, farklı bir özel durum türü kullanın, bu özelliği bir yönteme dönüştürün veya bu özelliğin mantığını artık özel durum tetiklemeyecek şekilde değiştirin.</target>
+        <source>'{0}' creates an exception of type '{1}', an exception type that should not be raised in a property. If this exception instance might be raised, use a different exception type, convert this property into a method, or change this property's logic so that it no longer raises an exception.</source>
+        <target state="needs-review-translation">{0}, bir özellikte tetiklenmemesi gereken {1} türünde bir özel durum oluşturuyor. Bu özel durum tetiklenebilirse, farklı bir özel durum türü kullanın, bu özelliği bir yönteme dönüştürün veya bu özelliğin mantığını artık özel durum tetiklemeyecek şekilde değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInUnexpectedLocationsMessageHasAllowedExceptions">
-        <source>{0} creates an exception of type {1}, an exception type that should not be raised in this type of method. If this exception instance might be raised, either use a different exception type or change this method's logic so that it no longer raises an exception.</source>
-        <target state="translated">{0}, bu tür bir yöntemde tetiklenmemesi gereken {1} türünde bir özel durum oluşturuyor. Bu özel durum tetiklenebilirse, farklı bir özel durum türü kullanın veya bu yöntemin mantığını artık özel durum tetiklemeyecek şekilde değiştirin.</target>
+        <source>'{0}' creates an exception of type '{1}', an exception type that should not be raised in this type of method. If this exception instance might be raised, either use a different exception type or change this method's logic so that it no longer raises an exception.</source>
+        <target state="needs-review-translation">{0}, bu tür bir yöntemde tetiklenmemesi gereken {1} türünde bir özel durum oluşturuyor. Bu özel durum tetiklenebilirse, farklı bir özel durum türü kullanın veya bu yöntemin mantığını artık özel durum tetiklemeyecek şekilde değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInUnexpectedLocationsMessageNoAllowedExceptions">
-        <source>{0} creates an exception of type {1}. Exceptions should not be raised in this type of method. If this exception instance might be raised, change this method's logic so it no longer raises an exception.</source>
-        <target state="translated">{0}, {1} türünde bir özel durum oluşturuyor. Bu tür bir yöntemde özel durum tetiklenmemelidir. Bu özel durum tetiklenebilirse, bu yöntemin mantığını artık özel durum tetiklemeyecek şekilde değiştirin.</target>
+        <source>'{0}' creates an exception of type '{1}'. Exceptions should not be raised in this type of method. If this exception instance might be raised, change this method's logic so it no longer raises an exception.</source>
+        <target state="needs-review-translation">{0}, {1} türünde bir özel durum oluşturuyor. Bu tür bir yöntemde özel durum tetiklenmemelidir. Bu özel durum tetiklenebilirse, bu yöntemin mantığını artık özel durum tetiklemeyecek şekilde değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresTitle">
@@ -1168,13 +1168,13 @@
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresDescription">
-        <source>By convention, identifier names do not contain the underscore (_) character. This rule checks namespaces, types, members, and parameters.</source>
-        <target state="translated">Kurallar gereği, tanımlayıcı adları alt çizgi (_) karakterini içermez. Bu kural ad alanlarını, türleri, üyeleri ve parametreleri denetler.</target>
+        <source>By convention, identifier names do not contain the underscore '_' character. This rule checks namespaces, types, members, and parameters.</source>
+        <target state="needs-review-translation">Kurallar gereği, tanımlayıcı adları alt çizgi (_) karakterini içermez. Bu kural ad alanlarını, türleri, üyeleri ve parametreleri denetler.</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageAssembly">
-        <source>Remove the underscores from assembly name {0}</source>
-        <target state="translated">{0} bütünleştirilmiş kod adından alt çizgileri kaldırın</target>
+        <source>Remove the underscores from assembly name '{0}'</source>
+        <target state="needs-review-translation">{0} bütünleştirilmiş kod adından alt çizgileri kaldırın</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageNamespace">
@@ -1183,33 +1183,33 @@
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageType">
-        <source>Remove the underscores from type name {0}</source>
-        <target state="translated">{0} tür adından alt çizgileri kaldırın</target>
+        <source>Remove the underscores from type name '{0}'</source>
+        <target state="needs-review-translation">{0} tür adından alt çizgileri kaldırın</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageMember">
-        <source>Remove the underscores from member name {0}</source>
-        <target state="translated">{0} üye adından alt çizgileri kaldırın</target>
+        <source>Remove the underscores from member name '{0}'</source>
+        <target state="needs-review-translation">{0} üye adından alt çizgileri kaldırın</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageTypeTypeParameter">
-        <source>On type {0}, remove the underscores from generic type parameter name {1}</source>
-        <target state="translated">{0} türünde, {1} genel tür parametre adından alt çizgileri kaldırın</target>
+        <source>On type '{0}', remove the underscores from generic type parameter name '{1}'</source>
+        <target state="needs-review-translation">{0} türünde, {1} genel tür parametre adından alt çizgileri kaldırın</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageMethodTypeParameter">
-        <source>On method {0}, remove the underscores from generic type parameter name {1}</source>
-        <target state="translated">{0} metodunda, {1} genel tür parametre adından alt çizgileri kaldırın</target>
+        <source>On method '{0}', remove the underscores from generic type parameter name '{1}'</source>
+        <target state="needs-review-translation">{0} metodunda, {1} genel tür parametre adından alt çizgileri kaldırın</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageMemberParameter">
-        <source>In member {0}, remove the underscores from parameter name {1}</source>
-        <target state="translated">{0} üyesinde, {1} parametre adından alt çizgileri kaldırın</target>
+        <source>In member '{0}', remove the underscores from parameter name '{1}'</source>
+        <target state="needs-review-translation">{0} üyesinde, {1} parametre adından alt çizgileri kaldırın</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageDelegateParameter">
-        <source>In delegate {0}, remove the underscores from parameter name {1}</source>
-        <target state="translated">{0} temsilcisinde, {1} parametre adından alt çizgileri kaldırın</target>
+        <source>In delegate '{0}', remove the underscores from parameter name '{1}'</source>
+        <target state="needs-review-translation">{0} temsilcisinde, {1} parametre adından alt çizgileri kaldırın</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldHaveCorrectSuffixTitle">
@@ -1223,14 +1223,14 @@
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageDefault">
-        <source>Rename {0} to end in '{1}'</source>
-        <target state="translated">{0} öğesini '{1}' ile bitecek şekilde yeniden adlandırın</target>
+        <source>Rename '{0}' to end in '{1}'</source>
+        <target state="needs-review-translation">{0} öğesini '{1}' ile bitecek şekilde yeniden adlandırın</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection">
-        <source>Rename {0} to end in either 'Collection' or '{1}'</source>
-        <target state="translated">{0} öğesini 'Collection' veya '{1}' ile bitecek şekilde yeniden adlandırın</target>
-        <note />
+        <source>Rename '{0}' to end in either 'Collection' or '{1}'</source>
+        <target state="needs-review-translation">{0} öğesini 'Collection' veya '{1}' ile bitecek şekilde yeniden adlandırın</target>
+        <note>{Locked="Collection"}</note>
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixTitle">
         <source>Identifiers should not have incorrect suffix</source>
@@ -1243,18 +1243,18 @@
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixMessageTypeNoAlternate">
-        <source>Rename type name {0} so that it does not end in '{1}'</source>
-        <target state="translated">{0} tür adını '{1}' ile bitmeyecek şekilde yeniden adlandırın</target>
+        <source>Rename type name '{0}' so that it does not end in '{1}'</source>
+        <target state="needs-review-translation">{0} tür adını '{1}' ile bitmeyecek şekilde yeniden adlandırın</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixMessageMemberNewerVersion">
-        <source>Either replace the suffix '{0}' in member name {1} with the suggested numeric alternate '2' or provide a more meaningful suffix that distinguishes it from the member it replaces</source>
-        <target state="translated">{1} üye adındaki '{0}' sonekini önerilen '2' sayısal alternatifi ile değiştirin ya da bunu, yerini aldığı üyeden ayırt edecek daha anlamlı bir sonek sağlayın</target>
+        <source>Either replace the suffix '{0}' in member name '{1}' with the suggested numeric alternate '2' or provide a more meaningful suffix that distinguishes it from the member it replaces</source>
+        <target state="needs-review-translation">{1} üye adındaki '{0}' sonekini önerilen '2' sayısal alternatifi ile değiştirin ya da bunu, yerini aldığı üyeden ayırt edecek daha anlamlı bir sonek sağlayın</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixMessageTypeNewerVersion">
-        <source>Either replace the suffix '{0}' in type name {1} with the suggested numeric alternate '2' or provide a more meaningful suffix that distinguishes it from the type it replaces</source>
-        <target state="translated">{1} tür adındaki '{0}' sonekini önerilen '2' sayısal alternatifi ile değiştirin ya da bunu, yerini aldığı türden ayırt edecek daha anlamlı bir sonek sağlayın</target>
+        <source>Either replace the suffix '{0}' in type name '{1}' with the suggested numeric alternate '2' or provide a more meaningful suffix that distinguishes it from the type it replaces</source>
+        <target state="needs-review-translation">{1} tür adındaki '{0}' sonekini önerilen '2' sayısal alternatifi ile değiştirin ya da bunu, yerini aldığı türden ayırt edecek daha anlamlı bir sonek sağlayın</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixMessageMemberWithAlternate">
@@ -1273,23 +1273,23 @@
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">{0} sanal/arabirim üyesinde, {1} parametresini ayrılmış dil anahtar sözcüğü '{2}' ile çakışmayacak şekilde yeniden adlandırın. Bir sanal/arabirim üyesindeki bir parametrenin adı olarak ayrılmış bir anahtar sözcüğün kullanılması, diğer dillerde kullanıcıların üyeyi geçersiz kılmasını/uygulamasını zorlaştırır.</target>
+        <source>In virtual/interface member '{0}', rename parameter '{1}' so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
+        <target state="needs-review-translation">{0} sanal/arabirim üyesinde, {1} parametresini ayrılmış dil anahtar sözcüğü '{2}' ile çakışmayacak şekilde yeniden adlandırın. Bir sanal/arabirim üyesindeki bir parametrenin adı olarak ayrılmış bir anahtar sözcüğün kullanılması, diğer dillerde kullanıcıların üyeyi geçersiz kılmasını/uygulamasını zorlaştırır.</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
-        <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">{0} sanal/arabirim üyesini, ayrılmış dil anahtar sözcüğü '{1}' ile çakışmayacak şekilde yeniden adlandırın. Bir sanal/arabirim üyesinin adı olarak ayrılmış bir anahtar sözcüğün kullanılması, diğer dillerde kullanıcıların üyeyi geçersiz kılmasını/uygulamasını zorlaştırır.</target>
+        <source>Rename virtual/interface member '{0}' so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
+        <target state="needs-review-translation">{0} sanal/arabirim üyesini, ayrılmış dil anahtar sözcüğü '{1}' ile çakışmayacak şekilde yeniden adlandırın. Bir sanal/arabirim üyesinin adı olarak ayrılmış bir anahtar sözcüğün kullanılması, diğer dillerde kullanıcıların üyeyi geçersiz kılmasını/uygulamasını zorlaştırır.</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageType">
-        <source>Rename type {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a type makes it harder for consumers in other languages to use the type.</source>
-        <target state="translated">{0} türünü, ayrılmış dil anahtar sözcüğü '{1}' ile çakışmayacak şekilde yeniden adlandırın. Bir türün adı olarak ayrılmış bir anahtar sözcüğün kullanılması, diğer dillerde kullanıcıların türü kullanmasını zorlaştırır.</target>
+        <source>Rename type '{0}' so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a type makes it harder for consumers in other languages to use the type.</source>
+        <target state="needs-review-translation">{0} türünü, ayrılmış dil anahtar sözcüğü '{1}' ile çakışmayacak şekilde yeniden adlandırın. Bir türün adı olarak ayrılmış bir anahtar sözcüğün kullanılması, diğer dillerde kullanıcıların türü kullanmasını zorlaştırır.</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageNamespace">
-        <source>Rename namespace {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a namespace makes it harder for consumers in other languages to use the namespace.</source>
-        <target state="translated">{0} ad alanını, ayrılmış dil anahtar sözcüğü '{1}' ile çakışmayacak şekilde yeniden adlandırın. Bir ad alanının adı olarak ayrılmış bir anahtar sözcüğün kullanılması, diğer dillerde kullanıcıların ad alanını kullanmasını zorlaştırır.</target>
+        <source>Rename namespace '{0}' so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a namespace makes it harder for consumers in other languages to use the namespace.</source>
+        <target state="needs-review-translation">{0} ad alanını, ayrılmış dil anahtar sözcüğü '{1}' ile çakışmayacak şekilde yeniden adlandırın. Bir ad alanının adı olarak ayrılmış bir anahtar sözcüğün kullanılması, diğer dillerde kullanıcıların ad alanını kullanmasını zorlaştırır.</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertyNamesShouldNotMatchGetMethodsTitle">
@@ -1298,8 +1298,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PropertyNamesShouldNotMatchGetMethodsDescription">
-        <source>The name of a public or protected member starts with ""Get"" and otherwise matches the name of a public or protected property. ""Get"" methods and properties should have names that clearly distinguish their function.</source>
-        <target state="translated">Genel veya korumalı bir üyenin adı ""Get"" ile başlar ve diğer durumlarda genel veya korumalı bir özelliğin adıyla eşleşir. ""Get"" yöntemleri ve özellikleri, işlevlerini açıkça ayırt eden adlara sahip olmalıdır.</target>
+        <source>The name of a public or protected member starts with 'Get' and otherwise matches the name of a public or protected property. 'Get' methods and properties should have names that clearly distinguish their function.</source>
+        <target state="needs-review-translation">Genel veya korumalı bir üyenin adı ""Get"" ile başlar ve diğer durumlarda genel veya korumalı bir özelliğin adıyla eşleşir. ""Get"" yöntemleri ve özellikleri, işlevlerini açıkça ayırt eden adlara sahip olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertyNamesShouldNotMatchGetMethodsMessage">
@@ -1318,13 +1318,13 @@
         <note />
       </trans-unit>
       <trans-unit id="TypeNamesShouldNotMatchNamespacesMessageDefault">
-        <source>The type name {0} conflicts in whole or in part with the namespace name '{1}'. Change either name to eliminate the conflict.</source>
-        <target state="translated">{0} tür adı, '{1}' ad alanı adıyla tamamen veya kısmen çakışıyor. Çakışmayı ortadan kaldırmak için iki addan birini değiştirin.</target>
+        <source>The type name '{0}' conflicts in whole or in part with the namespace name '{1}'. Change either name to eliminate the conflict.</source>
+        <target state="needs-review-translation">{0} tür adı, '{1}' ad alanı adıyla tamamen veya kısmen çakışıyor. Çakışmayı ortadan kaldırmak için iki addan birini değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="TypeNamesShouldNotMatchNamespacesMessageSystem">
-        <source>The type name {0} conflicts in whole or in part with the namespace name '{1}' defined in the .NET Framework. Rename the type to eliminate the conflict.</source>
-        <target state="translated">{0} tür adı, .NET Framework’te tanımlanan '{1}' ad alanı adıyla tamamen veya kısmen çakışıyor. Çakışmayı ortadan kaldırmak için türü yeniden adlandırın.</target>
+        <source>The type name '{0}' conflicts in whole or in part with the namespace name '{1}' defined in the .NET Framework. Rename the type to eliminate the conflict.</source>
+        <target state="needs-review-translation">{0} tür adı, .NET Framework’te tanımlanan '{1}' ad alanı adıyla tamamen veya kısmen çakışıyor. Çakışmayı ortadan kaldırmak için türü yeniden adlandırın.</target>
         <note />
       </trans-unit>
       <trans-unit id="ParameterNamesShouldMatchBaseDeclarationTitle">
@@ -1338,28 +1338,28 @@
         <note />
       </trans-unit>
       <trans-unit id="ParameterNamesShouldMatchBaseDeclarationMessage">
-        <source>In member {0}, change parameter name {1} to {2} in order to match the identifier as it has been declared in {3}</source>
-        <target state="translated">{0} üyesinde, {1} parametre adının {3} içinde bildirilen şekilde tanımlayıcıyla eşleşmesini sağlamak için adı {2} olarak değiştirin</target>
+        <source>In member '{0}', change parameter name '{1}' to '{2}' in order to match the identifier as it has been declared in '{3}'</source>
+        <target state="needs-review-translation">{0} üyesinde, {1} parametre adının {3} içinde bildirilen şekilde tanımlayıcıyla eşleşmesini sağlamak için adı {2} olarak değiştirin</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesTitle">
-        <source>Override equals and operator equals on value types</source>
-        <target state="translated">Değer türlerinde eşittirleri ve işleç eşittirleri geçersiz kılın</target>
+        <source>Override 'Equals' and operator equals on value types</source>
+        <target state="needs-review-translation">Değer türlerinde eşittirleri ve işleç eşittirleri geçersiz kılın</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesDescription">
-        <source>For value types, the inherited implementation of Equals uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement Equals.</source>
-        <target state="translated">Değer türleri için, devralınan Equals uygulaması Reflection kitaplığını kullanır ve tüm alanların içeriğini karşılaştırır. Reflection, çok işlem kaynağı gerektirir ve tüm alanların eşit olup olmadığının karşılaştırılması gereksiz olabilir. Kullanıcıların örnekleri karşılaştırmasını veya sıralamasını ya da karma tablo anahtarları olarak kullanmasını bekliyorsanız değer türünüz Equals uygulamalıdır.</target>
+        <source>For value types, the inherited implementation of 'Equals' uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement 'Equals'.</source>
+        <target state="needs-review-translation">Değer türleri için, devralınan Equals uygulaması Reflection kitaplığını kullanır ve tüm alanların içeriğini karşılaştırır. Reflection, çok işlem kaynağı gerektirir ve tüm alanların eşit olup olmadığının karşılaştırılması gereksiz olabilir. Kullanıcıların örnekleri karşılaştırmasını veya sıralamasını ya da karma tablo anahtarları olarak kullanmasını bekliyorsanız değer türünüz Equals uygulamalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals">
-        <source>{0} should override Equals</source>
-        <target state="translated">{0}, Equals’ı geçersiz kılmalıdır</target>
+        <source>'{0}' should override 'Equals'</source>
+        <target state="needs-review-translation">{0}, Equals’ı geçersiz kılmalıdır</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality">
-        <source>{0} should override the equality (==) and inequality (!=) operators</source>
-        <target state="translated">{0}, eşitlik (==) ve eşitsizlik (!=) işleçlerini geçersiz kılmalıdır</target>
+        <source>'{0}' should override the equality (==) and inequality (!=) operators</source>
+        <target state="needs-review-translation">{0}, eşitlik (==) ve eşitsizlik (!=) işleçlerini geçersiz kılmalıdır</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertiesShouldNotReturnArraysTitle">
@@ -1378,33 +1378,33 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetHashCodeOnOverridingEqualsTitle">
-        <source>Override GetHashCode on overriding Equals</source>
-        <target state="translated">Equals geçersiz kılındığında GetHashCode’u geçersiz kılın</target>
+        <source>Override 'GetHashCode' on overriding 'Equals'</source>
+        <target state="needs-review-translation">Equals geçersiz kılındığında GetHashCode’u geçersiz kılın</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetHashCodeOnOverridingEqualsDescription">
-        <source>GetHashCode returns a value, based on the current instance, that is suited for hashing algorithms and data structures such as a hash table. Two objects that are the same type and are equal must return the same hash code.</source>
-        <target state="translated">GetHashCode, geçerli örnek temel alınarak bir değer döndürür ve bu değer, algoritmaların ve veri yapılarının bir karma tablo gibi karmasını oluşturmak için uygundur. Aynı türde ve eşit olan iki nesne, aynı karma kodu döndürmelidir.</target>
+        <source>'GetHashCode' returns a value, based on the current instance, that is suited for hashing algorithms and data structures such as a hash table. Two objects that are the same type and are equal must return the same hash code.</source>
+        <target state="needs-review-translation">GetHashCode, geçerli örnek temel alınarak bir değer döndürür ve bu değer, algoritmaların ve veri yapılarının bir karma tablo gibi karmasını oluşturmak için uygundur. Aynı türde ve eşit olan iki nesne, aynı karma kodu döndürmelidir.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetHashCodeOnOverridingEqualsMessage">
-        <source>Override GetHashCode on overriding Equals</source>
-        <target state="translated">Equals geçersiz kılındığında GetHashCode’u geçersiz kılın</target>
+        <source>Override 'GetHashCode' on overriding 'Equals'</source>
+        <target state="needs-review-translation">Equals geçersiz kılındığında GetHashCode’u geçersiz kılın</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsOnOverloadingOperatorEqualsTitle">
-        <source>Override Equals on overloading operator equals</source>
-        <target state="translated">Aşırı yükleme işleci eşit olduğunda Equals’ı geçersiz kılın</target>
+        <source>Override 'Equals' on overloading operator equals</source>
+        <target state="needs-review-translation">Aşırı yükleme işleci eşit olduğunda Equals’ı geçersiz kılın</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsOnOverloadingOperatorEqualsDescription">
-        <source>A public type implements the equality operator but does not override Object.Equals.</source>
-        <target state="translated">Genel bir tür eşitlik işlecini uygular, ancak Object.Equals’ı geçersiz kılmaz.</target>
+        <source>A public type implements the equality operator but does not override 'Object.Equals'.</source>
+        <target state="needs-review-translation">Genel bir tür eşitlik işlecini uygular, ancak Object.Equals’ı geçersiz kılmaz.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsOnOverloadingOperatorEqualsMessage">
-        <source>Override Equals on overloading operator equals</source>
-        <target state="translated">Aşırı yükleme işleci eşit olduğunda Equals’ı geçersiz kılın</target>
+        <source>Override 'Equals' on overloading operator equals</source>
+        <target state="needs-review-translation">Aşırı yükleme işleci eşit olduğunda Equals’ı geçersiz kılın</target>
         <note />
       </trans-unit>
       <trans-unit id="Since_0_redefines_operator_1_it_should_also_redefine_operator_2">
@@ -1418,18 +1418,18 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle">
-        <source>Override object.Equals</source>
-        <target state="translated">object.Equals’ı geçersiz kılın</target>
+        <source>Override 'object.Equals'</source>
+        <target state="needs-review-translation">object.Equals’ı geçersiz kılın</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsOnImplementingIEquatableCodeActionTitle">
-        <source>Override object.Equals</source>
-        <target state="translated">object.Equals’ı geçersiz kılın</target>
+        <source>Override 'object.Equals'</source>
+        <target state="needs-review-translation">object.Equals’ı geçersiz kılın</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetHashCodeOnOverridingEqualsCodeActionTitle">
-        <source>Override object.GetHashCode</source>
-        <target state="translated">object.GetHashCode’u geçersiz kılın</target>
+        <source>Override 'object.GetHashCode'</source>
+        <target state="needs-review-translation">object.GetHashCode’u geçersiz kılın</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeExceptionPublic">
@@ -1463,23 +1463,23 @@
         <note />
       </trans-unit>
       <trans-unit id="MakeClassStatic">
-        <source>Make Class Static</source>
-        <target state="translated">Sınıfı Statik Yapın</target>
+        <source>Make class static</source>
+        <target state="needs-review-translation">Sınıfı Statik Yapın</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
-        <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">{0} türü IEquatable&lt;T&gt; uyguladığından Equals metodunu geçersiz kılmalıdır</target>
+        <source>Type '{0}' should override 'Equals' because it implements 'IEquatable&lt;T&gt;'</source>
+        <target state="needs-review-translation">{0} türü IEquatable&lt;T&gt; uyguladığından Equals metodunu geçersiz kılmalıdır</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
-        <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">IEquatable&lt;T&gt; uygularken Object.Equals(object)’i geçersiz kılın</target>
+        <source>Override 'Object.Equals(object)' when implementing 'IEquatable&lt;T&gt;'</source>
+        <target state="needs-review-translation">IEquatable&lt;T&gt; uygularken Object.Equals(object)’i geçersiz kılın</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
-        <source>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</source>
-        <target state="translated">Dizin oluşturucular, yani dizine eklenmiş özellikler dizin için tamsayı veya dize türlerini kullanmalıdır. Bu türler genellikle veri yapılarının dizininin oluşturulması ve kitaplığın kullanılabilirliğinin artırılması için kullanılır. Object türünün kullanımı, tamsayı veya dize türünün tasarım sırasında tam olarak belirtilemediği durumlarla kısıtlı olmalıdır. Tasarım dizin için başka türler gerektiriyorsa, türün mantıksal bir veri deposunu temsil edip etmediğini yeniden değerlendirin. Mantıksal bir veri deposunu temsil etmiyorsa bir yöntem kullanın.</target>
+        <source>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the 'Object' type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</source>
+        <target state="needs-review-translation">Dizin oluşturucular, yani dizine eklenmiş özellikler dizin için tamsayı veya dize türlerini kullanmalıdır. Bu türler genellikle veri yapılarının dizininin oluşturulması ve kitaplığın kullanılabilirliğinin artırılması için kullanılır. Object türünün kullanımı, tamsayı veya dize türünün tasarım sırasında tam olarak belirtilemediği durumlarla kısıtlı olmalıdır. Tasarım dizin için başka türler gerektiriyorsa, türün mantıksal bir veri deposunu temsil edip etmediğini yeniden değerlendirin. Mantıksal bir veri deposunu temsil etmiyorsa bir yöntem kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersMessage">
@@ -1493,33 +1493,33 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
-        <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
-        <target state="translated">Bir asenkron metot bir Görevi doğrudan bekliyorsa, görevi oluşturan iş parçacığında devamlılık gerçekleşir. Devamlılığa yönelik amacınızı belirtmek için Task.ConfigureAwait(Boolean) çağrısı yapmayı düşünün. İş parçacığı havuzuna devamlılıkları zamanlamaya yönelik görev üzerinde ConfigureAwait(false) çağrısı yaparak kullanıcı arabirimi iş parçacığında kilitlenmeyi önleyin. False geçirmek, uygulamadan bağımsız kitaplıklar için iyi bir seçenektir. Görevde ConfigureAwait(true) çağrısı yapmak, ConfigureAwait öğesini açıkça çağırmamakla aynı davranışa sahiptir. Bu yöntemi açık bir şekilde çağırarak, okuyuculara devamlılığı özgün eşitleme bağlamında gerçekleştirmek istediğinizi bildirirsiniz.</target>
-        <note />
+        <source>When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call 'ConfigureAwait(false)' on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling 'ConfigureAwait'. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
+        <target state="needs-review-translation">Bir asenkron metot bir Görevi doğrudan bekliyorsa, görevi oluşturan iş parçacığında devamlılık gerçekleşir. Devamlılığa yönelik amacınızı belirtmek için Task.ConfigureAwait(Boolean) çağrısı yapmayı düşünün. İş parçacığı havuzuna devamlılıkları zamanlamaya yönelik görev üzerinde ConfigureAwait(false) çağrısı yaparak kullanıcı arabirimi iş parçacığında kilitlenmeyi önleyin. False geçirmek, uygulamadan bağımsız kitaplıklar için iyi bir seçenektir. Görevde ConfigureAwait(true) çağrısı yapmak, ConfigureAwait öğesini açıkça çağırmamakla aynı davranışa sahiptir. Bu yöntemi açık bir şekilde çağırarak, okuyuculara devamlılığı özgün eşitleme bağlamında gerçekleştirmek istediğinizi bildirirsiniz.</target>
+        <note>{Locked="Task"}{Locked="ConfigureAwait(false)"}{Locked="ConfigureAwait(true)"}{Locked="Task.ConfigureAwait(Boolean)"}{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
-        <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="translated">Beklenen görevde ConfigureAwait çağrısı yapmayı düşünün</target>
-        <note />
+        <source>Consider calling 'ConfigureAwait' on the awaited task</source>
+        <target state="needs-review-translation">Beklenen görevde ConfigureAwait çağrısı yapmayı düşünün</target>
+        <note>{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
-        <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="translated">Beklenen görevde ConfigureAwait çağrısı yapmayı düşünün</target>
-        <note />
+        <source>Consider calling 'ConfigureAwait' on the awaited task</source>
+        <target state="needs-review-translation">Beklenen görevde ConfigureAwait çağrısı yapmayı düşünün</target>
+        <note>{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
-        <source>Append .ConfigureAwait(false)</source>
-        <target state="translated">Sonuna .ConfigureAwait(false) ekleyin</target>
-        <note />
+        <source>Append '.ConfigureAwait(false)'</source>
+        <target state="needs-review-translation">Sonuna .ConfigureAwait(false) ekleyin</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
-        <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">Bir T türü Object.Equals(object) öğesini geçersiz kıldığında, uygulama karşılaştırma gerçekleştirmeden önce nesne bağımsız değişkenini doğru T türüne dönüştürmelidir. Tür IEquatable&lt;T&gt; arabirimini uyguluyor, dolayısıyla T.Equals(T) metodunu sunuyorsa ve bağımsız değişkenin derleme zamanında T türünde olduğu biliniyorsa, derleyici Object.Equals(object) yerine IEquatable&lt;T&gt;.Equals(T) çağrısı yapabilir ve tür dönüştürmeye gerek kalmadığından performansın artırılması sağlanır.</target>
+        <source>When a type 'T' overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type 'T' before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</source>
+        <target state="needs-review-translation">Bir T türü Object.Equals(object) öğesini geçersiz kıldığında, uygulama karşılaştırma gerçekleştirmeden önce nesne bağımsız değişkenini doğru T türüne dönüştürmelidir. Tür IEquatable&lt;T&gt; arabirimini uyguluyor, dolayısıyla T.Equals(T) metodunu sunuyorsa ve bağımsız değişkenin derleme zamanında T türünde olduğu biliniyorsa, derleyici Object.Equals(object) yerine IEquatable&lt;T&gt;.Equals(T) çağrısı yapabilir ve tür dönüştürmeye gerek kalmadığından performansın artırılması sağlanır.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
-        <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">Bir T türü IEquatable&lt;T&gt; arabirimini uyguluyorsa, bu arabirim kaynak kodunda Equals metodu çağrısını gören kullanıcıya türün örneğinin başka herhangi bir türün örneğiyle eşitlenebileceği önerisinde bulunur. Kullanıcının, türü başka bir türün örneğiyle eşitleme girişimi derlenemediğinde kafası karışabilir. Bu durum, "en az beklenmedik durum ilkesini" ihlal eder.</target>
+        <source>When a type 'T' implements the interface 'IEquatable&lt;T&gt;', it suggests to a user who sees a call to the 'Equals' method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
+        <target state="needs-review-translation">Bir T türü IEquatable&lt;T&gt; arabirimini uyguluyorsa, bu arabirim kaynak kodunda Equals metodu çağrısını gören kullanıcıya türün örneğinin başka herhangi bir türün örneğiyle eşitlenebileceği önerisinde bulunur. Kullanıcının, türü başka bir türün örneğiyle eşitleme girişimi derlenemediğinde kafası karışabilir. Bu durum, "en az beklenmedik durum ilkesini" ihlal eder.</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1543,8 +1543,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
-        <source>Remove '{0}' and replace its usage with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">'{0}' öğesini kaldırın ve kullanımını genel bir EventHandler ile değiştirin. Örneğin, EventHandler&lt;T&gt;. Burada T, geçerli bir EventArgs değeridir</target>
+        <source>Remove '{0}' and replace its usage with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</source>
+        <target state="needs-review-translation">'{0}' öğesini kaldırın ve kullanımını genel bir EventHandler ile değiştirin. Örneğin, EventHandler&lt;T&gt;. Burada T, geçerli bir EventArgs değeridir</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1553,8 +1553,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
-        <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">'{0}' olayını, '{1}' türünün yerine genel bir EventHandler gelecek şekilde değiştirin. Örneğin, EventHandler&lt;T&gt;. Burada T, geçerli bir EventArgs değeridir</target>
+        <source>Change the event '{0}' to replace the type '{1}' with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</source>
+        <target state="needs-review-translation">'{0}' olayını, '{1}' türünün yerine genel bir EventHandler gelecek şekilde değiştirin. Örneğin, EventHandler&lt;T&gt;. Burada T, geçerli bir EventArgs değeridir</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
@@ -1563,34 +1563,34 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
-        <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="translated">Olay türünü açık bir şekilde belirterek (örneğin, Event MyEvent As EventHandler(Of MyEventArgs)), '{0}' olayını genel bir EventHandler kullanacak şekilde değiştirin.</target>
+        <source>Change the event '{0}' to use a generic 'EventHandler' by defining the event type explicitly, for example, 'Event MyEvent As EventHandler(Of MyEventArgs)'</source>
+        <target state="needs-review-translation">Olay türünü açık bir şekilde belirterek (örneğin, Event MyEvent As EventHandler(Of MyEventArgs)), '{0}' olayını genel bir EventHandler kullanacak şekilde değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
-        <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="translated">Bir tür, imzası iki parametre (ilki bir nesne, ikincisi EventArgs’a atanabilen bir tür) içeren ve void döndüren bir EventHandler temsilcisi bildiren bir olay içeriyor ve bunu içeren bütünleştirilmiş kod Microsoft .NET Framework 2.0 sürümünü hedefliyor.</target>
+        <source>A type contains an event that declares an 'EventHandler' delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
+        <target state="needs-review-translation">Bir tür, imzası iki parametre (ilki bir nesne, ikincisi EventArgs’a atanabilen bir tür) içeren ve void döndüren bir EventHandler temsilcisi bildiren bir olay içeriyor ve bunu içeren bütünleştirilmiş kod Microsoft .NET Framework 2.0 sürümünü hedefliyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
-        <source>{0} should define operator(s) '{1}' and Equals since it implements IComparable</source>
-        <target state="translated">{0}, IComparable'ı uyguladığından '{1}' işleçlerini ve Equals'ı tanımlamalıdır</target>
+        <source>'{0}' should define operator(s) '{1}' and 'Equals' since it implements 'IComparable'</source>
+        <target state="needs-review-translation">{0}, IComparable'ı uyguladığından '{1}' işleçlerini ve Equals'ı tanımlamalıdır</target>
         <note>1 is a comma-separated list</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixTitle">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">Ön ek içeren cref etiketlerini kullanmayın</target>
-        <note />
+        <target state="needs-review-translation">Ön ek içeren cref etiketlerini kullanmayın</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixDescription">
         <source>Use of cref tags with prefixes should be avoided, since it prevents the compiler from verifying references and the IDE from updating references during refactorings. It is permissible to suppress this error at a single documentation site if the cref must use a prefix because the type being mentioned is not findable by the compiler. For example, if a cref is mentioning a special attribute in the full framework but you're in a file that compiles against the portable framework, or if you want to reference a type at higher layer of Roslyn, you should suppress the error. You should not suppress the error just because you want to take a shortcut and avoid using the full syntax.</source>
-        <target state="translated">Ön ekli cref etiketleri kullanılması, derleyicinin başvuruları doğrulamasını ve yeniden düzenlemeler sırasında IDE’nin başvuruları güncelleştirmesini engellediğinden, bundan kaçınılmalıdır. Bahsedilmekte olan tür derleyici tarafından bulunabilir olmadığından cref’in bir ön ek kullanması gerekiyorsa tek bir belge sitesinde bu hatanın bastırılmasına izin verilir. Örneğin, bir cref tam çerçevedeki özel bir öznitelikten bahsediyor, ancak siz taşınabilir çerçeveye göre derlenen bir dosyadaysanız ya da daha yüksek bir Roslyn katmanındaki bir türe başvurmak istiyorsanız hatayı bastırmalısınız. Hatayı yalnızca işinizi kolaylaştırmak ve tam söz dizimini kullanmaktan kaçınmak için bastırmamalısınız.</target>
-        <note />
+        <target state="needs-review-translation">Ön ekli cref etiketleri kullanılması, derleyicinin başvuruları doğrulamasını ve yeniden düzenlemeler sırasında IDE’nin başvuruları güncelleştirmesini engellediğinden, bundan kaçınılmalıdır. Bahsedilmekte olan tür derleyici tarafından bulunabilir olmadığından cref’in bir ön ek kullanması gerekiyorsa tek bir belge sitesinde bu hatanın bastırılmasına izin verilir. Örneğin, bir cref tam çerçevedeki özel bir öznitelikten bahsediyor, ancak siz taşınabilir çerçeveye göre derlenen bir dosyadaysanız ya da daha yüksek bir Roslyn katmanındaki bir türe başvurmak istiyorsanız hatayı bastırmalısınız. Hatayı yalnızca işinizi kolaylaştırmak ve tam söz dizimini kullanmaktan kaçınmak için bastırmamalısınız.</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixMessage">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">Ön ek içeren cref etiketlerini kullanmayın</target>
-        <note />
+        <target state="needs-review-translation">Ön ek içeren cref etiketlerini kullanmayın</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
@@ -1693,8 +1693,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersMessage">
-        <source>Parameter {0} of method {1} is never used. Remove the parameter or use it in the method body.</source>
-        <target state="translated">{1} yönteminin {0} parametresi hiçbir zaman kullanılmıyor. Parametreyi kaldırın veya yöntem gövdesinde kullanın.</target>
+        <source>Parameter '{0}' of method '{1}' is never used. Remove the parameter or use it in the method body.</source>
+        <target state="needs-review-translation">{1} yönteminin {0} parametresi hiçbir zaman kullanılmıyor. Parametreyi kaldırın veya yöntem gövdesinde kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="RemoveUnusedParameterMessage">
@@ -1713,23 +1713,23 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessageObjectCreation">
-        <source>{0} creates a new instance of {1} which is never used. Pass the instance as an argument to another method, assign the instance to a variable, or remove the object creation if it is unnecessary.</source>
-        <target state="translated">{0} hiçbir zaman kullanılmayan yeni bir {1} örneği oluşturuyor. Örneği bir bağımsız değişken olarak başka yönteme geçirin, örneği bir değişkene atayın ya da gereksizse nesne oluşturmayı kaldırın.</target>
+        <source>'{0}' creates a new instance of '{1}' which is never used. Pass the instance as an argument to another method, assign the instance to a variable, or remove the object creation if it is unnecessary.</source>
+        <target state="needs-review-translation">{0} hiçbir zaman kullanılmayan yeni bir {1} örneği oluşturuyor. Örneği bir bağımsız değişken olarak başka yönteme geçirin, örneği bir değişkene atayın ya da gereksizse nesne oluşturmayı kaldırın.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessageStringCreation">
-        <source>{0} calls {1} but does not use the new string instance that the method returns. Pass the instance as an argument to another method, assign the instance to a variable, or remove the call if it is unnecessary.</source>
-        <target state="translated">{0}, {1} çağırıyor ancak yöntemin döndürdüğü yeni dize örneğini kullanmıyor. Örneği bir bağımsız değişken olarak başka yönteme geçirin, örneği bir değişkene atayın ya da gereksizse çağrıyı kaldırın.</target>
+        <source>'{0}' calls '{1}' but does not use the new string instance that the method returns. Pass the instance as an argument to another method, assign the instance to a variable, or remove the call if it is unnecessary.</source>
+        <target state="needs-review-translation">{0}, {1} çağırıyor ancak yöntemin döndürdüğü yeni dize örneğini kullanmıyor. Örneği bir bağımsız değişken olarak başka yönteme geçirin, örneği bir değişkene atayın ya da gereksizse çağrıyı kaldırın.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessageHResultOrErrorCode">
-        <source>{0} calls {1} but does not use the HRESULT or error code that the method returns. This could lead to unexpected behavior in error conditions or low-resource situations. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
-        <target state="translated">{0}, {1} çağırıyor ancak yöntemin döndürdüğü HRESULT veya hata kodunu kullanmıyor. Bu, hata koşullarında ya da düşük kaynak durumlarında beklenmedik davranışlara neden olabilir. Bir koşullu ifadedeki sonucu kullanın, sonucu bir değişkene atayın veya bir bağımsız değişken olarak başka bir yönteme geçirin.</target>
+        <source>'{0}' calls '{1}' but does not use the HRESULT or error code that the method returns. This could lead to unexpected behavior in error conditions or low-resource situations. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
+        <target state="needs-review-translation">{0}, {1} çağırıyor ancak yöntemin döndürdüğü HRESULT veya hata kodunu kullanmıyor. Bu, hata koşullarında ya da düşük kaynak durumlarında beklenmedik davranışlara neden olabilir. Bir koşullu ifadedeki sonucu kullanın, sonucu bir değişkene atayın veya bir bağımsız değişken olarak başka bir yönteme geçirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessageTryParse">
-        <source>{0} calls {1} but does not explicitly check whether the conversion succeeded. Either use the return value in a conditional statement or verify that the call site expects that the out argument will be set to the default value when the conversion fails.</source>
-        <target state="translated">{0}, {1} çağırıyor ancak dönüşümün başarılı olup olmadığını açıkça denetlemiyor. Dönüş değerini koşullu bir ifadede kullanın veya çağırma sitesinin çıkış değerinin dönüşüm başarısız olduğunda varsayılan değere ayarlanmasını beklediğini doğrulayın.</target>
+        <source>'{0}' calls '{1}' but does not explicitly check whether the conversion succeeded. Either use the return value in a conditional statement or verify that the call site expects that the out argument will be set to the default value when the conversion fails.</source>
+        <target state="needs-review-translation">{0}, {1} çağırıyor ancak dönüşümün başarılı olup olmadığını açıkça denetlemiyor. Dönüş değerini koşullu bir ifadede kullanın veya çağırma sitesinin çıkış değerinin dönüşüm başarısız olduğunda varsayılan değere ayarlanmasını beklediğini doğrulayın.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUninstantiatedInternalClassesTitle">
@@ -1743,9 +1743,9 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidUninstantiatedInternalClassesMessage">
-        <source>{0} is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</source>
-        <target state="translated">{0} hiç örneklenmemiş gibi görünen bir iç sınıftır. Öyleyse, kodu derlemeden kaldırın. Bu sınıfın yalnızca statik üyeler içermesi gerekiyorsa, statik yapın (Visual Basic’te Shared).</target>
-        <note />
+        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it 'static' ('Shared' in Visual Basic).</source>
+        <target state="needs-review-translation">{0} hiç örneklenmemiş gibi görünen bir iç sınıftır. Öyleyse, kodu derlemeden kaldırın. Bu sınıfın yalnızca statik üyeler içermesi gerekiyorsa, statik yapın (Visual Basic’te Shared).</target>
+        <note>{Locked="static"}{Locked="Shared"}{Locked="Visual Basic"}</note>
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsTitle">
         <source>Avoid unused private fields</source>
@@ -1763,8 +1763,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessagePureMethod">
-        <source>{0} calls {1} but does not use the value the method returns. Because {1} is marked as a Pure method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
-        <target state="translated">{0} {1} çağırıyor ancak yöntemin döndürdüğü değeri kullanmıyor. {1} Saf yöntem olarak işaretlendiğinden yan etkilere sahip olamaz. Bir koşullu ifadedeki sonucu kullanın, sonucu bir değişkene atayın veya bir bağımsız değişken olarak başka bir yönteme geçirin.</target>
+        <source>'{0}' calls '{1}' but does not use the value the method returns. Because '{1}' is marked as a 'Pure' method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
+        <target state="needs-review-translation">{0} {1} çağırıyor ancak yöntemin döndürdüğü değeri kullanmıyor. {1} Saf yöntem olarak işaretlendiğinden yan etkilere sahip olamaz. Bir koşullu ifadedeki sonucu kullanın, sonucu bir değişkene atayın veya bir bağımsız değişken olarak başka bir yönteme geçirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringDescription">
@@ -1783,8 +1783,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidPropertySelfAssignmentMessage">
-        <source>The property {0} should not be assigned to itself</source>
-        <target state="translated">{0} özelliği kendisine atanmamalıdır</target>
+        <source>The property '{0}' should not be assigned to itself</source>
+        <target state="needs-review-translation">{0} özelliği kendisine atanmamalıdır</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidPropertySelfAssignmentTitle">
@@ -1848,18 +1848,18 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageDefault">
-        <source>{0} is a multidimensional array. Replace it with a jagged array if possible.</source>
-        <target state="translated">{0}, çok boyutlu bir dizi. Mümkünse bunu düzensiz bir diziyle değiştirin.</target>
+        <source>'{0}' is a multidimensional array. Replace it with a jagged array if possible.</source>
+        <target state="needs-review-translation">{0}, çok boyutlu bir dizi. Mümkünse bunu düzensiz bir diziyle değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageReturn">
-        <source>{0} returns a multidimensional array of {1}. Replace it with a jagged array if possible.</source>
-        <target state="translated">{0}, çok boyutlu {1} dizisini döndürüyor. Mümkünse bunu düzensiz bir diziyle değiştirin.</target>
+        <source>'{0}' returns a multidimensional array of '{1}'. Replace it with a jagged array if possible.</source>
+        <target state="needs-review-translation">{0}, çok boyutlu {1} dizisini döndürüyor. Mümkünse bunu düzensiz bir diziyle değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageBody">
-        <source>{0} uses a multidimensional array of {1}. Replace it with a jagged array if possible.</source>
-        <target state="translated">{0}, çok boyutlu {1} dizisini kullanıyor. Mümkünse bunu düzensiz bir diziyle değiştirin.</target>
+        <source>'{0}' uses a multidimensional array of '{1}'. Replace it with a jagged array if possible.</source>
+        <target state="needs-review-translation">{0}, çok boyutlu {1} dizisini kullanıyor. Mümkünse bunu düzensiz bir diziyle değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkMembersAsStaticTitle">
@@ -1988,13 +1988,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsDescription">
-        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
-        <target state="translated">Dışarıdan görünen metot, bağımsız değişkenin null (Visual Basic’te Nothing) olup olmadığını doğrulamadan başvuru bağımsız değişkenlerinden birine başvurur. Dışarıdan görünen metotlara geçirilen tüm başvuru bağımsız değişkenlerinin null olup olmadığı denetlenmelidir. Uygunsa, bağımsız değişken null olduğunda bir ArgumentNullException oluşturun veya null olmayan bağımsız değişkenleri onaylayan bir Kod Sözleşmesi önkoşulu ekleyin. Metot yalnızca bilinen derlemeler tarafından çağrılacak şekilde tasarlanmışsa metodu içeriden görünen hale getirmeniz gerekir.</target>
+        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an \ArgumentNullException\ when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
+        <target state="needs-review-translation">Dışarıdan görünen metot, bağımsız değişkenin null (Visual Basic’te Nothing) olup olmadığını doğrulamadan başvuru bağımsız değişkenlerinden birine başvurur. Dışarıdan görünen metotlara geçirilen tüm başvuru bağımsız değişkenlerinin null olup olmadığı denetlenmelidir. Uygunsa, bağımsız değişken null olduğunda bir ArgumentNullException oluşturun veya null olmayan bağımsız değişkenleri onaylayan bir Kod Sözleşmesi önkoşulu ekleyin. Metot yalnızca bilinen derlemeler tarafından çağrılacak şekilde tasarlanmışsa metodu içeriden görünen hale getirmeniz gerekir.</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsMessage">
-        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
-        <target state="translated">Dışarıdan görünen '{0}' metodunda '{1}' parametresini kullanmadan önce parametrenin null olmadığını doğrulayın. Uygunsa, bağımsız değişken null olduğunda bir ArgumentNullException oluşturun veya null olmayan bağımsız değişkenleri onaylayan bir Kod Sözleşmesi önkoşulu ekleyin.</target>
+        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an 'ArgumentNullException' when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
+        <target state="needs-review-translation">Dışarıdan görünen '{0}' metodunda '{1}' parametresini kullanmadan önce parametrenin null olmadığını doğrulayın. Uygunsa, bağımsız değişken null olduğunda bir ArgumentNullException oluşturun veya null olmayan bağımsız değişkenleri onaylayan bir Kod Sözleşmesi önkoşulu ekleyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsTitle">

@@ -12,7 +12,7 @@
         "CA1001": {
           "id": "CA1001",
           "shortDescription": "Types that own disposable fields should be disposable",
-          "fullDescription": "A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.",
+          "fullDescription": "A class declares and implements an instance field that is a 'System.IDisposable' type, and the class does not implement 'IDisposable'. A class that declares an 'IDisposable' field indirectly owns an unmanaged resource and should implement the 'IDisposable' interface.",
           "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1001",
           "properties": {
@@ -307,7 +307,7 @@
         "CA2234": {
           "id": "CA2234",
           "shortDescription": "Pass system uri objects instead of strings",
-          "fullDescription": "A call is made to a method that has a string parameter whose name contains \"uri\", \"URI\", \"urn\", \"URN\", \"url\", or \"URL\". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.",
+          "fullDescription": "A call is made to a method that has a string parameter whose name contains \"uri\", \"URI\", \"urn\", \"URN\", \"url\", or \"URL\". The declaring type of the method contains a corresponding method overload that has a 'System.Uri' parameter.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234",
           "properties": {
@@ -490,7 +490,7 @@
         "CA1002": {
           "id": "CA1002",
           "shortDescription": "Do not expose generic lists",
-          "fullDescription": "System.Collections.Generic.List<T> is a generic collection that's designed for performance and not inheritance. List<T> does not contain virtual members that make it easier to change the behavior of an inherited class.",
+          "fullDescription": "'System.Collections.Generic.List<T>' is a generic collection that's designed for performance and not inheritance. 'List<T>' does not contain virtual members that make it easier to change the behavior of an inherited class.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1002",
           "properties": {
@@ -511,7 +511,7 @@
         "CA1003": {
           "id": "CA1003",
           "shortDescription": "Use generic event handler instances",
-          "fullDescription": "A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.",
+          "fullDescription": "A type contains an event that declares an 'EventHandler' delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1003",
           "properties": {
@@ -552,7 +552,7 @@
         "CA1008": {
           "id": "CA1008",
           "shortDescription": "Enums should have zero value",
-          "fullDescription": "The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the FlagsAttribute attribute applied defines a zero-valued member, its name should be \"\"None\"\" to indicate that no values have been set in the enumeration.",
+          "fullDescription": "The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the 'FlagsAttribute' attribute applied defines a zero-valued member, its name should be 'None' to indicate that no values have been set in the enumeration.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1008",
           "properties": {
@@ -615,8 +615,8 @@
         },
         "CA1014": {
           "id": "CA1014",
-          "shortDescription": "Mark assemblies with CLSCompliant",
-          "fullDescription": "The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using CLSCompliantAttribute . If this attribute is not present on an assembly, the assembly is not compliant.",
+          "shortDescription": "Mark assemblies with 'CLSCompliant'",
+          "fullDescription": "The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using 'CLSCompliantAttribute' . If this attribute is not present on an assembly, the assembly is not compliant.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1014",
           "properties": {
@@ -659,8 +659,8 @@
         },
         "CA1017": {
           "id": "CA1017",
-          "shortDescription": "Mark assemblies with ComVisible",
-          "fullDescription": "ComVisibleAttribute determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.",
+          "shortDescription": "Mark assemblies with 'ComVisible'",
+          "fullDescription": "'ComVisibleAttribute' determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1017",
           "properties": {
@@ -680,8 +680,8 @@
         },
         "CA1018": {
           "id": "CA1018",
-          "shortDescription": "Mark attributes with AttributeUsageAttribute",
-          "fullDescription": "Specify AttributeUsage on {0}",
+          "shortDescription": "Mark attributes with 'AttributeUsageAttribute'",
+          "fullDescription": "Specify AttributeUsage on '{0}'",
           "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1018",
           "properties": {
@@ -702,7 +702,7 @@
         "CA1019": {
           "id": "CA1019",
           "shortDescription": "Define accessors for attribute arguments",
-          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}",
+          "fullDescription": "Remove the property setter from '{0}' or reduce its accessibility because it corresponds to positional argument '{1}'",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1019",
           "properties": {
@@ -722,7 +722,7 @@
         },
         "CA1021": {
           "id": "CA1021",
-          "shortDescription": "Avoid out parameters",
+          "shortDescription": "Avoid 'out' parameters",
           "fullDescription": "Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1021",
@@ -743,7 +743,7 @@
         "CA1024": {
           "id": "CA1024",
           "shortDescription": "Use properties where appropriate",
-          "fullDescription": "A public or protected method has a name that starts with \"\"Get\"\", takes no parameters, and returns a value that is not an array. The method might be a good candidate to become a property.",
+          "fullDescription": "A public or protected method has a name that starts with 'Get', takes no parameters, and returns a value that is not an array. The method might be a good candidate to become a property.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1024",
           "properties": {
@@ -763,8 +763,8 @@
         },
         "CA1027": {
           "id": "CA1027",
-          "shortDescription": "Mark enums with FlagsAttribute",
-          "fullDescription": "An enumeration is a value type that defines a set of related named constants. Apply FlagsAttribute to an enumeration when its named constants can be meaningfully combined.",
+          "shortDescription": "Mark enums with 'FlagsAttribute'",
+          "fullDescription": "An enumeration is a value type that defines a set of related named constants. Apply 'FlagsAttribute' to an enumeration when its named constants can be meaningfully combined.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1027",
           "properties": {
@@ -784,7 +784,7 @@
         },
         "CA1028": {
           "id": "CA1028",
-          "shortDescription": "Enum Storage should be Int32",
+          "shortDescription": "Enum Storage should be 'Int32'",
           "fullDescription": "An enumeration is a value type that defines a set of related named constants. By default, the System.Int32 data type is used to store the constant value. Although you can change this underlying type, it is not required or recommended for most scenarios.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1028",
@@ -827,7 +827,7 @@
         "CA1031": {
           "id": "CA1031",
           "shortDescription": "Do not catch general exception types",
-          "fullDescription": "A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.",
+          "fullDescription": "A general exception such as 'System.Exception' or 'System.SystemException' or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1031",
           "properties": {
@@ -890,7 +890,7 @@
         "CA1036": {
           "id": "CA1036",
           "shortDescription": "Override methods on comparable types",
-          "fullDescription": "A public or protected type implements the System.IComparable interface. It does not override Object.Equals nor does it overload the language-specific operator for equality, inequality, less than, less than or equal, greater than or greater than or equal.",
+          "fullDescription": "A public or protected type implements the 'System.IComparable' interface. It does not override 'Object.Equals' nor does it overload the language-specific operator for equality, inequality, less than, less than or equal, greater than or greater than or equal.",
           "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1036",
           "properties": {
@@ -931,8 +931,8 @@
         },
         "CA1041": {
           "id": "CA1041",
-          "shortDescription": "Provide ObsoleteAttribute message",
-          "fullDescription": "A type or member is marked by using a System.ObsoleteAttribute attribute that does not have its ObsoleteAttribute.Message property specified. When a type or member that is marked by using ObsoleteAttribute is compiled, the Message property of the attribute is displayed. This gives the user information about the obsolete type or member.",
+          "shortDescription": "Provide 'ObsoleteAttribute' message",
+          "fullDescription": "A type or member is marked by using a 'System.ObsoleteAttribute' attribute that does not have its 'ObsoleteAttribute.Message' property specified. When a type or member that is marked by using 'ObsoleteAttribute' is compiled, the 'Message' property of the attribute is displayed. This gives the user information about the obsolete type or member.",
           "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1041",
           "properties": {
@@ -953,7 +953,7 @@
         "CA1043": {
           "id": "CA1043",
           "shortDescription": "Use Integral Or String Argument For Indexers",
-          "fullDescription": "Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.",
+          "fullDescription": "Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the 'Object' type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1043",
           "properties": {
@@ -995,7 +995,7 @@
         "CA1045": {
           "id": "CA1045",
           "shortDescription": "Do not pass types by reference",
-          "fullDescription": "Passing types by reference (using out or ref) requires experience with pointers, understanding how value types and reference types differ, and handling methods that have multiple return values. Also, the difference between out and ref parameters is not widely understood.",
+          "fullDescription": "Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods that have multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1045",
           "properties": {
@@ -1161,7 +1161,7 @@
         "CA1056": {
           "id": "CA1056",
           "shortDescription": "URI-like properties should not be strings",
-          "fullDescription": "This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.",
+          "fullDescription": "This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The 'System.Uri' class provides these services in a safe and secure manner.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1056",
           "properties": {
@@ -1203,7 +1203,7 @@
         "CA1060": {
           "id": "CA1060",
           "shortDescription": "Move pinvokes to native methods class",
-          "fullDescription": "Platform Invocation methods, such as those that are marked by using the System.Runtime.InteropServices.DllImportAttribute attribute, or methods that are defined by using the Declare keyword in Visual Basic, access unmanaged code. These methods should be of the NativeMethods, SafeNativeMethods, or UnsafeNativeMethods class.",
+          "fullDescription": "Platform Invocation methods, such as those that are marked by using the 'System.Runtime.InteropServices.DllImportAttribute' attribute, or methods that are defined by using the 'Declare' keyword in Visual Basic, access unmanaged code. These methods should be of the 'NativeMethods', 'SafeNativeMethods', or 'UnsafeNativeMethods' class.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1060",
           "properties": {
@@ -1244,7 +1244,7 @@
         "CA1062": {
           "id": "CA1062",
           "shortDescription": "Validate arguments of public methods",
-          "fullDescription": "An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.",
+          "fullDescription": "An externally visible method dereferences one of its reference arguments without verifying whether that argument is null ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an \\ArgumentNullException\\ when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062",
           "properties": {
@@ -1265,8 +1265,8 @@
         },
         "CA1063": {
           "id": "CA1063",
-          "shortDescription": "Implement IDisposable Correctly",
-          "fullDescription": "All IDisposable types should implement the Dispose pattern correctly.",
+          "shortDescription": "Implement 'IDisposable' correctly",
+          "fullDescription": "All 'IDisposable' types should implement the dispose pattern correctly.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1063",
           "properties": {
@@ -1287,7 +1287,7 @@
         "CA1064": {
           "id": "CA1064",
           "shortDescription": "Exceptions should be public",
-          "fullDescription": "An internal exception is visible only inside its own internal scope. After the exception falls outside the internal scope, only the base exception can be used to catch the exception. If the internal exception is inherited from T:System.Exception, T:System.SystemException, or T:System.ApplicationException, the external code will not have sufficient information to know what to do with the exception.",
+          "fullDescription": "An internal exception is visible only inside its own internal scope. After the exception falls outside the internal scope, only the base exception can be used to catch the exception. If the internal exception is inherited from 'System.Exception', 'System.SystemException', or 'System.ApplicationException', the external code will not have sufficient information to know what to do with the exception.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1064",
           "properties": {
@@ -1328,8 +1328,8 @@
         },
         "CA1066": {
           "id": "CA1066",
-          "shortDescription": "Implement IEquatable when overriding Object.Equals",
-          "fullDescription": "When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable<T>, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable<T>.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.",
+          "shortDescription": "Implement 'IEquatable' when overriding 'Object.Equals'",
+          "fullDescription": "When a type 'T' overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type 'T' before performing the comparison. If the type implements 'IEquatable<T>', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable<T>.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1066",
           "properties": {
@@ -1348,8 +1348,8 @@
         },
         "CA1067": {
           "id": "CA1067",
-          "shortDescription": "Override Object.Equals(object) when implementing IEquatable<T>",
-          "fullDescription": "When a type T implements the interface IEquatable<T>, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the \"principle of least surprise\".",
+          "shortDescription": "Override 'Object.Equals(object)' when implementing 'IEquatable<T>'",
+          "fullDescription": "When a type 'T' implements the interface 'IEquatable<T>', it suggests to a user who sees a call to the 'Equals' method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the \"principle of least surprise\".",
           "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1067",
           "properties": {
@@ -1368,8 +1368,8 @@
         },
         "CA1068": {
           "id": "CA1068",
-          "shortDescription": "CancellationToken parameters must come last",
-          "fullDescription": "Method '{0}' should take CancellationToken as the last parameter",
+          "shortDescription": "'CancellationToken' parameters must come last",
+          "fullDescription": "Method '{0}' should take 'CancellationToken' as the last parameter",
           "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1068",
           "properties": {
@@ -1841,7 +1841,7 @@
         "CA1707": {
           "id": "CA1707",
           "shortDescription": "Identifiers should not contain underscores",
-          "fullDescription": "By convention, identifier names do not contain the underscore (_) character. This rule checks namespaces, types, members, and parameters.",
+          "fullDescription": "By convention, identifier names do not contain the underscore '_' character. This rule checks namespaces, types, members, and parameters.",
           "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1707",
           "properties": {
@@ -1967,7 +1967,7 @@
         "CA1715": {
           "id": "CA1715",
           "shortDescription": "Identifiers should have correct prefix",
-          "fullDescription": "The name of an externally visible interface does not start with an uppercase \"\"I\"\". The name of a generic type parameter on an externally visible type or method does not start with an uppercase \"\"T\"\".",
+          "fullDescription": "The name of an externally visible interface does not start with an uppercase 'I'. The name of a generic type parameter on an externally visible type or method does not start with an uppercase 'T'.",
           "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1715",
           "properties": {
@@ -2030,7 +2030,7 @@
         "CA1721": {
           "id": "CA1721",
           "shortDescription": "Property names should not match get methods",
-          "fullDescription": "The name of a public or protected member starts with \"\"Get\"\" and otherwise matches the name of a public or protected property. \"\"Get\"\" methods and properties should have names that clearly distinguish their function.",
+          "fullDescription": "The name of a public or protected member starts with 'Get' and otherwise matches the name of a public or protected property. 'Get' methods and properties should have names that clearly distinguish their function.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1721",
           "properties": {
@@ -2197,8 +2197,8 @@
         },
         "CA1815": {
           "id": "CA1815",
-          "shortDescription": "Override equals and operator equals on value types",
-          "fullDescription": "For value types, the inherited implementation of Equals uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement Equals.",
+          "shortDescription": "Override 'Equals' and operator equals on value types",
+          "fullDescription": "For value types, the inherited implementation of 'Equals' uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement 'Equals'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1815",
           "properties": {
@@ -2846,8 +2846,8 @@
         },
         "CA2007": {
           "id": "CA2007",
-          "shortDescription": "Consider calling ConfigureAwait on the awaited task",
-          "fullDescription": "When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.",
+          "shortDescription": "Consider calling 'ConfigureAwait' on the awaited task",
+          "fullDescription": "When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call 'ConfigureAwait(false)' on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling 'ConfigureAwait'. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2007",
           "properties": {
@@ -3341,8 +3341,8 @@
         },
         "CA2217": {
           "id": "CA2217",
-          "shortDescription": "Do not mark enums with FlagsAttribute",
-          "fullDescription": "An externally visible enumeration is marked by using FlagsAttribute, and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.",
+          "shortDescription": "Do not mark enums with 'FlagsAttribute'",
+          "fullDescription": "An externally visible enumeration is marked by using 'FlagsAttribute', and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2217",
           "properties": {
@@ -3467,8 +3467,8 @@
         },
         "CA2231": {
           "id": "CA2231",
-          "shortDescription": "Overload operator equals on overriding value type Equals",
-          "fullDescription": "In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.",
+          "shortDescription": "Overload operator equals on overriding value type 'Equals'",
+          "fullDescription": "In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of 'Equals'.",
           "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2231",
           "properties": {
@@ -3613,7 +3613,7 @@
         "CA2245": {
           "id": "CA2245",
           "shortDescription": "Do not assign a property to itself",
-          "fullDescription": "The property {0} should not be assigned to itself",
+          "fullDescription": "The property '{0}' should not be assigned to itself",
           "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2245",
           "properties": {
@@ -5666,7 +5666,7 @@
         "CA1001": {
           "id": "CA1001",
           "shortDescription": "Types that own disposable fields should be disposable",
-          "fullDescription": "A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.",
+          "fullDescription": "A class declares and implements an instance field that is a 'System.IDisposable' type, and the class does not implement 'IDisposable'. A class that declares an 'IDisposable' field indirectly owns an unmanaged resource and should implement the 'IDisposable' interface.",
           "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1001",
           "properties": {
@@ -5941,8 +5941,8 @@
         },
         "CA2218": {
           "id": "CA2218",
-          "shortDescription": "Override GetHashCode on overriding Equals",
-          "fullDescription": "GetHashCode returns a value, based on the current instance, that is suited for hashing algorithms and data structures such as a hash table. Two objects that are the same type and are equal must return the same hash code.",
+          "shortDescription": "Override 'GetHashCode' on overriding 'Equals'",
+          "fullDescription": "'GetHashCode' returns a value, based on the current instance, that is suited for hashing algorithms and data structures such as a hash table. Two objects that are the same type and are equal must return the same hash code.",
           "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2218",
           "properties": {
@@ -5961,8 +5961,8 @@
         },
         "CA2224": {
           "id": "CA2224",
-          "shortDescription": "Override Equals on overloading operator equals",
-          "fullDescription": "A public type implements the equality operator but does not override Object.Equals.",
+          "shortDescription": "Override 'Equals' on overloading operator equals",
+          "fullDescription": "A public type implements the equality operator but does not override 'Object.Equals'.",
           "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2224",
           "properties": {
@@ -5982,7 +5982,7 @@
         "CA2234": {
           "id": "CA2234",
           "shortDescription": "Pass system uri objects instead of strings",
-          "fullDescription": "A call is made to a method that has a string parameter whose name contains \"uri\", \"URI\", \"urn\", \"URN\", \"url\", or \"URL\". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.",
+          "fullDescription": "A call is made to a method that has a string parameter whose name contains \"uri\", \"URI\", \"urn\", \"URN\", \"url\", or \"URL\". The declaring type of the method contains a corresponding method overload that has a 'System.Uri' parameter.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234",
           "properties": {

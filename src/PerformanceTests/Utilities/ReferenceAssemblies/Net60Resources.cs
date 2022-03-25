@@ -12,6 +12,8 @@ namespace Reference.Assemblies
         internal static byte[] MicrosoftVisualBasic => ResourceLoader.GetOrCreateResource(ref _MicrosoftVisualBasic, "net60.Microsoft.VisualBasic");
         private static byte[]? _MicrosoftWin32Primitives;
         internal static byte[] MicrosoftWin32Primitives => ResourceLoader.GetOrCreateResource(ref _MicrosoftWin32Primitives, "net60.Microsoft.Win32.Primitives");
+        private static byte[]? _MicrosoftWin32Registry;
+        internal static byte[] MicrosoftWin32Registry => ResourceLoader.GetOrCreateResource(ref _MicrosoftWin32Registry, "net60.Microsoft.Win32.Registry");
         private static byte[]? _mscorlib;
         internal static byte[] mscorlib => ResourceLoader.GetOrCreateResource(ref _mscorlib, "net60.mscorlib");
         private static byte[]? _netstandard;
@@ -100,6 +102,8 @@ namespace Reference.Assemblies
         internal static byte[] SystemIOCompressionZipFile => ResourceLoader.GetOrCreateResource(ref _SystemIOCompressionZipFile, "net60.System.IO.Compression.ZipFile");
         private static byte[]? _SystemIO;
         internal static byte[] SystemIO => ResourceLoader.GetOrCreateResource(ref _SystemIO, "net60.System.IO");
+        private static byte[]? _SystemIOFileSystemAccessControl;
+        internal static byte[] SystemIOFileSystemAccessControl => ResourceLoader.GetOrCreateResource(ref _SystemIOFileSystemAccessControl, "net60.System.IO.FileSystem.AccessControl");
         private static byte[]? _SystemIOFileSystem;
         internal static byte[] SystemIOFileSystem => ResourceLoader.GetOrCreateResource(ref _SystemIOFileSystem, "net60.System.IO.FileSystem");
         private static byte[]? _SystemIOFileSystemDriveInfo;
@@ -112,6 +116,8 @@ namespace Reference.Assemblies
         internal static byte[] SystemIOIsolatedStorage => ResourceLoader.GetOrCreateResource(ref _SystemIOIsolatedStorage, "net60.System.IO.IsolatedStorage");
         private static byte[]? _SystemIOMemoryMappedFiles;
         internal static byte[] SystemIOMemoryMappedFiles => ResourceLoader.GetOrCreateResource(ref _SystemIOMemoryMappedFiles, "net60.System.IO.MemoryMappedFiles");
+        private static byte[]? _SystemIOPipesAccessControl;
+        internal static byte[] SystemIOPipesAccessControl => ResourceLoader.GetOrCreateResource(ref _SystemIOPipesAccessControl, "net60.System.IO.Pipes.AccessControl");
         private static byte[]? _SystemIOPipes;
         internal static byte[] SystemIOPipes => ResourceLoader.GetOrCreateResource(ref _SystemIOPipes, "net60.System.IO.Pipes");
         private static byte[]? _SystemIOUnmanagedMemoryStream;
@@ -144,8 +150,6 @@ namespace Reference.Assemblies
         internal static byte[] SystemNetPing => ResourceLoader.GetOrCreateResource(ref _SystemNetPing, "net60.System.Net.Ping");
         private static byte[]? _SystemNetPrimitives;
         internal static byte[] SystemNetPrimitives => ResourceLoader.GetOrCreateResource(ref _SystemNetPrimitives, "net60.System.Net.Primitives");
-        private static byte[]? _SystemNetQuic;
-        internal static byte[] SystemNetQuic => ResourceLoader.GetOrCreateResource(ref _SystemNetQuic, "net60.System.Net.Quic");
         private static byte[]? _SystemNetRequests;
         internal static byte[] SystemNetRequests => ResourceLoader.GetOrCreateResource(ref _SystemNetRequests, "net60.System.Net.Requests");
         private static byte[]? _SystemNetSecurity;
@@ -224,14 +228,20 @@ namespace Reference.Assemblies
         internal static byte[] SystemRuntimeSerializationPrimitives => ResourceLoader.GetOrCreateResource(ref _SystemRuntimeSerializationPrimitives, "net60.System.Runtime.Serialization.Primitives");
         private static byte[]? _SystemRuntimeSerializationXml;
         internal static byte[] SystemRuntimeSerializationXml => ResourceLoader.GetOrCreateResource(ref _SystemRuntimeSerializationXml, "net60.System.Runtime.Serialization.Xml");
+        private static byte[]? _SystemSecurityAccessControl;
+        internal static byte[] SystemSecurityAccessControl => ResourceLoader.GetOrCreateResource(ref _SystemSecurityAccessControl, "net60.System.Security.AccessControl");
         private static byte[]? _SystemSecurityClaims;
         internal static byte[] SystemSecurityClaims => ResourceLoader.GetOrCreateResource(ref _SystemSecurityClaims, "net60.System.Security.Claims");
         private static byte[]? _SystemSecurityCryptographyAlgorithms;
         internal static byte[] SystemSecurityCryptographyAlgorithms => ResourceLoader.GetOrCreateResource(ref _SystemSecurityCryptographyAlgorithms, "net60.System.Security.Cryptography.Algorithms");
+        private static byte[]? _SystemSecurityCryptographyCng;
+        internal static byte[] SystemSecurityCryptographyCng => ResourceLoader.GetOrCreateResource(ref _SystemSecurityCryptographyCng, "net60.System.Security.Cryptography.Cng");
         private static byte[]? _SystemSecurityCryptographyCsp;
         internal static byte[] SystemSecurityCryptographyCsp => ResourceLoader.GetOrCreateResource(ref _SystemSecurityCryptographyCsp, "net60.System.Security.Cryptography.Csp");
         private static byte[]? _SystemSecurityCryptographyEncoding;
         internal static byte[] SystemSecurityCryptographyEncoding => ResourceLoader.GetOrCreateResource(ref _SystemSecurityCryptographyEncoding, "net60.System.Security.Cryptography.Encoding");
+        private static byte[]? _SystemSecurityCryptographyOpenSsl;
+        internal static byte[] SystemSecurityCryptographyOpenSsl => ResourceLoader.GetOrCreateResource(ref _SystemSecurityCryptographyOpenSsl, "net60.System.Security.Cryptography.OpenSsl");
         private static byte[]? _SystemSecurityCryptographyPrimitives;
         internal static byte[] SystemSecurityCryptographyPrimitives => ResourceLoader.GetOrCreateResource(ref _SystemSecurityCryptographyPrimitives, "net60.System.Security.Cryptography.Primitives");
         private static byte[]? _SystemSecurityCryptographyX509Certificates;
@@ -240,6 +250,8 @@ namespace Reference.Assemblies
         internal static byte[] SystemSecurity => ResourceLoader.GetOrCreateResource(ref _SystemSecurity, "net60.System.Security");
         private static byte[]? _SystemSecurityPrincipal;
         internal static byte[] SystemSecurityPrincipal => ResourceLoader.GetOrCreateResource(ref _SystemSecurityPrincipal, "net60.System.Security.Principal");
+        private static byte[]? _SystemSecurityPrincipalWindows;
+        internal static byte[] SystemSecurityPrincipalWindows => ResourceLoader.GetOrCreateResource(ref _SystemSecurityPrincipalWindows, "net60.System.Security.Principal.Windows");
         private static byte[]? _SystemSecuritySecureString;
         internal static byte[] SystemSecuritySecureString => ResourceLoader.GetOrCreateResource(ref _SystemSecuritySecureString, "net60.System.Security.SecureString");
         private static byte[]? _SystemServiceModelWeb;

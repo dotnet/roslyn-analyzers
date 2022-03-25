@@ -732,6 +732,30 @@ Providing a parameterless constructor that is as visible as the containing type 
 |CodeFix|True|
 ---
 
+## [CA1420](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1420): Property, type, or attribute requires runtime marshalling
+
+Using features that require runtime marshalling when runtime marshalling is disabled will result in runtime exceptions.
+
+|Item|Value|
+|-|-|
+|Category|Interoperability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA1421](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421): This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied
+
+This method uses runtime marshalling even when runtime marshalling is disabled, which can cause unexpected behavior differences at runtime due to different expectations of a type's native layout.
+
+|Item|Value|
+|-|-|
+|Category|Interoperability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA1501](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1501): Avoid excessive inheritance
 
 Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.
@@ -1464,6 +1488,30 @@ When inside a Task-returning method, use the async version of methods, if they e
 |CodeFix|False|
 ---
 
+## [CA1850](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850): Prefer static 'HashData' method over 'ComputeHash'
+
+It is more efficient to use the static 'HashData' method over creating and managing a HashAlgorithm instance to call 'ComputeHash'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1851](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1851): Possible multiple enumerations of 'IEnumerable' collection
+
+Possible multiple enumerations of 'IEnumerable' collection. Consider using an implementation that avoid multiple enumerations.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|False|
+|Severity|Warning|
+|CodeFix|False|
+---
+
 ## [CA2000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
 
 If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.
@@ -1617,6 +1665,18 @@ Number of parameters supplied in the logging message template do not match the n
 |Category|Reliability|
 |Enabled|True|
 |Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA2019](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019): Improper 'ThreadStatic' field initialization
+
+'ThreadStatic' fields should be initialized lazily on use, not with inline initialization nor explicitly in a static constructor, which would only initialize the field on the thread that runs the type's static constructor.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Info|
 |CodeFix|False|
 ---
 
@@ -2139,6 +2199,18 @@ Since a type that implements 'IDynamicInterfaceCastable' may not implement a dyn
 ## [CA2258](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2258): Providing a 'DynamicInterfaceCastableImplementation' interface in Visual Basic is unsupported
 
 Providing a functional 'DynamicInterfaceCastableImplementationAttribute'-attributed interface requires the Default Interface Members feature, which is unsupported in Visual Basic.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA2259](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259): 'ThreadStatic' only affects static fields
+
+'ThreadStatic' only affects static fields. When applied to instance fields, it has no impact on behavior.
 
 |Item|Value|
 |-|-|

@@ -40,8 +40,8 @@ stages:
       jobs:
       - job: Signed_Build
         pool:
-          name: NetCoreInternal-Pool
-          queue: BuildPool.Windows.10.Amd64.VS2019.Pre
+          name: NetCore1ESPool-Svc-Internal
+          demands: ImageOverride -equals Build.Windows.10.Amd64.VS2019.Pre
         variables:
           - group: DotNet-Blob-Feed
           - group: Publish-Build-Assets

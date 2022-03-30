@@ -7,3 +7,4 @@ CA1421 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA1851 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1851> | Possible multiple enumerations of 'IEnumerable' collection |
 CA2019 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019> | Improper 'ThreadStatic' field initialization |
 CA2259 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259> | 'ThreadStatic' only affects static fields |
+CA2258 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2258> | Providing a 'DynamicInterfaceCastableImplementation' interface in Visual Basic is unsupported |

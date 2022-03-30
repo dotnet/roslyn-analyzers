@@ -15,14 +15,14 @@ stages:
         jobs:
         - job: Debug_Build
           pool:
-            name: NetCorePublic-Pool
-            queue: BuildPool.Windows.10.Amd64.VS2019.Pre.Open
+            name: NetCore1ESPool-Public
+            demands: ImageOverride -equals Build.Windows.Amd64.VS2022.Pre.Open
           variables:
             - name: _BuildConfig
               value: Debug
           steps:
           - checkout: self
             clean: true
-          - script: eng\common\CIBuild.cmd 
+          - script: eng\common\CIBuild.cmd
                       -configuration $(_BuildConfig)
             displayName: Build and Index

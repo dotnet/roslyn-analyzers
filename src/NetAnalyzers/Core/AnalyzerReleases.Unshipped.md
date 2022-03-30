@@ -13,4 +13,4 @@ CA2019 | Reliability | Info | UseThreadStaticCorrectly, [Documentation](https://
 CA2259 | Usage | Warning | UseThreadStaticCorrectly, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259)
 CA5404 | Security | Disabled | DoNotDisableTokenValidationChecks, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5404)
 CA5405 | Security | Disabled | DoNotAlwaysSkipTokenValidationInDelegates, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5405)
-CA1852 | Performance | Info | DoNotGuardDictionaryRemoveByContainsKey, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1851)
+CA1852 | Performance | Info | DoNotGuardDictionaryRemoveByContainsKey, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1852)

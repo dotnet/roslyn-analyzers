@@ -23,7 +23,7 @@ jobs:
   pool:
     name: Hosted VS2017
     queue: Windows.10.Amd64.20H2.Owl.Perf
-  timeoutInMinutes: 120
+  timeoutInMinutes: 150
 
   steps:
     - checkout: self

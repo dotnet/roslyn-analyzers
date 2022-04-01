@@ -119,7 +119,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static string GetExtractedMemberName(IEnumerable<string> memberNames, string parameterName)
         {
-            bool hasCollectionEnding = s_collectionMemberEndings.Any(x => parameterName.EndsWith(x, true, null));
+            bool hasCollectionEnding = s_collectionMemberEndings.Any(x => parameterName.EndsWith(x, true, CultureInfo.InvariantCulture));
 
             if (parameterName == "source" // for LINQ, "sourceArray" is clearer than "source"
                 || (memberNames.Contains(parameterName) && !hasCollectionEnding))

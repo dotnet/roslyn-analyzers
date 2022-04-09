@@ -225,9 +225,9 @@ namespace Microsoft.CodeAnalysis.ResxSourceGenerator
 
                 var extension = language switch
                 {
-                    Lang.CSharp => "cs",
-                    Lang.VisualBasic => "vb",
-                    _ => "cs",
+                    Lang.CSharp => "g.cs",
+                    Lang.VisualBasic => "g.vb",
+                    _ => "g.cs",
                 };
 
                 OutputTextHintName = ResourceName + $".Designer.{extension}";

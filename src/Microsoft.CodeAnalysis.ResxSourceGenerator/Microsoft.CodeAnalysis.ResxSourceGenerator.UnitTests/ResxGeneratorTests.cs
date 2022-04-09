@@ -151,7 +151,7 @@ namespace TestProject
                     AdditionalFiles = { ("/0/Resources.resx", code) },
                     GeneratedSources =
                     {
-                        (typeof(CSharpResxGenerator), "TestProject.Resources.Designer.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(CSharpResxGenerator), "TestProject.Resources.Designer.g.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -208,7 +208,7 @@ End Namespace
                     AdditionalFiles = { ("/0/Resources.resx", code) },
                     GeneratedSources =
                     {
-                        (typeof(VisualBasicResxGenerator), "TestProject.Resources.Designer.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(VisualBasicResxGenerator), "TestProject.Resources.Designer.g.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -309,7 +309,7 @@ build_property.RootNamespace = {rootNamespace}
                     },
                     GeneratedSources =
                     {
-                        (typeof(CSharpResxGenerator), $"{rootNamespace}.Resources.Designer.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(CSharpResxGenerator), $"{rootNamespace}.Resources.Designer.g.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -377,7 +377,7 @@ build_property.RootNamespace = {rootNamespace}
                     },
                     GeneratedSources =
                     {
-                        (typeof(VisualBasicResxGenerator), $"{rootNamespace}.Resources.Designer.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(VisualBasicResxGenerator), $"{rootNamespace}.Resources.Designer.g.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -443,7 +443,7 @@ build_metadata.AdditionalFiles.RelativeDir = {relativeDir}
                     },
                     GeneratedSources =
                     {
-                        (typeof(CSharpResxGenerator), $"{namespaceName}.{typeName}.Designer.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(CSharpResxGenerator), $"{namespaceName}.{typeName}.Designer.g.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -521,7 +521,7 @@ build_metadata.AdditionalFiles.RelativeDir = {relativeDir}
                     },
                     GeneratedSources =
                     {
-                        (typeof(VisualBasicResxGenerator), $"{namespaceName}.{typeName}.Designer.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(VisualBasicResxGenerator), $"{namespaceName}.{typeName}.Designer.g.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -593,7 +593,7 @@ build_metadata.AdditionalFiles.OmitGetResourceString = {(omitGetResourceString ?
                     },
                     GeneratedSources =
                     {
-                        (typeof(CSharpResxGenerator), "TestProject.Resources.Designer.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(CSharpResxGenerator), "TestProject.Resources.Designer.g.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -676,7 +676,7 @@ build_metadata.AdditionalFiles.OmitGetResourceString = {(omitGetResourceString ?
                     },
                     GeneratedSources =
                     {
-                        (typeof(VisualBasicResxGenerator), "TestProject.Resources.Designer.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(VisualBasicResxGenerator), "TestProject.Resources.Designer.g.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -736,7 +736,7 @@ build_metadata.AdditionalFiles.AsConstants = {(asConstants ? "true" : "false")}
                     },
                     GeneratedSources =
                     {
-                        (typeof(CSharpResxGenerator), "TestProject.Resources.Designer.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(CSharpResxGenerator), "TestProject.Resources.Designer.g.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -808,7 +808,7 @@ build_metadata.AdditionalFiles.AsConstants = {(asConstants ? "true" : "false")}
                     },
                     GeneratedSources =
                     {
-                        (typeof(VisualBasicResxGenerator), "TestProject.Resources.Designer.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(VisualBasicResxGenerator), "TestProject.Resources.Designer.g.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -868,7 +868,7 @@ build_metadata.AdditionalFiles.IncludeDefaultValues = {(includeDefaultValues ? "
                     },
                     GeneratedSources =
                     {
-                        (typeof(CSharpResxGenerator), "TestProject.Resources.Designer.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(CSharpResxGenerator), "TestProject.Resources.Designer.g.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -940,7 +940,7 @@ build_metadata.AdditionalFiles.IncludeDefaultValues = {(includeDefaultValues ? "
                     },
                     GeneratedSources =
                     {
-                        (typeof(VisualBasicResxGenerator), "TestProject.Resources.Designer.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(VisualBasicResxGenerator), "TestProject.Resources.Designer.g.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -1035,7 +1035,7 @@ build_metadata.AdditionalFiles.EmitFormatMethods = {(emitFormatMethods ? "true" 
                     },
                     GeneratedSources =
                     {
-                        (typeof(CSharpResxGenerator), "TestProject.Resources.Designer.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(CSharpResxGenerator), "TestProject.Resources.Designer.g.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();
@@ -1103,7 +1103,7 @@ build_metadata.AdditionalFiles.EmitFormatMethods = {(emitFormatMethods ? "true" 
                     },
                     GeneratedSources =
                     {
-                        (typeof(VisualBasicResxGenerator), "TestProject.Resources.Designer.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                        (typeof(VisualBasicResxGenerator), "TestProject.Resources.Designer.g.vb", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                     },
                 },
             }.RunAsync();

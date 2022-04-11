@@ -1139,7 +1139,7 @@ class Test
         }
 
         [Fact]
-        public async Task GuardAttributeWithinTargetedAssembly()
+        public async Task IosGuardAttributeWithinMacCatalystTargetedAssembly()
         {
             var csSource = @"
 using System;
@@ -1147,22 +1147,19 @@ using System.Runtime.Versioning;
 
 [assembly: SupportedOSPlatform(""MacCatalyst13.1"")]
 
-public static class Forms
+public class Test
 {
     [SupportedOSPlatformGuard(""ios14.0"")]
 	internal static bool IsiOS14OrNewer => true;
-}
-public class Test
-{
-    private static int field1 = 0;
 
     [SupportedOSPlatform(""ios13.4"")]
-    public static void iOS13Method() { field1 = 1; }
+    public static void iOS13Method() { }
 
     static void M1()
     {
-        if (Forms.IsiOS14OrNewer)
-            iOS13Method();
+        [|iOS13Method()|]; // This call site is reachable on: 'MacCatalyst' 13.1 and later. 'Test.iOS13Method()' is only supported on: 'MacCatalyst' 13.4 and later.
+        if (IsiOS14OrNewer)
+            iOS13Method(); // Should not warn
             
     }
 }";
@@ -4124,7 +4121,7 @@ class Test
         }
 
         [Fact]
-        public async Task GuardedWithCachedValueSupportedGuardAttributeAsync()
+        public async Task GuardedCallingCachedValue_CAllsiteHasAssemblyAttributeAsync()
         {
             var source = @"
 using System;
@@ -4137,7 +4134,7 @@ class Test
     static bool s_isiOS11OrNewer => false;
 
     [SupportedOSPlatformGuard(""ios11.0"")]
-    private bool IsIos11Supported() => s_isiOS11OrNewer;
+    private bool IsIos11Supported() => s_isiOS11OrNewer; // should not warn
 
     void M1()
     {
@@ -4602,7 +4599,7 @@ class Test
 
     [SupportedOSPlatform(""ios"")]
     [SupportedOSPlatform(""Linux"")]
-    [SupportedOSPlatform(""MacCatalyst"")]
+    [SupportedOSPlatform(""maccatalyst"")]
     void SupportedOnIOSLinuxMacCatalyst() { }
 
     [UnsupportedOSPlatform(""maccatalyst"")]

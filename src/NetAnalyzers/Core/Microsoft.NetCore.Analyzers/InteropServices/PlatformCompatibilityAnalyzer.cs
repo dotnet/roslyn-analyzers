@@ -1309,7 +1309,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         if (callSiteAttributes.TryGetValue(platformName, out var callSiteAttribute))
                         {
                             var attributeToCheck = attribute.SupportedSecond ?? attribute.SupportedFirst;
-                            if (MandatoryOsVersionsSuppressed(callSiteAttribute, attributeToCheck) && AllowList(callSiteAttribute))
+                            if ((MandatoryOsVersionsSuppressed(callSiteAttribute, attributeToCheck) || crossPlatform) && AllowList(callSiteAttribute))
                             {
                                 mandatorySupportFound = true;
                             }
@@ -1548,7 +1548,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     if (attribute.AttributeClass.Name is SupportedOSPlatformGuardAttribute or UnsupportedOSPlatformGuardAttribute)
                     {
-                        parentAttributes = new PlatformAttributes();
+                        if (!parentAttributes.IsAssemblyAttribute)
+                        {
+                            parentAttributes = new PlatformAttributes();
+                        }
                         return;
                     }
                     if (s_osPlatformAttributes.Contains(attribute.AttributeClass.Name))

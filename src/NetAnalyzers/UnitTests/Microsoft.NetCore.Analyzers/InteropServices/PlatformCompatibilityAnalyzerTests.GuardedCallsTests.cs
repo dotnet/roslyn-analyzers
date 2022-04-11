@@ -1104,6 +1104,37 @@ class Test
         }
 
         [Fact]
+        public async Task GuardAttributeWithinTargetedAssembly()
+        {
+            var csSource = @"
+using System;
+using System.Runtime.Versioning;
+
+[assembly: SupportedOSPlatform(""MacCatalyst13.1"")]
+
+public static class Forms
+{
+    [SupportedOSPlatformGuard(""ios14.0"")]
+	internal static bool IsiOS14OrNewer => true;
+}
+public class Test
+{
+    private static int field1 = 0;
+
+    [SupportedOSPlatform(""ios13.4"")]
+    public static void iOS13Method() { field1 = 1; }
+
+    static void M1()
+    {
+        if (Forms.IsiOS14OrNewer)
+            iOS13Method();
+            
+    }
+}";
+            await VerifyAnalyzerCSAsync(csSource);
+        }
+
+        [Fact]
         public async Task GuardedWith_RuntimeInformation_IsOSPlatform_SimpleIfElseAsync()
         {
             var source = @"
@@ -4058,6 +4089,39 @@ class Test
         }
 
         [Fact]
+        public async Task GuardedWithCachedValueSupportedGuardAttributeAsync()
+        {
+            var source = @"
+using System;
+using System.Diagnostics;
+using System.Runtime.Versioning;
+
+[assembly: SupportedOSPlatform(""ios10.0"")]
+class Test
+{
+    static bool s_isiOS11OrNewer => false;
+
+    [SupportedOSPlatformGuard(""ios11.0"")]
+    private bool IsIos11Supported() => s_isiOS11OrNewer;
+
+    void M1()
+    {
+        [|SupportedOniOS11()|]; 
+
+        if (IsIos11Supported())
+        {
+            SupportedOniOS11();    
+        }
+    }
+
+    [SupportedOSPlatform(""ios11.0"")]
+    void SupportedOniOS11() { }
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
         public async Task GuardMembersWithSupportedGuardAttributesAsync()
         {
             var source = @"
@@ -4503,7 +4567,7 @@ class Test
 
     [SupportedOSPlatform(""ios"")]
     [SupportedOSPlatform(""Linux"")]
-    [SupportedOSPlatform(""maccatalyst"")]
+    [SupportedOSPlatform(""MacCatalyst"")]
     void SupportedOnIOSLinuxMacCatalyst() { }
 
     [UnsupportedOSPlatform(""maccatalyst"")]

@@ -8,8 +8,8 @@ Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
-    Public Class BasicUseToLowerInvariantOrToUpperInvariantAnalyzer
-        Inherits UseToLowerInvariantOrToUpperInvariantAnalyzer
+    Public Class BasicSpecifyCultureForToLowerAndToUpperAnalyzer
+        Inherits SpecifyCultureForToLowerAndToUpperAnalyzer
 
         Protected Overrides Function GetMethodNameLocation(invocationNode As SyntaxNode) As Location
             Debug.Assert(invocationNode.IsKind(SyntaxKind.InvocationExpression))

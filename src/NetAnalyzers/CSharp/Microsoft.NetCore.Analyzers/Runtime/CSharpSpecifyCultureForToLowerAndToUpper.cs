@@ -10,7 +10,7 @@ using Microsoft.NetCore.Analyzers.Runtime;
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CSharpUseToLowerInvariantOrToUpperInvariantAnalyzer : UseToLowerInvariantOrToUpperInvariantAnalyzer
+    public class CSharpSpecifyCultureForToLowerAndToUpperAnalyzer : SpecifyCultureForToLowerAndToUpperAnalyzer
     {
         protected override Location GetMethodNameLocation(SyntaxNode invocationNode)
         {

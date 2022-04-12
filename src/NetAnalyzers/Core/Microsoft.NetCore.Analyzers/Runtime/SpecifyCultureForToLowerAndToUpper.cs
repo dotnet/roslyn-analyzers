@@ -12,19 +12,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
-    public abstract class UseToLowerInvariantOrToUpperInvariantAnalyzer : AbstractGlobalizationDiagnosticAnalyzer
+    public abstract class SpecifyCultureForToLowerAndToUpperAnalyzer : AbstractGlobalizationDiagnosticAnalyzer
     {
         internal const string RuleId = "CA1311";
 
-        private static readonly LocalizableString s_localizableMessageAndTitle = CreateLocalizableResourceString(nameof(UseToLowerInvariantOrToUpperInvariantTitle));
-
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            s_localizableMessageAndTitle,
-            s_localizableMessageAndTitle,
+            CreateLocalizableResourceString(nameof(SpecifyCultureForToLowerAndToUpperTitle)),
+            CreateLocalizableResourceString(nameof(SpecifyCultureForToLowerAndToUpperMessage)),
             DiagnosticCategory.Globalization,
             RuleLevel.IdeHidden_BulkConfigurable,
-            description: CreateLocalizableResourceString(nameof(UseToLowerInvariantOrToUpperInvariantDescription)),
+            description: CreateLocalizableResourceString(nameof(SpecifyCultureForToLowerAndToUpperDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 

@@ -3,15 +3,15 @@
 using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpUseToLowerInvariantOrToUpperInvariantAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpSpecifyCultureForToLowerAndToUpperAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicUseToLowerInvariantOrToUpperInvariantAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicSpecifyCultureForToLowerAndToUpperAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class UseToLowerInvariantOrToUpperInvariantTests
+    public class SpecifyCultureForToLowerAndToUpperTests
     {
         #region Diagnostic tests
 

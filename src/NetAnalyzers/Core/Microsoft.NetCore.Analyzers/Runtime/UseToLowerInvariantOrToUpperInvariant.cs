@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             DiagnosticCategory.Globalization,
             RuleLevel.IdeHidden_BulkConfigurable,
             description: CreateLocalizableResourceString(nameof(UseToLowerInvariantOrToUpperInvariantDescription)),
-            isPortedFxCopRule: true,
+            isPortedFxCopRule: false,
             isDataflowRule: false);
 
         internal const string ToLowerMethodName = "ToLower";

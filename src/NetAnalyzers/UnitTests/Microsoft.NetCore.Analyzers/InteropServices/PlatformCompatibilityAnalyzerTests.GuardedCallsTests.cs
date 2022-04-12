@@ -1138,7 +1138,7 @@ class Test
             await VerifyAnalyzerCSAsync(source);
         }
 
-        [Fact]
+        [Fact, WorkItem(5963, "https://github.com/dotnet/roslyn-analyzers/pull/5963")]
         public async Task IosGuardAttributeWithinMacCatalystTargetedAssembly()
         {
             var csSource = @"
@@ -4120,8 +4120,8 @@ class Test
             await VerifyAnalyzerCSAsync(source, "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive");
         }
 
-        [Fact]
-        public async Task GuardedCallingCachedValue_CAllsiteHasAssemblyAttributeAsync()
+        [Fact, WorkItem(5963, "https://github.com/dotnet/roslyn-analyzers/pull/5963")]
+        public async Task GuardCallingCachedValue_CallSiteHasAssemblyAttributeAsync()
         {
             var source = @"
 using System;

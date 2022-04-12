@@ -210,7 +210,7 @@ public class Test
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(6).WithArguments("Test.BrowserOnlyCallsite()", "'browser'", "'linux'"));
         }
 
-        [Fact]
+        [Fact, WorkItem(5963, "https://github.com/dotnet/roslyn-analyzers/pull/5963")]
         public async Task PlatformNeutralAssemblyAndCallSiteHasHigherVersionSupport()
         {
             var csSource = @"

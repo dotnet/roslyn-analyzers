@@ -90,19 +90,18 @@
         },
         "CA1311": {
           "id": "CA1311",
-          "shortDescription": "Use an invariant version",
-          "fullDescription": "Using an invariant version yields consistent results regardless of the culture of an application.",
+          "shortDescription": "Specify culture explicitly",
+          "fullDescription": "Specify culture to help avoid accidental implicit dependence on current culture",
           "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311",
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
-            "typeName": "CSharpUseToLowerInvariantOrToUpperInvariantAnalyzer",
+            "typeName": "CSharpSpecifyCultureForToLowerAndToUpperAnalyzer",
             "languages": [
               "C#"
             ],
             "tags": [
-              "PortedFromFxCop",
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]
@@ -5764,19 +5763,18 @@
         },
         "CA1311": {
           "id": "CA1311",
-          "shortDescription": "Use an invariant version",
-          "fullDescription": "Using an invariant version yields consistent results regardless of the culture of an application.",
+          "shortDescription": "Specify culture explicitly",
+          "fullDescription": "Specify culture to help avoid accidental implicit dependence on current culture",
           "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311",
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
-            "typeName": "BasicUseToLowerInvariantOrToUpperInvariant",
+            "typeName": "BasicSpecifyCultureForToLowerAndToUpperAnalyzer",
             "languages": [
               "Visual Basic"
             ],
             "tags": [
-              "PortedFromFxCop",
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]

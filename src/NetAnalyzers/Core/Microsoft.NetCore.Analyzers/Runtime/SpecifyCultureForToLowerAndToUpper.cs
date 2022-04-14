@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
@@ -52,8 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static bool IsToLowerOrToUpper(string methodName)
         {
-            return string.Equals(methodName, ToLowerMethodName, StringComparison.Ordinal) ||
-                string.Equals(methodName, ToUpperMethodName, StringComparison.Ordinal);
+            return methodName == ToLowerMethodName || methodName == ToUpperMethodName;
         }
     }
 }

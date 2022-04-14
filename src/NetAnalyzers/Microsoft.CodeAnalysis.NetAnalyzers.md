@@ -672,9 +672,9 @@ A string comparison operation uses a method overload that does not set a StringC
 |CodeFix|False|
 ---
 
-## [CA1311](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311): Specify culture explicitly
+## [CA1311](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311): Specify a culture or use an invariant version
 
-Specify culture to help avoid accidental implicit dependence on current culture
+Specify culture to help avoid accidental implicit dependency on current culture. Using an invariant version yields consistent results regardless of the culture of an application.
 
 |Item|Value|
 |-|-|

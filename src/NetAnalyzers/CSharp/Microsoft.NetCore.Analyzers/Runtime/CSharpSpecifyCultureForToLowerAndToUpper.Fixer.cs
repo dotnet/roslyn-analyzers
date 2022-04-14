@@ -43,18 +43,16 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
         {
             if (node.IsKind(SyntaxKind.IdentifierName))
             {
-                if (node.Parent?.IsKind(SyntaxKind.SimpleMemberAccessExpression) == true)
+                if (node.Parent is MemberAccessExpressionSyntax memberAccess)
                 {
-                    var memberAccess = (MemberAccessExpressionSyntax)node.Parent;
                     var replacementMethodName = GetReplacementMethodName(memberAccess.Name.Identifier.Text);
                     var newMemberAccess = memberAccess.WithName((SimpleNameSyntax)generator.IdentifierName(replacementMethodName)).WithAdditionalAnnotations(Formatter.Annotation);
                     var newRoot = root.ReplaceNode(memberAccess, newMemberAccess);
                     return Task.FromResult(document.WithSyntaxRoot(newRoot));
                 }
 
-                if (node.Parent?.IsKind(SyntaxKind.MemberBindingExpression) == true)
+                if (node.Parent is MemberBindingExpressionSyntax memberBinding)
                 {
-                    var memberBinding = (MemberBindingExpressionSyntax)node.Parent;
                     var replacementMethodName = GetReplacementMethodName(memberBinding.Name.Identifier.Text);
                     var newMemberBinding = memberBinding.WithName((SimpleNameSyntax)generator.IdentifierName(replacementMethodName)).WithAdditionalAnnotations(Formatter.Annotation);
                     var newRoot = root.ReplaceNode(memberBinding, newMemberBinding);

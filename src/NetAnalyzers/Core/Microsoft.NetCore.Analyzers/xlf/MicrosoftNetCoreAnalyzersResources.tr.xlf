@@ -2328,18 +2328,18 @@
         <note />
       </trans-unit>
       <trans-unit id="SpecifyCultureForToLowerAndToUpperDescription">
-        <source>Specify culture to help avoid accidental implicit dependence on current culture</source>
-        <target state="new">Specify culture to help avoid accidental implicit dependence on current culture</target>
+        <source>Specify culture to help avoid accidental implicit dependency on current culture. Using an invariant version yields consistent results regardless of the culture of an application.</source>
+        <target state="new">Specify culture to help avoid accidental implicit dependency on current culture. Using an invariant version yields consistent results regardless of the culture of an application.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyCultureForToLowerAndToUpperMessage">
-        <source>Specify culture to avoid implicit dependence on current culture</source>
-        <target state="new">Specify culture to avoid implicit dependence on current culture</target>
+        <source>Specify a culture or use an invariant version to avoid implicit dependency on current culture</source>
+        <target state="new">Specify a culture or use an invariant version to avoid implicit dependency on current culture</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyCultureForToLowerAndToUpperTitle">
-        <source>Specify culture explicitly</source>
-        <target state="new">Specify culture explicitly</target>
+        <source>Specify a culture or use an invariant version</source>
+        <target state="new">Specify a culture or use an invariant version</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyCultureInfoDescription">

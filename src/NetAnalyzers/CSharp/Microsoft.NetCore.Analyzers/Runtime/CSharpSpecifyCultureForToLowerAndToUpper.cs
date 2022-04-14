@@ -17,13 +17,13 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             Debug.Assert(invocationNode.IsKind(SyntaxKind.InvocationExpression));
 
             var invocation = (InvocationExpressionSyntax)invocationNode;
-            if (invocation.Expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess)
             {
-                return ((MemberAccessExpressionSyntax)invocation.Expression).Name.GetLocation();
+                return memberAccess.Name.GetLocation();
             }
-            else if (invocation.Expression.IsKind(SyntaxKind.MemberBindingExpression))
+            else if (invocation.Expression is MemberBindingExpressionSyntax memberBinding)
             {
-                return ((MemberBindingExpressionSyntax)invocation.Expression).Name.GetLocation();
+                return memberBinding.Name.GetLocation();
             }
             return invocation.GetLocation();
         }

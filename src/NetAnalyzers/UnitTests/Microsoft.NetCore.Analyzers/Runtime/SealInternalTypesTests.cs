@@ -202,6 +202,30 @@ End Class";
         #endregion
 
         #region No Diagnostic
+        [Fact]
+        public Task PublicClassType_NoDiagnostic_CS()
+        {
+            string source = $"public class C {{ protected class P {{ }} }}";
+
+            return VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public Task AlreadySealedType_NoDiagnostic_CS()
+        {
+            string source = $"internal sealed class C {{ }}";
+
+            return VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public Task ComImportAttributedType_NoDiagnostic_CS()
+        {
+            string source = $"[System.Runtime.InteropServices.ComImport] [System.Runtime.InteropServices.Guid(\"E8D59775-E821-4D6C-B63D-BB0D969361DA\")] internal class C {{ }}";
+
+            return VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
         [Theory]
         [InlineData("interface I { }")]
         [InlineData("struct S { }")]
@@ -325,6 +349,37 @@ End Class";
                         @"internal class Base { }",
                         @"internal sealed partial class Derived : Base { }",
                         @"internal sealed partial class Derived : Base { }"
+                    }
+                }
+            };
+            return test.RunAsync();
+        }
+
+        [Fact(Skip = "Changes are being applied to .g.cs file")]
+        public Task PartialClass_OneGenerated_ReportedAndFixedAtAllNonGeneratedLocations_CS()
+        {
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ("File1.cs", @"internal class Base { }"),
+                        ("File2.cs", @"internal partial class {|#0:Derived|} : Base { }"),
+                        ("File3.g.cs", @"internal partial class {|#1:Derived|} : Base { }")
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        VerifyCS.Diagnostic(Rule).WithArguments("Derived").WithLocation(0).WithLocation(1)
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        ("File1.cs", @"internal class Base { }"),
+                        ("File2.cs", @"internal sealed partial class {|#0:Derived|} : Base { }"),
+                        ("File3.g.cs", @"internal partial class {|#1:Derived|} : Base { }")
                     }
                 }
             };

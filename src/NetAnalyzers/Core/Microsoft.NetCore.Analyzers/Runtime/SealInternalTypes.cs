@@ -36,6 +36,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
+            INamedTypeSymbol? comImportAttributeType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComImportAttribute);
+
             var candidateTypes = PooledConcurrentSet<INamedTypeSymbol>.GetInstance(SymbolEqualityComparer.Default);
             var baseTypes = PooledConcurrentSet<INamedTypeSymbol>.GetInstance(SymbolEqualityComparer.Default);
 
@@ -43,17 +45,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 var type = (INamedTypeSymbol)context.Symbol;
 
-                if (type.TypeKind is TypeKind.Class && !type.IsAbstract && !type.IsStatic && !type.IsSealed && !type.IsExternallyVisible())
+                if (type.TypeKind is TypeKind.Class &&
+                    !type.IsAbstract &&
+                    !type.IsStatic &&
+                    !type.IsSealed &&
+                    !type.IsExternallyVisible() &&
+                    (comImportAttributeType is null || !type.HasAttribute(comImportAttributeType)))
+                {
                     candidateTypes.Add(type);
+                }
 
-                for (var baseType = type.BaseType; baseType is not null; baseType = baseType.BaseType)
+                for (INamedTypeSymbol? baseType = type.BaseType; baseType is not null; baseType = baseType.BaseType)
+                {
                     baseTypes.Add(baseType.OriginalDefinition);
+                }
 
             }, SymbolKind.NamedType);
 
             context.RegisterCompilationEndAction(context =>
             {
-                foreach (var type in candidateTypes)
+                foreach (INamedTypeSymbol type in candidateTypes)
                 {
                     if (!baseTypes.Contains(type.OriginalDefinition))
                     {

@@ -2713,8 +2713,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseInvariantVersion">
-        <source>User an invariant version</source>
-        <target state="new">User an invariant version</target>
+        <source>Use an invariant version</source>
+        <target state="new">Use an invariant version</target>
         <note />
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiDescription">

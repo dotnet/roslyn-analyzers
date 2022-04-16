@@ -15,65 +15,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     {
         #region Diagnostic tests
 
-        [Fact]
-        public async Task CA1311_ToLowerTest_CSharp()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-class C
-{
-    void Method()
-    {
-        string a = ""test"";
-        a.[|ToLower|]();
-        a?.[|ToLower|]();
-    }
-}
-");
-        }
-
-        [Fact]
-        public async Task CA1311_ToLowerTest_Basic()
-        {
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Class C
-    Sub Method()
-        Dim a As String = ""test""
-        a.[|ToLower|]()
-        a?.[|ToLower|]()
-    End Sub
-End Class
-");
-        }
-
-        [Fact]
-        public async Task CA1311_ToUpperTest_CSharp()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-class C
-{
-    void Method()
-    {
-        string a = ""test"";
-        a.[|ToUpper|]();
-        a?.[|ToUpper|]();
-    }
-}
-");
-        }
-
-        [Fact]
-        public async Task CA1311_ToUpperTest_Basic()
-        {
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Class C
-    Sub Method()
-        Dim a As String = ""test""
-        a.[|ToUpper|]()
-        a?.[|ToUpper|]()
-    End Sub
-End Class
-");
-        }
 
         [Fact]
         public async Task CA1311_ToLower_WithExplicitCultureTest_CSharp()

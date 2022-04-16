@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpSpecifyCultureForToLowerAndToUpperAnalyzer,
@@ -11,7 +12,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class SpecifyCultureForToLowerAndToUpperFixerTests
+    public class SpecifyCultureForToLowerAndToUpperTests
     {
         [Fact]
         public async Task CA1311_FixToLowerCSharpAsync_SpecifyCurrentCulture()
@@ -124,6 +125,42 @@ End Class
             }.RunAsync();
         }
 
+        [Fact]
+        public async Task CA1311_FixToLowerBasicAsync_SpecifyCurrentCulture_MemberAccessSyntax()
+        {
+            var source = @"
+Imports System.Globalization
+
+Class C
+    Sub M()
+        Dim a = ""test""
+        a.[|ToLower|]
+        a?.[|ToLower|]
+    End Sub
+End Class
+";
+
+            var fixedSource = @"
+Imports System.Globalization
+
+Class C
+    Sub M()
+        Dim a = ""test""
+        a.ToLower(CultureInfo.CurrentCulture)
+        a?.ToLower(CultureInfo.CurrentCulture)
+    End Sub
+End Class
+";
+            await new VerifyVB.Test
+            {
+                TestState = { Sources = { source } },
+                FixedState = { Sources = { fixedSource } },
+                CodeActionIndex = 0,
+                CodeActionEquivalenceKey = nameof(MicrosoftNetCoreAnalyzersResources.SpecifyCurrentCulture),
+                CodeActionValidationMode = CodeActionValidationMode.None,
+            }.RunAsync();
+        }
+
 
         [Fact]
         public async Task CA1311_FixToLowerBasicAsync_UseInvariantVersion()
@@ -144,6 +181,38 @@ Class C
         Dim a = ""test""
         a.ToLowerInvariant()
         a?.ToLowerInvariant()
+    End Sub
+End Class
+";
+
+            await new VerifyVB.Test
+            {
+                TestState = { Sources = { source } },
+                FixedState = { Sources = { fixedSource } },
+                CodeActionIndex = 1,
+                CodeActionEquivalenceKey = nameof(MicrosoftNetCoreAnalyzersResources.UseInvariantVersion),
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task CA1311_FixToLowerBasicAsync_UseInvariantVersion_MemberAccessSyntax()
+        {
+            const string source = @"
+Class C
+    Sub M()
+        Dim a = ""test""
+        a.[|ToLower|]
+        a?.[|ToLower|]
+    End Sub
+End Class
+";
+
+            const string fixedSource = @"
+Class C
+    Sub M()
+        Dim a = ""test""
+        a.ToLowerInvariant
+        a?.ToLowerInvariant
     End Sub
 End Class
 ";
@@ -268,9 +337,76 @@ End Class
             }.RunAsync();
         }
 
+        [Fact]
+        public async Task CA1311_FixToUpperBasicAsync_SpecifyCurrentCulture_MemberAccessSyntax()
+        {
+            var source = @"
+Imports System.Globalization
+
+Class C
+    Sub M()
+        Dim a = ""test""
+        a.[|ToUpper|]
+        a?.[|ToUpper|]
+    End Sub
+End Class
+";
+
+            var fixedSource = @"
+Imports System.Globalization
+
+Class C
+    Sub M()
+        Dim a = ""test""
+        a.ToUpper(CultureInfo.CurrentCulture)
+        a?.ToUpper(CultureInfo.CurrentCulture)
+    End Sub
+End Class
+";
+            await new VerifyVB.Test
+            {
+                TestState = { Sources = { source } },
+                FixedState = { Sources = { fixedSource } },
+                CodeActionIndex = 0,
+                CodeActionEquivalenceKey = nameof(MicrosoftNetCoreAnalyzersResources.SpecifyCurrentCulture),
+                CodeActionValidationMode = CodeActionValidationMode.None,
+            }.RunAsync();
+        }
 
         [Fact]
         public async Task CA1311_FixToUpperBasicAsync_UseInvariantVersion()
+        {
+            const string source = @"
+Class C
+    Sub M()
+        Dim a = ""test""
+        a.[|ToUpper|]()
+        a?.[|ToUpper|]()
+    End Sub
+End Class
+";
+
+            const string fixedSource = @"
+Class C
+    Sub M()
+        Dim a = ""test""
+        a.ToUpperInvariant()
+        a?.ToUpperInvariant()
+    End Sub
+End Class
+";
+
+            await new VerifyVB.Test
+            {
+                TestState = { Sources = { source } },
+                FixedState = { Sources = { fixedSource } },
+                CodeActionIndex = 1,
+                CodeActionEquivalenceKey = nameof(MicrosoftNetCoreAnalyzersResources.UseInvariantVersion),
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task CA1311_FixToUpperBasicAsync_UseInvariantVersion_MemberAccessSyntax()
         {
             const string source = @"
 Class C

@@ -300,5 +300,79 @@ End Class
                 CodeActionEquivalenceKey = nameof(MicrosoftNetCoreAnalyzersResources.UseInvariantVersion),
             }.RunAsync();
         }
+
+        [Fact]
+        public async Task CA1311_ToLower_WithExplicitCultureTest_CSharp()
+        {
+
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System.Globalization;
+
+class C
+{
+    void Method()
+    {
+        string a = ""test"";
+        CultureInfo culture = CultureInfo.CreateSpecificCulture(""ka-GE"");
+        a.ToLower(culture);
+        a?.ToLower(culture);
+    }
+}
+");
+        }
+
+        [Fact]
+        public async Task CA1311_ToLower_WithExplicitCultureTest_Basic()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Globalization
+
+Class C
+    Sub Method()
+        Dim a As String = ""test""
+        Dim culture As CultureInfo = CultureInfo.CreateSpecificCulture(""ka-GE"")
+        a.ToLower(culture)
+        a?.ToLower(culture)
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public async Task CA1311_ToUpper_WithExplicitCultureTest_CSharp()
+        {
+
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System.Globalization;
+
+class C
+{
+    void Method()
+    {
+        string a = ""test"";
+        CultureInfo culture = CultureInfo.CreateSpecificCulture(""ka-GE"");
+        a.ToUpper(culture);
+        a?.ToUpper(culture);
+    }
+}
+");
+        }
+
+        [Fact]
+        public async Task CA1311_ToUpper_WithExplicitCultureTest_Basic()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Globalization
+
+Class C
+    Sub Method()
+        Dim a As String = ""test""
+        Dim culture As CultureInfo = CultureInfo.CreateSpecificCulture(""ka-GE"")
+        a.ToUpper(culture)
+        a?.ToUpper(culture)
+    End Sub
+End Class
+");
+        }
     }
 }

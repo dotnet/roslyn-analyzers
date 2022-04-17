@@ -1524,7 +1524,7 @@ Possible multiple enumerations of 'IEnumerable' collection. Consider using an im
 |CodeFix|False|
 ---
 
-## [CA1852](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1851): Seal internal types
+## [CA1852](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1852): Seal internal types
 
 When a type is not accessible outside its assembly and has no subtypes within its containing assembly, it can be safely sealed. Sealing types can improve performance.
 

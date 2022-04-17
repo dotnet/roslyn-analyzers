@@ -50,7 +50,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     !type.IsStatic &&
                     !type.IsSealed &&
                     !type.IsExternallyVisible() &&
-                    (comImportAttributeType is null || !type.HasAttribute(comImportAttributeType)))
+                    !type.HasAttribute(comImportAttributeType))
                 {
                     candidateTypes.Add(type);
                 }

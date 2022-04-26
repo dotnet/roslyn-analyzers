@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Analyzer.Utilities.Extensions;
@@ -422,6 +421,20 @@ namespace Analyzer.Utilities
             Compilation compilation)
             => options.GetSymbolNamesWithValueOption<Unit>(EditorConfigOptionNames.AdditionalUseResultsMethods, rule, tree, compilation, static name => new SymbolNamesWithValueOption<Unit>.NameParts(name, Unit.Default), namePrefix: "M:");
 
+        public static SymbolNamesWithValueOption<Unit> GetEnumerationMethodsOption(
+            this AnalyzerOptions options,
+            DiagnosticDescriptor rule,
+            SyntaxTree tree,
+            Compilation compilation)
+            => options.GetSymbolNamesWithValueOption<Unit>(EditorConfigOptionNames.EnumerationMethods, rule, tree, compilation, static name => new SymbolNamesWithValueOption<Unit>.NameParts(name, Unit.Default), namePrefix: "M:");
+
+        public static SymbolNamesWithValueOption<Unit> GetLinqChainMethodsOption(
+            this AnalyzerOptions options,
+            DiagnosticDescriptor rule,
+            SyntaxTree tree,
+            Compilation compilation)
+            => options.GetSymbolNamesWithValueOption<Unit>(EditorConfigOptionNames.LinqChainMethods, rule, tree, compilation, static name => new SymbolNamesWithValueOption<Unit>.NameParts(name, Unit.Default), namePrefix: "M:");
+
         private static SymbolNamesWithValueOption<TValue> GetSymbolNamesWithValueOption<TValue>(
             this AnalyzerOptions options,
             string optionName,
@@ -579,11 +592,6 @@ namespace Analyzer.Utilities
         private static ICategorizedAnalyzerConfigOptions GetOrComputeCategorizedAnalyzerConfigOptions(
             this AnalyzerOptions options, Compilation compilation)
         {
-            if (options.AdditionalFiles.Any(f => Path.GetFileName(f.Path).Equals(".editorconfig", StringComparison.OrdinalIgnoreCase)))
-            {
-                throw new InvalidOperationException("Passing '.editorconfig' files as additional files is no longer needed. It will be implicitly discovered (if the file is in the project's directory or any ancestor directory), or it should be converted into a 'globalconfig'. See 'https://docs.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files'.");
-            }
-
             // TryGetValue upfront to avoid allocating createValueCallback if the entry already exists.
             if (s_cachedOptions.TryGetValue(options, out var categorizedAnalyzerConfigOptions))
             {

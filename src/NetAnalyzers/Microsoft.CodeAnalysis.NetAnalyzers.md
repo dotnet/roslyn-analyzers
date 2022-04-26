@@ -1536,7 +1536,7 @@ When a type is not accessible outside its assembly and has no subtypes within it
 |CodeFix|True|
 ---
 
-## [CA1853](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1851): Avoid constant arrays as arguments
+## [CA1853](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853): Avoid constant arrays as arguments
 
 Having a constant array passed as an argument is not ideally performant. Extract constant arrays as 'static readonly'.
 

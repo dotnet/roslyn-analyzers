@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
@@ -39,8 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxGenerator generator = editor.Generator;
 
             string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysCodeFixTitle;
-            context.RegisterCodeFix(
-                new MyCodeAction(
+            context.RegisterCodeFix(CodeAction.Create(
                     title,
                     async c => await ExtractConstArrayAsync(node, model, editor, generator, context.Diagnostics.First().Properties, c).ConfigureAwait(false),
                     equivalenceKey: title),
@@ -156,15 +156,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     : accessibility;
             }
             return Accessibility.Private;
-        }
-
-        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
-        private sealed class MyCodeAction : DocumentChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey) :
-                base(title, createChangedDocument, equivalenceKey)
-            {
-            }
         }
     }
 

@@ -5,7 +5,7 @@ using Analyzer.Utilities;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices
 {
-    public sealed partial class PlatformCompatibilityAnalyzer
+    public abstract partial class PlatformCompatibilityAnalyzer
     {
         /// <summary>
         /// Class used for keeping platform information of an API, all properties are optional.

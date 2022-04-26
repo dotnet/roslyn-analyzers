@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices
 {
-    public sealed partial class PlatformCompatibilityAnalyzer
+    public abstract partial class PlatformCompatibilityAnalyzer
     {
         private sealed class OperationVisitor : GlobalFlowStateValueSetFlowOperationVisitor
         {

@@ -6,7 +6,7 @@ using Test.Utilities;
 using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.InteropServices.PlatformCompatibilityAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.InteropServices.CSharpPlatformCompatibilityAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests

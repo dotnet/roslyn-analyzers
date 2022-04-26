@@ -30,8 +30,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
     /// If using the platform-specific API is not safe it reports diagnostics.
     ///
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed partial class PlatformCompatibilityAnalyzer : DiagnosticAnalyzer
+    public abstract partial class PlatformCompatibilityAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1416";
         private static readonly ImmutableArray<string> s_osPlatformAttributes = ImmutableArray.Create(SupportedOSPlatformAttribute, UnsupportedOSPlatformAttribute);
@@ -126,13 +125,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
+        protected abstract bool IsSingleLineComment(SyntaxTrivia trivia);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(OnlySupportedCsReachable, OnlySupportedCsUnreachable,
             OnlySupportedCsAllPlatforms, SupportedCsAllPlatforms, SupportedCsReachable, UnsupportedCsAllPlatforms, UnsupportedCsReachable);
 
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
             context.RegisterCompilationStartAction(context =>
             {
@@ -296,6 +297,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             ITypeSymbol? notSupportedExceptionType,
             SmallDictionary<string, (string relatedPlatform, bool isSubset)> relatedPlatforms)
         {
+            if (!GeneratedCodeUtilities.IsNotGeneratedCodeOrRazorPage(context.OwningSymbol.Locations[0].SourceTree, IsSingleLineComment, context.CancellationToken))
+            {
+                return;
+            }
+
             if (context.IsMethodNotImplementedOrSupported(checkPlatformNotSupported: true))
             {
                 return;

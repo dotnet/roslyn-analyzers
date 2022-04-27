@@ -2317,6 +2317,26 @@
         <target state="translated">Zkontrolujte dotazy SQL pro chyby zabezpečení</target>
         <note />
       </trans-unit>
+      <trans-unit id="SealInternalTypesCodeFixTitle">
+        <source>Seal class</source>
+        <target state="new">Seal class</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SealInternalTypesDescription">
+        <source>When a type is not accessible outside its assembly and has no subtypes within its containing assembly, it can be safely sealed. Sealing types can improve performance.</source>
+        <target state="new">When a type is not accessible outside its assembly and has no subtypes within its containing assembly, it can be safely sealed. Sealing types can improve performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SealInternalTypesMessage">
+        <source>Type '{0}' can be sealed because it has no subtypes in its containing assembly and is not externally visible</source>
+        <target state="new">Type '{0}' can be sealed because it has no subtypes in its containing assembly and is not externally visible</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SealInternalTypesTitle">
+        <source>Seal internal types</source>
+        <target state="new">Seal internal types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SetHttpOnlyForHttpCookie">
         <source>Set HttpOnly to true for HttpCookie</source>
         <target state="translated">Nastavit HttpOnly na hodnotu true pro HttpCookie</target>
@@ -2347,6 +2367,21 @@
         <target state="translated">Třída {0}, která je odvozená ze System.Web.UI.Page, nenastavuje vlastnost ViewStateUserKey v metodě OnInit nebo Page_Init.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SpecifyCultureForToLowerAndToUpperDescription">
+        <source>Specify culture to help avoid accidental implicit dependency on current culture. Using an invariant version yields consistent results regardless of the culture of an application.</source>
+        <target state="new">Specify culture to help avoid accidental implicit dependency on current culture. Using an invariant version yields consistent results regardless of the culture of an application.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecifyCultureForToLowerAndToUpperMessage">
+        <source>Specify a culture or use an invariant version to avoid implicit dependency on current culture</source>
+        <target state="new">Specify a culture or use an invariant version to avoid implicit dependency on current culture</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecifyCultureForToLowerAndToUpperTitle">
+        <source>Specify a culture or use an invariant version</source>
+        <target state="new">Specify a culture or use an invariant version</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SpecifyCultureInfoDescription">
         <source>A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter. When a CultureInfo or System.IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'CultureInfo' parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify 'CultureInfo.InvariantCulture'.</source>
         <target state="translated">Metoda nebo konstruktor volá člen, který je přetížením přijímajícím parametr System.Globalization.CultureInfo, ale metoda nebo konstruktor nevolá přetížení, které přijímá parametr CultureInfo. Když se nezadá CultureInfo ani objekt System.IFormatProvider, výchozí hodnota, kterou poskytuje přetížený člen, nemusí mít ve všech národních prostředích požadovaný účinek. Pokud se výsledek zobrazí uživateli, zadejte jako parametr CultureInfo hodnotu CultureInfo.CurrentCulture. V opačném případě, pokud software výsledek uloží a přistupuje k němu, třeba při jeho trvalém uložení na disk nebo do databáze, zadejte CultureInfo.InvariantCulture.</target>
@@ -2360,6 +2395,11 @@
       <trans-unit id="SpecifyCultureInfoTitle">
         <source>Specify CultureInfo</source>
         <target state="translated">Zadejte CultureInfo</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecifyCurrentCulture">
+        <source>Specify current culture</source>
+        <target state="new">Specify current culture</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyIFormatProviderDescription">
@@ -2710,6 +2750,11 @@
       <trans-unit id="UseIndexer">
         <source>Use indexer</source>
         <target state="translated">Použít indexer</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseInvariantVersion">
+        <source>User an invariant version</source>
+        <target state="new">User an invariant version</target>
         <note />
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiDescription">

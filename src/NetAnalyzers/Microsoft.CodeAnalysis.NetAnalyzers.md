@@ -672,6 +672,18 @@ A string comparison operation uses a method overload that does not set a StringC
 |CodeFix|False|
 ---
 
+## [CA1311](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311): Specify a culture or use an invariant version
+
+Specify culture to help avoid accidental implicit dependency on current culture. Using an invariant version yields consistent results regardless of the culture of an application.
+
+|Item|Value|
+|-|-|
+|Category|Globalization|
+|Enabled|True|
+|Severity|Hidden|
+|CodeFix|True|
+---
+
 ## [CA1401](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401): P/Invokes should not be visible
 
 A public or protected method in a public type has the System.Runtime.InteropServices.DllImportAttribute attribute (also implemented by the Declare keyword in Visual Basic). Such methods should not be exposed.
@@ -1502,7 +1514,7 @@ It is more efficient to use the static 'HashData' method over creating and manag
 
 ## [CA1851](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1851): Possible multiple enumerations of 'IEnumerable' collection
 
-Possible multiple enumerations of 'IEnumerable' collection. Consider using an implementation that avoid multiple enumerations.
+Possible multiple enumerations of 'IEnumerable' collection. Consider using an implementation that avoids multiple enumerations.
 
 |Item|Value|
 |-|-|
@@ -1512,15 +1524,15 @@ Possible multiple enumerations of 'IEnumerable' collection. Consider using an im
 |CodeFix|False|
 ---
 
-## [CA1852](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1852): Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'
+## [CA1852](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1852): Seal internal types
 
-Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The former already checks whether the key exists, and will not throw if it does not.
+When a type is not accessible outside its assembly and has no subtypes within its containing assembly, it can be safely sealed. Sealing types can improve performance.
 
 |Item|Value|
 |-|-|
 |Category|Performance|
 |Enabled|True|
-|Severity|Info|
+|Severity|Hidden|
 |CodeFix|True|
 ---
 

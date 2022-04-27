@@ -5,8 +5,8 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 
 namespace Microsoft.NetCore.Analyzers.Performance
@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
 
             context.RegisterCodeFix(new DoNotGuardDictionaryRemoveByContainsKeyCodeAction(_ =>
-                Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalSyntax, childStatementSyntax))),
+                Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalSyntax, childStatementSyntax)), MicrosoftNetCoreAnalyzersResources.RemoveRedundantGuardCallCodeFixTitle),
                 diagnostic);
         }
 
@@ -55,12 +55,24 @@ namespace Microsoft.NetCore.Analyzers.Performance
                                                               SyntaxNode conditionalOperationNode,
                                                               SyntaxNode childOperationNode);
 
-        private class DoNotGuardDictionaryRemoveByContainsKeyCodeAction : DocumentChangeAction
+        private class DoNotGuardDictionaryRemoveByContainsKeyCodeAction : CodeAction
         {
-            public DoNotGuardDictionaryRemoveByContainsKeyCodeAction(Func<CancellationToken, Task<Document>> action)
-            : base(MicrosoftNetCoreAnalyzersResources.RemoveRedundantGuardCallCodeFixTitle, action,
-                   DoNotGuardDictionaryRemoveByContainsKey.RuleId)
-            { }
+            private readonly Func<CancellationToken, Task<Document>> _createChangedDocument;
+            public sealed override string Title { get; }
+
+            public sealed override string? EquivalenceKey { get; }
+
+            public DoNotGuardDictionaryRemoveByContainsKeyCodeAction(Func<CancellationToken, Task<Document>> createChangedDocument, string title, string? equivalenceKey = null)
+            {
+                _createChangedDocument = createChangedDocument;
+                Title = title;
+                EquivalenceKey = equivalenceKey;
+            }
+
+            protected override Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
+            {
+                return _createChangedDocument(cancellationToken);
+            }
         }
     }
 }

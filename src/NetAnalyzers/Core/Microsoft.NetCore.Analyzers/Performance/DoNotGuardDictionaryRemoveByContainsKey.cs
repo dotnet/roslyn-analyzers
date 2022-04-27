@@ -18,12 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotGuardDictionaryRemoveByContainsKey : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1852";
-
-        public const string AdditionalDocumentLocationInfoSeparator = ";;";
-        public static readonly string[] AdditionalDocumentLocationInfoSeparatorArray = new[] { AdditionalDocumentLocationInfoSeparator };
-        public const string ConditionalOperation = nameof(ConditionalOperation);
-        public const string ChildStatementOperation = nameof(ChildStatementOperation);
+        internal const string RuleId = "CA1853";
         private const string Remove = nameof(Remove);
         private const string ContainsKey = nameof(ContainsKey);
 

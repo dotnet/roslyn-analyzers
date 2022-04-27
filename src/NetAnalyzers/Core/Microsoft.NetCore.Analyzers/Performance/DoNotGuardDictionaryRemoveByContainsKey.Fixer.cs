@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
@@ -33,11 +32,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             var diagnostic = context.Diagnostics.FirstOrDefault();
-
-            if (!TryParseLocationInfo(diagnostic, DoNotGuardDictionaryRemoveByContainsKey.ConditionalOperation, out var conditionalOperationSpan) ||
-                !TryParseLocationInfo(diagnostic, DoNotGuardDictionaryRemoveByContainsKey.ChildStatementOperation, out var childStatementOperationSpan) ||
-                root.FindNode(conditionalOperationSpan) is not SyntaxNode conditionalSyntax ||
-                root.FindNode(childStatementOperationSpan) is not SyntaxNode childStatementSyntax)
+            var conditionalOperationSpan = diagnostic.AdditionalLocations[0];
+            var childLocation = diagnostic.AdditionalLocations[1];
+            if (root.FindNode(conditionalOperationSpan.SourceSpan) is not SyntaxNode conditionalSyntax ||
+                root.FindNode(childLocation.SourceSpan) is not SyntaxNode childStatementSyntax)
             {
                 return;
             }
@@ -56,25 +54,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
         protected abstract Document ReplaceConditionWithChild(Document document, SyntaxNode root,
                                                               SyntaxNode conditionalOperationNode,
                                                               SyntaxNode childOperationNode);
-
-        private static bool TryParseLocationInfo(Diagnostic diagnostic, string propertyKey, out TextSpan span)
-        {
-            span = default;
-
-            if (!diagnostic.Properties.TryGetValue(propertyKey, out var locationInfo))
-                return false;
-
-            var parts = locationInfo.Split(DoNotGuardDictionaryRemoveByContainsKey.AdditionalDocumentLocationInfoSeparatorArray, StringSplitOptions.None);
-            if (parts.Length != 2 ||
-                !int.TryParse(parts[0], out var spanStart) ||
-                !int.TryParse(parts[1], out var spanLength))
-            {
-                return false;
-            }
-
-            span = new TextSpan(spanStart, spanLength);
-            return true;
-        }
 
         private class DoNotGuardDictionaryRemoveByContainsKeyCodeAction : DocumentChangeAction
         {

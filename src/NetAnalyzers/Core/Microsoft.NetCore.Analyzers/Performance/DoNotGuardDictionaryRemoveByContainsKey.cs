@@ -24,6 +24,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
         public static readonly string[] AdditionalDocumentLocationInfoSeparatorArray = new[] { AdditionalDocumentLocationInfoSeparator };
         public const string ConditionalOperation = nameof(ConditionalOperation);
         public const string ChildStatementOperation = nameof(ChildStatementOperation);
+        private const string Remove = nameof(Remove);
+        private const string ContainsKey = nameof(ContainsKey);
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
@@ -33,8 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(DoNotGuardDictionaryRemoveByContainsKeyDescription)),
             isPortedFxCopRule: false,
-            isDataflowRule: false,
-            additionalCustomTags: WellKnownDiagnosticTags.Unnecessary);
+            isDataflowRule: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
@@ -47,14 +48,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (!TryGetDictionaryTypeAndContainsKeyMethod(context.Compilation, out var dictionaryType, out var containsKeyMethod))
+            if (!TryGetDictionaryTypeAndMethods(context.Compilation, out var containsKey, out var remove1Param, out var remove2Param))
             {
                 return;
             }
 
-            context.RegisterOperationAction(context => AnalyzeOperation(context, dictionaryType, containsKeyMethod), OperationKind.Conditional);
+            context.RegisterOperationAction(context => AnalyzeOperation(context, containsKey, remove1Param, remove2Param), OperationKind.Conditional);
 
-            static void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol dictionaryType, IMethodSymbol containsKeyMethod)
+            static void AnalyzeOperation(OperationAnalysisContext context, IMethodSymbol containsKeyMethod, IMethodSymbol remove1Param, IMethodSymbol remove2Param)
             {
                 var conditionalOperation = (IConditionalOperation)context.Operation;
 
@@ -69,6 +70,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         if (unaryOperation.Operand is IInvocationOperation operand)
                             invocationOperation = operand;
                         break;
+                    case IParenthesizedOperation parenthesizedOperation:
+                        if (parenthesizedOperation.Operand is IInvocationOperation invocation)
+                            invocationOperation = invocation;
+                        break;
                     default:
                         return;
                 }
@@ -80,18 +85,16 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 if (conditionalOperation.WhenTrue.Children.Any())
                 {
-                    var properties = ImmutableDictionary.CreateBuilder<string, string?>();
-                    properties[ConditionalOperation] = CreateLocationInfo(conditionalOperation.Syntax);
-
+                    var additionalLocation = ImmutableArray.CreateBuilder<Location>(1);
+                    additionalLocation.Add(conditionalOperation.Syntax.GetLocation());
                     switch (conditionalOperation.WhenTrue.Children.First())
                     {
                         case IInvocationOperation childInvocationOperation:
-                            if (childInvocationOperation.TargetMethod.Name == "Remove" &&
-                                childInvocationOperation.TargetMethod.OriginalDefinition.ContainingType.Equals(dictionaryType, SymbolEqualityComparer.Default))
+                            if (childInvocationOperation.TargetMethod.OriginalDefinition.Equals(remove1Param, SymbolEqualityComparer.Default) ||
+                                childInvocationOperation.TargetMethod.OriginalDefinition.Equals(remove2Param, SymbolEqualityComparer.Default))
                             {
-                                properties[ChildStatementOperation] = CreateLocationInfo(childInvocationOperation.Syntax.Parent);
-
-                                context.ReportDiagnostic(invocationOperation.CreateDiagnostic(Rule, properties.ToImmutable()));
+                                additionalLocation.Add(childInvocationOperation.Syntax.Parent.GetLocation());
+                                context.ReportDiagnostic(invocationOperation.CreateDiagnostic(Rule, additionalLocations: additionalLocation.ToImmutable(), null));
                             }
 
                             break;
@@ -102,14 +105,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
                              */
 
                             var nestedInvocationOperation = childStatementOperation.Children.OfType<IInvocationOperation>()
-                                                               .FirstOrDefault(op => op.TargetMethod.Name == "Remove" &&
-                                                                op.TargetMethod.OriginalDefinition.ContainingType.Equals(dictionaryType, SymbolEqualityComparer.Default));
+                                                            .FirstOrDefault(op => op.TargetMethod.OriginalDefinition.Equals(remove1Param, SymbolEqualityComparer.Default) ||
+                                                                                  op.TargetMethod.OriginalDefinition.Equals(remove2Param, SymbolEqualityComparer.Default));
 
                             if (nestedInvocationOperation != null)
                             {
-                                properties[ChildStatementOperation] = CreateLocationInfo(nestedInvocationOperation.Syntax.Parent);
-
-                                context.ReportDiagnostic(invocationOperation.CreateDiagnostic(Rule, properties.ToImmutable()));
+                                additionalLocation.Add(nestedInvocationOperation.Syntax.Parent.GetLocation());
+                                context.ReportDiagnostic(invocationOperation.CreateDiagnostic(Rule, additionalLocations: additionalLocation.ToImmutable(), null));
                             }
 
                             break;
@@ -118,38 +120,43 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
                 }
             }
-            static bool TryGetDictionaryTypeAndContainsKeyMethod(Compilation compilation, [NotNullWhen(true)] out INamedTypeSymbol? dictionaryType, [NotNullWhen(true)] out IMethodSymbol? containsKeyMethod)
+            static bool TryGetDictionaryTypeAndMethods(Compilation compilation, [NotNullWhen(true)] out IMethodSymbol? containsKey,
+                            [NotNullWhen(true)] out IMethodSymbol? remove1Param, [NotNullWhen(true)] out IMethodSymbol? remove2Param)
             {
-                containsKeyMethod = null;
+                containsKey = null;
+                remove1Param = null;
+                remove2Param = null;
 
-                if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericDictionary2, out dictionaryType))
+                if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericDictionary2, out var dictionary))
                 {
                     return false;
                 }
 
-                foreach (var m in dictionaryType.GetMembers("ContainsKey").OfType<IMethodSymbol>())
+                foreach (var m in dictionary.GetMembers().OfType<IMethodSymbol>())
                 {
-                    if (m.ReturnType.SpecialType == SpecialType.System_Boolean &&
-                        m.Parameters.Length == 1 &&
-                        m.Parameters[0].Name == "key")
+                    if (m.ReturnType.SpecialType == SpecialType.System_Boolean)
                     {
-                        containsKeyMethod = m;
-                        return true;
+                        switch (m.Parameters.Length)
+                        {
+                            case 1:
+                                switch (m.Name)
+                                {
+                                    case ContainsKey: containsKey = m; break;
+                                    case Remove: remove1Param = m; break;
+                                }
+                                break;
+                            case 2:
+                                if (m.Name == Remove)
+                                {
+                                    remove2Param = m;
+                                }
+                                break;
+                        }
                     }
                 }
 
-                return false;
+                return containsKey != null && remove1Param != null && remove2Param != null;
             }
-        }
-
-        private static string CreateLocationInfo(SyntaxNode syntax)
-        {
-            // see DiagnosticDescriptorCreationAnalyzer
-
-            var location = syntax.GetLocation();
-            var span = location.SourceSpan;
-
-            return $"{span.Start}{AdditionalDocumentLocationInfoSeparator}{span.Length}";
         }
     }
 }

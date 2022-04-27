@@ -693,8 +693,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyTitle">
-        <source>Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'</source>
-        <target state="new">Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'</target>
+        <source>Unnecessary call to 'Dictionary.ContainsKey(key)'</source>
+        <target state="new">Unnecessary call to 'Dictionary.ContainsKey(key)'</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeCertificate">
@@ -2158,8 +2158,8 @@
         <note />
       </trans-unit>
       <trans-unit id="RemoveRedundantGuardCallCodeFixTitle">
-        <source>Remove redundant guard call</source>
-        <target state="new">Remove redundant guard call</target>
+        <source>Remove unnecessary call</source>
+        <target state="new">Remove unnecessary call</target>
         <note />
       </trans-unit>
       <trans-unit id="ReplaceStringLiteralWithCharLiteralCodeActionTitle">

@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -50,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             context.RegisterOperationAction(context => AnalyzeOperation(context, containsKey, remove1Param, remove2Param), OperationKind.Conditional);
 
-            static void AnalyzeOperation(OperationAnalysisContext context, IMethodSymbol containsKeyMethod, IMethodSymbol remove1Param, IMethodSymbol remove2Param)
+            static void AnalyzeOperation(OperationAnalysisContext context, IMethodSymbol containsKeyMethod, IMethodSymbol remove1Param, IMethodSymbol? remove2Param)
             {
                 var conditionalOperation = (IConditionalOperation)context.Operation;
 
@@ -80,8 +81,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 if (conditionalOperation.WhenTrue.Children.Any())
                 {
-                    var additionalLocation = ImmutableArray.CreateBuilder<Location>(1);
+                    using var additionalLocation = ArrayBuilder<Location>.GetInstance(2);
                     additionalLocation.Add(conditionalOperation.Syntax.GetLocation());
+
                     switch (conditionalOperation.WhenTrue.Children.First())
                     {
                         case IInvocationOperation childInvocationOperation:
@@ -116,7 +118,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
             }
             static bool TryGetDictionaryTypeAndMethods(Compilation compilation, [NotNullWhen(true)] out IMethodSymbol? containsKey,
-                            [NotNullWhen(true)] out IMethodSymbol? remove1Param, [NotNullWhen(true)] out IMethodSymbol? remove2Param)
+                            [NotNullWhen(true)] out IMethodSymbol? remove1Param, out IMethodSymbol? remove2Param)
             {
                 containsKey = null;
                 remove1Param = null;
@@ -150,7 +152,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
                 }
 
-                return containsKey != null && remove1Param != null && remove2Param != null;
+                return containsKey != null && remove1Param != null;
             }
         }
     }

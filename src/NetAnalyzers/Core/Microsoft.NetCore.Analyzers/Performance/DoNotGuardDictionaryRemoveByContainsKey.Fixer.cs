@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -44,8 +42,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (!SyntaxSupportedByFixer(conditionalSyntax))
                 return;
 
-            context.RegisterCodeFix(new DoNotGuardDictionaryRemoveByContainsKeyCodeAction(_ =>
-                Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalSyntax, childStatementSyntax)), MicrosoftNetCoreAnalyzersResources.RemoveRedundantGuardCallCodeFixTitle),
+            context.RegisterCodeFix(CodeAction.Create(MicrosoftNetCoreAnalyzersResources.RemoveRedundantGuardCallCodeFixTitle, ct =>
+                    Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalSyntax, childStatementSyntax)), MicrosoftNetCoreAnalyzersResources.RemoveRedundantGuardCallCodeFixTitle),
                 diagnostic);
         }
 
@@ -54,25 +52,5 @@ namespace Microsoft.NetCore.Analyzers.Performance
         protected abstract Document ReplaceConditionWithChild(Document document, SyntaxNode root,
                                                               SyntaxNode conditionalOperationNode,
                                                               SyntaxNode childOperationNode);
-
-        private class DoNotGuardDictionaryRemoveByContainsKeyCodeAction : CodeAction
-        {
-            private readonly Func<CancellationToken, Task<Document>> _createChangedDocument;
-            public sealed override string Title { get; }
-
-            public sealed override string? EquivalenceKey { get; }
-
-            public DoNotGuardDictionaryRemoveByContainsKeyCodeAction(Func<CancellationToken, Task<Document>> createChangedDocument, string title, string? equivalenceKey = null)
-            {
-                _createChangedDocument = createChangedDocument;
-                Title = title;
-                EquivalenceKey = equivalenceKey;
-            }
-
-            protected override Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
-            {
-                return _createChangedDocument(cancellationToken);
-            }
-        }
     }
 }

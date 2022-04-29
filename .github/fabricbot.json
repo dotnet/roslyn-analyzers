@@ -1,0 +1,1086 @@
+[
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "Add untriaged label to new/reopened issues without a milestone",
+      "actions": [
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "untriaged"
+          }
+        }
+      ],
+      "eventType": "issue",
+      "eventNames": [
+        "issues"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "name": "isAction",
+                "parameters": {
+                  "action": "opened"
+                }
+              },
+              {
+                "name": "isAction",
+                "parameters": {
+                  "action": "reopened"
+                }
+              },
+              {
+                "name": "removedFromMilestone",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isInMilestone",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "hasLabel",
+                "parameters": {
+                  "label": "untriaged"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "Remove untriaged label from issues when closed or added to a milestone",
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "untriaged"
+          }
+        }
+      ],
+      "eventType": "issue",
+      "eventNames": [
+        "issues"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "name": "isAction",
+                "parameters": {
+                  "action": "closed"
+                }
+              },
+              {
+                "name": "addedToMilestone",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "untriaged"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "Assign Team PRs to author",
+      "actions": [
+        {
+          "name": "assignToUser",
+          "parameters": {
+            "user": {
+              "type": "prAuthor"
+            }
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "pull_request"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "opened"
+            }
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "activitySenderHasPermissions",
+                "parameters": {
+                  "permissions": "read"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - Issue Triage] Moved to Another Area",
+      "actions": [
+        {
+          "name": "addToProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+            "columnName": "Triaged",
+            "isOrgProject": true
+          }
+        }
+      ],
+      "eventType": "issue",
+      "eventNames": [
+        "issues"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isInProjectColumn",
+                "parameters": {
+                  "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+                  "columnName": "Triaged",
+                  "isOrgProject": true
+                }
+              }
+            ]
+          },
+          {
+            "operator": "and",
+            "operands": [
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "hasLabel",
+                    "parameters": {
+                      "label": "Area-Microsoft.NetCore.Analyzers"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "unlabeled"
+            }
+          },
+          {
+            "name": "isInProject",
+            "parameters": {
+              "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+              "isOrgProject": true
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - Issue Triage] Needs Triage",
+      "actions": [
+        {
+          "name": "removeFromProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+            "isOrgProject": true
+          }
+        },
+        {
+          "name": "addToProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+            "columnName": "Needs Triage",
+            "isOrgProject": true
+          }
+        }
+      ],
+      "eventType": "issue",
+      "eventNames": [
+        "issues"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "operator": "and",
+                "operands": [
+                  {
+                    "operator": "or",
+                    "operands": [
+                      {
+                        "name": "hasLabel",
+                        "parameters": {
+                          "label": "Area-Microsoft.NetCore.Analyzers"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "or",
+                    "operands": [
+                      {
+                        "name": "isAction",
+                        "parameters": {
+                          "action": "reopened"
+                        }
+                      },
+                      {
+                        "operator": "not",
+                        "operands": [
+                          {
+                            "name": "isInMilestone",
+                            "parameters": {}
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "or",
+                "operands": [
+                  {
+                    "name": "labelAdded",
+                    "parameters": {
+                      "label": "Area-Microsoft.NetCore.Analyzers"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isInProject",
+                    "parameters": {
+                      "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+                      "isOrgProject": true
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "isInProjectColumn",
+                "parameters": {
+                  "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+                  "isOrgProject": true,
+                  "columnName": "Triaged"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssueCommentResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - Issue Triage] Needs Further Triage",
+      "actions": [
+        {
+          "name": "removeFromProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+            "isOrgProject": true
+          }
+        },
+        {
+          "name": "addToProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+            "columnName": "Needs Triage",
+            "isOrgProject": true
+          }
+        }
+      ],
+      "eventType": "issue",
+      "eventNames": [
+        "issue_comment"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "name": "hasLabel",
+                "parameters": {
+                  "label": "Area-Microsoft.NetCore.Analyzers"
+                }
+              }
+            ]
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isCloseAndComment",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "activitySenderHasPermissions",
+            "parameters": {
+              "permissions": "read"
+            }
+          },
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isInProject",
+                    "parameters": {
+                      "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+                      "isOrgProject": true
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "isInProjectColumn",
+                "parameters": {
+                  "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+                  "columnName": "Triaged",
+                  "isOrgProject": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - Issue Triage] Triaged",
+      "actions": [
+        {
+          "name": "addToProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+            "columnName": "Triaged",
+            "isOrgProject": true
+          }
+        },
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "untriaged"
+          }
+        }
+      ],
+      "eventType": "issue",
+      "eventNames": [
+        "issues"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isInProject",
+            "parameters": {
+              "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+              "isOrgProject": true
+            }
+          },
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "name": "addedToMilestone",
+                "parameters": {}
+              },
+              {
+                "name": "isAction",
+                "parameters": {
+                  "action": "closed"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - Issue Triage] Buyaa Updated Issue",
+      "actions": [
+        {
+          "name": "moveToProjectColumn",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+            "columnName": "Triage: Buyaa",
+            "isOrgProject": true
+          }
+        }
+      ],
+      "eventType": "issue",
+      "eventNames": [
+        "issues"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isInProjectColumn",
+            "parameters": {
+              "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+              "isOrgProject": true,
+              "columnName": "Needs Triage"
+            }
+          },
+          {
+            "name": "isActivitySender",
+            "parameters": {
+              "user": "buyaa-n"
+            }
+          },
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isInMilestone",
+                "parameters": {}
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssueCommentResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - Issue Triage] Buyaa Commented",
+      "actions": [
+        {
+          "name": "moveToProjectColumn",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+            "columnName": "Triage: Buyaa",
+            "isOrgProject": true
+          }
+        }
+      ],
+      "eventType": "issue",
+      "eventNames": [
+        "issue_comment"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isInProjectColumn",
+            "parameters": {
+              "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+              "isOrgProject": true,
+              "columnName": "Needs Triage"
+            }
+          },
+          {
+            "name": "isActivitySender",
+            "parameters": {
+              "user": "buyaa-n"
+            }
+          },
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isInMilestone",
+                "parameters": {}
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - Issue Triage] Carlos Updated Issue",
+      "actions": [
+        {
+          "name": "moveToProjectColumn",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+            "columnName": "Triage: Carlos",
+            "isOrgProject": true
+          }
+        }
+      ],
+      "eventType": "issue",
+      "eventNames": [
+        "issues"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isInProjectColumn",
+            "parameters": {
+              "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+              "isOrgProject": true,
+              "columnName": "Needs Triage"
+            }
+          },
+          {
+            "name": "isActivitySender",
+            "parameters": {
+              "user": "carlossanlop"
+            }
+          },
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isInMilestone",
+                "parameters": {}
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssueCommentResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - Issue Triage] Carlos Commented",
+      "actions": [
+        {
+          "name": "moveToProjectColumn",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+            "columnName": "Triage: Carlos",
+            "isOrgProject": true
+          }
+        }
+      ],
+      "eventType": "issue",
+      "eventNames": [
+        "issue_comment"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isInProjectColumn",
+            "parameters": {
+              "projectName": "Area Pod: Libraries Analyzers - Issue Triage",
+              "isOrgProject": true,
+              "columnName": "Needs Triage"
+            }
+          },
+          {
+            "name": "isActivitySender",
+            "parameters": {
+              "user": "carlossanlop"
+            }
+          },
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isInMilestone",
+                "parameters": {}
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - PRs] Closed, Merged, or Moved",
+      "actions": [
+        {
+          "name": "moveToProjectColumn",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - PRs",
+            "columnName": "Done",
+            "isOrgProject": true
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "pull_request"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isInProject",
+            "parameters": {
+              "projectName": "Area Pod: Libraries Analyzers - PRs",
+              "isOrgProject": true
+            }
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isInProjectColumn",
+                "parameters": {
+                  "projectName": "Area Pod: Libraries Analyzers - PRs",
+                  "columnName": "Done",
+                  "isOrgProject": true
+                }
+              }
+            ]
+          },
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isOpen",
+                    "parameters": {}
+                  }
+                ]
+              },
+              {
+                "operator": "and",
+                "operands": [
+                  {
+                    "operator": "not",
+                    "operands": [
+                      {
+                        "name": "hasLabel",
+                        "parameters": {
+                          "label": "Area-Microsoft.NetCore.Analyzers"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - PRs] Needs Champion",
+      "actions": [
+        {
+          "name": "removeFromProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - PRs",
+            "isOrgProject": true
+          }
+        },
+        {
+          "name": "addToProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - PRs",
+            "columnName": "Needs Champion",
+            "isOrgProject": true
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "pull_request"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "name": "hasLabel",
+                "parameters": {
+                  "label": "Area-Microsoft.NetCore.Analyzers"
+                }
+              }
+            ]
+          },
+          {
+            "operator": "and",
+            "operands": [
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isAssignedToUser",
+                    "parameters": {
+                      "user": "buyaa-n"
+                    }
+                  }
+                ]
+              },
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isAssignedToUser",
+                    "parameters": {
+                      "user": "carlossanlop"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isInProject",
+                    "parameters": {
+                      "projectName": "Area Pod: Libraries Analyzers - PRs",
+                      "isOrgProject": true
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "isInProjectColumn",
+                "parameters": {
+                  "projectName": "Area Pod: Libraries Analyzers - PRs",
+                  "columnName": "Done",
+                  "isOrgProject": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - PRs] Buyaa Assigned as Champion",
+      "actions": [
+        {
+          "name": "removeFromProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - PRs",
+            "isOrgProject": true
+          }
+        },
+        {
+          "name": "addToProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - PRs",
+            "columnName": "Champion: Buyaa",
+            "isOrgProject": true
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "pull_request"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "name": "hasLabel",
+                "parameters": {
+                  "label": "Area-Microsoft.NetCore.Analyzers"
+                }
+              }
+            ]
+          },
+          {
+            "name": "isAssignedToUser",
+            "parameters": {
+              "user": "buyaa-n"
+            }
+          },
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isInProject",
+                    "parameters": {
+                      "projectName": "Area Pod: Libraries Analyzers - PRs",
+                      "isOrgProject": true
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "isInProjectColumn",
+                "parameters": {
+                  "projectName": "Area Pod: Libraries Analyzers - PRs",
+                  "columnName": "Needs Champion",
+                  "isOrgProject": true
+                }
+              },
+              {
+                "name": "isInProjectColumn",
+                "parameters": {
+                  "projectName": "Area Pod: Libraries Analyzers - PRs",
+                  "columnName": "Done",
+                  "isOrgProject": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - PRs] Carlos Assigned as Champion",
+      "actions": [
+        {
+          "name": "removeFromProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - PRs",
+            "isOrgProject": true
+          }
+        },
+        {
+          "name": "addToProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - PRs",
+            "columnName": "Champion: Carlos",
+            "isOrgProject": true
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "pull_request"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "name": "hasLabel",
+                "parameters": {
+                  "label": "Area-Microsoft.NetCore.Analyzers"
+                }
+              }
+            ]
+          },
+          {
+            "name": "isAssignedToUser",
+            "parameters": {
+              "user": "carlossanlop"
+            }
+          },
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isInProject",
+                    "parameters": {
+                      "projectName": "Area Pod: Libraries Analyzers - PRs",
+                      "isOrgProject": true
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "isInProjectColumn",
+                "parameters": {
+                  "projectName": "Area Pod: Libraries Analyzers - PRs",
+                  "columnName": "Needs Champion",
+                  "isOrgProject": true
+                }
+              },
+              {
+                "name": "isInProjectColumn",
+                "parameters": {
+                  "projectName": "Area Pod: Libraries Analyzers - PRs",
+                  "columnName": "Done",
+                  "isOrgProject": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

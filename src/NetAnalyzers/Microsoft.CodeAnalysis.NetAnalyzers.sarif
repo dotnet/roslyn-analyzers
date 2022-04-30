@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.CSharp.NetAnalyzers",
-        "version": "6.0.0",
+        "version": "7.0.0",
         "language": "en-US"
       },
       "rules": {
@@ -29,26 +29,6 @@
             ]
           }
         },
-        "CA1019": {
-          "id": "CA1019",
-          "shortDescription": "Define accessors for attribute arguments",
-          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1019",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": false,
-            "typeName": "CSharpDefineAccessorsForAttributeArgumentsAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
         "CA1032": {
           "id": "CA1032",
           "shortDescription": "Implement standard exception constructors",
@@ -59,26 +39,6 @@
             "category": "Design",
             "isEnabledByDefault": false,
             "typeName": "CSharpImplementStandardExceptionConstructorsAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
-        "CA1065": {
-          "id": "CA1065",
-          "shortDescription": "Do not raise exceptions in unexpected locations",
-          "fullDescription": "A method that is not expected to throw exceptions throws an exception.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1065",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": false,
-            "typeName": "CSharpDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer",
             "languages": [
               "C#"
             ],
@@ -128,6 +88,25 @@
             ]
           }
         },
+        "CA1311": {
+          "id": "CA1311",
+          "shortDescription": "Specify a culture or use an invariant version",
+          "fullDescription": "Specify culture to help avoid accidental implicit dependency on current culture. Using an invariant version yields consistent results regardless of the culture of an application.",
+          "defaultLevel": "hidden",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311",
+          "properties": {
+            "category": "Globalization",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpSpecifyCultureForToLowerAndToUpperAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1507": {
           "id": "CA1507",
           "shortDescription": "Use nameof to express symbol names",
@@ -142,6 +121,26 @@
               "C#"
             ],
             "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1802": {
+          "id": "CA1802",
+          "shortDescription": "Use literals where appropriate",
+          "fullDescription": "A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1802",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpUseLiteralsWhereAppropriate",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFromFxCop",
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]
@@ -228,6 +227,64 @@
             ]
           }
         },
+        "CA1841": {
+          "id": "CA1841",
+          "shortDescription": "Prefer Dictionary.Contains methods",
+          "fullDescription": "Many dictionary implementations lazily initialize the Values collection. To avoid unnecessary allocations, prefer 'ContainsValue' over 'Values.Contains'.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1841",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpPreferDictionaryContainsMethods",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1845": {
+          "id": "CA1845",
+          "shortDescription": "Use span-based 'string.Concat'",
+          "fullDescription": "It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1845",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpUseSpanBasedStringConcat",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1851": {
+          "id": "CA1851",
+          "shortDescription": "Possible multiple enumerations of 'IEnumerable' collection",
+          "fullDescription": "Possible multiple enumerations of 'IEnumerable' collection. Consider using an implementation that avoids multiple enumerations.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1851",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpAvoidMultipleEnumerationsAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2014": {
           "id": "CA2014",
           "shortDescription": "Do not use stackalloc in loops",
@@ -281,6 +338,25 @@
             ],
             "tags": [
               "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2252": {
+          "id": "CA2252",
+          "shortDescription": "This API requires opting into preview features",
+          "fullDescription": "An assembly has to opt into preview features before using them.",
+          "defaultLevel": "error",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpDetectPreviewFeatureAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]
@@ -405,7 +481,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.NetAnalyzers",
-        "version": "6.0.0",
+        "version": "7.0.0",
         "language": "en-US"
       },
       "rules": {
@@ -631,6 +707,27 @@
             "category": "Design",
             "isEnabledByDefault": true,
             "typeName": "MarkAttributesWithAttributeUsageAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1019": {
+          "id": "CA1019",
+          "shortDescription": "Define accessors for attribute arguments",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1019",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "DefineAccessorsForAttributeArgumentsAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -1227,6 +1324,27 @@
             ]
           }
         },
+        "CA1065": {
+          "id": "CA1065",
+          "shortDescription": "Do not raise exceptions in unexpected locations",
+          "fullDescription": "A method that is not expected to throw exceptions throws an exception.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1065",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1066": {
           "id": "CA1066",
           "shortDescription": "Implement IEquatable when overriding Object.Equals",
@@ -1503,6 +1621,86 @@
             "category": "Interoperability",
             "isEnabledByDefault": true,
             "typeName": "DoNotUseOutAttributeStringPInvokeParametersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1418": {
+          "id": "CA1418",
+          "shortDescription": "Use valid platform string",
+          "fullDescription": "Platform compatibility analyzer requires a valid platform name and version.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1418",
+          "properties": {
+            "category": "Interoperability",
+            "isEnabledByDefault": true,
+            "typeName": "UseValidPlatformString",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1419": {
+          "id": "CA1419",
+          "shortDescription": "Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle'",
+          "fullDescription": "Providing a parameterless constructor that is as visible as the containing type for a type derived from 'System.Runtime.InteropServices.SafeHandle' enables better performance and usage with source-generated interop solutions.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419",
+          "properties": {
+            "category": "Interoperability",
+            "isEnabledByDefault": true,
+            "typeName": "ProvidePublicParameterlessSafeHandleConstructorAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1420": {
+          "id": "CA1420",
+          "shortDescription": "Property, type, or attribute requires runtime marshalling",
+          "fullDescription": "Using features that require runtime marshalling when runtime marshalling is disabled will result in runtime exceptions.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1420",
+          "properties": {
+            "category": "Interoperability",
+            "isEnabledByDefault": true,
+            "typeName": "DisableRuntimeMarshallingAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1421": {
+          "id": "CA1421",
+          "shortDescription": "This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied",
+          "fullDescription": "This method uses runtime marshalling even when runtime marshalling is disabled, which can cause unexpected behavior differences at runtime due to different expectations of a type's native layout.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421",
+          "properties": {
+            "category": "Interoperability",
+            "isEnabledByDefault": true,
+            "typeName": "DisableRuntimeMarshallingAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -1912,22 +2110,21 @@
             ]
           }
         },
-        "CA1802": {
-          "id": "CA1802",
-          "shortDescription": "Use literals where appropriate",
-          "fullDescription": "A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1802",
+        "CA1727": {
+          "id": "CA1727",
+          "shortDescription": "Use PascalCase for named placeholders",
+          "fullDescription": "Use PascalCase for named placeholders in the logging message template.",
+          "defaultLevel": "hidden",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727",
           "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": false,
-            "typeName": "UseLiteralsWhereAppropriateAnalyzer",
+            "category": "Naming",
+            "isEnabledByDefault": true,
+            "typeName": "LoggerMessageDefineAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
             ],
             "tags": [
-              "PortedFromFxCop",
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]
@@ -2392,7 +2589,7 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "UseEnvironmentProcessId",
+            "typeName": "UseEnvironmentMembers",
             "languages": [
               "C#",
               "Visual Basic"
@@ -2413,6 +2610,247 @@
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "AvoidStringBuilderPInvokeParametersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1839": {
+          "id": "CA1839",
+          "shortDescription": "Use 'Environment.ProcessPath'",
+          "fullDescription": "'Environment.ProcessPath' is simpler and faster than 'Process.GetCurrentProcess().MainModule.FileName'.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseEnvironmentMembers",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1840": {
+          "id": "CA1840",
+          "shortDescription": "Use 'Environment.CurrentManagedThreadId'",
+          "fullDescription": "'Environment.CurrentManagedThreadId' is simpler and faster than 'Thread.CurrentThread.ManagedThreadId'.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1840",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseEnvironmentMembers",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1842": {
+          "id": "CA1842",
+          "shortDescription": "Do not use 'WhenAll' with a single task",
+          "fullDescription": "Using 'WhenAll' with a single task may result in performance loss, await or return the task instead.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1842",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseWhenAllOrWaitAllWithSingleArgument",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1843": {
+          "id": "CA1843",
+          "shortDescription": "Do not use 'WaitAll' with a single task",
+          "fullDescription": "Using 'WaitAll' with a single task may result in performance loss, await or return the task instead.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1843",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseWhenAllOrWaitAllWithSingleArgument",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1844": {
+          "id": "CA1844",
+          "shortDescription": "Provide memory-based overrides of async methods when subclassing 'Stream'",
+          "fullDescription": "To improve performance, override the memory-based async methods when subclassing 'Stream'. Then implement the array-based methods in terms of the memory-based methods.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1844",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "ProvideStreamMemoryBasedAsyncOverrides",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1846": {
+          "id": "CA1846",
+          "shortDescription": "Prefer 'AsSpan' over 'Substring'",
+          "fullDescription": "'AsSpan' is more efficient then 'Substring'. 'Substring' performs an O(n) string copy, while 'AsSpan' does not and has a constant cost.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1846",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "PreferAsSpanOverSubstring",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1847": {
+          "id": "CA1847",
+          "shortDescription": "Use char literal for a single character lookup",
+          "fullDescription": "'string.Contains(char)' is available as a better performing overload for single char lookup.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseStringContainsCharOverloadWithSingleCharactersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1848": {
+          "id": "CA1848",
+          "shortDescription": "Use the LoggerMessage delegates",
+          "fullDescription": "For improved performance, use the LoggerMessage delegates.",
+          "defaultLevel": "hidden",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "LoggerMessageDefineAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1849": {
+          "id": "CA1849",
+          "shortDescription": "Call async methods when in an async method",
+          "fullDescription": "When inside a Task-returning method, use the async version of methods, if they exist.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": false,
+            "typeName": "UseAsyncMethodInAsyncContext",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1850": {
+          "id": "CA1850",
+          "shortDescription": "Prefer static 'HashData' method over 'ComputeHash'",
+          "fullDescription": "It is more efficient to use the static 'HashData' method over creating and managing a HashAlgorithm instance to call 'ComputeHash'.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "PreferHashDataOverComputeHashAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1852": {
+          "id": "CA1852",
+          "shortDescription": "Seal internal types",
+          "fullDescription": "When a type is not accessible outside its assembly and has no subtypes within its containing assembly, it can be safely sealed. Sealing types can improve performance.",
+          "defaultLevel": "hidden",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1852",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "SealInternalTypes",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
+            ]
+          }
+        },
+        "CA1853": {
+          "id": "CA1853",
+          "shortDescription": "Unnecessary call to 'Dictionary.ContainsKey(key)'",
+          "fullDescription": "Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The former already checks whether the key exists, and will not throw if it does not.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotGuardDictionaryRemoveByContainsKey",
             "languages": [
               "C#",
               "Visual Basic"
@@ -2615,6 +3053,66 @@
             "category": "Reliability",
             "isEnabledByDefault": true,
             "typeName": "DoNotDefineFinalizersForTypesDerivedFromMemoryManager",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2017": {
+          "id": "CA2017",
+          "shortDescription": "Parameter count mismatch",
+          "fullDescription": "Number of parameters supplied in the logging message template do not match the number of named placeholders.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "LoggerMessageDefineAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2018": {
+          "id": "CA2018",
+          "shortDescription": "'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument",
+          "fullDescription": "'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument. Using 'Array.Length' may not match the number of bytes that needs to be copied.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2018",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "BufferBlockCopyLengthAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2019": {
+          "id": "CA2019",
+          "shortDescription": "Improper 'ThreadStatic' field initialization",
+          "fullDescription": "'ThreadStatic' fields should be initialized lazily on use, not with inline initialization nor explicitly in a static constructor, which would only initialize the field on the thread that runs the type's static constructor.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "UseThreadStaticCorrectly",
             "languages": [
               "C#",
               "Visual Basic"
@@ -3280,6 +3778,185 @@
             "category": "Usage",
             "isEnabledByDefault": true,
             "typeName": "PreferStringContainsOverIndexOfAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2250": {
+          "id": "CA2250",
+          "shortDescription": "Use 'ThrowIfCancellationRequested'",
+          "fullDescription": "'ThrowIfCancellationRequested' automatically checks whether the token has been canceled, and throws an 'OperationCanceledException' if it has.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "UseCancellationTokenThrowIfCancellationRequested",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2251": {
+          "id": "CA2251",
+          "shortDescription": "Use 'string.Equals'",
+          "fullDescription": "It is both clearer and likely faster to use 'string.Equals' instead of comparing the result of 'string.Compare' to zero.",
+          "defaultLevel": "hidden",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "UseStringEqualsOverStringCompare",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2253": {
+          "id": "CA2253",
+          "shortDescription": "Named placeholders should not be numeric values",
+          "fullDescription": "Named placeholders in the logging message template should not be comprised of only numeric characters.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "LoggerMessageDefineAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2254": {
+          "id": "CA2254",
+          "shortDescription": "Template should be a static expression",
+          "fullDescription": "The logging message template should not vary between calls.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2254",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "LoggerMessageDefineAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2255": {
+          "id": "CA2255",
+          "shortDescription": "The 'ModuleInitializer' attribute should not be used in libraries",
+          "fullDescription": "Module initializers are intended to be used by application code to ensure an application's components are initialized before the application code begins executing. If library code declares a 'ModuleInitializer' method, it can interfere with application initialization and also lead to limitations in that application's trimming abilities. Library code should therefore not utilize the 'ModuleInitializer' attribute, but instead expose methods that can be used to initialize any components within the library and allow the application to invoke the method during application initialization.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2255",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "ModuleInitializerAttributeShouldNotBeUsedInLibraries",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2256": {
+          "id": "CA2256",
+          "shortDescription": "All members declared in parent interfaces must have an implementation in a DynamicInterfaceCastableImplementation-attributed interface",
+          "fullDescription": "Types attributed with 'DynamicInterfaceCastableImplementationAttribute' act as an interface implementation for a type that implements the 'IDynamicInterfaceCastable' type. As a result, it must provide an implementation of all of the members defined in the inherited interfaces, because the type that implements 'IDynamicInterfaceCastable' will not provide them otherwise.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2256",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DynamicInterfaceCastableImplementationAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2257": {
+          "id": "CA2257",
+          "shortDescription": "Members defined on an interface with the 'DynamicInterfaceCastableImplementationAttribute' should be 'static'",
+          "fullDescription": "Since a type that implements 'IDynamicInterfaceCastable' may not implement a dynamic interface in metadata, calls to an instance interface member that is not an explicit implementation defined on this type are likely to fail at runtime. Mark new interface members 'static' to avoid runtime errors.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2257",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DynamicInterfaceCastableImplementationAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2258": {
+          "id": "CA2258",
+          "shortDescription": "Providing a 'DynamicInterfaceCastableImplementation' interface in Visual Basic is unsupported",
+          "fullDescription": "Providing a functional 'DynamicInterfaceCastableImplementationAttribute'-attributed interface requires the Default Interface Members feature, which is unsupported in Visual Basic.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2258",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DynamicInterfaceCastableImplementationAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2259": {
+          "id": "CA2259",
+          "shortDescription": "'ThreadStatic' only affects static fields",
+          "fullDescription": "'ThreadStatic' only affects static fields. When applied to instance fields, it has no impact on behavior.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "UseThreadStaticCorrectly",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5015,13 +5692,53 @@
               "EnabledRuleInAggressiveMode"
             ]
           }
+        },
+        "CA5404": {
+          "id": "CA5404",
+          "shortDescription": "Do not disable token validation checks",
+          "fullDescription": "Token validation checks ensure that while validating tokens, all aspects are analyzed and verified. Turning off validation can lead to security holes by allowing untrusted tokens to make it through validation.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5404",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotDisableTokenValidationChecks",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA5405": {
+          "id": "CA5405",
+          "shortDescription": "Do not always skip token validation in delegates",
+          "fullDescription": "By setting critical TokenValidationParameter validation delegates to true, important authentication safeguards are disabled which can lead to tokens from any issuer or expired tokens being wrongly validated.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5405",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotAlwaysSkipTokenValidationInDelegates",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
         }
       }
     },
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers",
-        "version": "6.0.0",
+        "version": "7.0.0",
         "language": "en-US"
       },
       "rules": {
@@ -5045,26 +5762,6 @@
             ]
           }
         },
-        "CA1019": {
-          "id": "CA1019",
-          "shortDescription": "Define accessors for attribute arguments",
-          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1019",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": false,
-            "typeName": "BasicDefineAccessorsForAttributeArgumentsAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
         "CA1032": {
           "id": "CA1032",
           "shortDescription": "Implement standard exception constructors",
@@ -5075,26 +5772,6 @@
             "category": "Design",
             "isEnabledByDefault": false,
             "typeName": "BasicImplementStandardExceptionConstructorsAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
-        "CA1065": {
-          "id": "CA1065",
-          "shortDescription": "Do not raise exceptions in unexpected locations",
-          "fullDescription": "A method that is not expected to throw exceptions throws an exception.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1065",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": false,
-            "typeName": "BasicDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer",
             "languages": [
               "Visual Basic"
             ],
@@ -5144,6 +5821,25 @@
             ]
           }
         },
+        "CA1311": {
+          "id": "CA1311",
+          "shortDescription": "Specify a culture or use an invariant version",
+          "fullDescription": "Specify culture to help avoid accidental implicit dependency on current culture. Using an invariant version yields consistent results regardless of the culture of an application.",
+          "defaultLevel": "hidden",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311",
+          "properties": {
+            "category": "Globalization",
+            "isEnabledByDefault": true,
+            "typeName": "BasicSpecifyCultureForToLowerAndToUpperAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1507": {
           "id": "CA1507",
           "shortDescription": "Use nameof to express symbol names",
@@ -5158,6 +5854,26 @@
               "Visual Basic"
             ],
             "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1802": {
+          "id": "CA1802",
+          "shortDescription": "Use literals where appropriate",
+          "fullDescription": "A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1802",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": false,
+            "typeName": "BasicUseLiteralsWhereAppropriate",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]
@@ -5244,6 +5960,64 @@
             ]
           }
         },
+        "CA1841": {
+          "id": "CA1841",
+          "shortDescription": "Prefer Dictionary.Contains methods",
+          "fullDescription": "Many dictionary implementations lazily initialize the Values collection. To avoid unnecessary allocations, prefer 'ContainsValue' over 'Values.Contains'.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1841",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicPreferDictionaryContainsMethods",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1845": {
+          "id": "CA1845",
+          "shortDescription": "Use span-based 'string.Concat'",
+          "fullDescription": "It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1845",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicUseSpanBasedStringConcat",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1851": {
+          "id": "CA1851",
+          "shortDescription": "Possible multiple enumerations of 'IEnumerable' collection",
+          "fullDescription": "Possible multiple enumerations of 'IEnumerable' collection. Consider using an implementation that avoids multiple enumerations.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1851",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": false,
+            "typeName": "BasicAvoidMultipleEnumerationsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2016": {
           "id": "CA2016",
           "shortDescription": "Forward the 'CancellationToken' parameter to methods",
@@ -5318,6 +6092,25 @@
             ],
             "tags": [
               "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2252": {
+          "id": "CA2252",
+          "shortDescription": "This API requires opting into preview features",
+          "fullDescription": "An assembly has to opt into preview features before using them.",
+          "defaultLevel": "error",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "BasicDetectPreviewFeatureAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]

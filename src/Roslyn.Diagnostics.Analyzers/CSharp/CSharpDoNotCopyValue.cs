@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 #nullable disable warnings
 
@@ -17,6 +17,9 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
     {
         protected override NonCopyableWalker CreateWalker(OperationBlockAnalysisContext context, NonCopyableTypesCache cache)
             => new CSharpNonCopyableWalker(context, cache);
+
+        protected override NonCopyableSymbolWalker CreateSymbolWalker(SymbolAnalysisContext context, NonCopyableTypesCache cache)
+            => new CSharpNonCopyableSymbolWalker(context, cache);
 
         private sealed class CSharpNonCopyableWalker : NonCopyableWalker
         {
@@ -45,6 +48,14 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
                 }
 
                 return false;
+            }
+        }
+
+        private sealed class CSharpNonCopyableSymbolWalker : NonCopyableSymbolWalker
+        {
+            public CSharpNonCopyableSymbolWalker(SymbolAnalysisContext context, NonCopyableTypesCache cache)
+                : base(context, cache)
+            {
             }
         }
     }

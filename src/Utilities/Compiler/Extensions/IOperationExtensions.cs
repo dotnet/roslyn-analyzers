@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 #if HAS_IOPERATION
 
@@ -108,11 +108,11 @@ namespace Analyzer.Utilities.Extensions
             return false;
         }
 
-        private static bool HasConstantValue(Optional<object> constantValue, ITypeSymbol constantValueType, ulong comparand)
+        private static bool HasConstantValue(Optional<object?> constantValue, ITypeSymbol constantValueType, ulong comparand)
         {
             if (constantValueType.SpecialType is SpecialType.System_Double or SpecialType.System_Single)
             {
-                return (double)constantValue.Value == comparand;
+                return (double?)constantValue.Value == comparand;
             }
 
             return DiagnosticHelpers.TryConvertToUInt64(constantValue.Value, constantValueType.SpecialType, out ulong convertedValue) && convertedValue == comparand;
@@ -217,6 +217,25 @@ namespace Analyzer.Utilities.Extensions
         }
 
         /// <summary>
+        /// Returns the first <see cref="IBlockOperation"/> in the parent chain of <paramref name="operation"/>.
+        /// </summary>
+        public static IBlockOperation? GetFirstParentBlock(this IOperation? operation)
+        {
+            IOperation? currentOperation = operation;
+            while (currentOperation != null)
+            {
+                if (currentOperation is IBlockOperation blockOperation)
+                {
+                    return blockOperation;
+                }
+
+                currentOperation = currentOperation.Parent;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Gets the first ancestor of this operation with:
         ///  1. Specified OperationKind
         ///  2. If <paramref name="predicate"/> is non-null, it succeeds for the ancestor.
@@ -304,7 +323,7 @@ namespace Analyzer.Utilities.Extensions
 
             if (isInsideAnonymousObjectInitializer)
             {
-                for (IOperation current = operation; current != null && current.Kind != OperationKind.Block; current = current.Parent)
+                for (IOperation? current = operation; current != null && current.Kind != OperationKind.Block; current = current.Parent)
                 {
                     switch (current.Kind)
                     {
@@ -406,6 +425,7 @@ namespace Analyzer.Utilities.Extensions
         public static bool TryGetEnclosingControlFlowGraph(this IOperation operation, [NotNullWhen(returnValue: true)] out ControlFlowGraph? cfg)
         {
             operation = operation.GetRoot();
+            RoslynDebug.Assert(operation.SemanticModel is not null);
             var operationToCfgMap = s_operationToCfgCache.GetOrCreateValue(operation.SemanticModel.Compilation);
             cfg = operationToCfgMap.GetOrAdd(operation, CreateControlFlowGraph);
             return cfg != null;
@@ -642,11 +662,15 @@ namespace Analyzer.Utilities.Extensions
             return operation;
         }
 
-        public static IOperation WalkUpParentheses(this IOperation operation)
+        [return: NotNullIfNotNull("operation")]
+        public static IOperation? WalkUpParentheses(this IOperation? operation)
         {
-            while (operation is IParenthesizedOperation parenthesizedOperation)
+            if (operation is null)
+                return null;
+
+            while (operation.Parent is IParenthesizedOperation parenthesizedOperation)
             {
-                operation = parenthesizedOperation.Parent;
+                operation = parenthesizedOperation;
             }
 
             return operation;
@@ -667,11 +691,32 @@ namespace Analyzer.Utilities.Extensions
             return operation;
         }
 
-        public static IOperation WalkUpConversion(this IOperation operation)
+        /// <summary>
+        /// Walks down consecutive conversion operations that satisfy <paramref name="predicate"/> until an operand is reached that
+        /// either isn't a conversion or doesn't satisfy <paramref name="predicate"/>.
+        /// </summary>
+        /// <param name="operation">The starting operation.</param>
+        /// <param name="predicate">A predicate to filter conversion operations.</param>
+        /// <returns>The first operation that either isn't a conversion or doesn't satisfy <paramref name="predicate"/>.</returns>
+        public static IOperation WalkDownConversion(this IOperation operation, Func<IConversionOperation, bool> predicate)
         {
-            while (operation is IConversionOperation conversionOperation)
+            while (operation is IConversionOperation conversionOperation && predicate(conversionOperation))
             {
-                operation = conversionOperation.Parent;
+                operation = conversionOperation.Operand;
+            }
+
+            return operation;
+        }
+
+        [return: NotNullIfNotNull("operation")]
+        public static IOperation? WalkUpConversion(this IOperation? operation)
+        {
+            if (operation is null)
+                return null;
+
+            while (operation.Parent is IConversionOperation conversionOperation)
+            {
+                operation = conversionOperation;
             }
 
             return operation;
@@ -713,7 +758,7 @@ namespace Analyzer.Utilities.Extensions
             int minOrdinal = int.MaxValue;
             foreach (IArgumentOperation argumentOperation in invocationOperation.Arguments)
             {
-                if (argumentOperation.Parameter.Ordinal < minOrdinal && argumentOperation.Value is TOperation to)
+                if (argumentOperation.Parameter?.Ordinal < minOrdinal && argumentOperation.Value is TOperation to)
                 {
                     minOrdinal = argumentOperation.Parameter.Ordinal;
                     firstFoundArgument = to;
@@ -784,7 +829,7 @@ namespace Analyzer.Utilities.Extensions
 
             foreach (var argument in arguments)
             {
-                if (argument.Parameter.Ordinal == parameterIndex)
+                if (argument.Parameter?.Ordinal == parameterIndex)
                 {
                     return argument;
                 }
@@ -805,6 +850,7 @@ namespace Analyzer.Utilities.Extensions
 
             foreach (var argument in arguments)
             {
+                RoslynDebug.Assert(argument.Parameter is not null);
                 Debug.Assert(parameterOrderedArguments[argument.Parameter.Ordinal] == null);
                 parameterOrderedArguments[argument.Parameter.Ordinal] = argument;
             }
@@ -812,7 +858,7 @@ namespace Analyzer.Utilities.Extensions
             return parameterOrderedArguments.ToImmutableArray();
         }
 
-        // Copied from roslyn https://github.com/dotnet/roslyn/blob/master/src/Workspaces/SharedUtilitiesAndExtensions/Compiler/Core/Extensions/OperationExtensions.cs#L25
+        // Copied from roslyn https://github.com/dotnet/roslyn/blob/main/src/Workspaces/SharedUtilitiesAndExtensions/Compiler/Core/Extensions/OperationExtensions.cs#L25
 
 #if CODEANALYSIS_V3_OR_BETTER
         /// <summary>
@@ -934,7 +980,7 @@ namespace Analyzer.Utilities.Extensions
             }
             else if (operation.Parent is IArgumentOperation argumentOperation)
             {
-                return argumentOperation.Parameter.RefKind switch
+                return argumentOperation.Parameter?.RefKind switch
                 {
                     RefKind.RefReadOnly => ValueUsageInfo.ReadableReference,
                     RefKind.Out => ValueUsageInfo.WritableReference,
@@ -978,25 +1024,23 @@ namespace Analyzer.Utilities.Extensions
             {
                 return ValueUsageInfo.Write;
             }
-            else if (operation.Parent is IVariableInitializerOperation variableInitializerOperation)
+            else if (operation.Parent is IVariableInitializerOperation variableInitializerOperation &&
+                variableInitializerOperation.Parent is IVariableDeclaratorOperation variableDeclaratorOperation)
             {
-                if (variableInitializerOperation.Parent is IVariableDeclaratorOperation variableDeclaratorOperation)
+                switch (variableDeclaratorOperation.Symbol.RefKind)
                 {
-                    switch (variableDeclaratorOperation.Symbol.RefKind)
-                    {
-                        case RefKind.Ref:
-                            return ValueUsageInfo.ReadableWritableReference;
+                    case RefKind.Ref:
+                        return ValueUsageInfo.ReadableWritableReference;
 
-                        case RefKind.RefReadOnly:
-                            return ValueUsageInfo.ReadableReference;
-                    }
+                    case RefKind.RefReadOnly:
+                        return ValueUsageInfo.ReadableReference;
                 }
             }
 
             return ValueUsageInfo.Read;
         }
 
-        public static bool IsInLeftOfDeconstructionAssignment(this IOperation operation, out IDeconstructionAssignmentOperation? deconstructionAssignment)
+        public static bool IsInLeftOfDeconstructionAssignment([DisallowNull] this IOperation? operation, out IDeconstructionAssignmentOperation? deconstructionAssignment)
         {
             deconstructionAssignment = null;
 

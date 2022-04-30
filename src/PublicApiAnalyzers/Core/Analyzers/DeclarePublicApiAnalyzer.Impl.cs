@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -86,8 +86,6 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
         private sealed class Impl
         {
-            private const char ObliviousMarker = '~';
-
             private static readonly ImmutableArray<MethodKind> s_ignorableMethodKinds
                 = ImmutableArray.Create(MethodKind.EventAdd, MethodKind.EventRemove);
 
@@ -259,12 +257,12 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         }
                         else
                         {
-                            reportAnnotateApi(symbol, isImplicitlyDeclaredConstructor, publicApiName, foundApiLine.IsShippedApi);
+                            reportAnnotateApi(symbol, isImplicitlyDeclaredConstructor, publicApiName, foundApiLine.IsShippedApi, foundApiLine.Path);
                         }
                     }
                     else if (hasPublicApiEntryWithNullability && symbolUsesOblivious)
                     {
-                        reportAnnotateApi(symbol, isImplicitlyDeclaredConstructor, publicApiName, foundApiLine.IsShippedApi);
+                        reportAnnotateApi(symbol, isImplicitlyDeclaredConstructor, publicApiName, foundApiLine.IsShippedApi, foundApiLine.Path);
                     }
                 }
                 else
@@ -304,7 +302,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         reportDiagnostic(Diagnostic.Create(ExposedNoninstantiableType, locations[0], propertyBag, errorMessageName));
                     }
 
-                    // Flag public API with optional parameters that violate backcompat requirements: https://github.com/dotnet/roslyn/blob/master/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md.
+                    // Flag public API with optional parameters that violate backcompat requirements: https://github.com/dotnet/roslyn/blob/main/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md.
                     if (method.HasOptionalParameters())
                     {
                         foreach (var overload in method.GetOverloads())
@@ -329,15 +327,12 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                             // RS0026: Symbol '{0}' violates the backcompat requirement: 'Do not add multiple overloads with optional parameters'. See '{1}' for details.
                             var overloadHasOptionalParams = overload.HasOptionalParameters();
-                            if (overloadHasOptionalParams)
+                            // Flag only if 'method' is a new unshipped API with optional parameters.
+                            if (overloadHasOptionalParams && !isMethodShippedApi)
                             {
-                                // Flag only if 'method' is a new unshipped API with optional parameters.
-                                if (!isMethodShippedApi)
-                                {
-                                    string errorMessageName = GetErrorMessageName(method, isImplicitlyDeclaredConstructor);
-                                    reportDiagnosticAtLocations(AvoidMultipleOverloadsWithOptionalParameters, ImmutableDictionary<string, string>.Empty, errorMessageName, AvoidMultipleOverloadsWithOptionalParameters.HelpLinkUri);
-                                    break;
-                                }
+                                string errorMessageName = GetErrorMessageName(method, isImplicitlyDeclaredConstructor);
+                                reportDiagnosticAtLocations(AvoidMultipleOverloadsWithOptionalParameters, ImmutableDictionary<string, string>.Empty, errorMessageName, AvoidMultipleOverloadsWithOptionalParameters.HelpLinkUri);
+                                break;
                             }
 
                             // RS0027: Symbol '{0}' violates the backcompat requirement: 'Public API with optional parameter(s) should have the most parameters amongst its public overloads'. See '{1}' for details.
@@ -400,7 +395,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     reportDiagnosticAtLocations(DeclareNewApiRule, propertyBag, errorMessageName);
                 }
 
-                void reportAnnotateApi(ISymbol symbol, bool isImplicitlyDeclaredConstructor, ApiName publicApiName, bool isShipped)
+                void reportAnnotateApi(ISymbol symbol, bool isImplicitlyDeclaredConstructor, ApiName publicApiName, bool isShipped, string filename)
                 {
                     // Public API missing annotations in public API file - report diagnostic.
                     string errorMessageName = GetErrorMessageName(symbol, isImplicitlyDeclaredConstructor);
@@ -408,7 +403,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         .Add(PublicApiNamePropertyBagKey, publicApiName.Name)
                         .Add(PublicApiNameWithNullabilityPropertyBagKey, withObliviousIfNeeded(publicApiName.NameWithNullability))
                         .Add(MinimalNamePropertyBagKey, errorMessageName)
-                        .Add(PublicApiIsShippedPropertyBagKey, isShipped ? "true" : "false");
+                        .Add(PublicApiIsShippedPropertyBagKey, isShipped ? "true" : "false")
+                        .Add(FileName, filename);
 
                     reportDiagnosticAtLocations(AnnotateApiRule, propertyBag, errorMessageName);
                 }
@@ -536,7 +532,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         {
                             if (sibling.IsImplicitlyDeclared)
                             {
-                                if (!sibling.IsConstructor())
+                                if (sibling is not IMethodSymbol { MethodKind: MethodKind.Constructor or MethodKind.PropertyGet or MethodKind.PropertySet })
                                 {
                                     continue;
                                 }
@@ -644,14 +640,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             internal void OnCompilationEnd(CompilationAnalysisContext context)
             {
                 ProcessTypeForwardedAttributes(context.Compilation, context.ReportDiagnostic, context.CancellationToken);
-                List<ApiLine> deletedApiList = GetDeletedApiList();
-                foreach (ApiLine cur in deletedApiList)
-                {
-                    LinePositionSpan linePositionSpan = cur.SourceText.Lines.GetLinePositionSpan(cur.Span);
-                    Location location = Location.Create(cur.Path, cur.Span, linePositionSpan);
-                    ImmutableDictionary<string, string> propertyBag = ImmutableDictionary<string, string>.Empty.Add(PublicApiNamePropertyBagKey, cur.Text);
-                    context.ReportDiagnostic(Diagnostic.Create(RemoveDeletedApiRule, location, propertyBag, cur.Text));
-                }
+                ReportDeletedApiList(context.ReportDiagnostic);
+                ReportMarkedAsRemovedButNotActuallyRemovedApiList(context.ReportDiagnostic);
             }
 
             private void ProcessTypeForwardedAttributes(Compilation compilation, Action<Diagnostic> reportDiagnostic, CancellationToken cancellationToken)
@@ -662,17 +652,18 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 {
                     foreach (var attribute in compilation.Assembly.GetAttributes())
                     {
-                        if (attribute.AttributeClass.Equals(typeForwardedToAttribute))
+                        if (attribute.AttributeClass.Equals(typeForwardedToAttribute) &&
+                            attribute.AttributeConstructor.Parameters.Length == 1 &&
+                            attribute.ConstructorArguments.Length == 1 &&
+                            attribute.ConstructorArguments[0].Value is INamedTypeSymbol forwardedType)
                         {
-                            if (attribute.AttributeConstructor.Parameters.Length == 1 &&
-                                attribute.ConstructorArguments.Length == 1)
+                            var obsoleteAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
+                            if (forwardedType.IsUnboundGenericType)
                             {
-                                if (attribute.ConstructorArguments[0].Value is INamedTypeSymbol forwardedType)
-                                {
-                                    var obsoleteAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
-                                    VisitForwardedTypeRecursively(forwardedType, reportDiagnostic, obsoleteAttribute, attribute.ApplicationSyntaxReference.GetSyntax(cancellationToken).GetLocation(), cancellationToken);
-                                }
+                                forwardedType = forwardedType.ConstructedFrom;
                             }
+
+                            VisitForwardedTypeRecursively(forwardedType, reportDiagnostic, obsoleteAttribute, attribute.ApplicationSyntaxReference.GetSyntax(cancellationToken).GetLocation(), cancellationToken);
                         }
                     }
                 }
@@ -701,12 +692,10 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             }
 
             /// <summary>
-            /// Calculated the set of APIs which have been deleted but not yet documented.
+            /// Report diagnostics to the set of APIs which have been deleted but not yet documented.
             /// </summary>
-            /// <returns></returns>
-            internal List<ApiLine> GetDeletedApiList()
+            internal void ReportDeletedApiList(Action<Diagnostic> reportDiagnostic)
             {
-                var list = new List<ApiLine>();
                 foreach (KeyValuePair<string, ApiLine> pair in _publicApiMap)
                 {
                     if (_visitedApiList.ContainsKey(pair.Key))
@@ -719,10 +708,31 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         continue;
                     }
 
-                    list.Add(pair.Value);
+                    Location location = GetLocationFromApiLine(pair.Value);
+                    ImmutableDictionary<string, string> propertyBag = ImmutableDictionary<string, string>.Empty.Add(PublicApiNamePropertyBagKey, pair.Value.Text);
+                    reportDiagnostic(Diagnostic.Create(RemoveDeletedApiRule, location, propertyBag, pair.Value.Text));
                 }
+            }
 
-                return list;
+            /// <summary>
+            /// Report diagnostics to the set of APIs which have been marked with *REMOVED* but still exists in source code.
+            /// </summary>
+            internal void ReportMarkedAsRemovedButNotActuallyRemovedApiList(Action<Diagnostic> reportDiagnostic)
+            {
+                foreach (var markedAsRemoved in _unshippedData.RemovedApiList)
+                {
+                    if (_visitedApiList.ContainsKey(markedAsRemoved.Text))
+                    {
+                        Location location = GetLocationFromApiLine(markedAsRemoved.ApiLine);
+                        reportDiagnostic(Diagnostic.Create(RemovedApiIsNotActuallyRemovedRule, location, messageArgs: markedAsRemoved.Text));
+                    }
+                }
+            }
+
+            private static Location GetLocationFromApiLine(ApiLine apiLine)
+            {
+                LinePositionSpan linePositionSpan = apiLine.SourceText.Lines.GetLinePositionSpan(apiLine.Span);
+                return Location.Create(apiLine.Path, apiLine.Span, linePositionSpan);
             }
 
             private bool IsPublicAPI(ISymbol symbol)
@@ -822,21 +832,17 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 /// <summary>This is visiting type references, not type definitions (that's done elsewhere).</summary>
                 public override bool VisitNamedType(INamedTypeSymbol symbol)
                 {
-                    if (!_ignoreTopLevelNullability)
+                    if (!_ignoreTopLevelNullability &&
+                        symbol.IsReferenceType &&
+                        symbol.NullableAnnotation() == NullableAnnotation.None)
                     {
-                        if (symbol.IsReferenceType &&
-                            symbol.NullableAnnotation() == NullableAnnotation.None)
-                        {
-                            return true;
-                        }
+                        return true;
                     }
 
-                    if (symbol.ContainingType is INamedTypeSymbol containing)
+                    if (symbol.ContainingType is INamedTypeSymbol containing &&
+                        IgnoreTopLevelNullabilityInstance.Visit(containing))
                     {
-                        if (IgnoreTopLevelNullabilityInstance.Visit(containing))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
 
                     foreach (var typeArgument in symbol.TypeArguments)

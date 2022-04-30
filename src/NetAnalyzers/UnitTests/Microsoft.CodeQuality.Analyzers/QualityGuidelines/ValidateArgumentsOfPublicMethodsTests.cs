@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Threading.Tasks;
@@ -37,7 +37,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
                 .WithArguments(methodSignature, parameterName);
 
         [Fact]
-        public async Task ValueTypeParameter_NoDiagnostic()
+        public async Task ValueTypeParameter_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct C
@@ -67,7 +67,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ReferenceTypeParameter_NoUsages_NoDiagnostic()
+        public async Task ReferenceTypeParameter_NoUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Test
@@ -86,7 +86,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ReferenceTypeParameter_NoHazardousUsages_NoDiagnostic()
+        public async Task ReferenceTypeParameter_NoHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Test
@@ -116,7 +116,7 @@ End Class");
         }
 
         [Fact]
-        public async Task NonExternallyVisibleMethod_NoDiagnostic()
+        public async Task NonExternallyVisibleMethod_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -187,7 +187,7 @@ End Class");
         }
 
         [Fact]
-        public async Task HazardousUsage_MethodReference_Diagnostic()
+        public async Task HazardousUsage_MethodReference_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Test
@@ -213,7 +213,7 @@ End Class
         }
 
         [Fact]
-        public async Task HazardousUsage_FieldReference_Diagnostic()
+        public async Task HazardousUsage_FieldReference_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -248,7 +248,7 @@ End Class
         }
 
         [Fact]
-        public async Task HazardousUsage_PropertyReference_Diagnostic()
+        public async Task HazardousUsage_PropertyReference_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -283,7 +283,7 @@ End Class
         }
 
         [Fact]
-        public async Task HazardousUsage_EventReference_Diagnostic()
+        public async Task HazardousUsage_EventReference_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -326,7 +326,7 @@ End Class
         }
 
         [Fact]
-        public async Task HazardousUsage_ArrayElementReference_Diagnostic()
+        public async Task HazardousUsage_ArrayElementReference_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Test
@@ -352,7 +352,7 @@ End Class
         }
 
         [Fact]
-        public async Task HazardousUsage_ReferenceInConditiona_Diagnostic()
+        public async Task HazardousUsage_ReferenceInConditiona_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -390,7 +390,7 @@ End Class
         }
 
         [Fact]
-        public async Task MultipleHazardousUsages_OneReportPerParameter_Diagnostic()
+        public async Task MultipleHazardousUsages_OneReportPerParameter_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -444,7 +444,7 @@ End Class
         }
 
         [Fact]
-        public async Task HazardousUsage_OptionalParameter_Diagnostic()
+        public async Task HazardousUsage_OptionalParameter_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Test
@@ -472,7 +472,7 @@ End Class
         }
 
         [Fact]
-        public async Task ConditionalAccessUsages_NoDiagnostic()
+        public async Task ConditionalAccessUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -508,7 +508,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ValidatedNonNullAttribute_PossibleNullRefUsage_NoDiagnostic()
+        public async Task ValidatedNonNullAttribute_PossibleNullRefUsage_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class ValidatedNotNullAttribute : System.Attribute
@@ -538,7 +538,7 @@ End Class
         }
 
         [Fact]
-        public async Task ValidatedNonNullAttribute_PossibleNullRefUsageOnDifferentParam_Diagnostic()
+        public async Task ValidatedNonNullAttribute_PossibleNullRefUsageOnDifferentParam_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class ValidatedNotNullAttribute : System.Attribute
@@ -572,7 +572,7 @@ End Class
         }
 
         [Fact, WorkItem(4248, "https://github.com/dotnet/roslyn-analyzers/issues/4248")]
-        public async Task NotNullAttribute_PossibleNullRefUsage_NoDiagnostic()
+        public async Task NotNullAttribute_PossibleNullRefUsage_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -606,7 +606,7 @@ End Class
         }
 
         [Fact]
-        public async Task DefiniteSimpleAssignment_BeforeHazardousUsages_NoDiagnostic()
+        public async Task DefiniteSimpleAssignment_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -646,7 +646,7 @@ End Class");
         }
 
         [Fact]
-        public async Task AssignedToFieldAndValidated_BeforeHazardousUsages_NoDiagnostic()
+        public async Task AssignedToFieldAndValidated_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -701,7 +701,7 @@ End Class");
         [InlineData(PointsToAnalysisKind.None)]
         [InlineData(PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties)]
         [InlineData(PointsToAnalysisKind.Complete)]
-        public async Task AssignedToFieldAndNotValidated_BeforeHazardousUsages_Diagnostic(PointsToAnalysisKind? pointsToAnalysisKind)
+        public async Task AssignedToFieldAndNotValidated_BeforeHazardousUsages_DiagnosticAsync(PointsToAnalysisKind? pointsToAnalysisKind)
         {
             var editorConfig = pointsToAnalysisKind.HasValue ?
                 $"dotnet_code_quality.CA1062.points_to_analysis_kind = {pointsToAnalysisKind}" :
@@ -742,8 +742,11 @@ public class Test
 }";
             var csTest = new VerifyCS.Test()
             {
-                TestCode = csCode,
-                AnalyzerConfigDocument = editorConfig
+                TestState =
+                {
+                    Sources = { csCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
             };
 
             if (pointsToAnalysisKind == PointsToAnalysisKind.Complete)
@@ -789,8 +792,11 @@ End Class";
 
             var vbTest = new VerifyVB.Test()
             {
-                TestCode = vbCode,
-                AnalyzerConfigDocument = editorConfig
+                TestState =
+                {
+                    Sources = { vbCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
             };
 
             if (pointsToAnalysisKind == PointsToAnalysisKind.Complete)
@@ -808,7 +814,7 @@ End Class";
         }
 
         [Fact]
-        public async Task MayBeAssigned_BeforeHazardousUsages_Diagnostic()
+        public async Task MayBeAssigned_BeforeHazardousUsages_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -864,7 +870,7 @@ End Class",
         }
 
         [Fact]
-        public async Task ConditionalButDefiniteNonNullAssigned_BeforeHazardousUsages_NoDiagnostic_CopyAnalysis()
+        public async Task ConditionalButDefiniteNonNullAssigned_BeforeHazardousUsages_NoDiagnostic_CopyAnalysisAsync()
         {
             await new VerifyCS.Test
             {
@@ -934,7 +940,10 @@ public class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") }
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.copy_analysis = true") }
                 }
             }.RunAsync();
 
@@ -997,13 +1006,16 @@ Public Class Test
 
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") }
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.copy_analysis = true") }
                 }
             }.RunAsync();
         }
 
         [Fact]
-        public async Task ThrowOnNull_BeforeHazardousUsages_NoDiagnostic()
+        public async Task ThrowOnNull_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1081,7 +1093,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ThrowOnNullForSomeParameter_HazardousUsageForDifferentParameter_Diagnostic()
+        public async Task ThrowOnNullForSomeParameter_HazardousUsageForDifferentParameter_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -1168,7 +1180,7 @@ End Class
         }
 
         [Fact]
-        public async Task ThrowOnNull_AfterHazardousUsages_Diagnostic()
+        public async Task ThrowOnNull_AfterHazardousUsages_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -1210,7 +1222,7 @@ End Class
         }
 
         [Fact]
-        public async Task NullCoalescingThrowExpressionOnNull_BeforeHazardousUsages_NoDiagnostic()
+        public async Task NullCoalescingThrowExpressionOnNull_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1236,7 +1248,7 @@ public class Test
         }
 
         [Fact]
-        public async Task ThrowOnNull_UncommonNullCheckSyntax_BeforeHazardousUsages_NoDiagnostic()
+        public async Task ThrowOnNull_UncommonNullCheckSyntax_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1347,7 +1359,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ContractCheck_NoDiagnostic_CopyAnalysis()
+        public async Task ContractCheck_NoDiagnostic_CopyAnalysisAsync()
         {
             await new VerifyCS.Test
             {
@@ -1400,7 +1412,10 @@ public class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") }
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.copy_analysis = true") }
                 }
             }.RunAsync();
 
@@ -1450,14 +1465,17 @@ Public Class Test
 End Class
 "
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") }
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.copy_analysis = true") }
                 }
             }.RunAsync();
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public async Task ContractCheck_Diagnostic()
+        public async Task ContractCheck_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -1557,7 +1575,7 @@ End Class",
         }
 
         [Fact]
-        public async Task ReturnOnNull_BeforeHazardousUsages_NoDiagnostic()
+        public async Task ReturnOnNull_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -1662,7 +1680,7 @@ End Class
         }
 
         [Fact]
-        public async Task ReturnOnNullForSomeParameter_HazardousUsageForDifferentParameter_Diagnostic()
+        public async Task ReturnOnNullForSomeParameter_HazardousUsageForDifferentParameter_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -1749,7 +1767,7 @@ End Class
         }
 
         [Fact]
-        public async Task StringIsNullCheck_BeforeHazardousUsages_NoDiagnostic()
+        public async Task StringIsNullCheck_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Test
@@ -1775,7 +1793,7 @@ End Class");
         }
 
         [Fact]
-        public async Task StringIsNullCheck_WithCopyAnalysis_BeforeHazardousUsages_NoDiagnostic()
+        public async Task StringIsNullCheck_WithCopyAnalysis_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Test
@@ -1803,7 +1821,7 @@ End Class");
         }
 
         [Fact]
-        public async Task SpecialCase_ExceptionGetObjectData_NoDiagnostic()
+        public async Task SpecialCase_ExceptionGetObjectData_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1871,7 +1889,7 @@ End Class
         }
 
         [Fact]
-        public async Task NullCheckWithNegationBasedCondition_BeforeHazardousUsages_NoDiagnostic()
+        public async Task NullCheckWithNegationBasedCondition_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1914,7 +1932,7 @@ End Class");
         }
 
         [Fact]
-        public async Task HazardousUsageInInvokedMethod_PrivateMethod_Diagnostic()
+        public async Task HazardousUsageInInvokedMethod_PrivateMethod_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -1971,7 +1989,7 @@ End Class
         [InlineData(@"dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
         [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive
                       dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
-        public async Task HazardousUsageInInvokedMethod_PrivateMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
+        public async Task HazardousUsageInInvokedMethod_PrivateMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnosticAsync(string editorConfigText)
         {
             await new VerifyCS.Test
             {
@@ -2004,7 +2022,11 @@ public class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             }.RunAsync();
 
@@ -2034,7 +2056,11 @@ Public Class Test
 End Class
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             }.RunAsync();
         }
@@ -2044,7 +2070,7 @@ End Class
         [InlineData(@"dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
         [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive
                       dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
-        public async Task ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
+        public async Task ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnosticAsync(string editorConfigText)
         {
             await new VerifyCS.Test
             {
@@ -2078,7 +2104,11 @@ public class C
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
                 ExpectedDiagnostics =
                 {
@@ -2089,7 +2119,7 @@ public class C
         }
 
         [Fact, WorkItem(2525, "https://github.com/dotnet/roslyn-analyzers/issues/2525")]
-        public async Task ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic_02()
+        public async Task ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2130,7 +2160,7 @@ public static class Issue2578Test
         }
 
         [Fact, WorkItem(2525, "https://github.com/dotnet/roslyn-analyzers/issues/2525")]
-        public async Task ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic_03()
+        public async Task ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic_03Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2189,7 +2219,7 @@ public static class Issue2578Test
         // Match multiple methods by method documentation ID with "M:" prefix
         [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None
                       dotnet_code_quality.null_check_validation_methods = M:C.Validate(C)|M:Helper`1.Validate(C)|M:Helper`1.Validate``1(C,``0)")]
-        public async Task NullCheckValidationMethod_ConfiguredInEditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
+        public async Task NullCheckValidationMethod_ConfiguredInEditorConfig_NoInterproceduralAnalysis_NoDiagnosticAsync(string editorConfigText)
         {
             await new VerifyCS.Test
             {
@@ -2250,7 +2280,11 @@ internal static class Helper<T>
 }
 "
 },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
                 ExpectedDiagnostics =
                 {
@@ -2265,7 +2299,7 @@ internal static class Helper<T>
         }
 
         [Fact, WorkItem(1707, "https://github.com/dotnet/roslyn-analyzers/issues/1707")]
-        public async Task HazardousUsageInInvokedMethod_PrivateMethod_Generic_Diagnostic()
+        public async Task HazardousUsageInInvokedMethod_PrivateMethod_Generic_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -2318,7 +2352,7 @@ End Class
         }
 
         [Fact]
-        public async Task HazardousUsageInInvokedMethod_PublicMethod_Diagnostic()
+        public async Task HazardousUsageInInvokedMethod_PublicMethod_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -2371,7 +2405,7 @@ End Class
         }
 
         [Fact, WorkItem(1707, "https://github.com/dotnet/roslyn-analyzers/issues/1707")]
-        public async Task HazardousUsageInInvokedMethod_PublicMethod_Generic_Diagnostic()
+        public async Task HazardousUsageInInvokedMethod_PublicMethod_Generic_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -2424,7 +2458,7 @@ End Class
         }
 
         [Fact]
-        public async Task HazardousUsageInInvokedMethod_PrivateMethod_MultipleLevelsDown_NoDiagnostic()
+        public async Task HazardousUsageInInvokedMethod_PrivateMethod_MultipleLevelsDown_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -2473,7 +2507,7 @@ End Class
         }
 
         [Fact]
-        public async Task HazardousUsageInInvokedMethod_WithInvocationCycles_Diagnostic()
+        public async Task HazardousUsageInInvokedMethod_WithInvocationCycles_DiagnosticAsync()
         {
             // Code with cyclic call graph to verify we don't analyze indefinitely.
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -2529,7 +2563,7 @@ End Class
         }
 
         [Fact]
-        public async Task HazardousUsageInInvokedMethod_InvokedAfterValidation_NoDiagnostic()
+        public async Task HazardousUsageInInvokedMethod_InvokedAfterValidation_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -2574,7 +2608,7 @@ End Class
         }
 
         [Fact]
-        public async Task ValidatedInInvokedMethod_NoDiagnostic()
+        public async Task ValidatedInInvokedMethod_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2624,7 +2658,7 @@ End Class");
         }
 
         [Fact, WorkItem(1707, "https://github.com/dotnet/roslyn-analyzers/issues/1707")]
-        public async Task ValidatedInInvokedMethod_Generic_NoDiagnostic()
+        public async Task ValidatedInInvokedMethod_Generic_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2674,7 +2708,7 @@ End Class");
         }
 
         [Fact, WorkItem(2504, "https://github.com/dotnet/roslyn-analyzers/issues/2504")]
-        public async Task ValidatedInInvokedMethod_Generic_02_NoDiagnostic()
+        public async Task ValidatedInInvokedMethod_Generic_02_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2706,7 +2740,7 @@ public class Test
         }
 
         [Fact]
-        public async Task MaybeValidatedInInvokedMethod_Diagnostic()
+        public async Task MaybeValidatedInInvokedMethod_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2764,7 +2798,7 @@ End Class",
         }
 
         [Fact]
-        public async Task ValidatedButNoExceptionThrownInInvokedMethod_Diagnostic()
+        public async Task ValidatedButNoExceptionThrownInInvokedMethod_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2822,7 +2856,7 @@ End Class",
         }
 
         [Fact]
-        public async Task ValidatedInInvokedMethod_AfterHazardousUsage_Diagnostic()
+        public async Task ValidatedInInvokedMethod_AfterHazardousUsage_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -2876,7 +2910,7 @@ End Class",
         }
 
         [Fact]
-        public async Task WhileLoop_NullCheckInCondition_NoDiagnostic()
+        public async Task WhileLoop_NullCheckInCondition_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -2915,7 +2949,7 @@ End Class");
         }
 
         [Fact]
-        public async Task WhileLoop_NullCheckInCondition_HazardousUsageOnExit_Diagnostic()
+        public async Task WhileLoop_NullCheckInCondition_HazardousUsageOnExit_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -2968,7 +3002,7 @@ End Class",
         }
 
         [Fact]
-        public async Task ForLoop_NullCheckInCondition_NoDiagnostic()
+        public async Task ForLoop_NullCheckInCondition_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -2991,7 +3025,7 @@ public class Test
         }
 
         [Fact]
-        public async Task ForLoop_NullCheckInCondition_HazardousUsageOnExit_Diagnostic()
+        public async Task ForLoop_NullCheckInCondition_HazardousUsageOnExit_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3021,7 +3055,7 @@ public class Test
         }
 
         [Fact]
-        public async Task LocalFunctionInvocation_EmptyBody_Diagnostic()
+        public async Task LocalFunctionInvocation_EmptyBody_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3054,7 +3088,7 @@ public class Test
         }
 
         [Fact]
-        public async Task LocalFunction_HazardousUsagesInBody_Diagnostic()
+        public async Task LocalFunction_HazardousUsagesInBody_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3089,7 +3123,7 @@ public class Test
         }
 
         [Fact]
-        public async Task LambdaInvocation_EmptyBody_Diagnostic()
+        public async Task LambdaInvocation_EmptyBody_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3142,7 +3176,7 @@ End Class",
         }
 
         [Fact]
-        public async Task Lambda_HazardousUsagesInBody_Diagnostic()
+        public async Task Lambda_HazardousUsagesInBody_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3199,7 +3233,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DelegateInvocation_ValidatedArguments_NoDiagnostic()
+        public async Task DelegateInvocation_ValidatedArguments_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3268,7 +3302,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DelegateInvocation_EmptyBody_Diagnostic()
+        public async Task DelegateInvocation_EmptyBody_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3325,7 +3359,7 @@ End Class",
         }
 
         [Fact]
-        public async Task DelegateInvocation_HazardousUsagesInBody_Diagnostic()
+        public async Task DelegateInvocation_HazardousUsagesInBody_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3380,7 +3414,7 @@ End Class",
         }
 
         [Fact]
-        public async Task TryCast_NoDiagnostic()
+        public async Task TryCast_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
@@ -3426,7 +3460,7 @@ End Class");
         }
 
         [Fact]
-        public async Task DirectCastToObject_BeforeNullCheck_NoDiagnostic()
+        public async Task DirectCastToObject_BeforeNullCheck_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3465,7 +3499,7 @@ End Class");
         }
 
         [Fact]
-        public async Task StaticObjectReferenceEquals_BeforeHazardousUsages_NoDiagnostic()
+        public async Task StaticObjectReferenceEquals_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3504,7 +3538,7 @@ End Class");
         }
 
         [Fact]
-        public async Task StaticObjectEquals_BeforeHazardousUsages_NoDiagnostic()
+        public async Task StaticObjectEquals_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3543,7 +3577,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ObjectEquals_BeforeHazardousUsages_NoDiagnostic()
+        public async Task ObjectEquals_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3582,7 +3616,7 @@ End Class");
         }
 
         [Fact]
-        public async Task ObjectEqualsOverride_BeforeHazardousUsages_NoDiagnostic()
+        public async Task ObjectEqualsOverride_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3627,7 +3661,7 @@ End Class");
         }
 
         [Fact]
-        public async Task IEquatableEquals_ExplicitImplementation_BeforeHazardousUsages_NoDiagnostic()
+        public async Task IEquatableEquals_ExplicitImplementation_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3677,7 +3711,7 @@ End Class");
         }
 
         [Fact]
-        public async Task IEquatableEquals_ImplicitImplementation_BeforeHazardousUsages_NoDiagnostic()
+        public async Task IEquatableEquals_ImplicitImplementation_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3705,7 +3739,7 @@ public class Test
         }
 
         [Fact]
-        public async Task IEquatableEquals_Override_BeforeHazardousUsages_NoDiagnostic()
+        public async Task IEquatableEquals_Override_BeforeHazardousUsages_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3737,7 +3771,7 @@ public class Test
         }
 
         [Fact, WorkItem(1852, "https://github.com/dotnet/roslyn-analyzers/issues/1852")]
-        public async Task Issue1852()
+        public async Task Issue1852Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3766,7 +3800,7 @@ namespace Blah
         }
 
         [Fact, WorkItem(1856, "https://github.com/dotnet/roslyn-analyzers/issues/1856")]
-        public async Task PointsToDataFlowOperationVisitor_VisitInstanceReference_Assert()
+        public async Task PointsToDataFlowOperationVisitor_VisitInstanceReference_AssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3861,7 +3895,7 @@ using System.Xml.Linq;
         }
 
         [Fact, WorkItem(1856, "https://github.com/dotnet/roslyn-analyzers/issues/1856")]
-        public async Task InvocationThroughAnUninitializedLocalInstance()
+        public async Task InvocationThroughAnUninitializedLocalInstanceAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -3884,7 +3918,7 @@ public class C
         }
 
         [Fact, WorkItem(1870, "https://github.com/dotnet/roslyn-analyzers/issues/1870")]
-        public async Task Issue1870()
+        public async Task Issue1870Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3931,7 +3965,7 @@ using System.Reflection;
         }
 
         [Fact, WorkItem(1870, "https://github.com/dotnet/roslyn-analyzers/issues/1870")]
-        public async Task Issue1870_02()
+        public async Task Issue1870_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -3957,7 +3991,7 @@ namespace ANamespace
         }
 
         [Fact, WorkItem(1886, "https://github.com/dotnet/roslyn-analyzers/issues/1886")]
-        public async Task Issue1886()
+        public async Task Issue1886Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public enum Status
@@ -3986,7 +4020,7 @@ public class C2
         }
 
         [Fact, WorkItem(1891, "https://github.com/dotnet/roslyn-analyzers/issues/1891")]
-        public async Task Issue1891()
+        public async Task Issue1891Async()
         {
             await new VerifyCS.Test
             {
@@ -4170,7 +4204,7 @@ public class Class1
         }
 
         [Fact]
-        public async Task MakeNullAndMakeMayBeNullAssert()
+        public async Task MakeNullAndMakeMayBeNullAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4230,7 +4264,7 @@ public class Class1
         }
 
         [Fact]
-        public async Task OutParameterAssert()
+        public async Task OutParameterAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -4264,7 +4298,7 @@ internal class C2
         }
 
         [Fact]
-        public async Task OutParameterAssert_02()
+        public async Task OutParameterAssert_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Diagnostics;
@@ -4306,7 +4340,7 @@ internal static class EncodingExtensions
         }
 
         [Fact]
-        public async Task GetValueOrDefaultAssert()
+        public async Task GetValueOrDefaultAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct S
@@ -4330,7 +4364,7 @@ public struct S
         }
 
         [Fact]
-        public async Task GetValueOrDefaultAssert_02()
+        public async Task GetValueOrDefaultAssert_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct S
@@ -4368,7 +4402,7 @@ public struct S2
         }
 
         [Fact]
-        public async Task GetValueAssert()
+        public async Task GetValueAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct S
@@ -4406,7 +4440,7 @@ public struct S2
         }
 
         [Fact]
-        public async Task SameFlowCaptureIdAcrossInterproceduralMethod()
+        public async Task SameFlowCaptureIdAcrossInterproceduralMethodAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -4430,7 +4464,7 @@ public class C
         }
 
         [Fact]
-        public async Task HashCodeClashForUnequalPointsToAbstractValues()
+        public async Task HashCodeClashForUnequalPointsToAbstractValuesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Diagnostics;
@@ -4500,7 +4534,7 @@ public class C
         }
 
         [Fact]
-        public async Task AssignmentInTry_CatchWithThrow()
+        public async Task AssignmentInTry_CatchWithThrowAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4536,7 +4570,7 @@ public class C2
         }
 
         [Fact]
-        public async Task AnalysisEntityWithIndexAssert()
+        public async Task AnalysisEntityWithIndexAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct C1
@@ -4567,7 +4601,7 @@ public struct S { }
         }
 
         [Fact]
-        public async Task NonMonotonicMergeAssert_FieldAllocatedInCallee()
+        public async Task NonMonotonicMergeAssert_FieldAllocatedInCalleeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4637,7 +4671,7 @@ public struct S { }
         }
 
         [Fact]
-        public async Task NonMonotonicMergeAssert_LValueFlowCatpure_ResetAcrossInterproceduralCall()
+        public async Task NonMonotonicMergeAssert_LValueFlowCatpure_ResetAcrossInterproceduralCallAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading;
@@ -4667,7 +4701,7 @@ public class C<T> where T : class
         }
 
         [Fact]
-        public async Task YieldReturn_WithinLoop()
+        public async Task YieldReturn_WithinLoopAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections.Generic;
@@ -4714,7 +4748,7 @@ public class E : C
         }
 
         [Fact]
-        public async Task NonMonotonicMergeAssert_UnknownValueMerge()
+        public async Task NonMonotonicMergeAssert_UnknownValueMergeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections.Generic;
@@ -4753,7 +4787,7 @@ public class C
         }
 
         [Fact]
-        public async Task NonMonotonicMergeAssert_DefaultEntityEntryMissing()
+        public async Task NonMonotonicMergeAssert_DefaultEntityEntryMissingAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections.Generic;
@@ -4802,7 +4836,7 @@ internal static class FileUtilities
         }
 
         [Fact]
-        public async Task NonMonotonicMergeAssert_DefaultEntityEntryMissing_02()
+        public async Task NonMonotonicMergeAssert_DefaultEntityEntryMissing_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -4839,7 +4873,7 @@ public class GreenNode { }
         }
 
         [Fact]
-        public async Task ComparisonOfValueTypeCastToObjectWithNull()
+        public async Task ComparisonOfValueTypeCastToObjectWithNullAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -4858,7 +4892,7 @@ public struct S { }",
         }
 
         [Fact]
-        public async Task InvalidParentInstanceAssertForAnalysisEntity()
+        public async Task InvalidParentInstanceAssertForAnalysisEntityAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading;
@@ -4885,7 +4919,7 @@ public class C
         }
 
         [Fact]
-        public async Task InvalidParentInstanceAssertForAnalysisEntity_02()
+        public async Task InvalidParentInstanceAssertForAnalysisEntity_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading;
@@ -4912,7 +4946,7 @@ internal static class C
         }
 
         [Fact]
-        public async Task IndexedEntityInstanceLocationMergeAssert()
+        public async Task IndexedEntityInstanceLocationMergeAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections.Generic;
@@ -5024,7 +5058,7 @@ public class C
         }
 
         [Fact]
-        public async Task CopyValueMergeAssert()
+        public async Task CopyValueMergeAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -5053,7 +5087,7 @@ public class C
         }
 
         [Fact]
-        public async Task CopyValueInvalidResetDataAssert()
+        public async Task CopyValueInvalidResetDataAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5091,7 +5125,7 @@ public class C
         }
 
         [Fact]
-        public async Task CopyValueAddressSharedEntityAssert()
+        public async Task CopyValueAddressSharedEntityAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5115,7 +5149,7 @@ public class C
         }
 
         [Fact]
-        public async Task CopyValueAddressSharedEntityAssert_RecursiveInvocations()
+        public async Task CopyValueAddressSharedEntityAssert_RecursiveInvocationsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5146,7 +5180,7 @@ public class C
         }
 
         [Fact]
-        public async Task CopyValueTrackingEntityWithUnknownInstanceLocationAssert()
+        public async Task CopyValueTrackingEntityWithUnknownInstanceLocationAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5185,7 +5219,7 @@ public class C
         }
 
         [Fact]
-        public async Task RecursiveLocalFunctionInvocation()
+        public async Task RecursiveLocalFunctionInvocationAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5215,7 +5249,7 @@ public class C
         }
 
         [Fact]
-        public async Task MultiChainedLocalFunctionInvocations()
+        public async Task MultiChainedLocalFunctionInvocationsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5253,7 +5287,7 @@ public class C
         }
 
         [Fact]
-        public async Task MultiChainedLambdaInvocations()
+        public async Task MultiChainedLambdaInvocationsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5284,7 +5318,7 @@ public class C
         }
 
         [Fact]
-        public async Task IsPatterExpression_UndefinedValueAssert()
+        public async Task IsPatterExpression_UndefinedValueAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5309,7 +5343,7 @@ public class D : C { }
 
         [WorkItem(1939, "https://github.com/dotnet/roslyn-analyzers/issues/1939")]
         [Fact]
-        public async Task Issue1939()
+        public async Task Issue1939Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5334,7 +5368,7 @@ public class Test
         }
 
         [Fact]
-        public async Task CopyAnalysisGetTrimmedDataAssert()
+        public async Task CopyAnalysisGetTrimmedDataAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5359,7 +5393,7 @@ public class C
         }
 
         [Fact]
-        public async Task CopyAnalysisGetTrimmedDataAssert_02()
+        public async Task CopyAnalysisGetTrimmedDataAssert_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5398,7 +5432,7 @@ public class C
         }
 
         [Fact]
-        public async Task CopyAnalysisFlowCaptureReturnValueAssert()
+        public async Task CopyAnalysisFlowCaptureReturnValueAssertAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5444,7 +5478,7 @@ public enum Kind
         }
 
         [Fact]
-        public async Task CopyAnalysisFlowCaptureReturnValueAssert_02()
+        public async Task CopyAnalysisFlowCaptureReturnValueAssert_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5492,7 +5526,7 @@ public enum Kind
 
         [WorkItem(1943, "https://github.com/dotnet/roslyn-analyzers/issues/1943")]
         [Fact]
-        public async Task Issue1943()
+        public async Task Issue1943Async()
         {
             await new VerifyCS.Test
             {
@@ -5569,7 +5603,7 @@ namespace MyComments
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public async Task CopyAnalysisAssert_AddressSharedOutParam()
+        public async Task CopyAnalysisAssert_AddressSharedOutParamAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -5593,7 +5627,7 @@ public class C
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public async Task CopyAnalysisAssert_ApplyInterproceduralResult()
+        public async Task CopyAnalysisAssert_ApplyInterproceduralResultAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class SyntaxNode
@@ -5682,7 +5716,7 @@ public class CSharpSyntaxNode : SyntaxNode
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2339, "https://github.com/dotnet/roslyn-analyzers/issues/2339")]
-        public async Task ParameterReassignedAfterNullCheck()
+        public async Task ParameterReassignedAfterNullCheckAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5708,7 +5742,7 @@ public static class C
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2327, "https://github.com/dotnet/roslyn-analyzers/issues/2327")]
-        public async Task ForEachLoopsAfterNullCheck()
+        public async Task ForEachLoopsAfterNullCheckAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5745,7 +5779,7 @@ public class Model
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2280, "https://github.com/dotnet/roslyn-analyzers/issues/2280")]
-        public async Task ConditionalAssignmentAfterNullCheck()
+        public async Task ConditionalAssignmentAfterNullCheckAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5766,7 +5800,7 @@ public class Node
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2276, "https://github.com/dotnet/roslyn-analyzers/issues/2276")]
-        public async Task AssignedArrayEmptyOnNullPath()
+        public async Task AssignedArrayEmptyOnNullPathAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -5796,7 +5830,7 @@ public class TableSet
         [Theory, WorkItem(2275, "https://github.com/dotnet/roslyn-analyzers/issues/2275")]
         [InlineData("IsNullOrWhiteSpace")]
         [InlineData("IsNullOrEmpty")]
-        public async Task StringNullCheckApis(string apiName)
+        public async Task StringNullCheckApisAsync(string apiName)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
 using System.Globalization;
@@ -5834,7 +5868,7 @@ public class C
         [Theory, WorkItem(2369, "https://github.com/dotnet/roslyn-analyzers/issues/2369")]
         [InlineData("IsNullOrWhiteSpace")]
         [InlineData("IsNullOrEmpty")]
-        public async Task StringNullCheckApis_02(string apiName)
+        public async Task StringNullCheckApis_02Async(string apiName)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
 using System;
@@ -5862,7 +5896,7 @@ public class C
         [Theory, WorkItem(2369, "https://github.com/dotnet/roslyn-analyzers/issues/2369")]
         [InlineData("IsNullOrWhiteSpace")]
         [InlineData("IsNullOrEmpty")]
-        public async Task StringNullCheckApis_03(string apiName)
+        public async Task StringNullCheckApis_03Async(string apiName)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
 using System;
@@ -5886,7 +5920,7 @@ public class C
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2582, "https://github.com/dotnet/roslyn-analyzers/issues/2582")]
-        public async Task StringEmptyFieldIsNonNull()
+        public async Task StringEmptyFieldIsNonNullAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
 using System;
@@ -5904,7 +5938,7 @@ public class Class1
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2582, "https://github.com/dotnet/roslyn-analyzers/issues/2582")]
-        public async Task ArrayEmptyMethodIsNonNull()
+        public async Task ArrayEmptyMethodIsNonNullAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
 using System;
@@ -5922,7 +5956,7 @@ public class Class1
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2582, "https://github.com/dotnet/roslyn-analyzers/issues/2582")]
-        public async Task ImmutableCreationMethodIsNonNull()
+        public async Task ImmutableCreationMethodIsNonNullAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
 using System.Collections.Immutable;
@@ -5945,7 +5979,7 @@ public class Class1
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public async Task NamedArgumentInDifferentOrder()
+        public async Task NamedArgumentInDifferentOrderAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -5977,7 +6011,7 @@ public class C
         [Fact]
         [WorkItem(2528, "https://github.com/dotnet/roslyn-analyzers/issues/2528")]
         [WorkItem(3845, "https://github.com/dotnet/roslyn-analyzers/issues/3845")]
-        public async Task ParamArrayIsFlagged()
+        public async Task ParamArrayIsFlaggedAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
@@ -5999,7 +6033,7 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2269, "https://github.com/dotnet/roslyn-analyzers/issues/2269")]
-        public async Task ProtectedMemberOfSealedClassNotFlagged()
+        public async Task ProtectedMemberOfSealedClassNotFlaggedAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6019,7 +6053,7 @@ public sealed class B : A
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2526, "https://github.com/dotnet/roslyn-analyzers/issues/2526")]
-        public async Task CheckedWithConditionalAccess_01()
+        public async Task CheckedWithConditionalAccess_01Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections.Generic;
@@ -6039,7 +6073,7 @@ public class C
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2526, "https://github.com/dotnet/roslyn-analyzers/issues/2526")]
-        public async Task CheckedWithConditionalAccess_02()
+        public async Task CheckedWithConditionalAccess_02Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections.Generic;
@@ -6055,7 +6089,7 @@ public class C
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2586, "https://github.com/dotnet/roslyn-analyzers/issues/2586")]
-        public async Task CheckedWithConditionalAccess_03()
+        public async Task CheckedWithConditionalAccess_03Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections.Generic;
@@ -6080,7 +6114,7 @@ public class C
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2630, "https://github.com/dotnet/roslyn-analyzers/issues/2630")]
-        public async Task IsPatternInConditionalExpression_01_NoDiagnostic()
+        public async Task IsPatternInConditionalExpression_01_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
@@ -6104,7 +6138,7 @@ public class Class1
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2630, "https://github.com/dotnet/roslyn-analyzers/issues/2630")]
-        public async Task IsPatternInConditionalExpression_01_Diagnostic()
+        public async Task IsPatternInConditionalExpression_01_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
@@ -6134,7 +6168,7 @@ public class Class1
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(2630, "https://github.com/dotnet/roslyn-analyzers/issues/2630")]
-        public async Task IsPatternInConditionalExpression_02_NoDiagnostic()
+        public async Task IsPatternInConditionalExpression_02_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
@@ -6157,7 +6191,7 @@ public class Class1
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Theory, CombinatorialData, WorkItem(3716, "https://github.com/dotnet/roslyn-analyzers/issues/3716")]
-        public async Task IsPatternInConditionalExpression_03_NoDiagnostic(bool discardPattern)
+        public async Task IsPatternInConditionalExpression_03_NoDiagnosticAsync(bool discardPattern)
         {
             var local = discardPattern ? "_" : "c";
             await VerifyCS.VerifyAnalyzerAsync($@"
@@ -6175,7 +6209,7 @@ public class Class1
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Theory, CombinatorialData, WorkItem(3716, "https://github.com/dotnet/roslyn-analyzers/issues/3716")]
-        public async Task IsPatternInConditionalExpression_04_NoDiagnostic(bool discardPattern)
+        public async Task IsPatternInConditionalExpression_04_NoDiagnosticAsync(bool discardPattern)
         {
             var local1 = discardPattern ? "_" : "c";
             var local2 = discardPattern ? "_" : "d";
@@ -6201,7 +6235,7 @@ public class Class2 {{ }}");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Theory, CombinatorialData, WorkItem(3716, "https://github.com/dotnet/roslyn-analyzers/issues/3716")]
-        public async Task IsPatternInConditionalExpression_05_NoDiagnostic(bool discardPattern)
+        public async Task IsPatternInConditionalExpression_05_NoDiagnosticAsync(bool discardPattern)
         {
             var local = discardPattern ? "_" : "c";
             await VerifyCS.VerifyAnalyzerAsync($@"
@@ -6218,7 +6252,7 @@ public class Class1
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(3716, "https://github.com/dotnet/roslyn-analyzers/issues/3716")]
-        public async Task RecursivePatternInConditionalExpression_NoDiagnostic()
+        public async Task RecursivePatternInConditionalExpression_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -6240,7 +6274,7 @@ public class Class1
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(4056, "https://github.com/dotnet/roslyn-analyzers/issues/4056")]
-        public async Task IsNullPatternInConditionalExpression_NoDiagnostic()
+        public async Task IsNullPatternInConditionalExpression_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -6264,7 +6298,7 @@ public class Class1
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(4056, "https://github.com/dotnet/roslyn-analyzers/issues/4056")]
-        public async Task NegationPatternInConditionalExpression_NoDiagnostic()
+        public async Task NegationPatternInConditionalExpression_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -6286,7 +6320,7 @@ public class Class1
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(4056, "https://github.com/dotnet/roslyn-analyzers/issues/4056")]
-        public async Task RelationalPatternInConditionalExpression_NoDiagnostic()
+        public async Task RelationalPatternInConditionalExpression_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -6307,7 +6341,7 @@ public class Class1
         }
 
         [Fact, WorkItem(3049, "https://github.com/dotnet/roslyn-analyzers/issues/3049")]
-        public async Task SwitchStatement_PatternMatchingNullCheck()
+        public async Task SwitchStatement_PatternMatchingNullCheckAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6328,7 +6362,7 @@ public class Test
         }
 
         [Fact, WorkItem(3049, "https://github.com/dotnet/roslyn-analyzers/issues/3049")]
-        public async Task SwitchExpression_PatternMatchingNullCheck()
+        public async Task SwitchExpression_PatternMatchingNullCheckAsync()
         {
             await new VerifyCS.Test
             {
@@ -6352,7 +6386,7 @@ public class Test
         }
 
         [Fact, WorkItem(4056, "https://github.com/dotnet/roslyn-analyzers/issues/4056")]
-        public async Task SwitchStatement_PatternMatchingNotNullCheck()
+        public async Task SwitchStatement_PatternMatchingNotNullCheckAsync()
         {
             await new VerifyCS.Test
             {
@@ -6378,7 +6412,7 @@ public class Test
         }
 
         [Fact, WorkItem(4056, "https://github.com/dotnet/roslyn-analyzers/issues/4056")]
-        public async Task SwitchExpression_PatternMatchingNotNullCheck()
+        public async Task SwitchExpression_PatternMatchingNotNullCheckAsync()
         {
             await new VerifyCS.Test
             {
@@ -6402,7 +6436,7 @@ public class Test
         }
 
         [Fact, WorkItem(4056, "https://github.com/dotnet/roslyn-analyzers/issues/4056")]
-        public async Task SwitchExpression_PatternMatchingRelationalPatternCheck()
+        public async Task SwitchExpression_PatternMatchingRelationalPatternCheckAsync()
         {
             await new VerifyCS.Test
             {
@@ -6431,7 +6465,7 @@ public class Test
         [InlineData("dotnet_code_quality.CA1062.excluded_symbol_names = M1")]
         [InlineData("dotnet_code_quality.CA1062.excluded_symbol_names = M*")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = M1")]
-        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOptionAsync(string editorConfigText)
         {
             var expected = Array.Empty<DiagnosticResult>();
             if (editorConfigText.Length == 0)
@@ -6459,7 +6493,11 @@ public class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
             };
             csTest.ExpectedDiagnostics.AddRange(expected);
@@ -6489,7 +6527,11 @@ Public Class Test
 End Class
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
             vbTest.ExpectedDiagnostics.AddRange(expected);
@@ -6502,7 +6544,7 @@ End Class
         [InlineData("dotnet_code_quality.exclude_extension_method_this_parameter = true")]
         [InlineData("dotnet_code_quality." + ValidateArgumentsOfPublicMethods.RuleId + ".exclude_extension_method_this_parameter = true")]
         [InlineData("dotnet_code_quality.dataflow.exclude_extension_method_this_parameter = true")]
-        public async Task EditorConfigConfiguration_ExcludeExtensionMethodThisParameterOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludeExtensionMethodThisParameterOptionAsync(string editorConfigText)
         {
             var expected = Array.Empty<DiagnosticResult>();
             if (editorConfigText.Length == 0)
@@ -6530,7 +6572,11 @@ public static class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
             };
             csTest.ExpectedDiagnostics.AddRange(expected);
@@ -6562,7 +6608,11 @@ Public Module Test
     End Sub
 End Module"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
             vbTest.ExpectedDiagnostics.AddRange(expected);
@@ -6570,7 +6620,7 @@ End Module"
         }
 
         [Fact, WorkItem(2919, "https://github.com/dotnet/roslyn-analyzers/issues/2919")]
-        public async Task Interprocedural_DelegateInvocation_NoDiagnostic()
+        public async Task Interprocedural_DelegateInvocation_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -6608,7 +6658,7 @@ namespace ReproCA1062
         }
 
         [Fact, WorkItem(3437, "https://github.com/dotnet/roslyn-analyzers/issues/3437")]
-        public async Task ReDim_FirstInstruction_NoDiagnostic()
+        public async Task ReDim_FirstInstruction_NoDiagnosticAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
@@ -6620,7 +6670,7 @@ End Class");
         }
 
         [Fact, WorkItem(3437, "https://github.com/dotnet/roslyn-analyzers/issues/3437")]
-        public async Task ReDim_FirstInstructionMultipleVariables_NoDiagnostic()
+        public async Task ReDim_FirstInstructionMultipleVariables_NoDiagnosticAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
@@ -6633,7 +6683,7 @@ End Class");
         }
 
         [Fact, WorkItem(3437, "https://github.com/dotnet/roslyn-analyzers/issues/3437")]
-        public async Task ReDim_ParameterAccessFirst_Diagnostic()
+        public async Task ReDim_ParameterAccessFirst_DiagnosticAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
@@ -6647,7 +6697,7 @@ End Class",
         }
 
         [Fact, WorkItem(3899, "https://github.com/dotnet/roslyn-analyzers/issues/3899")]
-        public async Task IsNotNullPattern_NoDiagnostic()
+        public async Task IsNotNullPattern_NoDiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -6663,6 +6713,155 @@ public class C
         }
     }
 }",
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(3634, "https://github.com/dotnet/roslyn-analyzers/issues/3634")]
+        public async Task NullConditionalAssignmentOperator_NullableEnableContext_NoDiagnostic()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+#nullable enable
+using System.Collections.Generic;
+
+public class C
+{
+    public void ParameterTest(Dictionary<string, string>? dict = null)
+    {
+        dict ??= new Dictionary<string, string>();
+        SetParameter(dict);
+    }
+
+    private void SetParameter(Dictionary<string, string> dict)
+    {
+    }
+}",
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(3634, "https://github.com/dotnet/roslyn-analyzers/issues/3634")]
+        public async Task NullConditionalAssignmentOperator_NonNullableEnableContext_NoDiagnostic()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+using System.Collections.Generic;
+
+public class C
+{
+    public void ParameterTest(Dictionary<string, string> dict = null)
+    {
+        dict ??= new Dictionary<string, string>();
+        SetParameter(dict);
+    }
+
+    private void SetParameter(Dictionary<string, string> dict)
+    {
+    }
+}",
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8
+            }.RunAsync();
+        }
+
+        [Theory, WorkItem(5726, "https://github.com/dotnet/roslyn-analyzers/issues/5726")]
+        // General analyzer option
+        [InlineData("public", "dotnet_code_quality.api_surface = public")]
+        [InlineData("public", "dotnet_code_quality.api_surface = private, internal, public")]
+        [InlineData("public", "dotnet_code_quality.api_surface = all")]
+        [InlineData("protected", "dotnet_code_quality.api_surface = public")]
+        [InlineData("protected", "dotnet_code_quality.api_surface = private, internal, public")]
+        [InlineData("protected", "dotnet_code_quality.api_surface = all")]
+        [InlineData("internal", "dotnet_code_quality.api_surface = internal")]
+        [InlineData("internal", "dotnet_code_quality.api_surface = private, internal")]
+        [InlineData("internal", "dotnet_code_quality.api_surface = all")]
+        [InlineData("private", "dotnet_code_quality.api_surface = private")]
+        [InlineData("private", "dotnet_code_quality.api_surface = private, public")]
+        [InlineData("private", "dotnet_code_quality.api_surface = all")]
+        // Specific analyzer option
+        [InlineData("internal", "dotnet_code_quality.CA1062.api_surface = all")]
+        [InlineData("internal", "dotnet_code_quality.Design.api_surface = all")]
+        // General + Specific analyzer option
+        [InlineData("internal", @"dotnet_code_quality.api_surface = private
+                                       dotnet_code_quality.CA1062.api_surface = all")]
+        // Case-insensitive analyzer option
+        [InlineData("internal", "DOTNET_code_quality.CA1062.API_SURFACE = ALL")]
+        // Invalid analyzer option ignored
+        [InlineData("internal", @"dotnet_code_quality.api_surface = all
+                                       dotnet_code_quality.CA1062.api_surface_2 = private")]
+        public async Task CSharp_ApiSurface_Diagnostic(string accessibility, string editorConfigText)
+        {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
+public class Test
+{{
+    {accessibility} void M1(string str)
+    {{
+        var x = [|str|].ToString();
+    }}
+}}
+"},
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
+                },
+            }.RunAsync();
+        }
+
+        [Theory, WorkItem(5726, "https://github.com/dotnet/roslyn-analyzers/issues/5726")]
+        // General analyzer option
+        [InlineData("Public", "dotnet_code_quality.api_surface = Public")]
+        [InlineData("Public", "dotnet_code_quality.api_surface = Private, Friend, Public")]
+        [InlineData("Public", "dotnet_code_quality.api_surface = All")]
+        [InlineData("Protected", "dotnet_code_quality.api_surface = Public")]
+        [InlineData("Protected", "dotnet_code_quality.api_surface = Private, Friend, Public")]
+        [InlineData("Protected", "dotnet_code_quality.api_surface = All")]
+        [InlineData("Friend", "dotnet_code_quality.api_surface = Friend")]
+        [InlineData("Friend", "dotnet_code_quality.api_surface = Private, Friend")]
+        [InlineData("Friend", "dotnet_code_quality.api_surface = All")]
+        [InlineData("Private", "dotnet_code_quality.api_surface = Private")]
+        [InlineData("Private", "dotnet_code_quality.api_surface = Private, Public")]
+        [InlineData("Private", "dotnet_code_quality.api_surface = All")]
+        // Specific analyzer option
+        [InlineData("Friend", "dotnet_code_quality.CA1062.api_surface = All")]
+        [InlineData("Friend", "dotnet_code_quality.Design.api_surface = All")]
+        // General + Specific analyzer option
+        [InlineData("Friend", @"dotnet_code_quality.api_surface = Private
+                                     dotnet_code_quality.CA1062.api_surface = All")]
+        // Case-insensitive analyzer option
+        [InlineData("Friend", "DOTNET_code_quality.CA1062.API_SURFACE = ALL")]
+        // Invalid analyzer option ignored
+        [InlineData("Friend", @"dotnet_code_quality.api_surface = All
+                                     dotnet_code_quality.CA1062.api_surface_2 = Private")]
+        public async Task Basic_ApiSurface_Diagnostic(string accessibility, string editorConfigText)
+        {
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
+Public Class Test
+    {accessibility} Sub M1(str As String)
+        Dim x = [|str|].ToString()
+    End Sub
+End Class
+"},
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
+                },
             }.RunAsync();
         }
     }

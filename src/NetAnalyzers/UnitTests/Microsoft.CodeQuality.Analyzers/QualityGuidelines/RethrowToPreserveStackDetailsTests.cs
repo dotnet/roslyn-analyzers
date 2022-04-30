@@ -1,8 +1,6 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -17,7 +15,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
     public class RethrowToPreserveStackDetailsTests
     {
         [Fact]
-        public async Task CA2200_NoDiagnosticsForRethrow()
+        public async Task CA2200_NoDiagnosticsForRethrowAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -53,7 +51,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForThrowAnotherException()
+        public async Task CA2200_NoDiagnosticsForThrowAnotherExceptionAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -94,7 +92,7 @@ End Class
 
         [Fact]
         [WorkItem(4280, "https://github.com/dotnet/roslyn-analyzers/issues/4280")]
-        public async Task CA2200_NoDiagnosticsForThrowAnotherExceptionInWhenClause()
+        public async Task CA2200_NoDiagnosticsForThrowAnotherExceptionInWhenClauseAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -117,7 +115,7 @@ public abstract class C
 
         [Fact]
         [WorkItem(4280, "https://github.com/dotnet/roslyn-analyzers/issues/4280")]
-        public async Task CA2200_NoDiagnosticsForThrowAnotherExceptionInWhenClauseWithoutVariableDeclarator()
+        public async Task CA2200_NoDiagnosticsForThrowAnotherExceptionInWhenClauseWithoutVariableDeclaratorAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -141,7 +139,7 @@ public abstract class C
         }
 
         [Fact]
-        public async Task CA2200_DiagnosticForThrowCaughtException()
+        public async Task CA2200_DiagnosticForThrowCaughtExceptionAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -183,7 +181,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForThrowCaughtReassignedException()
+        public async Task CA2200_NoDiagnosticsForThrowCaughtReassignedExceptionAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -226,7 +224,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForEmptyBlock()
+        public async Task CA2200_NoDiagnosticsForEmptyBlockAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -267,7 +265,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForThrowCaughtExceptionInAnotherScope()
+        public async Task CA2200_NoDiagnosticsForThrowCaughtExceptionInAnotherScopeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -295,7 +293,7 @@ class Program
         }
 
         [Fact]
-        public async Task CA2200_SingleDiagnosticForThrowCaughtExceptionInSpecificScope()
+        public async Task CA2200_SingleDiagnosticForThrowCaughtExceptionInSpecificScopeAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -315,7 +313,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_MultipleDiagnosticsForThrowCaughtExceptionAtMultiplePlaces()
+        public async Task CA2200_MultipleDiagnosticsForThrowCaughtExceptionAtMultiplePlacesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -363,7 +361,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticForThrowOuterCaughtException()
+        public async Task CA2200_NoDiagnosticForThrowOuterCaughtExceptionAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -411,7 +409,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForNestingWithCompileErrors()
+        public async Task CA2200_NoDiagnosticsForNestingWithCompileErrorsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -475,7 +473,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForCatchWithoutIdentifier()
+        public async Task CA2200_NoDiagnosticsForCatchWithoutIdentifierAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -499,7 +497,7 @@ class Program
 
         [Fact]
         [WorkItem(2167, "https://github.com/dotnet/roslyn-analyzers/issues/2167")]
-        public async Task CA2200_NoDiagnosticsForCatchWithoutArgument()
+        public async Task CA2200_NoDiagnosticsForCatchWithoutArgumentAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -536,7 +534,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2200_DiagnosticsForThrowCaughtExceptionInLocalMethod()
+        public async Task CA2200_DiagnosticsForThrowCaughtExceptionInLocalMethodAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -563,7 +561,7 @@ class Program
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForThrowCaughtExceptionInLocalMethodAfterReassignment()
+        public async Task CA2200_NoDiagnosticsForThrowCaughtExceptionInLocalMethodAfterReassignmentAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -591,7 +589,7 @@ class Program
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForThrowCaughtExceptionInActionOrFunc()
+        public async Task CA2200_NoDiagnosticsForThrowCaughtExceptionInActionOrFuncAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -625,7 +623,7 @@ class Program
         }
 
         [Fact]
-        public async Task CA2200_NoDiagnosticsForThrowVariable()
+        public async Task CA2200_NoDiagnosticsForThrowVariableAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;

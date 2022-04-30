@@ -1,6 +1,5 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -11,6 +10,7 @@ using Analyzer.Utilities;
 using System.Threading;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.CodeActions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -21,12 +21,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class EquatableFixer : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds =>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(EquatableAnalyzer.ImplementIEquatableRuleId, EquatableAnalyzer.OverrideObjectEqualsRuleId);
 
         public override FixAllProvider GetFixAllProvider()
         {
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
+            // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
             return WellKnownFixAllProviders.BatchFixer;
         }
 
@@ -58,7 +58,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             if (type.TypeKind == TypeKind.Struct && !TypeImplementsEquatable(type, equatableType))
             {
                 string title = MicrosoftCodeQualityAnalyzersResources.ImplementEquatable;
-                context.RegisterCodeFix(new MyCodeAction(
+                context.RegisterCodeFix(CodeAction.Create(
                     title,
                     async ct =>
                         await ImplementEquatableInStructAsync(context.Document, declaration, type, model.Compilation,
@@ -69,7 +69,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             if (!type.OverridesEquals())
             {
                 string title = MicrosoftCodeQualityAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle;
-                context.RegisterCodeFix(new MyCodeAction(
+                context.RegisterCodeFix(CodeAction.Create(
                     title,
                     async ct =>
                         await OverrideObjectEqualsAsync(context.Document, declaration, type, equatableType,
@@ -230,15 +230,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         generator.CastExpression(
                             typeSymbol,
                             argumentName))));
-        }
-
-        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
-        private class MyCodeAction : DocumentChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument, equivalenceKey)
-            {
-            }
         }
     }
 }

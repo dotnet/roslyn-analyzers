@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -104,7 +104,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         protected string GetConfigureAwaitVisualBasic(bool isEmpty) => isEmpty ? "" : @".ConfigureAwait(False)";
 
-        public static IEnumerable<object[]> CSharpUnnamedArgumentsFullBufferTestData()
+        public static IEnumerable<object[]> UnnamedArgumentsFullBufferTestData()
         {
             yield return new object[] { "buffer, 0, buffer.Length",
                                         "buffer" };
@@ -314,14 +314,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                                         "buffer.AsMemory(1, buffer.Length), New CancellationToken()" };
         }
 
-        public static IEnumerable<object[]> VisualBasicUnnamedArgumentsFullBufferTestData()
-        {
-            yield return new object[] { "buffer, 0, buffer.Length",
-                                        "buffer" };
-            yield return new object[] { "buffer, 0, buffer.Length, CancellationToken.None",
-                                        "buffer, CancellationToken.None" };
-        }
-
         public static IEnumerable<object[]> VisualBasicNamedArgumentsPartialBufferTestData()
         {
             // Normal argument order is: (byte[] buffer, int offset, int count)
@@ -483,6 +475,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             yield return new object[] { "cancellationToken:=CancellationToken.None, offset:=0, buffer:=buffer, count:=buffer.Length",
                                         "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "cancellationToken:=CancellationToken.None, offset:=0, count:=buffer.Length, buffer:=buffer",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
+        }
+
+        public static IEnumerable<object[]> VisualBasicNamedArgumentsWrongCaseTestData()
+        {
+            yield return new object[] { "cOUnt:=buffer.Length, BUFFER:=buffer, offSET:=1",
+                                        "buffer:=buffer.AsMemory(start:=1, length:=buffer.Length)" };
+            yield return new object[] { "OffSet:=0, cOUNT:=buffer.Length, BuFfEr:=buffer",
+                                        "buffer:=buffer" };
+            yield return new object[] { "COUNT:=buffer.Length, oFFSeT:=1, bUffEr:=buffer, CANCELlationtOKEN:=New CancellationToken()",
+                                        "buffer:=buffer.AsMemory(start:=1, length:=buffer.Length), cancellationToken:=New CancellationToken()" };
+            yield return new object[] { "CANCELLATIONTOKEN:=New CancellationToken(), OffsEt:=1, BUFFEr:=buffer, cOUnt:=buffer.Length",
+                                        "buffer:=buffer.AsMemory(start:=1, length:=buffer.Length), cancellationToken:=New CancellationToken()" };
+            yield return new object[] { "COUNT:=buffer.Length, BUFFER:=buffer, CANCELLATIONTOKEN:=CancellationToken.None, OFFSET:=0",
                                         "buffer:=buffer, cancellationToken:=CancellationToken.None" };
         }
     }

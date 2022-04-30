@@ -1,10 +1,13 @@
-﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information. -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
     <DefineConstants>$(DefineConstants),NET_ANALYZERS_TEST</DefineConstants>
     <ServerGarbageCollection>true</ServerGarbageCollection>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="$(RepoRoot)\NuGet.config" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisVersionForTests)" />
   </ItemGroup>

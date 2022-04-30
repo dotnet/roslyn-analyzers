@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -18,7 +18,21 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
         #region Unit tests for no analyzer diagnostic
 
         [Fact]
-        public async Task NoDiagnostic_NoArguments()
+        [WorkItem(3023, "https://github.com/dotnet/roslyn-analyzers/issues/3023")]
+        public async Task NoDiagnostic_ArgListAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class C
+{
+    public void M(__arglist)
+    {
+        M(__arglist());
+    }
+}");
+        }
+
+        [Fact]
+        public async Task NoDiagnostic_NoArgumentsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -32,7 +46,7 @@ class C
         }
 
         [Fact]
-        public async Task NoDiagnostic_NullLiteral()
+        public async Task NoDiagnostic_NullLiteralAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -46,7 +60,7 @@ class C
         }
 
         [Fact]
-        public async Task NoDiagnostic_StringIsAReservedWord()
+        public async Task NoDiagnostic_StringIsAReservedWordAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -60,7 +74,7 @@ class C
         }
 
         [Fact]
-        public async Task NoDiagnostic_NoMatchingParametersInScope()
+        public async Task NoDiagnostic_NoMatchingParametersInScopeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -74,7 +88,7 @@ class C
         }
 
         [Fact]
-        public async Task NoDiagnostic_NameColonOtherParameterName()
+        public async Task NoDiagnostic_NameColonOtherParameterNameAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -88,7 +102,7 @@ class C
         }
 
         [Fact]
-        public async Task NoDiagnostic_NotStringLiteral()
+        public async Task NoDiagnostic_NotStringLiteralAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -103,7 +117,7 @@ class C
         }
 
         [Fact]
-        public async Task NoDiagnostic_NotValidIdentifier()
+        public async Task NoDiagnostic_NotValidIdentifierAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -117,7 +131,7 @@ class C
         }
 
         [Fact]
-        public async Task NoDiagnostic_NoArgumentList()
+        public async Task NoDiagnostic_NoArgumentListAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -131,7 +145,7 @@ class C
         }
 
         [Fact]
-        public async Task NoDiagnostic_NoMatchingParameter()
+        public async Task NoDiagnostic_NoMatchingParameterAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -145,7 +159,7 @@ class C
         }
 
         [Fact]
-        public async Task NoDiagnostic_MatchesParameterButNotCalledParamName()
+        public async Task NoDiagnostic_MatchesParameterButNotCalledParamNameAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -159,7 +173,7 @@ class C
         }
 
         [Fact]
-        public async Task NoDiagnostic_MatchesPropertyButNotCalledPropertyName()
+        public async Task NoDiagnostic_MatchesPropertyButNotCalledPropertyNameAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -191,7 +205,7 @@ public class Person : INotifyPropertyChanged
         }
 
         [Fact]
-        public async Task NoDiagnostic_PositionalArgumentOtherParameterName()
+        public async Task NoDiagnostic_PositionalArgumentOtherParameterNameAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -206,7 +220,7 @@ class C
 
         [WorkItem(1426, "https://github.com/dotnet/roslyn-analyzers/issues/1426")]
         [Fact]
-        public async Task NoDiagnostic_1426()
+        public async Task NoDiagnostic_1426Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.CompilerServices;
@@ -230,7 +244,7 @@ public class C
 
         [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
         [Fact]
-        public async Task NoDiagnostic_CSharp5()
+        public async Task NoDiagnostic_CSharp5Async()
         {
             await new VerifyCS.Test
             {
@@ -249,7 +263,7 @@ class C
 
         [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
         [Fact]
-        public async Task Diagnostic_CSharp6()
+        public async Task Diagnostic_CSharp6Async()
         {
             await new VerifyCS.Test
             {
@@ -272,7 +286,7 @@ class C
 
         [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
         [Fact]
-        public async Task NoDiagnostic_VB12()
+        public async Task NoDiagnostic_VB12Async()
         {
             await new VerifyVB.Test
             {
@@ -290,7 +304,7 @@ End Module",
 
         [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
         [Fact]
-        public async Task Diagnostic_VB14()
+        public async Task Diagnostic_VB14Async()
         {
             await new VerifyVB.Test
             {
@@ -315,7 +329,7 @@ End Module",
         #region Unit tests for analyzer diagnostic(s)
 
         [Fact]
-        public async Task Diagnostic_ArgumentMatchesAParameterInScope()
+        public async Task Diagnostic_ArgumentMatchesAParameterInScopeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -330,7 +344,7 @@ class C
         }
 
         [Fact]
-        public async Task Diagnostic_VB_ArgumentMatchesAParameterInScope()
+        public async Task Diagnostic_VB_ArgumentMatchesAParameterInScopeAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -344,7 +358,7 @@ End Module",
         }
 
         [Fact]
-        public async Task Diagnostic_ArgumentMatchesAPropertyInScope()
+        public async Task Diagnostic_ArgumentMatchesAPropertyInScopeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -376,7 +390,7 @@ public class Person : INotifyPropertyChanged
         }
 
         [Fact]
-        public async Task Diagnostic_ArgumentMatchesAPropertyInScope2()
+        public async Task Diagnostic_ArgumentMatchesAPropertyInScope2Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -419,7 +433,7 @@ public class Person : INotifyPropertyChanged
         }
 
         [Fact]
-        public async Task Diagnostic_ArgumentNameColonParamName()
+        public async Task Diagnostic_ArgumentNameColonParamNameAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -434,7 +448,7 @@ class C
         }
 
         [Fact]
-        public async Task Diagnostic_ArgumentNameColonPropertyName()
+        public async Task Diagnostic_ArgumentNameColonPropertyNameAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
@@ -466,7 +480,7 @@ public class Person : INotifyPropertyChanged
         }
 
         [Fact]
-        public async Task Diagnostic_AnonymousFunctionMultiline1()
+        public async Task Diagnostic_AnonymousFunctionMultiline1Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -485,7 +499,7 @@ class Test
         }
 
         [Fact]
-        public async Task Diagnostic_AnonymousFunctionMultiLine2()
+        public async Task Diagnostic_AnonymousFunctionMultiLine2Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -504,7 +518,7 @@ class Test
         }
 
         [Fact]
-        public async Task Diagnostic_AnonymousFunctionSingleLine1()
+        public async Task Diagnostic_AnonymousFunctionSingleLine1Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -520,7 +534,7 @@ class Test
         }
 
         [Fact]
-        public async Task Diagnostic_AnonymousFunctionSingleLine2()
+        public async Task Diagnostic_AnonymousFunctionSingleLine2Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -536,7 +550,7 @@ class Test
         }
 
         [Fact]
-        public async Task Diagnostic_AnonymousFunctionMultipleParameters()
+        public async Task Diagnostic_AnonymousFunctionMultipleParametersAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -552,7 +566,7 @@ class Test
         }
 
         [Fact]
-        public async Task Diagnostic_LocalFunction1()
+        public async Task Diagnostic_LocalFunction1Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -571,7 +585,7 @@ class Test
         }
 
         [Fact]
-        public async Task Diagnostic_LocalFunction2()
+        public async Task Diagnostic_LocalFunction2Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -590,7 +604,7 @@ class Test
         }
 
         [Fact]
-        public async Task Diagnostic_Delegate()
+        public async Task Diagnostic_DelegateAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;

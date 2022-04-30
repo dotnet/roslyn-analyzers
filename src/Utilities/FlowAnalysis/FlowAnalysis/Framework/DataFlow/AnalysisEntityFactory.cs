@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -290,7 +290,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     // 3) Properties with a backing field (auto-generated properties)
                     if (!propertyReference.Arguments.IsEmpty ||
                         propertyReference.Property.IsReadOnly ||
-                        propertyReference.Property.IsPropertyWithBackingField())
+                        propertyReference.Property.IsPropertyWithBackingField(out _))
                     {
                         symbol = propertyReference.Property;
                         indices = !propertyReference.Arguments.IsEmpty ?

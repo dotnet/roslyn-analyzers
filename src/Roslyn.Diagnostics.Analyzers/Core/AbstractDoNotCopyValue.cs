@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 #nullable disable warnings
 
@@ -17,110 +17,116 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Roslyn.Diagnostics.Analyzers
 {
+    using static RoslynDiagnosticsAnalyzersResources;
+
     public abstract class AbstractDoNotCopyValue : DiagnosticAnalyzer
     {
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueTitle), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueMessage), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueDescription), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(DoNotCopyValueTitle));
 
-        private static readonly LocalizableString s_localizableUnsupportedUseMessage = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueUnsupportedUseMessage), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-        private static readonly LocalizableString s_localizableUnsupportedUseDescription = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueUnsupportedUseDescription), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableAvoidNullableWrapperMessage = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueAvoidNullableWrapperMessage), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-        private static readonly LocalizableString s_localizableAvoidNullableWrapperDescription = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueAvoidNullableWrapperDescription), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableNoAssignValueFromReferenceMessage = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueNoAssignValueFromReferenceMessage), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-        private static readonly LocalizableString s_localizableNoAssignValueFromReferenceDescription = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueNoAssignValueFromReferenceDescription), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableNoReturnValueFromReferenceMessage = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueNoReturnValueFromReferenceMessage), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-        private static readonly LocalizableString s_localizableNoReturnValueFromReferenceDescription = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueNoReturnValueFromReferenceDescription), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableNoBoxingMessage = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueNoBoxingMessage), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-        private static readonly LocalizableString s_localizableNoBoxingDescription = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueNoBoxingDescription), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableNoUnboxingMessage = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueNoUnboxingMessage), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-        private static readonly LocalizableString s_localizableNoUnboxingDescription = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.DoNotCopyValueNoUnboxingDescription), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-
-        internal static DiagnosticDescriptor Rule = new(
+        internal static readonly DiagnosticDescriptor Rule = new(
             RoslynDiagnosticIds.DoNotCopyValueRuleId,
             s_localizableTitle,
-            s_localizableMessage,
+            CreateLocalizableResourceString(nameof(DoNotCopyValueMessage)),
             DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: s_localizableDescription,
+            description: CreateLocalizableResourceString(nameof(DoNotCopyValueDescription)),
             helpLinkUri: null,
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        internal static DiagnosticDescriptor UnsupportedUseRule = new(
+        internal static readonly DiagnosticDescriptor UnsupportedUseRule = new(
             RoslynDiagnosticIds.DoNotCopyValueRuleId,
             s_localizableTitle,
-            s_localizableUnsupportedUseMessage,
+            CreateLocalizableResourceString(nameof(DoNotCopyValueUnsupportedUseMessage)),
             DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: s_localizableUnsupportedUseDescription,
+            description: CreateLocalizableResourceString(nameof(DoNotCopyValueUnsupportedUseDescription)),
             helpLinkUri: null,
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        internal static DiagnosticDescriptor AvoidNullableWrapperRule = new(
+        internal static readonly DiagnosticDescriptor AvoidNullableWrapperRule = new(
             RoslynDiagnosticIds.DoNotCopyValueRuleId,
             s_localizableTitle,
-            s_localizableAvoidNullableWrapperMessage,
+            CreateLocalizableResourceString(nameof(DoNotCopyValueAvoidNullableWrapperMessage)),
             DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: s_localizableAvoidNullableWrapperDescription,
+            description: CreateLocalizableResourceString(nameof(DoNotCopyValueAvoidNullableWrapperDescription)),
             helpLinkUri: null,
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        internal static DiagnosticDescriptor NoAssignValueFromReferenceRule = new(
+        internal static readonly DiagnosticDescriptor NoAssignValueFromReferenceRule = new(
             RoslynDiagnosticIds.DoNotCopyValueRuleId,
             s_localizableTitle,
-            s_localizableNoAssignValueFromReferenceMessage,
+            CreateLocalizableResourceString(nameof(DoNotCopyValueNoAssignValueFromReferenceMessage)),
             DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: s_localizableNoAssignValueFromReferenceDescription,
+            description: CreateLocalizableResourceString(nameof(DoNotCopyValueNoAssignValueFromReferenceDescription)),
             helpLinkUri: null,
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        internal static DiagnosticDescriptor NoReturnValueFromReferenceRule = new(
+        internal static readonly DiagnosticDescriptor NoReturnValueFromReferenceRule = new(
             RoslynDiagnosticIds.DoNotCopyValueRuleId,
             s_localizableTitle,
-            s_localizableNoReturnValueFromReferenceMessage,
+            CreateLocalizableResourceString(nameof(DoNotCopyValueNoReturnValueFromReferenceMessage)),
             DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: s_localizableNoReturnValueFromReferenceDescription,
+            description: CreateLocalizableResourceString(nameof(DoNotCopyValueNoReturnValueFromReferenceDescription)),
             helpLinkUri: null,
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        internal static DiagnosticDescriptor NoBoxingRule = new(
+        internal static readonly DiagnosticDescriptor NoBoxingRule = new(
             RoslynDiagnosticIds.DoNotCopyValueRuleId,
             s_localizableTitle,
-            s_localizableNoBoxingMessage,
+            CreateLocalizableResourceString(nameof(DoNotCopyValueNoBoxingMessage)),
             DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: s_localizableNoBoxingDescription,
+            description: CreateLocalizableResourceString(nameof(DoNotCopyValueNoBoxingDescription)),
             helpLinkUri: null,
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        internal static DiagnosticDescriptor NoUnboxingRule = new(
+        internal static readonly DiagnosticDescriptor NoUnboxingRule = new(
             RoslynDiagnosticIds.DoNotCopyValueRuleId,
             s_localizableTitle,
-            s_localizableNoUnboxingMessage,
+            CreateLocalizableResourceString(nameof(DoNotCopyValueNoUnboxingMessage)),
             DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: s_localizableNoUnboxingDescription,
+            description: CreateLocalizableResourceString(nameof(DoNotCopyValueNoUnboxingDescription)),
             helpLinkUri: null,
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule, UnsupportedUseRule, NoBoxingRule, NoUnboxingRule);
+        internal static readonly DiagnosticDescriptor NoFieldOfCopyableTypeRule = new(
+            RoslynDiagnosticIds.DoNotCopyValueRuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DoNotCopyValueNoFieldOfCopyableTypeMessage)),
+            DiagnosticCategory.RoslynDiagnosticsReliability,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: CreateLocalizableResourceString(nameof(DoNotCopyValueNoFieldOfCopyableTypeDescription)),
+            helpLinkUri: null,
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
+
+        internal static readonly DiagnosticDescriptor NoAutoPropertyRule = new(
+            RoslynDiagnosticIds.DoNotCopyValueRuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DoNotCopyValueNoAutoPropertyMessage)),
+            DiagnosticCategory.RoslynDiagnosticsReliability,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: CreateLocalizableResourceString(nameof(DoNotCopyValueNoAutoPropertyDescription)),
+            helpLinkUri: null,
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule, UnsupportedUseRule, NoBoxingRule, NoUnboxingRule, NoFieldOfCopyableTypeRule, NoAutoPropertyRule);
 
         protected abstract NonCopyableWalker CreateWalker(OperationBlockAnalysisContext context, NonCopyableTypesCache cache);
+
+        protected abstract NonCopyableSymbolWalker CreateSymbolWalker(SymbolAnalysisContext context, NonCopyableTypesCache cache);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -131,6 +137,30 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 var cache = new NonCopyableTypesCache(context.Compilation);
                 context.RegisterOperationBlockAction(context => AnalyzeOperationBlock(context, cache));
+                context.RegisterSymbolAction(
+                    context => AnalyzeSymbol(context, cache),
+                    //SymbolKind.Alias,
+                    //SymbolKind.ArrayType,
+                    //SymbolKind.Assembly,
+                    //SymbolKind.Discard,
+                    //SymbolKind.DynamicType,
+                    //SymbolKind.ErrorType,
+                    SymbolKind.Event,
+                    SymbolKind.Field,
+                    //SymbolKind.FunctionPointerType,
+                    //SymbolKind.Label,
+                    //SymbolKind.Local,
+                    SymbolKind.Method,
+                    SymbolKind.NamedType,
+                    SymbolKind.Namespace,
+                    //SymbolKind.NetModule,
+                    SymbolKind.Parameter,
+                    //SymbolKind.PointerType,
+                    //SymbolKind.Preprocessing,
+                    SymbolKind.Property
+                    //SymbolKind.RangeVariable,
+                    //SymbolKind.TypeParameter
+                    );
             });
         }
 
@@ -141,6 +171,12 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 walker.Visit(operation);
             }
+        }
+
+        private void AnalyzeSymbol(SymbolAnalysisContext context, NonCopyableTypesCache cache)
+        {
+            var walker = CreateSymbolWalker(context, cache);
+            walker.Visit(context.Symbol);
         }
 
         private static VisitReleaser<T> TryAddForVisit<T>(HashSet<T> set, T? value, out bool added)
@@ -175,6 +211,142 @@ namespace Roslyn.Diagnostics.Analyzers
             public void Dispose()
             {
                 _set?.Remove(_value);
+            }
+        }
+
+        protected abstract class NonCopyableSymbolWalker : SymbolVisitor
+        {
+            private readonly SymbolAnalysisContext _context;
+            //private readonly HashSet<ISymbol> _handledSymbols = new();
+
+            protected NonCopyableSymbolWalker(SymbolAnalysisContext context, NonCopyableTypesCache cache)
+            {
+                _context = context;
+                Cache = cache;
+            }
+
+            protected NonCopyableTypesCache Cache { get; }
+
+            public sealed override void Visit(ISymbol? symbol)
+            {
+                base.Visit(symbol);
+            }
+
+            public override void DefaultVisit(ISymbol symbol)
+            {
+                base.DefaultVisit(symbol);
+            }
+
+            public override void VisitAlias(IAliasSymbol symbol)
+            {
+                base.VisitAlias(symbol);
+            }
+
+            public override void VisitArrayType(IArrayTypeSymbol symbol)
+            {
+                base.VisitArrayType(symbol);
+            }
+
+            public override void VisitAssembly(IAssemblySymbol symbol)
+            {
+                base.VisitAssembly(symbol);
+            }
+
+            public override void VisitDiscard(IDiscardSymbol symbol)
+            {
+                base.VisitDiscard(symbol);
+            }
+
+            public override void VisitDynamicType(IDynamicTypeSymbol symbol)
+            {
+                base.VisitDynamicType(symbol);
+            }
+
+            public override void VisitEvent(IEventSymbol symbol)
+            {
+                base.VisitEvent(symbol);
+            }
+
+            public override void VisitField(IFieldSymbol symbol)
+            {
+                // Fields of copyable value types must be copyable. Copying a value type makes a shallow copy of the
+                // fields, which implicitly copies any value type fields.
+                if (Cache.IsNonCopyableType(symbol.Type)
+                    && !Cache.IsNonCopyableType(symbol.ContainingType)
+                    && symbol.ContainingType.IsValueType)
+                {
+                    _context.ReportDiagnostic(symbol.CreateDiagnostic(NoFieldOfCopyableTypeRule, symbol.Type, symbol));
+                }
+
+                base.VisitField(symbol);
+            }
+
+            public override void VisitFunctionPointerType(IFunctionPointerTypeSymbol symbol)
+            {
+                base.VisitFunctionPointerType(symbol);
+            }
+
+            public override void VisitLabel(ILabelSymbol symbol)
+            {
+                base.VisitLabel(symbol);
+            }
+
+            public override void VisitLocal(ILocalSymbol symbol)
+            {
+                base.VisitLocal(symbol);
+            }
+
+            public override void VisitMethod(IMethodSymbol symbol)
+            {
+                base.VisitMethod(symbol);
+            }
+
+            public override void VisitModule(IModuleSymbol symbol)
+            {
+                base.VisitModule(symbol);
+            }
+
+            public override void VisitNamedType(INamedTypeSymbol symbol)
+            {
+                base.VisitNamedType(symbol);
+            }
+
+            public override void VisitNamespace(INamespaceSymbol symbol)
+            {
+                base.VisitNamespace(symbol);
+            }
+
+            public override void VisitParameter(IParameterSymbol symbol)
+            {
+                base.VisitParameter(symbol);
+            }
+
+            public override void VisitPointerType(IPointerTypeSymbol symbol)
+            {
+                base.VisitPointerType(symbol);
+            }
+
+            public override void VisitProperty(IPropertySymbol symbol)
+            {
+                // Auto-properties cannot have non-copyable types. The getter always returns the backing field by value,
+                // which requires making a copy.
+                if (symbol.IsAutoProperty()
+                    && Cache.IsNonCopyableType(symbol.Type))
+                {
+                    _context.ReportDiagnostic(symbol.CreateDiagnostic(NoAutoPropertyRule, symbol.Type, symbol));
+                }
+
+                base.VisitProperty(symbol);
+            }
+
+            public override void VisitRangeVariable(IRangeVariableSymbol symbol)
+            {
+                base.VisitRangeVariable(symbol);
+            }
+
+            public override void VisitTypeParameter(ITypeParameterSymbol symbol)
+            {
+                base.VisitTypeParameter(symbol);
             }
         }
 

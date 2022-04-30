@@ -1,12 +1,11 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
@@ -50,7 +49,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         // Ensures the member invocation is retrieved with the name and nullability.
         protected abstract SyntaxNode GetNamedMemberInvocation(SyntaxGenerator generator, SyntaxNode node, string memberName);
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds =>
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(PreferStreamAsyncMemoryOverloads.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider() =>
@@ -103,7 +102,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             string title = MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsTitle;
 
-            Task<Document> createChangedDocument(CancellationToken _) => FixInvocation(model, doc, root,
+            Task<Document> createChangedDocument(CancellationToken _) => FixInvocationAsync(model, doc, root,
                                                          invocation, invocation.TargetMethod.Name,
                                                          bufferNode, isBufferNamed,
                                                          offsetNode, isOffsetNamed,
@@ -111,14 +110,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                          cancellationTokenNode, isCancellationTokenNamed);
 
             context.RegisterCodeFix(
-                new MyCodeAction(
+                CodeAction.Create(
                     title: title,
                     createChangedDocument,
                     equivalenceKey: title + invocation.TargetMethod.Name),
                 context.Diagnostics);
         }
 
-        private Task<Document> FixInvocation(SemanticModel model, Document doc, SyntaxNode root,
+        private Task<Document> FixInvocationAsync(SemanticModel model, Document doc, SyntaxNode root,
             IInvocationOperation invocation, string methodName,
             SyntaxNode bufferNode, bool isBufferNamed,
             SyntaxNode offsetNode, bool isOffsetNamed,
@@ -183,15 +182,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode newRootWithImports = containsSystemImport ? newRoot : generator.AddNamespaceImports(newRoot, generator.NamespaceImportDeclaration(nameof(System)));
 
             return Task.FromResult(doc.WithSyntaxRoot(newRootWithImports));
-        }
-
-        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
-        private class MyCodeAction : DocumentChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument, equivalenceKey)
-            {
-            }
         }
     }
 }

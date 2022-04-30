@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 namespace Roslyn.Diagnostics.Analyzers
 {
@@ -8,7 +8,7 @@ namespace Roslyn.Diagnostics.Analyzers
         public const string UseSingletonEnumerableRuleId = "RS0002";
         // public const string DirectlyAwaitingTaskAnalyzerRuleId = "RS0003";           // Now CA2007 => Microsoft.ApiDesignGuidelines.Analyzers.DoNotDirectlyAwaitATaskAnalyzer
         public const string UseSiteDiagnosticsCheckerRuleId = "RS0004";
-        public const string DoNotUseCodeActionCreateRuleId = "RS0005";
+        //public const string DoNotUseCodeActionCreateRuleId = "RS0005";                // Removed (see https://github.com/dotnet/roslyn-analyzers/issues/5947)
         public const string MixedVersionsOfMefAttributesRuleId = "RS0006";
         // public const string UseArrayEmptyRuleId = "RS0007";                          // Now CA1825 => System.Runtime.Analyzers.AvoidZeroLengthArrayAllocationsAnalyzer
         // public const string ImplementIEquatableRuleId = "RS0008";                    // Now CA1067 => Microsoft.ApiDesignGuidelines.Analyzers.EquatableAnalyzer
@@ -54,8 +54,10 @@ namespace Roslyn.Diagnostics.Analyzers
         public const string PublicApiFileMissing = "RS0048";
         public const string TemporaryArrayAsRefRuleId = "RS0049";
 
-        public const string WrapStatementsRuleId = "RS0100";
-        public const string BlankLinesRuleId = "RS0101";
-        public const string BracePlacementRuleId = "RS0102";
+        public const string RemovedApiIsNotActuallyRemovedRuleId = "RS0050";
+
+        //public const string WrapStatementsRuleId = "RS0100"; // Now ported to dotnet/roslyn https://github.com/dotnet/roslyn/pull/50358
+        //public const string BlankLinesRuleId = "RS0101"; // Now ported to dotnet/roslyn https://github.com/dotnet/roslyn/pull/50358
+        //public const string BracePlacementRuleId = "RS0102"; // Now ported to dotnet/roslyn https://github.com/dotnet/roslyn/pull/50358
     }
 }

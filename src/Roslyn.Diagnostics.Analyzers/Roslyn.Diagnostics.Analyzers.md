@@ -36,18 +36,6 @@ Invoke the correct property to ensure correct use site diagnostics
 |CodeFix|False|
 ---
 
-## RS0005: Do not use generic 'CodeAction.Create' to create 'CodeAction'
-
-Do not use generic 'CodeAction.Create' to create 'CodeAction'
-
-|Item|Value|
-|-|-|
-|Category|RoslynDiagnosticsPerformance|
-|Enabled|True|
-|Severity|Warning|
-|CodeFix|False|
----
-
 ## RS0006: Do not mix attributes from different versions of MEF
 
 Do not mix attributes from different versions of MEF.
@@ -81,7 +69,7 @@ Part exported with MEFv2 must be marked with the 'SharedAttribute'.
 |Category|RoslynDiagnosticsReliability|
 |Enabled|True|
 |Severity|Warning|
-|CodeFix|False|
+|CodeFix|True|
 ---
 
 ## RS0032: Test exports should not be discoverable
@@ -146,7 +134,7 @@ Defaultable types should have defaultable fields.
 
 ## RS0042: Do not copy value
 
-Do not unbox non-copyable value types.
+Auto-properties always copy values, so they cannot be declared with non-copyable types.
 
 |Item|Value|
 |-|-|
@@ -190,40 +178,4 @@ Instance of TemporaryArray\<T>.AsRef() must be a 'using' variable.
 |Enabled|True|
 |Severity|Warning|
 |CodeFix|False|
----
-
-## RS0100: Statements must be placed on their own line
-
-Statements must be placed on their own line
-
-|Item|Value|
-|-|-|
-|Category|RoslynDiagnosticsMaintainability|
-|Enabled|True|
-|Severity|Warning|
-|CodeFix|True|
----
-
-## RS0101: Avoid multiple blank lines
-
-Avoid multiple blank lines
-
-|Item|Value|
-|-|-|
-|Category|RoslynDiagnosticsMaintainability|
-|Enabled|True|
-|Severity|Warning|
-|CodeFix|True|
----
-
-## RS0102: Braces must not have blank lines between them
-
-Braces must not have blank lines between them
-
-|Item|Value|
-|-|-|
-|Category|RoslynDiagnosticsMaintainability|
-|Enabled|True|
-|Severity|Warning|
-|CodeFix|True|
 ---

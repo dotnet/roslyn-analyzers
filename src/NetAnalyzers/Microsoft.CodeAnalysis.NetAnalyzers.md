@@ -672,6 +672,18 @@ A string comparison operation uses a method overload that does not set a StringC
 |CodeFix|False|
 ---
 
+## [CA1311](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311): Specify a culture or use an invariant version
+
+Specify culture to help avoid accidental implicit dependency on current culture. Using an invariant version yields consistent results regardless of the culture of an application.
+
+|Item|Value|
+|-|-|
+|Category|Globalization|
+|Enabled|True|
+|Severity|Hidden|
+|CodeFix|True|
+---
+
 ## [CA1401](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401): P/Invokes should not be visible
 
 A public or protected method in a public type has the System.Runtime.InteropServices.DllImportAttribute attribute (also implemented by the Declare keyword in Visual Basic). Such methods should not be exposed.
@@ -706,6 +718,54 @@ String parameters passed by value with the 'OutAttribute' can destabilize the ru
 |Enabled|True|
 |Severity|Warning|
 |CodeFix|False|
+---
+
+## [CA1418](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1418): Use valid platform string
+
+Platform compatibility analyzer requires a valid platform name and version.
+
+|Item|Value|
+|-|-|
+|Category|Interoperability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA1419](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419): Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle'
+
+Providing a parameterless constructor that is as visible as the containing type for a type derived from 'System.Runtime.InteropServices.SafeHandle' enables better performance and usage with source-generated interop solutions.
+
+|Item|Value|
+|-|-|
+|Category|Interoperability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1420](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1420): Property, type, or attribute requires runtime marshalling
+
+Using features that require runtime marshalling when runtime marshalling is disabled will result in runtime exceptions.
+
+|Item|Value|
+|-|-|
+|Category|Interoperability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA1421](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421): This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied
+
+This method uses runtime marshalling even when runtime marshalling is disabled, which can cause unexpected behavior differences at runtime due to different expectations of a type's native layout.
+
+|Item|Value|
+|-|-|
+|Category|Interoperability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
 ---
 
 ## [CA1501](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1501): Avoid excessive inheritance
@@ -813,7 +873,7 @@ By convention, identifier names do not contain the underscore (_) character. Thi
 |Category|Naming|
 |Enabled|True|
 |Severity|Hidden|
-|CodeFix|False|
+|CodeFix|True|
 ---
 
 ## [CA1708](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1708): Identifiers should differ by more than case
@@ -946,6 +1006,18 @@ Consistent naming of parameters in an override hierarchy increases the usability
 |Enabled|True|
 |Severity|Hidden|
 |CodeFix|True|
+---
+
+## [CA1727](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727): Use PascalCase for named placeholders
+
+Use PascalCase for named placeholders in the logging message template.
+
+|Item|Value|
+|-|-|
+|Category|Naming|
+|Enabled|True|
+|Severity|Hidden|
+|CodeFix|False|
 ---
 
 ## [CA1802](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1802): Use literals where appropriate
@@ -1296,6 +1368,186 @@ Marshalling of 'StringBuilder' always creates a native buffer copy, resulting in
 |CodeFix|False|
 ---
 
+## [CA1839](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839): Use 'Environment.ProcessPath'
+
+'Environment.ProcessPath' is simpler and faster than 'Process.GetCurrentProcess().MainModule.FileName'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1840](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1840): Use 'Environment.CurrentManagedThreadId'
+
+'Environment.CurrentManagedThreadId' is simpler and faster than 'Thread.CurrentThread.ManagedThreadId'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1841](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1841): Prefer Dictionary.Contains methods
+
+Many dictionary implementations lazily initialize the Values collection. To avoid unnecessary allocations, prefer 'ContainsValue' over 'Values.Contains'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1842](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1842): Do not use 'WhenAll' with a single task
+
+Using 'WhenAll' with a single task may result in performance loss, await or return the task instead.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1843](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1843): Do not use 'WaitAll' with a single task
+
+Using 'WaitAll' with a single task may result in performance loss, await or return the task instead.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1844](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1844): Provide memory-based overrides of async methods when subclassing 'Stream'
+
+To improve performance, override the memory-based async methods when subclassing 'Stream'. Then implement the array-based methods in terms of the memory-based methods.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
+## [CA1845](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1845): Use span-based 'string.Concat'
+
+It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1846](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1846): Prefer 'AsSpan' over 'Substring'
+
+'AsSpan' is more efficient then 'Substring'. 'Substring' performs an O(n) string copy, while 'AsSpan' does not and has a constant cost.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1847](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847): Use char literal for a single character lookup
+
+'string.Contains(char)' is available as a better performing overload for single char lookup.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1848](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848): Use the LoggerMessage delegates
+
+For improved performance, use the LoggerMessage delegates.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Hidden|
+|CodeFix|False|
+---
+
+## [CA1849](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849): Call async methods when in an async method
+
+When inside a Task-returning method, use the async version of methods, if they exist.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|False|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA1850](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1850): Prefer static 'HashData' method over 'ComputeHash'
+
+It is more efficient to use the static 'HashData' method over creating and managing a HashAlgorithm instance to call 'ComputeHash'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1851](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1851): Possible multiple enumerations of 'IEnumerable' collection
+
+Possible multiple enumerations of 'IEnumerable' collection. Consider using an implementation that avoids multiple enumerations.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|False|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA1852](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1852): Seal internal types
+
+When a type is not accessible outside its assembly and has no subtypes within its containing assembly, it can be safely sealed. Sealing types can improve performance.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Hidden|
+|CodeFix|True|
+---
+
+## [CA1853](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853): Unnecessary call to 'Dictionary.ContainsKey(key)'
+
+Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The former already checks whether the key exists, and will not throw if it does not.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA2000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
 
 If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.
@@ -1426,6 +1678,42 @@ Forward the 'CancellationToken' parameter to methods to ensure the operation can
 |Enabled|True|
 |Severity|Info|
 |CodeFix|True|
+---
+
+## [CA2017](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017): Parameter count mismatch
+
+Number of parameters supplied in the logging message template do not match the number of named placeholders.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA2018](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2018): 'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument
+
+'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument. Using 'Array.Length' may not match the number of bytes that needs to be copied.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA2019](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019): Improper 'ThreadStatic' field initialization
+
+'ThreadStatic' fields should be initialized lazily on use, not with inline initialization nor explicitly in a static constructor, which would only initialize the field on the thread that runs the type's static constructor.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
 ---
 
 ## [CA2100](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100): Review SQL queries for security vulnerabilities
@@ -1846,6 +2134,126 @@ Calls to 'string.IndexOf' where the result is used to check for the presence/abs
 |Enabled|True|
 |Severity|Info|
 |CodeFix|True|
+---
+
+## [CA2250](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250): Use 'ThrowIfCancellationRequested'
+
+'ThrowIfCancellationRequested' automatically checks whether the token has been canceled, and throws an 'OperationCanceledException' if it has.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA2251](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251): Use 'string.Equals'
+
+It is both clearer and likely faster to use 'string.Equals' instead of comparing the result of 'string.Compare' to zero.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Hidden|
+|CodeFix|True|
+---
+
+## [CA2252](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252): This API requires opting into preview features
+
+An assembly has to opt into preview features before using them.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Error|
+|CodeFix|False|
+---
+
+## [CA2253](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253): Named placeholders should not be numeric values
+
+Named placeholders in the logging message template should not be comprised of only numeric characters.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
+## [CA2254](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2254): Template should be a static expression
+
+The logging message template should not vary between calls.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
+## [CA2255](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2255): The 'ModuleInitializer' attribute should not be used in libraries
+
+Module initializers are intended to be used by application code to ensure an application's components are initialized before the application code begins executing. If library code declares a 'ModuleInitializer' method, it can interfere with application initialization and also lead to limitations in that application's trimming abilities. Library code should therefore not utilize the 'ModuleInitializer' attribute, but instead expose methods that can be used to initialize any components within the library and allow the application to invoke the method during application initialization.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA2256](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2256): All members declared in parent interfaces must have an implementation in a DynamicInterfaceCastableImplementation-attributed interface
+
+Types attributed with 'DynamicInterfaceCastableImplementationAttribute' act as an interface implementation for a type that implements the 'IDynamicInterfaceCastable' type. As a result, it must provide an implementation of all of the members defined in the inherited interfaces, because the type that implements 'IDynamicInterfaceCastable' will not provide them otherwise.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|True|
+---
+
+## [CA2257](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2257): Members defined on an interface with the 'DynamicInterfaceCastableImplementationAttribute' should be 'static'
+
+Since a type that implements 'IDynamicInterfaceCastable' may not implement a dynamic interface in metadata, calls to an instance interface member that is not an explicit implementation defined on this type are likely to fail at runtime. Mark new interface members 'static' to avoid runtime errors.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|True|
+---
+
+## [CA2258](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2258): Providing a 'DynamicInterfaceCastableImplementation' interface in Visual Basic is unsupported
+
+Providing a functional 'DynamicInterfaceCastableImplementationAttribute'-attributed interface requires the Default Interface Members feature, which is unsupported in Visual Basic.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA2259](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259): 'ThreadStatic' only affects static fields
+
+'ThreadStatic' only affects static fields. When applied to instance fields, it has no impact on behavior.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
 ---
 
 ## [CA2300](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2300): Do not use insecure deserializer BinaryFormatter
@@ -2907,6 +3315,30 @@ Symmetric encryption should always use a non-repeatable initialization vector to
 ## [CA5403](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5403): Do not hard-code certificate
 
 Hard-coded certificates in source code are vulnerable to being exploited.
+
+|Item|Value|
+|-|-|
+|Category|Security|
+|Enabled|False|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA5404](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5404): Do not disable token validation checks
+
+Token validation checks ensure that while validating tokens, all aspects are analyzed and verified. Turning off validation can lead to security holes by allowing untrusted tokens to make it through validation.
+
+|Item|Value|
+|-|-|
+|Category|Security|
+|Enabled|False|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA5405](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5405): Do not always skip token validation in delegates
+
+By setting critical TokenValidationParameter validation delegates to true, important authentication safeguards are disabled which can lead to tokens from any issuer or expired tokens being wrongly validated.
 
 |Item|Value|
 |-|-|

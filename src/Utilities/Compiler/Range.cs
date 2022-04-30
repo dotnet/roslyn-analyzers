@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 #if !NETCOREAPP
 
@@ -50,7 +50,7 @@ namespace System
         /// <summary>Returns the hash code for this instance.</summary>
         public override int GetHashCode()
         {
-            return HashUtilities.Combine(Start.GetHashCode(), End.GetHashCode());
+            return RoslynHashCode.Combine(Start.GetHashCode(), End.GetHashCode());
         }
 
         /// <summary>Converts the value of the current Range object to its equivalent string representation.</summary>

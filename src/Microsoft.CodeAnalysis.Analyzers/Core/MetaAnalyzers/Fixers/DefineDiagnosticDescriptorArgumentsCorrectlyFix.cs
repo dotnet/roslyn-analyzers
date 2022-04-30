@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
@@ -21,7 +22,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
         private const string SourceDocumentEquivalenceKeySuffix = nameof(SourceDocumentEquivalenceKeySuffix);
         private const string AdditionalDocumentEquivalenceKeySuffix = nameof(AdditionalDocumentEquivalenceKeySuffix);
 
-        public override ImmutableArray<string> FixableDiagnosticIds =>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(DiagnosticIds.DefineDiagnosticTitleCorrectlyRuleId,
                                   DiagnosticIds.DefineDiagnosticMessageCorrectlyRuleId,
                                   DiagnosticIds.DefineDiagnosticDescriptionCorrectlyRuleId);
@@ -58,7 +59,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
                 var equivalenceKeySuffix = fixInfo.Value.AdditionalDocumentToFix != null ? AdditionalDocumentEquivalenceKeySuffix : SourceDocumentEquivalenceKeySuffix;
                 var equivalenceKey = codeFixTitle + equivalenceKeySuffix;
 
-                var codeAction = new MyCodeAction(
+                var codeAction = CodeAction.Create(
                    codeFixTitle,
                    ct => ApplyFixAsync(context.Document, root, fixInfo.Value, ct),
                    equivalenceKey);
@@ -168,15 +169,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
                 var textChange = new TextChange(fixInfo.AdditionalDocumentSpanToFix.Value, fixInfo.FixValue);
                 var newText = text.WithChanges(textChange);
                 return document.Project.Solution.WithAdditionalDocumentText(fixInfo.AdditionalDocumentToFix.Id, newText);
-            }
-        }
-
-        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
-        private sealed class MyCodeAction : SolutionChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Solution>> createChangedSolution, string equivalenceKey)
-                : base(title, createChangedSolution, equivalenceKey)
-            {
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 #nullable disable warnings
 
@@ -12,6 +12,14 @@ namespace Analyzer.Utilities.Extensions
 {
     internal static class ITypeSymbolExtensions
     {
+#if CODEANALYSIS_V3_OR_BETTER
+        public static bool IsAssignableTo(
+            [NotNullWhen(returnValue: true)] this ITypeSymbol? fromSymbol,
+            [NotNullWhen(returnValue: true)] ITypeSymbol? toSymbol,
+            Compilation compilation)
+            => fromSymbol != null && toSymbol != null && compilation.ClassifyCommonConversion(fromSymbol, toSymbol).IsImplicit;
+#endif
+
         public static bool IsPrimitiveType(this ITypeSymbol type)
         {
             return type.SpecialType switch
@@ -89,7 +97,7 @@ namespace Analyzer.Utilities.Extensions
             if (!baseTypesOnly && candidateBaseType.TypeKind == TypeKind.Interface)
             {
                 var allInterfaces = symbol.AllInterfaces.OfType<ITypeSymbol>();
-                if (candidateBaseType.OriginalDefinition.Equals(candidateBaseType))
+                if (SymbolEqualityComparer.Default.Equals(candidateBaseType.OriginalDefinition, candidateBaseType))
                 {
                     // Candidate base type is not a constructed generic type, so use original definition for interfaces.
                     allInterfaces = allInterfaces.Select(i => i.OriginalDefinition);
@@ -115,7 +123,7 @@ namespace Analyzer.Utilities.Extensions
 
             while (symbol != null)
             {
-                if (symbol.Equals(candidateBaseType))
+                if (SymbolEqualityComparer.Default.Equals(symbol, candidateBaseType))
                 {
                     return true;
                 }
@@ -152,7 +160,7 @@ namespace Analyzer.Utilities.Extensions
 
             static bool IsInterfaceOrImplementsInterface(ITypeSymbol type, INamedTypeSymbol? interfaceType)
                 => interfaceType != null &&
-                   (Equals(type, interfaceType) || type.AllInterfaces.Contains(interfaceType));
+                   (SymbolEqualityComparer.Default.Equals(type, interfaceType) || type.AllInterfaces.Contains(interfaceType));
         }
 
         /// <summary>
@@ -200,7 +208,7 @@ namespace Analyzer.Utilities.Extensions
                 {
                     foreach (var attributeClassData in currentAttributeClass.GetAttributes())
                     {
-                        if (!Equals(attributeClassData.AttributeClass, attributeUsageAttribute))
+                        if (!SymbolEqualityComparer.Default.Equals(attributeClassData.AttributeClass, attributeUsageAttribute))
                         {
                             continue;
                         }
@@ -241,13 +249,10 @@ namespace Analyzer.Utilities.Extensions
                     {
                         attributes.Add(attribute);
                     }
-                    else if (!onlyIncludeInherited)
+                    else if (!onlyIncludeInherited &&
+                        (attribute.AttributeClass.Inherits(exportAttributeV1) || attribute.AttributeClass.Inherits(exportAttributeV2)))
                     {
-                        if (attribute.AttributeClass.Inherits(exportAttributeV1)
-                            || attribute.AttributeClass.Inherits(exportAttributeV2))
-                        {
-                            attributes.Add(attribute);
-                        }
+                        attributes.Add(attribute);
                     }
                 }
 
@@ -295,6 +300,9 @@ namespace Analyzer.Utilities.Extensions
 
         public static bool IsNullableOfBoolean([NotNullWhen(returnValue: true)] this ITypeSymbol? typeSymbol)
             => typeSymbol.IsNullableValueType() && ((INamedTypeSymbol)typeSymbol).TypeArguments[0].SpecialType == SpecialType.System_Boolean;
+
+        public static ITypeSymbol? GetNullableValueTypeUnderlyingType(this ITypeSymbol? typeSymbol)
+            => typeSymbol.IsNullableValueType() ? ((INamedTypeSymbol)typeSymbol).TypeArguments[0] : null;
 
 #if HAS_IOPERATION
         public static ITypeSymbol GetUnderlyingValueTupleTypeOrThis(this ITypeSymbol typeSymbol)
@@ -364,9 +372,9 @@ namespace Analyzer.Utilities.Extensions
                 RoslynDebug.Assert(iReadOnlyCollectionOfT != null);
 
                 return type.OriginalDefinition is INamedTypeSymbol originalDefinition &&
-                    (iCollection.Equals(originalDefinition) ||
-                     iCollectionOfT.Equals(originalDefinition) ||
-                     iReadOnlyCollectionOfT.Equals(originalDefinition));
+                    (SymbolEqualityComparer.Default.Equals(iCollection, originalDefinition) ||
+                     SymbolEqualityComparer.Default.Equals(iCollectionOfT, originalDefinition) ||
+                     SymbolEqualityComparer.Default.Equals(iReadOnlyCollectionOfT, originalDefinition));
             }
         }
     }

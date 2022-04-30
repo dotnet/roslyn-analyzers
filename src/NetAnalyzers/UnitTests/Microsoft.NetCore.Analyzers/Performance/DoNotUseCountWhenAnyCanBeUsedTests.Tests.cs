@@ -1,11 +1,10 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.CSharp.Analyzers.Performance;
 using Microsoft.NetCore.VisualBasic.Analyzers.Performance;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
@@ -17,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public Task CountEqualsNonZero_NoDiagnostic(bool withPredicate)
+        public Task CountEqualsNonZero_NoDiagnosticAsync(bool withPredicate)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -29,7 +28,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public Task NonZeroEqualsCount_NoDiagnostic(bool withPredicate)
+        public Task NonZeroEqualsCount_NoDiagnosticAsync(bool withPredicate)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -39,7 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     SourceProvider.IsAsync ? SourceProvider.GetExtensionsCode(SourceProvider.ExtensionsNamespace, SourceProvider.ExtensionsClass) : null);
 
         [Fact]
-        public Task NotCountEqualsZero_NoDiagnostic()
+        public Task NotCountEqualsZero_NoDiagnosticAsync()
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -49,7 +48,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     SourceProvider.IsAsync ? SourceProvider.GetExtensionsCode(SourceProvider.ExtensionsNamespace, SourceProvider.ExtensionsClass) : null);
 
         [Fact]
-        public Task ZeroEqualsNotCount_NoDiagnostic()
+        public Task ZeroEqualsNotCount_NoDiagnosticAsync()
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -60,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         [Theory]
         [MemberData(nameof(LeftCount_Diagnostic_TheoryData))]
-        public Task LeftNotCountComparison_NoDiagnostic(BinaryOperatorKind @operator, int value)
+        public Task LeftNotCountComparison_NoDiagnosticAsync(BinaryOperatorKind @operator, int value)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -71,7 +70,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         [Theory]
         [MemberData(nameof(RightCount_Diagnostic_TheoryData))]
-        public Task RightNotCountComparison_NoDiagnostic(int value, BinaryOperatorKind @operator)
+        public Task RightNotCountComparison_NoDiagnosticAsync(int value, BinaryOperatorKind @operator)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -83,7 +82,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public Task LeftCountNotComparison_NoDiagnostic(bool withPredicate)
+        public Task LeftCountNotComparison_NoDiagnosticAsync(bool withPredicate)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -95,7 +94,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public Task RightCountNotComparison_NoDiagnostic(bool withPredicate)
+        public Task RightCountNotComparison_NoDiagnosticAsync(bool withPredicate)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -106,7 +105,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         [Theory]
         [MemberData(nameof(LeftCount_NoDiagnostic_Predicate_TheoryData))]
-        public Task LeftCountComparison_NoDiagnostic(BinaryOperatorKind @operator, int value, bool withPredicate)
+        public Task LeftCountComparison_NoDiagnosticAsync(BinaryOperatorKind @operator, int value, bool withPredicate)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -117,7 +116,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         [Theory]
         [MemberData(nameof(RightCount_NoDiagnostic_Predicate_TheoryData))]
-        public Task RightCountComparison_NoDiagnostic(int value, BinaryOperatorKind @operator, bool withPredicate)
+        public Task RightCountComparison_NoDiagnosticAsync(int value, BinaryOperatorKind @operator, bool withPredicate)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -128,7 +127,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         [Theory]
         [MemberData(nameof(LeftCount_Fixer_TheoryData))]
-        public Task LeftNotTargetCountComparison_NoDiagnostic(BinaryOperatorKind @operator, int value, bool withPredicate)
+        public Task LeftNotTargetCountComparison_NoDiagnosticAsync(BinaryOperatorKind @operator, int value, bool withPredicate)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -139,7 +138,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         [Theory]
         [MemberData(nameof(RightCount_Fixer_TheoryData))]
-        public Task RightNotTargetCountComparison_NoDiagnostic(int value, BinaryOperatorKind @operator, bool withPredicate)
+        public Task RightNotTargetCountComparison_NoDiagnosticAsync(int value, BinaryOperatorKind @operator, bool withPredicate)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -150,7 +149,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         [Theory]
         [MemberData(nameof(LeftCount_Fixer_Predicate_TheoryData))]
-        public Task LeftTargetCountComparison_Fixed(BinaryOperatorKind @operator, int value, bool withPredicate, bool negate)
+        public Task LeftTargetCountComparison_FixedAsync(BinaryOperatorKind @operator, int value, bool withPredicate, bool negate)
             => this.VerifyAsync(
                 methodName: this.SourceProvider.MemberName,
                 testSource:
@@ -166,7 +165,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         [Theory]
         [MemberData(nameof(RightCount_Fixer_Predicate_TheoryData))]
-        public Task RightTargetCountComparison_Fixed(int value, BinaryOperatorKind @operator, bool withPredicate, bool negate)
+        public Task RightTargetCountComparison_FixedAsync(int value, BinaryOperatorKind @operator, bool withPredicate, bool negate)
             => this.VerifyAsync(
                 methodName: this.SourceProvider.MemberName,
                 testSource:
@@ -183,7 +182,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public Task CountEqualsZero_Fixed(bool withPredicate)
+        public Task CountEqualsZero_FixedAsync(bool withPredicate)
             => this.VerifyAsync(
                 methodName: this.SourceProvider.MemberName,
                 testSource:
@@ -200,7 +199,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public Task ZeroEqualsCount_Fixed(bool withPredicate)
+        public Task ZeroEqualsCount_FixedAsync(bool withPredicate)
             => this.VerifyAsync(
                 methodName: this.SourceProvider.MemberName,
                 testSource:
@@ -231,7 +230,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public Task TestConstIdentifiers()
+        public Task TestConstIdentifiersAsync()
             => Test.Utilities.CSharpCodeFixVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"using System;
 using System.Linq;
@@ -335,7 +334,7 @@ class C
         }
 
         [Fact]
-        public Task TestConstIdentifiers()
+        public Task TestConstIdentifiersAsync()
             => Test.Utilities.CSharpCodeFixVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"using System;
 using System.Linq;
@@ -439,7 +438,7 @@ class C
         }
 
         [Fact]
-        public Task TestConstIdentifiers()
+        public Task TestConstIdentifiersAsync()
             => Test.Utilities.VisualBasicCodeFixVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"Imports System
 Imports System.Linq
@@ -587,7 +586,7 @@ End Module
         }
 
         [Fact]
-        public Task TestConstIdentifiers()
+        public Task TestConstIdentifiersAsync()
             => Test.Utilities.VisualBasicCodeFixVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"Imports System
 Imports System.Linq
@@ -759,7 +758,7 @@ End Module
         }
 
         [Fact]
-        public Task TestConstIdentifiers()
+        public Task TestConstIdentifiersAsync()
             => Test.Utilities.CSharpCodeFixVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"using System;
 using System.Linq;
@@ -879,7 +878,7 @@ namespace System.Data.Entity
         }
 
         [Fact]
-        public Task TestConstIdentifiers()
+        public Task TestConstIdentifiersAsync()
             => Test.Utilities.CSharpCodeFixVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"using System;
 using System.Linq;
@@ -999,7 +998,7 @@ namespace System.Data.Entity
         }
 
         [Fact]
-        public Task TestConstIdentifiers()
+        public Task TestConstIdentifiersAsync()
             => Test.Utilities.VisualBasicCodeFixVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"Imports System
 Imports System.Linq
@@ -1173,7 +1172,7 @@ End Namespace
         }
 
         [Fact]
-        public Task TestConstIdentifiers()
+        public Task TestConstIdentifiersAsync()
             => Test.Utilities.VisualBasicCodeFixVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"Imports System
 Imports System.Linq
@@ -1347,7 +1346,7 @@ End Namespace
             : base(sourceProvider, verifier) { }
 #pragma warning disable xUnit1026 // Theory methods should use all of their parameters
         [Fact]
-        public Task CountEqualsNonZero_NoDiagnostic()
+        public Task CountEqualsNonZero_NoDiagnosticAsync()
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -1357,7 +1356,7 @@ End Namespace
                     SourceProvider.IsAsync ? SourceProvider.GetExtensionsCode(SourceProvider.ExtensionsNamespace, SourceProvider.ExtensionsClass) : null);
 
         [Fact]
-        public Task NonZeroEqualsCount_NoDiagnostic()
+        public Task NonZeroEqualsCount_NoDiagnosticAsync()
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -1367,7 +1366,7 @@ End Namespace
                     SourceProvider.IsAsync ? SourceProvider.GetExtensionsCode(SourceProvider.ExtensionsNamespace, SourceProvider.ExtensionsClass) : null);
 
         [Fact]
-        public Task NotCountEqualsZero_NoDiagnostic()
+        public Task NotCountEqualsZero_NoDiagnosticAsync()
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -1377,7 +1376,7 @@ End Namespace
                     SourceProvider.IsAsync ? SourceProvider.GetExtensionsCode(SourceProvider.ExtensionsNamespace, SourceProvider.ExtensionsClass) : null);
 
         [Fact]
-        public Task ZeroEqualsNotCount_NoDiagnostic()
+        public Task ZeroEqualsNotCount_NoDiagnosticAsync()
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -1388,7 +1387,7 @@ End Namespace
 
         [Theory]
         [MemberData(nameof(LeftCount_Diagnostic_TheoryData))]
-        public Task LeftNotCountComparison_NoDiagnostic(BinaryOperatorKind @operator, int value)
+        public Task LeftNotCountComparison_NoDiagnosticAsync(BinaryOperatorKind @operator, int value)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -1399,7 +1398,7 @@ End Namespace
 
         [Theory]
         [MemberData(nameof(RightCount_Diagnostic_TheoryData))]
-        public Task RightNotCountComparison_NoDiagnostic(int value, BinaryOperatorKind @operator)
+        public Task RightNotCountComparison_NoDiagnosticAsync(int value, BinaryOperatorKind @operator)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -1409,7 +1408,7 @@ End Namespace
                     SourceProvider.IsAsync ? SourceProvider.GetExtensionsCode(SourceProvider.ExtensionsNamespace, SourceProvider.ExtensionsClass) : null);
 
         [Fact]
-        public Task LeftCountNotComparison_NoDiagnostic()
+        public Task LeftCountNotComparison_NoDiagnosticAsync()
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -1419,7 +1418,7 @@ End Namespace
                     SourceProvider.IsAsync ? SourceProvider.GetExtensionsCode(SourceProvider.ExtensionsNamespace, SourceProvider.ExtensionsClass) : null);
 
         [Fact]
-        public Task RightCountNotComparison_NoDiagnostic()
+        public Task RightCountNotComparison_NoDiagnosticAsync()
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -1430,7 +1429,7 @@ End Namespace
 
         [Theory]
         [MemberData(nameof(LeftCount_NoDiagnostic_Predicate_TheoryData))]
-        public Task LeftCountComparison_NoDiagnostic(BinaryOperatorKind @operator, int value, bool _)
+        public Task LeftCountComparison_NoDiagnosticAsync(BinaryOperatorKind @operator, int value, bool _)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -1441,7 +1440,7 @@ End Namespace
 
         [Theory]
         [MemberData(nameof(RightCount_NoDiagnostic_Predicate_TheoryData))]
-        public Task RightCountComparison_NoDiagnostic(int value, BinaryOperatorKind @operator, bool _)
+        public Task RightCountComparison_NoDiagnosticAsync(int value, BinaryOperatorKind @operator, bool _)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -1452,7 +1451,7 @@ End Namespace
 
         [Theory]
         [MemberData(nameof(LeftCount_Fixer_TheoryData))]
-        public Task LeftNotTargetCountComparison_NoDiagnostic(BinaryOperatorKind @operator, int value, bool _)
+        public Task LeftNotTargetCountComparison_NoDiagnosticAsync(BinaryOperatorKind @operator, int value, bool _)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -1463,7 +1462,7 @@ End Namespace
 
         [Theory]
         [MemberData(nameof(RightCount_Fixer_TheoryData))]
-        public Task RightNotTargetCountComparison_NoDiagnostic(int value, BinaryOperatorKind @operator, bool _)
+        public Task RightNotTargetCountComparison_NoDiagnosticAsync(int value, BinaryOperatorKind @operator, bool _)
             => this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
@@ -1474,7 +1473,7 @@ End Namespace
 
         [Theory]
         [MemberData(nameof(LeftCount_Fixer_Predicate_TheoryData))]
-        public Task LeftTargetCountComparison_Fixed(BinaryOperatorKind @operator, int value, bool _, bool negate)
+        public Task LeftTargetCountComparison_FixedAsync(BinaryOperatorKind @operator, int value, bool _, bool negate)
             => this.VerifyAsync(
                 methodName: this.SourceProvider.MemberName,
                 testSource:
@@ -1490,7 +1489,7 @@ End Namespace
 
         [Theory]
         [MemberData(nameof(RightCount_Fixer_Predicate_TheoryData))]
-        public Task RightTargetCountComparison_Fixed(int value, BinaryOperatorKind @operator, bool _, bool negate)
+        public Task RightTargetCountComparison_FixedAsync(int value, BinaryOperatorKind @operator, bool _, bool negate)
             => this.VerifyAsync(
                 methodName: this.SourceProvider.MemberName,
                 testSource:
@@ -1505,7 +1504,7 @@ End Namespace
                     SourceProvider.IsAsync ? SourceProvider.GetExtensionsCode(SourceProvider.ExtensionsNamespace, SourceProvider.ExtensionsClass) : null);
 
         [Fact]
-        public Task CountEqualsZero_Fixed()
+        public Task CountEqualsZero_FixedAsync()
             => this.VerifyAsync(
                 methodName: this.SourceProvider.MemberName,
                 testSource:
@@ -1520,7 +1519,7 @@ End Namespace
                     SourceProvider.IsAsync ? SourceProvider.GetExtensionsCode(SourceProvider.ExtensionsNamespace, SourceProvider.ExtensionsClass) : null);
 
         [Fact]
-        public Task ZeroEqualsCount_Fixed()
+        public Task ZeroEqualsCount_FixedAsync()
             => this.VerifyAsync(
                 methodName: this.SourceProvider.MemberName,
                 testSource:

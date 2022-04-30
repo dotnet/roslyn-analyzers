@@ -1,7 +1,8 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System.Linq;
 using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -10,16 +11,18 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
+    using static CodeAnalysisDiagnosticsResources;
+
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class CompareSymbolsCorrectlyAnalyzer : DiagnosticAnalyzer
     {
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
-        private static readonly LocalizableString s_localizableDescriptionGetHashCode = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyDescriptionGetHashCode), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(CompareSymbolsCorrectlyTitle));
+        private static readonly LocalizableString s_localizableMessage = CreateLocalizableResourceString(nameof(CompareSymbolsCorrectlyMessage));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(CompareSymbolsCorrectlyDescription));
 
         private static readonly string s_symbolTypeFullName = typeof(ISymbol).FullName;
         private const string s_symbolEqualsName = nameof(ISymbol.Equals);
+        private const string s_HashCodeCombineName = "Combine";
         public const string SymbolEqualityComparerName = "Microsoft.CodeAnalysis.SymbolEqualityComparer";
 
         public static readonly DiagnosticDescriptor EqualityRule = new(
@@ -30,7 +33,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: s_localizableDescription,
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
         public static readonly DiagnosticDescriptor GetHashCodeRule = new(
             DiagnosticIds.CompareSymbolsCorrectlyRuleId,
@@ -39,8 +42,8 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: s_localizableDescriptionGetHashCode,
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            description: CreateLocalizableResourceString(nameof(CompareSymbolsCorrectlyDescriptionGetHashCode)),
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
         public static readonly DiagnosticDescriptor CollectionRule = new(
             DiagnosticIds.CompareSymbolsCorrectlyRuleId,
@@ -50,9 +53,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: s_localizableDescription,
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(EqualityRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(EqualityRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -70,27 +73,29 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
                 // Check that the EqualityComparer exists and can be used, otherwise the Roslyn version
                 // being used it too low to need the change for method references
-                var symbolEqualityComparerType = compilation.GetOrCreateTypeByMetadataName(SymbolEqualityComparerName);
+                var hasSymbolEqualityComparer = UseSymbolEqualityComparer(compilation);
 
                 context.RegisterOperationAction(
                     context => HandleBinaryOperator(in context, symbolType),
                     OperationKind.BinaryOperator);
 
                 var equalityComparerMethods = GetEqualityComparerMethodsToCheck(compilation);
+                var systemHashCode = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemHashCode);
+                var iEqualityComparer = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEqualityComparer1);
 
                 context.RegisterOperationAction(
-                    context => HandleInvocationOperation(in context, symbolType, symbolEqualityComparerType, equalityComparerMethods),
+                    context => HandleInvocationOperation(in context, symbolType, hasSymbolEqualityComparer, equalityComparerMethods, systemHashCode, iEqualityComparer),
                     OperationKind.Invocation);
 
-                if (symbolEqualityComparerType != null)
+                if (hasSymbolEqualityComparer && iEqualityComparer is not null)
                 {
-                    var collectionTypesBuilder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+                    var collectionTypesBuilder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>(SymbolEqualityComparer.Default);
                     collectionTypesBuilder.AddIfNotNull(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericDictionary2));
                     collectionTypesBuilder.AddIfNotNull(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericHashSet1));
                     collectionTypesBuilder.AddIfNotNull(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsConcurrentConcurrentDictionary2));
 
                     context.RegisterOperationAction(
-                        context => HandleObjectCreation(in context, symbolType, symbolEqualityComparerType, collectionTypesBuilder.ToImmutable()),
+                        context => HandleObjectCreation(in context, symbolType, iEqualityComparer, collectionTypesBuilder.ToImmutable()),
                         OperationKind.ObjectCreation);
                 }
             });
@@ -123,12 +128,10 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 return;
             }
 
-            if (binary.Language == LanguageNames.VisualBasic)
+            if (binary.Language == LanguageNames.VisualBasic
+                && (IsSymbolClassType(binary.LeftOperand) || IsSymbolClassType(binary.RightOperand)))
             {
-                if (IsSymbolClassType(binary.LeftOperand) || IsSymbolClassType(binary.RightOperand))
-                {
-                    return;
-                }
+                return;
             }
 
             if (IsExplicitCastToObject(binary.LeftOperand) || IsExplicitCastToObject(binary.RightOperand))
@@ -139,8 +142,13 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             context.ReportDiagnostic(binary.Syntax.GetLocation().CreateDiagnostic(EqualityRule));
         }
 
-        private static void HandleInvocationOperation(in OperationAnalysisContext context, INamedTypeSymbol symbolType,
-            INamedTypeSymbol? symbolEqualityComparerType, ImmutableDictionary<string, ImmutableHashSet<INamedTypeSymbol>> equalityComparerMethods)
+        private static void HandleInvocationOperation(
+            in OperationAnalysisContext context,
+            INamedTypeSymbol symbolType,
+            bool hasSymbolEqualityComparer,
+            ImmutableDictionary<string, ImmutableHashSet<INamedTypeSymbol>> equalityComparerMethods,
+            INamedTypeSymbol? systemHashCodeType,
+            INamedTypeSymbol? iEqualityComparer)
         {
             var invocationOperation = (IInvocationOperation)context.Operation;
             var method = invocationOperation.TargetMethod;
@@ -148,14 +156,16 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             switch (method.Name)
             {
                 case WellKnownMemberNames.ObjectGetHashCode:
-                    if (IsNotInstanceInvocationOrNotOnSymbol(invocationOperation, symbolType))
+                    // This is a call for an instance of ISymbol.GetHashCode()
+                    // without the correct arguments
+                    if (IsSymbolType(invocationOperation.Instance, symbolType))
                     {
                         context.ReportDiagnostic(invocationOperation.CreateDiagnostic(GetHashCodeRule));
                     }
                     break;
 
                 case s_symbolEqualsName:
-                    if (symbolEqualityComparerType != null && IsNotInstanceInvocationOrNotOnSymbol(invocationOperation, symbolType))
+                    if (hasSymbolEqualityComparer && IsNotInstanceInvocationOrNotOnSymbol(invocationOperation, symbolType))
                     {
                         var parameters = invocationOperation.Arguments;
                         if (parameters.All(p => IsSymbolType(p.Value, symbolType)))
@@ -165,16 +175,25 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     }
                     break;
 
-                default:
-                    if (equalityComparerMethods.TryGetValue(method.Name, out var possibleMethodTypes))
+                case s_HashCodeCombineName:
+                    // A call System.HashCode.Combine(ISymbol) will do the wrong thing and should be avoided
+                    if (systemHashCodeType is not null &&
+                        invocationOperation.Instance is null &&
+                        systemHashCodeType.Equals(method.ContainingType, SymbolEqualityComparer.Default) &&
+                        invocationOperation.Arguments.Any(arg => IsSymbolType(arg.Value, symbolType)))
                     {
-                        if (symbolEqualityComparerType != null &&
-                            possibleMethodTypes.Contains(method.ContainingType.OriginalDefinition) &&
-                            HasFirstTypeArgumentSymbolType(method, symbolType) &&
-                            !invocationOperation.Arguments.Any(arg => IsSymbolType(arg.Value, symbolEqualityComparerType)))
-                        {
-                            context.ReportDiagnostic(invocationOperation.CreateDiagnostic(CollectionRule));
-                        }
+                        context.ReportDiagnostic(invocationOperation.CreateDiagnostic(GetHashCodeRule));
+                    }
+                    break;
+
+                default:
+                    if (equalityComparerMethods.TryGetValue(method.Name, out var possibleMethodTypes) &&
+                        hasSymbolEqualityComparer &&
+                        possibleMethodTypes.Contains(method.ContainingType.OriginalDefinition) &&
+                        IsBehavingOnSymbolType(method, symbolType) &&
+                        !invocationOperation.Arguments.Any(arg => IsSymbolType(arg.Value, iEqualityComparer)))
+                    {
+                        context.ReportDiagnostic(invocationOperation.CreateDiagnostic(CollectionRule));
                     }
                     break;
             }
@@ -182,7 +201,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             static bool IsNotInstanceInvocationOrNotOnSymbol(IInvocationOperation invocationOperation, INamedTypeSymbol symbolType)
                 => invocationOperation.Instance is null || IsSymbolType(invocationOperation.Instance, symbolType);
 
-            static bool HasFirstTypeArgumentSymbolType(IMethodSymbol? method, INamedTypeSymbol symbolType)
+            static bool IsBehavingOnSymbolType(IMethodSymbol? method, INamedTypeSymbol symbolType)
             {
                 if (method is null)
                 {
@@ -190,14 +209,20 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 }
                 else if (!method.TypeArguments.IsEmpty)
                 {
-                    return IsSymbolType(method.TypeArguments[0], symbolType);
+                    var destinationTypeIndex = method.TypeParameters
+                        .Select((type, index) => type.Name == "TKey" ? index : -1)
+                        .FirstOrDefault(x => x >= 0);
+
+                    Debug.Assert(destinationTypeIndex < method.TypeArguments.Length);
+
+                    return IsSymbolType(method.TypeArguments[destinationTypeIndex], symbolType);
                 }
                 else if (method.ReducedFrom != null && !method.ReducedFrom.TypeArguments.IsEmpty)
                 {
                     // We are in the case where the ReducedFrom has TypeArguments but the original method doesn't.
                     // This seems to happen only for VB.NET and the only workaround is to force the construction
                     // of the ReducedFrom.
-                    return HasFirstTypeArgumentSymbolType(method.GetConstructedReducedFrom(), symbolType);
+                    return IsBehavingOnSymbolType(method.GetConstructedReducedFrom(), symbolType);
                 }
                 else
                 {
@@ -207,7 +232,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         }
 
         private static void HandleObjectCreation(in OperationAnalysisContext context, INamedTypeSymbol symbolType,
-             INamedTypeSymbol symbolEqualityComparerType, ImmutableHashSet<INamedTypeSymbol> collectionTypes)
+             INamedTypeSymbol iEqualityComparerType, ImmutableHashSet<INamedTypeSymbol> collectionTypes)
         {
             var objectCreation = (IObjectCreationOperation)context.Operation;
 
@@ -215,15 +240,15 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 collectionTypes.Contains(createdType.OriginalDefinition) &&
                 !createdType.TypeArguments.IsEmpty &&
                 IsSymbolType(createdType.TypeArguments[0], symbolType) &&
-                !objectCreation.Arguments.Any(arg => IsSymbolType(arg.Value, symbolEqualityComparerType)))
+                !objectCreation.Arguments.Any(arg => IsSymbolType(arg.Value, iEqualityComparerType)))
             {
                 context.ReportDiagnostic(objectCreation.CreateDiagnostic(CollectionRule));
             }
         }
 
-        private static bool IsSymbolType(IOperation operation, INamedTypeSymbol symbolType)
+        private static bool IsSymbolType(IOperation? operation, INamedTypeSymbol? symbolType)
         {
-            if (operation.Type is object && IsSymbolType(operation.Type, symbolType))
+            if (operation?.Type is object && IsSymbolType(operation.Type.OriginalDefinition, symbolType))
             {
                 return true;
             }
@@ -236,35 +261,18 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             return false;
         }
 
-        private static bool IsSymbolType(ITypeSymbol typeSymbol, INamedTypeSymbol symbolType)
-        {
-            if (typeSymbol == null)
-            {
-                return false;
-            }
-
-            if (typeSymbol.Equals(symbolType))
-            {
-                return true;
-            }
-
-            if (typeSymbol.AllInterfaces.Contains(symbolType))
-            {
-                return true;
-            }
-
-            return false;
-        }
+        private static bool IsSymbolType(ITypeSymbol typeSymbol, INamedTypeSymbol? symbolType)
+            => typeSymbol != null
+                && (SymbolEqualityComparer.Default.Equals(typeSymbol, symbolType)
+                    || typeSymbol.AllInterfaces.Contains(symbolType));
 
         private static bool IsSymbolClassType(IOperation operation)
         {
-            if (operation.Type is object)
+            if (operation.Type is object &&
+                operation.Type.TypeKind == TypeKind.Class &&
+                operation.Type.SpecialType != SpecialType.System_Object)
             {
-                if (operation.Type.TypeKind == TypeKind.Class
-                    && operation.Type.SpecialType != SpecialType.System_Object)
-                {
-                    return true;
-                }
+                return true;
             }
 
             if (operation is IConversionOperation conversion)
@@ -331,7 +339,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             {
                 if (!builder.ContainsKey(methodName))
                 {
-                    builder.Add(methodName, ImmutableHashSet.CreateBuilder<INamedTypeSymbol>());
+                    builder.Add(methodName, ImmutableHashSet.CreateBuilder<INamedTypeSymbol>(SymbolEqualityComparer.Default));
                 }
 
                 builder[methodName].Add(typeSymbol);

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 namespace GenerateDocumentationAndConfigFiles
 {
@@ -13,5 +13,6 @@ namespace GenerateDocumentationAndConfigFiles
         public const string CodeAnalysisAnalyzersPackageName = "Microsoft.CodeAnalysis.Analyzers";
         public const string PublicApiAnalyzersPackageName = "Microsoft.CodeAnalysis.PublicApiAnalyzers";
         public const string PerformanceSensitiveAnalyzersPackageName = "Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers";
+        public const string ResxSourceGeneratorPackageName = "Microsoft.CodeAnalysis.ResxSourceGenerator";
     }
 }

@@ -18,8 +18,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CompareSymbolsCorrectlyCodeFix">
-        <source>Compare symbols correctly</source>
-        <target state="translated">シンボルを正しく比較する</target>
+        <source>Use a 'SymbolEqualityComparer' for symbol comparison</source>
+        <target state="translated">シンボル比較に 'SymbolEqualityComparer' を使用する</target>
         <note />
       </trans-unit>
       <trans-unit id="CompareSymbolsCorrectlyDescription">
@@ -33,13 +33,13 @@
         <note />
       </trans-unit>
       <trans-unit id="CompareSymbolsCorrectlyMessage">
-        <source>Compare symbols correctly</source>
-        <target state="translated">シンボルを正しく比較する</target>
+        <source>Use 'SymbolEqualityComparer' when comparing symbols</source>
+        <target state="translated">シンボルを比較するときに 'SymbolEqualityComparer' を使用する</target>
         <note />
       </trans-unit>
       <trans-unit id="CompareSymbolsCorrectlyTitle">
-        <source>Compare symbols correctly</source>
-        <target state="translated">シンボルを正しく比較する</target>
+        <source>Symbols should be compared for equality</source>
+        <target state="translated">シンボルは等しいかどうかを比較する必要があります</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigureGeneratedCodeAnalysisFix">
@@ -133,8 +133,8 @@
         <note />
       </trans-unit>
       <trans-unit id="EnableAnalyzerReleaseTrackingRuleDescription">
-        <source>Enabling release tracking for analyzer packages helps in tracking and documenting the analyzer diagnostics that ship and/or change with each analyzer release. See details at https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md.</source>
-        <target state="translated">アナライザー パッケージのリリース追跡を有効にすると、各アナライザー リリースで配布または変更されるアナライザー診断の追跡とドキュメント化に役立ちます。詳細については、https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md をご覧ください。</target>
+        <source>Enabling release tracking for analyzer packages helps in tracking and documenting the analyzer diagnostics that ship and/or change with each analyzer release. See details at https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md.</source>
+        <target state="translated">アナライザー パッケージのリリース追跡を有効にすると、各アナライザー リリースで配布または変更されるアナライザー診断の追跡とドキュメント化に役立ちます。詳細については、https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md をご覧ください。</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableAnalyzerReleaseTrackingRuleMessage">
@@ -259,22 +259,22 @@
       </trans-unit>
       <trans-unit id="PreferIsKindDescription">
         <source>Prefer 'syntax.IsKind(kind)' to 'syntax.Kind() == kind' when checking syntax kinds. Code using 'IsKind' is slightly more efficient at runtime, so consistent use of this form where applicable helps improve performance in complex analysis scenarios.</source>
-        <target state="new">Prefer 'syntax.IsKind(kind)' to 'syntax.Kind() == kind' when checking syntax kinds. Code using 'IsKind' is slightly more efficient at runtime, so consistent use of this form where applicable helps improve performance in complex analysis scenarios.</target>
+        <target state="translated">構文の種類をチェックするときに 'syntax.Kind() == kind' よりも 'syntax.IsKind(kind)' を優先します。'IsKind' を使用するコードは実行時に多少効率がよくなるため、この形式 (存在する場合) を常に使用すると、複雑な分析シナリオのパフォーマンスが向上します。</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsKindFix">
         <source>Use 'IsKind' instead of 'Kind'</source>
-        <target state="new">Use 'IsKind' instead of 'Kind'</target>
+        <target state="translated">'Kind' ではなく 'IsKind' を使用する</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsKindMessage">
         <source>Prefer 'IsKind' for checking syntax kinds</source>
-        <target state="new">Prefer 'IsKind' for checking syntax kinds</target>
+        <target state="translated">構文の種類のチェックで 'IsKind' を優先します</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsKindTitle">
         <source>Prefer 'IsKind' for checking syntax kinds</source>
-        <target state="new">Prefer 'IsKind' for checking syntax kinds</target>
+        <target state="translated">構文の種類のチェックで 'IsKind' を優先する</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCustomTagsInDescriptorDescription">
@@ -556,8 +556,8 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetFixAllProviderDescription">
-        <source>A CodeFixProvider should provide FixAll support to enable users to fix multiple instances of the underlying diagnostic with a single code fix. See documentation at https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for further details.</source>
-        <target state="translated">CodeFixProvider はユーザーが基本となる診断の複数のインスタンスを 1 つのコード修正プログラムで修正できるようにするために、FixAll サポートを提供する必要があります。詳細については、https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md をご覧ください。</target>
+        <source>A CodeFixProvider should provide FixAll support to enable users to fix multiple instances of the underlying diagnostic with a single code fix. See documentation at https://github.com/dotnet/roslyn/blob/main/docs/analyzers/FixAllProvider.md for further details.</source>
+        <target state="translated">CodeFixProvider はユーザーが基本となる診断の複数のインスタンスを 1 つのコード修正プログラムで修正できるようにするために、FixAll サポートを提供する必要があります。詳細については、https://github.com/dotnet/roslyn/blob/main/docs/analyzers/FixAllProvider.md をご覧ください。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetFixAllProviderCodeFixTitle">

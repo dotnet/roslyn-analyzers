@@ -1,12 +1,12 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
@@ -14,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     public abstract class UseOrdinalStringComparisonFixerBase : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UseOrdinalStringComparisonAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(UseOrdinalStringComparisonAnalyzer.RuleId);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -28,8 +28,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 // StringComparison.CurrentCulture => StringComparison.Ordinal
                 // StringComparison.CurrentCultureIgnoreCase => StringComparison.OrdinalIgnoreCase
-                context.RegisterCodeFix(new MyCodeAction(title,
-                                                         async ct => await FixArgument(context.Document, syntaxGenerator, root, node).ConfigureAwait(false),
+                context.RegisterCodeFix(CodeAction.Create(title,
+                                                         async ct => await FixArgumentAsync(context.Document, syntaxGenerator, root, node).ConfigureAwait(false),
                                                          equivalenceKey: title),
                                         context.Diagnostics);
             }
@@ -37,18 +37,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 // string.Equals(a, b) => string.Equals(a, b, StringComparison.Ordinal)
                 // string.Compare(a, b) => string.Compare(a, b, StringComparison.Ordinal)
-                context.RegisterCodeFix(new MyCodeAction(title,
-                                                         async ct => await FixIdentifierName(context.Document, syntaxGenerator, root, node, context.CancellationToken).ConfigureAwait(false),
+                context.RegisterCodeFix(CodeAction.Create(title,
+                                                         async ct => await FixIdentifierNameAsync(context.Document, syntaxGenerator, root, node, context.CancellationToken).ConfigureAwait(false),
                                                          equivalenceKey: title),
                                         context.Diagnostics);
             }
         }
 
         protected abstract bool IsInArgumentContext(SyntaxNode node);
-        protected abstract Task<Document> FixArgument(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode argument);
+        protected abstract Task<Document> FixArgumentAsync(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode argument);
 
         protected abstract bool IsInIdentifierNameContext(SyntaxNode node);
-        protected abstract Task<Document> FixIdentifierName(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode identifier, CancellationToken cancellationToken);
+        protected abstract Task<Document> FixIdentifierNameAsync(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode identifier, CancellationToken cancellationToken);
 
         internal static SyntaxNode CreateOrdinalMemberAccess(SyntaxGenerator generator, SemanticModel model)
         {
@@ -99,15 +99,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             return false;
-        }
-
-        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
-        private class MyCodeAction : DocumentChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument, equivalenceKey)
-            {
-            }
         }
 
         public sealed override FixAllProvider GetFixAllProvider()

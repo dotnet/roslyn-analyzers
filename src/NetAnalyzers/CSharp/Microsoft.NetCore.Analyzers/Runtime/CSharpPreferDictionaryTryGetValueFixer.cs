@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.NetCore.Analyzers.Runtime;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
@@ -26,10 +27,10 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
 
             Document document = context.Document;
-            SyntaxNode root = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+            SyntaxNode root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
             var dictionaryAccess = root.FindNode(dictionaryAccessLocation.SourceSpan, getInnermostNodeForTie: true);
-            if (dictionaryAccess is not ElementAccessExpressionSyntax
+            if (dictionaryAccess is not ElementAccessExpressionSyntax accessExpression
                 || root.FindNode(context.Span) is not InvocationExpressionSyntax containsKeyInvocation
                 || containsKeyInvocation.Expression is not MemberAccessExpressionSyntax containsKeyAccess)
             {
@@ -45,7 +46,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 var keyArgument = containsKeyInvocation.ArgumentList.Arguments.FirstOrDefault();
 
                 var outArgument = generator.Argument(RefKind.Out,
-                    SyntaxFactory.DeclarationExpression(SyntaxFactory.IdentifierName("var"), SyntaxFactory.SingleVariableDesignation(SyntaxFactory.Identifier("value"))));
+                    DeclarationExpression(
+                        IdentifierName("var"),
+                        SingleVariableDesignation(Identifier("value"))
+                        )
+                    );
                 var tryGetValueInvocation = generator.InvocationExpression(tryGetValueAccess, keyArgument, outArgument);
                 editor.ReplaceNode(containsKeyInvocation, tryGetValueInvocation);
 

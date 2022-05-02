@@ -265,7 +265,7 @@ End Namespace";
 
         private const string VbDictionaryContainsKeyPrintValue = @"
             Dim key As String = ""key""
-            Dim data As Dictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+            Dim data As Dictionary(Of String, Guid) = New Dictionary(Of String, Guid)()
 
             If {|#0:data.ContainsKey(key)|} Then
                 Console.WriteLine({|#1:data(key)|})
@@ -275,9 +275,9 @@ End Namespace";
 
         private const string VbDictionaryContainsKeyPrintValueFixed = @"
             Dim key As String = ""key""
-            Dim data As Dictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
-            
-            Dim value = Nothing
+            Dim data As Dictionary(Of String, Guid) = New Dictionary(Of String, Guid)()
+
+            Dim value As Guid
             If data.TryGetValue(key, value) Then
                 Console.WriteLine(value)
             End If
@@ -288,8 +288,8 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As ConcurrentDictionary(Of String, Integer) = New ConcurrentDictionary(Of String, Integer)()
 
-            If data.ContainsKey(key) Then
-                Return data(key)
+            If {|#0:data.ContainsKey(key)|} Then
+                Return {|#1:data(key)|}
             End If
 
             Return 0";
@@ -297,11 +297,11 @@ End Namespace";
         private const string VbDictionaryContainsKeyReturnValueFixed = @"
             Dim key As String = ""key""
             Dim data As ConcurrentDictionary(Of String, Integer) = New ConcurrentDictionary(Of String, Integer)()
-            
-            Dim value = Nothing
+
+            Dim value As Integer
             If data.TryGetValue(key, value) Then
                 Return value
-            End If  
+            End If
 
             Return 0";
 
@@ -309,10 +309,10 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            If data.ContainsKey(key) Then
+            If {|#0:data.ContainsKey(key)|} Then
                 Console.WriteLine(2)
                 Dim x = 2
-                Console.WriteLine(data(key))
+                Console.WriteLine({|#1:data(key)|})
 
                 Return x
             End If
@@ -323,11 +323,12 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value = Nothing
+            Dim value As Integer
             If data.TryGetValue(key, value) Then
                 Console.WriteLine(2)
                 Dim x = 2
                 Console.WriteLine(value)
+
                 Return x
             End If
 
@@ -337,10 +338,10 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            If key = ""key"" AndAlso data.ContainsKey(key) Then
+            If key = ""key"" AndAlso {|#0:data.ContainsKey(key)|} Then
                 Console.WriteLine(2)
                 Dim x = 2
-                Console.WriteLine(data(key))
+                Console.WriteLine({|#1:data(key)|})
                 
                 Return x
             End If
@@ -350,8 +351,8 @@ End Namespace";
         private const string VbDictionaryContainsKeyMultipleConditionsFixed = @"
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
-            
-            Dim value = Nothing
+
+            Dim value As Integer
             If key = ""key"" AndAlso data.TryGetValue(key, value) Then
                 Console.WriteLine(2)
                 Dim x = 2
@@ -366,13 +367,13 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            If key = ""key"" AndAlso data.ContainsKey(key) Then
+            If key = ""key"" AndAlso {|#0:data.ContainsKey(key)|} Then
                 Console.WriteLine(2)
                 Dim x = 2
                 Dim wrapper = Function(i As Integer) As Integer
                     Return i
                 End Function
-                Console.WriteLine(wrapper(data(key)))
+                Console.WriteLine(wrapper({|#1:data(key)|}))
         
                 Return x
             End If
@@ -383,14 +384,14 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value = Nothing
+            Dim value As Integer
             If key = ""key"" AndAlso data.TryGetValue(key, value) Then
                 Console.WriteLine(2)
                 Dim x = 2
                 Dim wrapper = Function(i As Integer) As Integer
                     Return i
                 End Function
-                Console.WriteLine(Wrapper(value))
+                Console.WriteLine(wrapper(value))
         
                 Return x
             End If
@@ -400,14 +401,14 @@ End Namespace";
         private const string VbDictionaryContainsKeyTernary = @"
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
-            
-            Return If(data.ContainsKey(key), data(key), 2)";
+
+            Return If({|#0:data.ContainsKey(key)|}, {|#1:data(key)|}, 2)";
 
         private const string VbDictionaryContainsKeyTernaryFixed = @"
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
-            Dim value = Nothing
 
+            Dim value As Integer
             Return If(data.TryGetValue(key, value), value, 2)";
 
         #region NoDiagnostic
@@ -471,7 +472,7 @@ End Namespace";
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
                 ExpectedDiagnostics = { diagnostic }
             }.RunAsync();
         }
@@ -487,7 +488,7 @@ End Namespace";
             return new VerifyCS.Test
             {
                 TestCode = testCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
 
@@ -508,7 +509,7 @@ End Namespace";
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
                 ExpectedDiagnostics = { diagnostic }
             }.RunAsync();
         }
@@ -524,7 +525,7 @@ End Namespace";
             return new VerifyVB.Test
             {
                 TestCode = testCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
 

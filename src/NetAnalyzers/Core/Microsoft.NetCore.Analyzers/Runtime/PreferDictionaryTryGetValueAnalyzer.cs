@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PreferDictionaryTryGetValueAnalyzer : DiagnosticAnalyzer
     {
-        public const string RuleId = "CA1839";
+        public const string RuleId = "CA1854";
 
         private const string ContainsKeyMethodName = nameof(IDictionary<dynamic, dynamic>.ContainsKey);
         private const string IndexerName = "this[]";
@@ -30,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             s_localizableTitle,
             s_localizableTryGetValueMessage,
             DiagnosticCategory.Performance,
-            RuleLevel.BuildWarning,
+            RuleLevel.IdeSuggestion,
             s_localizableTryGetValueDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
@@ -44,15 +44,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.RegisterCompilationStartAction(OnCompilationStart);
         }
 
-        private void OnCompilationStart(CompilationStartAnalysisContext compilationContext)
+        private static void OnCompilationStart(CompilationStartAnalysisContext compilationContext)
         {
             var compilation = compilationContext.Compilation;
-
-            if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1, out _))
-                return;
             if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIDictionary2, out var dictionaryType))
-                return;
-            if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1, out _))
                 return;
 
             compilationContext.RegisterOperationAction(context => OnOperationAction(context, dictionaryType), OperationKind.PropertyReference);

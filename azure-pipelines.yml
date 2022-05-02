@@ -24,20 +24,27 @@ jobs:
         _configuration: Release
         _codeCoverage: False
   pool:
-    name: NetCorePublic-Pool
-    queue: BuildPool.Windows.10.Amd64.VS2019.Pre.Open
-  timeoutInMinutes: 40
+    name: NetCore1ESPool-Public
+    demands: ImageOverride -equals Build.Windows.Amd64.VS2022.Pre.Open
+  timeoutInMinutes: 120
 
   steps:
     - checkout: self
       clean: true
+    - pwsh: eng\scripts\Get-ProcDump.ps1
+      displayName: Get ProcDump
+    - pwsh: Write-Host "##vso[task.setvariable variable=PROCDUMP_PATH;]$(Build.SourcesDirectory)\.tools\procdump"
+      displayName: Set PROCDUMP_PATH Environment Variable
+    - pwsh: Write-Host "##vso[task.prependpath]$(Build.SourcesDirectory)\.tools\procdump"
+      displayName: Set PATH Environment Variable
+    - pwsh: Write-Host "##vso[task.setvariable variable=VSTEST_DUMP_FORCEPROCDUMP;]1"
+      displayName: Set VSTEST_DUMP_FORCEPROCDUMP Environment Variable
     - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine /p:Coverage=$(_codeCoverage)
       displayName: Build and Test
-
     - task: PublishTestResults@2
       inputs:
-        testRunner: XUnit
-        testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)\*.xml'
+        testRunner: VSTest
+        testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)\*.trx'
         mergeTestResults: true
         testRunTitle: 'Windows $(_configuration)'
       condition: always()
@@ -45,41 +52,19 @@ jobs:
       displayName: Upload coverage to codecov.io
       condition: and(succeeded(), eq(variables['_codeCoverage'], True))
     - task: PublishBuildArtifacts@1
-      displayName: Publish Logs
+      displayName: 'Publish Artifact: Logs'
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
-        ArtifactName: 'Windows $(_configuration)'
+        ArtifactName: 'Windows $(_configuration) Logs'
       continueOnError: true
-      condition: always()
-
-- job: Windows_Desktop_Spanish_Unit_Tests
-  strategy:
-    maxParallel: 4
-  pool:
-    name: NetCorePublic-Pool
-    queue: BuildPool.Windows.Amd64.VS2019.Pre.ES.Open
-  timeoutInMinutes: 40
-
-  steps:
-    - checkout: self
-      clean: true
-    - script: eng\common\cibuild.cmd -prepareMachine
-      displayName: Build and Test
-
-    - task: PublishTestResults@2
-      inputs:
-        testRunner: XUnit
-        testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\Debug\*.xml'
-        mergeTestResults: true
-        testRunTitle: 'Windows Desktop Spanish'
       condition: always()
     - task: PublishBuildArtifacts@1
-      displayName: Publish Logs
+      displayName: 'Publish Artifact: TestResults'
       inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\Debug'
-        ArtifactName: 'Windows Desktop Spanish'
+        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)'
+        ArtifactName: 'Windows $(_configuration) Test Logs'
       continueOnError: true
-      condition: not(succeeded())
+      condition: always()
 
 - job: Ubuntu
   strategy:
@@ -90,8 +75,8 @@ jobs:
       Release:
         _configuration: Release
   pool:
-    name: NetCorePublic-Pool
-    queue: BuildPool.Ubuntu.1804.amd64.Open
+    name: NetCore1ESPool-Public
+    demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
   timeoutInMinutes: 40
   steps:
     - checkout: self
@@ -101,8 +86,8 @@ jobs:
 
     - task: PublishTestResults@2
       inputs:
-        testRunner: XUnit
-        testResultsFiles: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_configuration)/*.xml'
+        testRunner: VSTest
+        testResultsFiles: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_configuration)/*.trx'
         mergeTestResults: true
         testRunTitle: 'Ubuntu $(_configuration)'
       condition: always()

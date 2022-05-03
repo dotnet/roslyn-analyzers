@@ -807,7 +807,128 @@
     "subCapability": "PullRequestResponder",
     "version": "1.0",
     "config": {
-      "taskName": "[Area Pod: Libraries Analyzers - PRs] Needs Champion",
+      "taskName": "[Area Pod: Libraries Analyzers - PRs] New PR Needs Champion",
+      "actions": [
+        {
+          "name": "addToProject",
+          "parameters": {
+            "projectName": "Area Pod: Libraries Analyzers - PRs",
+            "columnName": "Needs Champion",
+            "isOrgProject": true
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "pull_request"
+      ],
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "opened"
+            }
+          },
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "name": "hasLabel",
+                "parameters": {
+                  "label": "Area-Microsoft.NetCore.Analyzers"
+                }
+              }
+            ]
+          },
+          [
+            [
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isAssignedToUser",
+                    "parameters": {
+                      "user": "buyaa-n"
+                    }
+                  }
+                ]
+              },
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isActivitySender",
+                    "parameters": {
+                      "user": "buyaa-n"
+                    }
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isAssignedToUser",
+                    "parameters": {
+                      "user": "carlossanlop"
+                    }
+                  }
+                ]
+              },
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isActivitySender",
+                    "parameters": {
+                      "user": "carlossanlop"
+                    }
+                  }
+                ]
+              }
+            ]
+          ],
+          {
+            "operator": "or",
+            "operands": [
+              {
+                "operator": "not",
+                "operands": [
+                  {
+                    "name": "isInProject",
+                    "parameters": {
+                      "projectName": "Area Pod: Libraries Analyzers - PRs",
+                      "isOrgProject": true
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "isInProjectColumn",
+                "parameters": {
+                  "projectName": "Area Pod: Libraries Analyzers - PRs",
+                  "columnName": "Done",
+                  "isOrgProject": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "taskSource": "fabricbot-config",
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "[Area Pod: Libraries Analyzers - PRs] Updated PR Needs Champion",
       "actions": [
         {
           "name": "removeFromProject",
@@ -837,6 +958,17 @@
             "parameters": {}
           },
           {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isAction",
+                "parameters": {
+                  "action": "opened"
+                }
+              }
+            ]
+          },
+          {
             "operator": "or",
             "operands": [
               {
@@ -848,29 +980,24 @@
             ]
           },
           {
-            "operator": "and",
+            "operator": "not",
             "operands": [
               {
-                "operator": "not",
-                "operands": [
-                  {
-                    "name": "isAssignedToUser",
-                    "parameters": {
-                      "user": "buyaa-n"
-                    }
-                  }
-                ]
-              },
+                "name": "isAssignedToUser",
+                "parameters": {
+                  "user": "buyaa-n"
+                }
+              }
+            ]
+          },
+          {
+            "operator": "not",
+            "operands": [
               {
-                "operator": "not",
-                "operands": [
-                  {
-                    "name": "isAssignedToUser",
-                    "parameters": {
-                      "user": "carlossanlop"
-                    }
-                  }
-                ]
+                "name": "isAssignedToUser",
+                "parameters": {
+                  "user": "carlossanlop"
+                }
               }
             ]
           },
@@ -951,10 +1078,32 @@
             ]
           },
           {
-            "name": "isAssignedToUser",
-            "parameters": {
-              "user": "buyaa-n"
-            }
+            "operator": "or",
+            "operands": [
+              {
+                "name": "isAssignedToUser",
+                "parameters": {
+                  "user": "buyaa-n"
+                }
+              },
+              {
+                "operator": "and",
+                "operands": [
+                  {
+                    "name": "isAction",
+                    "parameters": {
+                      "action": "opened"
+                    }
+                  },
+                  {
+                    "name": "isActivitySender",
+                    "parameters": {
+                      "user": "buyaa-n"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           {
             "operator": "or",
@@ -1041,10 +1190,32 @@
             ]
           },
           {
-            "name": "isAssignedToUser",
-            "parameters": {
-              "user": "carlossanlop"
-            }
+            "operator": "or",
+            "operands": [
+              {
+                "name": "isAssignedToUser",
+                "parameters": {
+                  "user": "carlossanlop"
+                }
+              },
+              {
+                "operator": "and",
+                "operands": [
+                  {
+                    "name": "isAction",
+                    "parameters": {
+                      "action": "opened"
+                    }
+                  },
+                  {
+                    "name": "isActivitySender",
+                    "parameters": {
+                      "user": "carlossanlop"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           {
             "operator": "or",

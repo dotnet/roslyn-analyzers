@@ -105,7 +105,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static bool IsDictionaryAccess(IPropertyReferenceOperation propertyReference, INamedTypeSymbol dictionaryType)
         {
             return propertyReference.Property.IsIndexer && IsDictionaryType(propertyReference.Property.ContainingType, dictionaryType) &&
-                   (propertyReference.Property.OriginalDefinition.Name == IndexerName || propertyReference.Language == "Visual Basic" && propertyReference.Property.OriginalDefinition.Name == IndexerNameVb);
+                   (propertyReference.Property.OriginalDefinition.Name == IndexerName || propertyReference.Language == LanguageNames.VisualBasic && propertyReference.Property.OriginalDefinition.Name == IndexerNameVb);
         }
 
         private static bool TryGetParentConditionalOperation(IOperation derivedOperation, [NotNullWhen(true)] out IConditionalOperation? conditionalOperation)

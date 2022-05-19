@@ -1548,6 +1548,18 @@ Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The fo
 |CodeFix|True|
 ---
 
+## [CA1854](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1854): Prefer the Dictionary's TryGetValue method
+
+Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' performs a null check under the hood, so using 'TryGetValue' removes the extra lookup.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA2000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
 
 If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.

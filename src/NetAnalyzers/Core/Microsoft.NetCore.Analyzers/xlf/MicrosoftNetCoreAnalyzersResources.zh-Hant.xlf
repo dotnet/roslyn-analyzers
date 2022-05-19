@@ -3008,13 +3008,13 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferDictionaryTryGetValueMessage">
-        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</source>
-        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</target>
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
+        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferDictionaryTryGetValueDescription">
-        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</source>
-        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</target>
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' performs a null check under the hood, so using 'TryGetValue' removes the extra lookup.</source>
+        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' performs a null check under the hood, so using 'TryGetValue' removes the extra lookup.</target>
         <note />
       </trans-unit>
     </body>

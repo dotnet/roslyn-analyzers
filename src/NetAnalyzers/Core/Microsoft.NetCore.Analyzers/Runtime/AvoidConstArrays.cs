@@ -51,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (context.Operation is IArrayCreationOperation arrayCreationOperation) // For arrays passed as arguments
                     {
                         argumentOperation = arrayCreationOperation.GetAncestor<IArgumentOperation>(OperationKind.Argument);
-                        if (argumentOperation is null)
+                        if (argumentOperation is null || argumentOperation.Parameter.IsParams)
                         {
                             return;
                         }

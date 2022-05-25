@@ -24,7 +24,7 @@ public class A
 {
     public void B()
     {
-        Console.WriteLine({|CA1853:new[]{ 1, 2, 3 }|});
+        Console.WriteLine({|CA1854:new[]{ 1, 2, 3 }|});
     }
 }
 ", @"
@@ -46,7 +46,7 @@ Imports System
 
 Public Class A
     Public Sub B()
-        Console.WriteLine({|CA1853:{1, 2, 3}|})
+        Console.WriteLine({|CA1854:{1, 2, 3}|})
     End Sub
 End Class
 ", @"
@@ -68,7 +68,7 @@ public class A
 {
     public void B()
     {
-        Console.WriteLine({|CA1853:new int[]{ 1, 2, 3 }|});
+        Console.WriteLine({|CA1854:new int[]{ 1, 2, 3 }|});
     }
 }
 ", @"
@@ -90,7 +90,7 @@ Imports System
 
 Public Class A
     Public Sub B()
-        Console.WriteLine({|CA1853:New Integer() {1, 2, 3}|})
+        Console.WriteLine({|CA1854:New Integer() {1, 2, 3}|})
     End Sub
 End Class
 ", @"
@@ -112,7 +112,7 @@ public class A
 {
     public void B()
     {
-        Console.WriteLine(string.Join("" "", {|CA1853:new[] { ""Cake"", ""is"", ""good"" }|}));
+        Console.WriteLine(string.Join("" "", {|CA1854:new[] { ""Cake"", ""is"", ""good"" }|}));
     }
 }
 ", @"
@@ -134,7 +134,7 @@ Imports System
 
 Public Class A
     Public Sub B()
-        Console.WriteLine(String.Join("" ""c, {|CA1853:{""Cake"", ""is"", ""good""}|}))
+        Console.WriteLine(String.Join("" ""c, {|CA1854:{""Cake"", ""is"", ""good""}|}))
     End Sub
 End Class
 ", @"
@@ -156,7 +156,7 @@ public class A
 {
     public void B()
     {
-        Console.WriteLine(string.Join("" "", {|CA1853:new[] { ""a"", ""b"" }|} /* test comment */));
+        Console.WriteLine(string.Join("" "", {|CA1854:new[] { ""a"", ""b"" }|} /* test comment */));
     }
 }
 ", @"
@@ -183,7 +183,7 @@ public class A
     public void B()
     {
         var x = new string[] { ""a"", ""b"" };
-        var y = x.Select(z => {|CA1853:new[] { ""c"" }|});
+        var y = x.Select(z => {|CA1854:new[] { ""c"" }|});
     }
 }
 ", @"
@@ -212,7 +212,7 @@ public class A
     public void B()
     {
         var x = new string[] { ""a"", ""b"" };
-        var y = x.Select(z => {|CA1853:new[] { ""c"" }|}.First());
+        var y = x.Select(z => {|CA1854:new[] { ""c"" }|}.First());
     }
 }
 ", @"
@@ -240,7 +240,7 @@ public class A
 {
     public void B()
     {
-        string y = {|CA1853:new[] { ""a"", ""b"", ""c"" }|}.First();
+        string y = {|CA1854:new[] { ""a"", ""b"", ""c"" }|}.First();
         Console.WriteLine(y);
     }
 }
@@ -266,7 +266,7 @@ Imports System.Linq
 
 Public Class A
     Public Sub B()
-        Dim y As String = {|CA1853:{""a"", ""b"", ""c""}|}.First()
+        Dim y As String = {|CA1854:{""a"", ""b"", ""c""}|}.First()
         Console.WriteLine(y)
     End Sub
 End Class
@@ -297,7 +297,7 @@ public class A
 
     public void B()
     {
-        Console.WriteLine({|CA1853:new[]{ 1, 2, 3 }|});
+        Console.WriteLine({|CA1854:new[]{ 1, 2, 3 }|});
     }
 }
 ", @"
@@ -329,7 +329,7 @@ Public Class A
     Private Shared ReadOnly x As Integer = 1
 
     Public Sub B()
-        Console.WriteLine({|CA1853:{1, 2, 3}|})
+        Console.WriteLine({|CA1854:{1, 2, 3}|})
     End Sub
 End Class
 ", @"

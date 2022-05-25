@@ -439,6 +439,40 @@ public class A
     }
 }
 ");
+
+            // Params arguments
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class A
+{
+    public void B()
+    {
+        C(true, false);
+    }
+
+    private void C(params bool[] booleans)
+    {
+    }
+}
+");
+
+            // A params argument, even as a literal array
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class A
+{
+    public void B()
+    {
+        C(new bool[] { true, false });
+    }
+
+    private void C(params bool[] booleans)
+    {
+    }
+}
+");
         }
     }
 }

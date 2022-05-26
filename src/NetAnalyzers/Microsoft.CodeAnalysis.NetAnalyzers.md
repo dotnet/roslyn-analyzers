@@ -1539,7 +1539,6 @@ When a type is not accessible outside its assembly and has no subtypes within it
 ## [CA1853](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853): Unnecessary call to 'Dictionary.ContainsKey(key)'
 
 Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The former already checks whether the key exists, and will not throw if it does not.
->>>>>>> 04edea1ac503805a8d9a6959ec18e20bff506bb5
 
 |Item|Value|
 |-|-|

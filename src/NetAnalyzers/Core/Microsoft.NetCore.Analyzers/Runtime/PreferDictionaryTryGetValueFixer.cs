@@ -7,6 +7,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     public abstract class PreferDictionaryTryGetValueFixer : CodeFixProvider
     {
+        protected const string Var = "var";
+        protected const string Value = "value";
+        protected const string TryGetValue = nameof(TryGetValue);
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PreferDictionaryTryGetValueAnalyzer.RuleId);
 
         protected static string PreferDictionaryTryGetValueCodeFixTitle => MicrosoftNetCoreAnalyzersResources.PreferDictionaryTryGetValueCodeFixTitle;

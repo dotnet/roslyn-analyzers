@@ -39,10 +39,10 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                                       Dim editor = Await DocumentEditor.CreateAsync(document, ct).ConfigureAwait(False)
                                       Dim generator = editor.Generator
 
-                                      Dim tryGetValueAccess = generator.MemberAccessExpression(containsKeyAccess.Expression, "TryGetValue")
+                                      Dim tryGetValueAccess = generator.MemberAccessExpression(containsKeyAccess.Expression, TryGetValue)
                                       Dim keyArgument = containsKeyInvocation.ArgumentList.Arguments.FirstOrDefault()
-                                      Dim valueAssignment = generator.LocalDeclarationStatement(dictionaryValueType, "value").WithLeadingTrivia(SyntaxFactory.CarriageReturn).WithoutTrailingTrivia()
-                                      Dim tryGetValueInvocation = generator.InvocationExpression(tryGetValueAccess, keyArgument, generator.Argument(generator.IdentifierName("value")))
+                                      Dim valueAssignment = generator.LocalDeclarationStatement(dictionaryValueType, Value).WithLeadingTrivia(SyntaxFactory.CarriageReturn).WithoutTrailingTrivia()
+                                      Dim tryGetValueInvocation = generator.InvocationExpression(tryGetValueAccess, keyArgument, generator.Argument(generator.IdentifierName(Value)))
 
                                       Dim ifStatement As SyntaxNode = containsKeyAccess.AncestorsAndSelf().OfType(Of MultiLineIfBlockSyntax).FirstOrDefault()
                                       If ifStatement Is Nothing
@@ -56,7 +56,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
                                       editor.InsertBefore(ifStatement, valueAssignment)
                                       editor.ReplaceNode(containsKeyInvocation, tryGetValueInvocation)
-                                      editor.ReplaceNode(dictionaryAccess, generator.IdentifierName("value"))
+                                      editor.ReplaceNode(dictionaryAccess, generator.IdentifierName(Value))
 
                                       Return editor.GetChangedDocument()
                                   End Function

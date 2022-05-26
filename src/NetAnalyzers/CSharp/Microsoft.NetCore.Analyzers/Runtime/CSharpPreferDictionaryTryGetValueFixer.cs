@@ -29,9 +29,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             SyntaxNode root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
             var dictionaryAccess = root.FindNode(dictionaryAccessLocation.SourceSpan, getInnermostNodeForTie: true);
-            if (dictionaryAccess is not ElementAccessExpressionSyntax accessExpression
-                || root.FindNode(context.Span) is not InvocationExpressionSyntax containsKeyInvocation
-                || containsKeyInvocation.Expression is not MemberAccessExpressionSyntax containsKeyAccess)
+            if (dictionaryAccess is not ElementAccessExpressionSyntax
+                || root.FindNode(context.Span) is not InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax containsKeyAccess } containsKeyInvocation)
             {
                 return;
             }
@@ -41,19 +40,19 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 var editor = await DocumentEditor.CreateAsync(document, ct).ConfigureAwait(false);
                 var generator = editor.Generator;
 
-                var tryGetValueAccess = generator.MemberAccessExpression(containsKeyAccess.Expression, "TryGetValue");
+                var tryGetValueAccess = generator.MemberAccessExpression(containsKeyAccess.Expression, TryGetValue);
                 var keyArgument = containsKeyInvocation.ArgumentList.Arguments.FirstOrDefault();
 
                 var outArgument = generator.Argument(RefKind.Out,
                     DeclarationExpression(
-                        IdentifierName("var"),
-                        SingleVariableDesignation(Identifier("value"))
+                        IdentifierName(Var),
+                        SingleVariableDesignation(Identifier(Value))
                         )
                     );
                 var tryGetValueInvocation = generator.InvocationExpression(tryGetValueAccess, keyArgument, outArgument);
                 editor.ReplaceNode(containsKeyInvocation, tryGetValueInvocation);
 
-                editor.ReplaceNode(dictionaryAccess, generator.IdentifierName("value"));
+                editor.ReplaceNode(dictionaryAccess, generator.IdentifierName(Value));
 
                 return editor.GetChangedDocument();
             }, PreferDictionaryTryGetValueCodeFixTitle);

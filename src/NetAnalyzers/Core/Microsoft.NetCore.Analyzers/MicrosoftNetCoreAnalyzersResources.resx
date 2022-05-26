@@ -1940,6 +1940,6 @@
     <value>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</value>
   </data>
   <data name="PreferDictionaryTryGetValueDescription" xml:space="preserve">
-    <value>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' performs a null check under the hood, so using 'TryGetValue' removes the extra lookup.</value>
+    <value>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</value>
   </data>
 </root>

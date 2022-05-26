@@ -10,6 +10,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
+using static Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
+
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
@@ -17,13 +19,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         public const string RuleId = "CA1854";
 
-        private const string ContainsKeyMethodName = nameof(IDictionary<dynamic, dynamic>.ContainsKey);
         private const string IndexerName = "this[]";
         private const string IndexerNameVb = "Item";
+        private const string ContainsKey = nameof(IDictionary<dynamic, dynamic>.ContainsKey);
 
-        private static readonly LocalizableString s_localizableTitle = CreateResource(nameof(MicrosoftNetCoreAnalyzersResources.PreferDictionaryTryGetValueTitle));
-        private static readonly LocalizableString s_localizableTryGetValueMessage = CreateResource(nameof(MicrosoftNetCoreAnalyzersResources.PreferDictionaryTryGetValueMessage));
-        private static readonly LocalizableString s_localizableTryGetValueDescription = CreateResource(nameof(MicrosoftNetCoreAnalyzersResources.PreferDictionaryTryGetValueDescription));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(PreferDictionaryTryGetValueTitle));
+        private static readonly LocalizableString s_localizableTryGetValueMessage = CreateLocalizableResourceString(nameof(PreferDictionaryTryGetValueMessage));
+        private static readonly LocalizableString s_localizableTryGetValueDescription = CreateLocalizableResourceString(nameof(PreferDictionaryTryGetValueDescription));
 
         internal static readonly DiagnosticDescriptor ContainsKeyRule = DiagnosticDescriptorHelper.Create(
             RuleId,
@@ -47,20 +49,22 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static void OnCompilationStart(CompilationStartAnalysisContext compilationContext)
         {
             var compilation = compilationContext.Compilation;
-            if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIDictionary2, out var dictionaryType))
+            if (!TryGetDictionaryTypeAndMembers(compilation, out var iDictionaryType, out var containsKeySymbol, out var indexerSymbol))
+            {
                 return;
+            }
 
-            compilationContext.RegisterOperationAction(context => OnOperationAction(context, dictionaryType), OperationKind.PropertyReference);
+            compilationContext.RegisterOperationAction(context => OnOperationAction(context, iDictionaryType, containsKeySymbol, indexerSymbol), OperationKind.PropertyReference);
         }
 
-        private static void OnOperationAction(OperationAnalysisContext context, INamedTypeSymbol dictionaryType)
+        private static void OnOperationAction(OperationAnalysisContext context, INamedTypeSymbol dictionaryType, IMethodSymbol containsKeySymbol, IPropertySymbol indexerSymbol)
         {
             var propertyReference = (IPropertyReferenceOperation)context.Operation;
 
             if (propertyReference.Parent is IAssignmentOperation
-                || !IsDictionaryAccess(propertyReference, dictionaryType)
+                || !IsDictionaryAccess(propertyReference, dictionaryType, indexerSymbol)
                 || !TryGetParentConditionalOperation(propertyReference, out var conditionalOperation)
-                || !TryGetContainsKeyGuard(conditionalOperation, out var containsKeyInvocation))
+                || !TryGetContainsKeyGuard(conditionalOperation, containsKeySymbol, out var containsKeyInvocation))
             {
                 return;
             }
@@ -74,26 +78,46 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.ReportDiagnostic(Diagnostic.Create(ContainsKeyRule, containsKeyInvocation.Syntax.GetLocation(), additionalLocations));
         }
 
-        private static bool TryGetContainsKeyGuard(IConditionalOperation conditionalOperation, [NotNullWhen(true)] out IInvocationOperation? containsKeyInvocation)
+        private static bool TryGetDictionaryTypeAndMembers(Compilation compilation,
+            [NotNullWhen(true)] out INamedTypeSymbol? iDictionaryType,
+            [NotNullWhen(true)] out IMethodSymbol? containsKeySymbol,
+            [NotNullWhen(true)] out IPropertySymbol? indexerSymbol)
         {
-            containsKeyInvocation = conditionalOperation.Condition as IInvocationOperation ?? FindContainsKeyInvocation(conditionalOperation.Condition);
-            if (containsKeyInvocation is not null && containsKeyInvocation.TargetMethod.Name == ContainsKeyMethodName)
+            containsKeySymbol = null;
+            indexerSymbol = null;
+            if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIDictionary2, out iDictionaryType))
             {
-                return true;
+                return false;
             }
 
-            return false;
+            containsKeySymbol = iDictionaryType.GetMembers().FirstOrDefault(m => m.Name == ContainsKey) as IMethodSymbol;
+            indexerSymbol = iDictionaryType.GetMembers().FirstOrDefault(m => m.Name == IndexerName || m.Language == LanguageNames.VisualBasic && m.Name == IndexerNameVb) as IPropertySymbol;
+
+            return containsKeySymbol is not null && indexerSymbol is not null;
         }
 
-        private static IInvocationOperation? FindContainsKeyInvocation(IOperation baseOperation)
+        private static bool TryGetContainsKeyGuard(IConditionalOperation conditionalOperation, IMethodSymbol containsKeySymbol, [NotNullWhen(true)] out IInvocationOperation? containsKeyInvocation)
+        {
+            containsKeyInvocation = FindContainsKeyInvocation(conditionalOperation.Condition, containsKeySymbol);
+
+            return containsKeyInvocation is not null;
+        }
+
+        private static IInvocationOperation? FindContainsKeyInvocation(IOperation baseOperation, IMethodSymbol containsKeyMethod)
         {
             return baseOperation switch
             {
-                IInvocationOperation i when i.TargetMethod.Name == ContainsKeyMethodName => i,
+                IInvocationOperation i when IsContainsKeyMethod(i.TargetMethod, containsKeyMethod) => i,
                 IBinaryOperation { OperatorKind: BinaryOperatorKind.ConditionalAnd or BinaryOperatorKind.ConditionalOr } b =>
-                    FindContainsKeyInvocation(b.LeftOperand) ?? FindContainsKeyInvocation(b.RightOperand),
+                    FindContainsKeyInvocation(b.LeftOperand, containsKeyMethod) ?? FindContainsKeyInvocation(b.RightOperand, containsKeyMethod),
                 _ => null
             };
+        }
+
+        private static bool IsContainsKeyMethod(IMethodSymbol suspectedContainsKeyMethod, IMethodSymbol containsKeyMethod)
+        {
+            return suspectedContainsKeyMethod.OriginalDefinition.Equals(containsKeyMethod, SymbolEqualityComparer.Default)
+                   || DoesSignatureMatch(suspectedContainsKeyMethod, containsKeyMethod);
         }
 
         private static bool DictionaryEntryIsModified(IPropertyReferenceOperation dictionaryAccess, IBlockOperation blockOperation)
@@ -102,10 +126,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 o.Operation is IAssignmentOperation { Target: IPropertyReferenceOperation reference } && reference.Property.Equals(dictionaryAccess.Property, SymbolEqualityComparer.Default));
         }
 
-        private static bool IsDictionaryAccess(IPropertyReferenceOperation propertyReference, INamedTypeSymbol dictionaryType)
+        private static bool IsDictionaryAccess(IPropertyReferenceOperation propertyReference, INamedTypeSymbol dictionaryType, IPropertySymbol indexer)
         {
-            return propertyReference.Property.IsIndexer && IsDictionaryType(propertyReference.Property.ContainingType, dictionaryType) &&
-                   (propertyReference.Property.OriginalDefinition.Name == IndexerName || propertyReference.Language == LanguageNames.VisualBasic && propertyReference.Property.OriginalDefinition.Name == IndexerNameVb);
+            return propertyReference.Property.IsIndexer
+                   && IsDictionaryType(propertyReference.Property.ContainingType, dictionaryType)
+                   && (propertyReference.Property.OriginalDefinition.Equals(indexer, SymbolEqualityComparer.Default)
+                       || DoesSignatureMatch(propertyReference.Property, indexer));
         }
 
         private static bool TryGetParentConditionalOperation(IOperation derivedOperation, [NotNullWhen(true)] out IConditionalOperation? conditionalOperation)
@@ -113,9 +139,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             conditionalOperation = null;
             do
             {
-                if (derivedOperation.Parent is IConditionalOperation c)
+                if (derivedOperation.Parent.Kind == OperationKind.Conditional)
                 {
-                    conditionalOperation = c;
+                    conditionalOperation = (IConditionalOperation)derivedOperation.Parent;
 
                     return true;
                 }
@@ -126,20 +152,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
-        private static bool IsDictionaryType(INamedTypeSymbol derived, ISymbol dictionaryType)
+        private static bool IsDictionaryType(INamedTypeSymbol suspectedDictionaryType, ISymbol iDictionaryType)
         {
-            var constructedDictionaryType = derived.GetBaseTypesAndThis()
-                .WhereAsArray(x => x.OriginalDefinition.Equals(dictionaryType, SymbolEqualityComparer.Default))
-                .SingleOrDefault() ?? derived.AllInterfaces
-                .WhereAsArray(x => x.OriginalDefinition.Equals(dictionaryType, SymbolEqualityComparer.Default))
-                .SingleOrDefault();
-
-            return constructedDictionaryType is not null;
+            // Either the type is the IDictionary it is a type which (indirectly) implements it.  
+            return suspectedDictionaryType.OriginalDefinition.Equals(iDictionaryType, SymbolEqualityComparer.Default)
+                   || suspectedDictionaryType.AllInterfaces.Any((@interface, dictionary) => @interface.OriginalDefinition.Equals(dictionary, SymbolEqualityComparer.Default), iDictionaryType);
         }
 
-        private static LocalizableString CreateResource(string resourceName)
+        // Unfortunately we can't do symbol comparison, since this won't work for i.e. a method in a ConcurrentDictionary comparing against the same method in the IDictionary.
+        private static bool DoesSignatureMatch(IMethodSymbol suspected, IMethodSymbol comparator)
         {
-            return new LocalizableResourceString(resourceName, MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+            return suspected.OriginalDefinition.ReturnType.Name == comparator.OriginalDefinition.ReturnType.Name
+                   && suspected.Name == comparator.Name
+                   && suspected.Parameters.Zip(comparator.Parameters, (p1, p2) => p1.OriginalDefinition.Type.Name == p2.OriginalDefinition.Type.Name).All(isParameterEqual => isParameterEqual);
+        }
+
+        private static bool DoesSignatureMatch(IPropertySymbol suspected, IPropertySymbol comparator)
+        {
+            return suspected.OriginalDefinition.Type.Name == comparator.OriginalDefinition.Type.Name
+                   && suspected.Name == comparator.Name
+                   && suspected.Parameters.Zip(comparator.Parameters, (p1, p2) => p1.OriginalDefinition.Type.Name == p2.OriginalDefinition.Type.Name).All(isParameterEqual => isParameterEqual);
         }
     }
 }

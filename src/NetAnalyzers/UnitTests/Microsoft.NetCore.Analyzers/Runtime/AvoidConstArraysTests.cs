@@ -14,9 +14,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class AvoidConstArraysTests
     {
         [Fact]
-        public async Task IdentifyConstArraysCS()
+        public async Task IdentifyConstArrays_ImplicitInitialization()
         {
-            // Implicit initialization check
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
@@ -41,7 +40,29 @@ public class A
 }
 ");
 
-            // Explicit initialization check
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine({|CA1854:{1, 2, 3}|})
+    End Sub
+End Class
+", @"
+Imports System
+
+Public Class A
+    Private Shared ReadOnly value As Integer() = {1, 2, 3}
+    Public Sub B()
+        Console.WriteLine(value)
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public async Task IdentifyConstArrays_ExplicitInitialization()
+        {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
@@ -66,7 +87,29 @@ public class A
 }
 ");
 
-            // Nested arguments
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine({|CA1854:New Integer() {1, 2, 3}|})
+    End Sub
+End Class
+", @"
+Imports System
+
+Public Class A
+    Private Shared ReadOnly value As Integer() = New Integer() {1, 2, 3}
+    Public Sub B()
+        Console.WriteLine(value)
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public async Task IdentifyConstArrays_NestedArgs()
+        {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
@@ -91,7 +134,29 @@ public class A
 }
 ");
 
-            // Trivia test, CS only
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine(String.Join("" ""c, {|CA1854:{""Cake"", ""is"", ""good""}|}))
+    End Sub
+End Class
+", @"
+Imports System
+
+Public Class A
+    Private Shared ReadOnly value As String() = {""Cake"", ""is"", ""good""}
+    Public Sub B()
+        Console.WriteLine(String.Join("" ""c, value))
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public async Task IdentifyConstArrays_TriviaTest()
+        {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
@@ -115,8 +180,11 @@ public class A
     }
 }
 ");
+        }
 
-            // A lambda with an array creation
+        [Fact]
+        public async Task IdentifyConstArrays_LambdaArrayCreation()
+        {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 using System.Linq;
@@ -144,8 +212,11 @@ public class A
     }
 }
 ");
+        }
 
-            // A lambda with an invoked array creation
+        [Fact]
+        public async Task IdentifyConstArrays_LambdaInvokedArrayCreation()
+        {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 using System.Linq;
@@ -173,8 +244,11 @@ public class A
     }
 }
 ");
+        }
 
-            // Extension method usage
+        [Fact]
+        public async Task IdentifyConstArrays_ExtensionMethod()
+        {
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 using System.Linq;
@@ -203,6 +277,33 @@ public class A
 }
 ");
 
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+Imports System.Linq
+
+Public Class A
+    Public Sub B()
+        Dim y As String = {|CA1854:{""a"", ""b"", ""c""}|}.First()
+        Console.WriteLine(y)
+    End Sub
+End Class
+", @"
+Imports System
+Imports System.Linq
+
+Public Class A
+    Private Shared ReadOnly stringArray As String() = {""a"", ""b"", ""c""}
+    Public Sub B()
+        Dim y As String = stringArray.First()
+        Console.WriteLine(y)
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public async Task IdentifyConstArrays_MemberExtractionTest()
+        {
             // Member extraction tests
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
@@ -238,96 +339,7 @@ public class A
     }
 }
 ");
-        }
 
-        [Fact]
-        public async Task IdentifyConstArraysVB()
-        {
-            // Implicit initialization check
-            await VerifyVB.VerifyCodeFixAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine({|CA1854:{1, 2, 3}|})
-    End Sub
-End Class
-", @"
-Imports System
-
-Public Class A
-    Private Shared ReadOnly value As Integer() = {1, 2, 3}
-    Public Sub B()
-        Console.WriteLine(value)
-    End Sub
-End Class
-");
-
-            // Explicit initialization check
-            await VerifyVB.VerifyCodeFixAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine({|CA1854:New Integer() {1, 2, 3}|})
-    End Sub
-End Class
-", @"
-Imports System
-
-Public Class A
-    Private Shared ReadOnly value As Integer() = New Integer() {1, 2, 3}
-    Public Sub B()
-        Console.WriteLine(value)
-    End Sub
-End Class
-");
-
-            // Nested arguments
-            await VerifyVB.VerifyCodeFixAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine(String.Join("" ""c, {|CA1854:{""Cake"", ""is"", ""good""}|}))
-    End Sub
-End Class
-", @"
-Imports System
-
-Public Class A
-    Private Shared ReadOnly value As String() = {""Cake"", ""is"", ""good""}
-    Public Sub B()
-        Console.WriteLine(String.Join("" ""c, value))
-    End Sub
-End Class
-");
-
-            // Extension method usage
-            await VerifyVB.VerifyCodeFixAsync(@"
-Imports System
-Imports System.Linq
-
-Public Class A
-    Public Sub B()
-        Dim y As String = {|CA1854:{""a"", ""b"", ""c""}|}.First()
-        Console.WriteLine(y)
-    End Sub
-End Class
-", @"
-Imports System
-Imports System.Linq
-
-Public Class A
-    Private Shared ReadOnly stringArray As String() = {""a"", ""b"", ""c""}
-    Public Sub B()
-        Dim y As String = stringArray.First()
-        Console.WriteLine(y)
-    End Sub
-End Class
-");
-
-            // Member extraction tests
             await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
@@ -359,7 +371,7 @@ End Class
         }
 
         [Fact]
-        public async Task IgnoreOtherArgs_NoDiagnosticCS()
+        public async Task IgnoreOtherArgs_NoDiagnostic()
         {
             // A string
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -372,6 +384,16 @@ public class A
         Console.WriteLine(""Lorem ipsum"");
     }
 }
+");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine(""Lorem ipsum"")
+    End Sub
+End Class
 ");
 
             // Test another type to be extra safe
@@ -387,6 +409,16 @@ public class A
 }
 ");
 
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine(123)
+    End Sub
+End Class
+");
+
             // Non-literal array
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -400,6 +432,22 @@ public class A
     }
 }
 ");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Dim str As String = ""Lorem ipsum""
+        Console.WriteLine({ str })
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public async Task IgnoreReadonlySpan_NoDiagnostic()
+        {
 
             // A ReadOnlySpan, which is already optimized
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -417,7 +465,11 @@ public class A
     }
 }
 ");
+        }
 
+        [Fact]
+        public async Task IgnoreParams_NoDiagnostic()
+        {
             // Params arguments
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -450,44 +502,6 @@ public class A
     {
     }
 }
-");
-        }
-
-        [Fact]
-        public async Task IgnoreOtherArgs_NoDiagnosticVB()
-        {
-            // A string
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine(""Lorem ipsum"")
-    End Sub
-End Class
-");
-
-            // Test another type to be extra safe
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine(123)
-    End Sub
-End Class
-");
-
-            // Non-literal array
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Dim str As String = ""Lorem ipsum""
-        Console.WriteLine({ str })
-    End Sub
-End Class
 ");
         }
     }

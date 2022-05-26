@@ -12,7 +12,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
         Inherits SpecifyCultureForToLowerAndToUpperAnalyzer
 
         Protected Overrides Function GetMethodNameLocation(node As SyntaxNode) As Location
-            Debug.Assert(node.IsKind(SyntaxKind.InvocationExpression) Or node.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+            Debug.Assert(node.IsKind(SyntaxKind.InvocationExpression) OrElse node.IsKind(SyntaxKind.SimpleMemberAccessExpression))
 
             If node.IsKind(SyntaxKind.InvocationExpression) Then
                 Dim invocation = DirectCast(node, InvocationExpressionSyntax)

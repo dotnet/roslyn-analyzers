@@ -1550,7 +1550,7 @@ Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The fo
 
 ## [CA1854](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1854): Avoid constant arrays as arguments
 
-Having a constant array passed as an argument is not ideally performant. Extract constant arrays as 'static readonly'.
+Constant arrays passed as arguments are not reused which implies a performance overhead. Consider extracting them to 'static readonly' fields to improve performance.
 
 |Item|Value|
 |-|-|

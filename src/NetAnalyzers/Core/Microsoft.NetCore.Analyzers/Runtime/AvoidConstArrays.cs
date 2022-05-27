@@ -40,18 +40,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.RegisterCompilationStartAction(context =>
             {
                 INamedTypeSymbol? readonlySpanType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1);
-                INamedTypeSymbol? functionType = context.Compilation.GetOrCreateTypeByMetadataName("System.Func`2");
+                INamedTypeSymbol? functionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemFunc2);
 
                 // Analyzes an argument operation
                 context.RegisterOperationAction(context =>
                 {
-                    bool isDirectlyInsideLambda = false;
                     IArgumentOperation? argumentOperation;
 
                     if (context.Operation is IArrayCreationOperation arrayCreationOperation) // For arrays passed as arguments
                     {
                         argumentOperation = arrayCreationOperation.GetAncestor<IArgumentOperation>(OperationKind.Argument);
-                        if (argumentOperation is null || argumentOperation.Parameter.IsParams)
+
+                        // If no argument, return
+                        // If argument is passed as a params array but isn't itself an array, return
+                        if (argumentOperation is null || (argumentOperation.Parameter.IsParams && arrayCreationOperation.IsImplicit))
                         {
                             return;
                         }
@@ -93,33 +95,38 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    if (argumentOperation is not null)
-                    {
-                        ITypeSymbol originalDefinition = argumentOperation.Parameter.Type.OriginalDefinition;
-
-                        // Can't be a ReadOnlySpan, as those are already optimized
-                        if (readonlySpanType is not null && originalDefinition.Equals(readonlySpanType))
-                        {
-                            return;
-                        }
-
-                        // Check if the parameter is a function so the name can be set to null
-                        // Otherwise, the parameter name doesn't reflect the array creation as well
-                        if (functionType is not null)
-                        {
-                            isDirectlyInsideLambda = originalDefinition.Equals(functionType);
-                        }
-                    }
-
                     // Must be literal array
                     if (arrayCreationOperation.Initializer.ElementValues.Any(x => x is not ILiteralOperation))
                     {
                         return;
                     }
 
+                    string? paramName = null;
+                    if (argumentOperation is not null)
+                    {
+                        ITypeSymbol originalDefinition = argumentOperation.Parameter.Type.OriginalDefinition;
+
+                        // Can't be a ReadOnlySpan, as those are already optimized
+                        if (SymbolEqualityComparer.Default.Equals(readonlySpanType, originalDefinition))
+                        {
+                            return;
+                        }
+
+                        // Check if the parameter is a function so the name can be set to null
+                        // Otherwise, the parameter name doesn't reflect the array creation as well
+                        bool isDirectlyInsideLambda = originalDefinition.Equals(functionType);
+
+                        // Parameter shouldn't have same containing type as the context, to prevent naming ambiguity
+                        // Ignore parameter name if we're inside a lambda function
+                        if (!isDirectlyInsideLambda && !argumentOperation.Parameter.ContainingType.Equals(context.ContainingSymbol.ContainingType))
+                        {
+                            paramName = argumentOperation.Parameter.Name;
+                        }
+                    }
+
                     Dictionary<string, string?> properties = new()
                     {
-                        { "paramName", isDirectlyInsideLambda ? null : argumentOperation?.Parameter?.Name }
+                        { "paramName", paramName }
                     };
 
                     context.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties.ToImmutableDictionary()));

@@ -43,23 +43,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysCodeFixTitle;
             context.RegisterCodeFix(CodeAction.Create(
                     title,
-                    async c => await ExtractConstArrayAsync(node, model, editor, generator, context.Diagnostics.First().Properties, c).ConfigureAwait(false),
+                    async c => await ExtractConstArrayAsync(root, node, model, editor, generator, context.Diagnostics.First().Properties, c).ConfigureAwait(false),
                     equivalenceKey: title),
                 context.Diagnostics);
         }
 
-        private static async Task<Document> ExtractConstArrayAsync(SyntaxNode node, SemanticModel model, DocumentEditor editor,
-            SyntaxGenerator generator, ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
+        private static Task<Document> ExtractConstArrayAsync(SyntaxNode root, SyntaxNode node, SemanticModel model, DocumentEditor editor,
+            SyntaxGenerator generator, ImmutableDictionary<string, string?> properties, CancellationToken cancellationToken)
         {
             IArrayCreationOperation arrayArgument = GetArrayCreationOperation(node, model, cancellationToken, out bool isInvoked);
-            IEnumerable<ISymbol> members = model.GetEnclosingSymbol(node.SpanStart, cancellationToken).ContainingType.GetMembers();
+            INamedTypeSymbol containingType = model.GetEnclosingSymbol(node.SpanStart, cancellationToken).ContainingType;
 
             // Get a valid member name for the extracted constant
-            string newMemberName = GetExtractedMemberName(
-                members.Where(x => x is IFieldSymbol).Select(x => x.Name),
-                properties["paramName"] ?? GetMemberNameFromType(arrayArgument));
+            string newMemberName = GetExtractedMemberName(containingType.MemberNames, properties["paramName"] ?? GetMemberNameFromType(arrayArgument));
 
-            // Get method containing the symbol that is being diagnosed.
+            // Get method containing the symbol that is being diagnosed
             IOperation? methodContext = arrayArgument.GetAncestor<IMethodBodyOperation>(OperationKind.MethodBody);
             methodContext ??= arrayArgument.GetAncestor<IBlockOperation>(OperationKind.Block); // VB methods have a different structure than CS methods
 
@@ -78,10 +76,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 newMember = newMember.FormatForExtraction(methodContext.Syntax);
             }
 
-            // Insert the new extracted member before the first member
-            SyntaxNode firstMemberNode = await members.First().DeclaringSyntaxReferences.First()
-                .GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
-            editor.InsertBefore(generator.GetDeclaration(firstMemberNode), newMember);
+            ISymbol lastFieldOrPropertSymbol = containingType.GetMembers().LastOrDefault(x => x is IFieldSymbol || x is IPropertySymbol);
+            if (lastFieldOrPropertSymbol is not null)
+            {
+                // Insert after fields or properties
+                SyntaxNode lastFieldOrPropertyNode = root.FindNode(lastFieldOrPropertSymbol.Locations.First().SourceSpan);
+                editor.InsertAfter(generator.GetDeclaration(lastFieldOrPropertyNode), newMember);
+            }
+            else
+            {
+                // No fields or properties, insert right before the containing method for simplicity
+                editor.InsertBefore(methodContext?.Syntax, newMember);
+            }
 
             // Replace argument with a reference to our new member
             SyntaxNode identifier = generator.IdentifierName(newMemberName);
@@ -91,12 +97,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
             else
             {
-                editor.ReplaceNode(node, generator.Argument(identifier)
-                    .WithTrailingTrivia(arrayArgument.Syntax.GetTrailingTrivia())); // add any extra trivia that was after the original argument
+                // add any extra trivia that was after the original argument
+                editor.ReplaceNode(node, generator.Argument(identifier).WithTrailingTrivia(arrayArgument.Syntax.GetTrailingTrivia()));
             }
 
             // Return changed document
-            return editor.GetChangedDocument();
+            return Task.FromResult(editor.GetChangedDocument());
         }
 
         private static IArrayCreationOperation GetArrayCreationOperation(SyntaxNode node, SemanticModel model, CancellationToken cancellationToken,
@@ -150,11 +156,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static Accessibility GetAccessibility(ISymbol? methodSymbol)
         {
-            if (methodSymbol is not null && Enum.TryParse(methodSymbol.GetResultantVisibility().ToString(), out Accessibility accessibility))
+            if (methodSymbol is not null)
             {
-                return accessibility == Accessibility.Public
-                    ? Accessibility.Private // public accessibility not wanted for fields
-                    : accessibility;
+                // If private or public, return private since public accessibility not wanted for fields by default
+                return methodSymbol.GetResultantVisibility() switch
+                {
+                    // Return internal if internal
+                    SymbolVisibility.Internal => Accessibility.Internal,
+                    _ => Accessibility.Private
+                };
             }
             return Accessibility.Private;
         }

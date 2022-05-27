@@ -1162,6 +1162,11 @@
         <target state="translated">Les paramètres by-ref nécessitent l’activation du marshaling d’exécution</target>
         <note />
       </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage">
+        <source>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</source>
+        <target state="new">Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageHResultSwapping">
         <source>HResult-swapping requires runtime marshalling to be enabled</source>
         <target state="translated">HResult-swapping nécessite l’activation du marshaling d’exécution</target>
@@ -2773,8 +2778,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseInvariantVersion">
-        <source>User an invariant version</source>
-        <target state="translated">Utilisateur avec une version invariante</target>
+        <source>Use an invariant version</source>
+        <target state="new">Use an invariant version</target>
         <note />
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiDescription">

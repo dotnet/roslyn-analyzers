@@ -306,8 +306,6 @@ End Class
         {
             // A params argument passed as an array of literals
             await VerifyCS.VerifyCodeFixAsync(@"
-using System;
-
 public class A
 {
     public void B()
@@ -320,8 +318,6 @@ public class A
     }
 }
 ", @"
-using System;
-
 public class A
 {
     private static readonly bool[] booleanArray = new bool[] { true, false };
@@ -336,6 +332,46 @@ public class A
     }
 }
 ");
+        }
+
+        [Fact]
+        public async Task IdentifyConstArrays_ParamsArrays()
+        {
+            // A params array of arrays
+            // Doubles as test for batch fix and two or more errors on same line
+            await new VerifyCS.Test()
+            {
+                TestCode = @"
+public class A
+{
+    public void B()
+    {
+        C({|CA1854:new bool[] { true, false }|}, {|CA1854:new bool[] { false, true }|});
+    }
+
+    private void C(params bool[][] booleans)
+    {
+    }
+}
+",
+                NumberOfFixAllIterations = 2,
+                FixedCode = @"
+public class A
+{
+    private static readonly bool[] booleanArray = new bool[] { true, false };
+    private static readonly bool[] booleanArray0 = new bool[] { false, true };
+
+    public void B()
+    {
+        C(booleanArray, booleanArray0);
+    }
+
+    private void C(params bool[][] booleans)
+    {
+    }
+}
+"
+            }.RunAsync();
         }
 
         [Fact]
@@ -508,8 +544,6 @@ public class A
         {
             // Params arguments
             await VerifyCS.VerifyAnalyzerAsync(@"
-using System;
-
 public class A
 {
     public void B()

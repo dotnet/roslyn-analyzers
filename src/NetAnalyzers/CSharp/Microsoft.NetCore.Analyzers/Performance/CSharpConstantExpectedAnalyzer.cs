@@ -13,8 +13,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     internal sealed class CSharpConstantExpectedAnalyzer : ConstantExpectedAnalyzer
     {
         private static readonly CSharpDiagnosticHelper s_diagnosticHelper = new();
-        private readonly IdentifierNameSyntax _constantExpectedIdentifier = (IdentifierNameSyntax)SyntaxFactory.ParseName(ConstantExpected);
-        private readonly IdentifierNameSyntax _constantExpectedAttributeIdentifier = (IdentifierNameSyntax)SyntaxFactory.ParseName(ConstantExpectedAttribute);
+        private static readonly IdentifierNameSyntax s_constantExpectedIdentifier = (IdentifierNameSyntax)SyntaxFactory.ParseName(ConstantExpected);
+        private static readonly IdentifierNameSyntax s_constantExpectedAttributeIdentifier = (IdentifierNameSyntax)SyntaxFactory.ParseName(ConstantExpectedAttribute);
 
         protected override DiagnosticHelper Helper => s_diagnosticHelper;
 
@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         private void OnAttributeNode(SyntaxNodeAnalysisContext context)
         {
             var attributeSyntax = (AttributeSyntax)context.Node;
-            if (!attributeSyntax.Name.IsEquivalentTo(_constantExpectedIdentifier) && !attributeSyntax.Name.IsEquivalentTo(_constantExpectedAttributeIdentifier))
+            if (!attributeSyntax.Name.IsEquivalentTo(s_constantExpectedIdentifier) && !attributeSyntax.Name.IsEquivalentTo(s_constantExpectedAttributeIdentifier))
             {
                 return;
             }

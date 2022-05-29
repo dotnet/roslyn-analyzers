@@ -159,6 +159,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     var baseParameter = baseParameters[i];
                     if (HasConstantExpectedAttributeData(baseParameter) && !HasConstantExpectedAttributeData(parameter))
                     {
+                        // mark the parameter including the type and name
                         var diagnostic = parameter.DeclaringSyntaxReferences[0].GetSyntax().CreateDiagnostic(CA1861.AttributeExpectedRule);
                         context.ReportDiagnostic(diagnostic);
                     }

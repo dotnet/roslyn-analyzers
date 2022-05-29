@@ -3003,8 +3003,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferDictionaryTryGetValueTitle">
-        <source>Prefer the Dictionary's TryGetValue method</source>
-        <target state="new">Prefer the Dictionary's TryGetValue method</target>
+        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue) method</source>
+        <target state="new">Prefer the 'IDictionary.TryGetValue(TKey, out TValue) method</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferDictionaryTryGetValueMessage">

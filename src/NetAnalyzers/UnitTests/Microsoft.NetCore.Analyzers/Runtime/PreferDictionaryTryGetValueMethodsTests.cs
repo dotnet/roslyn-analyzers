@@ -12,7 +12,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.PreferDictionaryTryGetValueAnalyzer,
     Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicPreferDictionaryTryGetValueFixer>;
 
-namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyzers.Runtime
+namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests
 {
     public class PreferDictionaryTryGetValueMethodsTests
     {

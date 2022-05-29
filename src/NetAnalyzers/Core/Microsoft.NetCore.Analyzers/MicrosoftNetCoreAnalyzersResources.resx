@@ -1934,7 +1934,7 @@
     <value>Use 'TryGetValue(TKey, out TValue)'</value>
   </data>
   <data name="PreferDictionaryTryGetValueTitle" xml:space="preserve">
-    <value>Prefer the Dictionary's TryGetValue method</value>
+    <value>Prefer the 'IDictionary.TryGetValue(TKey, out TValue) method</value>
   </data>
   <data name="PreferDictionaryTryGetValueMessage" xml:space="preserve">
     <value>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</value>

@@ -90,8 +90,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return false;
             }
 
-            containsKeySymbol = iDictionaryType.GetMembers().FirstOrDefault(m => m.Name == ContainsKey) as IMethodSymbol;
-            indexerSymbol = iDictionaryType.GetMembers().FirstOrDefault(m => m.Name == IndexerName || m.Language == LanguageNames.VisualBasic && m.Name == IndexerNameVb) as IPropertySymbol;
+            containsKeySymbol = iDictionaryType.GetMembers().OfType<IMethodSymbol>().FirstOrDefault(m => m.Name == ContainsKey);
+            indexerSymbol = iDictionaryType.GetMembers().OfType<IPropertySymbol>().FirstOrDefault(m => m.Name == IndexerName || m.Language == LanguageNames.VisualBasic && m.Name == IndexerNameVb);
 
             return containsKeySymbol is not null && indexerSymbol is not null;
         }
@@ -154,7 +154,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static bool IsDictionaryType(INamedTypeSymbol suspectedDictionaryType, ISymbol iDictionaryType)
         {
-            // Either the type is the IDictionary it is a type which (indirectly) implements it.  
+            // Either the type is the IDictionary it is a type which (indirectly) implements it.
             return suspectedDictionaryType.OriginalDefinition.Equals(iDictionaryType, SymbolEqualityComparer.Default)
                    || suspectedDictionaryType.AllInterfaces.Any((@interface, dictionary) => @interface.OriginalDefinition.Equals(dictionary, SymbolEqualityComparer.Default), iDictionaryType);
         }
@@ -162,16 +162,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         // Unfortunately we can't do symbol comparison, since this won't work for i.e. a method in a ConcurrentDictionary comparing against the same method in the IDictionary.
         private static bool DoesSignatureMatch(IMethodSymbol suspected, IMethodSymbol comparator)
         {
-            return suspected.OriginalDefinition.ReturnType.Name == comparator.OriginalDefinition.ReturnType.Name
+            return suspected.OriginalDefinition.ReturnType.Name == comparator.ReturnType.Name
                    && suspected.Name == comparator.Name
-                   && suspected.Parameters.Zip(comparator.Parameters, (p1, p2) => p1.OriginalDefinition.Type.Name == p2.OriginalDefinition.Type.Name).All(isParameterEqual => isParameterEqual);
+                   && suspected.Parameters.Length == comparator.Parameters.Length
+                   && suspected.Parameters.Zip(comparator.Parameters, (p1, p2) => p1.OriginalDefinition.Type.Name == p2.Type.Name).All(isParameterEqual => isParameterEqual);
         }
 
         private static bool DoesSignatureMatch(IPropertySymbol suspected, IPropertySymbol comparator)
         {
-            return suspected.OriginalDefinition.Type.Name == comparator.OriginalDefinition.Type.Name
+            return suspected.OriginalDefinition.Type.Name == comparator.Type.Name
                    && suspected.Name == comparator.Name
-                   && suspected.Parameters.Zip(comparator.Parameters, (p1, p2) => p1.OriginalDefinition.Type.Name == p2.OriginalDefinition.Type.Name).All(isParameterEqual => isParameterEqual);
+                   && suspected.Parameters.Length == comparator.Parameters.Length
+                   && suspected.Parameters.Zip(comparator.Parameters, (p1, p2) => p1.OriginalDefinition.Type.Name == p2.Type.Name).All(isParameterEqual => isParameterEqual);
         }
     }
 }

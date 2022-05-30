@@ -156,17 +156,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static Accessibility GetAccessibility(ISymbol? methodSymbol)
         {
-            if (methodSymbol is not null)
+            // If private or public, return private since public accessibility not wanted for fields by default
+            return methodSymbol?.GetResultantVisibility() switch
             {
-                // If private or public, return private since public accessibility not wanted for fields by default
-                return methodSymbol.GetResultantVisibility() switch
-                {
-                    // Return internal if internal
-                    SymbolVisibility.Internal => Accessibility.Internal,
-                    _ => Accessibility.Private
-                };
-            }
-            return Accessibility.Private;
+                // Return internal if internal
+                SymbolVisibility.Internal => Accessibility.Internal,
+                _ => Accessibility.Private
+            };
         }
     }
 

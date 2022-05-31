@@ -3,7 +3,6 @@
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.NetCore.Analyzers.Runtime;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.PreferDictionaryTryGetValueAnalyzer,
@@ -12,7 +11,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.PreferDictionaryTryGetValueAnalyzer,
     Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicPreferDictionaryTryGetValueFixer>;
 
-namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests
+namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class PreferDictionaryTryGetValueMethodsTests
     {

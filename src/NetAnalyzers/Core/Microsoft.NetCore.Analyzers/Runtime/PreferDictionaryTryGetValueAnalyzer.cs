@@ -139,9 +139,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             conditionalOperation = null;
             do
             {
-                if (derivedOperation.Parent.Kind == OperationKind.Conditional)
+                if (derivedOperation.Parent is IConditionalOperation conditional)
                 {
-                    conditionalOperation = (IConditionalOperation)derivedOperation.Parent;
+                    conditionalOperation = conditional;
 
                     return true;
                 }

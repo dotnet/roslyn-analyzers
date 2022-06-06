@@ -26,7 +26,7 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests
         [Fact]
         public void TestGlobalizationAnalyzersSubclassAbstractGlobalizationDiagnosticAnalyzer()
         {
-            // <repo_root>\artifacts\bin\Microsoft.CodeAnalysis.NetAnalyzers.UnitTests\Debug\netcoreapp3.1\Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.dll
+            // <repo_root>\artifacts\bin\Microsoft.CodeAnalysis.NetAnalyzers.UnitTests\Debug\net6.0\Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.dll
             var testsAssemblyPath = typeof(MiscellaneousAnalyzerTests).Assembly.Location;
 
             var directory = Path.GetDirectoryName(testsAssemblyPath);

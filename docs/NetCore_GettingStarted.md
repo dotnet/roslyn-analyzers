@@ -79,7 +79,7 @@
 2. Build `dotnet/roslyn-analyzers` in debug mode:
     - `Build.cmd -Configuration Debug`
 3. Run AnalyzerRunner from the Roslyn root directory to get the diagnostics.
-    - `.\artifacts\bin\AnalyzerRunner\Release\netcoreapp3.1\AnalyzerRunner.exe ..\roslyn-analyzers\artifacts\bin\Microsoft.NetCore.Analyzers.Package\Debug\netstandard2.0 .\Roslyn.sln /stats /concurrent /a AnalyzerNameToTest /log Output.txt`
+    - `.\artifacts\bin\AnalyzerRunner\Release\net6.0\AnalyzerRunner.exe ..\roslyn-analyzers\artifacts\bin\Microsoft.NetCore.Analyzers.Package\Debug\netstandard2.0 .\Roslyn.sln /stats /concurrent /a AnalyzerNameToTest /log Output.txt`
     - Do not forget change value after `/a` option with your testing analyzer name.
 The diagnostics reported by the analyzer will be listed in Output.txt.
 

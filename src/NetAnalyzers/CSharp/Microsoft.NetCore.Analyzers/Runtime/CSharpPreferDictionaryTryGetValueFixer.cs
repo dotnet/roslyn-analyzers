@@ -53,6 +53,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
                 var outArgument = generator.Argument(RefKind.Out,
                     DeclarationExpression(
+                        // Roslyn has reducers that are run after a code action is applied, one of which will
+                        // simplify a TypeSyntax to `var` if the user prefers that. So we generate TypeSyntax, add
+                        // simplifier annotation, and then let Roslyn decide whether to keep TypeSyntax or convert it to var.
                         (TypeSyntax)generator.TypeExpression(type).WithAdditionalAnnotations(Simplifier.Annotation),
                         SingleVariableDesignation(Identifier(Value))
                         )

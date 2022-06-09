@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Simplification;
 using Microsoft.NetCore.Analyzers.Runtime;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -35,6 +36,13 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 return;
             }
 
+            var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            if (model.GetTypeInfo(dictionaryAccess).Type is not { } type)
+            {
+                return;
+            }
+
+
             var action = CodeAction.Create(PreferDictionaryTryGetValueCodeFixTitle, async ct =>
             {
                 var editor = await DocumentEditor.CreateAsync(document, ct).ConfigureAwait(false);
@@ -45,7 +53,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
                 var outArgument = generator.Argument(RefKind.Out,
                     DeclarationExpression(
-                        IdentifierName(Var),
+                        (TypeSyntax)generator.TypeExpression(type).WithAdditionalAnnotations(Simplifier.Annotation),
                         SingleVariableDesignation(Identifier(Value))
                         )
                     );

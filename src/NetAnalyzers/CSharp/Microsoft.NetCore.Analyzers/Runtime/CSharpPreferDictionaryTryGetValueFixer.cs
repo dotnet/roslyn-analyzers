@@ -39,7 +39,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
 
             var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var type = model.GetTypeInfo(dictionaryAccess).Type;
+            var type = model.GetTypeInfo(dictionaryAccess, context.CancellationToken).Type;
 
             var action = CodeAction.Create(PreferDictionaryTryGetValueCodeFixTitle, async ct =>
             {

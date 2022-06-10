@@ -17,6 +17,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpPreferDictionaryTryGetValueFixer : PreferDictionaryTryGetValueFixer
     {
+        private const string Var = "var";
+
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var diagnostic = context.Diagnostics.FirstOrDefault();
@@ -37,11 +39,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
 
             var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            if (model.GetTypeInfo(dictionaryAccess).Type is not { } type)
-            {
-                return;
-            }
-
+            var type = model.GetTypeInfo(dictionaryAccess).Type;
 
             var action = CodeAction.Create(PreferDictionaryTryGetValueCodeFixTitle, async ct =>
             {
@@ -51,12 +49,15 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 var tryGetValueAccess = generator.MemberAccessExpression(containsKeyAccess.Expression, TryGetValue);
                 var keyArgument = containsKeyInvocation.ArgumentList.Arguments.FirstOrDefault();
 
+                // Roslyn has reducers that are run after a code action is applied, one of which will
+                // simplify a TypeSyntax to `var` if the user prefers that. So we generate TypeSyntax, add
+                // simplifier annotation, and then let Roslyn decide whether to keep TypeSyntax or convert it to var.
+                // If the type is unknown (null) (likely in error scenario), then fallback to using var.
+                var typeSyntax = type is null ? IdentifierName(Var) : (TypeSyntax)generator.TypeExpression(type).WithAdditionalAnnotations(Simplifier.Annotation);
+
                 var outArgument = generator.Argument(RefKind.Out,
                     DeclarationExpression(
-                        // Roslyn has reducers that are run after a code action is applied, one of which will
-                        // simplify a TypeSyntax to `var` if the user prefers that. So we generate TypeSyntax, add
-                        // simplifier annotation, and then let Roslyn decide whether to keep TypeSyntax or convert it to var.
-                        (TypeSyntax)generator.TypeExpression(type).WithAdditionalAnnotations(Simplifier.Annotation),
+                        typeSyntax,
                         SingleVariableDesignation(Identifier(Value))
                         )
                     );

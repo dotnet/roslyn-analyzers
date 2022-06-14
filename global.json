@@ -1,17 +1,17 @@
 {
   "tools": {
-    "dotnet": "6.0.105",
+    "dotnet": "6.0.106",
     "vs": {
       "version": "16.10"
     },
     "xcopy-msbuild": "16.10.0-preview2"
   },
   "sdk": {
-    "version": "6.0.105",
+    "version": "6.0.106",
     "allowPrerelease": true,
     "rollForward": "patch"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "6.0.0-beta.22261.7"
+    "Microsoft.DotNet.Arcade.Sdk": "6.0.0-beta.22314.7"
   }
 }

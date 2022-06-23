@@ -166,6 +166,20 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
             => _hasPredicatedGlobalState && forBlock.DominatesPredecessors(DataFlowAnalysisContext.ControlFlowGraph) ?
             GlobalFlowStateAnalysisDomainInstance.Intersect(value1, value2, GlobalFlowStateAnalysisValueSetDomain.Intersect) :
             GlobalFlowStateAnalysisDomainInstance.Merge(value1, value2);
+
+        protected sealed override GlobalFlowStateAnalysisData MergeAnalysisDataForBackEdge(GlobalFlowStateAnalysisData value1, GlobalFlowStateAnalysisData value2, BasicBlock forBlock)
+        {
+            // If we are merging analysis data for back edge, we have done at least one analysis pass for the block
+            // and should replace 'Unset' value with 'Empty' value for the next pass.
+            if (value1.TryGetValue(_globalEntity, out var value) && value == GlobalFlowStateAnalysisValueSet.Unset)
+                value1[_globalEntity] = GlobalFlowStateAnalysisValueSet.Empty;
+
+            if (value2.TryGetValue(_globalEntity, out value) && value == GlobalFlowStateAnalysisValueSet.Unset)
+                value2[_globalEntity] = GlobalFlowStateAnalysisValueSet.Empty;
+
+            return base.MergeAnalysisDataForBackEdge(value1, value2, forBlock);
+        }
+
         protected sealed override void UpdateValuesForAnalysisData(GlobalFlowStateAnalysisData targetAnalysisData)
             => UpdateValuesForAnalysisData(targetAnalysisData, CurrentAnalysisData);
         protected sealed override GlobalFlowStateAnalysisData GetClonedAnalysisData(GlobalFlowStateAnalysisData analysisData)

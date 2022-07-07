@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.NetCore.Analyzers.InteropServices;
+using Microsoft.NetCore.VisualBasic.Analyzers.InteropServices;
 using PerformanceTests.Utilities;
 using PerfUtilities;
 
@@ -60,7 +60,7 @@ End Namespace
 
             var (compilation, options) = VisualBasicCompilationHelper.CreateWithOptionsAsync(sources.ToArray(), properties).GetAwaiter().GetResult();
             BaselineCompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new EmptyAnalyzer()), options);
-            CompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new PlatformCompatibilityAnalyzer()), options);
+            CompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new BasicPlatformCompatibilityAnalyzer()), options);
         }
 
         private static CompilationWithAnalyzers BaselineCompilationWithAnalyzers;

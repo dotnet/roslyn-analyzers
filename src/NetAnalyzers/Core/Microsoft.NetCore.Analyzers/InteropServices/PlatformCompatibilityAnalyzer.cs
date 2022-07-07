@@ -297,7 +297,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             ITypeSymbol? notSupportedExceptionType,
             SmallDictionary<string, (string relatedPlatform, bool isSubset)> relatedPlatforms)
         {
-            if (!GeneratedCodeUtilities.IsNotGeneratedCodeOrRazorPage(context.OwningSymbol.Locations[0].SourceTree, IsSingleLineComment, context.CancellationToken))
+            if (GeneratedCodeUtilities.IsGeneratedFileAndHasNoRazorTypeAttribute(context.OwningSymbol.Locations[0].SourceTree, IsSingleLineComment, context.CancellationToken))
             {
                 return;
             }

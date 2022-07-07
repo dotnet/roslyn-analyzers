@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.NetCore.Analyzers.InteropServices;
+using Microsoft.NetCore.CSharp.Analyzers.InteropServices;
 using PerformanceTests.Utilities;
 using PerfUtilities;
 
@@ -96,7 +96,7 @@ namespace PlatformCompatDemo.SupportedUnupported
             };
             var (compilation, options) = CSharpCompilationHelper.CreateWithOptionsAsync(sources.ToArray(), properties).GetAwaiter().GetResult();
             BaselineCompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new EmptyAnalyzer()), options);
-            CompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new PlatformCompatibilityAnalyzer()), options);
+            CompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new CSharpPlatformCompatibilityAnalyzer()), options);
         }
 
         private static CompilationWithAnalyzers BaselineCompilationWithAnalyzers;

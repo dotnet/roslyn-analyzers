@@ -107,6 +107,25 @@
             ]
           }
         },
+        "CA1416": {
+          "id": "CA1416",
+          "shortDescription": "Validate platform compatibility",
+          "fullDescription": "Using platform dependent API on a component makes the code no longer work across all platforms.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416",
+          "properties": {
+            "category": "Interoperability",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpPlatformCompatibilityAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1507": {
           "id": "CA1507",
           "shortDescription": "Use nameof to express symbol names",
@@ -1585,26 +1604,6 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
-        "CA1416": {
-          "id": "CA1416",
-          "shortDescription": "Validate platform compatibility",
-          "fullDescription": "Using platform dependent API on a component makes the code no longer work across all platforms.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416",
-          "properties": {
-            "category": "Interoperability",
-            "isEnabledByDefault": true,
-            "typeName": "PlatformCompatibilityAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]
@@ -5831,6 +5830,25 @@
             "category": "Globalization",
             "isEnabledByDefault": true,
             "typeName": "BasicSpecifyCultureForToLowerAndToUpperAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1416": {
+          "id": "CA1416",
+          "shortDescription": "Validate platform compatibility",
+          "fullDescription": "Using platform dependent API on a component makes the code no longer work across all platforms.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416",
+          "properties": {
+            "category": "Interoperability",
+            "isEnabledByDefault": true,
+            "typeName": "BasicPlatformCompatibilityAnalyzer",
             "languages": [
               "Visual Basic"
             ],

@@ -133,6 +133,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
+            // Generated code analysis enabled in order to analyze razor shtml pages, we are filtering them in AnalyzeOperationBlock
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
             context.RegisterCompilationStartAction(context =>

@@ -1,12 +1,12 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpRethrowToPreserveStackDetailsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.RethrowToPreserveStackDetailsAnalyzer,
     Microsoft.CodeQuality.Analyzers.QualityGuidelines.RethrowToPreserveStackDetailsFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicRethrowToPreserveStackDetailsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.RethrowToPreserveStackDetailsAnalyzer,
     Microsoft.CodeQuality.Analyzers.QualityGuidelines.RethrowToPreserveStackDetailsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
@@ -14,9 +14,11 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
     public class RethrowToPreserveStackDetailsTests
     {
         [Fact]
-        public async Task TestCSharp_RethrowExplicitlyToThrowImplicitly()
+        public async Task TestCSharp_RethrowExplicitlyToThrowImplicitlyAsync()
         {
-            await VerifyCS.VerifyCodeFixAsync(@"
+            await VerifyCS.VerifyCodeFixAsync(
+#pragma warning disable RS0030 // Do not used banned APIs
+@"
 using System;
 
 class Program
@@ -38,6 +40,7 @@ class Program
         throw new ArithmeticException();
     }
 }", VerifyCS.Diagnostic().WithLocation(14, 13),
+#pragma warning restore RS0030 // Do not used banned APIs
 @"
 using System;
 
@@ -62,9 +65,11 @@ class Program
 }");
         }
         [Fact]
-        public async Task TestBasic_RethrowExplicitlyToThrowImplicitly()
+        public async Task TestBasic_RethrowExplicitlyToThrowImplicitlyAsync()
         {
-            await VerifyVB.VerifyCodeFixAsync(@"
+            await VerifyVB.VerifyCodeFixAsync(
+#pragma warning disable RS0030 // Do not used banned APIs
+@"
 Imports System
 Class Program
     Sub CatchAndRethrowExplicitly()
@@ -76,6 +81,7 @@ Class Program
     End Sub
 End Class
 ", VerifyVB.Diagnostic().WithLocation(8, 13),
+#pragma warning restore RS0030 // Do not used banned APIs
     @"
 Imports System
 Class Program

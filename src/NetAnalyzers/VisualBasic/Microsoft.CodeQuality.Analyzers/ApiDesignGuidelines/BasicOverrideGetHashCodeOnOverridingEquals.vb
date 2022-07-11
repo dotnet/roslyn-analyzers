@@ -1,11 +1,11 @@
-' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 Imports System.Collections.Immutable
 Imports Analyzer.Utilities
 Imports Analyzer.Utilities.Extensions
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.CodeQuality.Analyzers
+Imports Microsoft.CodeQuality.Analyzers.MicrosoftCodeQualityAnalyzersResources
 
 Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
     ''' <summary>
@@ -20,28 +20,23 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
 
         Friend Const RuleId As String = "CA2218"
 
-        Private Shared ReadOnly s_localizableTitle As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftCodeQualityAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, GetType(MicrosoftCodeQualityAnalyzersResources))
-
-        Private Shared ReadOnly s_localizableMessage As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftCodeQualityAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, GetType(MicrosoftCodeQualityAnalyzersResources))
-        Private Shared ReadOnly s_localizableDescription As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftCodeQualityAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, GetType(MicrosoftCodeQualityAnalyzersResources))
-
         Friend Shared Rule As DiagnosticDescriptor = DiagnosticDescriptorHelper.Create(
             RuleId,
-            s_localizableTitle,
-            s_localizableMessage,
+            CreateLocalizableResourceString(NameOf(OverrideGetHashCodeOnOverridingEqualsTitle)),
+            CreateLocalizableResourceString(NameOf(OverrideGetHashCodeOnOverridingEqualsMessage)),
             DiagnosticCategory.Usage,
             RuleLevel.IdeSuggestion,
-            s_localizableDescription,
+            CreateLocalizableResourceString(NameOf(OverrideGetHashCodeOnOverridingEqualsDescription)),
             isPortedFxCopRule:=True,
             isDataflowRule:=False)
 
         Public Overrides ReadOnly Property SupportedDiagnostics As ImmutableArray(Of DiagnosticDescriptor) = ImmutableArray.Create(Rule)
 
-        Public Overrides Sub Initialize(analysisContext As AnalysisContext)
-            analysisContext.EnableConcurrentExecution()
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None)
+        Public Overrides Sub Initialize(context As AnalysisContext)
+            context.EnableConcurrentExecution()
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None)
 
-            analysisContext.RegisterSymbolAction(
+            context.RegisterSymbolAction(
                 Sub(symbolContext)
                     Dim type = DirectCast(symbolContext.Symbol, INamedTypeSymbol)
                     Debug.Assert(type.IsDefinition)

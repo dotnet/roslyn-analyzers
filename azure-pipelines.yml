@@ -105,7 +105,7 @@ jobs:
   pool:
       vmImage: ubuntu-18.04
   steps:
-    - script: sudo npm install -g markdownlint-cli
+    - script: sudo npm install -g markdownlint-cli@0.31.1
       displayName: Install markdownlint-cli
     - script: markdownlint '**/*.md' -i 'docs/Analyzer reference page template.md' -i 'eng/common/**/*.md'
       displayName: Run markdownlint

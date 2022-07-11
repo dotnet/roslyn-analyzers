@@ -171,6 +171,7 @@ namespace ReleaseNotesUtil
             }
 
             string[] roslynAnalyzerPackages = new string[] {
+                "Microsoft.CodeAnalysis.NetAnalyzers",
                 "Microsoft.CodeQuality.Analyzers",
                 "Microsoft.NetCore.Analyzers",
                 "Microsoft.NetFramework.Analyzers",

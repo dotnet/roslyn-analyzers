@@ -1877,7 +1877,7 @@
     <value>Specify current culture</value>
   </data>
   <data name="UseInvariantVersion" xml:space="preserve">
-    <value>User an invariant version</value>
+    <value>Use an invariant version</value>
   </data>
   <data name="FeatureUnsupportedWhenRuntimeMarshallingDisabledDescription" xml:space="preserve">
     <value>Using features that require runtime marshalling when runtime marshalling is disabled will result in runtime exceptions.</value>
@@ -1929,5 +1929,20 @@
   </data>
   <data name="SealInternalTypesCodeFixTitle" xml:space="preserve">
     <value>Seal class</value>
+  </data>
+  <data name="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage" xml:space="preserve">
+    <value>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</value>
+  </data>
+  <data name="PreferDictionaryTryGetValueCodeFixTitle" xml:space="preserve">
+    <value>Use 'TryGetValue(TKey, out TValue)'</value>
+  </data>
+  <data name="PreferDictionaryTryGetValueTitle" xml:space="preserve">
+    <value>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</value>
+  </data>
+  <data name="PreferDictionaryTryGetValueMessage" xml:space="preserve">
+    <value>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</value>
+  </data>
+  <data name="PreferDictionaryTryGetValueDescription" xml:space="preserve">
+    <value>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</value>
   </data>
 </root>

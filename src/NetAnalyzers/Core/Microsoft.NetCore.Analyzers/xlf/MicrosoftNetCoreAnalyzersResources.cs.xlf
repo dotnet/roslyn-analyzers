@@ -1142,6 +1142,11 @@
         <target state="translated">Parametry By-ref vyžadují, aby bylo povoleno zařazování modulu runtime</target>
         <note />
       </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage">
+        <source>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</source>
+        <target state="translated">Delegáti se spravovanými typy jako parametry nebo návratovým typem vyžadují povolení zařazování modulu runtime v sestavení, kde je definován delegát.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageHResultSwapping">
         <source>HResult-swapping requires runtime marshalling to be enabled</source>
         <target state="translated">HResult-swapping vyžaduje, aby bylo povoleno zařazování modulu runtime</target>
@@ -2753,8 +2758,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseInvariantVersion">
-        <source>User an invariant version</source>
-        <target state="translated">Uživatel s neutrální verzí</target>
+        <source>Use an invariant version</source>
+        <target state="translated">Použít neutrální verzi</target>
         <note />
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiDescription">
@@ -2995,6 +3000,26 @@
       <trans-unit id="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder">
         <source>{3} '{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</source>
         <target state="translated">{3}{0} používá typ preview {1} a vyžaduje vyjádření výslovného souhlasu s funkcemi preview. Další informace najdete v {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="translated">Použít TryGetValue(TKey, out TValue)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
+        <target state="translated">Preferovat metodu IDictionary.TryGetValue(TKey, out TValue)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
+        <target state="translated">Upřednostňovat volání TryGetValue před přístupem indexeru slovníku chráněným kontrolou ContainsKey, aby se zabránilo dvojitému vyhledávání</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
+        <target state="translated">Upřednostňujte volání TryGetValue před přístupem indexeru slovníku chráněným kontrolou ContainsKey. ContainsKey i indexer by hledaly klíč na pozadí, takže použití TryGetValue odebere dodatečné vyhledávání.</target>
         <note />
       </trans-unit>
     </body>

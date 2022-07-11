@@ -1142,6 +1142,11 @@
         <target state="translated">Les paramètres by-ref nécessitent l’activation du marshaling d’exécution</target>
         <note />
       </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage">
+        <source>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</source>
+        <target state="translated">Les délégués dont les paramètres ou le type de retour sont des types gérés nécessitent l'activation du marshalling à l'exécution dans l'assembly où le délégué est défini.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageHResultSwapping">
         <source>HResult-swapping requires runtime marshalling to be enabled</source>
         <target state="translated">HResult-swapping nécessite l’activation du marshaling d’exécution</target>
@@ -2753,8 +2758,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseInvariantVersion">
-        <source>User an invariant version</source>
-        <target state="translated">Utilisateur avec une version invariante</target>
+        <source>Use an invariant version</source>
+        <target state="translated">Utiliser une version invariante</target>
         <note />
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiDescription">
@@ -2995,6 +3000,26 @@
       <trans-unit id="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder">
         <source>{3} '{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</source>
         <target state="translated">'{3}'{0} utilise le type de prévisualisation '{1}' et doit opter pour les fonctionnalités de prévisualisation. Voir {2}pour plus d'informations.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="translated">Utiliser « TryGetValue(TKey, out TValue) »</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
+        <target state="translated">Préférer la méthode 'IDictionary.TryGetValue(TKey, out TValue)'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
+        <target state="translated">Préférer un appel 'TryGetValue' à un accès à l’indexeur dictionary protégé par une vérification 'ContainsKey' pour éviter la double recherche.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
+        <target state="translated">Préférez un appel 'TryGetValue' à un accès à l’indexeur dictionary protégé par une vérification 'ContainsKey'. 'ContainsKey' et l’indexeur recherchent tous les deux la clé sous le capot. Par conséquent, l’utilisation de 'TryGetValue' supprime la recherche supplémentaire.</target>
         <note />
       </trans-unit>
     </body>

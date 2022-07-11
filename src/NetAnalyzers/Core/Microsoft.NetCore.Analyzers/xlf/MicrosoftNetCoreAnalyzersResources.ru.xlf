@@ -1142,6 +1142,11 @@
         <target state="translated">Для параметров by-ref требуется включение маршалирования среды выполнения</target>
         <note />
       </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage">
+        <source>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</source>
+        <target state="translated">Для делегатов с управляемыми типами в качестве параметров и с возвращаемыми типами требуется, чтобы в сборке, где определен делегат, был включен маршалинг среды выполнения.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageHResultSwapping">
         <source>HResult-swapping requires runtime marshalling to be enabled</source>
         <target state="translated">Для переключения HResult требуется включить маршалирование среды выполнения</target>
@@ -2753,8 +2758,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseInvariantVersion">
-        <source>User an invariant version</source>
-        <target state="translated">Использование инвариантной версии</target>
+        <source>Use an invariant version</source>
+        <target state="translated">Использовать инвариантную версию</target>
         <note />
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiDescription">
@@ -2995,6 +3000,26 @@
       <trans-unit id="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder">
         <source>{3} '{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</source>
         <target state="translated">"{0}" {3} использует предварительную версию типа "{1}", поэтому требуется согласие на использование предварительных версий функций. Дополнительные сведения см. в разделе {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="translated">Использовать "TryGetValue(TKey, out TValue)"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
+        <target state="translated">Предпочитать метод "IDictionary.TryGetValue(TKey, out TValue)"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
+        <target state="translated">Предпочитать вызов TryGetValue доступу к индексатору словаря, защищенного проверкой ContainsKey, чтобы избежать двойного поиска</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
+        <target state="translated">Предпочитать вызов TryGetValue"доступу к индексатору словаря, защищенного проверкой ContainsKey. Как ContainsKey, так и индексатор будут искать ключ в фоновом режиме, поэтому при использовании TryGetValue удаляется дополнительный поиск.</target>
         <note />
       </trans-unit>
     </body>

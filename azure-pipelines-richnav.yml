@@ -23,6 +23,6 @@ stages:
           steps:
           - checkout: self
             clean: true
-          - script: eng\common\CIBuild.cmd 
+          - script: eng\common\CIBuild.cmd
                       -configuration $(_BuildConfig)
             displayName: Build and Index

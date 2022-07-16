@@ -1560,9 +1560,9 @@ Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'Conta
 |CodeFix|True|
 ---
 
-## [CA1860](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Incorrect use of ConstantExpectedAttribute
+## [CA1860](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Incorrect usage of ConstantExpected attribute
 
-ConstantExpectedAttribute is not applied correctly on the paramter.
+ConstantExpectedAttribute is not applied correctly on the parameter.
 
 |Item|Value|
 |-|-|
@@ -1572,7 +1572,7 @@ ConstantExpectedAttribute is not applied correctly on the paramter.
 |CodeFix|False|
 ---
 
-## [CA1861](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Constant is expected for the parameter
+## [CA1861](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): A constant is expected for the parameter
 
 The parameter expects a constant for optimal performance.
 

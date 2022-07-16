@@ -700,7 +700,7 @@ public class Test
             var test = new VerifyCS.Test
             {
                 TestCode = source,
-                LanguageVersion = CSharp.LanguageVersion.Preview,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
             };
             // TODO: remove when the type is available
             test.TestState.Sources.Add(s_attributeSource);

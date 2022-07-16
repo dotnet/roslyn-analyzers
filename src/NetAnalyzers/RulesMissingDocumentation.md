@@ -7,7 +7,7 @@ CA1420 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA1421 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421> | This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied |
 CA1852 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1852> | Seal internal types |
 CA1853 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853> | Unnecessary call to 'Dictionary.ContainsKey(key)' |
-CA1860 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860> | Incorrect use of ConstantExpectedAttribute |
-CA1861 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861> | Constant is expected for the parameter |
+CA1860 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860> | Incorrect usage of ConstantExpected attribute |
+CA1861 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861> | A constant is expected for the parameter |
 CA2019 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019> | Improper 'ThreadStatic' field initialization |
 CA2259 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259> | 'ThreadStatic' only affects static fields |

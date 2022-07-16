@@ -287,8 +287,8 @@
         },
         "CA1860": {
           "id": "CA1860",
-          "shortDescription": "Incorrect use of ConstantExpectedAttribute",
-          "fullDescription": "ConstantExpectedAttribute is not applied correctly on the paramter.",
+          "shortDescription": "Incorrect usage of ConstantExpected attribute",
+          "fullDescription": "ConstantExpectedAttribute is not applied correctly on the parameter.",
           "defaultLevel": "error",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860",
           "properties": {
@@ -306,7 +306,7 @@
         },
         "CA1861": {
           "id": "CA1861",
-          "shortDescription": "Constant is expected for the parameter",
+          "shortDescription": "A constant is expected for the parameter",
           "fullDescription": "The parameter expects a constant for optimal performance.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861",

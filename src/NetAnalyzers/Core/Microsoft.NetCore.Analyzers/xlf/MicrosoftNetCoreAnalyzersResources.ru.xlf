@@ -183,18 +183,18 @@
         <note>Separator used for separating list of platform names: {API} is only supported on: {‘windows’, ‘browser’, ‘linux’}</note>
       </trans-unit>
       <trans-unit id="ConstantExpectedApplicationDescription">
-        <source>ConstantExpectedAttribute is not applied correctly on the paramter.</source>
-        <target state="new">ConstantExpectedAttribute is not applied correctly on the paramter.</target>
+        <source>ConstantExpectedAttribute is not applied correctly on the parameter.</source>
+        <target state="new">ConstantExpectedAttribute is not applied correctly on the parameter.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedApplicationTitle">
-        <source>Incorrect use of ConstantExpectedAttribute</source>
-        <target state="new">Incorrect use of ConstantExpectedAttribute</target>
+        <source>Incorrect usage of ConstantExpected attribute</source>
+        <target state="new">Incorrect usage of ConstantExpected attribute</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedAttributExpectedMessage">
-        <source>The ConstantExpectedAttribute expected for the parameter due to the interface/base method.</source>
-        <target state="new">The ConstantExpectedAttribute expected for the parameter due to the interface/base method.</target>
+        <source>The ConstantExpected attribute is required for the parameter due to the parent method annotation.</source>
+        <target state="new">The ConstantExpected attribute is required for the parameter due to the parent method annotation.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedIncompatibleConstantTypeMessage">
@@ -208,13 +208,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedInvalidMessage">
-        <source>The constant is not of the same '{0}' type as the parameter</source>
-        <target state="new">The constant is not of the same '{0}' type as the parameter</target>
+        <source>The constant is not of the same '{0}' type as the parameter.</source>
+        <target state="new">The constant is not of the same '{0}' type as the parameter.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedInvertedRangeMessage">
-        <source>The Min and Max value are inverted.</source>
-        <target state="new">The Min and Max value are inverted.</target>
+        <source>The Min and Max values are inverted.</source>
+        <target state="new">The Min and Max values are inverted.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedNotConstantMessage">
@@ -223,8 +223,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedNotSupportedMessage">
-        <source>The '{0}' parameter is not supported for ConstantExpectedAttribute.</source>
-        <target state="new">The '{0}' parameter is not supported for ConstantExpectedAttribute.</target>
+        <source>The '{0}' type is not supported for ConstantExpected attribute.</source>
+        <target state="new">The '{0}' type is not supported for ConstantExpected attribute.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedOutOfBoundsMessage">
@@ -238,8 +238,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedUsageTitle">
-        <source>Constant is expected for the parameter</source>
-        <target state="new">Constant is expected for the parameter</target>
+        <source>A constant is expected for the parameter</source>
+        <target state="new">A constant is expected for the parameter</target>
         <note />
       </trans-unit>
       <trans-unit id="DataSetDataTableInDeserializableObjectGraphMessage">

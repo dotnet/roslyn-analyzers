@@ -1204,7 +1204,7 @@
       </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage">
         <source>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</source>
-        <target state="new">Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</target>
+        <target state="translated">Pełnomocnicy z typami zarządzanymi jako parametrami lub zwracanym typem wymagają włączenia kierowania środowiska uruchomieniowego w zestawie, w którym zdefiniowano pełnomocnika.</target>
         <note />
       </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageHResultSwapping">
@@ -2482,6 +2482,11 @@
         <target state="translated">Zachowanie elementu „{0}” może być różne w zależności od bieżących ustawień regionalnych użytkownika. Zastąp to wywołanie w metodzie „{1}” wywołaniem metody „{2}”.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SpecifyIFormatProviderMessageIFormatProviderOptional">
+        <source>The behavior of '{0}' could vary based on the current user's locale settings. Provide a value for the 'IFormatProvider' argument.</source>
+        <target state="new">The behavior of '{0}' could vary based on the current user's locale settings. Provide a value for the 'IFormatProvider' argument.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SpecifyIFormatProviderMessageUICulture">
         <source>'{0}' passes '{1}' as the 'IFormatProvider' parameter to '{2}'. This property returns a culture that is inappropriate for formatting methods.</source>
         <target state="translated">Metoda „{0}” przekazuje wartość „{1}” jako parametr „IFormatProvider” do metody „{2}”. Ta właściwość zwraca kulturę nieodpowiednią dla metod formatujących.</target>
@@ -2819,7 +2824,7 @@
       </trans-unit>
       <trans-unit id="UseInvariantVersion">
         <source>Use an invariant version</source>
-        <target state="new">Use an invariant version</target>
+        <target state="translated">Użyj niezmiennej wersji</target>
         <note />
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiDescription">
@@ -3060,6 +3065,26 @@
       <trans-unit id="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder">
         <source>{3} '{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</source>
         <target state="translated">{3} „{0}” używa typu w wersji zapoznawczej „{1}” i wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="translated">Użyj polecenia „TryGetValue(TKey, out TValue)”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
+        <target state="translated">Preferuj metodę „IDictionary.TryGetValue(TKey, out TValue)”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
+        <target state="translated">Preferuj wywołanie „TryGetValue” względem dostępu indeksatora słownika chronionego przez kontrolę „ContainsKey”, aby uniknąć podwójnego wyszukiwania</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
+        <target state="translated">Preferuj wywołanie „TryGetValue” względem dostępu indeksatora słownika chronionego przez kontrolę „ContainsKey”. Element „ContainsKey” i indeksator wyszukają klucz pod maską, więc użycie polecenia „TryGetValue” spowoduje usunięcie dodatkowego wyszukiwania.</target>
         <note />
       </trans-unit>
     </body>

@@ -114,7 +114,7 @@ namespace ReleaseNotesUtil
         {
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(RuleFileContent));
             using FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-            return (RuleFileContent)serializer.ReadObject(fs);
+            return (RuleFileContent)serializer.ReadObject(fs)!;
         }
 
         private static void GenerateAddRemovedRulesDiffMarkdown(StringBuilder sb, string heading, IEnumerable<RuleInfo> rules)
@@ -171,6 +171,7 @@ namespace ReleaseNotesUtil
             }
 
             string[] roslynAnalyzerPackages = new string[] {
+                "Microsoft.CodeAnalysis.NetAnalyzers",
                 "Microsoft.CodeQuality.Analyzers",
                 "Microsoft.NetCore.Analyzers",
                 "Microsoft.NetFramework.Analyzers",

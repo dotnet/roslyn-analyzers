@@ -25,7 +25,7 @@ Please follow the below steps after publishing analyzer NuGet packages from this
 1. Checkout the sources for the release branch locally. This would normally be the main branch.
 2. Build.
 3. Ensure that nuget.exe is on path.
-4. Generate notes: Switch to the output directory, say `artifacts\bin\ReleaseNotesUtil\Debug\netcoreapp3.1` and execute `GenDiffNotes.cmd` to generate release notes.  Example command line for v2.9.4 to v2.9.5: `GenDiffNotes.cmd C:\scratch nuget.org 2.9.4 2.9.5`.
+4. Generate notes: Switch to the output directory, say `artifacts\bin\ReleaseNotesUtil\Debug\net6.0` and execute `GenDiffNotes.cmd` to generate release notes.  Example command line for v2.9.4 to v2.9.5: `GenDiffNotes.cmd C:\scratch nuget.org 2.9.4 2.9.5`.
 
 ## Followup items
 

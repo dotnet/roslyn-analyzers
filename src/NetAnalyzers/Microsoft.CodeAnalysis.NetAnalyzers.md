@@ -1548,6 +1548,18 @@ Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The fo
 |CodeFix|True|
 ---
 
+## [CA1854](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1854): Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method
+
+Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA1860](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Incorrect use of ConstantExpectedAttribute
 
 ConstantExpectedAttribute is not applied correctly on the paramter.

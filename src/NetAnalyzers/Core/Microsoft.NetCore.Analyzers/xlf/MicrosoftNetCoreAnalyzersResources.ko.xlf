@@ -1204,7 +1204,7 @@
       </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage">
         <source>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</source>
-        <target state="new">Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</target>
+        <target state="translated">관리되는 형식을 매개 변수로 사용하거나 반환 형식을 사용하는 대리자는 대리자가 정의된 어셈블리에서 런타임 마샬링을 사용하도록 설정해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageHResultSwapping">
@@ -2482,6 +2482,11 @@
         <target state="translated">'{0}'의 동작은 현재 사용자의 로캘 설정에 따라 다를 수 있습니다. '{1}'에서 이 호출을 '{2}'에 대한 호출로 바꾸세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SpecifyIFormatProviderMessageIFormatProviderOptional">
+        <source>The behavior of '{0}' could vary based on the current user's locale settings. Provide a value for the 'IFormatProvider' argument.</source>
+        <target state="new">The behavior of '{0}' could vary based on the current user's locale settings. Provide a value for the 'IFormatProvider' argument.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SpecifyIFormatProviderMessageUICulture">
         <source>'{0}' passes '{1}' as the 'IFormatProvider' parameter to '{2}'. This property returns a culture that is inappropriate for formatting methods.</source>
         <target state="translated">'{0}'에서는 '{1}'을(를) 'IFormatProvider' 매개 변수로 '{2}'에 전달합니다. 이 속성이 서식 지정 메서드에 적합하지 않은 문화권을 반환합니다.</target>
@@ -2819,7 +2824,7 @@
       </trans-unit>
       <trans-unit id="UseInvariantVersion">
         <source>Use an invariant version</source>
-        <target state="new">Use an invariant version</target>
+        <target state="translated">고정 버전 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiDescription">
@@ -3060,6 +3065,26 @@
       <trans-unit id="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder">
         <source>{3} '{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</source>
         <target state="translated">{3} '{0}'은(는) 미리 보기 유형 '{1}'을(를) 사용하며 미리 보기 기능을 선택해야 합니다. 자세한 내용은 {2}를 참조하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="translated">'TryGetValue(TKey, out TValue)' 사용</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
+        <target state="translated">'IDictionary.TryGetValue(TKey, out TValue)' 메서드 선호</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
+        <target state="translated">이중 조회 방지를 위해 'ContainsKey' 검사로 보호되는 사전 인덱서 액세스보다 'TryGetValue' 호출을 선호합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
+        <target state="translated">'ContainsKey' 검사로 보호되는 사전 인덱서 액세스보다 'TryGetValue' 호출을 선호합니다. 'ContainsKey'와 인덱서는 모두 내부 키를 조회하므로 'TryGetValue'를 사용하면 추가 조회가 제거됩니다.</target>
         <note />
       </trans-unit>
     </body>

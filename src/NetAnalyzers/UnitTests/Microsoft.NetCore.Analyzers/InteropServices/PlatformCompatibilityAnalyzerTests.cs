@@ -3840,7 +3840,38 @@ class TestType
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
-#if DEBUG
+        [Fact, WorkItem(6015, "https://github.com/dotnet/roslyn-analyzers/issues/6015")]
+        public async Task TestGuardedCheckInsideLoopWithIfAsync()
+        {
+            var source = @"
+using System;
+using System.Collections.Generic;
+using System.Runtime.Versioning;
+
+class C
+{
+    void M(IEnumerable<D> list)
+    {
+        foreach (var d in list)
+        {
+            if ([|d.Flag|]) // This call site is reachable on all platforms. 'C.D.Flag' is only supported on: 'Windows'.
+            {
+                if (OperatingSystem.IsWindows() && OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17763, 0))
+                {
+                }
+            }
+        }
+    }
+
+    [SupportedOSPlatform(""Windows"")]
+    private class D
+    {
+        public bool Flag { get; }
+    }
+}";
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
         [Fact]
         public async Task IosSupportedOnMacCatalystAsync()
         {
@@ -3906,7 +3937,7 @@ class TestType
         [|UnsupportsIos()|];            // This call site is reachable on: 'ios'. 'TestType.UnsupportsIos()' is unsupported on: 'ios'.
         UnsupportsMacCatalyst();    
     }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerCSAsync(source);
         }
@@ -3984,7 +4015,7 @@ class AllPlatforms
         [|SupportsIos.SupportsIOSNotMacCatalyst()|]; // This call site is unreachable on: 'ios'. 'SupportsIos.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
         [|SupportsIos.WorksOnMacCatalystNotIOS()|];  // This call site is reachable on all platforms. 'SupportsIos.WorksOnMacCatalystNotIOS()' is supported on: 'maccatalyst'.  
     }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerCSAsync(source);
         }
@@ -4024,7 +4055,7 @@ class TestType
 
     [SupportedOSPlatform(""ios12.0"")]
     static void SupportsIOS() { }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerCSAsync(source);
         }
@@ -4063,7 +4094,7 @@ class TestType
     
     [UnsupportedOSPlatform(""iOS"")]
     static void UnsupportsIos() { }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
@@ -4103,10 +4134,9 @@ class TestType
 
     [UnsupportedOSPlatform(""iOS12.0"")]
     static void UnsupportsIos() { }
-}" + MockApisCsSource;
+}";
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
-#endif
 
         private string GetFormattedString(string resource, params string[] args) =>
             string.Format(CultureInfo.InvariantCulture, resource, args);

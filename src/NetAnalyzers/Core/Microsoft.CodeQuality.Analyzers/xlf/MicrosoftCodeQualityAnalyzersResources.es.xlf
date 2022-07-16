@@ -247,6 +247,11 @@
         <target state="translated">Los eventos no deben tener el prefijo "Antes" ni "Después"</target>
         <note />
       </trans-unit>
+      <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageMultiple">
+        <source>Rename {0} to end in either '{1}' or '{2}'</source>
+        <target state="new">Rename {0} to end in either '{1}' or '{2}'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresCodeFixTitle">
         <source>Remove underscores</source>
         <target state="translated">Quitar caracteres de subrayado</target>
@@ -1227,11 +1232,6 @@
         <target state="translated">Cambie el nombre de {0} para que termine en "{1}".</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection">
-        <source>Rename {0} to end in either 'Collection' or '{1}'</source>
-        <target state="translated">Cambie el nombre de {0} para que termine en "Collection" o en "{1}".</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixTitle">
         <source>Identifiers should not have incorrect suffix</source>
         <target state="translated">Los identificadores no deben tener un sufijo incorrecto</target>
@@ -1743,9 +1743,9 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidUninstantiatedInternalClassesMessage">
-        <source>{0} is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</source>
-        <target state="translated">{0} es una clase interna de la que aparentemente nunca se crea una instancia. Si es así, quite el código del ensamblado. Si esta clase está destinada a contener solo miembros estáticos, conviértala en static (Shared en Visual Basic).</target>
-        <note />
+        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it 'static' (Module in Visual Basic).</source>
+        <target state="new">'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it 'static' (Module in Visual Basic).</target>
+        <note>{Locked="Module"}</note>
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsTitle">
         <source>Avoid unused private fields</source>

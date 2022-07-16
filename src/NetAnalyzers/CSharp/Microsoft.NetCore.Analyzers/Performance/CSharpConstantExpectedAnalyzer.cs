@@ -41,8 +41,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
         private sealed class CSharpDiagnosticHelper : DiagnosticHelper
         {
-            private readonly IdentifierNameSyntax _constantExpectedMinIdentifier = (IdentifierNameSyntax)SyntaxFactory.ParseName("Min");
-            private readonly IdentifierNameSyntax _constantExpectedMaxIdentifier = (IdentifierNameSyntax)SyntaxFactory.ParseName("Max");
+            private readonly IdentifierNameSyntax _constantExpectedMinIdentifier = (IdentifierNameSyntax)SyntaxFactory.ParseName(ConstantExpectedMin);
+            private readonly IdentifierNameSyntax _constantExpectedMaxIdentifier = (IdentifierNameSyntax)SyntaxFactory.ParseName(ConstantExpectedMax);
 
             public override Location? GetMaxLocation(SyntaxNode attributeNode) => GetArgumentLocation(attributeNode, _constantExpectedMaxIdentifier);
 

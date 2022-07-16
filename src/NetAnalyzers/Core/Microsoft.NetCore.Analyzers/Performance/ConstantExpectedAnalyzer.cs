@@ -17,6 +17,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
     {
         protected static readonly string ConstantExpectedAttribute = nameof(ConstantExpectedAttribute);
         protected static readonly string ConstantExpected = nameof(ConstantExpected);
+        protected const string ConstantExpectedMin = "Min";
+        protected const string ConstantExpectedMax = "Max";
         private static readonly LocalizableString s_localizableApplicationTitle = CreateLocalizableResourceString(nameof(ConstantExpectedApplicationTitle));
         private static readonly LocalizableString s_localizableApplicationDescription = CreateLocalizableResourceString(nameof(ConstantExpectedApplicationDescription));
         private static readonly LocalizableString s_localizableUsageTitle = CreateLocalizableResourceString(nameof(ConstantExpectedUsageTitle));
@@ -326,8 +328,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             return namedType.Name.Equals(ConstantExpectedAttribute, StringComparison.Ordinal) &&
                    namedType.GetMembers().OfType<IPropertySymbol>()
-                       .All(s => s.Name.Equals("Min", StringComparison.Ordinal) ||
-                                 s.Name.Equals("Max", StringComparison.Ordinal));
+                       .All(s => s.Name.Equals(ConstantExpectedMin, StringComparison.Ordinal) ||
+                                 s.Name.Equals(ConstantExpectedMax, StringComparison.Ordinal));
         }
 
         private abstract class ConstantExpectedParameter
@@ -414,11 +416,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             foreach (var namedArg in attributeData.NamedArguments)
             {
-                if (namedArg.Key.Equals("Min", StringComparison.Ordinal))
+                if (namedArg.Key.Equals(ConstantExpectedMin, StringComparison.Ordinal))
                 {
                     minConstant = ToObject(namedArg.Value);
                 }
-                else if (namedArg.Key.Equals("Max", StringComparison.Ordinal))
+                else if (namedArg.Key.Equals(ConstantExpectedMax, StringComparison.Ordinal))
                 {
                     maxConstant = ToObject(namedArg.Value);
                 }
@@ -496,13 +498,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             public ImmutableArray<Diagnostic> ParameterIsInvalid(string expectedTypeName, SyntaxNode attributeSyntax) => ImmutableArray.Create(Diagnostic.Create(CA1860.UnsupportedTypeRule, attributeSyntax.GetLocation(), expectedTypeName));
 
-            public Diagnostic MinIsIncompatible(string expectedTypeName, SyntaxNode attributeSyntax) => Diagnostic.Create(CA1860.IncompatibleConstantTypeRule, GetMinLocation(attributeSyntax)!, "Min", expectedTypeName);
+            public Diagnostic MinIsIncompatible(string expectedTypeName, SyntaxNode attributeSyntax) => Diagnostic.Create(CA1860.IncompatibleConstantTypeRule, GetMinLocation(attributeSyntax)!, ConstantExpectedMin, expectedTypeName);
 
-            public Diagnostic MaxIsIncompatible(string expectedTypeName, SyntaxNode attributeSyntax) => Diagnostic.Create(CA1860.IncompatibleConstantTypeRule, GetMaxLocation(attributeSyntax)!, "Max", expectedTypeName);
+            public Diagnostic MaxIsIncompatible(string expectedTypeName, SyntaxNode attributeSyntax) => Diagnostic.Create(CA1860.IncompatibleConstantTypeRule, GetMaxLocation(attributeSyntax)!, ConstantExpectedMax, expectedTypeName);
 
-            public Diagnostic MinIsOutOfRange(SyntaxNode attributeSyntax, string typeMinValue, string typeMaxValue) => Diagnostic.Create(CA1860.InvalidBoundsRule, GetMinLocation(attributeSyntax)!, "Min", typeMinValue, typeMaxValue);
+            public Diagnostic MinIsOutOfRange(SyntaxNode attributeSyntax, string typeMinValue, string typeMaxValue) => Diagnostic.Create(CA1860.InvalidBoundsRule, GetMinLocation(attributeSyntax)!, ConstantExpectedMin, typeMinValue, typeMaxValue);
 
-            public Diagnostic MaxIsOutOfRange(SyntaxNode attributeSyntax, string typeMinValue, string typeMaxValue) => Diagnostic.Create(CA1860.InvalidBoundsRule, GetMaxLocation(attributeSyntax)!, "Max", typeMinValue, typeMaxValue);
+            public Diagnostic MaxIsOutOfRange(SyntaxNode attributeSyntax, string typeMinValue, string typeMaxValue) => Diagnostic.Create(CA1860.InvalidBoundsRule, GetMaxLocation(attributeSyntax)!, ConstantExpectedMax, typeMinValue, typeMaxValue);
 
             public static Diagnostic MinMaxIsInverted(SyntaxNode attributeSyntax) => Diagnostic.Create(CA1860.InvertedRangeRule, attributeSyntax.GetLocation());
 

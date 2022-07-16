@@ -1877,7 +1877,7 @@
     <value>The parameter expects a constant for optimal performance.</value>
   </data>
   <data name="ConstantExpectedNotSupportedMessage" xml:space="preserve">
-    <value>The '{0}' parameter is not supported for ConstantExpectedAttribute.</value>
+    <value>The '{0}' type is not supported for ConstantExpected attribute.</value>
   </data>
   <data name="ConstantExpectedIncompatibleConstantTypeMessage" xml:space="preserve">
     <value>The '{0}' value is not compatible with parameter type of '{1}'.</value>
@@ -1898,7 +1898,7 @@
     <value>The argument should be a constant for optimal performance.</value>
   </data>
   <data name="ConstantExpectedAttributExpectedMessage" xml:space="preserve">
-    <value>The ConstantExpectedAttribute expected for the parameter due to the interface/base method.</value>
+    <value>The ConstantExpected attribute is required for the parameter due to the parent method annotation.</value>
   </data>
   <data name="SpecifyCultureForToLowerAndToUpperTitle" xml:space="preserve">
     <value>Specify a culture or use an invariant version</value>

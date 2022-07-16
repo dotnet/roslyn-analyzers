@@ -311,10 +311,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static bool TryGetConstantExpectedAttributeData(IParameterSymbol parameter, [NotNullWhen(true)] out AttributeData? attributeData)
         {
-            AttributeData? constantExpectedAttributeData = parameter.GetAttributes()
+            attributeData = parameter.GetAttributes()
                 .FirstOrDefault(attrData => IsConstantExpectedAttribute(attrData.AttributeClass));
-            attributeData = constantExpectedAttributeData;
-            return constantExpectedAttributeData is not null;
+            return attributeData is not null;
         }
 
         private static bool HasConstantExpectedAttributeData(IParameterSymbol parameter)

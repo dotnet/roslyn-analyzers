@@ -132,7 +132,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             context.RegisterOperationAction(OnInvocation, OperationKind.Invocation);
             context.RegisterSymbolAction(context => OnMethodSymbol(context), SymbolKind.Method);
             RegisterAttributeSyntax(context);
-            return;
         }
 
         private static void OnMethodSymbol(SymbolAnalysisContext context)

@@ -8,7 +8,7 @@ using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.CSharp.Analyzers.Performance.CSharpConstantExpectedAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
-namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyzers.Performance
+namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public sealed class ConstantExpectedTests
     {
@@ -528,7 +528,7 @@ public class Test
     {{
         TestMethodWithConstant({{|#0:{testValue}|}});
     }}
-    public static void TestMethodWithConstant([ConstantExpected(Min={min}, Max={max})] {type} val) {{ }}
+    public static void TestMethodWithConstant([ConstantExpected(Min = {min}, Max = {max})] {type} val) {{ }}
 }}
 ";
             await TestCSAsync(csInput,

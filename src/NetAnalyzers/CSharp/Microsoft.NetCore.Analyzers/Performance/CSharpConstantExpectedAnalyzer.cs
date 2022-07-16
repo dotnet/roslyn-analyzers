@@ -22,10 +22,12 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         {
             context.RegisterSyntaxNodeAction(context => OnAttributeNode(context), SyntaxKind.Attribute);
         }
+        
         private void OnAttributeNode(SyntaxNodeAnalysisContext context)
         {
             var attributeSyntax = (AttributeSyntax)context.Node;
-            if (!attributeSyntax.Name.IsEquivalentTo(s_constantExpectedIdentifier) && !attributeSyntax.Name.IsEquivalentTo(s_constantExpectedAttributeIdentifier))
+            var attributeName = attributeSyntax.Name;
+            if (!attributeName.IsEquivalentTo(s_constantExpectedIdentifier) && !attributeName.IsEquivalentTo(s_constantExpectedAttributeIdentifier))
             {
                 return;
             }

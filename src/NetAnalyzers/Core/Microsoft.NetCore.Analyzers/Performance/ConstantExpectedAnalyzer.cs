@@ -237,8 +237,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return UnmanagedHelper<ulong>.TryCreate(parameterSymbol, attributeData, uint.MinValue, uint.MaxValue, out parameter);
                 case SpecialType.System_UInt64:
                     return UnmanagedHelper<ulong>.TryCreate(parameterSymbol, attributeData, ulong.MinValue, ulong.MaxValue, out parameter);
-                case SpecialType.System_UIntPtr:
-                    return UnmanagedHelper<ulong>.TryCreate(parameterSymbol, attributeData, uint.MinValue, uint.MaxValue, out parameter);
                 case SpecialType.System_SByte:
                     return UnmanagedHelper<long>.TryCreate(parameterSymbol, attributeData, sbyte.MinValue, sbyte.MaxValue, out parameter);
                 case SpecialType.System_Int16:
@@ -247,8 +245,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return UnmanagedHelper<long>.TryCreate(parameterSymbol, attributeData, int.MinValue, int.MaxValue, out parameter);
                 case SpecialType.System_Int64:
                     return UnmanagedHelper<long>.TryCreate(parameterSymbol, attributeData, long.MinValue, long.MaxValue, out parameter);
-                case SpecialType.System_IntPtr:
-                    return UnmanagedHelper<long>.TryCreate(parameterSymbol, attributeData, int.MinValue, int.MaxValue, out parameter);
                 case SpecialType.System_Single:
                     return UnmanagedHelper<float>.TryCreate(parameterSymbol, attributeData, float.MinValue, float.MaxValue, out parameter);
                 case SpecialType.System_Double:
@@ -283,8 +279,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return UnmanagedHelper<ulong>.Validate(parameterSymbol, attributeData, uint.MinValue, uint.MaxValue, Helper, out diagnostics);
                 case SpecialType.System_UInt64:
                     return UnmanagedHelper<ulong>.Validate(parameterSymbol, attributeData, ulong.MinValue, ulong.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_UIntPtr:
-                    return UnmanagedHelper<ulong>.Validate(parameterSymbol, attributeData, uint.MinValue, uint.MaxValue, Helper, out diagnostics);
                 case SpecialType.System_SByte:
                     return UnmanagedHelper<long>.Validate(parameterSymbol, attributeData, sbyte.MinValue, sbyte.MaxValue, Helper, out diagnostics);
                 case SpecialType.System_Int16:
@@ -293,8 +287,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return UnmanagedHelper<long>.Validate(parameterSymbol, attributeData, int.MinValue, int.MaxValue, Helper, out diagnostics);
                 case SpecialType.System_Int64:
                     return UnmanagedHelper<long>.Validate(parameterSymbol, attributeData, long.MinValue, long.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_IntPtr:
-                    return UnmanagedHelper<long>.Validate(parameterSymbol, attributeData, int.MinValue, int.MaxValue, Helper, out diagnostics);
                 case SpecialType.System_Single:
                     return UnmanagedHelper<float>.Validate(parameterSymbol, attributeData, float.MinValue, float.MaxValue, Helper, out diagnostics);
                 case SpecialType.System_Double:
@@ -476,12 +468,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 SpecialType.System_UInt16 => true,
                 SpecialType.System_UInt32 => true,
                 SpecialType.System_UInt64 => true,
-                SpecialType.System_UIntPtr => true,
                 SpecialType.System_SByte => true,
                 SpecialType.System_Int16 => true,
                 SpecialType.System_Int32 => true,
                 SpecialType.System_Int64 => true,
-                SpecialType.System_IntPtr => true,
                 SpecialType.System_Single => true,
                 SpecialType.System_Double => true,
                 SpecialType.System_Boolean => true,

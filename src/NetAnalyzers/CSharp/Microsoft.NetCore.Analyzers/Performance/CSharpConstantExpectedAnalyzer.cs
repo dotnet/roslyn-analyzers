@@ -22,7 +22,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         {
             context.RegisterSyntaxNodeAction(context => OnAttributeNode(context), SyntaxKind.Attribute);
         }
-        
+
         private void OnAttributeNode(SyntaxNodeAnalysisContext context)
         {
             var attributeSyntax = (AttributeSyntax)context.Node;

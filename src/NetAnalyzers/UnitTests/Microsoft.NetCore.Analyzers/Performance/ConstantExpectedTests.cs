@@ -120,6 +120,53 @@ public class Test
                         .WithLocation(2));
         }
 
+        [Theory]
+        [InlineData("char")]
+        [InlineData("sbyte")]
+        [InlineData("short")]
+        [InlineData("int")]
+        [InlineData("long")]
+        [InlineData("byte")]
+        [InlineData("ushort")]
+        [InlineData("uint")]
+        [InlineData("ulong")]
+        [InlineData("float")]
+        [InlineData("double")]
+        [InlineData("bool")]
+        [InlineData("string")]
+        public static async Task TestMissingConstantExpectedSupportedComplex2TypesAsync(string type)
+        {
+            string csInput = @$"
+using System;
+using Similar;
+#nullable enable
+
+public class Test
+{{
+    public interface ITest<T>
+    {{
+        T Method(T operand1, [ConstantExpected] T operand2);
+    }}
+    public interface ITest2<T>
+    {{
+        T Method(T operand1, [ConstantExpected] T operand2);
+    }}
+    public abstract class AbstractTest<T>
+    {{
+        public abstract T Method2(T operand1, [ConstantExpected] T operand2);
+    }}
+
+    public class Generic : AbstractTest<{type}>, ITest<{type}>, ITest2<{type}>
+    {{
+        public {type} Method({type} operand1, {type} operand2) => throw new NotImplementedException();
+        {type} ITest2<{type}>.Method({type} operand1, {type} operand2) => throw new NotImplementedException();
+        public override {type} Method2({type} operand1, {type} operand2) => throw new NotImplementedException();
+    }}
+}}
+";
+            await TestCSMissingAttributeAsync(csInput);
+        }
+
         [Fact]
         public static async Task TestConstantExpectedSupportedComplex3TypesAsync()
         {
@@ -691,6 +738,31 @@ public class Test
 
         private static readonly string s_attributeSource = @"#nullable enable
 namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
+    public sealed class ConstantExpectedAttribute : Attribute
+    {
+        public object? Min { get; set; }
+        public object? Max { get; set; }
+    }
+}";
+
+        private static async Task TestCSMissingAttributeAsync(string source, params DiagnosticResult[] diagnosticResults)
+        {
+            var test = new VerifyCS.Test
+            {
+                TestCode = source,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
+            };
+            test.TestState.Sources.Add(s_similarAttributeSource);
+            test.ExpectedDiagnostics.AddRange(diagnosticResults);
+            await test.RunAsync();
+        }
+
+        private static readonly string s_similarAttributeSource = @"#nullable enable
+using System;
+namespace Similar
 {
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
     public sealed class ConstantExpectedAttribute : Attribute

@@ -131,6 +131,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
+            if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsCodeAnalysisConstantExpectedAttribute, out _))
+            {
+                return;
+            }
             context.RegisterOperationAction(OnInvocation, OperationKind.Invocation);
             context.RegisterSymbolAction(context => OnMethodSymbol(context), SymbolKind.Method);
             RegisterAttributeSyntax(context);

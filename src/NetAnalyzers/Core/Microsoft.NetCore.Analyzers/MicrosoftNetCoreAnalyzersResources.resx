@@ -1485,7 +1485,7 @@
   </data>
   <data name="PlatformCompatibilityUnsupportedCsAllPlatformMessage" xml:space="preserve">
     <value>This call site is reachable on all platforms. '{0}' is unsupported on: {1}.</value>
-    <comment>This call site is reachable on all platforms. 'UnsupportedOnWindows()' is unsupported on: 'windows'</comment>
+    <comment>This call site is reachable on all platforms. 'UnsupportedOnWindows()' is unsupported on: 'windows'.</comment>
   </data>
   <data name="DoNotUseOutAttributeStringPInvokeParametersDescription" xml:space="preserve">
     <value>String parameters passed by value with the 'OutAttribute' can destabilize the runtime if the string is an interned string.</value>
@@ -1947,5 +1947,11 @@
   </data>
   <data name="SpecifyIFormatProviderMessageIFormatProviderOptional" xml:space="preserve">
     <value>The behavior of '{0}' could vary based on the current user's locale settings. Provide a value for the 'IFormatProvider' argument.</value>
+  </data>
+  <data name="PlatformCompatibilityObsoletedCsAllPlatformMessage" xml:space="preserve">
+    <value>This call site is reachable on all platforms. '{0}' is obsoleted on: {1}.</value>
+  </data>
+  <data name="PlatformCompatibilityObsoletedCsReachableMessage" xml:space="preserve">
+    <value>This call site is reachable on: {2}. '{0}' is obsoleted on: {1}.</value>
   </data>
 </root>

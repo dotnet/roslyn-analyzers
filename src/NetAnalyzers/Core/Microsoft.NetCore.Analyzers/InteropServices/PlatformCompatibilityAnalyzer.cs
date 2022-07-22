@@ -526,6 +526,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     attribute.UnsupportedSecond = null;
                                 }
 
+                                if (attribute.ObsoletedIn != null &&
+                                    attribute.ObsoletedIn.IsGreaterThanOrEqualTo(info.Version))
+                                {
+                                    attribute.ObsoletedIn = null;
+                                }
+
                                 if (!IsEmptyVersion(info.Version))
                                 {
                                     capturedVersions[info.PlatformName] = info.Version;
@@ -730,13 +736,16 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 foreach (var (name, attribute) in attributes)
                 {
-                    if (!name.Equals(platformName, StringComparison.OrdinalIgnoreCase) &&
-                        DenyList(attribute))
+                    if (!name.Equals(platformName, StringComparison.OrdinalIgnoreCase))
                     {
-                        attribute.UnsupportedFirst = null;
-                        attribute.UnsupportedSecond = null;
-                        attribute.SupportedFirst = null;
-                        attribute.SupportedSecond = null;
+                        if (DenyList(attribute))
+                        {
+                            attribute.UnsupportedFirst = null;
+                            attribute.UnsupportedSecond = null;
+                            attribute.SupportedFirst = null;
+                            attribute.SupportedSecond = null;
+                        }
+                        attribute.ObsoletedIn = null;
                     }
                 }
             }
@@ -879,10 +888,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             }
                         }
 
-                        if (pAttribute.ObsoletedIn != null)
-                        {
-                            obsoletedBuilder.Add(AppendMessageAndUrl(pAttribute, GetFormattedString(PlatformCompatibilityVersionAndLater, pName, pAttribute.ObsoletedIn)));
-                        }
+                        AddObsoletedIn(csAttributes, obsoletedBuilder, pName, pAttribute);
                     }
 
                     obsoletedPlatforms = obsoletedBuilder.ToImmutable();
@@ -926,7 +932,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 if (attribute.UnsupportedMessage is not null)
                 {
-                    message += $", {attribute.UnsupportedMessage}";
+                    message += $"{CommaSeparator}{attribute.UnsupportedMessage}";
                 }
 
                 return message;
@@ -936,12 +942,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 if (attribute.ObsoletedMessage is not null)
                 {
-                    message += $", {attribute.ObsoletedMessage}";
+                    message += $"{CommaSeparator}{attribute.ObsoletedMessage}";
                 }
 
                 if (attribute.ObsoletedUrl is not null)
                 {
-                    message += $", {attribute.ObsoletedUrl}";
+                    message += $" {attribute.ObsoletedUrl}";
                 }
 
                 return message;
@@ -1035,15 +1041,34 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             }
                         }
 
-                        if (pAttribute.ObsoletedIn != null)
-                        {
-                            obsoletedBuilder.Add(AppendMessageAndUrl(pAttribute, GetFormattedString(PlatformCompatibilityVersionAndLater, pName, pAttribute.ObsoletedIn)));
-                        }
+                        AddObsoletedIn(csAttributes, obsoletedBuilder, pName, pAttribute);
                     }
 
                     obsoletedPlatforms = obsoletedBuilder.ToImmutable();
                     platformNames = platformsBuilder.ToImmutable();
                     return unsupportedRule;
+                }
+            }
+
+            static void AddObsoletedIn(SmallDictionary<string, Versions>? csAttributes, ArrayBuilder<string> obsoletedBuilder, string pName, Versions pAttribute)
+            {
+                if (pAttribute.ObsoletedIn != null)
+                {
+                    if (IsEmptyVersion(pAttribute.ObsoletedIn)) // Do not need to add the version part if it is 0.0
+                    {
+                        if (csAttributes != null && HasVersionedCallsite(csAttributes, pName))
+                        {
+                            obsoletedBuilder.Add(AppendMessage(pAttribute, GetFormattedString(PlatformCompatibilityAllVersions, pName)));
+                        }
+                        else
+                        {
+                            obsoletedBuilder.Add(AppendMessage(pAttribute, EncloseWithQuotes(pName)));
+                        }
+                    }
+                    else
+                    {
+                        obsoletedBuilder.Add(AppendMessageAndUrl(pAttribute, GetFormattedString(PlatformCompatibilityVersionAndLater, pName, pAttribute.ObsoletedIn)));
+                    }
                 }
             }
 
@@ -1166,19 +1191,26 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         {
                             version = supportedVersion.IsGreaterThanOrEqualTo(version) ? supportedVersion : version;
                         }
-                        else
-                        {
-                            var unsupportedVersion = attribute.UnsupportedSecond ?? attribute.UnsupportedFirst;
-                            if (unsupportedVersion != null)
-                            {
-                                version = unsupportedVersion.IsGreaterThanOrEqualTo(version) ? unsupportedVersion : version;
-                            }
-                            else
-                            {
-                                version = supportedVersion;
-                            }
-                        }
                     }
+                    if (version != null && !IsEmptyVersion(version))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            static bool HasVersionedCallsite(SmallDictionary<string, Versions> csAttributes, string pName)
+            {
+                if (csAttributes.TryGetValue(pName, out var attribute))
+                {
+                    var version = attribute.ObsoletedIn;
+                    var supportedVersion = attribute.SupportedSecond ?? attribute.SupportedFirst;
+                    if (supportedVersion != null)
+                    {
+                        version = supportedVersion.IsGreaterThanOrEqualTo(version) ? supportedVersion : version;
+                    }
+
                     if (version != null && !IsEmptyVersion(version))
                     {
                         return true;
@@ -1562,7 +1594,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             }
                         }
                         else if (msBuildPlatforms.Contains(platformName, StringComparer.OrdinalIgnoreCase) &&
-                                 callSiteAttribute.UnsupportedFirst != null && callSiteAttribute.UnsupportedFirst > attribute.ObsoletedIn)
+                                 (callSiteAttribute.UnsupportedFirst != null && callSiteAttribute.UnsupportedFirst > attribute.ObsoletedIn ||
+                                  callSiteAttribute.ObsoletedIn != null && callSiteAttribute.ObsoletedIn > attribute.ObsoletedIn))
                         {
                             diagnosticAttribute.ObsoletedIn = (Version)attribute.ObsoletedIn.Clone();
                             diagnosticAttribute.ObsoletedMessage = attribute.ObsoletedMessage;

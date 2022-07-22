@@ -14,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
     public partial class PlatformCompatabilityAnalyzerTests
     {
         [Fact]
-        public async Task ObsoletedMethodsCalledWarnsAsync()
+        public async Task ObsoletedMethodsCalledWarns()
         {
             var csSource = @"
 using System;
@@ -70,7 +70,7 @@ End Class
         }
 
         [Fact]
-        public async Task ObsoletedWithMessageUrlCalledWarnsAsync()
+        public async Task ObsoletedWithMessageUrlCalledWarns()
         {
             var csSource = @"
 using System;
@@ -85,23 +85,6 @@ public class Test
         {|#1:ObsoletedWithMessage()|}; // This call site is reachable on all platforms. 'Test.ObsoletedWithMessage()' is obsoleted on: 'Windows' 10.1.1.1 and later, Use other method instead.
         ObsoletedOnAndroid(); // Cross platform and android not int he MSBuild list so not warn
     }
-
-    [SupportedOSPlatform(""Android"")]
-    public void ReachableOnAndroidAndWindows()
-    {
-        ObsoletedWithMessageAndUrl(); // Unreachable on windows, not warn
-        ObsoletedWithMessage();
-        {|CA1422:ObsoletedOnAndroid()|}; //  This call site is reachable on: 'Android', 'Windows'. 'Test.ObsoletedOnAndroid()' is obsoleted on: 'android' 21.0 and later.
-    }
-
-    [Mock.UnsupportedOSPlatform(""Android31.0"")]
-    [System.Runtime.Versioning.UnsupportedOSPlatform(""Windows10.1.0"")]
-    public void UnreachableOnAndroidAndWindows()
-    {
-        ObsoletedWithMessageAndUrl(); // Not supported on windows, not warn
-        ObsoletedWithMessage();
-        ObsoletedOnAndroid(); // Obsoleted before unuspport, so warns
-    }
     
     [ObsoletedInOSPlatform(""android21.0"")]
     public void ObsoletedOnAndroid() { }
@@ -112,9 +95,74 @@ public class Test
     public void ObsoletedWithMessage() { }
 }" + MockObsoletedAttributeCS;
             await VerifyAnalyzerCSAsync(csSource, s_msBuildPlatforms, VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.ObsoletedCsAllPlatforms).WithLocation(0).
-                    WithArguments("Test.ObsoletedWithMessageAndUrl()", "'Windows' 10.1.1.1 and later, Use other method instead, http://www/look.for.more.info"),
+                    WithArguments("Test.ObsoletedWithMessageAndUrl()", "'Windows' 10.1.1.1 and later, Use other method instead http://www/look.for.more.info"),
                   VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.ObsoletedCsAllPlatforms).WithLocation(1).
                     WithArguments("Test.ObsoletedWithMessage()", "'Windows' 10.1.1.1 and later, Use other method instead"));
+        }
+
+        [Fact]
+        public async Task ObsoletedWithinDifferentCallsite()
+        {
+            var csSource = @"
+using System;
+using System.Runtime.Versioning;
+using Mock;
+
+public class Test
+{
+    [SupportedOSPlatform(""IOS"")]
+    public void CallsiteReachableOnIOS()
+    {
+        ObsoletedOnWindows(); // Unreachable on windows, not warn
+        ObsoletedWithMessage();
+        {|CA1422:ObsoletedOnIOS14()|}; // This call site is reachable on: 'IOS', 'maccatalyst'. 'Test.ObsoletedOnIOS14()' is obsoleted on: 'ios' 14.0 and later, 'maccatalyst' 14.0 and later.
+    }
+
+    [Mock.UnsupportedOSPlatform(""ios13.0"")]
+    [System.Runtime.Versioning.UnsupportedOSPlatform(""Windows10.1.0"")]
+    public void SuppressedByCallsiteUnsupported()
+    {
+        ObsoletedOnWindows(); // Not supported on windows with matching version, not warn
+        ObsoletedWithMessage(); // Same as above
+        ObsoletedOnIOS14();
+    }
+
+    [Mock.UnsupportedOSPlatform(""ios15.0"")]
+    [System.Runtime.Versioning.UnsupportedOSPlatform(""Windows11.1.0"")]
+    public void NotSuppressedByCallsiteUnsupported() // obsoleted before unsupported version
+    {
+        {|CA1422:ObsoletedOnWindows()|}; // This call site is reachable on: 'Windows' 11.1.0 and before. 'Test.ObsoletedOnWindows()' is obsoleted on: 'Windows' 10.1.1.1 and later.
+        {|CA1422:ObsoletedWithMessage()|}; // This call site is reachable on: 'Windows' 11.1.0 and before. 'Test.ObsoletedWithMessage()' is obsoleted on: 'Windows' 10.1.1.1 and later, Use other method instead.
+        {|CA1422:ObsoletedOnIOS14()|}; // This call site is reachable on: 'ios' 15.0 and before, 'maccatalyst' 15.0 and before. 'Test.ObsoletedOnIOS14()' is obsoleted on: 'ios' 14.0 and later, 'maccatalyst' 14.0 and later.
+    }
+
+    [ObsoletedInOSPlatform(""ios13.0"")]
+    [ObsoletedInOSPlatform(""Windows10.1.0"")]
+    public void SuppressedByCallsiteObsoleted()
+    {
+        ObsoletedOnWindows(); // All calls Obsoleted within version range, not warn
+        ObsoletedWithMessage();
+        ObsoletedOnIOS14();
+    }
+
+    [ObsoletedInOSPlatform(""ios16.0"")]
+    [ObsoletedInOSPlatform(""Windows11.1.0"")]
+    public void NotSuppressedByCallsiteObsoleted()
+    {
+        {|CA1422:ObsoletedOnWindows()|}; //This call site is reachable on all platforms. 'Test.ObsoletedOnWindows()' is obsoleted on: 'Windows' 10.1.1.1 and later.
+        {|CA1422:ObsoletedWithMessage()|}; // This call site is reachable on all platforms. 'Test.ObsoletedWithMessage()' is obsoleted on: 'Windows' 10.1.1.1 and later, Use other method instead.
+        {|CA1422:ObsoletedOnIOS14()|}; // This call site is reachable on all platforms. 'Test.ObsoletedOnIOS14()' is obsoleted on: 'ios' 14.0 and later, 'maccatalyst' 14.0 and later.
+    }
+    
+    [ObsoletedInOSPlatform(""ios14.0"")]
+    public void ObsoletedOnIOS14() { }
+
+    [ObsoletedInOSPlatform(""Windows10.1.1.1"")]
+    public void ObsoletedOnWindows() { }
+    [ObsoletedInOSPlatform(""Windows10.1.1.1"", ""Use other method instead"")]
+    public void ObsoletedWithMessage() { }
+}" + MockObsoletedAttributeCS;
+            await VerifyAnalyzerCSAsync(csSource, s_msBuildPlatforms);
         }
 
         [Fact]
@@ -149,6 +197,112 @@ public class Test
     [Mock.UnsupportedOSPlatform(""Browser"", ""Use BrowserSupported() method instead"")]
     [Mock.UnsupportedOSPlatform(""Watchos"", ""Use WitchSupported() method instead"")]
     public void UnsupportedIosBrowserWatchOS() { }
+}" + MockObsoletedAttributeCS;
+            await VerifyAnalyzerCSAsync(csSource, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task ObsoletedWarningsGuardedWithOperatingSystemAPIs()
+        {
+            var csSource = @"
+using System;
+using System.Runtime.Versioning;
+using Mock;
+
+public class Test
+{
+    public void CrossPlatform()
+    {
+        if (OperatingSystem.IsMacOS())
+        {
+            {|CA1422:ObsoletedOnMacOS()|}; // This call site is reachable on: 'macOS/OSX'. 'Test.ObsoletedOnMacOS()' is obsoleted on: 'macOS/OSX'.
+            ObsoletedOnAndroid21(); // Call site only reachable on MacOS, no warning 
+            ObsoletedOnLinux4AndWindows10(); // Same, no warning
+        }
+        else
+        {
+            ObsoletedOnMacOS();
+            ObsoletedOnAndroid21(); // Android is not in MSBuild support list, no warning
+            {|CA1422:ObsoletedOnLinux4AndWindows10()|}; // This call site is reachable on all platforms. 'Test.ObsoletedOnLinux4AndWindows10()' is obsoleted on: 'Linux' 4.1 and later, Use Linux4Supported, 'Windows' 10.1.1.1 and later, Use Windows10Supported.
+        }
+
+        if (OperatingSystem.IsMacOSVersionAtLeast(11))
+        {
+            {|CA1422:ObsoletedOnMacOS()|}; // This call site is reachable on: 'macOS/OSX' 11.0 and later. 'Test.ObsoletedOnMacOS()' is obsoleted on: 'macOS/OSX' all versions.
+        }
+        else
+        {
+            {|CA1422:ObsoletedOnMacOS()|}; // It could be macos with less version, so warns: This call site is reachable on all platforms. 'Test.ObsoletedOnMacOS()' is obsoleted on: 'macOS/OSX'.
+        }
+    }
+    
+    [ObsoletedInOSPlatform(""Android21.0"")]
+    public void ObsoletedOnAndroid21() { }
+
+    [ObsoletedInOSPlatform(""MacOS"")]
+    public void ObsoletedOnMacOS() { }
+
+    [ObsoletedInOSPlatform(""Linux4.1"", ""Use Linux4Supported"")]
+    [ObsoletedInOSPlatform(""Windows10.1.1.1"",""Use Windows10Supported"")]
+    public void ObsoletedOnLinux4AndWindows10() { }
+}" + MockObsoletedAttributeCS;
+            await VerifyAnalyzerCSAsync(csSource, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task ObsoletedWarningsGuardedWithOperatingSystemAPIsDifferentCallsite()
+        {
+            var csSource = @"
+using System;
+using System.Runtime.Versioning;
+using Mock;
+
+public class Test
+{
+    [SupportedOSPlatform(""Android"")]
+    public void AndroidOnly()
+    {
+        if (OperatingSystem.IsMacOS())
+        {
+            ObsoletedOnMacOS(); // The method is not reachable on MacOS, so no warning
+            ObsoletedOnAndroid21(); // Conditional only reachable on MacOS, no warning 
+            ObsoletedOnLinux4AndWindows10();
+        }
+        else
+        {
+            ObsoletedOnMacOS(); // Method only for android, no warning
+            {|CA1422:ObsoletedOnAndroid21()|}; // This call site is reachable on: 'Android'. 'Test.ObsoletedOnAndroid21()' is obsoleted on: 'Android' 21.0 and later.
+            ObsoletedOnLinux4AndWindows10(); // Method only for android
+        }
+    }
+
+    [SupportedOSPlatform(""Android"")]
+    [SupportedOSPlatform(""MacOS"")]
+    public void AndroidMacOSOnly()
+    {
+        if (OperatingSystem.IsMacOS())
+        {
+            {|CA1422:ObsoletedOnMacOS()|}; //  This call site is reachable on: 'Android', 'macOS/OSX'. 'Test.ObsoletedOnMacOS()' is obsoleted on: 'macOS/OSX'.
+            ObsoletedOnAndroid21();
+            ObsoletedOnLinux4AndWindows10();
+        }
+        else
+        {
+            ObsoletedOnMacOS();
+            {|CA1422:ObsoletedOnAndroid21()|}; // This call site is reachable on: 'Android', 'macOS/OSX'. 'Test.ObsoletedOnAndroid21()' is obsoleted on: 'Android' 21.0 and later.
+            ObsoletedOnLinux4AndWindows10();
+        }
+    }
+    
+    [ObsoletedInOSPlatform(""Android21.0"")]
+    public void ObsoletedOnAndroid21() { }
+
+    [ObsoletedInOSPlatform(""MacOS"")]
+    public void ObsoletedOnMacOS() { }
+
+    [ObsoletedInOSPlatform(""Linux4.1"", ""Use Linux4Supported"")]
+    [ObsoletedInOSPlatform(""Windows10.1.1.1"",""Use Windows10Supported"")]
+    public void ObsoletedOnLinux4AndWindows10() { }
 }" + MockObsoletedAttributeCS;
             await VerifyAnalyzerCSAsync(csSource, s_msBuildPlatforms);
         }

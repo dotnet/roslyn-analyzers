@@ -831,7 +831,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     using var obsoletedBuilder = ArrayBuilder<string>.GetInstance();
                     bool? supportedRule = null;
-                    var platformsBuilder = ArrayBuilder<string>.GetInstance();
+                    using var platformsBuilder = ArrayBuilder<string>.GetInstance();
                     foreach (var (pName, pAttribute) in attributes)
                     {
                         if (pAttribute.SupportedFirst != null && supportedRule.GetValueOrDefault(true))

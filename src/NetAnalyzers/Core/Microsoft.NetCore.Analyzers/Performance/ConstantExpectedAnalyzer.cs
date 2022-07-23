@@ -223,13 +223,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static bool TryCreateConstantExpectedParameter(IParameterSymbol parameterSymbol, [NotNullWhen(true)] out ConstantExpectedParameter? parameter)
         {
+            var underlyingType = GetUnderlyingType(parameterSymbol);
+
             if (!TryGetConstantExpectedAttributeData(parameterSymbol, out var attributeData))
             {
                 parameter = null;
                 return false;
             }
 
-            switch (parameterSymbol.Type.SpecialType)
+            switch (underlyingType.SpecialType)
             {
                 case SpecialType.System_Char:
                     return UnmanagedHelper<char>.TryCreate(parameterSymbol, attributeData, char.MinValue, char.MaxValue, out parameter);
@@ -265,13 +267,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private bool ValidateConstantExpectedParameter(IParameterSymbol parameterSymbol, out ImmutableArray<Diagnostic> diagnostics)
         {
+            var underlyingType = GetUnderlyingType(parameterSymbol);
+
             if (!TryGetConstantExpectedAttributeData(parameterSymbol, out var attributeData))
             {
                 diagnostics = ImmutableArray<Diagnostic>.Empty;
                 return false;
             }
 
-            switch (parameterSymbol.Type.SpecialType)
+            switch (underlyingType.SpecialType)
             {
                 case SpecialType.System_Char:
                     return UnmanagedHelper<char>.Validate(parameterSymbol, attributeData, char.MinValue, char.MaxValue, Helper, out diagnostics);
@@ -305,6 +309,22 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     diagnostics = Helper.ParameterIsInvalid(parameterSymbol.Type.ToDisplayString(), attributeData.ApplicationSyntaxReference.GetSyntax());
                     return false;
             }
+        }
+
+        private static ITypeSymbol GetUnderlyingType(IParameterSymbol parameterSymbol)
+        {
+            ITypeSymbol underlyingType;
+            if (parameterSymbol.Type.TypeKind is TypeKind.Enum)
+            {
+                var enumType = (INamedTypeSymbol)parameterSymbol.Type;
+                underlyingType = enumType.EnumUnderlyingType;
+            }
+            else
+            {
+                underlyingType = parameterSymbol.Type;
+            }
+
+            return underlyingType;
         }
 
         private static bool TryGetConstantExpectedAttributeData(IParameterSymbol parameter, [NotNullWhen(true)] out AttributeData? attributeData)

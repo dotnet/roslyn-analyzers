@@ -45,6 +45,42 @@ public class Test
             await TestCSAsync(csInput);
         }
 
+        [Theory]
+        [InlineData("sbyte", "sbyte.MinValue", "sbyte.MaxValue")]
+        [InlineData("short", "short.MinValue", "short.MaxValue")]
+        [InlineData("int", "int.MinValue", "int.MaxValue")]
+        [InlineData("long", "long.MinValue", "long.MaxValue")]
+        [InlineData("byte", "byte.MinValue", "byte.MaxValue")]
+        [InlineData("ushort", "ushort.MinValue", "ushort.MaxValue")]
+        [InlineData("uint", "uint.MinValue", "uint.MaxValue")]
+        [InlineData("ulong", "ulong.MinValue", "ulong.MaxValue")]
+        public static async Task TestConstantExpectedSupportedEnumTypesAsync(string type, string minValue, string maxValue)
+        {
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
+
+public class Test
+{{
+    public static void TestMethod1([ConstantExpected] AEnum val) {{ }}
+    public static void TestMethod2([ConstantExpected(Min={minValue})] AEnum val) {{ }}
+    public static void TestMethod3([ConstantExpected(Max={maxValue})] AEnum val) {{ }}
+    public static void TestMethod4([ConstantExpected(Min={minValue}, Max={maxValue})] AEnum val) {{ }}
+    public static void TestMethod5([ConstantExpected(Min=null)] AEnum val) {{ }}
+    public static void TestMethod6([ConstantExpected(Max=null)] AEnum val) {{ }}
+    public static void TestMethod7([ConstantExpected(Min=null, Max=null)] AEnum val) {{ }}
+}}
+
+public enum AEnum : {type}
+{{
+    One,
+    Two
+}}
+";
+            await TestCSAsync(csInput);
+        }
+
         [Fact]
         public static async Task TestConstantExpectedSupportedComplexTypesAsync()
         {
@@ -349,6 +385,42 @@ public class Test
         }
 
         [Theory]
+        [InlineData("sbyte", "AEnum.Five", "AEnum.Two")]
+        [InlineData("short", "AEnum.Five", "AEnum.Two")]
+        [InlineData("int", "AEnum.Five", "AEnum.Two")]
+        [InlineData("long", "AEnum.Five", "AEnum.Two")]
+        [InlineData("byte", "AEnum.Five", "AEnum.Two")]
+        [InlineData("ushort", "AEnum.Five", "AEnum.Two")]
+        [InlineData("uint", "AEnum.Five", "AEnum.Two")]
+        [InlineData("ulong", "AEnum.Five", "AEnum.Two")]
+        public static async Task TestEnumConstantExpectedInvertedConstantTypeErrorAsync(string type, string min, string max)
+        {
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
+
+public class Test
+{{
+    public static void TestMethod([{{|#0:ConstantExpected(Min = {min}, Max = {max})|}}] {type} val) {{ }}
+}}
+
+public enum AEnum : {type}
+{{
+    Zero,
+    One = 1,
+    Two = 1 << 1,
+    Three = 1 << 2,
+    Four = 1 << 3,
+    Five = 1 << 4
+}}
+";
+            await TestCSAsync(csInput,
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvertedRangeRule)
+                        .WithLocation(0));
+        }
+
+        [Theory]
         [InlineData("sbyte", sbyte.MinValue, sbyte.MaxValue, "long.MinValue", "long.MaxValue", "false", "true")]
         [InlineData("short", short.MinValue, short.MaxValue, "long.MinValue", "long.MaxValue", "false", "true")]
         [InlineData("int", int.MinValue, int.MaxValue, "long.MinValue", "long.MaxValue", "false", "true")]
@@ -404,6 +476,70 @@ public class Test
         }
 
         [Theory]
+        [InlineData("sbyte", sbyte.MinValue, sbyte.MaxValue, "long.MinValue", "long.MaxValue", "false", "true")]
+        [InlineData("short", short.MinValue, short.MaxValue, "long.MinValue", "long.MaxValue", "false", "true")]
+        [InlineData("int", int.MinValue, int.MaxValue, "long.MinValue", "long.MaxValue", "false", "true")]
+        [InlineData("long", long.MinValue, long.MaxValue, "ulong.MaxValue", "ulong.MaxValue", "false", "true")]
+        [InlineData("byte", byte.MinValue, byte.MaxValue, "long.MinValue", "long.MaxValue", "false", "true")]
+        [InlineData("ushort", ushort.MinValue, ushort.MaxValue, "long.MinValue", "long.MaxValue", "false", "true")]
+        [InlineData("uint", uint.MinValue, uint.MaxValue, "long.MinValue", "long.MaxValue", "false", "true")]
+        [InlineData("ulong", ulong.MinValue, ulong.MaxValue, "long.MinValue", "-1", "false", "true")]
+        public static async Task TestEnumConstantExpectedInvalidBoundsAsync(string type, object min, object max, string min1, string max1, string badMinValue, string badMaxValue)
+        {
+            string minString = min.ToString();
+            string maxString = max.ToString();
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
+
+public class Test
+{{
+    public static void TestMethod([ConstantExpected({{|#0:Min = {min1}|}})] AEnum val) {{ }}
+    public static void TestMethod2([ConstantExpected({{|#1:Min = {min1}|}}, {{|#2:Max = {max1}|}})] AEnum val) {{ }}
+    public static void TestMethod3([ConstantExpected({{|#3:Max = {max1}|}})] AEnum val) {{ }}
+    public static void TestMethod4([ConstantExpected({{|#4:Min = {badMinValue}|}}, {{|#5:Max = {max1}|}})] AEnum val) {{ }}
+    public static void TestMethod5([ConstantExpected({{|#6:Min = {min1}|}}, {{|#7:Max = {badMaxValue}|}})] AEnum val) {{ }}
+}}
+
+public enum AEnum : {type}
+{{
+    Zero,
+    One = 1,
+    Two = 1 << 1,
+    Three = 1 << 2,
+    Four = 1 << 3,
+    Five = 1 << 4
+}}
+";
+            await TestCSAsync(csInput,
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                    .WithLocation(0)
+                    .WithArguments("Min", minString, maxString),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                    .WithLocation(1)
+                    .WithArguments("Min", minString, maxString),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                    .WithLocation(2)
+                    .WithArguments("Max", minString, maxString),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                    .WithLocation(3)
+                    .WithArguments("Max", minString, maxString),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.IncompatibleConstantTypeRule)
+                    .WithLocation(4)
+                    .WithArguments("Min", "AEnum"),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                    .WithLocation(5)
+                    .WithArguments("Max", minString, maxString),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                    .WithLocation(6)
+                    .WithArguments("Min", minString, maxString),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.IncompatibleConstantTypeRule)
+                    .WithLocation(7)
+                    .WithArguments("Max", "AEnum"));
+        }
+
+        [Theory]
         [InlineData("char", "'A'", "'Z'", "'A'", "(char)('A'+'\\u0001')")]
         [InlineData("sbyte", "10", "20", "10", "2*5")]
         [InlineData("short", "10", "20", "10", "2*5")]
@@ -451,6 +587,58 @@ public class Test
         }
 
         [Theory]
+        [InlineData("sbyte", "AEnum.One", "AEnum.Five", "AEnum.Two", "AEnum.One | AEnum.Two")]
+        [InlineData("short", "AEnum.One", "AEnum.Five", "AEnum.Two", "AEnum.One | AEnum.Two")]
+        [InlineData("int", "AEnum.One", "AEnum.Five", "AEnum.Two", "AEnum.One | AEnum.Two")]
+        [InlineData("long", "AEnum.One", "AEnum.Five", "AEnum.Two", "AEnum.One | AEnum.Two")]
+        [InlineData("byte", "AEnum.One", "AEnum.Five", "AEnum.Two", "AEnum.One | AEnum.Two")]
+        [InlineData("ushort", "AEnum.One", "AEnum.Five", "AEnum.Two", "AEnum.One | AEnum.Two")]
+        [InlineData("uint", "AEnum.One", "AEnum.Five", "AEnum.Two", "AEnum.One | AEnum.Two")]
+        [InlineData("ulong", "AEnum.One", "AEnum.Five", "AEnum.Two", "AEnum.One | AEnum.Two")]
+        public static async Task TestEnumArgumentConstantAsync(string type, string minValue, string maxValue, string value, string expression)
+        {
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
+
+public class Test
+{{
+    public static void TestMethod()
+    {{
+        TestMethodWithConstant({value});
+        TestMethodWithConstant({expression});
+        TestMethodWithConstrainedConstant({value});
+        TestMethodWithConstrainedConstant({expression});
+        TestMethodGeneric<AEnum>({value});
+        TestMethodGeneric<AEnum>({expression});
+        GenericClass<AEnum>.TestMethodGeneric({value});
+        GenericClass<AEnum>.TestMethodGeneric({expression});
+    }}
+    public static void TestMethodWithConstant([ConstantExpected] AEnum val) {{ }}
+    public static void TestMethodWithConstrainedConstant([ConstantExpected(Min = {minValue}, Max = {maxValue})] AEnum val) {{ }}
+    public static void TestMethodGeneric<T>([ConstantExpected] T val) {{ }}
+    
+    public static class GenericClass<T>
+    {{
+        public static void TestMethodGeneric([ConstantExpected] T val) {{ }}
+    }}
+}}
+
+public enum AEnum : {type}
+{{
+    Zero,
+    One = 1,
+    Two = 1 << 1,
+    Three = 1 << 2,
+    Four = 1 << 3,
+    Five = 1 << 4
+}}
+";
+            await TestCSAsync(csInput);
+        }
+
+        [Theory]
         [InlineData("char")]
         [InlineData("sbyte")]
         [InlineData("short")]
@@ -485,6 +673,54 @@ public class Test
     {{
         public static void TestMethodGeneric([ConstantExpected] T val) {{ }}
     }}
+}}
+";
+            await TestCSAsync(csInput,
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantNotConstantRule)
+                        .WithLocation(0),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantNotConstantRule)
+                        .WithLocation(1),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantNotConstantRule)
+                        .WithLocation(2));
+        }
+
+        [Theory]
+        [InlineData("sbyte")]
+        [InlineData("short")]
+        [InlineData("int")]
+        [InlineData("long")]
+        [InlineData("byte")]
+        [InlineData("ushort")]
+        [InlineData("uint")]
+        [InlineData("ulong")]
+        public static async Task TestEnumArgumentNotConstantAsync(string type)
+        {
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
+
+public class Test
+{{
+    public static void TestMethod(AEnum nonConstant)
+    {{
+        TestMethodWithConstant({{|#0:nonConstant|}});
+        TestMethodGeneric<AEnum>({{|#1:nonConstant|}});
+        GenenricClass<AEnum>.TestMethodGeneric({{|#2:nonConstant|}});
+    }}
+    public static void TestMethodWithConstant([ConstantExpected] AEnum val) {{ }}
+    public static void TestMethodGeneric<T>([ConstantExpected] T val) {{ }}
+    
+    public static class GenenricClass<T>
+    {{
+        public static void TestMethodGeneric([ConstantExpected] T val) {{ }}
+    }}
+}}
+
+public enum AEnum : {type}
+{{
+    One,
+    Two
 }}
 ";
             await TestCSAsync(csInput,
@@ -569,6 +805,47 @@ public class Test
                         .WithArguments(min.Trim('\''), max.Trim('\'')));
         }
 
+        [Theory]
+        [InlineData("sbyte", "AEnum.Three", "AEnum.Four", "AEnum.Five")]
+        [InlineData("short", "AEnum.Three", "AEnum.Four", "AEnum.Five")]
+        [InlineData("int", "AEnum.Three", "AEnum.Four", "AEnum.Five")]
+        [InlineData("long", "AEnum.Three", "AEnum.Four", "AEnum.Five")]
+        [InlineData("byte", "AEnum.Three", "AEnum.Four", "AEnum.Five")]
+        [InlineData("ushort", "AEnum.Three", "AEnum.Four", "AEnum.Five")]
+        [InlineData("uint", "AEnum.Three", "AEnum.Four", "AEnum.Five")]
+        [InlineData("ulong", "AEnum.Three", "AEnum.Four", "AEnum.Five")]
+        public static async Task TestEnumArgumentOutOfBoundsConstantAsync(string type, string min, string max, string testValue)
+        {
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
+
+public class Test
+{{
+    public static void TestMethod()
+    {{
+        TestMethodWithConstant({{|#0:{testValue}|}});
+    }}
+    public static void TestMethodWithConstant([ConstantExpected(Min = {min}, Max = {max})] AEnum val) {{ }}
+}}
+
+public enum AEnum : {type}
+{{
+    Zero,
+    One,
+    Two,
+    Three,
+    Four,
+    Five
+}}
+";
+            await TestCSAsync(csInput,
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantOutOfBoundsRule)
+                        .WithLocation(0)
+                        .WithArguments("3", "4"));
+        }
+
         [Fact]
         public static async Task TestArgumentInvalidGenericTypeParameterConstantAsync()
         {
@@ -633,6 +910,50 @@ public class Test
             await TestCSAsync(csInput);
         }
 
+        [Theory]
+        [InlineData("sbyte", "AEnum.Two", "AEnum.Three")]
+        [InlineData("short", "AEnum.Two", "AEnum.Three")]
+        [InlineData("int", "AEnum.Two", "AEnum.Three")]
+        [InlineData("long", "AEnum.Two", "AEnum.Three")]
+        [InlineData("byte", "AEnum.Two", "AEnum.Three")]
+        [InlineData("ushort", "AEnum.Two", "AEnum.Three")]
+        [InlineData("uint", "AEnum.Two", "AEnum.Three")]
+        [InlineData("ulong", "AEnum.Two", "AEnum.Three")]
+        public static async Task TestEnumConstantCompositionAsync(string type, string min, string max)
+        {
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
+
+public class Test
+{{
+    public static void TestMethod([ConstantExpected] AEnum constant)
+    {{
+        TestMethodWithConstant(constant);
+    }}
+    public static void TestMethodWithConstant([ConstantExpected] AEnum val) {{ }}
+    public static void TestMethodConstrained([ConstantExpected(Min = {min}, Max = {max})] AEnum constant)
+    {{
+        TestMethodWithConstant(constant);
+        TestMethodWithConstrainedConstant(constant);
+    }}
+    public static void TestMethodWithConstrainedConstant([ConstantExpected(Min = {min}, Max = {max})] AEnum val) {{ }}
+}}
+
+public enum AEnum : {type}
+{{
+    Zero,
+    One = 1,
+    Two = 1 << 1,
+    Three = 1 << 2,
+    Four = 1 << 3,
+    Five = 1 << 4
+}}
+";
+            await TestCSAsync(csInput);
+        }
+
         [Fact]
         public static async Task TestConstantCompositionStringAsync()
         {
@@ -680,6 +1001,47 @@ public class Test
         TestMethodWithConstrainedConstant({{|#0:constant|}});
     }}
     public static void TestMethodWithConstrainedConstant([ConstantExpected(Min = {min}, Max = {max})] {type} val) {{ }}
+}}
+";
+            await TestCSAsync(csInput,
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantOutOfBoundsRule)
+                        .WithLocation(0)
+                        .WithArguments(minValue.ToString(), maxValue.ToString()));
+        }
+
+        [Theory]
+        [InlineData("sbyte", "AEnum.Two", "AEnum.Three", "AEnum.Four", 2, 4)]
+        [InlineData("short", "AEnum.Two", "AEnum.Three", "AEnum.Four", 2, 4)]
+        [InlineData("int", "AEnum.Two", "AEnum.Three", "AEnum.Four", 2, 4)]
+        [InlineData("long", "AEnum.Two", "AEnum.Three", "AEnum.Four", 2, 4)]
+        [InlineData("byte", "AEnum.Two", "AEnum.Three", "AEnum.Four", 2, 4)]
+        [InlineData("ushort", "AEnum.Two", "AEnum.Three", "AEnum.Four", 2, 4)]
+        [InlineData("uint", "AEnum.Two", "AEnum.Three", "AEnum.Four", 2, 4)]
+        [InlineData("ulong", "AEnum.Two", "AEnum.Three", "AEnum.Four", 2, 4)]
+        public static async Task TestEnumConstantCompositionOutOfBoundsAsync(string type, string min, string max, string outOfBoundMax, object minValue, object maxValue)
+        {
+            string csInput = @$"
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
+
+public class Test
+{{
+    public static void TestMethodConstrained([ConstantExpected(Min = {min}, Max = {outOfBoundMax})] AEnum constant)
+    {{
+        TestMethodWithConstrainedConstant({{|#0:constant|}});
+    }}
+    public static void TestMethodWithConstrainedConstant([ConstantExpected(Min = {min}, Max = {max})] AEnum val) {{ }}
+}}
+
+public enum AEnum : {type}
+{{
+    Zero,
+    One = 1,
+    Two = 1 << 1,
+    Three = 1 << 2,
+    Four = 1 << 3,
+    Five = 1 << 4
 }}
 ";
             await TestCSAsync(csInput,

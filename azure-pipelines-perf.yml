@@ -21,8 +21,8 @@ jobs:
         _configuration: Release
         _codeCoverage: False
   pool:
-    name: Azure Pipelines
-    queue: Windows.10.Amd64.20H2.Owl.Perf
+    name: NetCore1ESPool-Public
+    demands: ImageOverride -equals Windows.10.Amd64.20H2.Owl.Perf
   timeoutInMinutes: 150
 
   steps:

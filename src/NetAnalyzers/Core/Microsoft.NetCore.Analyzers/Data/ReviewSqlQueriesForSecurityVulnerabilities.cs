@@ -73,7 +73,10 @@ namespace Microsoft.NetCore.Analyzers.Data
                     operationBlockStartContext.RegisterOperationAction(operationContext =>
                     {
                         var creation = (IObjectCreationOperation)operationContext.Operation;
-                        AnalyzeMethodCall(operationContext, creation.Constructor, symbol, creation.Arguments, creation.Syntax, isInDbCommandConstructor, isInDataAdapterConstructor, iDbCommandType, iDataAdapterType);
+                        if (creation.Constructor is not null)
+                        {
+                            AnalyzeMethodCall(operationContext, creation.Constructor, symbol, creation.Arguments, creation.Syntax, isInDbCommandConstructor, isInDataAdapterConstructor, iDbCommandType, iDataAdapterType);
+                        }
                     }, OperationKind.ObjectCreation);
 
                     // If an object calls a constructor in a base class or the same class, this will get called.

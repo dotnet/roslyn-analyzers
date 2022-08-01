@@ -665,7 +665,7 @@ using System.Threading.Tasks;
 
 class FileStream2 : IAsyncDisposable
 {
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+    public ValueTask DisposeAsync() => default;
 }
 
 public sealed class Test : IAsyncDisposable, IDisposable

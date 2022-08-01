@@ -1956,4 +1956,7 @@
     <value>This call site is reachable on: {2}. '{0}' is obsoleted on: {1}.</value>
     <comment>This call site is reachable on 'macos', 'linux'. 'OboletedOnMacOS()' is obsoleted on: 'macos'.</comment>
   </data>
+  <data name="ParenthesisWithPlaceHolder" xml:space="preserve">
+    <value> ({0})</value>
+  </data>
 </root>

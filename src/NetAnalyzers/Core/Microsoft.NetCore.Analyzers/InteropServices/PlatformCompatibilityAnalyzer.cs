@@ -502,6 +502,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                         attribute.UnsupportedSecond = null;
                                     }
                                     attribute.UnsupportedFirst = null;
+                                    attribute.UnsupportedMessage = null;
                                 }
                                 else
                                 {
@@ -513,6 +514,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                         attribute.SupportedSecond = null;
                                         attribute.UnsupportedSecond = null;
                                         attribute.UnsupportedFirst = null;
+                                        attribute.UnsupportedMessage = null;
                                     }
                                     else if (value.AnalysisValues.Contains(new PlatformMethodValue(info.PlatformName, EmptyVersion, false)))
                                     {
@@ -530,6 +532,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     attribute.ObsoletedIn.IsGreaterThanOrEqualTo(info.Version))
                                 {
                                     attribute.ObsoletedIn = null;
+                                    attribute.ObsoletedMessage = null;
+                                    attribute.ObsoletedUrl = null;
                                 }
 
                                 if (!IsEmptyVersion(info.Version))
@@ -546,6 +550,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                         attribute.UnsupportedFirst.IsGreaterThanOrEqualTo(version))
                                     {
                                         attribute.UnsupportedFirst = null;
+                                        attribute.UnsupportedMessage = null;
                                     }
 
                                     if (attribute.UnsupportedSecond != null &&
@@ -553,6 +558,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                         version.IsGreaterThanOrEqualTo(attribute.UnsupportedSecond))
                                     {
                                         attribute.UnsupportedSecond = null;
+                                        attribute.UnsupportedMessage = null;
                                     }
                                 }
 
@@ -744,8 +750,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             attribute.UnsupportedSecond = null;
                             attribute.SupportedFirst = null;
                             attribute.SupportedSecond = null;
+                            attribute.UnsupportedMessage = null;
                         }
                         attribute.ObsoletedIn = null;
+                        attribute.ObsoletedMessage = null;
+                        attribute.ObsoletedUrl = null;
                     }
                 }
             }
@@ -932,7 +941,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 if (attribute.UnsupportedMessage is not null)
                 {
-                    message += $"{CommaSeparator}{attribute.UnsupportedMessage}";
+                    message += string.Format(CultureInfo.InvariantCulture, ParenthesisWithPlaceHolder, attribute.UnsupportedMessage);
                 }
 
                 return message;
@@ -942,12 +951,16 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 if (attribute.ObsoletedMessage is not null)
                 {
-                    message += $"{CommaSeparator}{attribute.ObsoletedMessage}";
+                    string customMessge = attribute.ObsoletedMessage;
+                    if (attribute.ObsoletedUrl is not null)
+                    {
+                        customMessge = $"{customMessge} {attribute.ObsoletedUrl}";
+                    }
+                    message += string.Format(CultureInfo.InvariantCulture, ParenthesisWithPlaceHolder, customMessge);
                 }
-
-                if (attribute.ObsoletedUrl is not null)
+                else if (attribute.ObsoletedUrl is not null)
                 {
-                    message += $" {attribute.ObsoletedUrl}";
+                    message += string.Format(CultureInfo.InvariantCulture, ParenthesisWithPlaceHolder, attribute.ObsoletedUrl);
                 }
 
                 return message;
@@ -1001,9 +1014,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                             platformsBuilder.Add(AppendMessage(pAttribute,
                                                 GetFormattedString(PlatformCompatibilityFromVersionToVersion, pName, unsupportedVersion, supportedVersion)));
                                         }
-                                        continue;
                                     }
-                                    platformsBuilder.Add(AppendMessage(pAttribute, GetFormattedString(PlatformCompatibilityVersionAndLater, pName, supportedVersion)));
+                                    else
+                                    {
+                                        platformsBuilder.Add(AppendMessage(pAttribute, GetFormattedString(PlatformCompatibilityVersionAndLater, pName, supportedVersion)));
+                                    }
                                 }
                                 else
                                 {
@@ -1018,9 +1033,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     if (csAttributes != null && HasSameVersionedPlatformSupport(csAttributes, pName, checkSupport: true))
                                     {
                                         platformsBuilder.Add(AppendMessage(pAttribute, GetFormattedString(PlatformCompatibilityAllVersions, pName)));
-                                        continue;
                                     }
-                                    platformsBuilder.Add(AppendMessage(pAttribute, EncloseWithQuotes(pName)));
+                                    else
+                                    {
+                                        platformsBuilder.Add(AppendMessage(pAttribute, EncloseWithQuotes(pName)));
+                                    }
                                 }
                                 else
                                 {
@@ -1578,7 +1595,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                 }
 
-                // Check if obsoleted attribute suppressed
+                // Check if obsoleted attribute guarded by callsite attributes
                 if (attribute.ObsoletedIn != null)
                 {
                     if (callSiteAttributes.TryGetValue(platformName, out var callSiteAttribute))
@@ -1811,6 +1828,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                             existing.SupportedFirst = childAttribute.SupportedFirst;
                                         }
                                     }
+
+                                    if (childAttribute.ObsoletedIn != null &&
+                                        (childAttribute.ObsoletedIn < existing.UnsupportedFirst ||
+                                            existing.SupportedFirst != null &&
+                                            (existing.UnsupportedSecond == null || existing.UnsupportedSecond > childAttribute.ObsoletedIn)) &&
+                                        (existing.ObsoletedIn == null || childAttribute.ObsoletedIn < existing.ObsoletedIn))
+                                    {
+                                        existing.ObsoletedIn = childAttribute.ObsoletedIn;
+                                        existing.ObsoletedMessage = childAttribute.ObsoletedMessage;
+                                        existing.ObsoletedUrl = childAttribute.ObsoletedMessage;
+                                    }
                                 }
                                 else
                                 {
@@ -1840,10 +1868,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                         parentAttributes.Callsite = Callsite.Empty;
                                         attributes.SupportedFirst = childAttribute.SupportedFirst > attributes.SupportedFirst ? childAttribute.SupportedFirst : null;
                                         attributes.UnsupportedFirst = childAttribute.UnsupportedFirst;
+                                        attributes.UnsupportedMessage = childAttribute.UnsupportedMessage;
                                     }
                                     else if (attributes.UnsupportedFirst == null || attributes.UnsupportedFirst > childAttribute.UnsupportedFirst)
                                     {
                                         attributes.UnsupportedFirst = childAttribute.UnsupportedFirst;
+                                        attributes.UnsupportedMessage = childAttribute.UnsupportedMessage;
                                     }
 
                                     if (attributes.SupportedSecond.IsGreaterThanOrEqualTo(childAttribute.UnsupportedFirst))
@@ -1853,6 +1883,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     if (childAttribute.UnsupportedSecond != null && childAttribute.UnsupportedSecond > attributes.UnsupportedFirst)
                                     {
                                         attributes.UnsupportedFirst = childAttribute.UnsupportedSecond;
+                                        attributes.UnsupportedMessage = childAttribute.UnsupportedMessage;
                                     }
                                 }
                             }
@@ -1862,12 +1893,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 notFoundPlatforms.Add(platform);
                             }
                         }
+
                         // Check for Obsoleted attributes, only lower version could overwrite
-                        if (attributes.ObsoletedIn != null &&
-                            childAttributes.TryGetValue(platform, out var childAttr) &&
-                            childAttr.ObsoletedIn != null && childAttr.ObsoletedIn < attributes.ObsoletedIn)
+                        if (childAttributes.TryGetValue(platform, out var childAttr) &&
+                            childAttr.ObsoletedIn != null &&
+                            (attributes.ObsoletedIn == null || childAttr.ObsoletedIn < attributes.ObsoletedIn))
                         {
                             attributes.ObsoletedIn = childAttr.ObsoletedIn;
+                            attributes.ObsoletedMessage = childAttr.ObsoletedMessage;
+                            attributes.ObsoletedUrl = childAttr.ObsoletedUrl;
                         }
                     }
 

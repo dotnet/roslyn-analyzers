@@ -1832,6 +1832,11 @@
         <target state="translated">P/Invokes 应该是不可见的</target>
         <note />
       </trans-unit>
+      <trans-unit id="ParenthesisWithPlaceHolder">
+        <source> ({0})</source>
+        <target state="new"> ({0})</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PlatformCompatibilityAllPlatforms">
         <source>and all other platforms</source>
         <target state="translated">和其他所有平台</target>

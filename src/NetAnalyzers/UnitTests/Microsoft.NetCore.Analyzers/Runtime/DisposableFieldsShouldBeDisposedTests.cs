@@ -663,15 +663,20 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 
+class FileStream2 : IAsyncDisposable
+{
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+}
+
 public sealed class Test : IAsyncDisposable, IDisposable
 {
     private readonly HttpClient client;
-    private readonly FileStream stream;
+    private readonly FileStream2 stream;
 
     public Test()
     {
         client = new HttpClient();
-        stream = new FileStream(""C://some-path"", FileMode.CreateNew);
+        stream = new FileStream2();
     }
 
     public void Dispose()
@@ -687,6 +692,7 @@ public sealed class Test : IAsyncDisposable, IDisposable
 "
             }.RunAsync();
         }
+
         [Fact, WorkItem(6075, "https://github.com/dotnet/roslyn-analyzers/issues/6075")]
         public async Task DisposableDisposedInExplicitDisposable_Disposed_NoDiagnosticAsync()
         {

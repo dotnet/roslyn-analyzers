@@ -4,8 +4,6 @@
     <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
     <DefineConstants>$(DefineConstants),NET_ANALYZERS_TEST</DefineConstants>
     <ServerGarbageCollection>true</ServerGarbageCollection>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="$(RepoRoot)\NuGet.config" CopyToOutputDirectory="PreserveNewest" />

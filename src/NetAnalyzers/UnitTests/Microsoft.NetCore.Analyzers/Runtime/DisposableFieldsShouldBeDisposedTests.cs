@@ -651,6 +651,43 @@ End Class",
             }.RunAsync();
         }
 
+        [Fact, WorkItem(6075, "https://github.com/dotnet/roslyn-analyzers/issues/6075")]
+        public async Task AsyncDisposableDisposedInAsyncDisposable_Disposed_NoDiagnosticAsync()
+        {
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+public sealed class Test : IAsyncDisposable, IDisposable
+{
+    private readonly HttpClient client;
+    private readonly FileStream stream;
+
+    public Test()
+    {
+        client = new HttpClient();
+        stream = new FileStream(""C://some-path"", FileMode.CreateNew);
+    }
+
+    public void Dispose()
+    {
+        client.Dispose();
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        await stream.DisposeAsync();
+    }
+}
+"
+            }.RunAsync();
+        }
+
         [Fact]
         public async Task DisposableAllocation_AssignedThroughLocal_Disposed_NoDiagnosticAsync()
         {

@@ -691,6 +691,44 @@ public sealed class Test : IAsyncDisposable, IDisposable
 }
 "
             }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+Imports System
+Imports System.IO
+Imports System.Net.Http
+Imports System.Threading.Tasks
+
+class FileStream2 
+	implements IAsyncDisposable
+	public function DisposeAsync() as ValueTask implements IAsyncDisposable.DisposeAsync
+		return nothing
+	end function
+end class
+
+public class Test 
+	implements IAsyncDisposable, IDisposable
+	
+    private readonly client as HttpClient
+    private readonly stream as FileStream2
+
+	public sub new()
+        client = new HttpClient
+        stream = new FileStream2
+	end sub
+
+	public sub Dispose() implements IDisposable.Dispose
+        client.Dispose()
+	end sub
+
+	function DisposeAsync() as ValueTask implements IAsyncDisposable.DisposeAsync
+		return stream.DisposeAsync()
+	end function
+end class
+"
+            }.RunAsync();
         }
 
         [Fact, WorkItem(6075, "https://github.com/dotnet/roslyn-analyzers/issues/6075")]
@@ -722,6 +760,34 @@ public sealed class Test : IDisposable
         stream.Dispose();
     }
 }
+"
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+Imports System
+Imports System.IO
+Imports System.Net.Http
+Imports System.Threading.Tasks
+
+public class Test 
+	implements IDisposable
+	
+    private readonly client as HttpClient
+    private readonly stream as FileStream
+
+	public sub new()
+        client = new HttpClient
+        stream = new FileStream(""C://some-path"", FileMode.CreateNew)
+	end sub
+
+	public sub Dispose() implements IDisposable.Dispose
+        client.Dispose()
+        stream.Dispose()
+	end sub
+end class
 "
             }.RunAsync();
         }

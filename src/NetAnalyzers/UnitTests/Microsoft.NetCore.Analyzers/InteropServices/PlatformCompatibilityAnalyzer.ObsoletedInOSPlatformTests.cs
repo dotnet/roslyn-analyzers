@@ -222,7 +222,7 @@ public class Test
     public void NotSuppressedByCallsiteUnsupported() // obsoleted before unsupported version
     {
         {|CA1422:ObsoletedOnWindows()|}; // This call site is reachable on: 'Windows' 11.1.0 and before. 'Test.ObsoletedOnWindows()' is obsoleted on: 'Windows' 10.1.1.1 and later.
-        {|CA1422:ObsoletedWithMessage()|}; // This call site is reachable on: 'Windows' 11.1.0 and before. 'Test.ObsoletedWithMessage()' is obsoleted on: 'Windows' 10.1.1.1 and later, Use other method instead.
+        {|CA1422:ObsoletedWithMessage()|}; // This call site is reachable on: 'Windows' 11.1.0 and before. 'Test.ObsoletedWithMessage()' is obsoleted on: 'Windows' 10.1.1.1 and later (Use other method instead).
         {|CA1422:ObsoletedOnIOS14()|}; // This call site is reachable on: 'ios' 15.0 and before, 'maccatalyst' 15.0 and before. 'Test.ObsoletedOnIOS14()' is obsoleted on: 'ios' 14.0 and later, 'maccatalyst' 14.0 and later.
     }
 
@@ -240,7 +240,7 @@ public class Test
     public void NotSuppressedByCallsiteObsoleted()
     {
         {|CA1422:ObsoletedOnWindows()|}; //This call site is reachable on all platforms. 'Test.ObsoletedOnWindows()' is obsoleted on: 'Windows' 10.1.1.1 and later.
-        {|CA1422:ObsoletedWithMessage()|}; // This call site is reachable on all platforms. 'Test.ObsoletedWithMessage()' is obsoleted on: 'Windows' 10.1.1.1 and later, Use other method instead.
+        {|CA1422:ObsoletedWithMessage()|}; // This call site is reachable on all platforms. 'Test.ObsoletedWithMessage()' is obsoleted on: 'Windows' 10.1.1.1 and later (Use other method instead).
         {|CA1422:ObsoletedOnIOS14()|}; // This call site is reachable on all platforms. 'Test.ObsoletedOnIOS14()' is obsoleted on: 'ios' 14.0 and later, 'maccatalyst' 14.0 and later.
     }
     
@@ -313,7 +313,7 @@ public class Test
         {
             ObsoletedOnMacOS();
             ObsoletedOnAndroid21(); // Android is not in MSBuild support list, no warning
-            {|CA1422:ObsoletedOnLinux4AndWindows10()|}; // This call site is reachable on all platforms. 'Test.ObsoletedOnLinux4AndWindows10()' is obsoleted on: 'Linux' 4.1 and later, Use Linux4Supported, 'Windows' 10.1.1.1 and later, Use Windows10Supported.
+            {|CA1422:ObsoletedOnLinux4AndWindows10()|}; // This call site is reachable on all platforms. 'Test.ObsoletedOnLinux4AndWindows10()' is obsoleted on: 'Linux' 4.1 and later, Use Linux4Supported, 'Windows' 10.1.1.1 and later (Use Windows10Supported).
         }
 
         if (OperatingSystem.IsMacOSVersionAtLeast(11))
@@ -423,14 +423,14 @@ public class Test
         {
             ObsoletedOnMacOS(); // Guarded with the attributed field
             ObsoletedOnMacOS15();
-            {|CA1422:ObsoletedOnLinuxAndWindows10()|}; // This call site is reachable on all platforms. 'Test.ObsoletedOnLinux4AndWindows10()' is obsoleted on: 'Linux', 'Windows' 10.1.1.1 and later, Use Windows10Supported.
+            {|CA1422:ObsoletedOnLinuxAndWindows10()|}; // This call site is reachable on all platforms. 'Test.ObsoletedOnLinux4AndWindows10()' is obsoleted on: 'Linux', 'Windows' 10.1.1.1 and later (Use Windows10Supported).
         }
 
         if (IsWindows11Supported)
         {
             ObsoletedOnMacOS(); // reachable on 'Windows' 11.0 and later only
             ObsoletedOnMacOS15();
-            {|CA1422:ObsoletedOnLinuxAndWindows10()|}; // This call site is reachable on: 'Windows' 11.0 and later. 'Test.ObsoletedOnLinux4AndWindows10()' is obsoleted on: 'Windows' 10.1.1.1 and later, Use Windows10Supported.
+            {|CA1422:ObsoletedOnLinuxAndWindows10()|}; // This call site is reachable on: 'Windows' 11.0 and later. 'Test.ObsoletedOnLinux4AndWindows10()' is obsoleted on: 'Windows' 10.1.1.1 and later (Use Windows10Supported).
         }
 
         if (IsLinuxWindows10NotSupported())

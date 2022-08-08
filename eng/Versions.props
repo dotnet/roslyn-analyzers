@@ -39,7 +39,7 @@
     <!-- Use the correct compiler version -->
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <!-- Dependencies from https://github.com/dotnet/roslyn -->
-    <MicrosoftNETCoreCompilersPackageVersion>4.0.0-4.final</MicrosoftNETCoreCompilersPackageVersion>
+    <MicrosoftNETCoreCompilersPackageVersion>4.2.0</MicrosoftNETCoreCompilersPackageVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNETCoreCompilersPackageVersion)</MicrosoftNetCompilersToolsetVersion>
     <CodeStyleAnalyersVersion>$(MicrosoftNETCoreCompilersPackageVersion)</CodeStyleAnalyersVersion>
     <!-- Roslyn -->

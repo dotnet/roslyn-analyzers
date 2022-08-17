@@ -179,3 +179,15 @@ Instance of TemporaryArray\<T>.AsRef() must be a 'using' variable.
 |Severity|Warning|
 |CodeFix|False|
 ---
+
+## RS0051: Do not used APIs banned for analyzers
+
+The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.
+
+|Item|Value|
+|-|-|
+|Category|RoslynDiagnosticsReliability|
+|Enabled|True|
+|Severity|Error|
+|CodeFix|False|
+---

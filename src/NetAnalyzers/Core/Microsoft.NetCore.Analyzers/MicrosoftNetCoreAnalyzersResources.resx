@@ -1959,4 +1959,13 @@
   <data name="ParenthesisWithPlaceHolder" xml:space="preserve">
     <value> ({0})</value>
   </data>
+  <data name="CuriouslyRecurringTemplatePatternDesciption" xml:space="preserve">
+    <value>Curiously Recurring Template Interface requires the derived type used for 'TSelf' type parameter</value>
+  </data>
+  <data name="CuriouslyRecurringTemplatePatternMessage" xml:space="preserve">
+    <value>'{0}' interface requires to use the derived type '{1}' as type parameter</value>
+  </data>
+  <data name="CuriouslyRecurringTemplatePatternTitle" xml:space="preserve">
+    <value>Use correct type parameter</value>
+  </data>
 </root>

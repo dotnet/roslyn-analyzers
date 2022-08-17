@@ -16,5 +16,6 @@ CA1853 | Performance | Info | DoNotGuardDictionaryRemoveByContainsKey, [Document
 CA1854 | Performance | Info | PreferDictionaryTryGetValueAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1854)
 CA2019 | Reliability | Info | UseThreadStaticCorrectly, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019)
 CA2259 | Usage | Warning | UseThreadStaticCorrectly, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259)
+CA2260 | Usage | Warning | UseCuriouslyRecurringTemplatePatternCorrectly, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2260)
 CA5404 | Security | Disabled | DoNotDisableTokenValidationChecks, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5404)
 CA5405 | Security | Disabled | DoNotAlwaysSkipTokenValidationInDelegates, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5405)

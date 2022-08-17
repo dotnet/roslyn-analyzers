@@ -55,6 +55,7 @@ namespace Roslyn.Diagnostics.Analyzers
         public const string TemporaryArrayAsRefRuleId = "RS0049";
 
         public const string RemovedApiIsNotActuallyRemovedRuleId = "RS0050";
+        public const string SymbolIsBannedInAnalyzersRuleId = "RS0051";
 
         //public const string WrapStatementsRuleId = "RS0100"; // Now ported to dotnet/roslyn https://github.com/dotnet/roslyn/pull/50358
         //public const string BlankLinesRuleId = "RS0101"; // Now ported to dotnet/roslyn https://github.com/dotnet/roslyn/pull/50358

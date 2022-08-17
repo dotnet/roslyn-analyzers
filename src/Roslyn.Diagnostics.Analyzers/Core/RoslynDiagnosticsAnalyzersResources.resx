@@ -394,4 +394,13 @@
   <data name="Run iterations" xml:space="preserve">
     <value>Run iterations</value>
   </data>
+  <data name="SymbolIsBannedInAnalyzersDescription" xml:space="preserve">
+    <value>The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.</value>
+  </data>
+  <data name="SymbolIsBannedInAnalyzersMessage" xml:space="preserve">
+    <value>The symbol '{0}' is banned for use by analyzers{1}</value>
+  </data>
+  <data name="SymbolIsBannedInAnalyzersTitle" xml:space="preserve">
+    <value>Do not used APIs banned for analyzers</value>
+  </data>
 </root>

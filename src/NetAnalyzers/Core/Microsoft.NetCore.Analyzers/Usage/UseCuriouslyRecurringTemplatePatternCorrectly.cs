@@ -26,7 +26,10 @@ namespace Microsoft.NetCore.Analyzers.Usage
             isDataflowRule: false);
 
         private static readonly ImmutableArray<string> s_knownInterfaces = ImmutableArray.Create("IParsable`1", "ISpanParsable`1", "IAdditionOperators`3", "IAdditiveIdentity`2",
-            "IBinaryFloatingPointIeee754`1", "IBinaryInteger`1");
+            "IBinaryFloatingPointIeee754`1", "IBinaryInteger`1", "IBinaryNumber`1", "IBitwiseOperators`3", "IComparisonOperators`2", "IDecrementOperators`1", "IDivisionOperators`3",
+            "IEqualityOperators`2", "IExponentialFunctions`1", "IFloatingPointIeee754`1", "IFloatingPoint`1", "IHyperbolicFunctions`1", "IIncrementOperators`1", "ILogarithmicFunctions`1",
+            "IMinMaxValue`1", "IModulusOperators`3", "IMultiplicativeIdentity`2", "IMultiplyOperators`3", "INumberBase`1", "INumber`1", "IPowerFunctions`1", "IRootFunctions`1", "IShiftOperators`2",
+            "ISignedNumber`1", "ISubtractionOperators`3", "ITrigonometricFunctions`1", "IUnaryNegationOperators`2", "IUnaryPlusOperators`2", "IUnsignedNumber`1");
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(CRTPRule);
 

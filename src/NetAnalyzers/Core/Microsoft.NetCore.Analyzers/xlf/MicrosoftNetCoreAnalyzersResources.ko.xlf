@@ -2693,13 +2693,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseSpanClearInsteadOfFillMessage">
-        <source>Use 'Clear' instead of 'Fill' with default value for spans</source>
-        <target state="new">Use 'Clear' instead of 'Fill' with default value for spans</target>
+        <source>Prefer 'Span&lt;T&gt;.Clear()' instead of 'Span&lt;T&gt;.Fill(default)'</source>
+        <target state="new">Prefer 'Span&lt;T&gt;.Clear()' instead of 'Span&lt;T&gt;.Fill(default)'</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSpanClearInsteadOfFillTitle">
-        <source>Use 'Clear' instead of 'Fill' with default value</source>
-        <target state="new">Use 'Clear' instead of 'Fill' with default value</target>
+        <source>Prefer 'Clear' over 'Fill'</source>
+        <target state="new">Prefer 'Clear' over 'Fill'</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">

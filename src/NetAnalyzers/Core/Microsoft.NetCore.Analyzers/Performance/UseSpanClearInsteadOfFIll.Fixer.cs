@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Editing;
 namespace Microsoft.NetCore.Analyzers.Performance
 {
     /// <summary>
-    /// CA1851: Use Span.Clear instead of Span.Fill(default)
+    /// CA1855: Use Span.Clear instead of Span.Fill(default)
     /// </summary>
     public abstract class UseSpanClearInsteadOfFillFixer : CodeFixProvider
     {

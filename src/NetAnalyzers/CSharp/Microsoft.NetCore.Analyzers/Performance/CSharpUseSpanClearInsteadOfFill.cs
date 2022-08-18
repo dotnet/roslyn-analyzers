@@ -11,7 +11,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     /// Implements the <see cref="UseSpanClearInsteadOfFillAnalyzer" />
     /// </summary>
     /// <seealso cref="UseSpanClearInsteadOfFillFixer"/>
-    [DiagnosticAnalyzer(LanguageNames.CSharp), Shared]
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpUseSpanClearInsteadOfFillAnalyzer : UseSpanClearInsteadOfFillAnalyzer
     {
     }

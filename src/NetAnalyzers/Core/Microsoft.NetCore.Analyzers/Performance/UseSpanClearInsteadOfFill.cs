@@ -68,6 +68,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     var invocation = (IInvocationOperation)context.Operation;
 
                     if (SymbolEqualityComparer.Default.Equals(invocation.TargetMethod.OriginalDefinition, spanFillMethod)
+                        && invocation.Arguments.Length == 1
                         && IsDefaultValue(invocation.Arguments[0]))
                     {
                         context.ReportDiagnostic(invocation.CreateDiagnostic(s_Rule));

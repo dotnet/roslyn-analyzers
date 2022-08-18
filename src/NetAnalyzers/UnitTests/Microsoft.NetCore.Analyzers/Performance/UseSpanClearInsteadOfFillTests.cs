@@ -340,6 +340,25 @@ class C
             await VerifyCSCodeFixAsync(source, source);
         }
 
+        [Fact]
+        public async Task TestBadFillCallAsync()
+        {
+            string source = @"
+
+using System;
+
+class C
+{
+    void M(Span<int> span)
+    {
+        span.Fill();
+    }
+}
+";
+            await VerifyCS.VerifyAnalyzerAsync(source,
+                DiagnosticResult.CompilerError("CS7036").WithSpan(9, 14, 9, 18));
+        }
+
         private static Task VerifyCSCodeFixAsync(string source, string corrected)
         {
             var test = new VerifyCS.Test

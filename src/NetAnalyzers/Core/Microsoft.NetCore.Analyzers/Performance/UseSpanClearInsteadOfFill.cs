@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseSpanClearInsteadOfFillAnalyzer : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "CA1851";
+        internal const string DiagnosticId = "CA1855";
         internal const string FillMethod = "Fill";
         internal const string ClearMethod = "Clear";
 

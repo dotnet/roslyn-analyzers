@@ -709,8 +709,8 @@
   <data name="IdentifiersShouldHaveCorrectSuffixMessageDefault" xml:space="preserve">
     <value>Rename {0} to end in '{1}'</value>
   </data>
-  <data name="IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection" xml:space="preserve">
-    <value>Rename {0} to end in either 'Collection' or '{1}'</value>
+  <data name="IdentifiersShouldHaveCorrectSuffixMessageMultiple" xml:space="preserve">
+    <value>Rename {0} to end in either '{1}' or '{2}'</value>
   </data>
   <data name="IdentifiersShouldNotHaveIncorrectSuffixTitle" xml:space="preserve">
     <value>Identifiers should not have incorrect suffix</value>
@@ -969,7 +969,8 @@
     <value>An instance of an assembly-level type is not created by code in the assembly.</value>
   </data>
   <data name="AvoidUninstantiatedInternalClassesMessage" xml:space="preserve">
-    <value>{0} is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</value>
+    <value>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it 'static' (Module in Visual Basic).</value>
+    <comment>{Locked="Module"}</comment>
   </data>
   <data name="AvoidUnusedPrivateFieldsTitle" xml:space="preserve">
     <value>Avoid unused private fields</value>
@@ -1310,6 +1311,14 @@
   </data>
   <data name="OperatorOverloadsHaveNamedAlternatesCodeFixTitle" xml:space="preserve">
     <value>Add operator overload named alternate</value>
+  </data>
+  <data name="AvoidMultipleEnumerationsMessage" xml:space="preserve">
+    <value>Possible multiple enumerations of 'IEnumerable' collection. Consider using an implementation that avoids multiple enumerations.</value>
+    <comment>{Locked="IEnumerable"}</comment>
+  </data>
+  <data name="AvoidMultipleEnumerationsTitle" xml:space="preserve">
+    <value>Possible multiple enumerations of 'IEnumerable' collection</value>
+    <comment>{Locked="IEnumerable"}</comment>
   </data>
   <data name="CollectionsShouldImplementGenericInterfaceMultipleMessage" xml:space="preserve">
     <value>Type '{0}' directly or indirectly inherits '{1}' without implementing any of '{2}'. Publicly-visible types should implement the generic version to broaden usability.</value>

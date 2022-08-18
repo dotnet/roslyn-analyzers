@@ -36,18 +36,6 @@ Invoke the correct property to ensure correct use site diagnostics
 |CodeFix|False|
 ---
 
-## RS0005: Do not use generic 'CodeAction.Create' to create 'CodeAction'
-
-Do not use generic 'CodeAction.Create' to create 'CodeAction'
-
-|Item|Value|
-|-|-|
-|Category|RoslynDiagnosticsPerformance|
-|Enabled|True|
-|Severity|Warning|
-|CodeFix|False|
----
-
 ## RS0006: Do not mix attributes from different versions of MEF
 
 Do not mix attributes from different versions of MEF.
@@ -108,7 +96,7 @@ Importing constructor should be marked with 'ObsoleteAttribute'.
 |CodeFix|True|
 ---
 
-## RS0034: Exported parts should be marked with 'ImportingConstructorAttribute'
+## RS0034: Exported parts should have a public constructor marked with 'ImportingConstructorAttribute'
 
 Exported parts should be marked with 'ImportingConstructorAttribute'.
 

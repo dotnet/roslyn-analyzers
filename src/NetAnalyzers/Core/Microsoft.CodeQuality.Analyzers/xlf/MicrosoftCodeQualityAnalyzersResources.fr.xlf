@@ -52,6 +52,16 @@
         <target state="translated">Éviter la récursivité infinie</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidMultipleEnumerationsMessage">
+        <source>Possible multiple enumerations of 'IEnumerable' collection. Consider using an implementation that avoids multiple enumerations.</source>
+        <target state="translated">Possibilité d'énumérations multiples de la collection 'IEnumerable'. Envisagez d'utiliser une mise en œuvre qui évite les énumérations multiples.</target>
+        <note>{Locked="IEnumerable"}</note>
+      </trans-unit>
+      <trans-unit id="AvoidMultipleEnumerationsTitle">
+        <source>Possible multiple enumerations of 'IEnumerable' collection</source>
+        <target state="translated">Possibilité d'énumérations multiples de la collection 'IEnumerable'.</target>
+        <note>{Locked="IEnumerable"}</note>
+      </trans-unit>
       <trans-unit id="AvoidOutParametersDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
         <target state="translated">Le passage de types par référence (via 'out' ou 'ref') nécessite une bonne connaissance des pointeurs, une bonne compréhension des différences entre les types valeur et les types référence ainsi qu'une certaine expérience de la gestion des méthodes avec plusieurs valeurs de retour. En effet, la différence entre les paramètres 'out' et 'ref' n'est pas comprise par tout le monde.</target>
@@ -235,6 +245,11 @@
       <trans-unit id="EventsShouldNotHaveBeforeOrAfterPrefixTitle">
         <source>Events should not have 'Before' or 'After' prefix</source>
         <target state="translated">Les événements ne doivent pas avoir un préfixe 'Before' ou 'After'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageMultiple">
+        <source>Rename {0} to end in either '{1}' or '{2}'</source>
+        <target state="translated">Renommer {0} pour se terminer par '{1}' ou '{2}'</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresCodeFixTitle">
@@ -1217,11 +1232,6 @@
         <target state="translated">Renommez {0} pour qu'il finisse par '{1}'</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection">
-        <source>Rename {0} to end in either 'Collection' or '{1}'</source>
-        <target state="translated">Renommez {0} pour qu'il finisse par 'Collection' ou par '{1}'</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixTitle">
         <source>Identifiers should not have incorrect suffix</source>
         <target state="translated">Les identificateurs ne doivent pas avoir un suffixe incorrect</target>
@@ -1733,9 +1743,9 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidUninstantiatedInternalClassesMessage">
-        <source>{0} is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</source>
-        <target state="translated">{0} est une classe interne qui n'est apparemment jamais instanciée. Si tel est le cas, supprimez le code de l'assembly. Si cette classe est destinée à contenir uniquement des membres statiques, rendez-la static (Shared en Visual Basic).</target>
-        <note />
+        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it 'static' (Module in Visual Basic).</source>
+        <target state="translated">« {0} » est une classe interne qui n'est apparemment jamais instanciée. Si tel est le cas, supprimez le code de l'assembly. Si cette classe est destinée à contenir uniquement des membres statiques, rendez-la « static » (Module dans Visual Basic).</target>
+        <note>{Locked="Module"}</note>
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsTitle">
         <source>Avoid unused private fields</source>

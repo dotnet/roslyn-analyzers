@@ -52,6 +52,16 @@
         <target state="translated">무한 재귀 방지</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidMultipleEnumerationsMessage">
+        <source>Possible multiple enumerations of 'IEnumerable' collection. Consider using an implementation that avoids multiple enumerations.</source>
+        <target state="translated">'IEnumerable' 컬렉션에 대해 여러 개의 열거형이 가능합니다. 여러 열거형을 방지하는 구현을 사용하는 것이 좋습니다.</target>
+        <note>{Locked="IEnumerable"}</note>
+      </trans-unit>
+      <trans-unit id="AvoidMultipleEnumerationsTitle">
+        <source>Possible multiple enumerations of 'IEnumerable' collection</source>
+        <target state="translated">'IEnumerable' 컬렉션에 대해 여러 개의 열거 가능</target>
+        <note>{Locked="IEnumerable"}</note>
+      </trans-unit>
       <trans-unit id="AvoidOutParametersDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
         <target state="translated">'out' 또는 'ref'를 사용하여 참조로 형식을 전달하려면 포인터 사용 경험, 값 형식과 참조 형식이 어떻게 다른지에 대한 이해 및 반환 값이 여러 개인 메서드 처리가 필요합니다. 또한 'out' 매개 변수와 'ref' 매개 변수의 차이점은 널리 이해되지 않습니다.</target>
@@ -235,6 +245,11 @@
       <trans-unit id="EventsShouldNotHaveBeforeOrAfterPrefixTitle">
         <source>Events should not have 'Before' or 'After' prefix</source>
         <target state="translated">이벤트에 'Before' 또는 'After' 접두사를 사용하지 마세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageMultiple">
+        <source>Rename {0} to end in either '{1}' or '{2}'</source>
+        <target state="translated">{0}이(가) '{1}' 또는 '{2}'(으)로 끝나도록 이름을 바꾸세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresCodeFixTitle">
@@ -1217,11 +1232,6 @@
         <target state="translated">{0}이(가) '{1}'(으)로 끝나도록 이름을 바꾸세요.</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection">
-        <source>Rename {0} to end in either 'Collection' or '{1}'</source>
-        <target state="translated">{0}이(가) 'Collection' 또는 '{1}'(으)로 끝나도록 이름을 바꾸세요.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixTitle">
         <source>Identifiers should not have incorrect suffix</source>
         <target state="translated">식별자에는 올바른 접미사를 사용해야 합니다.</target>
@@ -1733,9 +1743,9 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidUninstantiatedInternalClassesMessage">
-        <source>{0} is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</source>
-        <target state="translated">{0}은(는) 인스턴스화되지 않는 내부 클래스입니다. 어셈블리에서 해당 코드를 제거하세요. 이 클래스가 정적 멤버만 포함하는 경우 static(Visual Basic의 경우 Shared)으로 설정하세요.</target>
-        <note />
+        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it 'static' (Module in Visual Basic).</source>
+        <target state="translated">'{0}'은(는) 명백히 인스턴스화된 적이 없는 내부 클래스입니다. 그렇다면 어셈블리에서 코드를 제거합니다. 이 클래스에서 정적 멤버만 포함하려는 경우 'static'(Visual Basic의 Module)으로 설정합니다.</target>
+        <note>{Locked="Module"}</note>
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsTitle">
         <source>Avoid unused private fields</source>

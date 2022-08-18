@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Threading.Tasks;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -210,6 +209,25 @@ public class Test
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(5).WithArguments("Test.AndroidBrowserOnlyProgram", "'android', 'browser'", "'linux'"),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(6).WithArguments("Test.BrowserOnlyCallsite()", "'browser'", "'linux'"));
         }
+
+        [Fact, WorkItem(5963, "https://github.com/dotnet/roslyn-analyzers/pull/5963")]
+        public async Task PlatformNeutralAssemblyAndCallSiteHasHigherVersionSupport()
+        {
+            var csSource = @"
+using System;
+using System.Runtime.Versioning;
+
+[assembly: SupportedOSPlatform(""MacCatalyst13.1"")]
+public class Test
+{
+    private static int field1 = 0;
+
+    [SupportedOSPlatform(""ios11.0"")]
+    public static void iOS11Method() { field1 = 1; }
+}";
+            await VerifyAnalyzerCSAsync(csSource, "build_property.PlatformNeutralAssembly = true\nbuild_property.TargetFramework=net5.0");
+        }
+
 
         [Fact]
         public async Task OnlyThrowsNotSupportedWithOsDependentStringNotWarnsAsync()
@@ -2074,6 +2092,37 @@ class Some
         }
 
         [Fact]
+        public async Task MergePlatformAttributesCrushTest()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+[SupportedOSPlatform(""ios10.0"")]
+static class Program
+{
+    public static void Main()
+    {
+        [|Some.Api1()|]; // This call site is reachable on all platforms. 'Some.Api1()' is only supported on: 'ios' 14.0 and later, 'maccatalyst' 14.0 and later
+    }
+}
+
+[SupportedOSPlatform(""ios10.0"")]
+[SupportedOSPlatform(""tvos10.0"")]
+[SupportedOSPlatform(""macos10.14"")]
+[SupportedOSPlatform(""maccatalyst13.1"")]
+[UnsupportedOSPlatform(""watchos"")]
+class Some
+{
+    [UnsupportedOSPlatform(""watchos"")]
+    [UnsupportedOSPlatform(""tvos"")]
+    [UnsupportedOSPlatform(""macos"")]
+    [SupportedOSPlatform(""ios14.0"")]
+    public static void Api1() {}
+}";
+            await VerifyAnalyzerCSAsync(source);
+        }
+
+        [Fact]
         public async Task PlatformOverridesAsync()
         {
             var source = @"
@@ -3791,7 +3840,38 @@ class TestType
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
-#if DEBUG
+        [Fact, WorkItem(6015, "https://github.com/dotnet/roslyn-analyzers/issues/6015")]
+        public async Task TestGuardedCheckInsideLoopWithIfAsync()
+        {
+            var source = @"
+using System;
+using System.Collections.Generic;
+using System.Runtime.Versioning;
+
+class C
+{
+    void M(IEnumerable<D> list)
+    {
+        foreach (var d in list)
+        {
+            if ([|d.Flag|]) // This call site is reachable on all platforms. 'C.D.Flag' is only supported on: 'Windows'.
+            {
+                if (OperatingSystem.IsWindows() && OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17763, 0))
+                {
+                }
+            }
+        }
+    }
+
+    [SupportedOSPlatform(""Windows"")]
+    private class D
+    {
+        public bool Flag { get; }
+    }
+}";
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
         [Fact]
         public async Task IosSupportedOnMacCatalystAsync()
         {
@@ -3857,7 +3937,7 @@ class TestType
         [|UnsupportsIos()|];            // This call site is reachable on: 'ios'. 'TestType.UnsupportsIos()' is unsupported on: 'ios'.
         UnsupportsMacCatalyst();    
     }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerCSAsync(source);
         }
@@ -3935,7 +4015,7 @@ class AllPlatforms
         [|SupportsIos.SupportsIOSNotMacCatalyst()|]; // This call site is unreachable on: 'ios'. 'SupportsIos.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
         [|SupportsIos.WorksOnMacCatalystNotIOS()|];  // This call site is reachable on all platforms. 'SupportsIos.WorksOnMacCatalystNotIOS()' is supported on: 'maccatalyst'.  
     }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerCSAsync(source);
         }
@@ -3975,7 +4055,7 @@ class TestType
 
     [SupportedOSPlatform(""ios12.0"")]
     static void SupportsIOS() { }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerCSAsync(source);
         }
@@ -4014,7 +4094,7 @@ class TestType
     
     [UnsupportedOSPlatform(""iOS"")]
     static void UnsupportsIos() { }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
@@ -4054,10 +4134,9 @@ class TestType
 
     [UnsupportedOSPlatform(""iOS12.0"")]
     static void UnsupportsIos() { }
-}" + MockApisCsSource;
+}";
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
-#endif
 
         private string GetFormattedString(string resource, params string[] args) =>
             string.Format(CultureInfo.InvariantCulture, resource, args);

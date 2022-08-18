@@ -14,7 +14,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     /// </summary>
     /// <seealso cref="UseSpanClearInsteadOfFillFixer"/>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public class CSharpUseSpanClearInsteadOfFillFixer : UseSpanClearInsteadOfFillFixer
+    public sealed class CSharpUseSpanClearInsteadOfFillFixer : UseSpanClearInsteadOfFillFixer
     {
         protected override SyntaxNode? GetInvocationTarget(SyntaxNode? node)
         {

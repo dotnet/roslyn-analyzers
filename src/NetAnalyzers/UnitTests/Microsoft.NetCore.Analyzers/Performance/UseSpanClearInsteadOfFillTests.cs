@@ -54,6 +54,7 @@ class C
         [InlineData("int", "default")]
         [InlineData("int?", "default")]
         [InlineData("DateTime", "new DateTime()")]
+        [InlineData("DateTime", "new DateTime { }")]
         [InlineData("DateTime", "default")]
         [InlineData("DateTime", "default(DateTime)")]
         [InlineData("DayOfWeek", "DayOfWeek.Sunday")]
@@ -93,6 +94,7 @@ class C
         [InlineData("double", "-0.0")]
         [InlineData("decimal", "-0.0m")]
         [InlineData("string", "\"\"")]
+        [InlineData("object", "new object()")]
         [InlineData("int?", "0")]
         [InlineData("int?", "default(int)")]
         [InlineData("DateTime?", "new DateTime()")]
@@ -314,13 +316,37 @@ class C
             await VerifyCSCodeFixAsync(source, expected);
         }
 
+        [Fact]
+        public async Task TestStructParameterlessConstructor()
+        {
+            string source = @"
+
+using System;
+
+struct S
+{
+    int x;
+    public S() => x = 4;
+}
+
+class C
+{
+    void M(Span<S> span)
+    {
+        span.Fill(new S());
+    }
+}
+";
+            await VerifyCSCodeFixAsync(source, source);
+        }
+
         private static Task VerifyCSCodeFixAsync(string source, string corrected)
         {
             var test = new VerifyCS.Test
             {
                 TestCode = source,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                LanguageVersion = LanguageVersion.Preview,
+                LanguageVersion = LanguageVersion.CSharp10,
                 FixedCode = corrected,
             };
 

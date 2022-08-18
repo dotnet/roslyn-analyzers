@@ -1572,7 +1572,7 @@ Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'Conta
 |CodeFix|True|
 ---
 
-## [CA1855](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1854): Prefer 'Span<T>.Clear' over 'Span<T>.Fill(default)'
+## [CA1855](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1855): Prefer 'Clear' over 'Fill'
 
 It is more efficient to use 'Clear', instead of 'Fill' with default value.
 

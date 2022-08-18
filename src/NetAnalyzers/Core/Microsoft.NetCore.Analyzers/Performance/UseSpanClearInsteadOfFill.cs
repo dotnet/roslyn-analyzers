@@ -11,6 +11,8 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
     /// CA1851: Use Span.Clear instead of Span.Fill(default)
     /// </summary>
@@ -21,17 +23,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string FillMethod = "Fill";
         internal const string ClearMethod = "Clear";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseSpanClearInsteadOfFillTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseSpanClearInsteadOfFillMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseSpanClearInsteadOfFillDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-
         internal static readonly DiagnosticDescriptor s_Rule = DiagnosticDescriptorHelper.Create(
             DiagnosticId,
-            s_localizableTitle,
-            s_localizableMessage,
+            CreateLocalizableResourceString(nameof(UseSpanClearInsteadOfFillTitle)),
+            CreateLocalizableResourceString(nameof(UseSpanClearInsteadOfFillMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
-            description: s_localizableDescription,
+            description: CreateLocalizableResourceString(nameof(UseSpanClearInsteadOfFillDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 

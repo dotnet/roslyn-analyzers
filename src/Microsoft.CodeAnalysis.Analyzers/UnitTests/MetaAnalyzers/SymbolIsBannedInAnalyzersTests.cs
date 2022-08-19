@@ -17,6 +17,34 @@ namespace Microsoft.CodeAnalysis.Analyzers.UnitTests
     public class SymbolIsBannedInAnalyzersTests
     {
         [Fact]
+        public async Task ProjectContainsAnalyzer_NoBannedApiSetting()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using System.Collections.Immutable;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+public class MyAnalyzer : DiagnosticAnalyzer
+{
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray<DiagnosticDescriptor>.Empty;
+
+    public override void Initialize(AnalysisContext context)
+    {
+    }
+}
+",
+                ExpectedDiagnostics =
+                {
+                    // /0/Test0.cs(8,13): warning RS0051: The symbol 'File' is banned for use by analyzers: do not do file IO in analyzers
+                    VerifyCS.Diagnostic().WithSpan(8, 13, 8, 37).WithArguments("File", ": do not do file IO in analyzers"),
+                }
+            }.RunAsync();
+        }
+
+        [Fact]
         public async Task UseBannedApi_CSharp()
         {
             await new VerifyCS.Test

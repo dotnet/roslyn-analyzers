@@ -233,10 +233,6 @@ dotnet_diagnostic.IDE0072.severity = silent
 # IDE0083: Use pattern matching
 dotnet_diagnostic.IDE0083.severity = silent
 
-# IDE0090: Use 'new(...)'
-# Remove this once https://github.com/dotnet/roslyn-analyzers/issues/5867 is fixed and fix violations.
-dotnet_diagnostic.IDE0090.severity = suggestion
-
 # IDE0120: Simplify linq expression
 dotnet_diagnostic.IDE0120.severity = silent
 

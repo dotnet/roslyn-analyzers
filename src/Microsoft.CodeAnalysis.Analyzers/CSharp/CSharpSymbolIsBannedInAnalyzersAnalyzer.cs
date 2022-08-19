@@ -2,11 +2,9 @@
 
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Roslyn.Diagnostics.Analyzers;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Analyzers;
 
-namespace Roslyn.Diagnostics.CSharp.Analyzers
+namespace Microsoft.CodeAnalysis.CSharp.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpSymbolIsBannedInAnalyzersAnalyzer : SymbolIsBannedInAnalyzersAnalyzer<SyntaxKind>

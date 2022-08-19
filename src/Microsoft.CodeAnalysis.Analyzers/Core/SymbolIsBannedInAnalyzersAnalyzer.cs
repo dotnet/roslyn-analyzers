@@ -3,22 +3,21 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.BannedApiAnalyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Roslyn.Diagnostics.Analyzers
+namespace Microsoft.CodeAnalysis.Analyzers
 {
-    using static RoslynDiagnosticsAnalyzersResources;
+    using static CodeAnalysisDiagnosticsResources;
 
     internal static class SymbolIsBannedInAnalyzersAnalyzer
     {
         public static readonly DiagnosticDescriptor SymbolIsBannedRule = new(
-            id: RoslynDiagnosticIds.SymbolIsBannedInAnalyzersRuleId,
+            id: DiagnosticIds.SymbolIsBannedInAnalyzersRuleId,
             title: CreateLocalizableResourceString(nameof(SymbolIsBannedInAnalyzersTitle)),
             messageFormat: CreateLocalizableResourceString(nameof(SymbolIsBannedInAnalyzersMessage)),
-            category: DiagnosticCategory.RoslynDiagnosticsReliability,
+            category: DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
             description: CreateLocalizableResourceString(nameof(SymbolIsBannedInAnalyzersDescription)),
@@ -36,7 +35,7 @@ namespace Roslyn.Diagnostics.Analyzers
 #pragma warning disable RS1012 // 'compilationContext' does not register any analyzer actions. Consider moving actions registered in 'Initialize' that depend on this start action to 'compilationContext'.
         protected sealed override Dictionary<ISymbol, BanFileEntry>? ReadBannedApis(CompilationStartAnalysisContext compilationContext)
         {
-            const string fileName = "Roslyn.Diagnostics.Analyzers.AnalyzerBannedSymbols.txt";
+            const string fileName = "Microsoft.CodeAnalysis.Analyzers.AnalyzerBannedSymbols.txt";
             var stream = typeof(SymbolIsBannedInAnalyzersAnalyzer<>).Assembly.GetManifestResourceStream(fileName);
             var source = SourceText.From(stream);
             var result = new Dictionary<ISymbol, BanFileEntry>();

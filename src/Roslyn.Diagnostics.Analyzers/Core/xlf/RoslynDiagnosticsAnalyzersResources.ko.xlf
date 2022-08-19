@@ -302,21 +302,6 @@
         <target state="translated">반복 실행</target>
         <note />
       </trans-unit>
-      <trans-unit id="SymbolIsBannedInAnalyzersDescription">
-        <source>The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.</source>
-        <target state="new">The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SymbolIsBannedInAnalyzersMessage">
-        <source>The symbol '{0}' is banned for use by analyzers{1}</source>
-        <target state="new">The symbol '{0}' is banned for use by analyzers{1}</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SymbolIsBannedInAnalyzersTitle">
-        <source>Do not used APIs banned for analyzers</source>
-        <target state="new">Do not used APIs banned for analyzers</target>
-        <note />
-      </trans-unit>
       <trans-unit id="TemporaryArrayAsRefDescription">
         <source>Instance of TemporaryArray&lt;T&gt;.AsRef() must be a 'using' variable.</source>
         <target state="translated">TemporaryArray&lt;T&gt;.AsRef()의 인스턴스는 'using' 변수여야 합니다.</target>

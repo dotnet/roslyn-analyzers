@@ -352,6 +352,21 @@
         <target state="translated">Nie dodawaj usuniętych identyfikatorów diagnostyki analizatora do niedostarczonego wydania analizatora</target>
         <note />
       </trans-unit>
+      <trans-unit id="SymbolIsBannedInAnalyzersDescription">
+        <source>The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.</source>
+        <target state="new">The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SymbolIsBannedInAnalyzersMessage">
+        <source>The symbol '{0}' is banned for use by analyzers{1}</source>
+        <target state="new">The symbol '{0}' is banned for use by analyzers{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SymbolIsBannedInAnalyzersTitle">
+        <source>Do not used APIs banned for analyzers</source>
+        <target state="new">Do not used APIs banned for analyzers</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UnexpectedAnalyzerDiagnosticForRemovedDiagnosticIdDescription">
         <source>Diagnostic IDs marked as removed in analyzer release file should not be reported by analyzers.</source>
         <target state="translated">Identyfikatory diagnostyczne oznaczone jako usunięte w pliku wydania analizatora nie powinny być zgłaszane przez analizatory.</target>

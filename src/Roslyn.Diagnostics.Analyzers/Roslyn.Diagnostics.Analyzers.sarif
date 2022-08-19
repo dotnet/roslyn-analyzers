@@ -263,23 +263,6 @@
               "Telemetry"
             ]
           }
-        },
-        "RS0051": {
-          "id": "RS0051",
-          "shortDescription": "Do not used APIs banned for analyzers",
-          "fullDescription": "The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.",
-          "defaultLevel": "error",
-          "properties": {
-            "category": "RoslynDiagnosticsReliability",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpSymbolIsBannedInAnalyzersAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
         }
       }
     },
@@ -368,23 +351,6 @@
             "category": "RoslynDiagnosticsReliability",
             "isEnabledByDefault": true,
             "typeName": "VisualBasicDoNotCopyValue",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "RS0051": {
-          "id": "RS0051",
-          "shortDescription": "Do not used APIs banned for analyzers",
-          "fullDescription": "The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.",
-          "defaultLevel": "error",
-          "properties": {
-            "category": "RoslynDiagnosticsReliability",
-            "isEnabledByDefault": true,
-            "typeName": "BasicSymbolIsBannedInAnalyzersAnalyzer",
             "languages": [
               "Visual Basic"
             ],

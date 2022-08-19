@@ -424,6 +424,18 @@ Prefer 'syntax.IsKind(kind)' to 'syntax.Kind() == kind' when checking syntax kin
 |CodeFix|True|
 ---
 
+## RS1035: Do not used APIs banned for analyzers
+
+The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.
+
+|Item|Value|
+|-|-|
+|Category|MicrosoftCodeAnalysisCorrectness|
+|Enabled|True|
+|Severity|Error|
+|CodeFix|False|
+---
+
 ## [RS2000](https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md): Add analyzer diagnostic IDs to analyzer release
 
 All supported analyzer diagnostic IDs should be part of an analyzer release.

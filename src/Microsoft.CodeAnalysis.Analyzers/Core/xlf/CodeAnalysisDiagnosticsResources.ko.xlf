@@ -352,6 +352,21 @@
         <target state="translated">제거된 분석기 진단 ID를 제공되지 않은 분석기 릴리스에 추가하면 안 됩니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SymbolIsBannedInAnalyzersDescription">
+        <source>The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.</source>
+        <target state="new">The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SymbolIsBannedInAnalyzersMessage">
+        <source>The symbol '{0}' is banned for use by analyzers{1}</source>
+        <target state="new">The symbol '{0}' is banned for use by analyzers{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SymbolIsBannedInAnalyzersTitle">
+        <source>Do not used APIs banned for analyzers</source>
+        <target state="new">Do not used APIs banned for analyzers</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UnexpectedAnalyzerDiagnosticForRemovedDiagnosticIdDescription">
         <source>Diagnostic IDs marked as removed in analyzer release file should not be reported by analyzers.</source>
         <target state="translated">분석기 릴리스 파일에서 제거된 것으로 표시된 진단 ID는 분석기에서 보고되면 안 됩니다.</target>

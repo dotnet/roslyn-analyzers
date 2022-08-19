@@ -10,9 +10,6 @@
     <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\Microsoft.CodeAnalysis.BannedApiAnalyzers\Core\SymbolIsBannedAnalyzerBase.cs" Link="SymbolIsBannedAnalyzerBase.cs" />
-    <EmbeddedResource Include="AnalyzerBannedSymbols.txt" />
-
     <InternalsVisibleTo Include="Roslyn.Diagnostics.CSharp.Analyzers" />
     <InternalsVisibleTo Include="Roslyn.Diagnostics.VisualBasic.Analyzers" />
     <InternalsVisibleTo Include="Roslyn.Diagnostics.Analyzers.UnitTests" />

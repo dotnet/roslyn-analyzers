@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Roslyn.Diagnostics.CSharp.Analyzers.CSharpSymbolIsBannedInAnalyzersAnalyzer,
+    Microsoft.CodeAnalysis.CSharp.Analyzers.CSharpSymbolIsBannedInAnalyzersAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Roslyn.Diagnostics.VisualBasic.Analyzers.BasicSymbolIsBannedInAnalyzersAnalyzer,
+    Microsoft.CodeAnalysis.VisualBasic.Analyzers.BasicSymbolIsBannedInAnalyzersAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
-namespace Roslyn.Diagnostics.Analyzers.UnitTests
+namespace Microsoft.CodeAnalysis.Analyzers.UnitTests
 {
     public class SymbolIsBannedInAnalyzersTests
     {

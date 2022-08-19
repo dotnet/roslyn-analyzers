@@ -798,6 +798,23 @@
               "Telemetry"
             ]
           }
+        },
+        "RS1035": {
+          "id": "RS1035",
+          "shortDescription": "Do not used APIs banned for analyzers",
+          "fullDescription": "The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "MicrosoftCodeAnalysisCorrectness",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpSymbolIsBannedInAnalyzersAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
         }
       }
     },
@@ -955,6 +972,23 @@
             "category": "Library",
             "isEnabledByDefault": true,
             "typeName": "VisualBasicUpgradeMSBuildWorkspaceAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "RS1035": {
+          "id": "RS1035",
+          "shortDescription": "Do not used APIs banned for analyzers",
+          "fullDescription": "The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "MicrosoftCodeAnalysisCorrectness",
+            "isEnabledByDefault": true,
+            "typeName": "BasicSymbolIsBannedInAnalyzersAnalyzer",
             "languages": [
               "Visual Basic"
             ],

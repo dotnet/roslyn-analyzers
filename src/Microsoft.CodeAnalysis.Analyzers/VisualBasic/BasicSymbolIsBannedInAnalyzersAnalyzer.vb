@@ -1,12 +1,10 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.Analyzers
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
-Imports Roslyn.Diagnostics.Analyzers
 
-Namespace Roslyn.Diagnostics.VisualBasic.Analyzers
+Namespace Microsoft.CodeAnalysis.VisualBasic.Analyzers
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public Class BasicSymbolIsBannedInAnalyzersAnalyzer
         Inherits SymbolIsBannedInAnalyzersAnalyzer(Of SyntaxKind)

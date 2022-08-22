@@ -8,7 +8,7 @@ using Microsoft.NetCore.Analyzers.Usage;
 namespace Microsoft.NetCore.CSharp.Analyzers.Usage
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class CSharpUseCuriouslyRecurringTemplatePatternCorrectly : UseCuriouslyRecurringTemplatePatternCorrectly
+    public sealed class CSharpImplementGenericMathInterfacesCorrectly : ImplementGenericMathInterfacesCorrectly
     {
         protected override SyntaxNode? FindTheTypeArgumentOfTheInterfaceFromTypeDeclaration(ISymbol typeSymbol, ISymbol anInterfaceSymbol, int argumentLocation)
         {

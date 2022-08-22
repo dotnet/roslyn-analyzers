@@ -182,21 +182,6 @@
         <target state="translated">, </target>
         <note>Separator used for separating list of platform names: {API} is only supported on: {‘windows’, ‘browser’, ‘linux’}</note>
       </trans-unit>
-      <trans-unit id="CuriouslyRecurringTemplatePatternDesciption">
-        <source>Curiously Recurring Template Interface requires the derived type used for 'TSelf' type parameter</source>
-        <target state="new">Curiously Recurring Template Interface requires the derived type used for 'TSelf' type parameter</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CuriouslyRecurringTemplatePatternMessage">
-        <source>'{0}' interface requires to use the derived type '{1}' as type parameter</source>
-        <target state="new">'{0}' interface requires to use the derived type '{1}' as type parameter</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CuriouslyRecurringTemplatePatternTitle">
-        <source>Use correct type parameter</source>
-        <target state="new">Use correct type parameter</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DataSetDataTableInDeserializableObjectGraphMessage">
         <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}</source>
         <target state="translated">Güvenilmeyen giriş seri durumdan çıkarılırken, {0} nesnesinin seri durumdan çıkarılması güvenli değildir. '{1}', {0} nesnesidir veya bu nesneden türetilmiştir</target>
@@ -1255,6 +1240,21 @@
       <trans-unit id="HardcodedSslProtocolsTitle">
         <source>Avoid hardcoded SslProtocols values</source>
         <target state="translated">Sabit kodlanmış SslProtocols değerlerinden kaçının</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyDesciption">
+        <source>Specific generic math interfaces requires the derived type used for the 'TSelf' type parameter</source>
+        <target state="new">Specific generic math interfaces requires the derived type used for the 'TSelf' type parameter</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyMessage">
+        <source>'{0}' interface requires the derived type '{1}' used for the 'TSelf' type parameter</source>
+        <target state="new">'{0}' interface requires the derived type '{1}' used for the 'TSelf' type parameter</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyTitle">
+        <source>Use correct type parameter</source>
+        <target state="new">Use correct type parameter</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyDescription">

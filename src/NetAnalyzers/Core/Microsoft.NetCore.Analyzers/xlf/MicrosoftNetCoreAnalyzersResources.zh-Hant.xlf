@@ -182,21 +182,6 @@
         <target state="translated">, </target>
         <note>Separator used for separating list of platform names: {API} is only supported on: {‘windows’, ‘browser’, ‘linux’}</note>
       </trans-unit>
-      <trans-unit id="CuriouslyRecurringTemplatePatternDesciption">
-        <source>Curiously Recurring Template Interface requires the derived type used for 'TSelf' type parameter</source>
-        <target state="new">Curiously Recurring Template Interface requires the derived type used for 'TSelf' type parameter</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CuriouslyRecurringTemplatePatternMessage">
-        <source>'{0}' interface requires to use the derived type '{1}' as type parameter</source>
-        <target state="new">'{0}' interface requires to use the derived type '{1}' as type parameter</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CuriouslyRecurringTemplatePatternTitle">
-        <source>Use correct type parameter</source>
-        <target state="new">Use correct type parameter</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DataSetDataTableInDeserializableObjectGraphMessage">
         <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}</source>
         <target state="translated">還原序列化不受信任的輸入時，將 {0} 物件還原序列化並不安全。'{1}' 屬於或衍生自 {0}</target>
@@ -1255,6 +1240,21 @@
       <trans-unit id="HardcodedSslProtocolsTitle">
         <source>Avoid hardcoded SslProtocols values</source>
         <target state="translated">避免硬式編碼 SslProtocols 值</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyDesciption">
+        <source>Specific generic math interfaces requires the derived type used for the 'TSelf' type parameter</source>
+        <target state="new">Specific generic math interfaces requires the derived type used for the 'TSelf' type parameter</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyMessage">
+        <source>'{0}' interface requires the derived type '{1}' used for the 'TSelf' type parameter</source>
+        <target state="new">'{0}' interface requires the derived type '{1}' used for the 'TSelf' type parameter</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyTitle">
+        <source>Use correct type parameter</source>
+        <target state="new">Use correct type parameter</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyDescription">

@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.CSharp.Analyzers.Usage.CSharpUseCuriouslyRecurringTemplatePatternCorrectly,
+    Microsoft.NetCore.CSharp.Analyzers.Usage.CSharpImplementGenericMathInterfacesCorrectly,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
 {
-    public class UseCuriouslyRecurringTemplatePatternCorrectlyTests
+    public class ImplementGenericMathInterfacesCorrectlyTests
     {
 #if DEBUG
         [Fact]
@@ -18,13 +18,13 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
-public readonly struct MyDate : IParsable<{|#0:DateOnly|}> // 'IParsable' interface requires to use the derived type 'MyDate' as type parameter
+public readonly struct MyDate : IParsable<{|#0:DateOnly|}> // 'IParsable' interface requires the derived type 'MyDate' used for the 'TSelf' type parameter
 { }
-" + MockTypes, VerifyCS.Diagnostic(UseCuriouslyRecurringTemplatePatternCorrectly.CRTPRule).WithLocation(0).WithArguments("IParsable", "MyDate"));
+" + MockTypes, VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.CRTPRule).WithLocation(0).WithArguments("IParsable", "MyDate"));
         }
 
         [Fact]
-        public async Task CRTPatternUsedCorrectlyNotWarn()
+        public async Task IParsableImplementedCorrectlyNotWarn()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -46,9 +46,9 @@ public readonly struct MyDate<TSelf> : IParsable<TSelf> where TSelf : IParsable<
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
-public class Test : ISpanParsable<{|#0:DateOnly|}> // 'ISpanParsable' interface requires to use the derived type 'Test' as type parameter
+public class Test : ISpanParsable<{|#0:DateOnly|}> // 'ISpanParsable' interface requires the derived type 'Test' used for the 'TSelf' type parameter
 { }
-" + MockTypes, VerifyCS.Diagnostic(UseCuriouslyRecurringTemplatePatternCorrectly.CRTPRule).WithLocation(0).WithArguments("ISpanParsable", "Test"));
+" + MockTypes, VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.CRTPRule).WithLocation(0).WithArguments("ISpanParsable", "Test"));
         }
 
         [Fact]
@@ -59,7 +59,7 @@ using System.Numerics;
 
 public class Test : IAdditionOperators<Test, MyTest, long>
 { }
-public class MyTest : IAdditionOperators<[|Test|], MyTest, long> // 'IAdditionOperators' interface requires to use the derived type 'MyTest' as type parameter
+public class MyTest : IAdditionOperators<[|Test|], MyTest, long> // 'IAdditionOperators' interface requires the derived type 'MyTest' used for the 'TSelf' type parameter
 { }
 " + MockTypes);
         }

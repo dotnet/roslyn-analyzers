@@ -10,18 +10,18 @@ namespace Microsoft.NetCore.Analyzers.Usage
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
-    public abstract class UseCuriouslyRecurringTemplatePatternCorrectly : DiagnosticAnalyzer
+    public abstract class ImplementGenericMathInterfacesCorrectly : DiagnosticAnalyzer
     {
         private const string RuleId = "CA2260";
         private const string TSelf = nameof(TSelf);
 
         internal static readonly DiagnosticDescriptor CRTPRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(CuriouslyRecurringTemplatePatternTitle)),
-            CreateLocalizableResourceString(nameof(CuriouslyRecurringTemplatePatternMessage)),
+            CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyTitle)),
+            CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyMessage)),
             DiagnosticCategory.Usage,
             RuleLevel.BuildWarning,
-            description: CreateLocalizableResourceString(nameof(CuriouslyRecurringTemplatePatternDesciption)),
+            description: CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyDesciption)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 

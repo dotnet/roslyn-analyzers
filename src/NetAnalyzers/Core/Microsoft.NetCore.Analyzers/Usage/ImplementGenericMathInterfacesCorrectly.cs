@@ -87,13 +87,9 @@ namespace Microsoft.NetCore.Analyzers.Usage
         {
             var iNamespace = anInterface.ContainingNamespace;
 
-            if (s_knownInterfaces.Contains(anInterface.MetadataName) &&
-                (iNamespace.Equals(systemNS, SymbolEqualityComparer.Default) || iNamespace.Equals(systemNumericsNS)))
-            {
-                return true;
-            }
-
-            return false;
+            return s_knownInterfaces.Contains(anInterface.MetadataName) &&
+                   (iNamespace.Equals(systemNS, SymbolEqualityComparer.Default) ||
+                    iNamespace.Equals(systemNumericsNS, SymbolEqualityComparer.Default));
         }
 
         private bool IsCRTPNotUsedCorrectly(INamedTypeSymbol symbol, INamedTypeSymbol anInterface, out int location)

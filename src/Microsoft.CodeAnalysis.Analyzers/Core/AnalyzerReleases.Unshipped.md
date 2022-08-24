@@ -5,3 +5,4 @@
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 RS1035 | MicrosoftCodeAnalysisCorrectness | Error | SymbolIsBannedInAnalyzersAnalyzer
+RS1036 | MicrosoftCodeAnalysisCorrectness | Error | SymbolIsBannedInAnalyzersAnalyzer

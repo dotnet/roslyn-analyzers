@@ -436,6 +436,18 @@ The symbol has been marked as banned for use in analyzers, and an alternate shou
 |CodeFix|False|
 ---
 
+## RS1036: Specify analyzer banned API enforcement setting
+
+A project containing analyzers or source generators should specify an analyzer banned API enforcement setting.
+
+|Item|Value|
+|-|-|
+|Category|MicrosoftCodeAnalysisCorrectness|
+|Enabled|True|
+|Severity|Error|
+|CodeFix|False|
+---
+
 ## [RS2000](https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md): Add analyzer diagnostic IDs to analyzer release
 
 All supported analyzer diagnostic IDs should be part of an analyzer release.

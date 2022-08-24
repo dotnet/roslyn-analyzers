@@ -815,6 +815,23 @@
               "Telemetry"
             ]
           }
+        },
+        "RS1036": {
+          "id": "RS1036",
+          "shortDescription": "Specify analyzer banned API enforcement setting",
+          "fullDescription": "A project containing analyzers or source generators should specify an analyzer banned API enforcement setting.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "MicrosoftCodeAnalysisCorrectness",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpSymbolIsBannedInAnalyzersAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
         }
       }
     },
@@ -984,6 +1001,23 @@
           "id": "RS1035",
           "shortDescription": "Do not used APIs banned for analyzers",
           "fullDescription": "The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "MicrosoftCodeAnalysisCorrectness",
+            "isEnabledByDefault": true,
+            "typeName": "BasicSymbolIsBannedInAnalyzersAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "RS1036": {
+          "id": "RS1036",
+          "shortDescription": "Specify analyzer banned API enforcement setting",
+          "fullDescription": "A project containing analyzers or source generators should specify an analyzer banned API enforcement setting.",
           "defaultLevel": "error",
           "properties": {
             "category": "MicrosoftCodeAnalysisCorrectness",

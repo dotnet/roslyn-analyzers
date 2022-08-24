@@ -36,3 +36,4 @@ RS1032 |  | Define diagnostic message correctly |
 RS1033 |  | Define diagnostic description correctly |
 RS1034 |  | Prefer 'IsKind' for checking syntax kinds |
 RS1035 |  | Do not used APIs banned for analyzers |
+RS1036 |  | Specify analyzer banned API enforcement setting |

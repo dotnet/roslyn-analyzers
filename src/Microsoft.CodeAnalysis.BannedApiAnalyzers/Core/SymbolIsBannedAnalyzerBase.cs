@@ -20,6 +20,8 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
 
         protected abstract DiagnosticDescriptor SymbolIsBannedRule { get; }
 
+        protected abstract bool OptedInToBannedSymbolEnforcement(CompilationStartAnalysisContext context, SyntaxNode syntax);
+
         protected abstract TSyntaxKind XmlCrefSyntaxKind { get; }
 
         protected abstract SyntaxNode GetReferenceSyntaxNodeFromXmlCref(SyntaxNode syntaxNode);
@@ -173,6 +175,12 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
 
             bool VerifyType(Action<Diagnostic> reportDiagnostic, ITypeSymbol? type, SyntaxNode syntaxNode)
             {
+                if (!OptedInToBannedSymbolEnforcement(compilationContext, syntaxNode))
+                {
+                    // short-circuit by behaving as though we reported an error.
+                    return false;
+                }
+
                 RoslynDebug.Assert(entryBySymbol != null);
 
                 do
@@ -241,6 +249,11 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
 
             void VerifySymbol(Action<Diagnostic> reportDiagnostic, ISymbol symbol, SyntaxNode syntaxNode)
             {
+                if (!OptedInToBannedSymbolEnforcement(compilationContext, syntaxNode))
+                {
+                    return;
+                }
+
                 RoslynDebug.Assert(entryBySymbol != null);
 
                 foreach (var currentSymbol in GetSymbolAndOverridenSymbols(symbol))

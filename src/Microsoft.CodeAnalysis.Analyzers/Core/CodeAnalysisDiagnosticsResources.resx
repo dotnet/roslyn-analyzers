@@ -538,4 +538,13 @@
   <data name="SymbolIsBannedInAnalyzersTitle" xml:space="preserve">
     <value>Do not used APIs banned for analyzers</value>
   </data>
+  <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription" xml:space="preserve">
+    <value>A project containing analyzers or source generators should specify an analyzer banned API enforcement setting.</value>
+  </data>
+  <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage" xml:space="preserve">
+    <value>'{0}': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_analyzer_banned_apis = true'.</value>
+  </data>
+  <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersTitle" xml:space="preserve">
+    <value>Specify analyzer banned API enforcement setting</value>
+  </data>
 </root>

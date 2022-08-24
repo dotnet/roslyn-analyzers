@@ -17,42 +17,20 @@ namespace Microsoft.CodeAnalysis.Analyzers.UnitTests
     public class SymbolIsBannedInAnalyzersTests
     {
         [Fact]
-        public async Task ProjectContainsAnalyzer_NoBannedApiSetting()
+        public async Task UseBannedApi_EnforcementEnabled_CSharp()
         {
             await new VerifyCS.Test
             {
-                TestCode = @"
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using System.Collections.Immutable;
-
-[DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-public class MyAnalyzer : DiagnosticAnalyzer
-{
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray<DiagnosticDescriptor>.Empty;
-
-    public override void Initialize(AnalysisContext context)
-    {
-    }
-}
-",
-                ExpectedDiagnostics =
-                {
-                    // /0/Test0.cs(8,13): warning RS0051: The symbol 'File' is banned for use by analyzers: do not do file IO in analyzers
-                    VerifyCS.Diagnostic().WithSpan(8, 13, 8, 37).WithArguments("File", ": do not do file IO in analyzers"),
-                }
-            }.RunAsync();
-        }
-
-        [Fact]
-        public async Task UseBannedApi_CSharp()
-        {
-            await new VerifyCS.Test
-            {
-                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
                 LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp9,
                 TestCode = @"
 using System.IO;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+class MyAnalyzer
+{
+}
 
 class C
 {
@@ -62,23 +40,100 @@ class C
     }
 }
 ",
-                ExpectedDiagnostics =
-                {
-                    // /0/Test0.cs(8,13): warning RS0051: The symbol 'File' is banned for use by analyzers: do not do file IO in analyzers
-                    VerifyCS.Diagnostic().WithSpan(8, 13, 8, 37).WithArguments("File", ": do not do file IO in analyzers"),
+                ExpectedDiagnostics = {
+                    // /0/Test0.cs(15,13): error RS1035: The symbol 'File' is banned for use by analyzers: do not do file IO in analyzers
+                    VerifyCS.Diagnostic("RS1035").WithSpan(15, 13, 15, 37).WithArguments("File", ": do not do file IO in analyzers"),
+                },
+                TestState = {
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+dotnet_code_quality.enforce_analyzer_banned_apis = true
+"), },
                 }
             }.RunAsync();
         }
 
         [Fact]
-        public async Task UseBannedApi_Basic()
+        public async Task UseBannedApi_EnforcementNotSpecified_CSharp()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                TestCode = @"
+using System.IO;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+class MyAnalyzer
+{
+}
+
+class C
+{
+    void M()
+    {
+        _ = File.Exists(""something"");
+    }
+}
+",
+                ExpectedDiagnostics = {
+                    // /0/Test0.cs(7,7): error RS1036: 'MyAnalyzer': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_analyzer_banned_apis = true'.
+                    VerifyCS.Diagnostic("RS1036").WithSpan(7, 7, 7, 17).WithArguments("MyAnalyzer"),
+                }
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task UseBannedApi_EnforcementDisabled_CSharp()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                TestCode = @"
+using System.IO;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+class MyAnalyzer
+{
+}
+
+class C
+{
+    void M()
+    {
+        _ = File.Exists(""something"");
+    }
+}
+",
+                TestState = {
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+dotnet_code_quality.enforce_analyzer_banned_apis = false
+"),
+                    },
+                }
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task UseBannedApi_EnforcementEnabled_Basic()
         {
             await new VerifyVB.Test
             {
-                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
                 LanguageVersion = Microsoft.CodeAnalysis.VisualBasic.LanguageVersion.Latest,
                 TestCode = @"
 Imports System.IO
+Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.Diagnostics
+
+<DiagnosticAnalyzer(LanguageNames.VisualBasic)>
+Class MyDiagnosticAnalyzer
+End Class
 
 Class C
     Function M()
@@ -88,8 +143,77 @@ End Class
 ",
                 ExpectedDiagnostics =
                 {
-                    // /0/Test0.vb(6,9): warning RS0051: The symbol 'File' is banned for use by analyzers: do not do file IO in analyzers
-                    VerifyVB.Diagnostic().WithSpan(6, 9, 6, 33).WithArguments("File", ": do not do file IO in analyzers"),
+                    // /0/Test0.vb(12,9): error RS1035: The symbol 'File' is banned for use by analyzers: do not do file IO in analyzers
+                    VerifyVB.Diagnostic("RS1035").WithSpan(12, 9, 12, 33).WithArguments("File", ": do not do file IO in analyzers"),
+                },
+                TestState = {
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+dotnet_code_quality.enforce_analyzer_banned_apis = true
+"),
+                    },
+                }
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task UseBannedApi_EnforcementNotSpecified_Basic()
+        {
+            await new VerifyVB.Test
+            {
+                LanguageVersion = Microsoft.CodeAnalysis.VisualBasic.LanguageVersion.Latest,
+                TestCode = @"
+Imports System.IO
+Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.Diagnostics
+
+<DiagnosticAnalyzer(LanguageNames.VisualBasic)>
+Class MyDiagnosticAnalyzer
+End Class
+
+Class C
+    Function M()
+        File.Exists(""something"")
+    End Function
+End Class
+",
+                ExpectedDiagnostics =
+                {
+                    // /0/Test0.vb(7,7): error RS1036: 'MyDiagnosticAnalyzer': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_analyzer_banned_apis = true'.
+                    VerifyVB.Diagnostic("RS1036").WithSpan(7, 7, 7, 27).WithArguments("MyDiagnosticAnalyzer"),
+                }
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task UseBannedApi_EnforcementDisabled_Basic()
+        {
+            await new VerifyVB.Test
+            {
+                LanguageVersion = Microsoft.CodeAnalysis.VisualBasic.LanguageVersion.Latest,
+                TestCode = @"
+Imports System.IO
+Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.Diagnostics
+
+<DiagnosticAnalyzer(LanguageNames.VisualBasic)>
+Class MyDiagnosticAnalyzer
+End Class
+
+Class C
+    Function M()
+        File.Exists(""something"")
+    End Function
+End Class
+",
+                TestState = {
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+dotnet_code_quality.enforce_analyzer_banned_apis = false
+"),
+                    },
                 }
             }.RunAsync();
         }

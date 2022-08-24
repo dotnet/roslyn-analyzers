@@ -229,5 +229,10 @@ namespace Analyzer.Utilities
         /// String option to configure names of additional "None" enum case (separated by '|') for CA1008.
         /// </summary>
         public const string AdditionalEnumNoneNames = "additional_enum_none_names";
+
+        /// <summary>
+        /// Boolean option to enable enforcement of banned APIs in analyzers.
+        /// </summary>
+        public const string EnforceAnalyzerBannedApis = "enforce_analyzer_banned_apis";
     }
 }

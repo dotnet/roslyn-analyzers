@@ -257,6 +257,21 @@
         <target state="translated">Vous devez spécifier au moins un genre de syntaxe, de symbole ou d'opération au moment d'inscrire une action d'analyseur de syntaxe, de symbole ou d'opération. Sinon, l'action inscrite n'est jamais appelée durant l'analyse.</target>
         <note />
       </trans-unit>
+      <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription">
+        <source>A project containing analyzers or source generators should specify an analyzer banned API enforcement setting.</source>
+        <target state="new">A project containing analyzers or source generators should specify an analyzer banned API enforcement setting.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage">
+        <source>'{0}': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_analyzer_banned_apis = true'.</source>
+        <target state="new">'{0}': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_analyzer_banned_apis = true'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersTitle">
+        <source>Specify analyzer banned API enforcement setting</source>
+        <target state="new">Specify analyzer banned API enforcement setting</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferIsKindDescription">
         <source>Prefer 'syntax.IsKind(kind)' to 'syntax.Kind() == kind' when checking syntax kinds. Code using 'IsKind' is slightly more efficient at runtime, so consistent use of this form where applicable helps improve performance in complex analysis scenarios.</source>
         <target state="translated">Utilisez 'syntax.IsKind(kind)' au lieu de 'syntax.Kind() == kind' pour la vérification des genres de syntaxe. Dans la mesure où le code utilisant 'IsKind' est légèrement plus efficace au moment de l'exécution, l'utilisation cohérente de ce formulaire permet d'améliorer les performances dans les scénarios d'analyse complexes.</target>

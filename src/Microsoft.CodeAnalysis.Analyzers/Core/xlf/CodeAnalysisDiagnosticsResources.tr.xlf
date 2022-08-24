@@ -257,6 +257,21 @@
         <target state="translated">Bir söz dizimi, sembol veya işlem çözümleyicisi eylemi eklerken en az bir söz dizimi, sembol veya işlem türü belirtmeniz gerekir. Aksi takdirde, kayıtlı eylem çözümleme sırasında hiçbir zaman çağrılmaz.</target>
         <note />
       </trans-unit>
+      <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription">
+        <source>A project containing analyzers or source generators should specify an analyzer banned API enforcement setting.</source>
+        <target state="new">A project containing analyzers or source generators should specify an analyzer banned API enforcement setting.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage">
+        <source>'{0}': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_analyzer_banned_apis = true'.</source>
+        <target state="new">'{0}': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_analyzer_banned_apis = true'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersTitle">
+        <source>Specify analyzer banned API enforcement setting</source>
+        <target state="new">Specify analyzer banned API enforcement setting</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferIsKindDescription">
         <source>Prefer 'syntax.IsKind(kind)' to 'syntax.Kind() == kind' when checking syntax kinds. Code using 'IsKind' is slightly more efficient at runtime, so consistent use of this form where applicable helps improve performance in complex analysis scenarios.</source>
         <target state="translated">Söz dizimi çeşitleri denetlenirken 'syntax.IsKind(kind)' türünü 'syntax.Kind() == kind' türüne tercih edin. 'IsKind' kullanan kod, çalışma zamanında biraz daha etkilidir, bu nedenle bu formu kullanmak, karmaşık analiz senaryolarında performansın artırılmasına yardımcı olur.</target>

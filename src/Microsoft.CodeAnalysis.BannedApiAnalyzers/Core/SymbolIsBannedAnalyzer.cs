@@ -47,6 +47,8 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
 
         protected sealed override DiagnosticDescriptor SymbolIsBannedRule => SymbolIsBannedAnalyzer.SymbolIsBannedRule;
 
+        protected sealed override bool OptedInToBannedSymbolEnforcement(CompilationStartAnalysisContext context, SyntaxNode syntax) => true;
+
 #pragma warning disable RS1013 // 'compilationContext' does not register any analyzer actions, except for a 'CompilationEndAction'. Consider replacing this start/end action pair with a 'RegisterCompilationAction' or moving actions registered in 'Initialize' that depend on this start action to 'compilationContext'.
         protected sealed override Dictionary<ISymbol, BanFileEntry>? ReadBannedApis(CompilationStartAnalysisContext compilationContext)
         {

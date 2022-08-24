@@ -46,7 +46,7 @@ namespace Microsoft.CodeAnalysis.Analyzers
         protected sealed override bool OptedInToBannedSymbolEnforcement(CompilationStartAnalysisContext compilationContext, SyntaxNode syntax)
         {
             return compilationContext.Options.GetBoolOptionValue(
-                EditorConfigOptionNames.EnforceAnalyzerBannedApis,
+                EditorConfigOptionNames.EnforceExtendedAnalyzerRules,
                 rule: null,
                 syntax.SyntaxTree,
                 compilationContext.Compilation,
@@ -103,7 +103,7 @@ namespace Microsoft.CodeAnalysis.Analyzers
                     var treeOptions = symbolAnalysisContext.Options.AnalyzerConfigOptionsProvider.GetOptions(attributeData.ApplicationSyntaxReference.SyntaxTree);
                     var categorizedTreeOptions = SyntaxTreeCategorizedAnalyzerConfigOptions.Create(treeOptions);
                     var enforceBannedApisIsSpecified = categorizedTreeOptions.TryGetOptionValue(
-                        EditorConfigOptionNames.EnforceAnalyzerBannedApis,
+                        EditorConfigOptionNames.EnforceExtendedAnalyzerRules,
                         OptionKind.DotnetCodeQuality,
                         rule: null,
                         tryParseValue: bool.TryParse,

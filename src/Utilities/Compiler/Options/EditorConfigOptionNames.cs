@@ -231,8 +231,8 @@ namespace Analyzer.Utilities
         public const string AdditionalEnumNoneNames = "additional_enum_none_names";
 
         /// <summary>
-        /// Boolean option to enable enforcement of banned APIs in analyzers.
+        /// Boolean option to opt-in to extended analysis of analyzers and source generators, such as checks for banned APIs in analyzers.
         /// </summary>
-        public const string EnforceAnalyzerBannedApis = "enforce_analyzer_banned_apis";
+        public const string EnforceExtendedAnalyzerRules = "enforce_extended_analyzer_rules";
     }
 }

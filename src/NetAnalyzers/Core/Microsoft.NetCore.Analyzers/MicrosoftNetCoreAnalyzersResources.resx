@@ -1960,10 +1960,10 @@
     <value> ({0})</value>
   </data>
   <data name="ImplementGenericMathInterfacesCorrectlyDesciption" xml:space="preserve">
-    <value>Specific generic math interfaces requires the derived type used for the 'TSelf' type parameter</value>
+    <value>Generic math interfaces requires the derived type itself used for the self recurring type parameter</value>
   </data>
   <data name="ImplementGenericMathInterfacesCorrectlyMessage" xml:space="preserve">
-    <value>'{0}' interface requires the derived type '{1}' used for the 'TSelf' type parameter</value>
+    <value>'{0}' interface requires the derived type '{1}' used for the '{2}' type parameter</value>
   </data>
   <data name="ImplementGenericMathInterfacesCorrectlyTitle" xml:space="preserve">
     <value>Use correct type parameter</value>

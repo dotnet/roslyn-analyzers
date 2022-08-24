@@ -29,7 +29,26 @@ public readonly struct MyDate : IParsable<{|#0:DateOnly|}> // 'IParsable' interf
         throw new NotImplementedException();
     }
 }
-", VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.CRTPRule).WithLocation(0).WithArguments("IParsable", "MyDate")).RunAsync();
+", VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.GMInterfacesRule).WithLocation(0).WithArguments("IParsable", "MyDate", "TSelf")).RunAsync();
+        }
+
+        [Fact]
+        public async Task CustomInterfaceWithKnownNameImplementedNotWarn()
+        {
+            await PopulateTestCs(@"
+using System;
+
+namespace MyNamespace
+{
+    public interface IParsable<TSelf> where TSelf : IParsable<TSelf>
+    { }
+
+    public readonly struct MyDate : IParsable<MyDate>
+    { }
+
+    public readonly struct MyDate2 : IParsable<MyDate>
+    { }
+}").RunAsync();
         }
 
         [Fact]
@@ -50,6 +69,7 @@ public readonly struct MyDate : IParsable<MyDate>
         throw new NotImplementedException();
     }
 }
+
 
 public class Test : ISpanParsable<Test>
 {
@@ -115,7 +135,7 @@ public class Test : ISpanParsable<{|#0:DateOnly|}> // 'ISpanParsable' interface 
     {
         throw new NotImplementedException();
     }
-}", VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.CRTPRule).WithLocation(0).WithArguments("ISpanParsable", "Test")).RunAsync();
+}", VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.GMInterfacesRule).WithLocation(0).WithArguments("ISpanParsable", "Test", "TSelf")).RunAsync();
         }
 
         [Fact]
@@ -147,9 +167,135 @@ public class MyTest : IAdditionOperators<[|Test|], MyTest, long> // 'IAdditionOp
     {
         throw new NotImplementedException();
     }
-
-
 }").RunAsync();
+        }
+
+        [Fact]
+        public async Task ParentClassImplementedIParsableShouldWarn()
+        {
+            await PopulateTestCs(@"
+using System;
+
+class Foo<TMe> : IParsable<TMe> where TMe : IParsable<TMe>
+{
+    public static TMe Parse(string s, IFormatProvider provider)
+    {
+        throw new NotImplementedException();
+    }
+    public static bool TryParse(string s, IFormatProvider provider, out TMe result)
+    {
+        throw new NotImplementedException();
+    }
+}
+class WrongImplementation : Foo<{|#0:int|}> { } // 'IParsable' interface requires the derived type 'WrongImplementation' used for the 'TMe' type parameter
+
+class CorrectImplementation : Foo<CorrectImplementation> { }
+", VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.GMInterfacesRule).WithLocation(0).WithArguments("IParsable", "WrongImplementation", "TMe")).RunAsync();
+        }
+
+        [Fact]
+        public async Task ParentInterfaceImplementedIParsableShouldWarn()
+        {
+            await PopulateTestCs(@"
+using System;
+
+interface IMyInterface<TMe> : IParsable<TMe> where TMe : IParsable<TMe>
+{ }
+
+class WrongImplementation : IMyInterface<{|#0:int|}>
+{
+    public static int Parse(string s, IFormatProvider provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse(string s, IFormatProvider provider, out int result)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class CorrectImplementation : IMyInterface<CorrectImplementation>
+{
+    public static CorrectImplementation Parse(string s, IFormatProvider provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse(string s, IFormatProvider provider, out CorrectImplementation result)
+    {
+        throw new NotImplementedException();
+    }
+}
+", VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.GMInterfacesRule).WithLocation(0).WithArguments("IParsable", "WrongImplementation", "TMe")).RunAsync();
+        }
+
+        [Fact]
+        public async Task DerivedUsedBaseTypeaAsTypeParameters()
+        {
+            await PopulateTestCs(@"
+using System;
+using System.Numerics;
+
+class Base : IAdditionOperators<Base, int, int>
+{
+    public static int operator +(Base left, int right)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static int operator checked +(Base left, int right)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Derived : Base, IAdditionOperators<{|#0:Base|}, int, int> // 'IAdditionOperators' interface requires the derived type 'Derived' used for the 'TSelf' type parameter
+{
+    static int IAdditionOperators<Base, int, int>.operator +(Base left, int right)
+    {
+        throw new NotImplementedException();
+    }
+
+    static int IAdditionOperators<Base, int, int>.operator checked +(Base left, int right)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class DerivedCorrect : Base, IAdditionOperators<DerivedCorrect, int, int>
+{
+    public static int operator +(DerivedCorrect left, int right)
+    {
+        throw new NotImplementedException();
+    }
+}
+", VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.GMInterfacesRule).WithLocation(0).WithArguments("IAdditionOperators", "Derived", "TSelf")).RunAsync();
+        }
+
+        [Fact]
+        public async Task BaseUsedDerivedTypeAsTypeParameter()
+        {
+            await PopulateTestCs(@"
+using System;
+using System.Numerics;
+
+class Base : IAdditionOperators<{|#0:Derived|}, int, int> // 'IAdditionOperators' interface requires the derived type 'Base' used for the 'TSelf' type parameter
+{
+    static int IAdditionOperators<Derived, int, int>.operator +(Derived left, int right)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Derived : Base, IAdditionOperators<Derived, int, int>
+{
+    public static int operator +(Derived left, int right)
+    {
+        throw new NotImplementedException();
+    }
+}
+", VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.GMInterfacesRule).WithLocation(0).WithArguments("IAdditionOperators", "Base", "TSelf")).RunAsync();
         }
 
         private static VerifyCS.Test PopulateTestCs(string sourceCode, params DiagnosticResult[] expected)

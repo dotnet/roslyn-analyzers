@@ -10,25 +10,25 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpImplementGenericMathInterfacesCorrectly : ImplementGenericMathInterfacesCorrectly
     {
-        protected override SyntaxNode? FindTheTypeArgumentOfTheInterfaceFromTypeDeclaration(ISymbol typeSymbol, ISymbol anInterfaceSymbol, int argumentLocation)
+        protected override SyntaxNode? FindTheTypeArgumentOfTheInterfaceFromTypeDeclaration(ISymbol typeSymbol, ISymbol anInterfaceSymbol)
         {
             foreach (SyntaxReference syntaxReference in typeSymbol.DeclaringSyntaxReferences)
             {
                 SyntaxNode typeDefinition = syntaxReference.GetSyntax();
                 if (typeDefinition is ClassDeclarationSyntax classDeclaration)
                 {
-                    return FindTypeArgumentFromBaseInterfaceList(classDeclaration.BaseList.Types, anInterfaceSymbol, argumentLocation);
+                    return FindTypeArgumentFromBaseInterfaceList(classDeclaration.BaseList.Types, anInterfaceSymbol);
                 }
                 else if (typeDefinition is StructDeclarationSyntax structDeclaration)
                 {
-                    return FindTypeArgumentFromBaseInterfaceList(structDeclaration.BaseList.Types, anInterfaceSymbol, argumentLocation);
+                    return FindTypeArgumentFromBaseInterfaceList(structDeclaration.BaseList.Types, anInterfaceSymbol);
                 }
             }
 
             return null;
         }
 
-        private static SyntaxNode? FindTypeArgumentFromBaseInterfaceList(SeparatedSyntaxList<BaseTypeSyntax> baseListTypes, ISymbol anInterfaceSymbol, int argumentLocation)
+        private static SyntaxNode? FindTypeArgumentFromBaseInterfaceList(SeparatedSyntaxList<BaseTypeSyntax> baseListTypes, ISymbol anInterfaceSymbol)
         {
             foreach (BaseTypeSyntax baseType in baseListTypes)
             {
@@ -36,7 +36,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
                     simpleBaseType.Type is GenericNameSyntax genericName &&
                     genericName.Identifier.ValueText == anInterfaceSymbol.Name)
                 {
-                    return genericName.TypeArgumentList.Arguments[argumentLocation];
+                    return genericName.TypeArgumentList.Arguments[0];
                 }
             }
 

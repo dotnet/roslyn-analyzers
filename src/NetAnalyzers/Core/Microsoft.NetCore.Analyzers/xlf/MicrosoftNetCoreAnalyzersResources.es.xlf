@@ -1243,13 +1243,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementGenericMathInterfacesCorrectlyDesciption">
-        <source>Specific generic math interfaces requires the derived type used for the 'TSelf' type parameter</source>
-        <target state="new">Specific generic math interfaces requires the derived type used for the 'TSelf' type parameter</target>
+        <source>Generic math interfaces requires the derived type itself used for the self recurring type parameter</source>
+        <target state="new">Generic math interfaces requires the derived type itself used for the self recurring type parameter</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementGenericMathInterfacesCorrectlyMessage">
-        <source>'{0}' interface requires the derived type '{1}' used for the 'TSelf' type parameter</source>
-        <target state="new">'{0}' interface requires the derived type '{1}' used for the 'TSelf' type parameter</target>
+        <source>'{0}' interface requires the derived type '{1}' used for the '{2}' type parameter</source>
+        <target state="new">'{0}' interface requires the derived type '{1}' used for the '{2}' type parameter</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementGenericMathInterfacesCorrectlyTitle">

@@ -13,9 +13,8 @@ namespace Microsoft.NetCore.Analyzers.Usage
     public abstract class ImplementGenericMathInterfacesCorrectly : DiagnosticAnalyzer
     {
         private const string RuleId = "CA2260";
-        private const string TSelf = nameof(TSelf);
 
-        internal static readonly DiagnosticDescriptor CRTPRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor GMInterfacesRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyTitle)),
             CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyMessage)),
@@ -29,9 +28,9 @@ namespace Microsoft.NetCore.Analyzers.Usage
             "IBinaryFloatingPointIeee754`1", "IBinaryInteger`1", "IBinaryNumber`1", "IBitwiseOperators`3", "IComparisonOperators`2", "IDecrementOperators`1", "IDivisionOperators`3",
             "IEqualityOperators`2", "IExponentialFunctions`1", "IFloatingPointIeee754`1", "IFloatingPoint`1", "IHyperbolicFunctions`1", "IIncrementOperators`1", "ILogarithmicFunctions`1",
             "IMinMaxValue`1", "IModulusOperators`3", "IMultiplicativeIdentity`2", "IMultiplyOperators`3", "INumberBase`1", "INumber`1", "IPowerFunctions`1", "IRootFunctions`1", "IShiftOperators`2",
-            "ISignedNumber`1", "ISubtractionOperators`3", "ITrigonometricFunctions`1", "IUnaryNegationOperators`2", "IUnaryPlusOperators`2", "IUnsignedNumber`1");
+            "ISignedNumber`1", "ISubtractionOperators`3", "ITrigonometricFunctions`1", "IUnaryNegationOperators`2", "IUnaryPlusOperators`2", "IUnsignedNumber`1", "IFloatingPointConstants`1");
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(CRTPRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(GMInterfacesRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -48,7 +47,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
                 context.RegisterSymbolAction(context =>
                 {
-                    if (context.Symbol is INamedTypeSymbol ntSymbol)
+                    if (context.Symbol is INamedTypeSymbol ntSymbol && !ntSymbol.IsGenericType)
                     {
                         AnalyzeSymbol(context, ntSymbol, iParsableInterface.ContainingNamespace, iBinaryInteger1.ContainingNamespace);
                     }
@@ -58,30 +57,50 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
         private void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol symbol, INamespaceSymbol systemNS, INamespaceSymbol systemNumericsNS)
         {
-            foreach (INamedTypeSymbol anInterface in symbol.Interfaces)
+            if (!CheckInterfacesForViolation(symbol))
             {
-                if (IsKnownInterface(anInterface, systemNS, systemNumericsNS) &&
-                    IsCRTPNotUsedCorrectly(symbol, anInterface, out int parameterLocation))
+                INamedTypeSymbol? baseType = symbol.BaseType;
+                if (baseType != null && baseType.IsGenericType)
                 {
-                    SyntaxNode? typeParameter = FindTheTypeArgumentOfTheInterfaceFromTypeDeclaration(symbol, anInterface, parameterLocation);
-                    if (typeParameter != null)
-                    {
-                        context.ReportDiagnostic(typeParameter.CreateDiagnostic(CRTPRule, anInterface.Name, symbol.Name));
-                    }
-                    else
-                    {
-                        context.ReportDiagnostic(symbol.CreateDiagnostic(CRTPRule, anInterface.Name, symbol.Name));
-                    }
+                    CheckInterfacesForViolation(baseType);
                 }
             }
 
-            INamedTypeSymbol? baseType = symbol.BaseType;
-            if (baseType != null)
+            bool CheckInterfacesForViolation(INamedTypeSymbol lookup)
             {
-                // Should check base types?
+                foreach (INamedTypeSymbol anInterface in lookup.Interfaces)
+                {
+                    if (anInterface.IsGenericType)
+                    {
+                        if (IsKnownInterface(anInterface, systemNS, systemNumericsNS) &&
+                            FirstTypeParameterNameIsNotTheSymbolName(symbol, anInterface))
+                        {
+                            SyntaxNode? typeParameter = FindTheTypeArgumentOfTheInterfaceFromTypeDeclaration(symbol, symbol.Equals(lookup, SymbolEqualityComparer.Default) ? anInterface : lookup);
+                            if (typeParameter != null)
+                            {
+                                context.ReportDiagnostic(typeParameter.CreateDiagnostic(GMInterfacesRule, anInterface.Name, symbol.Name, GetTSelfParameterName(lookup, anInterface)));
+                            }
+                            else
+                            {
+                                context.ReportDiagnostic(symbol.CreateDiagnostic(GMInterfacesRule, anInterface.Name, symbol.Name, GetTSelfParameterName(lookup, anInterface)));
+                            }
+
+                            return true;
+                        }
+                        else if (CheckInterfacesForViolation(anInterface))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
+
+            string GetTSelfParameterName(INamedTypeSymbol symbol, INamedTypeSymbol anInterface) =>
+                symbol.IsGenericType ? symbol.OriginalDefinition.TypeParameters[0].Name : anInterface.OriginalDefinition.TypeParameters[0].Name;
         }
-        protected abstract SyntaxNode? FindTheTypeArgumentOfTheInterfaceFromTypeDeclaration(ISymbol typeSymbol, ISymbol theInterfaceSymbol, int parameterLocation);
+
+        protected abstract SyntaxNode? FindTheTypeArgumentOfTheInterfaceFromTypeDeclaration(ISymbol typeSymbol, ISymbol theInterfaceSymbol);
 
         private bool IsKnownInterface(INamedTypeSymbol anInterface, INamespaceSymbol systemNS, INamespaceSymbol systemNumericsNS)
         {
@@ -92,31 +111,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                     iNamespace.Equals(systemNumericsNS, SymbolEqualityComparer.Default));
         }
 
-        private bool IsCRTPNotUsedCorrectly(INamedTypeSymbol symbol, INamedTypeSymbol anInterface, out int location)
-        {
-            if (!symbol.IsGenericType)
-            {
-                location = GetTSelfTypeParameterLocation(anInterface.TypeParameters);
-                RoslynDebug.Assert(location > -1 && anInterface.TypeArguments.Length > location);
-
-                return anInterface.TypeArguments[location].Name != symbol.Name;
-            }
-
-            location = -1;
-            return false;
-        }
-
-        private int GetTSelfTypeParameterLocation(ImmutableArray<ITypeParameterSymbol> typeParameters)
-        {
-            int i = 0;
-            foreach (var tp in typeParameters)
-            {
-                if (tp.Name is TSelf)
-                    return i;
-                i++;
-            }
-
-            return -1;
-        }
+        private bool FirstTypeParameterNameIsNotTheSymbolName(INamedTypeSymbol symbol, INamedTypeSymbol anInterface) =>
+            anInterface.TypeArguments[0].Name != symbol.Name;
     }
 }

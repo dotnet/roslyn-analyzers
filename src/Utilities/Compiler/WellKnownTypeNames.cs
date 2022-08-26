@@ -266,7 +266,7 @@ namespace Analyzer.Utilities
         public const string SystemNotSupportedException = "System.NotSupportedException";
         public const string SystemNullable1 = "System.Nullable`1";
         public const string SystemNumber = "System.Number";
-        public const string SystemNumericsIDecrementOperators1 = "System.Numerics.IDecrementOperators`1";
+        public const string SystemNumericsINumber1 = "System.Numerics.INumber`1";
         public const string SystemObject = "System.Object";
         public const string SystemObsoleteAttribute = "System.ObsoleteAttribute";
         public const string SystemOperatingSystem = "System.OperatingSystem";

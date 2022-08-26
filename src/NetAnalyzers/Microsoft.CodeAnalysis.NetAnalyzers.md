@@ -2294,7 +2294,7 @@ Providing a functional 'DynamicInterfaceCastableImplementationAttribute'-attribu
 
 ## [CA2260](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2260): Use correct type parameter
 
-Generic math interfaces requires the derived type itself used for the self recurring type parameter
+Generic math interfaces require the derived type itself to be used for the self recurring type parameter
 
 |Item|Value|
 |-|-|

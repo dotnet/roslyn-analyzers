@@ -236,7 +236,7 @@ class Foo<TMe> : IDecrementOperators<TMe> where TMe : IDecrementOperators<TMe>
         throw new NotImplementedException();
     }
 }
-class WrongImplementation : Foo<{|#0:int|}> { } // The 'Foo<TMe>' interface requires the 'TMe' type parameter to be filled with the derived type 'WrongImplementation' 
+class WrongImplementation : Foo<{|#0:int|}> { } // The 'Foo<TMe>' class requires the 'TMe' type parameter to be filled with the derived type 'WrongImplementation' 
 
 class CorrectImplementation : Foo<CorrectImplementation> { }
 ", VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.GMIRuleForClass).WithLocation(0).WithArguments("Foo<TMe>", "TMe", "WrongImplementation")).RunAsync();
@@ -325,7 +325,7 @@ class Base1<T> : IIncrementOperators<T> where T : IIncrementOperators<T>
 
 class Base2<T> : Base1<T> where T : IIncrementOperators<T> { }
 
-class Wrong : Base2<{|#0:int|}> 
+class Wrong : Base2<{|#0:int|}> // The 'Base2<T>' class requires the 'T' type parameter to be filled with the derived type 'Wrong'
 { }
 ", VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.GMIRuleForClass).WithLocation(0).WithArguments("Base2<T>", "T", "Wrong")).RunAsync();
         }

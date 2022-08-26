@@ -17,6 +17,11 @@ dotnet_diagnostic.RS1024.severity = none
 # https://github.com/dotnet/roslyn/issues/51693
 dotnet_diagnostic.IDE0078.severity = silent
 
+# IDE0190: Null check can be simplified
+# IDE0200: Lambda expression can be removed
+dotnet_diagnostic.IDE0200.severity = silent
+dotnet_diagnostic.IDE0190.severity = silent
+
 # Code files
 [*.{cs,csx,vb,vbx}]
 indent_size = 4

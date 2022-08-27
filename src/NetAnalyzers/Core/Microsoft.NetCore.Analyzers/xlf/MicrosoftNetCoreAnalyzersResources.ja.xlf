@@ -1203,8 +1203,8 @@
         <note />
       </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage">
-        <source>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</source>
-        <target state="translated">パラメーターまたは戻り値の型としてマネージド型を持つデリゲートでは、デリゲートが定義されているアセンブリでランタイム マーシャリングを有効にする必要があります。</target>
+        <source>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined</source>
+        <target state="new">Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined</target>
         <note />
       </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageHResultSwapping">
@@ -1892,6 +1892,11 @@
         <target state="translated">P/Invokes は参照可能にすることはできません</target>
         <note />
       </trans-unit>
+      <trans-unit id="ParenthesisWithPlaceHolder">
+        <source> ({0})</source>
+        <target state="translated"> ({0})</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PlatformCompatibilityAllPlatforms">
         <source>and all other platforms</source>
         <target state="translated">およびその他すべてのプラットフォーム</target>
@@ -1911,6 +1916,16 @@
         <source>'{0}' from version {1} to {2}</source>
         <target state="translated">バージョン {1} から {2} の '{0}'</target>
         <note>'SupportedOnWindows1903UnsupportedOn2004()' is supported on: 'windows' from version 10.0.1903 to 10.0.2004.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityObsoletedCsAllPlatformMessage">
+        <source>This call site is reachable on all platforms. '{0}' is obsoleted on: {1}.</source>
+        <target state="translated">この呼び出しサイトはすべてのプラットフォームで到達可能です。'{0}' は {1} で廃止されました。</target>
+        <note>This call site is reachable on all platforms. 'OboletedOnMacOS()' is obsoleted on: 'macos'.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityObsoletedCsReachableMessage">
+        <source>This call site is reachable on: {2}. '{0}' is obsoleted on: {1}.</source>
+        <target state="translated">この呼び出しサイトは {2} で到達可能です。'{0}' は {1} で廃止されました。</target>
+        <note>This call site is reachable on 'macos', 'linux'. 'OboletedOnMacOS()' is obsoleted on: 'macos'.</note>
       </trans-unit>
       <trans-unit id="PlatformCompatibilityOnlySupportedCsAllPlatformMessage">
         <source>This call site is reachable on all platforms. '{0}' is only supported on: {1}.</source>
@@ -2484,7 +2499,7 @@
       </trans-unit>
       <trans-unit id="SpecifyIFormatProviderMessageIFormatProviderOptional">
         <source>The behavior of '{0}' could vary based on the current user's locale settings. Provide a value for the 'IFormatProvider' argument.</source>
-        <target state="new">The behavior of '{0}' could vary based on the current user's locale settings. Provide a value for the 'IFormatProvider' argument.</target>
+        <target state="translated">'{0}' の動作は、現在のユーザーのロケール設定によって異なる場合があります。"IFormatProvider" 引数に値を指定してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyIFormatProviderMessageUICulture">
@@ -2910,6 +2925,26 @@
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly.</source>
         <target state="translated">可能な場合は、Shared Access Signature (SAS) の代わりに、Azure のロールベースのアクセス制御を使用することを検討してください。依然として SAS を使用する必要がある場合は、SharedAccessProtocol.HttpsOnly を指定します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillCodeFixTitle">
+        <source>Use 'Clear()'</source>
+        <target state="translated">'Clear()' を使用する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillDescription">
+        <source>It is more efficient to use 'Clear', instead of 'Fill' with default value.</source>
+        <target state="translated">既定値で 'Fill' ではなく、'Clear' を使用する方が効率的です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillMessage">
+        <source>Prefer 'Span&lt;T&gt;.Clear()' instead of 'Span&lt;T&gt;.Fill(default)'</source>
+        <target state="translated">'Span&lt;T&gt;.Fill(default)' の代わりに 'Span&lt;T&gt;.Clear()' を優先する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillTitle">
+        <source>Prefer 'Clear' over 'Fill'</source>
+        <target state="translated">'塗りつぶし' よりも 'クリア' を優先する</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">

@@ -768,6 +768,18 @@ This method uses runtime marshalling even when runtime marshalling is disabled, 
 |CodeFix|True|
 ---
 
+## [CA1422](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1422): Validate platform compatibility
+
+Using platform dependent API on a component makes the code no longer work across all platforms.
+
+|Item|Value|
+|-|-|
+|Category|Interoperability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
 ## [CA1501](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1501): Avoid excessive inheritance
 
 Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.
@@ -1551,6 +1563,18 @@ Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The fo
 ## [CA1854](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1854): Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method
 
 Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1855](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1855): Prefer 'Clear' over 'Fill'
+
+It is more efficient to use 'Clear', instead of 'Fill' with default value.
 
 |Item|Value|
 |-|-|
@@ -2748,7 +2772,7 @@ Using XmlTextReader.Load(), creating an insecure XmlReaderSettings instance when
 |CodeFix|False|
 ---
 
-## [CA3076](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3076): Insecure XSLT script processing.
+## [CA3076](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3076): Insecure XSLT script processing
 
 Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argument with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.
 

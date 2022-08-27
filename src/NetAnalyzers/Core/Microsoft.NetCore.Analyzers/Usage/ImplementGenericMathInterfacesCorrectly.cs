@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
     {
         private const string RuleId = "CA2260";
 
-        internal static readonly DiagnosticDescriptor GMIRuleForInterface = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor GMIRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyTitle)),
             CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyMessageForInterface)),
@@ -27,23 +27,13 @@ namespace Microsoft.NetCore.Analyzers.Usage
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor GMIRuleForClass = DiagnosticDescriptorHelper.Create(
-            RuleId,
-            CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyTitle)),
-            CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyMessageForClass)),
-            DiagnosticCategory.Usage,
-            RuleLevel.BuildWarning,
-            description: CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyDescription)),
-            isPortedFxCopRule: false,
-            isDataflowRule: false);
-
-        private static readonly ImmutableArray<string> s_knownInterfaces = ImmutableArray.Create("IParsable`1", "ISpanParsable`1", "IAdditionOperators`3", "IAdditiveIdentity`2",
+        private static readonly ImmutableHashSet<string> s_knownInterfaces = ImmutableHashSet.Create("IParsable`1", "ISpanParsable`1", "IAdditionOperators`3", "IAdditiveIdentity`2",
             "IBinaryFloatingPointIeee754`1", "IBinaryInteger`1", "IBinaryNumber`1", "IBitwiseOperators`3", "IComparisonOperators`3", "IDecrementOperators`1", "IDivisionOperators`3",
             "IEqualityOperators`3", "IExponentialFunctions`1", "IFloatingPointIeee754`1", "IFloatingPoint`1", "IHyperbolicFunctions`1", "IIncrementOperators`1", "ILogarithmicFunctions`1",
             "IMinMaxValue`1", "IModulusOperators`3", "IMultiplicativeIdentity`2", "IMultiplyOperators`3", "INumberBase`1", "INumber`1", "IPowerFunctions`1", "IRootFunctions`1", "IShiftOperators`3",
             "ISignedNumber`1", "ISubtractionOperators`3", "ITrigonometricFunctions`1", "IUnaryNegationOperators`2", "IUnaryPlusOperators`2", "IUnsignedNumber`1");
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(GMIRuleForInterface, GMIRuleForClass);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(GMIRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -76,7 +66,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                     FirstTypeParameterNameIsNotTheSymbolName(symbol, anInterface))
                 {
                     SyntaxNode? typeParameter = FindTheTypeArgumentOfTheInterfaceFromTypeDeclaration(symbol, anInterface);
-                    context.ReportDiagnostic(CreateDiagnostic(GMIRuleForInterface, typeParameter, anInterface.OriginalDefinition.ToDisplayString(
+                    context.ReportDiagnostic(CreateDiagnostic(GMIRule, typeParameter, anInterface.OriginalDefinition.ToDisplayString(
                         SymbolDisplayFormat.MinimallyQualifiedFormat), anInterface.OriginalDefinition.TypeParameters[0].Name, symbol));
                     break;
                 }
@@ -91,7 +81,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                         FirstTypeParameterNameIsNotTheSymbolName(symbol, anInterface))
                     {
                         SyntaxNode? typeParameter = FindTheTypeArgumentOfTheInterfaceFromTypeDeclaration(symbol, symbol.BaseType);
-                        context.ReportDiagnostic(CreateDiagnostic(GMIRuleForClass, typeParameter, symbol.BaseType.OriginalDefinition.ToDisplayString(
+                        context.ReportDiagnostic(CreateDiagnostic(GMIRule, typeParameter, symbol.BaseType.OriginalDefinition.ToDisplayString(
                             SymbolDisplayFormat.MinimallyQualifiedFormat), symbol.BaseType.OriginalDefinition.TypeParameters[0].Name, symbol));
                         break;
                     }

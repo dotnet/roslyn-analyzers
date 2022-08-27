@@ -1963,7 +1963,7 @@
     <value>Generic math interfaces require the derived type itself to be used for the self recurring type parameter</value>
   </data>
   <data name="ImplementGenericMathInterfacesCorrectlyMessageForInterface" xml:space="preserve">
-    <value>The '{0}' interface requires the '{1}' type parameter to be filled with the derived type '{2}' </value>
+    <value>The '{0}' requires the '{1}' type parameter to be filled with the derived type '{2}' </value>
   </data>
   <data name="ImplementGenericMathInterfacesCorrectlyTitle" xml:space="preserve">
     <value>Use correct type parameter</value>
@@ -1979,8 +1979,5 @@
   </data>
   <data name="UseSpanClearInsteadOfFillTitle" xml:space="preserve">
     <value>Prefer 'Clear' over 'Fill'</value>
-  </data>
-  <data name="ImplementGenericMathInterfacesCorrectlyMessageForClass" xml:space="preserve">
-    <value>The '{0}' class requires the '{1}' type parameter to be filled with the derived type '{2}'</value>
   </data>
 </root>

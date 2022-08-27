@@ -1247,14 +1247,9 @@
         <target state="new">Generic math interfaces require the derived type itself to be used for the self recurring type parameter</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplementGenericMathInterfacesCorrectlyMessageForClass">
-        <source>The '{0}' class requires the '{1}' type parameter to be filled with the derived type '{2}'</source>
-        <target state="new">The '{0}' class requires the '{1}' type parameter to be filled with the derived type '{2}'</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImplementGenericMathInterfacesCorrectlyMessageForInterface">
-        <source>The '{0}' interface requires the '{1}' type parameter to be filled with the derived type '{2}' </source>
-        <target state="new">The '{0}' interface requires the '{1}' type parameter to be filled with the derived type '{2}' </target>
+        <source>The '{0}' requires the '{1}' type parameter to be filled with the derived type '{2}' </source>
+        <target state="new">The '{0}' requires the '{1}' type parameter to be filled with the derived type '{2}' </target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementGenericMathInterfacesCorrectlyTitle">

@@ -148,11 +148,11 @@ public class Test
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.AttributeExpectedRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.AttributeExpectedRule)
                         .WithLocation(0),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.AttributeExpectedRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.AttributeExpectedRule)
                         .WithLocation(1),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.AttributeExpectedRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.AttributeExpectedRule)
                         .WithLocation(2));
         }
 
@@ -234,11 +234,11 @@ public class Test
 }
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.AttributeExpectedRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.AttributeExpectedRule)
                         .WithLocation(0),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.AttributeExpectedRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.AttributeExpectedRule)
                         .WithLocation(1),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.AttributeExpectedRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.AttributeExpectedRule)
                         .WithLocation(2));
         }
 
@@ -266,7 +266,7 @@ public class Test{classGeneric}
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.UnsupportedTypeRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.UnsupportedTypeRule)
                         .WithLocation(0)
                         .WithArguments(diagnosticType));
         }
@@ -341,16 +341,16 @@ public class Test{classGeneric}
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.IncompatibleConstantTypeRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.IncompatibleConstantTypeRule)
                         .WithLocation(0)
                         .WithArguments("Min", type),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.IncompatibleConstantTypeRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.IncompatibleConstantTypeRule)
                         .WithLocation(1)
                         .WithArguments("Min", type),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.IncompatibleConstantTypeRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.IncompatibleConstantTypeRule)
                         .WithLocation(2)
                         .WithArguments("Max", type),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.IncompatibleConstantTypeRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.IncompatibleConstantTypeRule)
                         .WithLocation(3)
                         .WithArguments("Max", type));
         }
@@ -380,7 +380,7 @@ public class Test
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvertedRangeRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvertedRangeRule)
                         .WithLocation(0));
         }
 
@@ -416,7 +416,7 @@ public enum AEnum : {type}
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvertedRangeRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvertedRangeRule)
                         .WithLocation(0));
         }
 
@@ -449,28 +449,28 @@ public class Test
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvalidBoundsRule)
                     .WithLocation(0)
                     .WithArguments("Min", minString, maxString),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvalidBoundsRule)
                     .WithLocation(1)
                     .WithArguments("Min", minString, maxString),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvalidBoundsRule)
                     .WithLocation(2)
                     .WithArguments("Max", minString, maxString),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvalidBoundsRule)
                     .WithLocation(3)
                     .WithArguments("Max", minString, maxString),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.IncompatibleConstantTypeRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.IncompatibleConstantTypeRule)
                     .WithLocation(4)
                     .WithArguments("Min", type),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvalidBoundsRule)
                     .WithLocation(5)
                     .WithArguments("Max", minString, maxString),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvalidBoundsRule)
                     .WithLocation(6)
                     .WithArguments("Min", minString, maxString),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.IncompatibleConstantTypeRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.IncompatibleConstantTypeRule)
                     .WithLocation(7)
                     .WithArguments("Max", type));
         }
@@ -513,28 +513,28 @@ public enum AEnum : {type}
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvalidBoundsRule)
                     .WithLocation(0)
                     .WithArguments("Min", minString, maxString),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvalidBoundsRule)
                     .WithLocation(1)
                     .WithArguments("Min", minString, maxString),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvalidBoundsRule)
                     .WithLocation(2)
                     .WithArguments("Max", minString, maxString),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvalidBoundsRule)
                     .WithLocation(3)
                     .WithArguments("Max", minString, maxString),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.IncompatibleConstantTypeRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.IncompatibleConstantTypeRule)
                     .WithLocation(4)
                     .WithArguments("Min", "AEnum"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvalidBoundsRule)
                     .WithLocation(5)
                     .WithArguments("Max", minString, maxString),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.InvalidBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.InvalidBoundsRule)
                     .WithLocation(6)
                     .WithArguments("Min", minString, maxString),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1860.IncompatibleConstantTypeRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1856.IncompatibleConstantTypeRule)
                     .WithLocation(7)
                     .WithArguments("Max", "AEnum"));
         }
@@ -676,11 +676,11 @@ public class Test
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantNotConstantRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantNotConstantRule)
                         .WithLocation(0),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantNotConstantRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantNotConstantRule)
                         .WithLocation(1),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantNotConstantRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantNotConstantRule)
                         .WithLocation(2));
         }
 
@@ -724,11 +724,11 @@ public enum AEnum : {type}
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantNotConstantRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantNotConstantRule)
                         .WithLocation(0),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantNotConstantRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantNotConstantRule)
                         .WithLocation(1),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantNotConstantRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantNotConstantRule)
                         .WithLocation(2));
         }
 
@@ -760,13 +760,13 @@ public class Test
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantInvalidConstantRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantInvalidConstantRule)
                     .WithLocation(0)
                     .WithArguments(type),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantInvalidConstantRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantInvalidConstantRule)
                     .WithLocation(1)
                     .WithArguments(type),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantInvalidConstantRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantInvalidConstantRule)
                     .WithLocation(2)
                     .WithArguments(type));
         }
@@ -800,7 +800,7 @@ public class Test
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantOutOfBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantOutOfBoundsRule)
                         .WithLocation(0)
                         .WithArguments(min.Trim('\''), max.Trim('\'')));
         }
@@ -841,7 +841,7 @@ public enum AEnum : {type}
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantOutOfBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantOutOfBoundsRule)
                         .WithLocation(0)
                         .WithArguments("3", "4"));
         }
@@ -1004,7 +1004,7 @@ public class Test
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantOutOfBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantOutOfBoundsRule)
                         .WithLocation(0)
                         .WithArguments(minValue.ToString(), maxValue.ToString()));
         }
@@ -1045,7 +1045,7 @@ public enum AEnum : {type}
 }}
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantOutOfBoundsRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantOutOfBoundsRule)
                         .WithLocation(0)
                         .WithArguments(minValue.ToString(), maxValue.ToString()));
         }
@@ -1074,13 +1074,13 @@ public class Test
 }
 ";
             await TestCSAsync(csInput,
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantInvalidConstantRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantInvalidConstantRule)
                         .WithLocation(0)
                         .WithArguments("int"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantInvalidConstantRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantInvalidConstantRule)
                     .WithLocation(1)
                     .WithArguments("string"),
-                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1861.ConstantInvalidConstantRule)
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.ConstantInvalidConstantRule)
                         .WithLocation(2)
                         .WithArguments("int"));
         }

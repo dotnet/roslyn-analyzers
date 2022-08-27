@@ -1584,7 +1584,7 @@ It is more efficient to use 'Clear', instead of 'Fill' with default value.
 |CodeFix|True|
 ---
 
-## [CA1860](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Incorrect usage of ConstantExpected attribute
+## [CA1856](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856): Incorrect usage of ConstantExpected attribute
 
 ConstantExpectedAttribute is not applied correctly on the parameter.
 
@@ -1596,7 +1596,7 @@ ConstantExpectedAttribute is not applied correctly on the parameter.
 |CodeFix|False|
 ---
 
-## [CA1861](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): A constant is expected for the parameter
+## [CA1857](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857): A constant is expected for the parameter
 
 The parameter expects a constant for optimal performance.
 

@@ -304,12 +304,12 @@
             ]
           }
         },
-        "CA1860": {
-          "id": "CA1860",
+        "CA1856": {
+          "id": "CA1856",
           "shortDescription": "Incorrect usage of ConstantExpected attribute",
           "fullDescription": "ConstantExpectedAttribute is not applied correctly on the parameter.",
           "defaultLevel": "error",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
@@ -323,12 +323,12 @@
             ]
           }
         },
-        "CA1861": {
-          "id": "CA1861",
+        "CA1857": {
+          "id": "CA1857",
           "shortDescription": "A constant is expected for the parameter",
           "fullDescription": "The parameter expects a constant for optimal performance.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,

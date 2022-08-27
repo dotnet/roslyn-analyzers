@@ -1090,24 +1090,12 @@ public class Test
             var test = new VerifyCS.Test
             {
                 TestCode = source,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
             };
-            // TODO: remove when the type is available
-            test.TestState.Sources.Add(s_attributeSource);
             test.ExpectedDiagnostics.AddRange(diagnosticResults);
             await test.RunAsync();
         }
-
-        private static readonly string s_attributeSource = @"#nullable enable
-namespace System.Diagnostics.CodeAnalysis
-{
-    [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
-    public sealed class ConstantExpectedAttribute : Attribute
-    {
-        public object? Min { get; set; }
-        public object? Max { get; set; }
-    }
-}";
 
         private static async Task TestCSMissingAttributeAsync(string source, params DiagnosticResult[] diagnosticResults)
         {

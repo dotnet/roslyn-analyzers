@@ -20,7 +20,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
         protected override void RegisterAttributeSyntax(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(context => OnAttributeNode(context), SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(OnAttributeNode, SyntaxKind.Attribute);
         }
 
         private void OnAttributeNode(SyntaxNodeAnalysisContext context)

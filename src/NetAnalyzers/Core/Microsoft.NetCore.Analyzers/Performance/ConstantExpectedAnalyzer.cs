@@ -126,7 +126,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterCompilationStartAction(context => OnCompilationStart(context));
+            context.RegisterCompilationStartAction(OnCompilationStart);
         }
 
         private void OnCompilationStart(CompilationStartAnalysisContext context)
@@ -136,7 +136,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
             context.RegisterOperationAction(OnInvocation, OperationKind.Invocation);
-            context.RegisterSymbolAction(context => OnMethodSymbol(context), SymbolKind.Method);
+            context.RegisterSymbolAction(OnMethodSymbol, SymbolKind.Method);
             RegisterAttributeSyntax(context);
         }
 
@@ -457,7 +457,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private static bool TryGetMethodInterface(IMethodSymbol methodSymbol, [NotNullWhen(true)] out IMethodSymbol? interfaceMethodSymbol)
         {
             var explicitInterface = methodSymbol.ExplicitInterfaceImplementations
-                .FirstOrDefault(exInterface => methodSymbol.IsImplementationOfInterfaceMember(exInterface));
+                .FirstOrDefault(methodSymbol.IsImplementationOfInterfaceMember);
             if (explicitInterface is not null)
             {
                 interfaceMethodSymbol = explicitInterface;

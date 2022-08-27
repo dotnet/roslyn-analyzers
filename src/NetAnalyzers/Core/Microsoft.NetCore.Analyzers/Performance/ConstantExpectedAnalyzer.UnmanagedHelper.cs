@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -127,9 +126,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     minValue = typeMin;
                     maxValue = typeMax;
-                    (object? min, object? max) = GetAttributeConstants(attributeData);
+                    var ac = AttributeConstant.Get(attributeData);
                     errorFlags = ErrorKind.None;
-                    if (min is not null && _helper.TryTransformMin(min, out minValue, ref errorFlags))
+                    if (ac.Min is not null && _helper.TryTransformMin(ac.Min, out minValue, ref errorFlags))
                     {
                         if (_helper.IsLessThan(minValue, typeMin) || _helper.IsLessThan(typeMax, minValue))
                         {
@@ -137,7 +136,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         }
                     }
 
-                    if (max is not null && _helper.TryTransformMax(max, out maxValue, ref errorFlags))
+                    if (ac.Max is not null && _helper.TryTransformMax(ac.Max, out maxValue, ref errorFlags))
                     {
                         if (_helper.IsLessThan(maxValue, typeMin) || _helper.IsLessThan(typeMax, maxValue))
                         {
@@ -177,7 +176,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     if (Parameter.Type.SpecialType != subsetCandidate.Parameter.Type.SpecialType ||
                         subsetCandidate is not UnmanagedConstantExpectedParameter subsetCandidateTParameter)
                     {
-                        validationDiagnostics = Diagnostic.Create(CA1861.ConstantInvalidConstantRule, argument.Syntax.GetLocation(), Parameter.Type.ToDisplayString());
+                        validationDiagnostics = CreateConstantInvalidConstantRuleDiagnostic(argument);
                         return false;
                     }
 
@@ -187,23 +186,28 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         validationDiagnostics = null;
                         return true;
                     }
-                    validationDiagnostics = Diagnostic.Create(CA1861.ConstantOutOfBoundsRule, argument.Syntax.GetLocation(), Min.ToString(), Max.ToString());
+                    validationDiagnostics = CreateConstantOutOfBoundsRuleDiagnostic(argument, Min.ToString(), Max.ToString());
                     return false;
                 }
 
-                public override bool ValidateValue(IArgumentOperation argument, object? constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
+                public override bool ValidateValue(IArgumentOperation argument, Optional<object> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
                 {
-                    if (constant is not null && _helper.TryConvert(constant, out T value))
+                    if (!ValidateConstant(argument, constant, out validationDiagnostics))
+                    {
+                        return false;
+                    }
+
+                    if (constant.Value is not null && _helper.TryConvert(constant.Value, out T value))
                     {
                         if (!_helper.IsLessThan(value, Min) && !_helper.IsLessThan(Max, value))
                         {
                             validationDiagnostics = null;
                             return true;
                         }
-                        validationDiagnostics = argument.CreateDiagnostic(CA1861.ConstantOutOfBoundsRule, Min.ToString(), Max.ToString());
+                        validationDiagnostics = CreateConstantOutOfBoundsRuleDiagnostic(argument, Min.ToString(), Max.ToString());
                         return false;
                     }
-                    validationDiagnostics = argument.CreateDiagnostic(CA1861.ConstantInvalidConstantRule, Parameter.Type.ToDisplayString());
+                    validationDiagnostics = CreateConstantInvalidConstantRuleDiagnostic(argument);
                     return false;
                 }
             }

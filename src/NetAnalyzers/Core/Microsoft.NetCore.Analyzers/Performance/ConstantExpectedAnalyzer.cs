@@ -131,29 +131,106 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsCodeAnalysisConstantExpectedAttribute, out _))
+            if (!ConstantExpectedContext.TryCreate(context.Compilation, out var constantExpectedContext))
             {
                 return;
             }
-            context.RegisterOperationAction(OnInvocation, OperationKind.Invocation);
-            context.RegisterSymbolAction(OnMethodSymbol, SymbolKind.Method);
-            RegisterAttributeSyntax(context);
+            context.RegisterOperationAction(context => OnInvocation(context, constantExpectedContext), OperationKind.Invocation);
+            context.RegisterSymbolAction(context => OnMethodSymbol(context, constantExpectedContext), SymbolKind.Method);
+            RegisterAttributeSyntax(context, constantExpectedContext);
         }
 
-        private static void OnMethodSymbol(SymbolAnalysisContext context)
+        private static void OnMethodSymbol(SymbolAnalysisContext context, ConstantExpectedContext constantExpectedContext)
         {
             var methodSymbol = (IMethodSymbol)context.Symbol;
-            if (TryGetMethodInterface(methodSymbol, out var interfaceMethodSymbol))
+            if (methodSymbol.ExplicitInterfaceImplementations
+                    .FirstOrDefault(methodSymbol.IsImplementationOfInterfaceMember) is { } explicitInterfaceMethod)
             {
-                CheckAttribute(context, methodSymbol.Parameters, interfaceMethodSymbol.Parameters);
+                CheckParameters(methodSymbol.Parameters, explicitInterfaceMethod.Parameters);
             }
             else if (methodSymbol.OverriddenMethod is not null)
             {
-                CheckAttribute(context, methodSymbol.Parameters, methodSymbol.OverriddenMethod.Parameters);
+                CheckParameters(methodSymbol.Parameters, methodSymbol.OverriddenMethod.Parameters);
+            }
+            else if (methodSymbol.IsImplementationOfAnyImplicitInterfaceMember(out IMethodSymbol interfaceMethodSymbol))
+            {
+                CheckParameters(methodSymbol.Parameters, interfaceMethodSymbol.Parameters);
             }
 
-            static void CheckAttribute(SymbolAnalysisContext context, ImmutableArray<IParameterSymbol> parameters, ImmutableArray<IParameterSymbol> baseParameters)
+
+            void CheckParameters(ImmutableArray<IParameterSymbol> parameters, ImmutableArray<IParameterSymbol> baseParameters)
             {
+                if (constantExpectedContext.ValidatesAttributeImplementedFromParent(parameters, baseParameters, out var diagnostics))
+                {
+                    return;
+                }
+
+                foreach (var diagnostic in diagnostics)
+                {
+                    context.ReportDiagnostic(diagnostic);
+                }
+            }
+        }
+
+        private static void OnInvocation(OperationAnalysisContext context, ConstantExpectedContext constantExpectedContext)
+        {
+            var invocation = (IInvocationOperation)context.Operation;
+
+            foreach (var argument in invocation.Arguments)
+            {
+                if (!constantExpectedContext.TryCreateConstantExpectedParameter(argument.Parameter, out var argConstantParameter))
+                {
+                    continue;
+                }
+                var v = argument.Value.WalkDownConversion();
+                if (v is IParameterReferenceOperation parameterReference &&
+                    constantExpectedContext.TryCreateConstantExpectedParameter(parameterReference.Parameter, out var currConstantParameter))
+                {
+                    if (!argConstantParameter.ValidateParameterIsWithinRange(currConstantParameter, argument, out var parameterCheckDiagnostic))
+                    {
+                        context.ReportDiagnostic(parameterCheckDiagnostic);
+                    }
+                    continue;
+                }
+                var constantValue = v.ConstantValue;
+                if (!argConstantParameter.ValidateValue(argument, constantValue, out var valueDiagnostic))
+                {
+                    context.ReportDiagnostic(valueDiagnostic);
+                }
+            }
+        }
+
+        protected abstract void RegisterAttributeSyntax(CompilationStartAnalysisContext context, ConstantExpectedContext constantExpectedContext);
+
+        protected void OnParameterWithConstantExpectedAttribute(IParameterSymbol parameter, ConstantExpectedContext constantExpectedContext, Action<Diagnostic> reportAction)
+        {
+            if (!constantExpectedContext.ValidateConstantExpectedParameter(parameter, Helper, out ImmutableArray<Diagnostic> diagnostics))
+            {
+                foreach (var diagnostic in diagnostics)
+                {
+                    reportAction(diagnostic);
+                }
+            }
+        }
+
+        protected sealed class ConstantExpectedContext
+        {
+            public INamedTypeSymbol AttributeSymbol { get; }
+
+            public ConstantExpectedContext(INamedTypeSymbol attributeSymbol)
+            {
+                AttributeSymbol = attributeSymbol;
+            }
+            /// <summary>
+            /// Validates for ConstantExpected attribute in base parameter and returns AttributeExpectedRule if the coresponding implementation parameter does not have it
+            /// </summary>
+            /// <param name="parameters"></param>
+            /// <param name="baseParameters"></param>
+            /// <param name="diagnostics">Non empty when method returns false</param>
+            /// <returns></returns>
+            public bool ValidatesAttributeImplementedFromParent(ImmutableArray<IParameterSymbol> parameters, ImmutableArray<IParameterSymbol> baseParameters, out ImmutableArray<Diagnostic> diagnostics)
+            {
+                var arraybuilder = ImmutableArray.CreateBuilder<Diagnostic>();
                 for (var i = 0; i < parameters.Length; i++)
                 {
                     var parameter = parameters[i];
@@ -166,199 +243,248 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         // mark the parameter including the type and name
                         var diagnostic = parameter.DeclaringSyntaxReferences[0].GetSyntax().CreateDiagnostic(CA1861.AttributeExpectedRule);
-                        context.ReportDiagnostic(diagnostic);
+                        arraybuilder.Add(diagnostic);
                     }
                 }
-            }
-        }
-
-        private static void OnInvocation(OperationAnalysisContext context)
-        {
-            var invocation = (IInvocationOperation)context.Operation;
-
-            foreach (var argument in invocation.Arguments)
-            {
-                if (!TryCreateConstantExpectedParameter(argument.Parameter, out var argConstantParameter))
-                {
-                    continue;
-                }
-                var v = argument.Value.WalkDownConversion();
-                if (v is IParameterReferenceOperation parameterReference &&
-                    TryCreateConstantExpectedParameter(parameterReference.Parameter, out var currConstantParameter))
-                {
-                    if (!argConstantParameter.ValidateParameterIsWithinRange(currConstantParameter, argument, out var parameterCheckDiagnostic))
-                    {
-                        context.ReportDiagnostic(parameterCheckDiagnostic);
-                    }
-                    continue;
-                }
-                var constantValue = v.ConstantValue;
-                if (!constantValue.HasValue)
-                {
-                    var location = argument.Syntax.GetLocation();
-                    context.ReportDiagnostic(Diagnostic.Create(CA1861.ConstantNotConstantRule, location));
-                    continue;
-                }
-
-                var rawValue = constantValue.Value;
-                if (!argConstantParameter.ValidateValue(argument, rawValue, out var valueDiagnostic))
-                {
-                    context.ReportDiagnostic(valueDiagnostic);
-                }
-            }
-        }
-
-        protected abstract void RegisterAttributeSyntax(CompilationStartAnalysisContext context);
-
-        protected void OnParameterWithConstantExpectedAttribute(IParameterSymbol parameter, Action<Diagnostic> reportAction)
-        {
-            if (!ValidateConstantExpectedParameter(parameter, out ImmutableArray<Diagnostic> diagnostics))
-            {
-                foreach (var diagnostic in diagnostics)
-                {
-                    reportAction(diagnostic);
-                }
-            }
-        }
-
-        private static bool TryCreateConstantExpectedParameter(IParameterSymbol parameterSymbol, [NotNullWhen(true)] out ConstantExpectedParameter? parameter)
-        {
-            var underlyingType = GetUnderlyingType(parameterSymbol);
-
-            if (!TryGetConstantExpectedAttributeData(parameterSymbol, out var attributeData))
-            {
-                parameter = null;
-                return false;
+                diagnostics = arraybuilder.ToImmutable();
+                return diagnostics.Length is 0;
             }
 
-            switch (underlyingType.SpecialType)
+            private static bool IsConstantCompatible(ITypeSymbol type)
             {
-                case SpecialType.System_Char:
-                    return UnmanagedHelper<char>.TryCreate(parameterSymbol, attributeData, char.MinValue, char.MaxValue, out parameter);
-                case SpecialType.System_Byte:
-                    return UnmanagedHelper<ulong>.TryCreate(parameterSymbol, attributeData, byte.MinValue, byte.MaxValue, out parameter);
-                case SpecialType.System_UInt16:
-                    return UnmanagedHelper<ulong>.TryCreate(parameterSymbol, attributeData, ushort.MinValue, ushort.MaxValue, out parameter);
-                case SpecialType.System_UInt32:
-                    return UnmanagedHelper<ulong>.TryCreate(parameterSymbol, attributeData, uint.MinValue, uint.MaxValue, out parameter);
-                case SpecialType.System_UInt64:
-                    return UnmanagedHelper<ulong>.TryCreate(parameterSymbol, attributeData, ulong.MinValue, ulong.MaxValue, out parameter);
-                case SpecialType.System_SByte:
-                    return UnmanagedHelper<long>.TryCreate(parameterSymbol, attributeData, sbyte.MinValue, sbyte.MaxValue, out parameter);
-                case SpecialType.System_Int16:
-                    return UnmanagedHelper<long>.TryCreate(parameterSymbol, attributeData, short.MinValue, short.MaxValue, out parameter);
-                case SpecialType.System_Int32:
-                    return UnmanagedHelper<long>.TryCreate(parameterSymbol, attributeData, int.MinValue, int.MaxValue, out parameter);
-                case SpecialType.System_Int64:
-                    return UnmanagedHelper<long>.TryCreate(parameterSymbol, attributeData, long.MinValue, long.MaxValue, out parameter);
-                case SpecialType.System_Single:
-                    return UnmanagedHelper<float>.TryCreate(parameterSymbol, attributeData, float.MinValue, float.MaxValue, out parameter);
-                case SpecialType.System_Double:
-                    return UnmanagedHelper<double>.TryCreate(parameterSymbol, attributeData, double.MinValue, double.MaxValue, out parameter);
-                case SpecialType.System_Boolean:
-                    return UnmanagedHelper<bool>.TryCreate(parameterSymbol, attributeData, false, true, out parameter);
-                case SpecialType.System_String:
-                    return StringConstantExpectedParameter.TryCreate(parameterSymbol, attributeData, out parameter);
-                default:
+                return type.SpecialType switch
+                {
+                    SpecialType.System_Char => true,
+                    SpecialType.System_Byte => true,
+                    SpecialType.System_UInt16 => true,
+                    SpecialType.System_UInt32 => true,
+                    SpecialType.System_UInt64 => true,
+                    SpecialType.System_SByte => true,
+                    SpecialType.System_Int16 => true,
+                    SpecialType.System_Int32 => true,
+                    SpecialType.System_Int64 => true,
+                    SpecialType.System_Single => true,
+                    SpecialType.System_Double => true,
+                    SpecialType.System_Boolean => true,
+                    SpecialType.System_String => true,
+                    SpecialType.None when type.TypeKind == TypeKind.TypeParameter => true,
+                    _ => false,
+                };
+            }
+
+            /// <summary>
+            /// Tries to create a ConstantExpectedParameter to represent the ConstantExpected attribute application
+            /// </summary>
+            /// <param name="parameterSymbol"></param>
+            /// <param name="parameter"></param>
+            /// <returns></returns>
+            public bool TryCreateConstantExpectedParameter(IParameterSymbol parameterSymbol, [NotNullWhen(true)] out ConstantExpectedParameter? parameter)
+            {
+                var underlyingType = GetUnderlyingType(parameterSymbol);
+
+                if (!TryGetConstantExpectedAttributeData(parameterSymbol, out var attributeData))
+                {
                     parameter = null;
                     return false;
+                }
+
+                switch (underlyingType.SpecialType)
+                {
+                    case SpecialType.System_Char:
+                        return UnmanagedHelper<char>.TryCreate(parameterSymbol, attributeData, char.MinValue, char.MaxValue, out parameter);
+                    case SpecialType.System_Byte:
+                        return UnmanagedHelper<ulong>.TryCreate(parameterSymbol, attributeData, byte.MinValue, byte.MaxValue, out parameter);
+                    case SpecialType.System_UInt16:
+                        return UnmanagedHelper<ulong>.TryCreate(parameterSymbol, attributeData, ushort.MinValue, ushort.MaxValue, out parameter);
+                    case SpecialType.System_UInt32:
+                        return UnmanagedHelper<ulong>.TryCreate(parameterSymbol, attributeData, uint.MinValue, uint.MaxValue, out parameter);
+                    case SpecialType.System_UInt64:
+                        return UnmanagedHelper<ulong>.TryCreate(parameterSymbol, attributeData, ulong.MinValue, ulong.MaxValue, out parameter);
+                    case SpecialType.System_SByte:
+                        return UnmanagedHelper<long>.TryCreate(parameterSymbol, attributeData, sbyte.MinValue, sbyte.MaxValue, out parameter);
+                    case SpecialType.System_Int16:
+                        return UnmanagedHelper<long>.TryCreate(parameterSymbol, attributeData, short.MinValue, short.MaxValue, out parameter);
+                    case SpecialType.System_Int32:
+                        return UnmanagedHelper<long>.TryCreate(parameterSymbol, attributeData, int.MinValue, int.MaxValue, out parameter);
+                    case SpecialType.System_Int64:
+                        return UnmanagedHelper<long>.TryCreate(parameterSymbol, attributeData, long.MinValue, long.MaxValue, out parameter);
+                    case SpecialType.System_Single:
+                        return UnmanagedHelper<float>.TryCreate(parameterSymbol, attributeData, float.MinValue, float.MaxValue, out parameter);
+                    case SpecialType.System_Double:
+                        return UnmanagedHelper<double>.TryCreate(parameterSymbol, attributeData, double.MinValue, double.MaxValue, out parameter);
+                    case SpecialType.System_Boolean:
+                        return UnmanagedHelper<bool>.TryCreate(parameterSymbol, attributeData, false, true, out parameter);
+                    case SpecialType.System_String:
+                        return StringConstantExpectedParameter.TryCreate(parameterSymbol, attributeData, out parameter);
+                    default:
+                        parameter = null;
+                        return false;
+                }
             }
-        }
 
-        private bool ValidateConstantExpectedParameter(IParameterSymbol parameterSymbol, out ImmutableArray<Diagnostic> diagnostics)
-        {
-            var underlyingType = GetUnderlyingType(parameterSymbol);
-
-            if (!TryGetConstantExpectedAttributeData(parameterSymbol, out var attributeData))
+            /// <summary>
+            /// Validates that the parameter has a valid application of the ConstantExpected attributes. Returns diagnostics otherwise
+            /// </summary>
+            /// <param name="parameterSymbol"></param>
+            /// <param name="helper"></param>
+            /// <param name="diagnostics">not empty when method returns false</param>
+            /// <returns></returns>
+            public bool ValidateConstantExpectedParameter(IParameterSymbol parameterSymbol, DiagnosticHelper helper, out ImmutableArray<Diagnostic> diagnostics)
             {
-                diagnostics = ImmutableArray<Diagnostic>.Empty;
-                return false;
-            }
+                var underlyingType = GetUnderlyingType(parameterSymbol);
 
-            switch (underlyingType.SpecialType)
-            {
-                case SpecialType.System_Char:
-                    return UnmanagedHelper<char>.Validate(parameterSymbol, attributeData, char.MinValue, char.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_Byte:
-                    return UnmanagedHelper<ulong>.Validate(parameterSymbol, attributeData, byte.MinValue, byte.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_UInt16:
-                    return UnmanagedHelper<ulong>.Validate(parameterSymbol, attributeData, ushort.MinValue, ushort.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_UInt32:
-                    return UnmanagedHelper<ulong>.Validate(parameterSymbol, attributeData, uint.MinValue, uint.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_UInt64:
-                    return UnmanagedHelper<ulong>.Validate(parameterSymbol, attributeData, ulong.MinValue, ulong.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_SByte:
-                    return UnmanagedHelper<long>.Validate(parameterSymbol, attributeData, sbyte.MinValue, sbyte.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_Int16:
-                    return UnmanagedHelper<long>.Validate(parameterSymbol, attributeData, short.MinValue, short.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_Int32:
-                    return UnmanagedHelper<long>.Validate(parameterSymbol, attributeData, int.MinValue, int.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_Int64:
-                    return UnmanagedHelper<long>.Validate(parameterSymbol, attributeData, long.MinValue, long.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_Single:
-                    return UnmanagedHelper<float>.Validate(parameterSymbol, attributeData, float.MinValue, float.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_Double:
-                    return UnmanagedHelper<double>.Validate(parameterSymbol, attributeData, double.MinValue, double.MaxValue, Helper, out diagnostics);
-                case SpecialType.System_Boolean:
-                    return UnmanagedHelper<bool>.Validate(parameterSymbol, attributeData, false, true, Helper, out diagnostics);
-                case SpecialType.System_String:
-                    return Validate(parameterSymbol, attributeData, Helper, out diagnostics);
-                case SpecialType.None when parameterSymbol.Type.TypeKind == TypeKind.TypeParameter:
-                    return Validate(parameterSymbol, attributeData, Helper, out diagnostics);
-                default:
-                    diagnostics = Helper.ParameterIsInvalid(parameterSymbol.Type.ToDisplayString(), attributeData.ApplicationSyntaxReference.GetSyntax());
+                if (!TryGetConstantExpectedAttributeData(parameterSymbol, out var attributeData))
+                {
+                    diagnostics = ImmutableArray<Diagnostic>.Empty;
                     return false;
-            }
-        }
+                }
 
-        private static ITypeSymbol GetUnderlyingType(IParameterSymbol parameterSymbol)
-        {
-            ITypeSymbol underlyingType;
-            if (parameterSymbol.Type.TypeKind is TypeKind.Enum)
+                switch (underlyingType.SpecialType)
+                {
+                    case SpecialType.System_Char:
+                        return UnmanagedHelper<char>.Validate(parameterSymbol, attributeData, char.MinValue, char.MaxValue, helper, out diagnostics);
+                    case SpecialType.System_Byte:
+                        return UnmanagedHelper<ulong>.Validate(parameterSymbol, attributeData, byte.MinValue, byte.MaxValue, helper, out diagnostics);
+                    case SpecialType.System_UInt16:
+                        return UnmanagedHelper<ulong>.Validate(parameterSymbol, attributeData, ushort.MinValue, ushort.MaxValue, helper, out diagnostics);
+                    case SpecialType.System_UInt32:
+                        return UnmanagedHelper<ulong>.Validate(parameterSymbol, attributeData, uint.MinValue, uint.MaxValue, helper, out diagnostics);
+                    case SpecialType.System_UInt64:
+                        return UnmanagedHelper<ulong>.Validate(parameterSymbol, attributeData, ulong.MinValue, ulong.MaxValue, helper, out diagnostics);
+                    case SpecialType.System_SByte:
+                        return UnmanagedHelper<long>.Validate(parameterSymbol, attributeData, sbyte.MinValue, sbyte.MaxValue, helper, out diagnostics);
+                    case SpecialType.System_Int16:
+                        return UnmanagedHelper<long>.Validate(parameterSymbol, attributeData, short.MinValue, short.MaxValue, helper, out diagnostics);
+                    case SpecialType.System_Int32:
+                        return UnmanagedHelper<long>.Validate(parameterSymbol, attributeData, int.MinValue, int.MaxValue, helper, out diagnostics);
+                    case SpecialType.System_Int64:
+                        return UnmanagedHelper<long>.Validate(parameterSymbol, attributeData, long.MinValue, long.MaxValue, helper, out diagnostics);
+                    case SpecialType.System_Single:
+                        return UnmanagedHelper<float>.Validate(parameterSymbol, attributeData, float.MinValue, float.MaxValue, helper, out diagnostics);
+                    case SpecialType.System_Double:
+                        return UnmanagedHelper<double>.Validate(parameterSymbol, attributeData, double.MinValue, double.MaxValue, helper, out diagnostics);
+                    case SpecialType.System_Boolean:
+                        return UnmanagedHelper<bool>.Validate(parameterSymbol, attributeData, false, true, helper, out diagnostics);
+                    case SpecialType.System_String:
+                        return ValidateMinMaxIsNull(parameterSymbol, attributeData, helper, out diagnostics);
+                    case SpecialType.None when parameterSymbol.Type.TypeKind == TypeKind.TypeParameter:
+                        return ValidateMinMaxIsNull(parameterSymbol, attributeData, helper, out diagnostics);
+                    default:
+                        diagnostics = helper.ParameterIsInvalid(parameterSymbol.Type.ToDisplayString(), attributeData.ApplicationSyntaxReference.GetSyntax());
+                        return false;
+                }
+
+                static bool ValidateMinMaxIsNull(IParameterSymbol parameterSymbol, AttributeData attributeData, DiagnosticHelper helper, out ImmutableArray<Diagnostic> diagnostics)
+                {
+                    ErrorKind errorFlags = 0;
+
+                    foreach (var namedArg in attributeData.NamedArguments)
+                    {
+                        if (namedArg.Key.Equals(ConstantExpectedMin, StringComparison.Ordinal)
+                            && !namedArg.Value.IsNull)
+                        {
+                            errorFlags |= ErrorKind.MinIsIncompatible;
+                        }
+                        else if (namedArg.Key.Equals(ConstantExpectedMax, StringComparison.Ordinal)
+                            && !namedArg.Value.IsNull)
+                        {
+                            errorFlags |= ErrorKind.MaxIsIncompatible;
+                        }
+                    }
+                    if (errorFlags is not 0)
+                    {
+                        diagnostics = helper.GetError(errorFlags, parameterSymbol, attributeData.ApplicationSyntaxReference.GetSyntax(), "null", "null");
+                        return false;
+                    }
+                    diagnostics = ImmutableArray<Diagnostic>.Empty;
+                    return true;
+                }
+            }
+
+            private static ITypeSymbol GetUnderlyingType(IParameterSymbol parameterSymbol)
             {
-                var enumType = (INamedTypeSymbol)parameterSymbol.Type;
-                underlyingType = enumType.EnumUnderlyingType;
+                ITypeSymbol underlyingType;
+                if (parameterSymbol.Type.TypeKind is TypeKind.Enum)
+                {
+                    var enumType = (INamedTypeSymbol)parameterSymbol.Type;
+                    underlyingType = enumType.EnumUnderlyingType;
+                }
+                else
+                {
+                    underlyingType = parameterSymbol.Type;
+                }
+
+                return underlyingType;
             }
-            else
+
+            public bool TryGetConstantExpectedAttributeData(IParameterSymbol parameter, [NotNullWhen(true)] out AttributeData? attributeData)
             {
-                underlyingType = parameterSymbol.Type;
+                attributeData = parameter.GetAttributes()
+                    .FirstOrDefault(attrData => IsConstantExpectedAttribute(attrData.AttributeClass));
+                return attributeData is not null;
             }
 
-            return underlyingType;
+            private bool HasConstantExpectedAttributeData(IParameterSymbol parameter)
+            {
+                return parameter.GetAttributes()
+                    .Any(attrData => IsConstantExpectedAttribute(attrData.AttributeClass));
+            }
+
+            private bool IsConstantExpectedAttribute(INamedTypeSymbol namedType)
+            {
+                return namedType.Equals(AttributeSymbol, SymbolEqualityComparer.Default);
+            }
+
+            public static bool TryCreate(Compilation compilation, [NotNullWhen(true)] out ConstantExpectedContext? constantExpectedContext)
+            {
+                if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsCodeAnalysisConstantExpectedAttribute, out var attributeSymbol))
+                {
+                    constantExpectedContext = null;
+                    return false;
+                }
+
+                constantExpectedContext = new ConstantExpectedContext(attributeSymbol);
+                return true;
+            }
         }
 
-        private static bool TryGetConstantExpectedAttributeData(IParameterSymbol parameter, [NotNullWhen(true)] out AttributeData? attributeData)
-        {
-            attributeData = parameter.GetAttributes()
-                .FirstOrDefault(attrData => IsConstantExpectedAttribute(attrData.AttributeClass));
-            return attributeData is not null;
-        }
-
-        private static bool HasConstantExpectedAttributeData(IParameterSymbol parameter)
-        {
-            return parameter.GetAttributes()
-                .Any(attrData => IsConstantExpectedAttribute(attrData.AttributeClass));
-        }
-
-        private static bool IsConstantExpectedAttribute(INamedTypeSymbol namedType)
-        {
-            return namedType.Name.Equals(ConstantExpectedAttribute, StringComparison.Ordinal) &&
-                   namedType.GetMembers().OfType<IPropertySymbol>()
-                       .All(s => s.Name.Equals(ConstantExpectedMin, StringComparison.Ordinal) ||
-                                 s.Name.Equals(ConstantExpectedMax, StringComparison.Ordinal));
-        }
-
-        private abstract class ConstantExpectedParameter
+        /// <summary>
+        /// Encodes a parameter with its ConstantExpected attribute rules
+        /// </summary>
+        protected abstract class ConstantExpectedParameter
         {
             protected ConstantExpectedParameter(IParameterSymbol parameter)
             {
                 Parameter = parameter;
             }
-
+            /// <summary>
+            /// Parameter with the ConstantExpected attribute
+            /// </summary>
             public IParameterSymbol Parameter { get; }
 
-            public abstract bool ValidateValue(IArgumentOperation argument, object? constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics);
+            /// <summary>
+            /// Validates the provided constant value is within the constaints of ConstantExpected attribute set
+            /// </summary>
+            /// <param name="argument"></param>
+            /// <param name="constant"></param>
+            /// <param name="validationDiagnostics">Non empty when method returns false</param>
+            /// <returns></returns>
+            public abstract bool ValidateValue(IArgumentOperation argument, Optional<object> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics);
+
+            public bool ValidateConstant(IArgumentOperation argument, Optional<object> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
+            {
+                if (!constant.HasValue)
+                {
+                    validationDiagnostics = argument.CreateDiagnostic(CA1861.ConstantNotConstantRule);
+                    return false;
+                }
+                validationDiagnostics = null;
+                return true;
+            }
+
             public abstract bool ValidateParameterIsWithinRange(ConstantExpectedParameter subsetCandidate, IArgumentOperation argument, [NotNullWhen(false)] out Diagnostic? validationDiagnostics);
+            protected Diagnostic CreateConstantInvalidConstantRuleDiagnostic(IArgumentOperation argument) => argument.CreateDiagnostic(CA1861.ConstantInvalidConstantRule, Parameter.Type.ToDisplayString());
+            protected Diagnostic CreateConstantOutOfBoundsRuleDiagnostic(IArgumentOperation argument, string minText, string maxText) => argument.CreateDiagnostic(CA1861.ConstantOutOfBoundsRule, minText, maxText);
         }
 
         private sealed class StringConstantExpectedParameter : ConstantExpectedParameter
@@ -369,18 +495,22 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 if (subsetCandidate is not StringConstantExpectedParameter)
                 {
-                    validationDiagnostics = Diagnostic.Create(CA1861.ConstantInvalidConstantRule, argument.Syntax.GetLocation(), Parameter.Type.ToDisplayString());
+                    validationDiagnostics = CreateConstantInvalidConstantRuleDiagnostic(argument);
                     return false;
                 }
                 validationDiagnostics = null;
                 return true;
             }
 
-            public override bool ValidateValue(IArgumentOperation argument, object? constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
+            public override bool ValidateValue(IArgumentOperation argument, Optional<object> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
             {
-                if (constant is not string and not null)
+                if (!ValidateConstant(argument, constant, out validationDiagnostics))
                 {
-                    validationDiagnostics = argument.CreateDiagnostic(CA1861.ConstantInvalidConstantRule, Parameter.Type.ToDisplayString());
+                    return false;
+                }
+                if (constant.Value is not string and not null)
+                {
+                    validationDiagnostics = CreateConstantInvalidConstantRuleDiagnostic(argument);
                     return false;
                 }
                 validationDiagnostics = null;
@@ -389,7 +519,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             public static bool TryCreate(IParameterSymbol parameterSymbol, AttributeData attributeData, [NotNullWhen(true)] out ConstantExpectedParameter? parameter)
             {
-                if (!IsMinMaxValid(attributeData, out _))
+                var ac = AttributeConstant.Get(attributeData);
+                if (ac.Min is not null || ac.Max is not null)
                 {
                     parameter = null;
                     return false;
@@ -399,111 +530,46 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
         }
 
-        private static bool Validate(IParameterSymbol parameterSymbol, AttributeData attributeData, DiagnosticHelper helper, out ImmutableArray<Diagnostic> diagnostics)
+        private readonly struct AttributeConstant
         {
-            if (!IsMinMaxValid(attributeData, out ErrorKind errorFlags))
-            {
-                diagnostics = helper.GetError(errorFlags, parameterSymbol, attributeData.ApplicationSyntaxReference.GetSyntax(), "null", "null");
-                return false;
-            }
-            diagnostics = ImmutableArray<Diagnostic>.Empty;
-            return true;
-        }
+            public readonly object? Min;
+            public readonly object? Max;
 
-        private static bool IsMinMaxValid(AttributeData attributeData, out ErrorKind errorFlags)
-        {
-            (object? min, object? max) = GetAttributeConstants(attributeData);
-            errorFlags = 0;
-            if (min is not null)
+            public AttributeConstant(object? min, object? max)
             {
-                errorFlags |= ErrorKind.MinIsIncompatible;
+                Min = min;
+                Max = max;
             }
-            if (max is not null)
+            public static AttributeConstant Get(AttributeData attributeData)
             {
-                errorFlags |= ErrorKind.MaxIsIncompatible;
-            }
-            return min is null && max is null;
-        }
+                object? minConstant = null;
+                object? maxConstant = null;
 
-        public static (object? MinConstant, object? MaxConstant) GetAttributeConstants(AttributeData attributeData)
-        {
-            object? minConstant = null;
-            object? maxConstant = null;
-
-            foreach (var namedArg in attributeData.NamedArguments)
-            {
-                if (namedArg.Key.Equals(ConstantExpectedMin, StringComparison.Ordinal))
+                foreach (var namedArg in attributeData.NamedArguments)
                 {
-                    minConstant = ToObject(namedArg.Value);
-                }
-                else if (namedArg.Key.Equals(ConstantExpectedMax, StringComparison.Ordinal))
-                {
-                    maxConstant = ToObject(namedArg.Value);
-                }
-            }
-
-            return (minConstant, maxConstant);
-
-            static object? ToObject(TypedConstant typedConstant)
-            {
-                if (typedConstant.IsNull)
-                {
-                    return null;
-                }
-                return typedConstant.Kind == TypedConstantKind.Array ? typedConstant.Values : typedConstant.Value;
-            }
-        }
-
-        private static bool TryGetMethodInterface(IMethodSymbol methodSymbol, [NotNullWhen(true)] out IMethodSymbol? interfaceMethodSymbol)
-        {
-            var explicitInterface = methodSymbol.ExplicitInterfaceImplementations
-                .FirstOrDefault(methodSymbol.IsImplementationOfInterfaceMember);
-            if (explicitInterface is not null)
-            {
-                interfaceMethodSymbol = explicitInterface;
-                return true;
-            }
-
-            if (methodSymbol.ContainingType is not null)
-            {
-                foreach (INamedTypeSymbol interfaceSymbol in methodSymbol.ContainingType.AllInterfaces)
-                {
-                    foreach (var interfaceMember in interfaceSymbol.GetMembers().OfType<IMethodSymbol>())
+                    if (namedArg.Key.Equals(ConstantExpectedMin, StringComparison.Ordinal))
                     {
-                        if (methodSymbol.IsImplementationOfInterfaceMember(interfaceMember))
-                        {
-                            interfaceMethodSymbol = interfaceMember;
-                            return true;
-                        }
+                        minConstant = ToObject(namedArg.Value);
+                    }
+                    else if (namedArg.Key.Equals(ConstantExpectedMax, StringComparison.Ordinal))
+                    {
+                        maxConstant = ToObject(namedArg.Value);
                     }
                 }
+
+                return new AttributeConstant(minConstant, maxConstant);
+
+                static object? ToObject(TypedConstant typedConstant)
+                {
+                    if (typedConstant.IsNull)
+                    {
+                        return null;
+                    }
+                    return typedConstant.Kind == TypedConstantKind.Array ? typedConstant.Values : typedConstant.Value;
+                }
             }
-
-            interfaceMethodSymbol = null;
-            return false;
         }
 
-        private static bool IsConstantCompatible(ITypeSymbol type)
-        {
-            return type.SpecialType switch
-            {
-                SpecialType.System_Char => true,
-                SpecialType.System_Byte => true,
-                SpecialType.System_UInt16 => true,
-                SpecialType.System_UInt32 => true,
-                SpecialType.System_UInt64 => true,
-                SpecialType.System_SByte => true,
-                SpecialType.System_Int16 => true,
-                SpecialType.System_Int32 => true,
-                SpecialType.System_Int64 => true,
-                SpecialType.System_Single => true,
-                SpecialType.System_Double => true,
-                SpecialType.System_Boolean => true,
-                SpecialType.System_String => true,
-                SpecialType.None when type.TypeKind == TypeKind.TypeParameter => true,
-                _ => false,
-            };
-        }
 
         protected abstract class DiagnosticHelper
         {

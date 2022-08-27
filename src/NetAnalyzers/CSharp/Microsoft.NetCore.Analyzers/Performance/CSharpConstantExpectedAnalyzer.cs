@@ -10,7 +10,7 @@ using Microsoft.NetCore.Analyzers.Performance;
 namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal sealed class CSharpConstantExpectedAnalyzer : ConstantExpectedAnalyzer
+    public sealed class CSharpConstantExpectedAnalyzer : ConstantExpectedAnalyzer
     {
         private static readonly CSharpDiagnosticHelper s_diagnosticHelper = new();
         private static readonly IdentifierNameSyntax s_constantExpectedIdentifier = (IdentifierNameSyntax)SyntaxFactory.ParseName(ConstantExpected);
@@ -18,12 +18,12 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
         protected override DiagnosticHelper Helper => s_diagnosticHelper;
 
-        protected override void RegisterAttributeSyntax(CompilationStartAnalysisContext context)
+        protected override void RegisterAttributeSyntax(CompilationStartAnalysisContext context, ConstantExpectedContext constantExpectedContext)
         {
-            context.RegisterSyntaxNodeAction(OnAttributeNode, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(context => OnAttributeNode(context, constantExpectedContext), SyntaxKind.Attribute);
         }
 
-        private void OnAttributeNode(SyntaxNodeAnalysisContext context)
+        private void OnAttributeNode(SyntaxNodeAnalysisContext context, ConstantExpectedContext constantExpectedContext)
         {
             var attributeSyntax = (AttributeSyntax)context.Node;
             var attributeName = attributeSyntax.Name;
@@ -35,7 +35,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             if (attributeSyntax.Parent.Parent is ParameterSyntax parameter)
             {
                 var parameterSymbol = context.SemanticModel.GetDeclaredSymbol(parameter);
-                OnParameterWithConstantExpectedAttribute(parameterSymbol, context.ReportDiagnostic);
+                OnParameterWithConstantExpectedAttribute(parameterSymbol, constantExpectedContext, context.ReportDiagnostic);
             }
         }
 

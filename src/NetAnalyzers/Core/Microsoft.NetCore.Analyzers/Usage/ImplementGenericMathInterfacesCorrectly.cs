@@ -20,7 +20,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
         internal static readonly DiagnosticDescriptor GMIRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyTitle)),
-            CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyMessageForInterface)),
+            CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyMessage)),
             DiagnosticCategory.Usage,
             RuleLevel.BuildWarning,
             description: CreateLocalizableResourceString(nameof(ImplementGenericMathInterfacesCorrectlyDescription)),

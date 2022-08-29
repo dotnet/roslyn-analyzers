@@ -53,6 +53,47 @@ dotnet_code_quality.enforce_extended_analyzer_rules = true
                 }
             }.RunAsync();
         }
+        [Fact]
+        public async Task UseBannedApi_EnforcementEnabled_Generator_CSharp()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                TestCode = @"
+using System.IO;
+using Microsoft.CodeAnalysis;
+
+namespace Microsoft.CodeAnalysis
+{
+    public class GeneratorAttribute : System.Attribute { }
+}
+
+[Generator]
+class MyAnalyzer
+{
+}
+
+class C
+{
+    void M()
+    {
+        _ = File.Exists(""something"");
+    }
+}
+",
+                ExpectedDiagnostics = {
+                    // /0/Test0.cs(19,13): error RS1035: The symbol 'File' is banned for use by analyzers: Do not do file IO in analyzers
+                    VerifyCS.Diagnostic("RS1035").WithSpan(19, 13, 19, 37).WithArguments("File", ": Do not do file IO in analyzers"),
+                },
+                TestState = {
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+dotnet_code_quality.enforce_extended_analyzer_rules = true
+"), },
+                }
+            }.RunAsync();
+        }
 
         [Fact]
         public async Task UseBannedApi_EnforcementNotSpecified_CSharp()

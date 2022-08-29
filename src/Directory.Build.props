@@ -19,6 +19,7 @@
       <!-- Disable code analysis for source build -->
       <PropertyGroup>
         <EnableNETAnalyzers>false</EnableNETAnalyzers>
+        <RunAnalyzers>false</RunAnalyzers>
       </PropertyGroup>
     </When>
     <Otherwise>

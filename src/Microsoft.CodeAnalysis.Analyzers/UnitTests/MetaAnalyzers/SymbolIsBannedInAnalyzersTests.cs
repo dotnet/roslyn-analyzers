@@ -41,8 +41,8 @@ class C
 }
 ",
                 ExpectedDiagnostics = {
-                    // /0/Test0.cs(15,13): error RS1035: The symbol 'File' is banned for use by analyzers: do not do file IO in analyzers
-                    VerifyCS.Diagnostic("RS1035").WithSpan(15, 13, 15, 37).WithArguments("File", ": do not do file IO in analyzers"),
+                    // /0/Test0.cs(15,13): error RS1035: The symbol 'File' is banned for use by analyzers: Do not do file IO in analyzers
+                    VerifyCS.Diagnostic("RS1035").WithSpan(15, 13, 15, 37).WithArguments("File", ": Do not do file IO in analyzers"),
                 },
                 TestState = {
                     AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
@@ -79,7 +79,7 @@ class C
 }
 ",
                 ExpectedDiagnostics = {
-                    // /0/Test0.cs(7,7): error RS1036: 'MyAnalyzer': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_extended_analyzer_rules = true'.
+                    // /0/Test0.cs(7,7): warning RS1036: 'MyAnalyzer': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_extended_analyzer_rules = true'.
                     VerifyCS.Diagnostic("RS1036").WithSpan(7, 7, 7, 17).WithArguments("MyAnalyzer"),
                 }
             }.RunAsync();
@@ -143,8 +143,8 @@ End Class
 ",
                 ExpectedDiagnostics =
                 {
-                    // /0/Test0.vb(12,9): error RS1035: The symbol 'File' is banned for use by analyzers: do not do file IO in analyzers
-                    VerifyVB.Diagnostic("RS1035").WithSpan(12, 9, 12, 33).WithArguments("File", ": do not do file IO in analyzers"),
+                    // /0/Test0.vb(12,9,12,33): error RS1035: The symbol 'File' is banned for use by analyzers: Do not do file IO in analyzers
+                    VerifyVB.Diagnostic("RS1035").WithSpan(12, 9, 12, 33).WithArguments("File", ": Do not do file IO in analyzers"),
                 },
                 TestState = {
                     AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
@@ -180,7 +180,7 @@ End Class
 ",
                 ExpectedDiagnostics =
                 {
-                    // /0/Test0.vb(7,7): error RS1036: 'MyDiagnosticAnalyzer': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_extended_analyzer_rules = true'.
+                    // /0/Test0.vb(7,7): warning RS1036: 'MyDiagnosticAnalyzer': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_extended_analyzer_rules = true'.
                     VerifyVB.Diagnostic("RS1036").WithSpan(7, 7, 7, 27).WithArguments("MyDiagnosticAnalyzer"),
                 }
             }.RunAsync();

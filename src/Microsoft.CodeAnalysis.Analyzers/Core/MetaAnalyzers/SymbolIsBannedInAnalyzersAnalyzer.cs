@@ -31,7 +31,7 @@ namespace Microsoft.CodeAnalysis.Analyzers
             title: CreateLocalizableResourceString(nameof(NoSettingSpecifiedSymbolIsBannedInAnalyzersTitle)),
             messageFormat: CreateLocalizableResourceString(nameof(NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage)),
             category: DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: CreateLocalizableResourceString(nameof(NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription)),
             helpLinkUri: null,

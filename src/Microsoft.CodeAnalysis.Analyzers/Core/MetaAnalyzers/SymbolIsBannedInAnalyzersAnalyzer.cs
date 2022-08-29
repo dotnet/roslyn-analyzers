@@ -43,6 +43,7 @@ namespace Microsoft.CodeAnalysis.Analyzers
     {
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(SymbolIsBannedInAnalyzersAnalyzer.SymbolIsBannedRule, SymbolIsBannedInAnalyzersAnalyzer.NoSettingSpecifiedSymbolIsBannedRule);
 
+#pragma warning disable RS1012 // 'compilationContext' does not register any analyzer actions. Consider moving actions registered in 'Initialize' that depend on this start action to 'compilationContext'.
         protected sealed override bool OptedInToBannedSymbolEnforcement(CompilationStartAnalysisContext compilationContext, SyntaxNode syntax)
         {
             return compilationContext.Options.GetBoolOptionValue(
@@ -55,7 +56,6 @@ namespace Microsoft.CodeAnalysis.Analyzers
 
         protected sealed override DiagnosticDescriptor SymbolIsBannedRule { get; } = SymbolIsBannedInAnalyzersAnalyzer.SymbolIsBannedRule;
 
-#pragma warning disable RS1012 // 'compilationContext' does not register any analyzer actions. Consider moving actions registered in 'Initialize' that depend on this start action to 'compilationContext'.
         protected sealed override Dictionary<ISymbol, BanFileEntry>? ReadBannedApis(CompilationStartAnalysisContext compilationContext)
         {
             var provider = WellKnownTypeProvider.GetOrCreate(compilationContext.Compilation);
@@ -100,6 +100,12 @@ namespace Microsoft.CodeAnalysis.Analyzers
 
                 bool shouldReportNotSpecifiedEnforceAnalyzerBannedApisSetting(AttributeData attributeData)
                 {
+                    if (!attributeData.AttributeClass.Equals(diagnosticAnalyzerAttributeType, SymbolEqualityComparer.Default)
+                        && !attributeData.AttributeClass.Equals(generatorAttributeType, SymbolEqualityComparer.Default))
+                    {
+                        return false;
+                    }
+
                     var treeOptions = symbolAnalysisContext.Options.AnalyzerConfigOptionsProvider.GetOptions(attributeData.ApplicationSyntaxReference.SyntaxTree);
                     var categorizedTreeOptions = SyntaxTreeCategorizedAnalyzerConfigOptions.Create(treeOptions);
                     var enforceBannedApisIsSpecified = categorizedTreeOptions.TryGetOptionValue(
@@ -109,13 +115,7 @@ namespace Microsoft.CodeAnalysis.Analyzers
                         tryParseValue: bool.TryParse,
                         false,
                         out _);
-                    if (enforceBannedApisIsSpecified)
-                    {
-                        return false;
-                    }
-
-                    return attributeData.AttributeClass.Equals(diagnosticAnalyzerAttributeType, SymbolEqualityComparer.Default)
-                        || attributeData.AttributeClass.Equals(generatorAttributeType, SymbolEqualityComparer.Default);
+                    return !enforceBannedApisIsSpecified;
                 }
             }
         }

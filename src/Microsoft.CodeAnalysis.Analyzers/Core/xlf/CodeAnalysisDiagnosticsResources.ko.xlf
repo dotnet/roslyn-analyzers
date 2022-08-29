@@ -258,8 +258,8 @@
         <note />
       </trans-unit>
       <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription">
-        <source>A project containing analyzers or source generators should specify an analyzer banned API enforcement setting.</source>
-        <target state="new">A project containing analyzers or source generators should specify an analyzer banned API enforcement setting.</target>
+        <source>A project containing analyzers or source generators should specify an "enforce analyzer extended rules" setting.</source>
+        <target state="new">A project containing analyzers or source generators should specify an "enforce analyzer extended rules" setting.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage">
@@ -378,8 +378,8 @@
         <note />
       </trans-unit>
       <trans-unit id="SymbolIsBannedInAnalyzersTitle">
-        <source>Do not used APIs banned for analyzers</source>
-        <target state="new">Do not used APIs banned for analyzers</target>
+        <source>Do not use APIs banned for analyzers</source>
+        <target state="new">Do not use APIs banned for analyzers</target>
         <note />
       </trans-unit>
       <trans-unit id="UnexpectedAnalyzerDiagnosticForRemovedDiagnosticIdDescription">

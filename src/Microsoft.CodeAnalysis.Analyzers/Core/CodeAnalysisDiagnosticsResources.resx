@@ -536,10 +536,10 @@
     <value>The symbol '{0}' is banned for use by analyzers{1}</value>
   </data>
   <data name="SymbolIsBannedInAnalyzersTitle" xml:space="preserve">
-    <value>Do not used APIs banned for analyzers</value>
+    <value>Do not use APIs banned for analyzers</value>
   </data>
   <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription" xml:space="preserve">
-    <value>A project containing analyzers or source generators should specify an analyzer banned API enforcement setting.</value>
+    <value>A project containing analyzers or source generators should specify an "enforce analyzer extended rules" setting.</value>
   </data>
   <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage" xml:space="preserve">
     <value>'{0}': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_extended_analyzer_rules = true'.</value>

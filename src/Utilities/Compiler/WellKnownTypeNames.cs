@@ -38,7 +38,6 @@ namespace Analyzer.Utilities
         public const string MicrosoftCodeAnalysisCSharpExtensions = "Microsoft.CodeAnalysis.CSharpExtensions";
         public const string MicrosoftCodeAnalysisDiagnostic = "Microsoft.CodeAnalysis.Diagnostic";
         public const string MicrosoftCodeAnalysisDiagnosticDescriptor = "Microsoft.CodeAnalysis.DiagnosticDescriptor";
-        public const string MicrosoftCodeAnalysisGeneratorAttribute = "Microsoft.CodeAnalysis.GeneratorAttribute";
         public const string MicrosoftCodeAnalysisDiagnosticsAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.AnalysisContext";
         public const string MicrosoftCodeAnalysisDiagnosticsCodeBlockAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.CodeBlockAnalysisContext";
         public const string MicrosoftCodeAnalysisDiagnosticsCodeBlockStartAnalysisContext1 = "Microsoft.CodeAnalysis.Diagnostics.CodeBlockStartAnalysisContext`1";
@@ -54,6 +53,7 @@ namespace Analyzer.Utilities
         public const string MicrosoftCodeAnalysisDiagnosticsSymbolAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.SymbolAnalysisContext";
         public const string MicrosoftCodeAnalysisDiagnosticsSyntaxNodeAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext";
         public const string MicrosoftCodeAnalysisDiagnosticsSyntaxTreeAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.SyntaxTreeAnalysisContext";
+        public const string MicrosoftCodeAnalysisGeneratorAttribute = "Microsoft.CodeAnalysis.GeneratorAttribute";
         public const string MicrosoftCodeAnalysisHostMefMefConstruction = "Microsoft.CodeAnalysis.Host.Mef.MefConstruction";
         public const string MicrosoftCodeAnalysisLocalizableResourceString = "Microsoft.CodeAnalysis.LocalizableResourceString";
         public const string MicrosoftCodeAnalysisLocalizableString = "Microsoft.CodeAnalysis.LocalizableString";

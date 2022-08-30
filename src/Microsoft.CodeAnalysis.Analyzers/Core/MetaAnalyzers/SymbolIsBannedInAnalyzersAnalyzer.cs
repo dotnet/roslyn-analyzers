@@ -93,7 +93,7 @@ namespace Microsoft.CodeAnalysis.Analyzers
             }
 
             const string fileName = "Microsoft.CodeAnalysis.Analyzers.AnalyzerBannedSymbols.txt";
-            var stream = typeof(SymbolIsBannedInAnalyzersAnalyzer<>).Assembly.GetManifestResourceStream(fileName);
+            using var stream = typeof(SymbolIsBannedInAnalyzersAnalyzer<>).Assembly.GetManifestResourceStream(fileName);
             var source = SourceText.From(stream);
             var result = new Dictionary<ISymbol, BanFileEntry>();
             foreach (var line in source.Lines)

@@ -229,10 +229,5 @@ namespace Analyzer.Utilities
         /// String option to configure names of additional "None" enum case (separated by '|') for CA1008.
         /// </summary>
         public const string AdditionalEnumNoneNames = "additional_enum_none_names";
-
-        /// <summary>
-        /// Boolean option to opt-in to extended analysis of analyzers and source generators, such as checks for banned APIs in analyzers.
-        /// </summary>
-        public const string EnforceExtendedAnalyzerRules = "enforce_extended_analyzer_rules";
     }
 }

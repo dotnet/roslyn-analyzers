@@ -258,13 +258,13 @@
         <note />
       </trans-unit>
       <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription">
-        <source>A project containing analyzers or source generators should specify an "enforce analyzer extended rules" setting.</source>
-        <target state="new">A project containing analyzers or source generators should specify an "enforce analyzer extended rules" setting.</target>
+        <source>A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'.</source>
+        <target state="new">A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage">
-        <source>'{0}': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_extended_analyzer_rules = true'.</source>
-        <target state="new">'{0}': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_extended_analyzer_rules = true'.</target>
+        <source>'{0}': A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'</source>
+        <target state="new">'{0}': A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'</target>
         <note />
       </trans-unit>
       <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersTitle">

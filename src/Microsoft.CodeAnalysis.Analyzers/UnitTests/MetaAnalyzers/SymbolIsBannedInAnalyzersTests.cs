@@ -48,11 +48,12 @@ class C
                     AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
 
 [*]
-dotnet_code_quality.enforce_extended_analyzer_rules = true
+build_property.EnforceExtendedAnalyzerRules = true
 "), },
                 }
             }.RunAsync();
         }
+
         [Fact]
         public async Task UseBannedApi_EnforcementEnabled_Generator_CSharp()
         {
@@ -89,7 +90,7 @@ class C
                     AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
 
 [*]
-dotnet_code_quality.enforce_extended_analyzer_rules = true
+build_property.EnforceExtendedAnalyzerRules = true
 "), },
                 }
             }.RunAsync();
@@ -120,7 +121,7 @@ class C
 }
 ",
                 ExpectedDiagnostics = {
-                    // /0/Test0.cs(7,7): warning RS1036: 'MyAnalyzer': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_extended_analyzer_rules = true'.
+                    // /0/Test0.cs(7,7): warning RS1036: 'MyAnalyzer': A project containing analyzers or source generators should specify the property '<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>'
                     VerifyCS.Diagnostic("RS1036").WithSpan(7, 7, 7, 17).WithArguments("MyAnalyzer"),
                 }
             }.RunAsync();
@@ -154,7 +155,7 @@ class C
                     AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
 
 [*]
-dotnet_code_quality.enforce_extended_analyzer_rules = false
+build_property.EnforceExtendedAnalyzerRules = false
 "),
                     },
                 }
@@ -191,7 +192,7 @@ End Class
                     AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
 
 [*]
-dotnet_code_quality.enforce_extended_analyzer_rules = true
+build_property.EnforceExtendedAnalyzerRules = true
 "),
                     },
                 }
@@ -221,7 +222,7 @@ End Class
 ",
                 ExpectedDiagnostics =
                 {
-                    // /0/Test0.vb(7,7): warning RS1036: 'MyDiagnosticAnalyzer': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_extended_analyzer_rules = true'.
+                    // /0/Test0.vb(7,7): warning RS1036: 'MyDiagnosticAnalyzer': A project containing analyzers or source generators should specify the  property '<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>'
                     VerifyVB.Diagnostic("RS1036").WithSpan(7, 7, 7, 27).WithArguments("MyDiagnosticAnalyzer"),
                 }
             }.RunAsync();
@@ -252,7 +253,7 @@ End Class
                     AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
 
 [*]
-dotnet_code_quality.enforce_extended_analyzer_rules = false
+build_property.EnforceExtendedAnalyzerRules = false
 "),
                     },
                 }

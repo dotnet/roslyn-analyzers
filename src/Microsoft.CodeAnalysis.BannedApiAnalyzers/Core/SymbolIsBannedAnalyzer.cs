@@ -42,13 +42,10 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
     public abstract class SymbolIsBannedAnalyzer<TSyntaxKind> : SymbolIsBannedAnalyzerBase<TSyntaxKind>
         where TSyntaxKind : struct
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(SymbolIsBannedAnalyzer.SymbolIsBannedRule, SymbolIsBannedAnalyzer.DuplicateBannedSymbolRule);
 
         protected sealed override DiagnosticDescriptor SymbolIsBannedRule => SymbolIsBannedAnalyzer.SymbolIsBannedRule;
-
-#pragma warning disable RS1012 // 'context' does not register any analyzer actions. Consider moving actions registered in 'Initialize' that depend on this start action to 'context'.
-        protected sealed override bool OptedInToBannedSymbolEnforcement(CompilationStartAnalysisContext context, SyntaxNode syntax) => true;
 
 #pragma warning disable RS1013 // 'compilationContext' does not register any analyzer actions, except for a 'CompilationEndAction'. Consider replacing this start/end action pair with a 'RegisterCompilationAction' or moving actions registered in 'Initialize' that depend on this start action to 'compilationContext'.
         protected sealed override Dictionary<ISymbol, BanFileEntry>? ReadBannedApis(CompilationStartAnalysisContext compilationContext)

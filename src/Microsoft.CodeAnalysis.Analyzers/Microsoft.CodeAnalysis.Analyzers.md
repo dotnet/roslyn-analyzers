@@ -424,7 +424,7 @@ Prefer 'syntax.IsKind(kind)' to 'syntax.Kind() == kind' when checking syntax kin
 |CodeFix|True|
 ---
 
-## RS1035: Do not used APIs banned for analyzers
+## RS1035: Do not use APIs banned for analyzers
 
 The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.
 
@@ -438,13 +438,13 @@ The symbol has been marked as banned for use in analyzers, and an alternate shou
 
 ## RS1036: Specify analyzer banned API enforcement setting
 
-A project containing analyzers or source generators should specify an analyzer banned API enforcement setting.
+A project containing analyzers or source generators should specify the property '\<EnforceExtendedAnalyzerRules>true\</EnforceExtendedAnalyzerRules>'.
 
 |Item|Value|
 |-|-|
 |Category|MicrosoftCodeAnalysisCorrectness|
 |Enabled|True|
-|Severity|Error|
+|Severity|Warning|
 |CodeFix|False|
 ---
 

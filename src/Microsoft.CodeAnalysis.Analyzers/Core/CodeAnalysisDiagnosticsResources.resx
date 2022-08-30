@@ -539,10 +539,10 @@
     <value>Do not use APIs banned for analyzers</value>
   </data>
   <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription" xml:space="preserve">
-    <value>A project containing analyzers or source generators should specify an "enforce analyzer extended rules" setting.</value>
+    <value>A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'.</value>
   </data>
   <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage" xml:space="preserve">
-    <value>'{0}': A project containing analyzers or source generators should specify the editorconfig setting 'dotnet_code_quality.enforce_extended_analyzer_rules = true'.</value>
+    <value>'{0}': A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'</value>
   </data>
   <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersTitle" xml:space="preserve">
     <value>Specify analyzer banned API enforcement setting</value>

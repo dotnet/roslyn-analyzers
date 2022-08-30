@@ -1971,4 +1971,19 @@
   <data name="UseSpanClearInsteadOfFillTitle" xml:space="preserve">
     <value>Prefer 'Clear' over 'Fill'</value>
   </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesDescription" xml:space="preserve">
+    <value>Built in '+', '-' and explicit casting operators now may or may not throw when overflowing, while it was before. Wrap the expression with 'checked' or 'unchecked' statements to restore old behavior.</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorNotThrowMessage" xml:space="preserve">
+    <value>Built in operator '{0}' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorThrowsMessage" xml:space="preserve">
+    <value>Built in operator '{0}' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesTitle" xml:space="preserve">
+    <value>Prevent from behavioral change</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage" xml:space="preserve">
+    <value>Built in explicit conversion '{0}' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.</value>
+  </data>
 </root>

@@ -231,6 +231,7 @@ namespace Analyzer.Utilities
         public const string SystemInt16 = "System.Int16";
         public const string SystemInt32 = "System.Int32";
         public const string SystemInt64 = "System.Int64";
+        public const string SystemIntPtr = "System.IntPtr";
         public const string SystemInvalidOperationException = "System.InvalidOperationException";
         public const string SystemIOCompressionZipArchiveEntry = "System.IO.Compression.ZipArchiveEntry";
         public const string SystemIOCompressionZipFileExtensions = "System.IO.Compression.ZipFileExtensions";
@@ -296,6 +297,7 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeCompilerServicesModuleInitializerAttribute = "System.Runtime.CompilerServices.ModuleInitializerAttribute";
         public const string SystemRuntimeCompilerServicesRestrictedInternalsVisibleToAttribute = "System.Runtime.CompilerServices.RestrictedInternalsVisibleToAttribute";
         public const string SystemRuntimeCompilerServicesRuntimeFeature = "System.Runtime.CompilerServices.RuntimeFeature";
+        public const string SystemRuntimeCompilerServicesRuntimeFeatureNumericIntPtr = "System.Runtime.CompilerServices.RuntimeFeature.NumericIntPtr";
         public const string SystemRuntimeCompilerServicesTaskAwaiter = "System.Runtime.CompilerServices.TaskAwaiter";
         public const string SystemRuntimeCompilerServicesTypeForwardedToAttribute = "System.Runtime.CompilerServices.TypeForwardedToAttribute";
         public const string SystemRuntimeCompilerServicesValueTaskAwaiter = "System.Runtime.CompilerServices.ValueTaskAwaiter";
@@ -402,6 +404,7 @@ namespace Analyzer.Utilities
         public const string SystemThreadingThread = "System.Threading.Thread";
         public const string SystemTimeSpan = "System.TimeSpan";
         public const string SystemType = "System.Type";
+        public const string SystemUIntPtr = "System.UIntPtr";
         public const string SystemUri = "System.Uri";
         public const string SystemWebConfigurationHttpRuntimeSection = "System.Web.Configuration.HttpRuntimeSection";
         public const string SystemWebHttpApplication = "System.Web.HttpApplication";

@@ -2092,6 +2092,31 @@
         <target state="translated">該当する場合は 'StringBuilder.Append(char)' の使用を検討</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage">
+        <source>Built in explicit conversion '{0}' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.</source>
+        <target state="new">Built in explicit conversion '{0}' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesDescription">
+        <source>Built in '+', '-' and explicit casting operators now may or may not throw when overflowing, while it was before. Wrap the expression with 'checked' or 'unchecked' statements to restore old behavior.</source>
+        <target state="new">Built in '+', '-' and explicit casting operators now may or may not throw when overflowing, while it was before. Wrap the expression with 'checked' or 'unchecked' statements to restore old behavior.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorNotThrowMessage">
+        <source>Built in operator '{0}' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.</source>
+        <target state="new">Built in operator '{0}' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorThrowsMessage">
+        <source>Built in operator '{0}' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.</source>
+        <target state="new">Built in operator '{0}' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesTitle">
+        <source>Prevent from behavioral change</source>
+        <target state="new">Prevent from behavioral change</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ProvideCorrectArgumentToEnumHasFlagDescription">
         <source>'Enum.HasFlag' method expects the 'enum' argument to be of the same 'enum' type as the instance on which the method is invoked and that this 'enum' is marked with 'System.FlagsAttribute'. If these are different 'enum' types, an unhandled exception will be thrown at runtime. If the 'enum' type is not marked with 'System.FlagsAttribute' the call will always return 'false' at runtime.</source>
         <target state="translated">'Enum.HasFlag' メソッドでは、'enum' 引数が、メソッドが呼び出されたインスタンスと同じ 'enum' 型である必要があり、この 'enum' は、'System.FlagsAttribute' でマークされている必要があります。これらが異なる 'enum' 型の場合は、ハンドルされない例外が実行時にスローされます。'enum' 型が 'System.FlagsAttribute' でマークされていない場合、呼び出しは実行時に常に 'false' を返します。</target>

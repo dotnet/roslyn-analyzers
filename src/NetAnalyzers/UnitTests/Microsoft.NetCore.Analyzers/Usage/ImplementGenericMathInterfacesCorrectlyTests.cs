@@ -532,6 +532,27 @@ interface IMyNumber : IFloatingPointConstants<{|#0:double|}> // The 'IFloatingPo
         }
 
         [Fact]
+        public async Task UnconstrianedGenericTypeImplementedIParsableIncorrectly()
+        {
+            await PopulateTestCs(@"
+using System;
+
+class MyClass<T> : IParsable<{|#0:int|}> // The 'IParsable<TSelf>' requires the 'TSelf' type parameter to be filled with the derived type 'MyClass<T>'
+{
+    public static int Parse(string s, IFormatProvider provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse(string s, IFormatProvider provider, out int result)
+    {
+        throw new NotImplementedException();
+    }
+}
+", VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.GMIRule).WithLocation(0).WithArguments("IParsable<TSelf>", "TSelf", "MyClass<T>")).RunAsync();
+        }
+
+        [Fact]
         public async Task CustomInterfaceWithKnownNameImplementedNotWarn()
         {
             await PopulateTestCs(@"
@@ -611,7 +632,21 @@ public record MyRecord : IMinMaxValue<MyRecord>
     public static MyRecord MaxValue => throw new NotImplementedException();
 
     public static MyRecord MinValue => throw new NotImplementedException();
-}").RunAsync();
+}
+
+class MyClass<T> : IParsable<MyClass<T>>
+{
+    public static MyClass<T> Parse(string s, IFormatProvider provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse(string s, IFormatProvider provider, out MyClass<T> result)
+    {
+        throw new NotImplementedException();
+    }
+}
+").RunAsync();
         }
 
         [Fact]
@@ -674,13 +709,38 @@ class {|#0:MyDate|} : IParsableOfDateOnly // The 'IParsable<TSelf>' requires the
 ", VerifyCS.Diagnostic(ImplementGenericMathInterfacesCorrectly.GMIRule).WithLocation(0).WithArguments("IParsable<TSelf>", "TSelf", "MyDate")).RunAsync();
         }
 
+        [Fact]
+        public async Task MultipleInterfacesNotImplementedCorrectly()
+        {
+            await PopulateTestCs(@"
+using System;
+using System.Numerics;
+
+interface IMyNumber : IAdditionOperators<[|int|], int, int>,
+          IAdditiveIdentity<[|int|], int>,
+          IDecrementOperators<[|int|]>,
+          IDivisionOperators<[|int|], int, int>,
+          IEquatable<int>,
+          IEqualityOperators<[|long|], long, bool>,
+          IIncrementOperators<[|double|]>,
+          IMultiplicativeIdentity<[|float|], float>,
+          IMultiplyOperators<[|short|], short, short>,
+          ISpanFormattable,
+          ISpanParsable<[|int|]>,
+          ISubtractionOperators<[|decimal|], decimal, decimal>,
+          IUnaryPlusOperators<[|nint|], nint>,
+          IUnaryNegationOperators<[|ushort|], ushort>
+{ }
+").RunAsync();
+        }
+
         private static VerifyCS.Test PopulateTestCs(string sourceCode, params DiagnosticResult[] expected)
         {
             var test = new VerifyCS.Test
             {
                 TestCode = sourceCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
-                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp11
             };
             test.ExpectedDiagnostics.AddRange(expected);
             return test;

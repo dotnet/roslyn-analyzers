@@ -50,7 +50,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
                 context.RegisterSymbolAction(context =>
                 {
-                    if (context.Symbol is INamedTypeSymbol ntSymbol && !ntSymbol.IsGenericType)
+                    if (context.Symbol is INamedTypeSymbol ntSymbol)
                     {
                         AnalyzeSymbol(context, ntSymbol, iParsableInterface.ContainingNamespace, iNumberInterface.ContainingNamespace);
                     }
@@ -63,12 +63,12 @@ namespace Microsoft.NetCore.Analyzers.Usage
             foreach (INamedTypeSymbol anInterface in symbol.Interfaces)
             {
                 if (IsKnownInterfaceInTheChain(anInterface) &&
-                    FirstTypeParameterNameIsNotTheSymbolName(symbol, anInterface))
+                    FirstTypeParameterNameIsNotTheSymbolName(symbol, anInterface) &&
+                    (!symbol.IsGenericType || NotConstrainedToTheInterface(anInterface, symbol.TypeParameters)))
                 {
                     SyntaxNode? typeParameter = FindTheTypeArgumentOfTheInterfaceFromTypeDeclaration(symbol, anInterface);
                     context.ReportDiagnostic(CreateDiagnostic(GMIRule, typeParameter, anInterface.OriginalDefinition.ToDisplayString(
                         SymbolDisplayFormat.MinimallyQualifiedFormat), anInterface.OriginalDefinition.TypeParameters[0].Name, symbol));
-                    break;
                 }
             }
 
@@ -78,12 +78,12 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 foreach (INamedTypeSymbol anInterface in baseType.Interfaces)
                 {
                     if (IsKnownInterfaceInTheChain(anInterface) &&
-                        FirstTypeParameterNameIsNotTheSymbolName(symbol, anInterface))
+                        FirstTypeParameterNameIsNotTheSymbolName(symbol, anInterface) &&
+                        (!symbol.IsGenericType || NotConstrainedToTheInterface(anInterface, symbol.TypeParameters)))
                     {
                         SyntaxNode? typeParameter = FindTheTypeArgumentOfTheInterfaceFromTypeDeclaration(symbol, symbol.BaseType);
                         context.ReportDiagnostic(CreateDiagnostic(GMIRule, typeParameter, symbol.BaseType.OriginalDefinition.ToDisplayString(
                             SymbolDisplayFormat.MinimallyQualifiedFormat), symbol.BaseType.OriginalDefinition.TypeParameters[0].Name, symbol));
-                        break;
                     }
                 }
 
@@ -112,12 +112,28 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
                 return false;
             }
+
+            static bool NotConstrainedToTheInterface(INamedTypeSymbol anInterface, ImmutableArray<ITypeParameterSymbol> typeParameters)
+            {
+                foreach (var typeParameter in typeParameters)
+                {
+                    foreach (var constraint in typeParameter.ConstraintTypes)
+                    {
+                        if (constraint.Equals(anInterface, SymbolEqualityComparer.Default))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            }
         }
 
         private static Diagnostic CreateDiagnostic(DiagnosticDescriptor GMIRule, SyntaxNode? parameter,
             string genericDeclaration, string parameterName, INamedTypeSymbol symbol) =>
-                parameter is null ? symbol.CreateDiagnostic(GMIRule, genericDeclaration, parameterName, symbol.Name) :
-                    parameter.CreateDiagnostic(GMIRule, genericDeclaration, parameterName, symbol.Name);
+                parameter is null ? symbol.CreateDiagnostic(GMIRule, genericDeclaration, parameterName, symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)) :
+                    parameter.CreateDiagnostic(GMIRule, genericDeclaration, parameterName, symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
 
         protected abstract SyntaxNode? FindTheTypeArgumentOfTheInterfaceFromTypeDeclaration(ISymbol typeSymbol, ISymbol theInterfaceSymbol);
 

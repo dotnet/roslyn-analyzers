@@ -54,7 +54,9 @@ namespace Microsoft.CodeAnalysis.Analyzers
             void analyzeAnalyzersAndGeneratorsIfPropertyNotSpecified(CompilationStartAnalysisContext context)
             {
                 var propertyValue = context.Options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.EnforceExtendedAnalyzerRules, context.Compilation);
-                if (propertyValue is not null)
+                // Note: in absence of any value for this property in the project, the generated editorconfig will have an entry like:
+                // `build_property.EnforceExtendedAnalyzerRules = `
+                if (!string.IsNullOrEmpty(propertyValue))
                 {
                     return;
                 }

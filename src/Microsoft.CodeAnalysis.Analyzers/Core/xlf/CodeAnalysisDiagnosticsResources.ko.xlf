@@ -7,6 +7,16 @@
         <target state="translated">제공되지 않은 릴리스 파일에 규칙 항목 추가</target>
         <note />
       </trans-unit>
+      <trans-unit id="AddGeneratorAttribute_1">
+        <source>Apply 'Generator' attribute for '{0}'.</source>
+        <target state="new">Apply 'Generator' attribute for '{0}'.</target>
+        <note>{Locked="Generator"}</note>
+      </trans-unit>
+      <trans-unit id="AddGeneratorAttribute_2">
+        <source>Apply 'Generator' attribute for both '{0}' and '{1}'.</source>
+        <target state="new">Apply 'Generator' attribute for both '{0}' and '{1}'.</target>
+        <note>{Locked="Generator"}</note>
+      </trans-unit>
       <trans-unit id="ClassIsNotDiagnosticAnalyzerMessage">
         <source>Inherit type '{0}' from DiagnosticAnalyzer or remove the DiagnosticAnalyzerAttribute(s)</source>
         <target state="translated">DiagnosticAnalyzer에서 '{0}' 형식을 상속하거나 DiagnosticAnalyzerAttribute를 제거하세요.</target>
@@ -231,6 +241,21 @@
         <source>Apply DiagnosticAnalyzer attribute for both '{0}' and '{1}'.</source>
         <target state="translated">'{0}' 및 '{1}'에 대한 DiagnosticAnalyzer 특성을 적용하세요.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="MissingSourceGeneratorAttributeDescription">
+        <source>A type implements 'ISourceGenerator' but does not have the 'Generator' attribute.</source>
+        <target state="new">A type implements 'ISourceGenerator' but does not have the 'Generator' attribute.</target>
+        <note>{Locked="ISourceGenerator"}{Locked="Generator"}</note>
+      </trans-unit>
+      <trans-unit id="MissingSourceGeneratorAttributeMessage">
+        <source>Missing 'Generator' attribute</source>
+        <target state="new">Missing 'Generator' attribute</target>
+        <note>{Locked="Generator"}</note>
+      </trans-unit>
+      <trans-unit id="MissingSourceGeneratorAttributeTitle">
+        <source>Missing 'Generator' Attribute</source>
+        <target state="new">Missing 'Generator' Attribute</target>
+        <note>{Locked="Generator"}</note>
       </trans-unit>
       <trans-unit id="MissingSymbolKindArgumentToRegisterActionMessage">
         <source>Specify at least one SymbolKind of interest when registering a symbol analyzer action</source>

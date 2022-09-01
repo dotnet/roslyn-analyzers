@@ -160,6 +160,8 @@ class A
     int Property { get; set; }
     [Obsolete(""valid"", false)]
     void Method() {}
+    [Obsolete(error: false, message: ""valid"")]
+    void Method2() {}
 }
 ");
         }

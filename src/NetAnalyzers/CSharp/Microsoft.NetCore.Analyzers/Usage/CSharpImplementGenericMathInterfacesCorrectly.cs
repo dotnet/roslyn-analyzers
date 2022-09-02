@@ -15,9 +15,10 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
             foreach (SyntaxReference syntaxReference in typeSymbol.DeclaringSyntaxReferences)
             {
                 SyntaxNode typeDefinition = syntaxReference.GetSyntax();
-                if (typeDefinition is BaseTypeDeclarationSyntax baseType)
+                if (typeDefinition is BaseTypeDeclarationSyntax baseType &&
+                    FindTypeArgumentFromBaseInterfaceList(baseType.BaseList.Types, anInterfaceSymbol) is { } node)
                 {
-                    return FindTypeArgumentFromBaseInterfaceList(baseType.BaseList.Types, anInterfaceSymbol);
+                    return node;
                 }
             }
 

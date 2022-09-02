@@ -734,6 +734,25 @@ interface IMyNumber : IAdditionOperators<[|int|], int, int>,
 ").RunAsync();
         }
 
+        [Fact]
+        public async Task PartialInterfaceImplementsMultipleGMInterfaces()
+        {
+            await PopulateTestCs(@"
+using System;
+using System.Numerics;
+
+partial interface IMyNumber : IAdditionOperators<[|int|], int, int>,
+          IAdditiveIdentity<[|int|], int>,
+          IDecrementOperators<[|int|]>
+{ }
+
+partial interface IMyNumber : IEquatable<int>,
+          IEqualityOperators<[|long|], long, bool>,
+          IIncrementOperators<[|double|]>
+{ }
+").RunAsync();
+        }
+
         private static VerifyCS.Test PopulateTestCs(string sourceCode, params DiagnosticResult[] expected)
         {
             var test = new VerifyCS.Test

@@ -1931,7 +1931,7 @@
     <value>Seal class</value>
   </data>
   <data name="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage" xml:space="preserve">
-    <value>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</value>
+    <value>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined</value>
   </data>
   <data name="PreferDictionaryTryGetValueCodeFixTitle" xml:space="preserve">
     <value>Use 'TryGetValue(TKey, out TValue)'</value>
@@ -1947,5 +1947,28 @@
   </data>
   <data name="SpecifyIFormatProviderMessageIFormatProviderOptional" xml:space="preserve">
     <value>The behavior of '{0}' could vary based on the current user's locale settings. Provide a value for the 'IFormatProvider' argument.</value>
+  </data>
+  <data name="PlatformCompatibilityObsoletedCsAllPlatformMessage" xml:space="preserve">
+    <value>This call site is reachable on all platforms. '{0}' is obsoleted on: {1}.</value>
+    <comment>This call site is reachable on all platforms. 'OboletedOnMacOS()' is obsoleted on: 'macos'.</comment>
+  </data>
+  <data name="PlatformCompatibilityObsoletedCsReachableMessage" xml:space="preserve">
+    <value>This call site is reachable on: {2}. '{0}' is obsoleted on: {1}.</value>
+    <comment>This call site is reachable on 'macos', 'linux'. 'OboletedOnMacOS()' is obsoleted on: 'macos'.</comment>
+  </data>
+  <data name="ParenthesisWithPlaceHolder" xml:space="preserve">
+    <value> ({0})</value>
+  </data>
+  <data name="UseSpanClearInsteadOfFillCodeFixTitle" xml:space="preserve">
+    <value>Use 'Clear()'</value>
+  </data>
+  <data name="UseSpanClearInsteadOfFillDescription" xml:space="preserve">
+    <value>It is more efficient to use 'Clear', instead of 'Fill' with default value.</value>
+  </data>
+  <data name="UseSpanClearInsteadOfFillMessage" xml:space="preserve">
+    <value>Prefer 'Span&lt;T&gt;.Clear()' instead of 'Span&lt;T&gt;.Fill(default)'</value>
+  </data>
+  <data name="UseSpanClearInsteadOfFillTitle" xml:space="preserve">
+    <value>Prefer 'Clear' over 'Fill'</value>
   </data>
 </root>

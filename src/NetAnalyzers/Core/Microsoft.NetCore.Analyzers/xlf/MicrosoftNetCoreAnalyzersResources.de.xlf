@@ -1143,7 +1143,7 @@
         <note />
       </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage">
-        <source>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</source>
+        <source>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined</source>
         <target state="translated">Delegates mit verwalteten Typen als Parameter oder der Rückgabetyp erfordern, dass das Marshalling der Runtime in der Assembly aktiviert ist, in der das Delegat definiert ist.</target>
         <note />
       </trans-unit>
@@ -1832,6 +1832,11 @@
         <target state="translated">P/Invokes dürfen nicht sichtbar sein</target>
         <note />
       </trans-unit>
+      <trans-unit id="ParenthesisWithPlaceHolder">
+        <source> ({0})</source>
+        <target state="translated"> ({0})</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PlatformCompatibilityAllPlatforms">
         <source>and all other platforms</source>
         <target state="translated">und alle anderen Plattformen</target>
@@ -1851,6 +1856,16 @@
         <source>'{0}' from version {1} to {2}</source>
         <target state="translated">{0}, Version {1} bis {2}</target>
         <note>'SupportedOnWindows1903UnsupportedOn2004()' is supported on: 'windows' from version 10.0.1903 to 10.0.2004.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityObsoletedCsAllPlatformMessage">
+        <source>This call site is reachable on all platforms. '{0}' is obsoleted on: {1}.</source>
+        <target state="translated">Diese Aufrufsite ist auf allen Plattformen erreichbar. „{0}“ ist veraltet für: {1}.</target>
+        <note>This call site is reachable on all platforms. 'OboletedOnMacOS()' is obsoleted on: 'macos'.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityObsoletedCsReachableMessage">
+        <source>This call site is reachable on: {2}. '{0}' is obsoleted on: {1}.</source>
+        <target state="translated">Diese Aufrufsite ist erreichbar für: {2}. „{0}“ ist veraltet für: {1}.</target>
+        <note>This call site is reachable on 'macos', 'linux'. 'OboletedOnMacOS()' is obsoleted on: 'macos'.</note>
       </trans-unit>
       <trans-unit id="PlatformCompatibilityOnlySupportedCsAllPlatformMessage">
         <source>This call site is reachable on all platforms. '{0}' is only supported on: {1}.</source>
@@ -2850,6 +2865,26 @@
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly.</source>
         <target state="translated">Erwägen Sie (sofern möglich) die Verwendung der rollenbasierten Zugriffssteuerung von Azure anstelle einer Shared Access Signature (SAS). Wenn Sie weiterhin eine SAS benötigen, verwenden Sie "SharedAccessProtocol.HttpsOnly".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillCodeFixTitle">
+        <source>Use 'Clear()'</source>
+        <target state="translated">Verwenden von „Clear()“</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillDescription">
+        <source>It is more efficient to use 'Clear', instead of 'Fill' with default value.</source>
+        <target state="translated">Es ist effizienter, „Clear“ anstelle von „Fill“ mit dem Standardwert zu verwenden.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillMessage">
+        <source>Prefer 'Span&lt;T&gt;.Clear()' instead of 'Span&lt;T&gt;.Fill(default)'</source>
+        <target state="translated">„Span&lt;T&gt;.Clear()“ anstelle von „Span&lt;T&gt;.Fill(default)“ bevorzugen</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillTitle">
+        <source>Prefer 'Clear' over 'Fill'</source>
+        <target state="translated">„Clear“ vor „Fill“ bevorzugen</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">

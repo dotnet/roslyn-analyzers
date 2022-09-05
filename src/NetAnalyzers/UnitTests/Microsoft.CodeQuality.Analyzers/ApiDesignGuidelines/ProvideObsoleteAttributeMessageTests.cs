@@ -39,6 +39,8 @@ public class A
 public interface I {}
 [Obsolete]
 public delegate void del(int x);
+[Obsolete(error: false, message: """")]
+public delegate void del2(int x);
 ",
             GetCSharpResultAt(4, 2, "A"),
             GetCSharpResultAt(7, 6, ".ctor"),
@@ -47,7 +49,8 @@ public delegate void del(int x);
             GetCSharpResultAt(13, 6, "Method"),
             GetCSharpResultAt(15, 6, "event1"),
             GetCSharpResultAt(18, 2, "I"),
-            GetCSharpResultAt(20, 2, "del"));
+            GetCSharpResultAt(20, 2, "del"),
+            GetCSharpResultAt(22, 2, "del2"));
         }
 
         [Fact]

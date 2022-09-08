@@ -2,6 +2,7 @@
 
 Rule ID | Missing Help Link | Title |
 --------|-------------------|-------|
+CA1011 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1011> | Consider using base type of parameter |
 CA1311 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
 CA1420 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1420> | Property, type, or attribute requires runtime marshalling |
 CA1421 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421> | This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied |

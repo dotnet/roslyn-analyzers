@@ -4,6 +4,7 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
+CA1011 | Design | Info | ConsiderPassingBaseTypesAsParameters, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1011)
 CA1311 | Globalization | Hidden | SpecifyCultureForToLowerAndToUpper, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311)
 CA1420 | Interoperability | Warning | FeatureUnsupportedWhenRuntimeMarshallingDisabled, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1420)
 CA1421 | Interoperability | Info | MethodUsesRuntimeMarshallingEvenWhenMarshallingDisabled, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421)

@@ -630,6 +630,27 @@
             ]
           }
         },
+        "CA1011": {
+          "id": "CA1011",
+          "shortDescription": "Consider using base type of parameter",
+          "fullDescription": "Consider changing this type to its base type. This method appears to only require base class members in its implementation.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1011",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "ConsiderPassingBaseTypesAsParameters",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1012": {
           "id": "CA1012",
           "shortDescription": "Abstract types should not have public constructors",

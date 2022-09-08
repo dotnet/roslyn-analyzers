@@ -84,6 +84,18 @@ To broaden the usability of a type, implement one of the generic interfaces. Thi
 |CodeFix|False|
 ---
 
+## [CA1011](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1011): Consider using base type of parameter
+
+Consider changing this type to its base type. This method appears to only require base class members in its implementation.
+
+|Item|Value|
+|-|-|
+|Category|Design|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
 ## [CA1012](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1012): Abstract types should not have public constructors
 
 Constructors on abstract types can be called only by derived types. Because public constructors create instances of a type, and you cannot create instances of an abstract type, an abstract type that has a public constructor is incorrectly designed.

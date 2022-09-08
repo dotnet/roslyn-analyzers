@@ -82,6 +82,21 @@
         <target state="translated">型 '{0}' は、'{2}' のいずれも実装することなく '{1}' を直接または間接的に継承します。公開されている型は、操作性の拡充のためジェネリック バージョンを実装する必要があります。</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConsiderPassingBaseTypesAsParametersDescription">
+        <source>Consider changing this type to its base type. This method appears to only require base class members in its implementation.</source>
+        <target state="new">Consider changing this type to its base type. This method appears to only require base class members in its implementation.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsiderPassingBaseTypesAsParametersMessage">
+        <source>Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'</source>
+        <target state="new">Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsiderPassingBaseTypesAsParametersTitle">
+        <source>Consider using base type of parameter</source>
+        <target state="new">Consider using base type of parameter</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
         <target state="translated">System.Exception や System.SystemException などの一般的な例外、または許可されていない例外の種類は catch ステートメントでキャッチされます。または一般的な catch 句を使用します。一般的な例外と許可されていない例外をキャッチしないでください。</target>

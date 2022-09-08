@@ -82,6 +82,21 @@
         <target state="translated">Der Typ "{0}" erbt "{1}" direkt oder indirekt ohne Implementierung von "{2}". Öffentlich sichtbare Typen müssen die generische Version implementieren, um die Nutzbarkeit zu erweitern.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConsiderPassingBaseTypesAsParametersDescription">
+        <source>Consider changing this type to its base type. This method appears to only require base class members in its implementation.</source>
+        <target state="new">Consider changing this type to its base type. This method appears to only require base class members in its implementation.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsiderPassingBaseTypesAsParametersMessage">
+        <source>Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'</source>
+        <target state="new">Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsiderPassingBaseTypesAsParametersTitle">
+        <source>Consider using base type of parameter</source>
+        <target state="new">Consider using base type of parameter</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
         <target state="translated">Eine allgemeine Ausnahme wie "System.Exception" oder "System.SystemException" oder ein unzulässiger Ausnahmetyp wurde durch eine catch-Anweisung abgefangen, oder es wird eine Klausel verwendet, um Ausnahmen generell abzufangen. Allgemeine und unzulässige Ausnahmen sollten jedoch nicht abgefangen werden.</target>

@@ -82,6 +82,21 @@
         <target state="translated">'{0}' türü, herhangi bir '{2}' uygulamaksızın doğrudan veya dolaylı olarak şunu devralır: '{1}'. Herkese görünür türler, kullanılabilirliği genişletmek için genel sürümü uygulamalıdır.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConsiderPassingBaseTypesAsParametersDescription">
+        <source>Consider changing this type to its base type. This method appears to only require base class members in its implementation.</source>
+        <target state="new">Consider changing this type to its base type. This method appears to only require base class members in its implementation.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsiderPassingBaseTypesAsParametersMessage">
+        <source>Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'</source>
+        <target state="new">Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsiderPassingBaseTypesAsParametersTitle">
+        <source>Consider using base type of parameter</source>
+        <target state="new">Consider using base type of parameter</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
         <target state="translated">System.Exception veya System.SystemException gibi genel bir ifade veya izin verilmeyen bir özel durum türü bir catch ifadesinde yakalandı ya da genel bir catch ifadesi kullanıldı. Genel özel durumlar yakalanmamalıdır.</target>

@@ -24,7 +24,7 @@ jobs:
         _configuration: Release
         _codeCoverage: False
   pool:
-    name: NetCore1ESPool-Public
+    name: NetCore-Public
     demands: ImageOverride -equals Build.Windows.Amd64.VS2022.Pre.Open
   timeoutInMinutes: 120
 
@@ -75,7 +75,7 @@ jobs:
       Release:
         _configuration: Release
   pool:
-    name: NetCore1ESPool-Public
+    name: NetCore-Public
     demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
   timeoutInMinutes: 40
   steps:

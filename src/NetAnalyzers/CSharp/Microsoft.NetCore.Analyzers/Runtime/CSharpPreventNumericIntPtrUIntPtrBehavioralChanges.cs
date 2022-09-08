@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -39,44 +38,47 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             return false;
         }
 
-        protected override bool NotAlias(ImmutableArray<SyntaxReference> syntaxReferences)
+        protected override bool IsAliasUsed(ISymbol? symbol)
         {
-            foreach (SyntaxReference? reference in syntaxReferences)
+            if (symbol != null)
             {
-                SyntaxNode definition = reference.GetSyntax();
-
-                while (definition is VariableDeclaratorSyntax)
+                foreach (SyntaxReference reference in symbol.DeclaringSyntaxReferences)
                 {
-                    definition = definition.Parent;
-                }
+                    SyntaxNode definition = reference.GetSyntax();
 
-                var type = GetType(definition);
+                    while (definition is VariableDeclaratorSyntax)
+                    {
+                        definition = definition.Parent;
+                    }
 
-                if (IdentifierNameIsIntPtrOrUIntPtr(type))
-                {
-                    return true;
+                    var type = GetType(definition);
+
+                    if (IdentifierNameIsIntPtrOrUIntPtr(type))
+                    {
+                        return false;
+                    }
                 }
             }
 
-            return false;
+            return true;
         }
 
         private static bool IdentifierNameIsIntPtrOrUIntPtr(ExpressionSyntax? syntax) =>
             syntax is IdentifierNameSyntax identifierName &&
             identifierName.Identifier.Text is IntPtr or UIntPtr;
 
-        protected override bool NotAlias(SyntaxNode syntax)
+        protected override bool IsAliasUsed(SyntaxNode syntax)
         {
             if (syntax is CastExpressionSyntax castSyntax)
             {
                 if (IdentifierNameIsIntPtrOrUIntPtr(castSyntax.Expression) ||
                     IdentifierNameIsIntPtrOrUIntPtr(castSyntax.Type))
                 {
-                    return true;
+                    return false;
                 }
             }
 
-            return false;
+            return true;
         }
 
         private static TypeSyntax? GetType(SyntaxNode syntax) =>
@@ -87,6 +89,5 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 CastExpressionSyntax cast => cast.Type,
                 _ => null,
             };
-
     }
 }

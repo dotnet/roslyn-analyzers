@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -11,12 +12,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     using static MicrosoftNetCoreAnalyzersResources;
     /// <summary>
-    /// 
+    /// CA2020: Detects Behavioral Changes introduced by new Numeric IntPtr UIntPtr feature
     /// </summary>
     public abstract class PreventNumericIntPtrUIntPtrBehavioralChanges : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2020";
-        private static readonly string Explicit = nameof(Explicit);
 
         internal static readonly DiagnosticDescriptor OperatorThrowsRule = DiagnosticDescriptorHelper.Create(
             RuleId,
@@ -52,9 +52,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         protected abstract bool IsWithinCheckedContext(IOperation operation);
 
-        protected abstract bool NotAlias(ImmutableArray<SyntaxReference> syntaxReferences);
+        protected abstract bool IsAliasUsed(ISymbol? syntaxReferences);
 
-        protected abstract bool NotAlias(SyntaxNode syntax);
+        protected abstract bool IsAliasUsed(SyntaxNode syntax);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -62,10 +62,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterCompilationStartAction(context =>
             {
-                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesRuntimeFeatureNumericIntPtr, out var _))
+                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesRuntimeFeature, out var runtimeFeatureType) ||
+                    !runtimeFeatureType.GetMembers("NumericIntPtr").OfType<IFieldSymbol>().Any())
                 {
                     // Numeric IntPtr feature not available
-                    //return;
+                    return;
                 }
 
                 context.RegisterOperationAction(context =>
@@ -74,37 +75,30 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         binaryOperation.IsAdditionOrSubstractionOperation(out var binaryOperator) &&
                         binaryOperation.IsChecked)
                     {
-                        if (binaryOperation.LeftOperand.Type?.SpecialType == SpecialType.System_IntPtr ||
-                             binaryOperation.LeftOperand.Type?.SpecialType == SpecialType.System_UIntPtr)
+                        if ((binaryOperation.LeftOperand.Type?.SpecialType == SpecialType.System_IntPtr ||
+                             binaryOperation.LeftOperand.Type?.SpecialType == SpecialType.System_UIntPtr) &&
+                             IsConversionFromInt32(binaryOperation.RightOperand) &&
+                             !IsAliasUsed(GetSymbol(binaryOperation.LeftOperand)))
                         {
-                            var symbol = GetSymbol(binaryOperation.LeftOperand);
-                            if (symbol != null && NotAlias(symbol.DeclaringSyntaxReferences))
-                            {
-                                context.ReportDiagnostic(binaryOperation.CreateDiagnostic(OperatorThrowsRule, binaryOperator));
-                                return;
-                            }
+                            context.ReportDiagnostic(binaryOperation.CreateDiagnostic(OperatorThrowsRule, binaryOperator));
                         }
                     }
-
-                    if (context.Operation is IConversionOperation conversionOperation)
+                    else if (context.Operation is IConversionOperation conversionOperation)
                     {
                         var operation = conversionOperation.WalkDownConversion(c => c.IsImplicit); // get innermost converesion
                         if (operation is IConversionOperation explicitConversion &&
                             explicitConversion.OperatorMethod == null) // Built in conversion
                         {
-                            if (IsWithinCheckedContext(explicitConversion))
+                            if (IsWithinCheckedContext(explicitConversion)) // explicitConversion.IsChecked somehow not working
                             {
-                                if (IsIntPtrToOrFromVoidPtrConversion(explicitConversion.Type, explicitConversion.Operand.Type))
+                                if (IsIntPtrToOrFromVoidPtrConversion(explicitConversion.Type, explicitConversion.Operand.Type) &&
+                                    !IsAliasUsed(GetSymbol(explicitConversion.Operand)))
                                 {
-                                    var symbol = GetSymbol(explicitConversion.Operand);
-                                    if (symbol != null && NotAlias(symbol.DeclaringSyntaxReferences))
-                                    {
-                                        context.ReportDiagnostic(explicitConversion.CreateDiagnostic(ConversionThrowsRule,
-                                            PopulateConversionString(explicitConversion.Type, explicitConversion.Operand.Type)));
-                                    }
+                                    context.ReportDiagnostic(explicitConversion.CreateDiagnostic(ConversionThrowsRule,
+                                        PopulateConversionString(explicitConversion.Type, explicitConversion.Operand.Type)));
                                 }
                                 else if (IsIntPtrToOrFromVoidPtrConversion(explicitConversion.Operand.Type, explicitConversion.Type) &&
-                                    NotAlias(explicitConversion.Syntax))
+                                         !IsAliasUsed(explicitConversion.Syntax))
                                 {
                                     context.ReportDiagnostic(explicitConversion.CreateDiagnostic(ConversionThrowsRule,
                                         PopulateConversionString(explicitConversion.Type, explicitConversion.Operand.Type)));
@@ -114,22 +108,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             {
                                 if ((IsLongToIntPtrConversion(explicitConversion.Type, explicitConversion.Operand.Type) ||
                                      IsULongToUIntPtrConversion(explicitConversion.Type, explicitConversion.Operand.Type)) &&
-                                    NotAlias(explicitConversion.Syntax))
+                                    !IsAliasUsed(explicitConversion.Syntax))
                                 {
                                     context.ReportDiagnostic(explicitConversion.CreateDiagnostic(NotThrowRule,
                                         PopulateConversionString(explicitConversion.Type, explicitConversion.Operand.Type)));
                                 }
-                                else if (IsIntPtrToIntConversion(explicitConversion.Type, explicitConversion.Operand.Type) ||
-                                         IsUIntPtrToUIntConversion(explicitConversion.Type, explicitConversion.Operand.Type))
+                                else if ((IsIntPtrToIntConversion(explicitConversion.Type, explicitConversion.Operand.Type) ||
+                                          IsUIntPtrToUIntConversion(explicitConversion.Type, explicitConversion.Operand.Type)) &&
+                                        !IsAliasUsed(GetSymbol(explicitConversion.Operand)))
                                 {
-                                    var symbol = GetSymbol(explicitConversion.Operand);
-                                    if (symbol != null && NotAlias(symbol.DeclaringSyntaxReferences))
-                                    {
-                                        context.ReportDiagnostic(explicitConversion.CreateDiagnostic(NotThrowRule,
-                                            PopulateConversionString(explicitConversion.Type, explicitConversion.Operand.Type)));
-                                    }
+                                    context.ReportDiagnostic(explicitConversion.CreateDiagnostic(NotThrowRule,
+                                        PopulateConversionString(explicitConversion.Type, explicitConversion.Operand.Type)));
                                 }
-
                             }
                         }
                     }
@@ -163,6 +153,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     ILocalReferenceOperation local => local.Local,
                     _ => null,
                 };
+
+            static bool IsConversionFromInt32(IOperation operation) =>
+                operation is IConversionOperation conversion &&
+                conversion.Operand.Type.SpecialType == SpecialType.System_Int32;
 
             static bool IsIntPtrToOrFromVoidPtrConversion(ITypeSymbol pointerType, ITypeSymbol intPtrType) =>
                 intPtrType.SpecialType == SpecialType.System_IntPtr &&

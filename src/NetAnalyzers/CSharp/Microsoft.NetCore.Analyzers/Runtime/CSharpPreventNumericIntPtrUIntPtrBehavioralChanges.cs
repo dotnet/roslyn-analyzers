@@ -9,7 +9,7 @@ using Microsoft.NetCore.Analyzers.Runtime;
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
     /// <summary>
-    /// 
+    /// CA2020: Detects Behavioral Changes introduced by new Numeric IntPtr UIntPtr feature
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpPreventNumericIntPtrUIntPtrBehavioralChanges : PreventNumericIntPtrUIntPtrBehavioralChanges

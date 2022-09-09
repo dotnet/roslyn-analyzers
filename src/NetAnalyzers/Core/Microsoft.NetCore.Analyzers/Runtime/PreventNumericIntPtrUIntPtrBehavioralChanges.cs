@@ -38,17 +38,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor NotThrowRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor ConversionNotThrowRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesTitle)),
-            CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesOperatorNotThrowMessage)),
+            CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage)),
             DiagnosticCategory.Reliability,
             RuleLevel.BuildWarning,
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(OperatorThrowsRule, NotThrowRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(OperatorThrowsRule, ConversionNotThrowRule);
 
         protected abstract bool IsWithinCheckedContext(IOperation operation);
 
@@ -85,11 +85,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
                     else if (context.Operation is IConversionOperation conversionOperation)
                     {
-                        var operation = conversionOperation.WalkDownConversion(c => c.IsImplicit); // get innermost converesion
+                        var operation = conversionOperation.WalkDownConversion(c => c.IsImplicit); // get innermost conversion
                         if (operation is IConversionOperation explicitConversion &&
                             explicitConversion.OperatorMethod == null) // Built in conversion
                         {
-                            if (IsWithinCheckedContext(explicitConversion)) // explicitConversion.IsChecked somehow not working
+                            if (IsWithinCheckedContext(explicitConversion))
                             {
                                 if (IsIntPtrToOrFromVoidPtrConversion(explicitConversion.Type, explicitConversion.Operand.Type) &&
                                     !IsAliasUsed(GetSymbol(explicitConversion.Operand)))
@@ -110,14 +110,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                      IsULongToUIntPtrConversion(explicitConversion.Type, explicitConversion.Operand.Type)) &&
                                     !IsAliasUsed(explicitConversion.Syntax))
                                 {
-                                    context.ReportDiagnostic(explicitConversion.CreateDiagnostic(NotThrowRule,
+                                    context.ReportDiagnostic(explicitConversion.CreateDiagnostic(ConversionNotThrowRule,
                                         PopulateConversionString(explicitConversion.Type, explicitConversion.Operand.Type)));
                                 }
                                 else if ((IsIntPtrToIntConversion(explicitConversion.Type, explicitConversion.Operand.Type) ||
                                           IsUIntPtrToUIntConversion(explicitConversion.Type, explicitConversion.Operand.Type)) &&
                                         !IsAliasUsed(GetSymbol(explicitConversion.Operand)))
                                 {
-                                    context.ReportDiagnostic(explicitConversion.CreateDiagnostic(NotThrowRule,
+                                    context.ReportDiagnostic(explicitConversion.CreateDiagnostic(ConversionNotThrowRule,
                                         PopulateConversionString(explicitConversion.Type, explicitConversion.Operand.Type)));
                                 }
                             }

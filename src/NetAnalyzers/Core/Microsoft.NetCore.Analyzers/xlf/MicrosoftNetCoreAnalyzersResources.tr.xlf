@@ -2092,6 +2092,11 @@
         <target state="translated">Uygun olduğunda 'StringBuilder.Append(char)' kullanabilirsiniz</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage">
+        <source>Built in explicit conversion '{0}' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.</source>
+        <target state="new">Built in explicit conversion '{0}' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage">
         <source>Built in explicit conversion '{0}' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.</source>
         <target state="new">Built in explicit conversion '{0}' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.</target>
@@ -2100,11 +2105,6 @@
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesDescription">
         <source>Built in '+', '-' and explicit casting operators now may or may not throw when overflowing, while it was before. Wrap the expression with 'checked' or 'unchecked' statements to restore old behavior.</source>
         <target state="new">Built in '+', '-' and explicit casting operators now may or may not throw when overflowing, while it was before. Wrap the expression with 'checked' or 'unchecked' statements to restore old behavior.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorNotThrowMessage">
-        <source>Built in operator '{0}' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.</source>
-        <target state="new">Built in operator '{0}' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorThrowsMessage">

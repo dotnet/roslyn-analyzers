@@ -222,15 +222,15 @@ class Program
         intPtr1 = (IntPtr)int1;
         short s = (short)intPtr1;
 
-        intPtr1 = {|#2:(IntPtr)long1|}; // Built in operator '(IntPtr)Int64' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
+        intPtr1 = {|#2:(IntPtr)long1|}; // Built in explicit conversion  '(IntPtr)Int64' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
 
-        int a = {|#3:(int)intPtr1|}; // Built in explicit conversion '(Int32)IntPtr' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+        int a = {|#3:(int)intPtr1|}; // Built in explicit conversion '(Int32)IntPtr' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
     }
 }",
             VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionThrowsRule).WithLocation(0).WithArguments("(*Void)IntPtr"),
             VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionThrowsRule).WithLocation(1).WithArguments("(IntPtr)*Void"),
-            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.NotThrowRule).WithLocation(2).WithArguments("(IntPtr)Int64"),
-            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.NotThrowRule).WithLocation(3).WithArguments("(Int32)IntPtr")).RunAsync();
+            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionNotThrowRule).WithLocation(2).WithArguments("(IntPtr)Int64"),
+            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionNotThrowRule).WithLocation(3).WithArguments("(Int32)IntPtr")).RunAsync();
         }
 
         [Fact]
@@ -259,13 +259,13 @@ class Program
         uintPtr1 = (UIntPtr)longValue;
         int a = (int)uintPtr1;
 
-        uintPtr1 = {|#0:(UIntPtr)uLongValue|}; // Built in operator '(UIntPtr)UInt64' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
+        uintPtr1 = {|#0:(UIntPtr)uLongValue|}; // Built in explicit conversion  '(UIntPtr)UInt64' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
 
-        uint ui = {|#1:(uint)uintPtr1|}; // Built in operator '(UInt32)UIntPtr' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
+        uint ui = {|#1:(uint)uintPtr1|}; // Built in explicit conversion '(UInt32)UIntPtr' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
     }
 }",
-            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.NotThrowRule).WithLocation(0).WithArguments("(UIntPtr)UInt64"),
-            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.NotThrowRule).WithLocation(1).WithArguments("(UInt32)UIntPtr")).RunAsync();
+            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionNotThrowRule).WithLocation(0).WithArguments("(UIntPtr)UInt64"),
+            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionNotThrowRule).WithLocation(1).WithArguments("(UInt32)UIntPtr")).RunAsync();
         }
 
         private static VerifyCS.Test PopulateTestCs(string sourceCode, params DiagnosticResult[] expected)

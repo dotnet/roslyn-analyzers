@@ -28,10 +28,10 @@ class Program
         checked
         {
             int i = 0;
-            intPtr2 = {|#0:intPtr1 + 2|}; // Built in operator '+' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
-            intPtr2 = {|#1:intPtr1 - 2 * 3|}; // Built in operator '-' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
-            intPtr2 = {|#2:intPtr1 - 2|} - 3; // Built in operator '-' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
-            intPtr2 = {|#3:intPtr1 + i|} + 3; // Built in operator '+' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+            intPtr2 = {|#0:intPtr1 + 2|}; // Starting with .NET 7 the operator '+' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+            intPtr2 = {|#1:intPtr1 - 2 * 3|}; // Starting with .NET 7 the operator '-' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+            intPtr2 = {|#2:intPtr1 - 2|} - 3; // Starting with .NET 7 the operator '-' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+            intPtr2 = {|#3:intPtr1 + i|} + 3; // Starting with .NET 7 the operator '+' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
             intPtr1 = {|#4:intPtr2 - i++|};
             intPtr1++; 
             intPtr1+=2;
@@ -40,7 +40,7 @@ class Program
             intPtr2 = intPtr1 / 2;
         }
 
-        intPtr2 = checked({|#5:intPtr1 - 2|}); // Built in operator '-' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+        intPtr2 = checked({|#5:intPtr1 - 2|}); // Starting with .NET 7 the operator '-' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
 
         intPtr2 = intPtr1 + 2; // unchecked context 
 
@@ -89,6 +89,24 @@ class Program
         }
 
         [Fact]
+        public async Task ConversionInCheckedExpressionNotWarn()
+        {
+            await PopulateTestCs(@"
+using System;
+
+class Program
+{
+    IntPtr intPtr1 = IntPtr.Zero;
+
+    public void M1(long long1, int offset)
+    {
+        intPtr1 = checked((IntPtr)long1);
+        intPtr1 = checked((IntPtr)long1 + offset);
+    }
+}").RunAsync();
+        }
+
+        [Fact]
         public async Task IntPtrAdditionSubstructionWithParameterReference()
         {
             await PopulateTestCs(@"
@@ -98,7 +116,7 @@ class Program
 {
     private IntPtr M2(IntPtr intPtr, int a)
     {
-        return checked({|#0:intPtr + a|}); // Built in operator '+' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+        return checked({|#0:intPtr + a|}); // Starting with .NET 7 the operator '+' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
     }
 
     private IntPtr M3(IntPtr intPtr, int a)
@@ -108,7 +126,7 @@ class Program
 
     private nint M4(IntPtr intPtr, int a)
     {
-        return checked({|#1:intPtr - a|}); // Built in operator '-' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+        return checked({|#1:intPtr - a|}); // Starting with .NET 7 the operator '-' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
     }
 
     private nint M5(IntPtr intPtr, int a)
@@ -145,10 +163,10 @@ class Program
     {
         checked
         {
-            uintPtr2 = {|#0:uintPtr1 + 2|}; // Built in operator '+' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+            uintPtr2 = {|#0:uintPtr1 + 2|}; // Starting with .NET 7 the operator '+' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
         }
 
-        uintPtr2 = checked({|#2:uintPtr1 - 2|}); // Built in operator '-' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+        uintPtr2 = checked({|#2:uintPtr1 - 2|}); // Starting with .NET 7 the operator '-' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
 
         uintPtr2 = uintPtr1 + 2;
         uintPtr2 = uintPtr1 + uintPtr2;
@@ -173,10 +191,10 @@ class Program
 
         checked
         {
-            intPtr2 = {|#0:intPtr1 + 2|}; // Built in operator '+' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+            intPtr2 = {|#0:intPtr1 + 2|}; // Starting with .NET 7 the operator '+' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
         }
 
-        intPtr2 = checked({|#1:intPtr1 - 2|}); // Built in operator '+' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+        intPtr2 = checked({|#1:intPtr1 - 2|}); // Starting with .NET 7 the operator '+' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
 
         intPtr2 = intPtr1 + 2;
 
@@ -207,9 +225,9 @@ class Program
 
         checked
         {
-            ptr = {|#0:(void*)intPtr1|}; // Built in explicit conversion '(*Void)IntPtr' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+            ptr = {|#0:(void*)intPtr1|}; // Starting with .NET 7 the explicit conversion '(*Void)IntPtr' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
 
-            intPtr2 = {|#1:(IntPtr)ptr|}; // Built in explicit conversion '(IntPtr)*Void' now may throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
+            intPtr2 = {|#1:(IntPtr)ptr|}; // Starting with .NET 7 the explicit conversion '(IntPtr)*Void' now will throw when overflowing in checked context. Wrap the expression with 'unchecked' statement to restore old behavior.
 
             long1 = (int)intPtr2;
             intPtr1 = (IntPtr)long1;
@@ -222,9 +240,9 @@ class Program
         intPtr1 = (IntPtr)int1;
         short s = (short)intPtr1;
 
-        intPtr1 = {|#2:(IntPtr)long1|}; // Built in explicit conversion  '(IntPtr)Int64' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
+        intPtr1 = {|#2:(IntPtr)long1|}; // Starting with .NET 7 the explicit conversion '(IntPtr)Int64' now will not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
 
-        int a = {|#3:(int)intPtr1|}; // Built in explicit conversion '(Int32)IntPtr' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
+        int a = {|#3:(int)intPtr1|}; // Starting with .NET 7 the explicit conversion '(Int32)IntPtr' now will not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
     }
 }",
             VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionThrowsRule).WithLocation(0).WithArguments("(*Void)IntPtr"),
@@ -259,9 +277,9 @@ class Program
         uintPtr1 = (UIntPtr)longValue;
         int a = (int)uintPtr1;
 
-        uintPtr1 = {|#0:(UIntPtr)uLongValue|}; // Built in explicit conversion  '(UIntPtr)UInt64' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
+        uintPtr1 = {|#0:(UIntPtr)uLongValue|}; // Starting with .NET 7 the explicit conversion '(UIntPtr)UInt64' now will not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
 
-        uint ui = {|#1:(uint)uintPtr1|}; // Built in explicit conversion '(UInt32)UIntPtr' now may not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
+        uint ui = {|#1:(uint)uintPtr1|}; // Starting with .NET 7 the explicit conversion '(UInt32)UIntPtr' now will not throw when overflowing in unchecked context. Wrap the expression with 'checked' statement to restore old behavior.
     }
 }",
             VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionNotThrowRule).WithLocation(0).WithArguments("(UIntPtr)UInt64"),

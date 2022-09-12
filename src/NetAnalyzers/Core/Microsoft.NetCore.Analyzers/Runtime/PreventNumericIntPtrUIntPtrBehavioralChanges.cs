@@ -89,7 +89,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (operation is IConversionOperation explicitConversion &&
                             explicitConversion.OperatorMethod == null) // Built in conversion
                         {
-                            if (IsWithinCheckedContext(explicitConversion))
+                            if (explicitConversion.IsChecked ||
+                                IsWithinCheckedContext(explicitConversion))
                             {
                                 if (IsIntPtrToOrFromVoidPtrConversion(explicitConversion.Type, explicitConversion.Operand.Type) &&
                                     !IsAliasUsed(GetSymbol(explicitConversion.Operand)))

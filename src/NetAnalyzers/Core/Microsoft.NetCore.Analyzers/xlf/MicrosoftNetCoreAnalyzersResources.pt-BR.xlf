@@ -183,8 +183,8 @@
         <note>Separator used for separating list of platform names: {API} is only supported on: {‘windows’, ‘browser’, ‘linux’}</note>
       </trans-unit>
       <trans-unit id="ConstantExpectedApplicationDescription">
-        <source>ConstantExpectedAttribute is not applied correctly on the parameter.</source>
-        <target state="new">ConstantExpectedAttribute is not applied correctly on the parameter.</target>
+        <source>ConstantExpected attribute is not applied correctly on the parameter.</source>
+        <target state="new">ConstantExpected attribute is not applied correctly on the parameter.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstantExpectedApplicationTitle">

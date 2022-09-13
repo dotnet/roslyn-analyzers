@@ -47,18 +47,9 @@ class {name}
     {{
     }}
 
-    public void Test2([ConstantExpected(Min = 0, Max = 15)] string val) // diagnostic x2
+    public void Test2([ConstantExpected(Min = 0, Max = 15)] int val) // no diagnostic
     {{
     }}
-
-    public void Test3<T>([ConstantExpected(Min = 0, Max = 15)] T val) // diagnostic
-    {{
-    }}
-
-    public void Test4([ConstantExpected(Min = 0, Max = int.MaxValue)] byte val) // diagnostic
-    {{
-    }}
-
 }}
 "));
             }
@@ -86,9 +77,9 @@ class {name}
                 throw new InvalidOperationException($"Expected no compilation diagnostics but found '{analysisResult.CompilationDiagnostics.Count}'");
             }
 
-            if (diagnostics.Length != 6 * Constants.Number_Of_Code_Files)
+            if (diagnostics.Length != 2 * Constants.Number_Of_Code_Files)
             {
-                throw new InvalidOperationException($"Expected '{6 * Constants.Number_Of_Code_Files:N0}' analyzer diagnostics but found '{diagnostics.Length}'");
+                throw new InvalidOperationException($"Expected '{2 * Constants.Number_Of_Code_Files:N0}' analyzer diagnostics but found '{diagnostics.Length}'");
             }
         }
 

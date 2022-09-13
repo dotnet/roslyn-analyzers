@@ -43,17 +43,10 @@ namespace ConstantExpectedTest
 {
     public class Test
     {
-        public void TestMethodString([ConstantExpected] string val) { }
         public void TestMethodInt32([ConstantExpected] int val) { }
         public void TestMethodInt32Ex([ConstantExpected(Min = 0, Max = 15)] int val) { }
-        public void TestMethodByte([ConstantExpected] byte val) { }
-        public void TestMethodByteEx([ConstantExpected(Min = 0, Max = 7)] byte val) { }
     }
-    public interface ITestInterface
-    {
-        void TestMethodT<T>([ConstantExpected] T val) { }
-    }
-    public interface ITestInterface2<T>
+    public interface ITestInterface<T>
     {
         void TestMethod([ConstantExpected] T val) { }
     }
@@ -78,18 +71,12 @@ class {name}
 
     public void Test(int a)
     {{
-        _test.TestMethodString(""Ok"");
-        _test.TestMethodInt32(10);
-        _test.TestMethodInt32Ex(10);
+        _test.TestMethodInt32(20);
         _test.TestMethodInt32Ex(20); // diagnostic
-        _test.TestMethodByte(10);
-        _test.TestMethodByteEx(10); // diagnostic
-        _test.TestMethodInt32Ex(a); // diagnostic
     }}
 
-    private sealed class TestImpl : ITestInterface, ITestInterface2<int>
+    private sealed class TestImpl : ITestInterface<int>
     {{
-        public void TestMethodT<T>( T val) {{ }}  // diagnostic
         public void TestMethod(int val) {{ }}  // diagnostic
     }}
 }}
@@ -119,9 +106,9 @@ class {name}
                 throw new InvalidOperationException($"Expected no compilation diagnostics but found '{analysisResult.CompilationDiagnostics.Count}'");
             }
 
-            if (diagnostics.Length != 5 * Constants.Number_Of_Code_Files)
+            if (diagnostics.Length != 2 * Constants.Number_Of_Code_Files)
             {
-                throw new InvalidOperationException($"Expected '{5 * Constants.Number_Of_Code_Files:N0}' analyzer diagnostics but found '{diagnostics.Length}'");
+                throw new InvalidOperationException($"Expected '{2 * Constants.Number_Of_Code_Files:N0}' analyzer diagnostics but found '{diagnostics.Length}'");
             }
         }
 

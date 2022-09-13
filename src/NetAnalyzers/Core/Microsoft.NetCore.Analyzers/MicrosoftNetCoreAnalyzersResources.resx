@@ -1868,7 +1868,7 @@
     <value>Incorrect usage of ConstantExpected attribute</value>
   </data>
   <data name="ConstantExpectedApplicationDescription" xml:space="preserve">
-    <value>ConstantExpectedAttribute is not applied correctly on the parameter.</value>
+    <value>ConstantExpected attribute is not applied correctly on the parameter.</value>
   </data>
   <data name="ConstantExpectedUsageTitle" xml:space="preserve">
     <value>A constant is expected for the parameter</value>

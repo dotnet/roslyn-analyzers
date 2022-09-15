@@ -142,10 +142,11 @@ namespace Analyzer.Utilities.Extensions
             INamedTypeSymbol? iDisposable,
             INamedTypeSymbol? iAsyncDisposable)
         {
-            if (type.IsReferenceType)
+            // structs can be Disposable as well
+            if (type.IsReferenceType || type.IsValueType)
             {
-                return IsInterfaceOrImplementsInterface(type, iDisposable)
-                    || IsInterfaceOrImplementsInterface(type, iAsyncDisposable);
+                if (IsInterfaceOrImplementsInterface(type, iDisposable) || IsInterfaceOrImplementsInterface(type, iAsyncDisposable))
+                    return true;
             }
 
 #if CODEANALYSIS_V3_OR_BETTER

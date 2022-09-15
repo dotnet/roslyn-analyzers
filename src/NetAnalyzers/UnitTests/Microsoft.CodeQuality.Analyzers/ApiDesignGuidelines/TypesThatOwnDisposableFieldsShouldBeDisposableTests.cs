@@ -1168,5 +1168,48 @@ Public Class NoDisposeMethod
 End Class
 ");
         }
+
+        [Fact]
+        [WorkItem(6151, "https://github.com/dotnet/roslyn-analyzers/issues/6151")]
+        public async Task CA1001CSharpDisposedCalledInStructAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.IO;
+
+internal struct Invalid : IDisposable
+{
+    private readonly Stream stream;
+
+    public Invalid(int length) => this.stream = new MemoryStream(length);
+
+    public void Dispose() => this.stream.Dispose();
+}
+");
+        }
+
+        [Fact]
+        [WorkItem(6151, "https://github.com/dotnet/roslyn-analyzers/issues/6151")]
+        public async Task CA1001BasicDisposedCalledInStructAsync()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+Imports System.IO
+
+Friend Structure Invalid
+    Implements IDisposable
+
+    Dim stream as Stream
+
+    Public Sub New(length As Integer)
+        stream = New MemoryStream(length)
+    End Sub
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        stream.Dispose()
+    End Sub
+End Structure
+");
+        }
     }
 }

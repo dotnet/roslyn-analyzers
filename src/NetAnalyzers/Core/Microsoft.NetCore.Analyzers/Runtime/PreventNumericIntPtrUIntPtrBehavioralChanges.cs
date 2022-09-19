@@ -23,7 +23,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesTitle)),
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesOperatorThrowsMessage)),
             DiagnosticCategory.Reliability,
-            RuleLevel.BuildWarning,
+            RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesTitle)),
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage)),
             DiagnosticCategory.Reliability,
-            RuleLevel.BuildWarning,
+            RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
@@ -43,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesTitle)),
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage)),
             DiagnosticCategory.Reliability,
-            RuleLevel.BuildWarning,
+            RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);

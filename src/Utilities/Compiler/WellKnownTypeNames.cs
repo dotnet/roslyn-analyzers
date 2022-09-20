@@ -232,7 +232,6 @@ namespace Analyzer.Utilities
         public const string SystemInt16 = "System.Int16";
         public const string SystemInt32 = "System.Int32";
         public const string SystemInt64 = "System.Int64";
-        public const string SystemIntPtr = "System.IntPtr";
         public const string SystemInvalidOperationException = "System.InvalidOperationException";
         public const string SystemIOCompressionZipArchiveEntry = "System.IO.Compression.ZipArchiveEntry";
         public const string SystemIOCompressionZipFileExtensions = "System.IO.Compression.ZipFileExtensions";
@@ -404,7 +403,6 @@ namespace Analyzer.Utilities
         public const string SystemThreadingThread = "System.Threading.Thread";
         public const string SystemTimeSpan = "System.TimeSpan";
         public const string SystemType = "System.Type";
-        public const string SystemUIntPtr = "System.UIntPtr";
         public const string SystemUri = "System.Uri";
         public const string SystemWebConfigurationHttpRuntimeSection = "System.Web.Configuration.HttpRuntimeSection";
         public const string SystemWebHttpApplication = "System.Web.HttpApplication";

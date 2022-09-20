@@ -17,38 +17,40 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     public abstract class PreventNumericIntPtrUIntPtrBehavioralChanges : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2020";
+        private static readonly LocalizableResourceString s_titleResource = CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesTitle));
+        private static readonly LocalizableResourceString s_descriptionResource = CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesDescription));
 
         internal static readonly DiagnosticDescriptor OperatorThrowsRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesTitle)),
+            s_titleResource,
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesOperatorThrowsMessage)),
             DiagnosticCategory.Reliability,
             RuleLevel.IdeSuggestion,
-            CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesDescription)),
+            s_descriptionResource,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
         internal static readonly DiagnosticDescriptor ConversionThrowsRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesTitle)),
+            s_titleResource,
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage)),
             DiagnosticCategory.Reliability,
             RuleLevel.IdeSuggestion,
-            CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesDescription)),
+            s_descriptionResource,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
         internal static readonly DiagnosticDescriptor ConversionNotThrowRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesTitle)),
+            s_titleResource,
             CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage)),
             DiagnosticCategory.Reliability,
             RuleLevel.IdeSuggestion,
-            CreateLocalizableResourceString(nameof(PreventNumericIntPtrUIntPtrBehavioralChangesDescription)),
+            s_descriptionResource,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(OperatorThrowsRule, ConversionNotThrowRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(OperatorThrowsRule, ConversionThrowsRule, ConversionNotThrowRule);
 
         protected abstract bool IsWithinCheckedContext(IOperation operation);
 
@@ -92,13 +94,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             if (explicitConversion.IsChecked ||
                                 IsWithinCheckedContext(explicitConversion))
                             {
-                                if (IsIntPtrToOrFromVoidPtrConversion(explicitConversion.Type, explicitConversion.Operand.Type) &&
+                                if (IsIntPtrToOrFromPtrConversion(explicitConversion.Type, explicitConversion.Operand.Type) &&
                                     !IsAliasUsed(GetSymbol(explicitConversion.Operand)))
                                 {
                                     context.ReportDiagnostic(explicitConversion.CreateDiagnostic(ConversionThrowsRule,
                                         PopulateConversionString(explicitConversion.Type, explicitConversion.Operand.Type)));
                                 }
-                                else if (IsIntPtrToOrFromVoidPtrConversion(explicitConversion.Operand.Type, explicitConversion.Type) &&
+                                else if (IsIntPtrToOrFromPtrConversion(explicitConversion.Operand.Type, explicitConversion.Type) &&
                                          !IsAliasUsed(explicitConversion.Syntax))
                                 {
                                     context.ReportDiagnostic(explicitConversion.CreateDiagnostic(ConversionThrowsRule,
@@ -133,14 +135,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 string typeName = type.Name;
                 string operandName = operand.Name;
 
-                if (type is IPointerTypeSymbol pointer)
+                if (type is IPointerTypeSymbol)
                 {
-                    typeName = $"*{pointer.PointedAtType.Name}";
+                    typeName = type.ToString();
                 }
 
-                if (operand is IPointerTypeSymbol pointerOp)
+                if (operand is IPointerTypeSymbol)
                 {
-                    operandName = $"*{pointerOp.PointedAtType.Name}";
+                    operandName = operand.ToString();
                 }
 
                 return $"({typeName}){operandName}";
@@ -159,9 +161,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 operation is IConversionOperation conversion &&
                 conversion.Operand.Type.SpecialType == SpecialType.System_Int32;
 
-            static bool IsIntPtrToOrFromVoidPtrConversion(ITypeSymbol pointerType, ITypeSymbol intPtrType) =>
+            static bool IsIntPtrToOrFromPtrConversion(ITypeSymbol pointerType, ITypeSymbol intPtrType) =>
                 intPtrType.SpecialType == SpecialType.System_IntPtr &&
-                pointerType is IPointerTypeSymbol pointer && pointer.PointedAtType.SpecialType == SpecialType.System_Void;
+                pointerType is IPointerTypeSymbol pointer;
 
             static bool IsLongToIntPtrConversion(ITypeSymbol convertingType, ITypeSymbol operandType) =>
                 convertingType.SpecialType == SpecialType.System_IntPtr &&

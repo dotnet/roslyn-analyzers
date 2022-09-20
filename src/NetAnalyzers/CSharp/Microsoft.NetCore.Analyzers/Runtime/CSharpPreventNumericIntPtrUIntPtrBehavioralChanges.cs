@@ -25,9 +25,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 switch (parent)
                 {
                     case CheckedExpressionSyntax expression:
-                        return expression.Kind() == SyntaxKind.CheckedExpression;
+                        return expression.IsKind(SyntaxKind.CheckedExpression);
                     case CheckedStatementSyntax statement:
-                        return statement.Kind() == SyntaxKind.CheckedStatement;
+                        return statement.IsKind(SyntaxKind.CheckedStatement);
                     case MethodDeclarationSyntax:
                         return false;
                 }

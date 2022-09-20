@@ -225,9 +225,9 @@ class Program
 
         checked
         {
-            ptr = {|#0:(void*)intPtr1|}; // Starting with .NET 7 the explicit conversion '(*Void)IntPtr' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.
+            ptr = {|#0:(void*)intPtr1|}; // Starting with .NET 7 the explicit conversion '(void*)IntPtr' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.
 
-            intPtr2 = {|#1:(IntPtr)ptr|}; // Starting with .NET 7 the explicit conversion '(IntPtr)*Void' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.
+            intPtr2 = {|#1:(IntPtr)ptr|}; // Starting with .NET 7 the explicit conversion '(IntPtr)void*' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.
 
             long1 = (int)intPtr2;
             intPtr1 = (IntPtr)long1;
@@ -245,10 +245,45 @@ class Program
         int a = {|#3:(int)intPtr1|}; // Starting with .NET 7 the explicit conversion '(Int32)IntPtr' will not throw when overflowing in an unchecked context. Wrap the expression with a 'checked' statement to restore the .NET 6 behavior.
     }
 }",
-            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionThrowsRule).WithLocation(0).WithArguments("(*Void)IntPtr"),
-            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionThrowsRule).WithLocation(1).WithArguments("(IntPtr)*Void"),
+            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionThrowsRule).WithLocation(0).WithArguments("(void*)IntPtr"),
+            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionThrowsRule).WithLocation(1).WithArguments("(IntPtr)void*"),
             VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionNotThrowRule).WithLocation(2).WithArguments("(IntPtr)Int64"),
             VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionNotThrowRule).WithLocation(3).WithArguments("(Int32)IntPtr")).RunAsync();
+        }
+
+        [Fact]
+        public async Task IntPtrExplicitConversionToFromDifferentPointerTypes()
+        {
+            await PopulateTestCs(@"
+using System;
+
+class Program
+{
+    IntPtr intPtr1 = IntPtr.Zero;
+    
+    public unsafe void M1()
+    {
+        void** voidPtr = null;
+        byte*** bytePtr = null;
+
+        checked
+        {
+            voidPtr = {|#0:(void**)intPtr1|}; // Starting with .NET 7 the explicit conversion '(void**)IntPtr' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.
+            intPtr1 = {|#1:(IntPtr)voidPtr|}; // Starting with .NET 7 the explicit conversion '(IntPtr)void**' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.
+            bytePtr = {|#2:(byte***)intPtr1|}; // Starting with .NET 7 the explicit conversion '(byte***)IntPtr' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.
+            intPtr1 = {|#3:(IntPtr)bytePtr|}; // Starting with .NET 7 the explicit conversion '(IntPtr)byte***' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.
+        }
+
+        voidPtr = (void**)intPtr1;
+        intPtr1 = (IntPtr)voidPtr;
+        bytePtr = (byte***)intPtr1;
+        intPtr1 = (IntPtr)bytePtr;
+    }
+}",
+            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionThrowsRule).WithLocation(0).WithArguments("(void**)IntPtr"),
+            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionThrowsRule).WithLocation(1).WithArguments("(IntPtr)void**"),
+            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionThrowsRule).WithLocation(2).WithArguments("(byte***)IntPtr"),
+            VerifyCS.Diagnostic(PreventNumericIntPtrUIntPtrBehavioralChanges.ConversionThrowsRule).WithLocation(3).WithArguments("(IntPtr)byte***")).RunAsync();
         }
 
         [Fact]

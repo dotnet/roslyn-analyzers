@@ -74,5 +74,6 @@
     <SystemComponentModelCompositionVersion>4.7.0</SystemComponentModelCompositionVersion>
     <SystemDirectoryServicesVersion>4.7.0</SystemDirectoryServicesVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
+    <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
   </PropertyGroup>
 </Project>

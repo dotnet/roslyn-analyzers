@@ -1959,6 +1959,15 @@
   <data name="ParenthesisWithPlaceHolder" xml:space="preserve">
     <value> ({0})</value>
   </data>
+  <data name="ImplementGenericMathInterfacesCorrectlyDescription" xml:space="preserve">
+    <value>Generic math interfaces require the derived type itself to be used for the self recurring type parameter.</value>
+  </data>
+  <data name="ImplementGenericMathInterfacesCorrectlyMessage" xml:space="preserve">
+    <value>The '{0}' requires the '{1}' type parameter to be filled with the derived type '{2}'</value>
+  </data>
+  <data name="ImplementGenericMathInterfacesCorrectlyTitle" xml:space="preserve">
+    <value>Use correct type parameter</value>
+  </data>
   <data name="UseSpanClearInsteadOfFillCodeFixTitle" xml:space="preserve">
     <value>Use 'Clear()'</value>
   </data>
@@ -1970,5 +1979,20 @@
   </data>
   <data name="UseSpanClearInsteadOfFillTitle" xml:space="preserve">
     <value>Prefer 'Clear' over 'Fill'</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesDescription" xml:space="preserve">
+    <value>Some built in operators added in .NET 7 behave differently than the user defined operatorsi in .NET 6 and below. Some operators that used to throw in unchecked context while overflowing will not throw anymore unless wrapped within checked context, and some operators that not used to throw in checked context now would throw unless wrapped within unchecked context.</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage" xml:space="preserve">
+    <value>Starting with .NET 7 the explicit conversion '{0}' will not throw when overflowing in an unchecked context. Wrap the expression with a 'checked' statement to restore the .NET 6 behavior.</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorThrowsMessage" xml:space="preserve">
+    <value>Starting with .NET 7 the operator '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesTitle" xml:space="preserve">
+    <value>Prevent from behavioral change</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage" xml:space="preserve">
+    <value>Starting with .NET 7 the explicit conversion '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</value>
   </data>
 </root>

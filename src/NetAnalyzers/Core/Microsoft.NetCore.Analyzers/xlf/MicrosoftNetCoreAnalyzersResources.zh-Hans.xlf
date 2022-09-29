@@ -1242,6 +1242,21 @@
         <target state="translated">避免硬编码的 SslProtocols 值</target>
         <note />
       </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyDescription">
+        <source>Generic math interfaces require the derived type itself to be used for the self recurring type parameter.</source>
+        <target state="translated">泛型数学接口要求将派生类型本身用于自重复类型参数。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyMessage">
+        <source>The '{0}' requires the '{1}' type parameter to be filled with the derived type '{2}'</source>
+        <target state="translated">"{0}" 需要使用派生类型 "{2}" 填充 "{1}" 类型参数。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyTitle">
+        <source>Use correct type parameter</source>
+        <target state="translated">使用正确的类型参数</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyDescription">
         <source>To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</source>
         <target state="translated">若要修复此规则的违规行为，将 GetObjectData 方法设置为可见并可重写，并确保所有实例字段都包含在序列化进程中或使用 NonSerializedAttribute 特性显式标记所有实例字段。</target>
@@ -2090,6 +2105,31 @@
       <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
         <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
         <target state="translated">若适用，请考虑使用 "StringBuilder.Append(char)"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage">
+        <source>Starting with .NET 7 the explicit conversion '{0}' will not throw when overflowing in an unchecked context. Wrap the expression with a 'checked' statement to restore the .NET 6 behavior.</source>
+        <target state="translated">从 .NET 7 开始，在未选中上下文中溢出时，显式转换“{0}”将不会引发。使用“已选中”语句包装表达式以还原 .NET 6 行为。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage">
+        <source>Starting with .NET 7 the explicit conversion '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</source>
+        <target state="translated">从 .NET 7 开始，在已选中上下文中溢出时，显式转换“{0}”将会引发。使用“未选中”语句包装表达式以还原 .NET 6 行为。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesDescription">
+        <source>Some built in operators added in .NET 7 behave differently than the user defined operatorsi in .NET 6 and below. Some operators that used to throw in unchecked context while overflowing will not throw anymore unless wrapped within checked context, and some operators that not used to throw in checked context now would throw unless wrapped within unchecked context.</source>
+        <target state="translated">.NET 7 中添加的某些内置运算符的行为与 .NET 6 及更低版本中用户定义的运算符行为不同。在溢出时，过去经常在未选中上下文中引发的某些运算符将不再引发，除非将其包装在已选中的上下文中，而过去在已选中上下文中不会引发的某些运算符现在将会引发，除非将其包装在未选中的上下文中。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorThrowsMessage">
+        <source>Starting with .NET 7 the operator '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</source>
+        <target state="translated">从 .NET 7 开始，运算符“{0}”将在选中上下文中溢出时引发。使用“未选中”语句包装表达式以还原 .NET 6 行为。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesTitle">
+        <source>Prevent from behavioral change</source>
+        <target state="translated">阻止行为变更</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentToEnumHasFlagDescription">

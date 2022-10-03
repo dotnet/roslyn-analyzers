@@ -1754,7 +1754,7 @@ Number of parameters supplied in the logging message template do not match the n
 
 ## [CA2020](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020): Prevent behavioral change
 
-Some built in operators added in .NET 7 behave differently when overflowing than did the user defined operators in .NET 6 and below. Some operators that used to throw in an unchecked context now no longer throw unless wrapped within a checked context, and some operators that did not previously throw in a checked context now throw unless wrapped in an unchecked context.
+Some built-in operators added in .NET 7 behave differently when overflowing than did the corresponding user-defined operators in .NET 6 and earlier versions. Some operators that previously threw in an unchecked context now don't throw unless wrapped within a checked context. Also, some operators that did not previously throw in a checked context now throw unless wrapped in an unchecked context.
 
 |Item|Value|
 |-|-|

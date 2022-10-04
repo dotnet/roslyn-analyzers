@@ -35,8 +35,9 @@
       <Link>AnalyzerReleases\$(AssemblyName)\AnalyzerReleases.Shipped.md</Link>
     </None>
   </ItemGroup>
-  
-  <ItemGroup>
+
+  <!-- Disable code analysis for source build -->
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' != 'true'">
     <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(MicrosoftCodeAnalysisBannedApiAnalyzersVersion)" />
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.txt" Condition="'$(BannedSymbolsOptOut)' != 'true'" />
   </ItemGroup>

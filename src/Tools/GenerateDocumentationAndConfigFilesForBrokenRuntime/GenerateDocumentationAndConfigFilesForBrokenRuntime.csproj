@@ -11,9 +11,15 @@
     <ProjectReference Include="..\GenerateDocumentationAndConfigFiles\GenerateDocumentationAndConfigFiles.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' != 'true'">
     <PackageReference Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisExecutableVersion)" />
     <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableExecutableVersion)" />
     <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataExecutableVersion)" />
+  </ItemGroup>
+
+  <!-- In source-build, the only executable version of Microsoft.CodeAnalysis is the one we already built, which is always
+  stored in MicrosoftCodeAnalysisVersion. -->
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisVersion)" />
   </ItemGroup>
 </Project>

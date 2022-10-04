@@ -1,6 +1,5 @@
 <Project>
-  <Import Project="$(SourceBuildPackageVersionPropsPath)" Condition="'$(SourceBuildPackageVersionPropsPath)' != ''" />
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(DotNetBuildFromSource)' != 'true'">
     <!--
       Binaries that need to be executable during source build are restricted to versions available within source build.
       This section defines executable versions of packages which are referenced via lower-version reference assemblies

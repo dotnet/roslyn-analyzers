@@ -7,7 +7,8 @@
     <ProjectReference Include="..\Core\Roslyn.Diagnostics.Analyzers.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="$(MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="$(MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion)" Condition="'$(DotNetBuildFromSource)' != 'true'"/>
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="$(MicrosoftCodeAnalysisVersion)" Condition="'$(DotNetBuildFromSource)' == 'true'"/>
   </ItemGroup>
   <Import Project="..\..\Utilities\Refactoring.VisualBasic\Refactoring.VisualBasic.Utilities.projitems" Label="Shared" />
 </Project>

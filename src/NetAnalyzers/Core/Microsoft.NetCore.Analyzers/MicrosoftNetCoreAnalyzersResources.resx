@@ -1995,4 +1995,16 @@
   <data name="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage" xml:space="preserve">
     <value>Starting with .NET 7 the explicit conversion '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</value>
   </data>
+  <data name="PreferDictionaryTryAddValueCodeFixTitle" xml:space="preserve">
+    <value>Use 'TryAdd(TKey, TValue)'</value>
+  </data>
+  <data name="PreferDictionaryTryAddValueTitle" xml:space="preserve">
+    <value>Prefer the 'IDictionary.TryAdd(TKey, TValue)' method</value>
+  </data>
+  <data name="PreferDictionaryTryAddValueMessage" xml:space="preserve">
+    <value>Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check to avoid double lookup</value>
+  </data>
+  <data name="PreferDictionaryTryAddValueDescription" xml:space="preserve">
+    <value>Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add' except that it doesn't throw an exception when a value for a given key already exists, but rather returns 'false'.</value>
+  </data>
 </root>

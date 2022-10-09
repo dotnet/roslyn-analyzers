@@ -15,6 +15,7 @@ CA1852 | Performance | Hidden | SealInternalTypes, [Documentation](https://learn
 CA1853 | Performance | Info | DoNotGuardDictionaryRemoveByContainsKey, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853)
 CA1854 | Performance | Info | PreferDictionaryTryGetValueAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1854)
 CA1855 | Performance | Info | UseSpanClearInsteadOfFillAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1855)
+CA1856 | Performance | Info | PreferDictionaryTryAddValueOverGuardedAdd, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856)
 CA2019 | Reliability | Info | UseThreadStaticCorrectly, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019)
 CA2020 | Reliability | Info | PreventNumericIntPtrUIntPtrBehavioralChanges, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020)
 CA2259 | Usage | Warning | UseThreadStaticCorrectly, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259)

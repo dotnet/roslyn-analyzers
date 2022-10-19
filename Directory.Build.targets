@@ -14,10 +14,6 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(IsUnitTestProject)' == 'true'">
-    <PackageReference Include="coverlet.msbuild" Version="$(CoverletVersion)" PrivateAssets="all" />
-  </ItemGroup>
-
   <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(NonShipping)' == 'true' or '$(IsVsixProject)' == 'true'">
     <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
   </PropertyGroup>
@@ -30,24 +26,6 @@
   <PropertyGroup>
     <!-- Clear out 'RootNamespace' for VB projects. Otherwise, it prepends the RootNamespace to declared namespace for the types in the project. -->
     <RootNamespace Condition="'$(Language)' == 'VB'"></RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Coverage)' == 'true'">
-    <!-- https://github.com/tonerdo/coverlet/issues/363 -->
-    <DeterministicSourcePaths>false</DeterministicSourcePaths>
-
-    <!-- https://github.com/tonerdo/coverlet/issues/618 -->
-    <IncludeTestAssembly>true</IncludeTestAssembly>
-
-    <CollectCoverage>true</CollectCoverage>
-    <SingleHit>true</SingleHit>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <CoverletOutputFormat>opencover</CoverletOutputFormat>
-    <CoverletOutput>$(ArtifactsDir)coverage\$(MSBuildProjectName)_$(TargetFramework)_$(_TestArchitecture).coverage</CoverletOutput>
-    <Include></Include>
-    <Exclude></Exclude>
-    <ExcludeByAttribute>ExcludeFromCodeCoverage</ExcludeByAttribute>
-    <ExcludeByFile></ExcludeByFile>
   </PropertyGroup>
 
   <Target Name="OuterInstrumentModulesNoBuild" BeforeTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' == ''">

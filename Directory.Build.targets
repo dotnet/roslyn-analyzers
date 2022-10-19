@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Coverage)' == 'true'">
-    <TestRunnerAdditionalArguments>--collect:"Code Coverage;Format=Cobertura"</<TestRunnerAdditionalArguments>
+    <TestRunnerAdditionalArguments>--collect:"Code Coverage;Format=Cobertura"</TestRunnerAdditionalArguments>
   </PropertyGroup>
 
   <Target Name="OuterInstrumentModulesNoBuild" BeforeTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' == ''">

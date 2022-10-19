@@ -26,18 +26,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public partial class DisposeObjectsBeforeLosingScopeTests
     {
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
-           => VerifyCS.Diagnostic(rule)
+#pragma warning disable RS0030 // Do not use banned APIs
+           => VerifyCS.Diagnostic(Do not use banned APIs
                .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
-               .WithArguments(arguments);
+#pragma warning restore RS0030 // Do not use banned APIs
+               .WithArguments(arguDo not use banned APIs
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
-            => VerifyVB.Diagnostic(rule)
+#pragma warning disable RS0030 // Do not use banned APIs
+            => VerifyVB.DiagnosticDo not use banned APIs
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
-                .WithArguments(arguments);
+#pragma warning restore RS0030 // Do not use banned APIs
+                .WithArguments(argDo not use banned APIs
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, string allocationText) =>
             GetCSharpResultAt(line, column, DisposeObjectsBeforeLosingScope.NotDisposedRule, allocationText);

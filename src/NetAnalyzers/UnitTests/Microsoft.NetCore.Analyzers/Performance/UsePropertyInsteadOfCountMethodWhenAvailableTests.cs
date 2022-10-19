@@ -207,11 +207,11 @@ public static class C
     public static int M() => GetData().Count();
 }}
 ",
-#pragma warning disable RS0030 // Do not used banned APIs
-                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.CA1829)
+#pragma warning disable RS0030 // Do not use banned APIs
+                VerifyCS.DiagnostiDo not use banned APIszer.CA1829)
                     .WithLocation(6, 30)
-#pragma warning restore RS0030 // Do not used banned APIs
-                    .WithArguments(propertyName),
+#pragma warning restore RS0030 // Do not use banned APIs
+                    .WithArgumentsDo not use banned APIs
                 $@"using System;
 using System.Linq;
 public static class C
@@ -237,11 +237,11 @@ public static class C
     public static int? M() => GetData()?.Count();
 }}
 ",
-#pragma warning disable RS0030 // Do not used banned APIs
-                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.CA1829)
+#pragma warning disable RS0030 // Do not use banned APIs
+                VerifyCS.DiagnostiDo not use banned APIszer.CA1829)
                     .WithLocation(6, 41)
-#pragma warning restore RS0030 // Do not used banned APIs
-                    .WithArguments(propertyName),
+#pragma warning restore RS0030 // Do not use banned APIs
+                    .WithArgumentsDo not use banned APIs
                 $@"using System;
 using System.Linq;
 public static class C
@@ -267,11 +267,11 @@ Public Module M
     End Function
 End Module
 ",
-#pragma warning disable RS0030 // Do not used banned APIs
-                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.CA1829)
+#pragma warning disable RS0030 // Do not use banned APIs
+                VerifyCS.DiagnostiDo not use banned APIszer.CA1829)
                     .WithLocation(8, 16)
-#pragma warning restore RS0030 // Do not used banned APIs
-                    .WithArguments(propertyName),
+#pragma warning restore RS0030 // Do not use banned APIs
+                    .WithArgumentsDo not use banned APIs
                 $@"Imports System
 Imports System.Linq
 Public Module M
@@ -300,11 +300,11 @@ Public Module M
     End Function
 End Module
 ",
-#pragma warning disable RS0030 // Do not used banned APIs
-                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.CA1829)
+#pragma warning disable RS0030 // Do not use banned APIs
+                VerifyCS.DiagnostiDo not use banned APIszer.CA1829)
                     .WithLocation(8, 26)
-#pragma warning restore RS0030 // Do not used banned APIs
-                    .WithArguments(propertyName),
+#pragma warning restore RS0030 // Do not use banned APIs
+                    .WithArgumentsDo not use banned APIs
                 $@"Imports System
 Imports System.Linq
 Public Module M
@@ -387,11 +387,11 @@ public static class C
     public static int M() => GetData().Count();
 }}
 ",
-#pragma warning disable RS0030 // Do not used banned APIs
-                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.CA1829)
+#pragma warning disable RS0030 // Do not use banned APIs
+                VerifyCS.DiagnostiDo not use banned APIszer.CA1829)
                     .WithLocation(18, 30)
-#pragma warning restore RS0030 // Do not used banned APIs
-                    .WithArguments("Count"),
+#pragma warning restore RS0030 // Do not use banned APIs
+                    .WithArgumentsDo not use banned APIs
                 $@"using System;
 using System.Linq;
 public class T : global::System.Collections.Generic.ICollection<string>
@@ -435,11 +435,11 @@ public static class C
     public static int M() => GetData().Count();
 }}
 ",
-#pragma warning disable RS0030 // Do not used banned APIs
-                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.CA1829)
+#pragma warning disable RS0030 // Do not use banned APIs
+                VerifyCS.DiagnostiDo not use banned APIszer.CA1829)
                     .WithLocation(17, 30)
-#pragma warning restore RS0030 // Do not used banned APIs
-                    .WithArguments("Count"),
+#pragma warning restore RS0030 // Do not use banned APIs
+                    .WithArgumentsDo not use banned APIs
                 $@"using System;
 using System.Linq;
 public class T :
@@ -499,11 +499,11 @@ public static class C
     public static int M() => GetData().Count();
 }
 ",
-#pragma warning disable RS0030 // Do not used banned APIs
-                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.CA1829)
+#pragma warning disable RS0030 // Do not use banned APIs
+                VerifyCS.DiagnostiDo not use banned APIszer.CA1829)
                     .WithLocation(10, 30)
-#pragma warning restore RS0030 // Do not used banned APIs
-                    .WithArguments("Count"),
+#pragma warning restore RS0030 // Do not use banned APIs
+                    .WithArgumentsDo not use banned APIs
 @"using System;
 using System.Linq;
 public interface I : global::System.Collections.Generic.ICollection<string>
@@ -534,11 +534,11 @@ public static class C
     public static int M() => GetData().Count();
 }
 ",
-#pragma warning disable RS0030 // Do not used banned APIs
-                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.CA1829)
+#pragma warning disable RS0030 // Do not use banned APIs
+                VerifyCS.DiagnostiDo not use banned APIszer.CA1829)
                     .WithLocation(12, 30)
-#pragma warning restore RS0030 // Do not used banned APIs
-                    .WithArguments("Count"),
+#pragma warning restore RS0030 // Do not use banned APIs
+                    .WithArgumentsDo not use banned APIs
 @"using System;
 using System.Linq;
 public interface I :
@@ -578,11 +578,11 @@ public static class C
     public static int M() => GetData().Count();
 }}
 ",
-#pragma warning disable RS0030 // Do not used banned APIs
-                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.CA1829)
+#pragma warning disable RS0030 // Do not use banned APIs
+                VerifyCS.DiagnostiDo not use banned APIszer.CA1829)
                     .WithLocation(19, 30)
-#pragma warning restore RS0030 // Do not used banned APIs
-                    .WithArguments("Count"),
+#pragma warning restore RS0030 // Do not use banned APIs
+                    .WithArgumentsDo not use banned APIs
                 $@"using System;
 using System.Linq;
 public class T : global::System.Collections.Generic.ICollection<string>
@@ -628,11 +628,11 @@ public static class C
     public static int M() => GetData().Count();
 }}
 ",
-#pragma warning disable RS0030 // Do not used banned APIs
-                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.CA1829)
+#pragma warning disable RS0030 // Do not use banned APIs
+                VerifyCS.DiagnostiDo not use banned APIszer.CA1829)
                     .WithLocation(18, 30)
-#pragma warning restore RS0030 // Do not used banned APIs
-                    .WithArguments("Count"),
+#pragma warning restore RS0030 // Do not use banned APIs
+                    .WithArgumentsDo not use banned APIs
                 $@"using System;
 using System.Linq;
 public class T :
@@ -666,11 +666,11 @@ public class SomeClass
     public IReadOnlyCollection<int> GetData() => null;
     public int M() => GetData().Count();
 }",
-#pragma warning disable RS0030 // Do not used banned APIs
-                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.CA1829)
+#pragma warning disable RS0030 // Do not use banned APIs
+                VerifyCS.DiagnostiDo not use banned APIszer.CA1829)
                     .WithLocation(8, 23)
-#pragma warning restore RS0030 // Do not used banned APIs
-                    .WithArguments(nameof(IReadOnlyCollection<int>.Count)));
+#pragma warning restore RS0030 // Do not use banned APIs
+                    .WithArgumentsDo not use banned APIstion<int>.Count)));
         }
 
         [Fact, WorkItem(3724, "https://github.com/dotnet/roslyn-analyzers/issues/3724")]

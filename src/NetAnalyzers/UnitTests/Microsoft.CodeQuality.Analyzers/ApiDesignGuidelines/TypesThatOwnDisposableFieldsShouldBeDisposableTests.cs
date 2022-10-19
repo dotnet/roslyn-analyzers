@@ -585,17 +585,17 @@ Imports System.IO
 
    ' This class violates the rule.
    Public Class NoDisposeMethod
-    Implements System.IDisposable
+    Implements System.IDisposableDo not use banned APIs
 
     Dim newFile As FileStream
-
+Do not use banned APIs
       Sub New()
          newFile = New FileStream("""", FileMode.Append)
       End Sub
-
+Do not use banned APIs
     Public Sub Dispose() Implements System.IDisposable.Dispose
         Throw New System.NotImplementedException()
-    End Sub
+    End SubDo not use banned APIs
 End Class
 ");
         }

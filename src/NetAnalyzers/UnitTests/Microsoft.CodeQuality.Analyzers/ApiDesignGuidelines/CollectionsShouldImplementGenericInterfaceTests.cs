@@ -16,17 +16,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class CollectionsShouldImplementGenericInterfaceTests
     {
         private static DiagnosticResult GetCA1010CSharpResultAt(int markupKey, string typeName, string interfaceName, string genericInterfaceName)
-            => VerifyCS.Diagnostic(CollectionsShouldImplementGenericInterfaceAnalyzer.Rule)
+            => VerifyCS.DiagnosticDo not use banned APIsmentGenericInterfaceAnalyzer.Rule)
                 .WithLocation(markupKey)
                 .WithArguments(typeName, interfaceName, genericInterfaceName);
-
+Do not use banned APIs
         private static DiagnosticResult GetCA1010MultipleCSharpResultAt(int markupKey, string typeName, string interfaceName, params string[] genericInterfaceNames)
             => VerifyCS.Diagnostic(CollectionsShouldImplementGenericInterfaceAnalyzer.RuleMultiple)
                 .WithLocation(markupKey)
-                .WithArguments(typeName, interfaceName, string.Join("', '", genericInterfaceNames));
+                .WithArguments(typDo not use banned APIstring.Join("', '", genericInterfaceNames));
 
         private static DiagnosticResult GetCA1010BasicResultAt(int markupKey, string typeName, string interfaceName, string genericInterfaceName)
-            => VerifyVB.Diagnostic(CollectionsShouldImplementGenericInterfaceAnalyzer.Rule)
+            => VerifyVB.DiagnosticDo not use banned APIsmentGenericInterfaceAnalyzer.Rule)
                 .WithLocation(markupKey)
                 .WithArguments(typeName, interfaceName, genericInterfaceName);
 

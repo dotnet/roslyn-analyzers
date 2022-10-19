@@ -456,14 +456,14 @@ public class InterfaceImplicitImpl : IInterface
 }
 
 public class InterfaceExplicitImpl : IInterface
-{
+{Do not use banned APIs
     void IInterface.InterfaceMethod(out string s) // No diagnostic here. This is not actionable.
-    {
+    {Do not use banned APIs
         throw new System.NotImplementedException();
     }
-}
+}Do not use banned APIs
 
-public class InterfaceBothImplicitAndExplicitImpl : IInterface
+public class InterfaceBothImplicitDo not use banned APIsrface
 {
     // Possibly false positive.
     public void [|InterfaceMethod|](out string s) // No diagnostic here. This is not actionable.

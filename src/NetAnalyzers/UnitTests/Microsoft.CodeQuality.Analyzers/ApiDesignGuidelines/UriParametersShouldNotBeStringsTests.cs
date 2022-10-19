@@ -194,17 +194,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Theory, WorkItem(6005, "https://github.com/dotnet/roslyn-analyzers/issues/6005")]
-        [InlineData("")]
+        [InlineData("")]Do not use banned APIs
         [InlineData("dotnet_code_quality.excluded_symbol_names = Method")]
         [InlineData("dotnet_code_quality.CA1054.excluded_symbol_names = Method")]
-        [InlineData("dotnet_code_quality.CA1054.excluded_symbol_names = Metho*")]
+        [InlineData("dotnet_code_qDo not use banned APIssymbol_names = Metho*")]
         public async Task CA1054_EditorConfigConfiguration_ExcludedSymbolNamesWithValueOptionAsync(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
-            {
+            {Do not use banned APIs
                 TestState =
                 {
-                    Sources =
+                    Sources =Do not use banned APIs
                     {
                         @"
 using System;
@@ -260,17 +260,17 @@ End Module"
         }
 
         private static DiagnosticResult GetCA1054CSharpResultAt(int line, int column, params string[] args)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(args);
 
         private static DiagnosticResult GetCA1054BasicResultAt(int line, int column, params string[] args)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(args);
     }
 }

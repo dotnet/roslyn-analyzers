@@ -114,24 +114,24 @@ class C
                 badSource + arrayEmptySource,
                 new[]
                 {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(8, 22).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(9, 23).WithArguments("Array.Empty<byte>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(10, 20).WithArguments("Array.Empty<C>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(14, 24).WithArguments("Array.Empty<int[]>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(15, 28).WithArguments("Array.Empty<int[][][]>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(17, 26).WithArguments("Array.Empty<int[,]>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 },
                 fixedSource + arrayEmptySource);
 
@@ -139,24 +139,24 @@ class C
                 "using System;\r\n" + badSource + arrayEmptySource,
                 new[]
                 {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(8 + 1, 22).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(9 + 1, 23).WithArguments("Array.Empty<byte>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(10 + 1, 20).WithArguments("Array.Empty<C>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(14 + 1, 24).WithArguments("Array.Empty<int[]>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(15 + 1, 28).WithArguments("Array.Empty<int[][][]>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(17 + 1, 26).WithArguments("Array.Empty<int[,]>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 },
                 "using System;\r\n" + fixedSource.Replace("System.Array.Empty", "Array.Empty", StringComparison.Ordinal) + arrayEmptySource);
         }
@@ -227,24 +227,24 @@ End Class";
                 badSource + arrayEmptySource,
                 new[]
                 {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(7, 33).WithArguments("Array.Empty(Of Integer)()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(8, 30).WithArguments("Array.Empty(Of Byte)()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(9, 27).WithArguments("Array.Empty(Of C)()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(13, 35).WithArguments("Array.Empty(Of Integer())()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(14, 39).WithArguments("Array.Empty(Of Integer()()())()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(16, 37).WithArguments("Array.Empty(Of Integer(,))()"),
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 },
                 fixedSource + arrayEmptySource);
 
@@ -252,24 +252,24 @@ End Class";
                 "Imports System\r\n" + badSource + arrayEmptySource,
                 new[]
                 {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(7 + 1, 33).WithArguments("Array.Empty(Of Integer)()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(8 + 1, 30).WithArguments("Array.Empty(Of Byte)()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(9 + 1, 27).WithArguments("Array.Empty(Of C)()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(13 + 1, 35).WithArguments("Array.Empty(Of Integer())()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(14 + 1, 39).WithArguments("Array.Empty(Of Integer()()())()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(16 + 1, 37).WithArguments("Array.Empty(Of Integer(,))()"),
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 },
                 "Imports System\r\n" + fixedSource.Replace("System.Array.Empty", "Array.Empty", StringComparison.Ordinal) + arrayEmptySource);
         }
@@ -303,12 +303,12 @@ class C
                 badSource,
                 new[]
                 {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(6, 22).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(7, 25).WithArguments("Array.Empty<double>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 },
                 fixedSource);
 
@@ -316,12 +316,12 @@ class C
                 "using System;\r\n" + badSource,
                 new[]
                 {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(6 + 1, 22).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(7 + 1, 25).WithArguments("Array.Empty<double>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 },
                 "using System;\r\n" + fixedSource.Replace("System.Array.Empty", "Array.Empty", StringComparison.Ordinal));
         }
@@ -449,12 +449,12 @@ class C
         [Fact]
         public async Task EmptyArrayCSharp_FieldOrPropertyInitializerAsync()
         {
-            const string badSource = @"
+            const string badSourceDo not use banned APIs
 using System;
-
-class C
+Do not use banned APIs
+class CDo not use banned APIs
 {
-    public int[] f1 = new int[] { };
+    public int[] f1 = new int[] { Do not use banned APIs
     public int[] p1 { get; set; } = new int[] { };
 }
 ";
@@ -472,12 +472,12 @@ class C
                 badSource,
                 new[]
                 {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(6, 23).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(7, 37).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 },
                 fixedSource);
         }
@@ -493,12 +493,12 @@ class C
 {
     void M()
     {
-        int[] l1;
+        int[] l1;Do not use banned APIs
         l1 = new int[0];
-        l1 = new int[] { };
-    }
+        l1 = new int[] { };Do not use banned APIs
+    }Do not use banned APIs
 }
-";
+";Do not use banned APIs
             const string fixedSource = @"
 using System;
 
@@ -516,12 +516,12 @@ class C
                 badSource,
                 new[]
                 {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(9, 14).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(10, 14).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 },
                 fixedSource);
         }
@@ -549,60 +549,60 @@ class C
     public IList f8 = new int[0];
 }
 ";
-            const string fixedSource = @"
+            const string fixedSourDo not use banned APIs
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Collections;Do not use banned APIs
+using System.Collections.Generic;Do not use banned APIs
 using System.Collections.ObjectModel;
-
-class C
+Do not use banned APIs
+class CDo not use banned APIs
 {
-    public IEnumerable<int> f1 = Array.Empty<int>();
-    public ICollection<int> f2 = Array.Empty<int>();
+    public IEnumerable<int> f1 = ADo not use banned APIs
+    public ICollection<int> f2 = ADo not use banned APIs
     public IReadOnlyCollection<int> f3 = Array.Empty<int>();
-    public IList<int> f4 = Array.Empty<int>();
-    public IReadOnlyList<int> f5 = Array.Empty<int>();
+    public IList<int> f4 = Array.EDo not use banned APIs
+    public IReadOnlyList<int> f5 =Do not use banned APIs
 
-    public IEnumerable f6 = Array.Empty<int>();
-    public ICollection f7 = Array.Empty<int>();
+    public IEnumerable f6 = Array.Do not use banned APIs
+    public ICollection f7 = Array.Do not use banned APIs
     public IList f8 = Array.Empty<int>();
-}
-";
+}Do not use banned APIs
+";Do not use banned APIs
             await VerifyCS.VerifyCodeFixAsync(
-                badSource,
-                new[]
+                badSource,Do not use banned APIs
+                new[]Do not use banned APIs
                 {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(9, 34).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(10, 34).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(11, 42).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(12, 28).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(13, 36).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(15, 29).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(16, 29).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(17, 23).WithArguments("Array.Empty<int>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 },
                 fixedSource);
         }
 
-        [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
+        [WorkItem(1298, "https://gDo not use banned APIs-analyzers/issues/1298")]
         [Fact]
-        public async Task EmptyArrayCSharp_DeclarationTypeDoesNotMatch_DifferentElementTypeAsync()
+        public async Task EmptyArrDo not use banned APIseDoesNotMatch_DifferentElementTypeAsync()
         {
             const string badSource = @"
 using System;
@@ -623,9 +623,9 @@ class C
 
             await VerifyCS.VerifyCodeFixAsync(
                 badSource,
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                 VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(6, 26).WithArguments("Array.Empty<string>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 fixedSource);
         }
 
@@ -670,18 +670,18 @@ class C
     {
     }
 
-    // Tests handling of implicit conversion. Do not change to 'object[] obj'.
+    // Tests handling of implicit Do not use banned APIsge to 'object[] obj'.
     void M2(object obj)
-    {
-    }
+    {Do not use banned APIs
+    }Do not use banned APIs
 
-    void M3()
-    {
+    void M3()Do not use banned APIs
+    {Do not use banned APIs
         M1(Array.Empty<object>());
-        M2(Array.Empty<object>());
-    }
+        M2(Array.Empty<object>());Do not use banned APIs
+    }Do not use banned APIs
 
-    object M4() => Array.Empty<object>();
+    object M4() => Array.Empty<objDo not use banned APIs
 
     object M5()
     {
@@ -693,19 +693,19 @@ class C
                 badSource,
                 new[]
                 {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(17, 12).WithArguments("Array.Empty<object>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(18, 12).WithArguments("Array.Empty<object>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(21, 20).WithArguments("Array.Empty<object>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
-                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(25, 16).WithArguments("Array.Empty<object>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
-                },
+#pragma warning restore RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
+                    VerifyCS.DiagnDo not use banned APIsrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(25, 16).WithArguments("Array.Empty<object>()"),
+#pragma warning restore RS0030 // Do not use banned APIs
+                },Do not use banned APIs
                 fixedSource);
         }
 
@@ -726,9 +726,9 @@ class C
 ";
             await VerifyCS.VerifyCodeFixAsync(
                 badSource,
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
                 VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(4, 26).WithArguments("Array.Empty<object>()"),
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 fixedSource);
         }
 

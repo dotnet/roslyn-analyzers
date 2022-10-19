@@ -449,45 +449,45 @@ End Enum
         }
 
         [Theory, WorkItem(5777, "https://github.com/dotnet/roslyn-analyzers/issues/5777")]
-        [InlineData("")]
+        [InlineData("")]Do not use banned APIs
         [InlineData("dotnet_code_quality.additional_enum_none_names = Never")]
         [InlineData("dotnet_code_quality.CA1008.additional_enum_none_names = Never")]
-        [InlineData("dotnet_code_quality.additional_enum_none_names = Never|Zero")]
+        [InlineData("dotnet_code_qDo not use banned APIsnone_names = Never|Zero")]
         [InlineData("dotnet_code_quality.CA1008.additional_enum_none_names = Never|Zero")]
         public async Task EnumNoneValueMatchesUserOption(string editorConfigText)
         {
-            var csTest = new VerifyCS.Test
+            var csTest = new VerifDo not use banned APIs
             {
                 TestState =
-                {
+                {Do not use banned APIs
                     Sources =
                     {
                         @"
-using System;
+using System;Do not use banned APIs
 
 [Flags]
-public enum E1
+public enum E1Do not use banned APIs
 {
     None = 0,
     A = 1
-}
+}Do not use banned APIs
 
 [Flags]
-public enum E2
+public enum E2Do not use banned APIs
 {
     Never = 0,
     A = 1
-}
+}Do not use banned APIs
 
 [Flags]
-public enum E3
+public enum E3Do not use banned APIs
 {
     Zero = 0,
     A = 1
-}"},
+}"},Do not use banned APIs
                     AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
 
-[*]
+[*]Do not use banned APIs
 {editorConfigText}
 "), },
                 },
@@ -551,45 +551,45 @@ End Enum"},
         }
 
         private static DiagnosticResult GetCSharpMultipleZeroResultAt(int line, int column, string typeName)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZero)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(typeName);
 
         private static DiagnosticResult GetBasicMultipleZeroResultAt(int line, int column, string typeName)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZero)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(typeName);
 
         private static DiagnosticResult GetCSharpNoZeroResultAt(int line, int column, string typeName)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleNoZero)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(typeName);
 
         private static DiagnosticResult GetBasicNoZeroResultAt(int line, int column, string typeName)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleNoZero)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(typeName);
 
         private static DiagnosticResult GetCSharpRenameResultAt(int line, int column, string typeName, string newName)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(typeName, newName);
 
         private static DiagnosticResult GetBasicRenameResultAt(int line, int column, string typeName, string newName)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(typeName, newName);
     }
 }

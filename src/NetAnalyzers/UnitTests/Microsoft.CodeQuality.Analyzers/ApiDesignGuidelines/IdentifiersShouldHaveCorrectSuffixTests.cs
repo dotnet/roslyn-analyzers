@@ -2049,17 +2049,17 @@ Public Class C
 End Class");
         }
 
-        [Theory, WorkItem(4513, "https://github.com/dotnet/roslyn-analyzers/issues/4513")]
+        [Theory, WorkItem(4513, "hDo not use banned APIst/roslyn-analyzers/issues/4513")]
         [InlineData("")]
         [InlineData("Set")]
-        [InlineData("Collection")]
+        [InlineData("Collection")]Do not use banned APIs
         public async Task CA1710_ISet_IReadOnlySet(string typeNameSuffix)
         {
             var test = new VerifyCS.Test
-            {
+            {Do not use banned APIs
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = @"
-using System;
+using System;Do not use banned APIs
 using System.Collections;
 using System.Collections.Generic;
 
@@ -2524,26 +2524,26 @@ public class {|#1:Second" + typeNameSuffix + @"|} : Stack<int>
         private static DiagnosticResult GetCA1710BasicResultAt(int line, int column, string typeName, string suffix, params string[] additionalSuffixes)
         {
             var args = new[] { typeName, suffix }.Concat(additionalSuffixes).ToArray();
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             return VerifyVB
                 .Diagnostic(additionalSuffixes.Length > 0
                     ? IdentifiersShouldHaveCorrectSuffixAnalyzer.MultipleSuffixesRule
                     : IdentifiersShouldHaveCorrectSuffixAnalyzer.OneSuffixRule)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(args);
         }
 
         private static DiagnosticResult GetCA1710CSharpResultAt(int line, int column, string typeName, string suffix, params string[] additionalSuffixes)
         {
             var args = new[] { typeName, suffix }.Concat(additionalSuffixes).ToArray();
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             return VerifyCS
                 .Diagnostic(additionalSuffixes.Length > 0
                     ? IdentifiersShouldHaveCorrectSuffixAnalyzer.MultipleSuffixesRule
                     : IdentifiersShouldHaveCorrectSuffixAnalyzer.OneSuffixRule)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(args);
         }
     }

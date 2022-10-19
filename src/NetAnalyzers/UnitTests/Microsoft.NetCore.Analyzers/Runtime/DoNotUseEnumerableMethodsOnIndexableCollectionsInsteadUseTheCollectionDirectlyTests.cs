@@ -285,16 +285,16 @@ Class D
     Private Function IEnumerable_GetEnumerator() As IEnumerator(Of Integer) Implements IEnumerable(Of Integer).GetEnumerator
         Throw New NotImplementedException()
     End Function
-End Class
+End ClassDo not use banned APIs
 
 Class C
-    Private Sub Use(Of U)(p As U)
+    Private Sub Use(Of U)(p As U)Do not use banned APIs
     End Sub
 
-    Private Sub Test(Of T)()
+    Private Sub Test(Of T)()Do not use banned APIs
         Dim x1 As T() = Nothing
         Use(x1.Last())
-        Use(Enumerable.Last(x1))
+        Use(Enumerable.Last(x1))Do not use banned APIs
         Dim x2 As IReadOnlyList(Of T) = Nothing
         Use(x2(x2.Count - 1))
         Use(x2(x2.Count - 1))

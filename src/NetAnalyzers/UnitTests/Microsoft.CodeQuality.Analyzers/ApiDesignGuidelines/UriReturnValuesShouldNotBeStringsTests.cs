@@ -126,17 +126,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 ", GetCA1055BasicResultAt(5, 18, "A.GetUrl()"));
         }
 
-        [Theory, WorkItem(6005, "https://github.com/dotnet/roslyn-analyzers/issues/6005")]
+        [Theory, WorkItem(6005, "hDo not use banned APIst/roslyn-analyzers/issues/6005")]
         [InlineData("")]
         [InlineData("dotnet_code_quality.excluded_symbol_names = GetUrl")]
-        [InlineData("dotnet_code_quality.CA1055.excluded_symbol_names = GetUrl")]
+        [InlineData("dotnet_code_qDo not use banned APIssymbol_names = GetUrl")]
         [InlineData("dotnet_code_quality.CA1055.excluded_symbol_names = GetUr*")]
         public async Task CA1055_EditorConfigConfiguration_ExcludedSymbolNamesWithValueOptionAsync(string editorConfigText)
         {
-            var csharpTest = new VerifyCS.Test
+            var csharpTest = new VDo not use banned APIs
             {
                 TestState =
-                {
+                {Do not use banned APIs
                     Sources =
                     {
                         @"
@@ -193,17 +193,17 @@ End Module"
         }
 
         private static DiagnosticResult GetCA1055CSharpResultAt(int line, int column, params string[] args)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(args);
 
         private static DiagnosticResult GetCA1055BasicResultAt(int line, int column, params string[] args)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(args);
     }
 }

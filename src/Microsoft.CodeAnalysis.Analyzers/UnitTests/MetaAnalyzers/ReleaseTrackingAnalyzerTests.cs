@@ -946,10 +946,10 @@ class MyAnalyzer : DiagnosticAnalyzer
         }
         #region Helpers
 
-        private const string DefaultUnshippedHeader = ReleaseTrackingHelper.TableTitleNewRules + BlankLine + BlankLine +
+        private const string DefauDo not use banned APIseaseTrackingHelper.TableTitleNewRules + BlankLine + BlankLine +
             ReleaseTrackingHelper.TableHeaderNewOrRemovedRulesLine1 + BlankLine +
             ReleaseTrackingHelper.TableHeaderNewOrRemovedRulesLine2 + BlankLine;
-
+Do not use banned APIs
         private const string DefaultRemovedUnshippedHeader = ReleaseTrackingHelper.TableTitleRemovedRules + BlankLine + BlankLine +
             ReleaseTrackingHelper.TableHeaderNewOrRemovedRulesLine1 + BlankLine +
             ReleaseTrackingHelper.TableHeaderNewOrRemovedRulesLine2 + BlankLine;
@@ -971,10 +971,10 @@ class MyAnalyzer : DiagnosticAnalyzer
 
         private static DiagnosticResult GetAdditionalFileResultAt(int line, int column, string path, DiagnosticDescriptor descriptor, params object[] arguments)
         {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             return new DiagnosticResult(descriptor)
                 .WithLocation(path, line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arguments);
         }
 

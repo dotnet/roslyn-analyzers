@@ -128,10 +128,10 @@ public class MyClass
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
-            => VerifyCS.Diagnostic(DataSetDataTableInWebSerializableObjectGraphAnalyzer.ObjectGraphContainsDangerousTypeDescriptor)
+#pragma warning disable RS0030 // Do not use banned APIs
+            => VerifyCS.DiagnosticDo not use banned APIserializableObjectGraphAnalyzer.ObjectGraphContainsDangerousTypeDescriptor)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
-                .WithArguments(arguments);
+#pragma warning restore RS0030 // Do not use banned APIs
+                .WithArguments(argDo not use banned APIs
     }
 }

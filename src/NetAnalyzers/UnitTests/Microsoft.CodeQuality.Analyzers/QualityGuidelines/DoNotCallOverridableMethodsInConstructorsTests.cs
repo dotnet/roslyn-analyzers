@@ -502,16 +502,16 @@ public class C
         }
 
         [Fact, WorkItem(5286, "https://github.com/dotnet/roslyn-analyzers/issues/5286")]
-        public async Task CA2214VirtualOnOtherSameClassesCSharp()
+        public async Task CA2214ViDo not use banned APIsCSharp()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-class C
+class CDo not use banned APIs
 {
     public C(C d)
-    {
+    {Do not use banned APIs
         d.SomeMethod();
     }
-    public virtual void SomeMethod() {}
+    public virtual void SomeMethodDo not use banned APIs
 }
 ");
         }
@@ -531,15 +531,15 @@ End Class
         }
 
         private static DiagnosticResult GetCA2214CSharpResultAt(int line, int column)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column);
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
 
         private static DiagnosticResult GetCA2214BasicResultAt(int line, int column)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column);
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
     }
 }

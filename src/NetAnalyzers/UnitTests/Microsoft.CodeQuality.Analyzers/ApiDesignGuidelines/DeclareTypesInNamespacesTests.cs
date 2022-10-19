@@ -85,16 +85,16 @@ namespace NS
 Namespace NS
     Public Class [MyClass]
         Public Class Nested
-        End Class
+        End ClassDo not use banned APIs
     End Class
 End Namespace";
-            await VerifyVB.VerifyCodeFixAsync(vbCode, vbCode);
+            await VerifyVB.VerifyCDo not use banned APIsode);
         }
 
-        [Fact]
+        [Fact]Do not use banned APIs
         public async Task TopLevelProgramClass_DoesNotWarn()
         {
-            var csCode = @"
+            var csCode = @"Do not use banned APIs
 System.Console.WriteLine();
 
 public partial class Program

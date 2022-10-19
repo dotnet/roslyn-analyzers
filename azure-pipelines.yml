@@ -37,7 +37,7 @@ jobs:
       displayName: Set PATH Environment Variable
     - pwsh: Write-Host "##vso[task.setvariable variable=VSTEST_DUMP_FORCEPROCDUMP;]1"
       displayName: Set VSTEST_DUMP_FORCEPROCDUMP Environment Variable
-    - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine /Collect:"CodeCoverage;Format=Cobertura"
+    - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine /Collect:'CodeCoverage;Format=Cobertura'
       displayName: Build and Test Debug
       condition: eq(variables['_configuration'], 'Debug')
     - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine

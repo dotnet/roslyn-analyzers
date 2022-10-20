@@ -30,6 +30,9 @@
 
   <PropertyGroup Condition="'$(Coverage)' == 'true'">
     <TestRunnerAdditionalArguments>--collect:"Code Coverage;Format=Cobertura"</TestRunnerAdditionalArguments>
+    <!-- TODO: On next arcade bump of Microsoft.CodeCoverage/Microsoft.NET.Test.Sdk we will have to update this line to be netstandard2.0 -->
+    <!-- Because arcade is passing dlls directly to 'dotnet test' command, we need to manually provide path to coverage datacollector -->
+    <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --test-adapter-path $(NUGET_PACKAGES)/microsoft.codecoverage/$(MicrosoftNETTestSdkVersion)/build/netstandard1.0</TestRunnerAdditionalArguments>
   </PropertyGroup>
 
   <Target Name="OuterInstrumentModulesNoBuild" BeforeTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' == ''">

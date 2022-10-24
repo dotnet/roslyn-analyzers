@@ -25,7 +25,7 @@ jobs:
         _codeCoverage: False
   pool:
     name: NetCore-Public
-    demands: ImageOverride -equals build.windows.amd64.vs2022.pre.open
+    demands: ImageOverride -equals windows.vs2022preview.amd64.open
   timeoutInMinutes: 120
 
   steps:

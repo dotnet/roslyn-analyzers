@@ -33,12 +33,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
 
             /// <summary>
-            /// If the <paramref name="symbol"/> provided annotated with any guard attributes updates the <paramref name="value"/> accordingly.
+            /// If the <paramref name="symbol"/> provided annotated with any guard attribute update the <paramref name="value"/> accordingly.
             /// </summary>
-            /// <param name="symbol">Symbol which attributes will be examined.</param>
+            /// <param name="symbol">Symbol for which the attributes will be examined.</param>
             /// <param name="value">Resulting flow analysis value.</param>
-            /// <param name="visitedArguments">Arguments passed to this method symbol.</param>
-            /// <returns>True if any guard attribute found and <paramref name="value"/> changed, false otherwise</returns>
+            /// <param name="visitedArguments">Arguments passed to the method symbol.</param>
+            /// <returns>True if any guard attribute found and <paramref name="value"/> changed accordingly, false otherwise</returns>
             internal bool TryParseGuardAttributes(ISymbol symbol, ref GlobalFlowStateAnalysisValueSet value, ImmutableArray<IArgumentOperation> visitedArguments)
             {
                 var attributes = symbol.GetAttributes();
@@ -67,7 +67,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
 
             /// <summary>
-            /// Checks if there is any guard attribute within <paramref name="attributes"/>, parse found attributes into to platform to version map <paramref name="mappedAttributes"/>
+            /// Checks if there is any guard attribute within <paramref name="attributes"/>, parse found attributes into platform to version map <paramref name="mappedAttributes"/>
             /// </summary>
             /// <param name="attributes">Attributes to check</param>
             /// <param name="methodArguments">If the symbol is method symbol provide its arguments</param>
@@ -114,11 +114,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
 
             /// <summary>
-            /// Convert each platform and versions pair from <paramref name="mappedAttributes"/> into <see cref="PlatformMethodValue"/>s and adds into <paramref name="infosBuilder"/> array
+            /// Convert each platform and versions pair from <paramref name="mappedAttributes"/> map into <see cref="PlatformMethodValue"/>s and add into <paramref name="infosBuilder"/> array
             /// </summary>
-            /// <param name="mappedAttributes">Map of platforms into versions populated from guard attributes</param>
-            /// <param name="infosBuilder">Converted array of <see cref="PlatformMethodValue"/></param>
-            /// <returns></returns>
+            /// <param name="mappedAttributes">Map of platforms to versions populated from guard attributes</param>
+            /// <param name="infosBuilder">Converted array of <see cref="PlatformMethodValue"/>s</param>
+            /// <returns>True if any <see cref="PlatformMethodValue"/> added into the <paramref name="infosBuilder"/>, false otherwise</returns>
             public bool TryDecodeGuardAttributes(SmallDictionary<string, Versions> mappedAttributes, ArrayBuilder<PlatformMethodValue> infosBuilder)
             {
                 foreach (var (name, versions) in mappedAttributes)
@@ -208,7 +208,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         return value;
                     }
                 }
-                else // Not a known guard method, check annotated with guard attributes
+                else // Not a known guard method, check if annotated with guard attributes
                 {
                     TryParseGuardAttributes(method, ref value, visitedArguments);
                 }

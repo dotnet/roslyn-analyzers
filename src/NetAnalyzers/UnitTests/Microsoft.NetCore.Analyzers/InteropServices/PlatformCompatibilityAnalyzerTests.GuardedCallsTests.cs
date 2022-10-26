@@ -4816,7 +4816,7 @@ class Test
         }
 
         [Fact]
-        public async Task DynamicallyLoadGuardingVersionFromAPIsArguments()
+        public async Task DynamicallyLoadGuardingVersionFromCallingApiArguments()
         {
             var source = @"
 using System;
@@ -4870,7 +4870,7 @@ class Test
         }
 
         [Fact]
-        public async Task DynamicallyLoadGuardingVersionFromAPIsArguments_Multiple()
+        public async Task DynamicallyLoadGuardingVersionFromCallingApiArguments_MultipleAttriubtesApplied()
         {
             var source = @"
 using System;
@@ -4925,7 +4925,7 @@ class Test
         }
 
         [Fact]
-        public async Task DynamicallyLoadGuardingVersionFromAPIsArguments_NotWarningCases()
+        public async Task DynamicallyLoadGuardingVersionFromCallingApiArguments_NotWarningCases()
         {
             var source = @"
 using System;
@@ -4969,7 +4969,7 @@ class Test
         }
 
         [Fact]
-        public async Task ApiAndGuardAttributeBothHasVersion_AttributeVersionWins()
+        public async Task ApiAndGuardAttributeBothHasVersions_AttributeVersionWins()
         {
             var source = @"
 using System;

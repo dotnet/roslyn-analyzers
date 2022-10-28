@@ -24,8 +24,8 @@ namespace Roslyn.Diagnostics.Analyzers
     /// This pattern is commonly used by compiler tests.
     /// Comments that don't look like numbered comments are left alone. For instance, any comment that contains alpha characters.
     /// </summary>
-    [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = nameof(NumberCommentslRefactoring)), Shared]
-    internal sealed class NumberCommentslRefactoring : CodeRefactoringProvider
+    [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = nameof(NumberCommentsRefactoring)), Shared]
+    internal sealed class NumberCommentsRefactoring : CodeRefactoringProvider
     {
         public override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
         {

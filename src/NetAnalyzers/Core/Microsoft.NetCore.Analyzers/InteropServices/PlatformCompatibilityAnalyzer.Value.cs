@@ -235,20 +235,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return false;
             }
 
-            static Version CreateVersion(ArrayBuilder<int> versionBuilder)
+            static Version CreateVersion(ArrayBuilder<int> versionBuilder) => versionBuilder switch
             {
-                if (versionBuilder[3] == 0)
-                {
-                    if (versionBuilder[2] == 0)
-                    {
-                        return new Version(versionBuilder[0], versionBuilder[1]);
-                    }
-
-                    return new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2]);
-                }
-
-                return new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2], versionBuilder[3]);
-            }
+                [int major, int minor, 0, 0] => new Version(major, minor),
+                [int major, int minor, int build, 0] => new Version(major, minor, build),
+                [int major, int minor, int build, int revision] => new Version(major, minor, build, revision),
+                _ => EmptyVersion
+            };
         }
     }
 }

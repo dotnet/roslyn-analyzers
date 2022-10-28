@@ -48,7 +48,10 @@ namespace Roslyn.Diagnostics.Analyzers
             var newValueText = FixComments(stringLiteral.Token.ValueText, prefix: null);
             var oldText = stringLiteral.Token.Text;
             var newText = FixComments(oldText, getPrefix(oldText));
-            var newStringLiteral = stringLiteral.Update(SyntaxFactory.Literal(text: newText, value: newValueText)).WithTriviaFrom(stringLiteral);
+
+            var oldToken = stringLiteral.Token;
+            var newToken = SyntaxFactory.Token(oldToken.LeadingTrivia, kind: oldToken.Kind(), text: newText, valueText: newValueText, oldToken.TrailingTrivia);
+            var newStringLiteral = stringLiteral.Update(newToken);
 
             var editor = await DocumentEditor.CreateAsync(document, c).ConfigureAwait(false);
             editor.ReplaceNode(stringLiteral, newStringLiteral);

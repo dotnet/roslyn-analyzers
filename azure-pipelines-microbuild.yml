@@ -96,6 +96,7 @@ stages:
   jobs:
     - job: codeql
       displayName: CodeQL
+      timeoutInMinutes: 120
       variables:
         # CG is handled in the primary CI pipeline
       - name: skipComponentGovernanceDetection

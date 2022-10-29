@@ -9,7 +9,8 @@ CA1422 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1852 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1852> | Seal internal types |
 CA1853 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853> | Unnecessary call to 'Dictionary.ContainsKey(key)' |
 CA1855 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1855> | Prefer 'Clear' over 'Fill' |
+CA1857 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857> | Prefer 'IsEmpty' over 'Any()' |
+CA1858 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858> | Prefer 'Length' over 'Any()' |
+CA1859 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859> | Prefer 'Count' over 'Any()' |
 CA2019 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019> | Improper 'ThreadStatic' field initialization |
-CA2020 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020> | Prevent from behavioral change |
 CA2259 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259> | 'ThreadStatic' only affects static fields |
-CA2260 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2260> | Use correct type parameter |

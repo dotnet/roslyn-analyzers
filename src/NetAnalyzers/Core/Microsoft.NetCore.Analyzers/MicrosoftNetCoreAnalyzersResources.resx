@@ -1995,4 +1995,40 @@
   <data name="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage" xml:space="preserve">
     <value>Starting with .NET 7 the explicit conversion '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</value>
   </data>
+  <data name="PreferLengthOverAnyCodeFixTitle" xml:space="preserve">
+    <value>Prefer 'Length' over 'Any()'</value>
+  </data>
+  <data name="PreferLengthOverAnyTitle" xml:space="preserve">
+    <value>Prefer 'Length' over 'Any()'</value>
+  </data>
+  <data name="PreferLengthOverAnyMessage" xml:space="preserve">
+    <value>Prefer a 'Length' check over 'Any()' to avoid the need for devirtualization</value>
+  </data>
+  <data name="PreferLengthOverAnyDescription" xml:space="preserve">
+    <value>Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</value>
+  </data>
+  <data name="PreferCountOverAnyCodeFixTitle" xml:space="preserve">
+    <value>Prefer 'Count' over 'Any()'</value>
+  </data>
+  <data name="PreferCountOverAnyTitle" xml:space="preserve">
+    <value>Prefer 'Count' over 'Any()'</value>
+  </data>
+  <data name="PreferCountOverAnyMessage" xml:space="preserve">
+    <value>Prefer a 'Count' check over 'Any()' to avoid the need for devirtualization</value>
+  </data>
+  <data name="PreferCountOverAnyDescription" xml:space="preserve">
+    <value>Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</value>
+  </data>
+  <data name="PreferIsEmptyOverAnyCodeFixTitle" xml:space="preserve">
+    <value>Prefer 'IsEmpty' over 'Any()'</value>
+  </data>
+  <data name="PreferIsEmptyOverAnyTitle" xml:space="preserve">
+    <value>Prefer 'IsEmpty' over 'Any()'</value>
+  </data>
+  <data name="PreferIsEmptyOverAnyMessage" xml:space="preserve">
+    <value>Prefer a 'IsEmpty' check over 'Any()' to avoid the need for devirtualization</value>
+  </data>
+  <data name="PreferIsEmptyOverAnyDescription" xml:space="preserve">
+    <value>Prefer a 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</value>
+  </data>
 </root>

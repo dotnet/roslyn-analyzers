@@ -1967,6 +1967,26 @@
         <target state="translated">Предпочтительное использование "AsSpan" вместо "Substring"</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferCountOverAnyCodeFixTitle">
+        <source>Prefer 'Count' over 'Any()'</source>
+        <target state="new">Prefer 'Count' over 'Any()'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferCountOverAnyDescription">
+        <source>Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</source>
+        <target state="new">Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferCountOverAnyMessage">
+        <source>Prefer a 'Count' check over 'Any()' to avoid the need for devirtualization</source>
+        <target state="new">Prefer a 'Count' check over 'Any()' to avoid the need for devirtualization</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferCountOverAnyTitle">
+        <source>Prefer 'Count' over 'Any()'</source>
+        <target state="new">Prefer 'Count' over 'Any()'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferDictionaryContainsKeyCodeFixTitle">
         <source>Use 'ContainsKey'</source>
         <target state="translated">Использовать "ContainsKey"</target>
@@ -2020,6 +2040,46 @@
       <trans-unit id="PreferHashDataOverComputeHashAnalyzerTitle">
         <source>Prefer static 'HashData' method over 'ComputeHash'</source>
         <target state="translated">Предпочитать статический метод "HashData" методу "ComputeHash"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsEmptyOverAnyCodeFixTitle">
+        <source>Prefer 'IsEmpty' over 'Any()'</source>
+        <target state="new">Prefer 'IsEmpty' over 'Any()'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsEmptyOverAnyDescription">
+        <source>Prefer a 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</source>
+        <target state="new">Prefer a 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsEmptyOverAnyMessage">
+        <source>Prefer a 'IsEmpty' check over 'Any()' to avoid the need for devirtualization</source>
+        <target state="new">Prefer a 'IsEmpty' check over 'Any()' to avoid the need for devirtualization</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsEmptyOverAnyTitle">
+        <source>Prefer 'IsEmpty' over 'Any()'</source>
+        <target state="new">Prefer 'IsEmpty' over 'Any()'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferLengthOverAnyCodeFixTitle">
+        <source>Prefer 'Length' over 'Any()'</source>
+        <target state="new">Prefer 'Length' over 'Any()'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferLengthOverAnyDescription">
+        <source>Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</source>
+        <target state="new">Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferLengthOverAnyMessage">
+        <source>Prefer a 'Length' check over 'Any()' to avoid the need for devirtualization</source>
+        <target state="new">Prefer a 'Length' check over 'Any()' to avoid the need for devirtualization</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferLengthOverAnyTitle">
+        <source>Prefer 'Length' over 'Any()'</source>
+        <target state="new">Prefer 'Length' over 'Any()'</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">

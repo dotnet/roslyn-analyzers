@@ -12,8 +12,6 @@ variables:
     value: .NETCore
   - name: _DotNetValidationArtifactsCategory
     value: .NETCoreValidation
-  - name: Codeql.Enabled
-    value: true
   - group: DotNet-Roslyn-SDLValidation-Params
   - group: DotNet-Blob-Feed
   - group: DotNet-Symbol-Server-Pats
@@ -51,6 +49,8 @@ stages:
             value: Release
           - name: _SignType
             value: real
+          - name: Codeql.Enabled
+            value: true
         steps:
         - checkout: self
           clean: true

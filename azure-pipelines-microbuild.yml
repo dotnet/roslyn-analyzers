@@ -1,3 +1,10 @@
+parameters:
+  # Optionally do not publish to TSA. Useful for e.g. verifying fixes before PR.
+- name: TSAEnabled
+  displayName: Publish results to TSA
+  type: boolean
+  default: true
+
 # Branches that trigger a build on commit
 trigger:
   - main
@@ -49,8 +56,6 @@ stages:
             value: Release
           - name: _SignType
             value: real
-          - name: Codeql.Enabled
-            value: true
         steps:
         - checkout: self
           clean: true
@@ -83,7 +88,41 @@ stages:
             PathtoPublish: 'artifacts\VSSetup\$(_BuildConfig)'
             ArtifactName: 'VSIXes'
           condition: succeeded()
-
+  - job: codeql
+    pool:
+      name: NetCore1ESPool-Internal
+      demands: ImageOverride -equals windows.vs2022preview.amd64
+    variables:
+      - template: eng/common-variables.yml
+      - template: eng/common/templates/variables/pool-providers.yml
+      # CG is handled in the primary CI pipeline
+      - name: skipComponentGovernanceDetection
+        value: true
+      # Force CodeQL enabled
+      - name: Codeql.Enabled
+        value: true
+      # Do not let CodeQL 3000 Extension gate scan frequency
+      - name: Codeql.Cadence
+        value: 0
+      # CodeQL needs this plumbed along as a variable to enable TSA
+      - name: Codeql.TSAEnabled
+        value: ${{ parameters.TSAEnabled }}
+      # Build variables
+      - name: _BuildConfig
+        value: Release
+    steps:
+      - task: UseDotNet@2
+        inputs:
+          useGlobalJson: true
+      - task: CodeQL3000Init@0
+        displayName: CodeQL Initialize
+      - script: eng\common\cibuild.cmd
+          -configuration $(_BuildConfig)
+          -prepareMachine
+          /p:Test=false
+        displayName: Windows Build
+      - task: CodeQL3000Finalize@0
+        displayName: CodeQL Finalize
 - template: eng\common\templates\post-build\post-build.yml
   parameters:
     publishingInfraVersion: 3

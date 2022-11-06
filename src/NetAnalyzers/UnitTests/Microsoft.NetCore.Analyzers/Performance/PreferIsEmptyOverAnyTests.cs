@@ -166,5 +166,95 @@ End Function";
 
             return VerifyVB.VerifyAnalyzerAsync(string.Format(VbTemplate, code));
         }
+
+        [Fact]
+        public Task TestQualifiedCallAsync()
+        {
+            const string code = @"
+public bool HasContents(ImmutableArray<int> array) {
+    return {|#0:Enumerable.Any(array)|};
+}";
+            const string fixedCode = @"
+public bool HasContents(ImmutableArray<int> array) {
+    return !array.IsEmpty;
+}";
+
+            return VerifyCS.VerifyCodeFixAsync(string.Format(CSharpTemplate, code), ExpectedDiagnostic, string.Format(CSharpTemplate, fixedCode));
+        }
+
+        [Fact]
+        public Task VbTestQualifiedCallAsync()
+        {
+            const string code = @"
+Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Return {|#0:Enumerable.Any(array)|}
+End Function";
+            const string fixedCode = @"
+Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Return Not array.IsEmpty
+End Function";
+
+            return VerifyVB.VerifyCodeFixAsync(string.Format(VbTemplate, code), ExpectedDiagnostic, string.Format(VbTemplate, fixedCode));
+        }
+
+        [Fact]
+        public Task TestFullyQualifiedCallAsync()
+        {
+            const string code = @"
+public bool HasContents(ImmutableArray<int> array) {
+    return {|#0:System.Linq.Enumerable.Any(array)|};
+}";
+            const string fixedCode = @"
+public bool HasContents(ImmutableArray<int> array) {
+    return !array.IsEmpty;
+}";
+
+            return VerifyCS.VerifyCodeFixAsync(string.Format(CSharpTemplate, code), ExpectedDiagnostic, string.Format(CSharpTemplate, fixedCode));
+        }
+
+        [Fact]
+        public Task VbTestFullyQualifiedCallAsync()
+        {
+            const string code = @"
+Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Return {|#0:System.Linq.Enumerable.Any(array)|}
+End Function";
+            const string fixedCode = @"
+Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Return Not array.IsEmpty
+End Function";
+
+            return VerifyVB.VerifyCodeFixAsync(string.Format(VbTemplate, code), ExpectedDiagnostic, string.Format(VbTemplate, fixedCode));
+        }
+
+        [Fact]
+        public Task VbTestWithoutParenthesesAsync()
+        {
+            const string code = @"
+Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Return {|#0:array.Any|}
+End Function";
+            const string fixedCode = @"
+Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Return Not array.IsEmpty
+End Function";
+
+            return VerifyVB.VerifyCodeFixAsync(string.Format(VbTemplate, code), ExpectedDiagnostic, string.Format(VbTemplate, fixedCode));
+        }
+
+        [Fact]
+        public Task VbTestNegatedWithoutParenthesesAsync()
+        {
+            const string code = @"
+Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Return Not {|#0:array.Any|}
+End Function";
+            const string fixedCode = @"
+Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Return array.IsEmpty
+End Function";
+
+            return VerifyVB.VerifyCodeFixAsync(string.Format(VbTemplate, code), ExpectedDiagnostic, string.Format(VbTemplate, fixedCode));
+        }
     }
 }

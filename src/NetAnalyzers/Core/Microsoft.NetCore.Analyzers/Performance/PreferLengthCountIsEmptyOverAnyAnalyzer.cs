@@ -28,37 +28,39 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string LengthId = "CA1858";
         internal const string CountId = "CA1859";
 
+        private const string SourceParameterName = "source";
+
         internal static readonly DiagnosticDescriptor IsEmptyDescriptor = DiagnosticDescriptorHelper.Create(
             IsEmptyId,
             CreateLocalizableResourceString(nameof(PreferIsEmptyOverAnyTitle)),
             CreateLocalizableResourceString(nameof(PreferIsEmptyOverAnyMessage)),
-            "Performance",
+            DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(PreferIsEmptyOverAnyDescription)),
-            false,
-            false
+            isPortedFxCopRule: false,
+            isDataflowRule: false
         );
 
         internal static readonly DiagnosticDescriptor LengthDescriptor = DiagnosticDescriptorHelper.Create(
             LengthId,
             CreateLocalizableResourceString(nameof(PreferLengthOverAnyTitle)),
             CreateLocalizableResourceString(nameof(PreferLengthOverAnyMessage)),
-            "Performance",
+            DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(PreferLengthOverAnyDescription)),
-            false,
-            false
+            isPortedFxCopRule: false,
+            isDataflowRule: false
         );
 
         internal static readonly DiagnosticDescriptor CountDescriptor = DiagnosticDescriptorHelper.Create(
             CountId,
             CreateLocalizableResourceString(nameof(PreferCountOverAnyTitle)),
             CreateLocalizableResourceString(nameof(PreferCountOverAnyMessage)),
-            "Performance",
+            DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(PreferCountOverAnyDescription)),
-            false,
-            false
+            isPortedFxCopRule: false,
+            isDataflowRule: false
         );
 
         public override void Initialize(AnalysisContext context)
@@ -105,7 +107,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return method.Name == AnyText
                    && method.ReturnType.SpecialType == SpecialType.System_Boolean
                    && method.Language == LanguageNames.CSharp && method.Parameters.Length == 1
-                   || (method.Language == LanguageNames.VisualBasic && method.Parameters.Length == 0);
+                   || (method.Language == LanguageNames.VisualBasic && (method.Parameters.Length == 0 || method.Parameters.Length == 1 && method.Parameters[0].Name == SourceParameterName));
         }
 
         private static bool HasEligibleIsEmptyProperty(ITypeSymbol typeSymbol)

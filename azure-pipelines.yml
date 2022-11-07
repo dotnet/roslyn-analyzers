@@ -103,7 +103,7 @@ jobs:
 
 - job: Markdownlint
   pool:
-      vmImage: ubuntu-18.04
+      vmImage: ubuntu-22.04
   steps:
     - script: sudo npm install -g markdownlint-cli@0.31.1
       displayName: Install markdownlint-cli

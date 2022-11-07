@@ -154,6 +154,14 @@ if(!d.ContainsKey(5))
 
 int LongRunningOperation() => throw null;";
 
+        private const string WithObjectInstantiation = @"
+if(!d.ContainsKey(5))
+{
+    d.Add(5, new int());
+}
+
+int LongRunningOperation() => throw null;";
+
         private const string NotGuardedByContainsKey = @"
 if(!d.ContainsValue(5))
 {
@@ -307,6 +315,7 @@ End If";
         [Theory]
         [InlineData(FakeDictionary)]
         [InlineData(LongRunningOperation)]
+        [InlineData(WithObjectInstantiation)]
         [InlineData(NotGuardedByContainsKey)]
         public Task ShouldNotReportDiagnosticAsync(string codeSnippet)
         {

@@ -307,9 +307,9 @@
         "CA1856": {
           "id": "CA1856",
           "shortDescription": "Incorrect usage of ConstantExpected attribute",
-          "fullDescription": "ConstantExpectedAttribute is not applied correctly on the parameter.",
+          "fullDescription": "ConstantExpected attribute is not applied correctly on the parameter.",
           "defaultLevel": "error",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
@@ -328,7 +328,7 @@
           "shortDescription": "A constant is expected for the parameter",
           "fullDescription": "The parameter expects a constant for optimal performance.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,

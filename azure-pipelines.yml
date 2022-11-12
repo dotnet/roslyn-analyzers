@@ -24,8 +24,8 @@ jobs:
         _configuration: Release
         _codeCoverage: False
   pool:
-    name: NetCore1ESPool-Public
-    demands: ImageOverride -equals Build.Windows.Amd64.VS2022.Pre.Open
+    name: NetCore-Public
+    demands: ImageOverride -equals windows.vs2022preview.amd64.open
   timeoutInMinutes: 120
 
   steps:
@@ -75,7 +75,7 @@ jobs:
       Release:
         _configuration: Release
   pool:
-    name: NetCore1ESPool-Public
+    name: NetCore-Public
     demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
   timeoutInMinutes: 40
   steps:
@@ -103,7 +103,7 @@ jobs:
 
 - job: Markdownlint
   pool:
-      vmImage: ubuntu-18.04
+      vmImage: ubuntu-22.04
   steps:
     - script: sudo npm install -g markdownlint-cli@0.31.1
       displayName: Install markdownlint-cli

@@ -1204,7 +1204,7 @@
       </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage">
         <source>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined</source>
-        <target state="new">Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined</target>
+        <target state="translated">Los delegados con tipos administrados como parámetros o el tipo de retorno requieren que se habilite el marshalling en tiempo de ejecución en el ensamblaje donde se define el delegado</target>
         <note />
       </trans-unit>
       <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageHResultSwapping">
@@ -1300,6 +1300,21 @@
       <trans-unit id="HardcodedSslProtocolsTitle">
         <source>Avoid hardcoded SslProtocols values</source>
         <target state="translated">Evitar valores de SslProtocols codificados de forma rígida</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyDescription">
+        <source>Generic math interfaces require the derived type itself to be used for the self recurring type parameter.</source>
+        <target state="translated">Las interfaces matemáticas genéricas requieren que se use el tipo derivado para el parámetro de tipo periódico.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyMessage">
+        <source>The '{0}' requires the '{1}' type parameter to be filled with the derived type '{2}'</source>
+        <target state="translated">El "{0}" requiere que el parámetro de tipo "{1}" se rellene con el tipo derivado "{2}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyTitle">
+        <source>Use correct type parameter</source>
+        <target state="translated">Use el parámetro de tipo correcto</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyDescription">
@@ -2150,6 +2165,31 @@
       <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
         <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
         <target state="translated">Puede usar "StringBuilder.Append(char)" cuando sea aplicable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage">
+        <source>Starting with .NET 7 the explicit conversion '{0}' will not throw when overflowing in an unchecked context. Wrap the expression with a 'checked' statement to restore the .NET 6 behavior.</source>
+        <target state="translated">A partir de .NET 7, la conversión explícita "{0}" no se iniciará cuando se desborde en un contexto no comprobado. Ajuste la expresión con una instrucción "checked" para restaurar el comportamiento de .NET 6.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage">
+        <source>Starting with .NET 7 the explicit conversion '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</source>
+        <target state="translated">A partir de .NET 7, la conversión explícita "{0}" se iniciará cuando se desborde en un contexto comprobado. Ajuste la expresión con una instrucción "unchecked" para restaurar el comportamiento de .NET 6.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesDescription">
+        <source>Some built in operators added in .NET 7 behave differently than the user defined operatorsi in .NET 6 and below. Some operators that used to throw in unchecked context while overflowing will not throw anymore unless wrapped within checked context, and some operators that not used to throw in checked context now would throw unless wrapped within unchecked context.</source>
+        <target state="translated">Algunos operadores integrados agregados en .NET 7 se comportan de forma diferente a los operadores definidos por el usuario en .NET 6 y versiones anteriores. Algunos operadores que se usaron para iniciar en contextos no activados durante el desbordamiento ya no iniciarán a menos que estén ajustados dentro del contexto activado, y algunos operadores que no se usan para iniciar en el contexto comprobado ahora iniciarían a menos que se ajustaran dentro de un contexto no seleccionado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorThrowsMessage">
+        <source>Starting with .NET 7 the operator '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</source>
+        <target state="translated">A partir de .NET 7, el operador "{0}" se iniciará cuando se desborde en un contexto comprobado. Ajuste la expresión con una instrucción "unchecked" para restaurar el comportamiento de .NET 6.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesTitle">
+        <source>Prevent from behavioral change</source>
+        <target state="translated">Evitar cambios de comportamiento</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentToEnumHasFlagDescription">

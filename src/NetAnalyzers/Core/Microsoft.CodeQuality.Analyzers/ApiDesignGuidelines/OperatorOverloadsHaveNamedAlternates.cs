@@ -13,7 +13,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA2225: Operator overloads have named alternates
+    /// CA2225: <inheritdoc cref="OperatorOverloadsHaveNamedAlternatesTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class OperatorOverloadsHaveNamedAlternatesAnalyzer : DiagnosticAnalyzer
@@ -189,7 +189,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         internal static ExpectedAlternateMethodGroup? GetExpectedAlternateMethodGroup(string operatorName, ITypeSymbol returnType, ITypeSymbol? parameterType)
         {
-            // list of operator alternate names: https://docs.microsoft.com/visualstudio/code-quality/ca2225
+            // list of operator alternate names: https://learn.microsoft.com/visualstudio/code-quality/ca2225
 
             // the most common case; create a static method with the already specified types
             static ExpectedAlternateMethodGroup createSingle(string methodName) => new(methodName);

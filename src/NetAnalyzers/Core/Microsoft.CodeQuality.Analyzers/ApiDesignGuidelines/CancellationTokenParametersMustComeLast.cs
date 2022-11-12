@@ -12,7 +12,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1068: CancellationToken parameters must come last.
+    /// CA1068: <inheritdoc cref="CancellationTokenParametersMustComeLastTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class CancellationTokenParametersMustComeLastAnalyzer : DiagnosticAnalyzer
@@ -87,7 +87,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     }
 
                     // Ignore parameters that have any of these attributes.
-                    // C# reserved attributes: https://docs.microsoft.com/dotnet/csharp/language-reference/attributes/caller-information
+                    // C# reserved attributes: https://learn.microsoft.com/dotnet/csharp/language-reference/attributes/caller-information
                     while (last >= 0
                         && HasCallerInformationAttribute(methodSymbol.Parameters[last], callerInformationAttributes))
                     {

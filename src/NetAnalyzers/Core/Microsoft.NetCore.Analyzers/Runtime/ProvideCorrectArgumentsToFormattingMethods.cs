@@ -55,14 +55,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     IArgumentOperation formatStringArgument = invocation.Arguments[info.FormatStringIndex];
-                    if (!Equals(formatStringArgument?.Value?.Type, formatInfo.String) ||
-                        !(formatStringArgument?.Value?.ConstantValue.Value is string))
+                    if (!Equals(formatStringArgument.Value.Type, formatInfo.String) ||
+                        !(formatStringArgument.Value.ConstantValue.Value is string stringFormat))
                     {
-                        // wrong argument
+                        // wrong argument or not a constant
                         return;
                     }
 
-                    var stringFormat = (string)formatStringArgument.Value.ConstantValue.Value;
                     int expectedStringFormatArgumentCount = GetFormattingArguments(stringFormat);
 
                     // explicit parameter case
@@ -315,6 +314,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private class StringFormatInfo
         {
             private const string Format = "format";
+            private const string CompositeFormat = "CompositeFormat";
 
             private readonly ImmutableDictionary<IMethodSymbol, Info> _map;
 
@@ -333,10 +333,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 String = @string;
                 Object = compilation.GetSpecialType(SpecialType.System_Object);
+                StringSyntaxAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsCodeAnalysisStringSyntaxAttributeName);
             }
 
             public INamedTypeSymbol String { get; }
             public INamedTypeSymbol Object { get; }
+            public INamedTypeSymbol? StringSyntaxAttribute { get; }
 
             public Info? TryGet(IMethodSymbol method, OperationAnalysisContext context)
             {
@@ -345,10 +347,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return info;
                 }
 
+                if (TryGetFormatInfoByCompositeFormatStringSyntaxAttribute(method, out info))
+                {
+                    return info;
+                }
+
                 // Check if this the underlying method is user configured string formatting method.
                 var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(Rule, context.Operation.Syntax.SyntaxTree, context.Compilation);
                 if (additionalStringFormatMethodsOption.Contains(method.OriginalDefinition) &&
-                    TryGetFormatInfo(method, out info))
+                    TryGetFormatInfoByParameterName(method, out info))
                 {
                     return info;
                 }
@@ -358,7 +365,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var determineAdditionalStringFormattingMethodsAutomatically = context.Options.GetBoolOptionValue(EditorConfigOptionNames.TryDetermineAdditionalStringFormattingMethodsAutomatically,
                         Rule, context.Operation.Syntax.SyntaxTree, context.Compilation, defaultValue: false);
                 if (determineAdditionalStringFormattingMethodsAutomatically &&
-                    TryGetFormatInfo(method, out info) &&
+                    TryGetFormatInfoByParameterName(method, out info) &&
                     info.ExpectedStringFormatArgumentCount == -1)
                 {
                     return info;
@@ -376,24 +383,34 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 foreach (IMethodSymbol method in type.GetMembers(methodName).OfType<IMethodSymbol>())
                 {
-                    if (TryGetFormatInfo(method, out var formatInfo))
+                    if (TryGetFormatInfoByParameterName(method, out var formatInfo))
                     {
                         builder.Add(method, formatInfo);
                     }
                 }
             }
 
-            private static bool TryGetFormatInfo(IMethodSymbol method, [NotNullWhen(returnValue: true)] out Info? formatInfo)
+            private bool TryGetFormatInfoByCompositeFormatStringSyntaxAttribute(IMethodSymbol method, [NotNullWhen(returnValue: true)] out Info? formatInfo)
+            {
+                int formatIndex = FindParameterIndexOfCompositeFormatStringSyntaxAttribute(method.Parameters);
+                return TryGetFormatInfo(method, formatIndex, out formatInfo);
+            }
+
+            private static bool TryGetFormatInfoByParameterName(IMethodSymbol method, [NotNullWhen(returnValue: true)] out Info? formatInfo)
+            {
+                int formatIndex = FindParameterIndexByParameterName(method.Parameters, Format);
+                return TryGetFormatInfo(method, formatIndex, out formatInfo);
+            }
+
+            private static bool TryGetFormatInfo(IMethodSymbol method, int formatIndex, [NotNullWhen(returnValue: true)] out Info? formatInfo)
             {
                 formatInfo = default;
 
-                int formatIndex = FindParameterIndexOfName(method.Parameters, Format);
-                if (formatIndex < 0 || formatIndex == method.Parameters.Length - 1)
+                if (formatIndex < 0)
                 {
                     // no valid format string
                     return false;
                 }
-
                 if (method.Parameters[formatIndex].Type.SpecialType != SpecialType.System_String)
                 {
                     // no valid format string
@@ -417,13 +434,39 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return parameters.Length - formatIndex - 1;
             }
 
-            private static int FindParameterIndexOfName(ImmutableArray<IParameterSymbol> parameters, string name)
+            private static int FindParameterIndexByParameterName(ImmutableArray<IParameterSymbol> parameters, string name)
             {
                 for (var i = 0; i < parameters.Length; i++)
                 {
                     if (string.Equals(parameters[i].Name, name, StringComparison.Ordinal))
                     {
                         return i;
+                    }
+                }
+
+                return -1;
+            }
+
+            private int FindParameterIndexOfCompositeFormatStringSyntaxAttribute(ImmutableArray<IParameterSymbol> parameters)
+            {
+                if (StringSyntaxAttribute is null)
+                {
+                    return -1;
+                }
+
+                for (var i = 0; i < parameters.Length; i++)
+                {
+                    ImmutableArray<AttributeData> attributes = parameters[i].GetAttributes();
+                    for (int j = 0; j < attributes.Length; j++)
+                    {
+                        if (Equals(attributes[j].AttributeClass, StringSyntaxAttribute))
+                        {
+                            ImmutableArray<TypedConstant> arguments = attributes[j].ConstructorArguments;
+                            if (arguments.Length == 1 && Equals(arguments[0].Value, CompositeFormat))
+                            {
+                                return i;
+                            }
+                        }
                     }
                 }
 

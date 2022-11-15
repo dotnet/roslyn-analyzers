@@ -510,6 +510,101 @@ End Class"
             await basicTest.RunAsync();
         }
 
+        [Fact]
+        [WorkItem(6012, "https://github.com/dotnet/roslyn-analyzers/issues/6012")]
+        public async Task EditorConfigConfiguration_StringSyntaxAnnotatedMethodsAsync()
+        {
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System.Diagnostics.CodeAnalysis;
+
+class Test
+{
+    public static string MyFormat([StringSyntax(StringSyntaxAttribute.CompositeFormat)] string specification, params object[] args) => specification;
+
+    void M1(string param)
+    {
+        var a = MyFormat("""", 1);
+    }
+}",
+                        @"
+namespace System.Diagnostics.CodeAnalysis
+{
+    /// <summary>Specifies the syntax used in a string.</summary>
+    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    public sealed class StringSyntaxAttribute : Attribute
+    {
+        /// <summary>The syntax identifier for strings containing composite formats for string formatting.</summary>
+        public const string CompositeFormat = nameof(CompositeFormat);
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref=""StringSyntaxAttribute""/> class with the identifier of the syntax used.
+        /// </summary>
+        /// <param name=""syntax"">The syntax identifier.</param>
+        public StringSyntaxAttribute(string syntax)
+        {
+        }
+    }
+}
+"
+                    }
+                }
+            };
+
+            csharpTest.ExpectedDiagnostics.Add(
+                // Test0.cs(10,17): warning CA2241: Provide correct arguments to formatting methods
+                GetCSharpResultAt(10, 17));
+
+            await csharpTest.RunAsync();
+
+            var basicTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+Imports System.Diagnostics.CodeAnalysis
+
+Class Test
+    Public Shared Function MyFormat(<StringSyntax(StringSyntaxAttribute.CompositeFormat)> specification As String, ParamArray args As Object()) As String
+        Return specification
+    End Function
+
+    Private Sub M1(ByVal param As String)
+        Dim a = MyFormat("""", 1)
+    End Sub
+End Class",
+                                                @"
+Namespace System.Diagnostics.CodeAnalysis
+    <AttributeUsage(AttributeTargets.Parameter Or AttributeTargets.Field Or AttributeTargets.Property, AllowMultiple := False, Inherited := False)>
+    Public Class StringSyntaxAttribute
+        Inherits Attribute
+
+        Public Const CompositeFormat As String = ""CompositeFormat""
+
+        Sub  New(ByVal syntax As String)
+        End Sub
+    End Class
+End Namespace
+"
+
+                    }
+                }
+            };
+
+            basicTest.ExpectedDiagnostics.Add(
+                // Test0.vb(10,17): warning CA2241: Provide correct arguments to formatting methods
+                GetBasicResultAt(10, 17));
+
+            await basicTest.RunAsync();
+        }
+
         #endregion
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)

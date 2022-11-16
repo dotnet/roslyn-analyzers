@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -316,20 +317,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             private const string Format = "format";
             private const string CompositeFormat = "CompositeFormat";
 
-            private readonly ImmutableDictionary<IMethodSymbol, Info> _map;
+            private readonly ConcurrentDictionary<IMethodSymbol, Info?> _map;
 
             public StringFormatInfo(Compilation compilation)
             {
-                ImmutableDictionary<IMethodSymbol, Info>.Builder builder = ImmutableDictionary.CreateBuilder<IMethodSymbol, Info>();
+                _map = new ConcurrentDictionary<IMethodSymbol, Info?>();
 
                 INamedTypeSymbol? console = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConsole);
-                AddStringFormatMap(builder, console, "Write");
-                AddStringFormatMap(builder, console, "WriteLine");
+                AddStringFormatMap(console, "Write");
+                AddStringFormatMap(console, "WriteLine");
 
                 INamedTypeSymbol @string = compilation.GetSpecialType(SpecialType.System_String);
-                AddStringFormatMap(builder, @string, "Format");
-
-                _map = builder.ToImmutable();
+                AddStringFormatMap(@string, "Format");
 
                 String = @string;
                 Object = compilation.GetSpecialType(SpecialType.System_Object);
@@ -371,10 +370,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return info;
                 }
 
+                _map.TryAdd(method, null);
                 return null;
             }
 
-            private static void AddStringFormatMap(ImmutableDictionary<IMethodSymbol, Info>.Builder builder, INamedTypeSymbol? type, string methodName)
+            private void AddStringFormatMap(INamedTypeSymbol? type, string methodName)
             {
                 if (type == null)
                 {
@@ -383,10 +383,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 foreach (IMethodSymbol method in type.GetMembers(methodName).OfType<IMethodSymbol>())
                 {
-                    if (TryGetFormatInfoByParameterName(method, out var formatInfo))
-                    {
-                        builder.Add(method, formatInfo);
-                    }
+                    TryGetFormatInfoByParameterName(method, out var _);
                 }
             }
 
@@ -396,13 +393,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return TryGetFormatInfo(method, formatIndex, out formatInfo);
             }
 
-            private static bool TryGetFormatInfoByParameterName(IMethodSymbol method, [NotNullWhen(returnValue: true)] out Info? formatInfo)
+            private bool TryGetFormatInfoByParameterName(IMethodSymbol method, [NotNullWhen(returnValue: true)] out Info? formatInfo)
             {
                 int formatIndex = FindParameterIndexByParameterName(method.Parameters, Format);
                 return TryGetFormatInfo(method, formatIndex, out formatInfo);
             }
 
-            private static bool TryGetFormatInfo(IMethodSymbol method, int formatIndex, [NotNullWhen(returnValue: true)] out Info? formatInfo)
+            private bool TryGetFormatInfo(IMethodSymbol method, int formatIndex, [NotNullWhen(returnValue: true)] out Info? formatInfo)
             {
                 formatInfo = default;
 
@@ -419,6 +416,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 int expectedArguments = GetExpectedNumberOfArguments(method.Parameters, formatIndex);
                 formatInfo = new Info(formatIndex, expectedArguments);
+                _map.TryAdd(method, formatInfo);
+
                 return true;
             }
 

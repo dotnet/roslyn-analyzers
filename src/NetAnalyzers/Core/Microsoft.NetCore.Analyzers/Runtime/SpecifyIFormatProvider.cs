@@ -229,10 +229,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             if (correctOverload != null)
                             {
                                 oaContext.ReportDiagnostic(
-                                    invocationExpression.Syntax.CreateDiagnostic(IFormatProviderAlternateRule,
-                                    targetMethod.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
-                                    oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
-                                    correctOverload.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
+                                    invocationExpression.CreateDiagnostic(IFormatProviderAlternateRule,
+                                        targetMethod.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                        oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                        correctOverload.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
                             }
                         }
                     }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -11,26 +11,33 @@ using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
+    /// <summary>
+    /// CA5364: <inheritdoc cref="DoNotUseDeprecatedSecurityProtocols"/>
+    /// CA5386: <inheritdoc cref="HardCodedSecurityProtocolTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotUseDeprecatedSecurityProtocols : DiagnosticAnalyzer
     {
-        internal static DiagnosticDescriptor DeprecatedRule = SecurityHelpers.CreateDiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor DeprecatedRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5364",
-            typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDeprecatedSecurityProtocols),
-            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDeprecatedSecurityProtocolsMessage),
+            nameof(DoNotUseDeprecatedSecurityProtocols),
+            nameof(DoNotUseDeprecatedSecurityProtocolsMessage),
             RuleLevel.IdeHidden_BulkConfigurable,
             isPortedFxCopRule: false,
             isDataflowRule: false,
-            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDeprecatedSecurityProtocolsDescription));
-        internal static DiagnosticDescriptor HardCodedRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            isReportedAtCompilationEnd: false,
+            descriptionResourceStringName: nameof(DoNotUseDeprecatedSecurityProtocolsDescription));
+
+        internal static readonly DiagnosticDescriptor HardCodedRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5386",
-            typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.HardCodedSecurityProtocolTitle),
-            nameof(MicrosoftNetCoreAnalyzersResources.HardCodedSecurityProtocolMessage),
+            nameof(HardCodedSecurityProtocolTitle),
+            nameof(HardCodedSecurityProtocolMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
-            isDataflowRule: false);
+            isDataflowRule: false,
+            isReportedAtCompilationEnd: false);
 
         private readonly ImmutableHashSet<string> HardCodedSafeProtocolMetadataNames = ImmutableHashSet.Create(
             StringComparer.Ordinal,
@@ -42,7 +49,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         private const int HardCodedBits = 3072 | 12288;    // SecurityProtocolType Tls12 Tls13
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DeprecatedRule, HardCodedRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DeprecatedRule, HardCodedRule);
 
         public override void Initialize(AnalysisContext context)
         {

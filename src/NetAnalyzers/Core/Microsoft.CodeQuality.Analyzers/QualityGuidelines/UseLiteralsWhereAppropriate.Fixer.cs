@@ -1,11 +1,10 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
@@ -17,11 +16,11 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     /// </summary>
     public abstract class UseLiteralsWhereAppropriateFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UseLiteralsWhereAppropriateAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(UseLiteralsWhereAppropriateAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
+            // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
             return WellKnownFixAllProviders.BatchFixer;
         }
 
@@ -39,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             string title = MicrosoftCodeQualityAnalyzersResources.UseLiteralsWhereAppropriateCodeActionTitle;
             context.RegisterCodeFix(
-                new MyCodeAction(
+                CodeAction.Create(
                     title,
                     cancellationToken => ToConstantDeclarationAsync(context.Document, fieldFeclaration, cancellationToken),
                     equivalenceKey: title),
@@ -98,13 +97,5 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         protected abstract SyntaxTokenList GetModifiers(SyntaxNode fieldSyntax);
         protected abstract SyntaxNode WithModifiers(SyntaxNode fieldSyntax, SyntaxTokenList modifiers);
-
-        private class MyCodeAction : DocumentChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument, equivalenceKey)
-            {
-            }
-        }
     }
 }

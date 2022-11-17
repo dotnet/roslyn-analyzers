@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -16,25 +16,27 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
+    /// <summary>
+    /// CA2213: <inheritdoc cref="DisposableFieldsShouldBeDisposedTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DisposableFieldsShouldBeDisposed : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2213";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposableFieldsShouldBeDisposedTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposableFieldsShouldBeDisposedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposableFieldsShouldBeDisposedDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(DisposableFieldsShouldBeDisposedTitle)),
+            CreateLocalizableResourceString(nameof(DisposableFieldsShouldBeDisposedMessage)),
+            DiagnosticCategory.Usage,
+            RuleLevel.Disabled,
+            description: CreateLocalizableResourceString(nameof(DisposableFieldsShouldBeDisposedDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: true);
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: true);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -86,7 +88,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var namedType = (INamedTypeSymbol)symbolStartContext.Symbol;
                 return disposeAnalysisHelper.IsDisposable(namedType) &&
                     !disposeAnalysisHelper.GetDisposableFields(namedType).IsEmpty &&
-                    !namedType.IsConfiguredToSkipAnalysis(symbolStartContext.Options, Rule, symbolStartContext.Compilation, symbolStartContext.CancellationToken);
+                    !symbolStartContext.Options.IsConfiguredToSkipAnalysis(Rule, namedType, symbolStartContext.Compilation);
             }
 
             bool IsDisposeMethod(IMethodSymbol method)
@@ -99,6 +101,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (IsDisposeMethod(method))
                     {
                         return true;
+                    }
+                }
+
+                foreach (var type in namedType.GetBaseTypes())
+                {
+                    foreach (var method in type.GetMembers().WhereAsArray(x => x.IsVirtual && x.Kind == SymbolKind.Method))
+                    {
+                        if (IsDisposeMethod((IMethodSymbol)method))
+                        {
+                            return true;
+                        }
                     }
                 }
 
@@ -124,7 +137,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 RoslynDebug.Assert(disposeAnalysisHelper != null);
 
-                if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod))
+                if (operationBlockStartContext.OwningSymbol is not IMethodSymbol containingMethod)
                 {
                     return;
                 }
@@ -167,12 +180,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
                                 var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
-                                    operationBlockStartContext.Options, Rule, containingMethod, operationBlockStartContext.Compilation, InterproceduralAnalysisKind.None, operationBlockStartContext.CancellationToken);
+                                    operationBlockStartContext.Options, Rule, cfg, operationBlockStartContext.Compilation, InterproceduralAnalysisKind.None);
                                 var pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(cfg,
                                     containingMethod, operationBlockStartContext.Options, wellKnownTypeProvider,
                                     PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties,
                                     interproceduralAnalysisConfig,
-                                    interproceduralAnalysisPredicateOpt: null,
+                                    interproceduralAnalysisPredicate: null,
                                     pessimisticAnalysis: false, performCopyAnalysis: false);
                                 if (pointsToAnalysisResult == null)
                                 {
@@ -204,8 +217,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (!disposableFields.IsEmpty)
                     {
                         if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks, containingMethod,
-                            operationBlockStartContext.Options, Rule, PointsToAnalysisKind.Complete, trackInstanceFields: true, trackExceptionPaths: false, cancellationToken: operationBlockStartContext.CancellationToken,
-                            disposeAnalysisResult: out var disposeAnalysisResult, pointsToAnalysisResult: out var pointsToAnalysisResult))
+                            operationBlockStartContext.Options, Rule, PointsToAnalysisKind.Complete, trackInstanceFields: true, trackExceptionPaths: false, disposeAnalysisResult: out var disposeAnalysisResult,
+                            pointsToAnalysisResult: out var pointsToAnalysisResult))
                         {
                             RoslynDebug.Assert(disposeAnalysisResult.TrackedInstanceFieldPointsToMap != null);
 
@@ -275,7 +288,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
                 finally
                 {
-                    fieldDisposeValueMap.Free();
+                    fieldDisposeValueMap.Free(symbolEndContext.CancellationToken);
                 }
             }
         }

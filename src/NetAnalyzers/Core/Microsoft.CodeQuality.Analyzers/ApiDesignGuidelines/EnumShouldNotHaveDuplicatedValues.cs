@@ -1,10 +1,7 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
+using System.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.PooledObjects;
@@ -14,174 +11,144 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
+    /// <summary>
+    /// CA1069: <inheritdoc cref="EnumShouldNotHaveDuplicatedValuesTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class EnumShouldNotHaveDuplicatedValues : DiagnosticAnalyzer
     {
         public const string RuleId = "CA1069";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.EnumShouldNotHaveDuplicatedValuesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(EnumShouldNotHaveDuplicatedValuesTitle));
 
-        private static readonly LocalizableString s_localizableMessageRuleDuplicatedValue = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.EnumShouldNotHaveDuplicatedValuesMessageDuplicatedValue), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        internal static DiagnosticDescriptor RuleDuplicatedValue = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                                            s_localizableTitle,
-                                                                                            s_localizableMessageRuleDuplicatedValue,
-                                                                                            DiagnosticCategory.Design,
-                                                                                            RuleLevel.IdeSuggestion,
-                                                                                            description: null,
-                                                                                            isPortedFxCopRule: false,
-                                                                                            isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor RuleDuplicatedValue = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(EnumShouldNotHaveDuplicatedValuesMessageDuplicatedValue)),
+            DiagnosticCategory.Design,
+            RuleLevel.IdeSuggestion,
+            description: null,
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
 
-        private static readonly LocalizableString s_localizableMessageRuleDuplicatedBitwiseValuePart = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.EnumShouldNotHaveDuplicatedValuesMessageDuplicatedBitwiseValuePart), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        internal static DiagnosticDescriptor RuleDuplicatedBitwiseValuePart = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                                                       s_localizableTitle,
-                                                                                                       s_localizableMessageRuleDuplicatedBitwiseValuePart,
-                                                                                                       DiagnosticCategory.Design,
-                                                                                                       RuleLevel.IdeSuggestion,
-                                                                                                       description: null,
-                                                                                                       isPortedFxCopRule: false,
-                                                                                                       isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor RuleDuplicatedBitwiseValuePart = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(EnumShouldNotHaveDuplicatedValuesMessageDuplicatedBitwiseValuePart)),
+            DiagnosticCategory.Design,
+            RuleLevel.IdeSuggestion,
+            description: null,
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
 
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleDuplicatedValue, RuleDuplicatedBitwiseValuePart);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(RuleDuplicatedValue, RuleDuplicatedBitwiseValuePart);
 
         public sealed override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterSymbolStartAction(ssac =>
+            context.RegisterSymbolStartAction(visitEnumSymbol, SymbolKind.NamedType);
+
+            void visitEnumSymbol(SymbolStartAnalysisContext context)
             {
-                var enumSymbol = (INamedTypeSymbol)ssac.Symbol;
-                if (enumSymbol.TypeKind != TypeKind.Enum)
+                if (context.Symbol is not INamedTypeSymbol { TypeKind: TypeKind.Enum } enumSymbol)
                 {
                     return;
                 }
 
-                var membersByValue = new ConcurrentDictionary<object, ConcurrentBag<(SyntaxNode fieldSyntax, string fieldName)>>();
-
-                // Workaround to get the value of all enum fields that don't have an explicit initializer.
-                // We will start with all of the enum fields and remove the ones with an explicit initializer.
-                // See https://github.com/dotnet/roslyn/issues/40811
-                var filteredFields = enumSymbol.GetMembers()
-                    .OfType<IFieldSymbol>()
-                    .Where(f => !f.IsImplicitlyDeclared)
-                    .Select(x => new KeyValuePair<IFieldSymbol, object>(x, x.ConstantValue));
-                var enumFieldsWithImplicitValue = new ConcurrentDictionary<IFieldSymbol, object>(filteredFields);
-
-                // Collect duplicated values...
-                ssac.RegisterOperationAction(oc =>
+                // This dictionary is populated by this thread and then read concurrently.
+                // https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2?view=net-5.0#thread-safety
+                var membersByValue = PooledDictionary<object, IFieldSymbol>.GetInstance();
+                var duplicates = PooledConcurrentSet<IFieldSymbol>.GetInstance(SymbolEqualityComparer.Default);
+                foreach (var member in enumSymbol.GetMembers())
                 {
-                    var fieldInitializerOperation = (IFieldInitializerOperation)oc.Operation;
-
-                    if (fieldInitializerOperation.InitializedFields.Length != 1 ||
-                        !fieldInitializerOperation.Value.ConstantValue.HasValue ||
-                        fieldInitializerOperation.Value.ConstantValue.Value == null)
+                    if (member is not IFieldSymbol { IsImplicitlyDeclared: false, HasConstantValue: true } field)
                     {
-                        return;
+                        continue;
                     }
 
-                    var currentField = fieldInitializerOperation.InitializedFields[0];
-
-                    // Remove the explicitly initialized field
-                    enumFieldsWithImplicitValue.TryRemove(currentField, out _);
-
-                    var onlyReferencesOneField = GetFilteredDescendants(fieldInitializerOperation, op => op.Kind != OperationKind.Binary)
-                        .OfType<IFieldReferenceOperation>()
-                        .Where(fro => fro.Field.ContainingType.Equals(enumSymbol))
-                        .Any();
-                    if (onlyReferencesOneField)
+                    var constantValue = field.ConstantValue;
+                    if (membersByValue.ContainsKey(constantValue))
                     {
-                        return;
+                        // This field is a duplicate. We need to first check
+                        // if its initializer is another field on this enum,
+                        // and if not give a diagnostic on it.
+                        var added = duplicates.Add(field);
+                        Debug.Assert(added);
                     }
-
-                    membersByValue.AddOrUpdate(fieldInitializerOperation.Value.ConstantValue.Value,
-                        new ConcurrentBag<(SyntaxNode, string)> { (fieldInitializerOperation.Syntax.Parent, currentField.Name) },
-                        (key, value) =>
-                        {
-                            value.Add((fieldInitializerOperation.Syntax.Parent, currentField.Name));
-                            return value;
-                        });
-                }, OperationKind.FieldInitializer);
-
-                // ...and report at the end of the enum declaration
-                ssac.RegisterSymbolEndAction(sac =>
-                {
-                    // Handle all enum fields without an explicit initializer
-                    foreach ((var field, var value) in enumFieldsWithImplicitValue)
+                    else
                     {
-                        var fieldSyntax = field.DeclaringSyntaxReferences.FirstOrDefault()?.GetSyntax(sac.CancellationToken);
-
-                        if (fieldSyntax != null && value != null)
-                        {
-                            membersByValue.AddOrUpdate(value,
-                                new ConcurrentBag<(SyntaxNode, string)> { (fieldSyntax, field.Name) },
-                                (k, v) =>
-                                {
-                                    v.Add((fieldSyntax, field.Name));
-                                    return v;
-                                });
-                        }
-                    }
-
-                    foreach (var kvp in membersByValue)
-                    {
-                        var orderedItems = kvp.Value.OrderBy(x => x.fieldSyntax.GetLocation().SourceSpan);
-                        var duplicatedMemberName = orderedItems.FirstOrDefault().fieldName;
-
-                        foreach ((var fieldSyntax, var fieldName) in orderedItems.Skip(1))
-                        {
-                            sac.ReportDiagnostic(fieldSyntax.CreateDiagnostic(RuleDuplicatedValue, fieldName, kvp.Key, duplicatedMemberName));
-                        }
-                    }
-                });
-
-                // Collect and report on duplicated bitwise parts
-                ssac.RegisterOperationAction(oc =>
-                {
-                    var binaryOperation = (IBinaryOperation)oc.Operation;
-                    if (binaryOperation.OperatorKind != BinaryOperatorKind.Or)
-                    {
-                        return;
-                    }
-
-                    var bitwiseRefFieldsByField = GetFilteredDescendants(binaryOperation,
-                            op => op.Kind != OperationKind.Binary || (op is IBinaryOperation binaryOp && binaryOp.OperatorKind == BinaryOperatorKind.Or))
-                        .OfType<IFieldReferenceOperation>()
-                        .GroupBy(fro => fro.Field, fro => fro.Syntax)
-                        .ToDictionary(x => x.Key, x => x.ToList());
-
-                    foreach (var kvp in bitwiseRefFieldsByField)
-                    {
-                        foreach (var item in kvp.Value.OrderBy(x => x.GetLocation().SourceSpan).Skip(1))
-                        {
-                            oc.ReportDiagnostic(item.CreateDiagnostic(RuleDuplicatedBitwiseValuePart, kvp.Key.Name));
-                        }
-                    }
-                }, OperationKind.Binary);
-            }, SymbolKind.NamedType);
-        }
-
-        private static IEnumerable<IOperation> GetFilteredDescendants(IOperation operation, Func<IOperation, bool> descendIntoOperation)
-        {
-            var stack = ArrayBuilder<IEnumerator<IOperation>>.GetInstance();
-            stack.Add(operation.Children.GetEnumerator());
-
-            while (stack.Any())
-            {
-                var enumerator = stack.Last();
-                stack.RemoveLast();
-                if (enumerator.MoveNext())
-                {
-                    var current = enumerator.Current;
-                    stack.Add(enumerator);
-                    if (current != null && descendIntoOperation(current))
-                    {
-                        yield return current;
-                        stack.Add(current.Children.GetEnumerator());
+                        membersByValue[constantValue] = field;
                     }
                 }
-            }
 
-            stack.Free();
+                context.RegisterOperationAction(visitFieldInitializer, OperationKind.FieldInitializer);
+                context.RegisterSymbolEndAction(endVisitEnumSymbol);
+
+                void visitFieldInitializer(OperationAnalysisContext context)
+                {
+                    var initializer = (IFieldInitializerOperation)context.Operation;
+                    if (initializer.InitializedFields.Length != 1)
+                    {
+                        return;
+                    }
+
+                    var field = initializer.InitializedFields[0];
+                    if (duplicates.Remove(field))
+                    {
+                        var duplicatedField = membersByValue[field.ConstantValue];
+                        if (initializer.Value is not IConversionOperation { Operand: IFieldReferenceOperation { Field: IFieldSymbol referencedField } }
+                            || !SymbolEqualityComparer.Default.Equals(referencedField, duplicatedField))
+                        {
+                            context.ReportDiagnostic(field.CreateDiagnostic(RuleDuplicatedValue, field.Name, field.ConstantValue, duplicatedField.Name));
+                        }
+                    }
+
+                    // Check for duplicate usages of an enum field in an initializer consisting of '|' expressions
+                    var referencedSymbols = PooledHashSet<IFieldSymbol>.GetInstance(SymbolEqualityComparer.Default);
+                    var containingType = field.ContainingType;
+                    visitInitializerValue(initializer.Value);
+                    referencedSymbols.Free(context.CancellationToken);
+
+                    void visitInitializerValue(IOperation operation)
+                    {
+                        switch (operation)
+                        {
+                            case IBinaryOperation { OperatorKind: not BinaryOperatorKind.Or }:
+                                // only descend into '|' binary operators, not into '&', '+', ...
+                                break;
+                            case IFieldReferenceOperation { Field: var referencedField } fieldOperation:
+                                if (SymbolEqualityComparer.Default.Equals(referencedField.ContainingType, containingType)
+                                    && !referencedSymbols.Add(referencedField))
+                                {
+                                    context.ReportDiagnostic(fieldOperation.CreateDiagnostic(RuleDuplicatedBitwiseValuePart, referencedField.Name));
+                                }
+                                break;
+                            default:
+                                foreach (var childOperation in operation.Children)
+                                {
+                                    visitInitializerValue(childOperation);
+                                }
+                                break;
+                        }
+                    }
+                }
+
+                void endVisitEnumSymbol(SymbolAnalysisContext context)
+                {
+                    // visit any duplicates which didn't have an initializer
+                    foreach (var field in duplicates)
+                    {
+                        var duplicatedField = membersByValue[field.ConstantValue];
+                        context.ReportDiagnostic(field.CreateDiagnostic(RuleDuplicatedValue, field.Name, field.ConstantValue, duplicatedField.Name));
+                    }
+                    duplicates.Free(context.CancellationToken);
+                    membersByValue.Free(context.CancellationToken);
+                }
+            }
         }
     }
 }

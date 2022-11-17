@@ -1,7 +1,6 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.QualityGuidelines.ReviewVisibleEventHandlersAnalyzer,
@@ -15,7 +14,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
     public class ReviewVisibleEventHandlersTests
     {
         [Fact]
-        public async Task CA2109_PublicEventHandler_Diagnostic()
+        public async Task CA2109_PublicEventHandler_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -25,8 +24,12 @@ public class Program
     public void Handler1(object sender, EventArgs args) {}
     protected void Handler2(object sender, EventArgs args) {}
 }",
+#pragma warning disable RS0030 // Do not used banned APIs
                 VerifyCS.Diagnostic().WithLocation(6, 17).WithArguments("Handler1"),
+#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not used banned APIs
                 VerifyCS.Diagnostic().WithLocation(7, 20).WithArguments("Handler2"));
+#pragma warning restore RS0030 // Do not used banned APIs
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -38,12 +41,16 @@ Public Class Program
     Protected Sub Handler2(ByVal sender As Object, ByVal args As EventArgs)
     End Sub
 End Class",
+#pragma warning disable RS0030 // Do not used banned APIs
                 VerifyVB.Diagnostic().WithLocation(5, 16).WithArguments("Handler1"),
+#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not used banned APIs
                 VerifyVB.Diagnostic().WithLocation(8, 19).WithArguments("Handler2"));
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         [Fact]
-        public async Task CA2109_PublicEventHandlerWithSecurityAttribute_Diagnostic()
+        public async Task CA2109_PublicEventHandlerWithSecurityAttribute_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -67,7 +74,7 @@ End Class");
         }
 
         [Fact]
-        public async Task CA2109_PublicEventHandlerUWP_Diagnostic()
+        public async Task CA2109_PublicEventHandlerUWP_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 namespace Windows.UI.Xaml
@@ -93,7 +100,7 @@ End Class");
         }
 
         [Fact]
-        public async Task CA2109_PrivateInternalEventHandler_NoDiagnostic()
+        public async Task CA2109_PrivateInternalEventHandler_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -117,7 +124,7 @@ End Class");
         }
 
         [Fact]
-        public async Task CA2109_PublicProtectedNotEventHandler_NoDiagnostic()
+        public async Task CA2109_PublicProtectedNotEventHandler_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -141,7 +148,7 @@ End Class");
         }
 
         [Fact]
-        public async Task CA2109_PublicOverrideVirtualEventHandler_NoDiagnostic()
+        public async Task CA2109_PublicOverrideVirtualEventHandler_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -174,7 +181,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2109_PublicOverrideAbstractEventHandler_NoDiagnostic()
+        public async Task CA2109_PublicOverrideAbstractEventHandler_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -206,7 +213,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2109_PublicInterfaceImplementationEventHandler_NoDiagnostic()
+        public async Task CA2109_PublicInterfaceImplementationEventHandler_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;

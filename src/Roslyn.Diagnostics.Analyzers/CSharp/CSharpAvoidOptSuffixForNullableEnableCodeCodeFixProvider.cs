@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+
+#nullable disable warnings
 
 using System.Collections.Immutable;
 using System.Composition;
@@ -16,7 +18,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
     [Shared]
     public sealed class CSharpAvoidOptSuffixForNullableEnableCodeCodeFixProvider : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CSharpAvoidOptSuffixForNullableEnableCode.Rule.Id);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(CSharpAvoidOptSuffixForNullableEnableCode.Rule.Id);
 
         public override FixAllProvider GetFixAllProvider()
             => WellKnownFixAllProviders.BatchFixer;
@@ -41,7 +43,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
                     continue;
                 }
 
-                var newName = variableSymbol.Name.Substring(0, variableSymbol.Name.Length - CSharpAvoidOptSuffixForNullableEnableCode.OptSuffix.Length);
+                var newName = variableSymbol.Name[..^CSharpAvoidOptSuffixForNullableEnableCode.OptSuffix.Length];
 
                 // There is no symbol matching the new name so we can register the codefix
                 if (semanticModel.LookupSymbols(diagnostic.Location.SourceSpan.Start, variableSymbol.ContainingType, newName).IsEmpty)

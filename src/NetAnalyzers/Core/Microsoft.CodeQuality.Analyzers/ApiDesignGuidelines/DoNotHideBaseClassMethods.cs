@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -10,36 +10,34 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1061: Do not hide base class methods
+    /// CA1061: <inheritdoc cref="DoNotHideBaseClassMethodsTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotHideBaseClassMethodsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1061";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotHideBaseClassMethodsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotHideBaseClassMethodsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotHideBaseClassMethodsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-
         public static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            s_localizableTitle,
-            s_localizableMessage,
+            CreateLocalizableResourceString(nameof(DoNotHideBaseClassMethodsTitle)),
+            CreateLocalizableResourceString(nameof(DoNotHideBaseClassMethodsMessage)),
             DiagnosticCategory.Design,
             RuleLevel.IdeSuggestion,
-            description: s_localizableDescription,
+            description: CreateLocalizableResourceString(nameof(DoNotHideBaseClassMethodsDescription)),
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(SymbolAnalyzer, SymbolKind.Method);
+            context.RegisterSymbolAction(SymbolAnalyzer, SymbolKind.Method);
         }
 
         private void SymbolAnalyzer(SymbolAnalysisContext context)
@@ -60,7 +58,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             foreach (var hiddenMethod in GetMethodsHiddenByMethod(method, method.ContainingType.BaseType))
             {
-                var diagnostic = Diagnostic.Create(Rule, context.Symbol.Locations[0], method.ToDisplayString(), hiddenMethod.ToDisplayString());
+                var diagnostic = context.Symbol.CreateDiagnostic(Rule, method.ToDisplayString(), hiddenMethod.ToDisplayString());
                 context.ReportDiagnostic(diagnostic);
             }
         }

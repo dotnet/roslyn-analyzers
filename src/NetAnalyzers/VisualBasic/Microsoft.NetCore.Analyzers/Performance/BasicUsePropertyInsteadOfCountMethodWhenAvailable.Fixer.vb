@@ -1,4 +1,4 @@
-﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
@@ -38,7 +38,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
             Dim memberAccessExpression = TryCast(invocationExpression.Expression, MemberAccessExpressionSyntax)
 
-            If Not memberAccessExpression Is Nothing Then
+            If memberAccessExpression IsNot Nothing Then
 
                 memberAccessNode = memberAccessExpression
                 nameNode = memberAccessExpression.Name

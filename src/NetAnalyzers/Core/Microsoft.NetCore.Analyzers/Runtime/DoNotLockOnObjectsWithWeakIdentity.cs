@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
@@ -9,8 +9,10 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
-    /// CA2002: Do not lock on objects with weak identities
+    /// CA2002: <inheritdoc cref="DoNotLockOnObjectsWithWeakIdentityTitle"/>
     ///
     /// Cause:
     /// A thread that attempts to acquire a lock on an object that has a weak identity could cause hangs.
@@ -24,27 +26,25 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     public sealed class DoNotLockOnObjectsWithWeakIdentityAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2002";
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                         s_localizableTitle,
-                                                                         s_localizableMessage,
-                                                                         DiagnosticCategory.Reliability,
-                                                                         RuleLevel.CandidateForRemoval,     // .NET core only has one appdomain
-                                                                         description: s_localizableDescription,
-                                                                         isPortedFxCopRule: true,
-                                                                         isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(DoNotLockOnObjectsWithWeakIdentityTitle)),
+            CreateLocalizableResourceString(nameof(DoNotLockOnObjectsWithWeakIdentityMessage)),
+            DiagnosticCategory.Reliability,
+            RuleLevel.CandidateForRemoval,     // .NET core only has one appdomain
+            description: CreateLocalizableResourceString(nameof(DoNotLockOnObjectsWithWeakIdentityDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationStartContext =>
+            context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 var compilation = compilationStartContext.Compilation;
 
@@ -123,26 +123,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public static bool IsPrimitiveType(ITypeSymbol type)
         {
-            switch (type.SpecialType)
+            return type.SpecialType switch
             {
-                case SpecialType.System_Boolean:
-                case SpecialType.System_Byte:
-                case SpecialType.System_Char:
-                case SpecialType.System_Double:
-                case SpecialType.System_Int16:
-                case SpecialType.System_Int32:
-                case SpecialType.System_Int64:
-                case SpecialType.System_UInt16:
-                case SpecialType.System_UInt32:
-                case SpecialType.System_UInt64:
-                case SpecialType.System_IntPtr:
-                case SpecialType.System_UIntPtr:
-                case SpecialType.System_SByte:
-                case SpecialType.System_Single:
-                    return true;
-                default:
-                    return false;
-            }
+                SpecialType.System_Boolean
+                or SpecialType.System_Byte
+                or SpecialType.System_Char
+                or SpecialType.System_Double
+                or SpecialType.System_Int16
+                or SpecialType.System_Int32
+                or SpecialType.System_Int64
+                or SpecialType.System_UInt16
+                or SpecialType.System_UInt32
+                or SpecialType.System_UInt64
+                or SpecialType.System_IntPtr
+                or SpecialType.System_UIntPtr
+                or SpecialType.System_SByte
+                or SpecialType.System_Single => true,
+                _ => false,
+            };
         }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -20,29 +20,36 @@ using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
+    /// <summary>
+    /// CA5387: <inheritdoc cref="DefinitelyUseWeakKDFInsufficientIterationCount"/>
+    /// CA5388: <inheritdoc cref="MaybeUseWeakKDFInsufficientIterationCount"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotUseWeakKDFInsufficientIterationCount : DiagnosticAnalyzer
     {
-        internal static DiagnosticDescriptor DefinitelyUseWeakKDFInsufficientIterationCountRule = SecurityHelpers.CreateDiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor DefinitelyUseWeakKDFInsufficientIterationCountRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5387",
-            typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseWeakKDFInsufficientIterationCount),
-            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseWeakKDFInsufficientIterationCountMessage),
+            nameof(DefinitelyUseWeakKDFInsufficientIterationCount),
+            nameof(DefinitelyUseWeakKDFInsufficientIterationCountMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
             isDataflowRule: true,
-            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseWeakKDFInsufficientIterationCountDescription));
-        internal static DiagnosticDescriptor MaybeUseWeakKDFInsufficientIterationCountRule = SecurityHelpers.CreateDiagnosticDescriptor(
-            "CA5388",
-            typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseWeakKDFInsufficientIterationCount),
-            nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseWeakKDFInsufficientIterationCountMessage),
-            RuleLevel.Disabled,
-            isPortedFxCopRule: false,
-            isDataflowRule: true,
-            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseWeakKDFInsufficientIterationCountDescription));
+            isReportedAtCompilationEnd: true,
+            descriptionResourceStringName: nameof(DoNotUseWeakKDFInsufficientIterationCountDescription));
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+        internal static readonly DiagnosticDescriptor MaybeUseWeakKDFInsufficientIterationCountRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5388",
+            nameof(MaybeUseWeakKDFInsufficientIterationCount),
+            nameof(MaybeUseWeakKDFInsufficientIterationCountMessage),
+            RuleLevel.Disabled,
+            isPortedFxCopRule: false,
+            isDataflowRule: true,
+            isReportedAtCompilationEnd: true,
+            descriptionResourceStringName: nameof(DoNotUseWeakKDFInsufficientIterationCountDescription));
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
                                                                                         DefinitelyUseWeakKDFInsufficientIterationCountRule,
                                                                                         MaybeUseWeakKDFInsufficientIterationCountRule);
 
@@ -50,7 +57,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
         {
-            return (propertySetAbstractValue[0]) switch
+            return propertySetAbstractValue[0] switch
             {
                 PropertySetAbstractValueKind.Flagged => HazardousUsageEvaluationResult.Flagged,
 
@@ -75,19 +82,17 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyRfc2898DeriveBytes,
                             out var rfc2898DeriveBytesTypeSymbol) ||
-                        !(compilationStartAnalysisContext.Compilation.SyntaxTrees.FirstOrDefault() is SyntaxTree tree))
+                        compilationStartAnalysisContext.Compilation.SyntaxTrees.FirstOrDefault() is not SyntaxTree tree)
                     {
                         return;
                     }
 
-                    var cancellationToken = compilationStartAnalysisContext.CancellationToken;
                     var sufficientIterationCount = compilationStartAnalysisContext.Options.GetUnsignedIntegralOptionValue(
                         optionName: EditorConfigOptionNames.SufficientIterationCountForWeakKDFAlgorithm,
                         rule: DefinitelyUseWeakKDFInsufficientIterationCountRule,
                         tree,
                         compilationStartAnalysisContext.Compilation,
-                        defaultValue: 100000,
-                        cancellationToken: cancellationToken);
+                        defaultValue: 100000);
                     var constructorMapper = new ConstructorMapper(
                         (IMethodSymbol constructorMethod, IReadOnlyList<ValueContentAbstractValue> argumentValueContentAbstractValues,
                         IReadOnlyList<PointsToAbstractValue> argumentPointsToAbstractValues) =>
@@ -118,10 +123,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
                             // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
-                            if (operationBlockStartAnalysisContext.OwningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    DefinitelyUseWeakKDFInsufficientIterationCountRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
-                                operationBlockStartAnalysisContext.OwningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    MaybeUseWeakKDFInsufficientIterationCountRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            if (operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(DefinitelyUseWeakKDFInsufficientIterationCountRule,
+                                    operationBlockStartAnalysisContext.OwningSymbol, operationBlockStartAnalysisContext.Compilation) &&
+                                operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(MaybeUseWeakKDFInsufficientIterationCountRule,
+                                    operationBlockStartAnalysisContext.OwningSymbol, operationBlockStartAnalysisContext.Compilation))
                             {
                                 return;
                             }
@@ -183,10 +188,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
-                                            tree,
+                                            rootOperationsNeedingAnalysis.First().Item1,
                                             compilationStartAnalysisContext.Compilation,
-                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                            cancellationToken: cancellationToken));
+                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive));
                                 }
 
                                 if (allResults == null)
@@ -222,8 +226,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                             finally
                             {
-                                rootOperationsNeedingAnalysis.Free();
-                                allResults?.Free();
+                                rootOperationsNeedingAnalysis.Free(compilationAnalysisContext.CancellationToken);
+                                allResults?.Free(compilationAnalysisContext.CancellationToken);
                             }
                         });
 

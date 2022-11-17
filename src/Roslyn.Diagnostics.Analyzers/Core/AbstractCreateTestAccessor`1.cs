@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+
+#nullable disable warnings
 
 using System.Linq;
 using System.Threading;
@@ -49,7 +51,7 @@ namespace Roslyn.Diagnostics.Analyzers
         }
 
         private static bool IsClassOrStruct(ITypeSymbol typeSymbol)
-            => typeSymbol.TypeKind == TypeKind.Class || typeSymbol.TypeKind == TypeKind.Struct;
+            => typeSymbol.TypeKind is TypeKind.Class or TypeKind.Struct;
 
         private async Task<Document> CreateTestAccessorAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
         {
@@ -71,7 +73,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 accessibility: Accessibility.Internal,
                 statements: new[] { syntaxGenerator.ReturnStatement(newTestAccessorExpression) });
 
-            var parameterName = char.ToLowerInvariant(type.Name[0]) + type.Name.Substring(1);
+            var parameterName = "instance";
             var fieldName = "_" + parameterName;
             var testAccessorField = syntaxGenerator.FieldDeclaration(
                 fieldName,

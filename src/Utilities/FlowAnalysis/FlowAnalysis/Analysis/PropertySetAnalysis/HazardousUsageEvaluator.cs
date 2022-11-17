@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using Microsoft.CodeAnalysis;
@@ -66,7 +66,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
         /// <param name="derivedClass">Whether to consider derived class.</param>
         public HazardousUsageEvaluator(HazardousUsageEvaluatorKind kind, EvaluationCallback evaluator, bool derivedClass = false)
         {
-            if (kind != HazardousUsageEvaluatorKind.Return && kind != HazardousUsageEvaluatorKind.Initialization && kind != HazardousUsageEvaluatorKind.Argument)
+            if (kind is not HazardousUsageEvaluatorKind.Return and not HazardousUsageEvaluatorKind.Initialization and not HazardousUsageEvaluatorKind.Argument)
             {
                 throw new ArgumentException(
                     "kind must be Return or Initialization or Argument.  Use other constructors for Invocation.",
@@ -116,12 +116,12 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
 
         public override int GetHashCode()
         {
-            return HashUtilities.Combine(
+            return RoslynHashCode.Combine(
                 this.ContainingTypeName.GetHashCodeOrDefault(),
-                HashUtilities.Combine(this.MethodName.GetHashCodeOrDefault(),
-                HashUtilities.Combine(this.ParameterNameOfPropertySetObject.GetHashCodeOrDefault(),
-                 HashUtilities.Combine(this.DerivedClass.GetHashCodeOrDefault(),
-                this.InvocationEvaluator.GetHashCodeOrDefault()))));
+                this.MethodName.GetHashCodeOrDefault(),
+                this.ParameterNameOfPropertySetObject.GetHashCodeOrDefault(),
+                this.DerivedClass.GetHashCode(),
+                this.InvocationEvaluator.GetHashCodeOrDefault());
         }
 
         public override bool Equals(object obj)

@@ -5,28 +5,10 @@
     {
       "tool": {
         "name": "Roslyn.Diagnostics.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.4",
         "language": "en-US"
       },
       "rules": {
-        "RS0005": {
-          "id": "RS0005",
-          "shortDescription": "Do not use generic 'CodeAction.Create' to create 'CodeAction'",
-          "fullDescription": "Do not use generic 'CodeAction.Create' to create 'CodeAction'",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "RoslynDiagnosticsPerformance",
-            "isEnabledByDefault": true,
-            "typeName": "CodeActionCreateAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
         "RS0006": {
           "id": "RS0006",
           "shortDescription": "Do not mix attributes from different versions of MEF",
@@ -101,7 +83,7 @@
         },
         "RS0034": {
           "id": "RS0034",
-          "shortDescription": "Exported parts should be marked with 'ImportingConstructorAttribute'",
+          "shortDescription": "Exported parts should have a public constructor marked with 'ImportingConstructorAttribute'",
           "fullDescription": "Exported parts should be marked with 'ImportingConstructorAttribute'.",
           "defaultLevel": "warning",
           "properties": {
@@ -134,24 +116,6 @@
             ]
           }
         },
-        "RS0042": {
-          "id": "RS0042",
-          "shortDescription": "Do not copy value",
-          "fullDescription": "Do not unbox non-copyable value types.",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "RoslynDiagnosticsReliability",
-            "isEnabledByDefault": true,
-            "typeName": "DoNotCopyValue",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
         "RS0043": {
           "id": "RS0043",
           "shortDescription": "Do not call 'GetTestAccessor()'",
@@ -170,41 +134,21 @@
             ]
           }
         },
-        "RS0044": {
-          "id": "RS0044",
-          "shortDescription": "Create test accessor",
-          "fullDescription": "This is a refactoring which simplifies the process of creating test accessors using the 'TestAccessor' pattern.",
-          "defaultLevel": "hidden",
+        "RS0049": {
+          "id": "RS0049",
+          "shortDescription": "Instance of TemporaryArray<T>.AsRef() must be a 'using' variable",
+          "fullDescription": "Instance of TemporaryArray<T>.AsRef() must be a 'using' variable.",
+          "defaultLevel": "warning",
           "properties": {
-            "category": "RoslynDiagnosticsMaintainability",
+            "category": "RoslynDiagnosticsReliability",
             "isEnabledByDefault": true,
-            "typeName": "CreateTestAccessor",
+            "typeName": "TemporaryArrayAsRefAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry",
-              "NotConfigurable"
-            ]
-          }
-        },
-        "RS0045": {
-          "id": "RS0045",
-          "shortDescription": "Expose member for testing",
-          "fullDescription": "Expose member for testing.",
-          "defaultLevel": "hidden",
-          "properties": {
-            "category": "RoslynDiagnosticsMaintainability",
-            "isEnabledByDefault": true,
-            "typeName": "ExposeMemberForTesting",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "Telemetry",
-              "NotConfigurable"
+              "Telemetry"
             ]
           }
         }
@@ -213,7 +157,7 @@
     {
       "tool": {
         "name": "Roslyn.Diagnostics.CSharp.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.4",
         "language": "en-US"
       },
       "rules": {
@@ -264,6 +208,7 @@
               "C#"
             ],
             "tags": [
+              "CompilationEnd",
               "Telemetry"
             ]
           }
@@ -277,6 +222,23 @@
             "category": "RoslynDiagnosticsMaintainability",
             "isEnabledByDefault": true,
             "typeName": "PreferNullLiteral",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "RS0042": {
+          "id": "RS0042",
+          "shortDescription": "Do not copy value",
+          "fullDescription": "Auto-properties always copy values, so they cannot be declared with non-copyable types.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "RoslynDiagnosticsReliability",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpDoNotCopyValue",
             "languages": [
               "C#"
             ],
@@ -301,64 +263,13 @@
               "Telemetry"
             ]
           }
-        },
-        "RS0100": {
-          "id": "RS0100",
-          "shortDescription": "Statements must be placed on their own line",
-          "fullDescription": "Statements must be placed on their own line",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "RoslynDiagnosticsMaintainability",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpWrapStatementsDiagnosticAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "RS0101": {
-          "id": "RS0101",
-          "shortDescription": "Avoid multiple blank lines",
-          "fullDescription": "Avoid multiple blank lines",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "RoslynDiagnosticsMaintainability",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpBlankLinesDiagnosticAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "RS0102": {
-          "id": "RS0102",
-          "shortDescription": "Braces must not have blank lines between them",
-          "fullDescription": "Braces must not have blank lines between them",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "RoslynDiagnosticsMaintainability",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpBracePlacementDiagnosticAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
         }
       }
     },
     {
       "tool": {
         "name": "Roslyn.Diagnostics.VisualBasic.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.4",
         "language": "en-US"
       },
       "rules": {
@@ -426,19 +337,20 @@
               "Visual Basic"
             ],
             "tags": [
+              "CompilationEnd",
               "Telemetry"
             ]
           }
         },
-        "RS0101": {
-          "id": "RS0101",
-          "shortDescription": "Avoid multiple blank lines",
-          "fullDescription": "Avoid multiple blank lines",
+        "RS0042": {
+          "id": "RS0042",
+          "shortDescription": "Do not copy value",
+          "fullDescription": "Auto-properties always copy values, so they cannot be declared with non-copyable types.",
           "defaultLevel": "warning",
           "properties": {
-            "category": "RoslynDiagnosticsMaintainability",
+            "category": "RoslynDiagnosticsReliability",
             "isEnabledByDefault": true,
-            "typeName": "VisualBasicBlankLinesDiagnosticAnalyzer",
+            "typeName": "VisualBasicDoNotCopyValue",
             "languages": [
               "Visual Basic"
             ],

@@ -1,32 +1,34 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Roslyn.Diagnostics.Analyzers;
 
 namespace Roslyn.Diagnostics.CSharp.Analyzers
 {
+    using static RoslynDiagnosticsAnalyzersResources;
+
+    /// <summary>
+    /// RS0038: <inheritdoc cref="PreferNullLiteralTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class PreferNullLiteral : DiagnosticAnalyzer
     {
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.PreferNullLiteralTitle), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.PreferNullLiteralMessage), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.PreferNullLiteralDescription), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
-
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Rule = new(
             RoslynDiagnosticIds.PreferNullLiteralRuleId,
-            s_localizableTitle,
-            s_localizableMessage,
+            CreateLocalizableResourceString(nameof(PreferNullLiteralTitle)),
+            CreateLocalizableResourceString(nameof(PreferNullLiteralMessage)),
             DiagnosticCategory.RoslynDiagnosticsMaintainability,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: s_localizableDescription,
+            description: CreateLocalizableResourceString(nameof(PreferNullLiteralDescription)),
             helpLinkUri: null,
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -54,9 +56,13 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
             {
                 // Pointers can use 'null'
             }
+            else if (type.TypeKind == TypeKind.Error)
+            {
+                return;
+            }
             else if (type.IsValueType)
             {
-                if (!(type is INamedTypeSymbol namedType)
+                if (type is not INamedTypeSymbol namedType
                     || namedType.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T)
                 {
                     return;
@@ -67,7 +73,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation()));
+            context.ReportDiagnostic(context.Operation.CreateDiagnostic(Rule));
         }
     }
 }

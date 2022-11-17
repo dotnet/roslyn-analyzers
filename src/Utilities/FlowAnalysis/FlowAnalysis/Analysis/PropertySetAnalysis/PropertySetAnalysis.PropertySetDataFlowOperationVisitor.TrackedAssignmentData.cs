@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
@@ -30,17 +30,17 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
 
                 public void Free()
                 {
-                    this.AssignmentsWithUnknownLocation?.Free();
+                    this.AssignmentsWithUnknownLocation?.Dispose();
                     this.AssignmentsWithUnknownLocation = null;
 
                     if (this.AbstractLocationsToAssignments != null)
                     {
                         foreach (PooledHashSet<IAssignmentOperation> hashSet in this.AbstractLocationsToAssignments.Values)
                         {
-                            hashSet?.Free();
+                            hashSet?.Dispose();
                         }
 
-                        this.AbstractLocationsToAssignments.Free();
+                        this.AbstractLocationsToAssignments.Dispose();
                         this.AbstractLocationsToAssignments = null;
                     }
                 }

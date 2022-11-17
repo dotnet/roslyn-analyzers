@@ -1,26 +1,28 @@
-How to use Microsoft.CodeAnalysis.BannedApiAnalyzers
---------------------------------
+# How to use Microsoft.CodeAnalysis.BannedApiAnalyzers
 
-The following file have to be added to any project referencing this package to enable analysis:
+The following file or files have to be added to any project referencing this package to enable analysis:
 
 - BannedSymbols.txt
+- BannedSymbols.\*.txt
 
 This can be done by:
 
 - In Visual Studio, right click project in Solution Explorer, and choose "Add -> New Items", then select "Text File" in "Add new item" dialog.
 - Or, create the file at the location you desire, then add the following text to your project/target file (replace file path with its actual location):
 
-```xml
+  ```xml
   <ItemGroup>
     <AdditionalFiles Include="BannedSymbols.txt" />
   </ItemGroup>
   ```
 
-To add a symbol to banned list, just add an entry in the format below to the BannedSymbols.txt (Description Text will be displayed as description in diagnostics, which is optional):
+To add a symbol to the banned list, just add an entry in the format below to one of the configuration files (Description Text will be displayed as description in diagnostics, which is optional):
 
-        {Documentation Comment ID string for the symbol}[;Description Text]
+```txt
+{Documentation Comment ID string for the symbol}[;Description Text]
+```
 
-For details on ID string format, please refer to ["Documentation comments"](https://github.com/dotnet/csharplang/blob/master/spec/documentation-comments.md#id-string-format).
+For details on ID string format, please refer to ["Documentation comments"](https://github.com/dotnet/csharplang/blob/main/spec/documentation-comments.md#id-string-format).
 
 Examples of BannedSymbols.txt entries for symbols declared in the source below:
 
@@ -64,5 +66,3 @@ namespace N
 | `string BannedField`                  | `F:N.BannedType.BannedField`
 | `string BannedProperty { get; }`      | `P:N.BannedType.BannedProperty`
 | `event EventHandler BannedEvent;`     | `E:N.BannedType.BannedEvent`
-
-

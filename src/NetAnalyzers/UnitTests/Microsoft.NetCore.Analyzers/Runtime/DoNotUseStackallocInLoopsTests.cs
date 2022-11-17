@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Runtime.DoNotUseStackallocInLoopsAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpDoNotUseStackallocInLoopsAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
@@ -11,7 +12,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class DoNotUseStackallocInLoopsTests
     {
         [Fact]
-        public async Task NoDiagnostics_StackallocNotInLoop()
+        public async Task NoDiagnostics_StackallocNotInLoopAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -28,7 +29,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task NoDiagnostics_StackallocInLoopWithBreak()
+        public async Task NoDiagnostics_StackallocAsSourceOfForeachLoop()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = LanguageVersion.CSharp8,
+                TestCode = @"
+                using System;
+                unsafe class TestClass {
+                    private static void SourceOfForeachLoop() {
+                        foreach (char c in stackalloc char[] { 'a', 'b', 'c' }) { }
+                    }
+                }"
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task NoDiagnostics_StackallocInLoopWithBreakAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -64,7 +81,94 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task Diagnostics_LoopsWithStackallocPtr()
+        public async Task NoDiagnostics_StackallocInLoopButInsideALocalFunctionAsync()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = LanguageVersion.CSharp8,
+                TestCode = @"
+using System;
+class TestClass {
+    private static void StackAllocInLoopButInsideLocalFunction() {
+        while (true) {
+            XX();
+
+            static void XX()
+            {
+                Span<int> tmp = stackalloc int[10];
+                Console.WriteLine(tmp[0]);
+            }
+        }
+    }
+}"
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task NoDiagnostics_StackallocInLoopButInsideALambdaAsync()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = LanguageVersion.CSharp8,
+                TestCode = @"
+using System;
+class TestClass {
+    private static void StackallocInLoopButInsideALambda() {
+        while (true) {
+            Action a = () => {
+                Span<int> tmp = stackalloc int[10];
+                Console.WriteLine(tmp[0]);
+            };
+            a();
+        }
+    }
+}"
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task NoDiagnostics_StackallocInLoopButInsideALambda2Async()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = LanguageVersion.CSharp8,
+                TestCode = @"
+using System;
+class TestClass {
+    private static void StackallocInLoopButInsideALambda2() {
+        while (true) {
+            Action<int> a = _ => Console.Write((stackalloc int[10]).Length);
+        }
+    }
+}"
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task NoDiagnostics_StackallocInLoopButInsideFuncAsync()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = LanguageVersion.CSharp8,
+                TestCode = @"
+using System;
+class TestClass {
+    private static void StackallocInLoopButInsideAction() {
+        while (true) {
+            Func<int> a = delegate()
+            {
+                Span<int> tmp = stackalloc int[10];
+                return 0;
+            };
+            a();
+        }
+    }
+}"
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task Diagnostics_LoopsWithStackallocPtrAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -94,7 +198,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task Diagnostics_LoopsWithStackallocSpan()
+        public async Task Diagnostics_LoopsWithStackallocSpanAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -124,7 +228,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task Diagnostics_LoopInLoopWithOuterBreak()
+        public async Task Diagnostics_LoopInLoopWithOuterBreakAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -143,7 +247,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task Diagnostics_LoopWithBreakInConditional()
+        public async Task Diagnostics_LoopWithBreakInConditionalAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -161,6 +265,25 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         }
                     }
                 }");
+        }
+
+        [Fact]
+        public async Task Diagnostics_StackallocAsSourceOfForeachLoopButInAnotherLoop()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = LanguageVersion.CSharp8,
+                TestCode = @"
+                using System;
+                unsafe class TestClass {
+                    private static void SourceOfForeachLoopInAnotherLoop() {
+                        for (int i = 0; i < 10; i++)
+                        {
+                            foreach (char c in {|CA2014:stackalloc char[] { 'a', 'b', 'c' }|}) { }
+                        }
+                    }
+                }"
+            }.RunAsync();
         }
     }
 }

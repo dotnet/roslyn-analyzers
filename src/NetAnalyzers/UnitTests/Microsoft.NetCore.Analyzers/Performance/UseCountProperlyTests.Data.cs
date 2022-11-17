@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections;
@@ -34,8 +34,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                             }
                             else
                             {
-                                // If the evaluation for Count {operand} 0 when Count = 1 has the same result as the evaluation 
-                                // when either Count = 1 or Count = 2 then the case does not apply and therefore no diagnosis should be given. 
+                                // If the evaluation for Count {operand} 0 when Count = 1 has the same result as the evaluation
+                                // when either Count = 1 or Count = 2 then the case does not apply and therefore no diagnosis should be given.
                                 if (resultWhenExpressionEqualsZero == @operator.Operation(leftSide, rightSide))
                                 {
                                     noDiagnosis = true;
@@ -49,7 +49,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                             noDiagnosis,
                             literal,
                             @operator.BinaryOperatorKind,
-                            isRightSideExpression, 
+                            isRightSideExpression,
                             // Indicates whether the IsEmpty property should be negated on the fix.
                             !resultWhenExpressionEqualsZero
                         };
@@ -60,19 +60,19 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private static readonly List<OperatorKind> _operators = new List<OperatorKind>
+        private static readonly List<OperatorKind> _operators = new()
         {
-            new OperatorKind((a,b) => a == b, 1, 2, BinaryOperatorKind.Equals),
-            new OperatorKind((a,b) => a != b, 2, 2, BinaryOperatorKind.NotEquals),
-            new OperatorKind((a,b) => a > b,  1, 1, BinaryOperatorKind.GreaterThan),
-            new OperatorKind((a,b) => a >= b, 2, 2, BinaryOperatorKind.GreaterThanOrEqual),
-            new OperatorKind((a,b) => a < b,  1, 1, BinaryOperatorKind.LessThan),
-            new OperatorKind((a,b) => a <= b, 2, 2, BinaryOperatorKind.LessThanOrEqual),
+            new OperatorKind((a, b) => a == b, 1, 2, BinaryOperatorKind.Equals),
+            new OperatorKind((a, b) => a != b, 2, 2, BinaryOperatorKind.NotEquals),
+            new OperatorKind((a, b) => a > b, 1, 1, BinaryOperatorKind.GreaterThan),
+            new OperatorKind((a, b) => a >= b, 2, 2, BinaryOperatorKind.GreaterThanOrEqual),
+            new OperatorKind((a, b) => a < b, 1, 1, BinaryOperatorKind.LessThan),
+            new OperatorKind((a, b) => a <= b, 2, 2, BinaryOperatorKind.LessThanOrEqual),
         };
     }
 
 #pragma warning disable CA1815 // Override equals and operator equals on value types
-    public struct OperatorKind
+    public readonly struct OperatorKind
     {
         public int BasicOperatorLength { get; }
         public int CSharpOperatorLength { get; }

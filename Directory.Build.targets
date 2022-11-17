@@ -1,15 +1,15 @@
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information. -->
 <Project>
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <!-- Add License and Third Party Notices files into each VSIX. -->
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)\assets\EULA.rtf">
-      <Link>EULA.rtf</Link>
+    <Content Include="$(MSBuildThisFileDirectory)\assets\EULA.txt">
+      <Link>EULA.txt</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="$(MSBuildThisFileDirectory)\assets\ThirdPartyNotices.rtf">
-       <Link>ThirdPartyNotices.rtf</Link>
+    <Content Include="$(MSBuildThisFileDirectory)\assets\ThirdPartyNotices.txt">
+       <Link>ThirdPartyNotices.txt</Link>
        <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
@@ -18,7 +18,7 @@
     <PackageReference Include="coverlet.msbuild" Version="$(CoverletVersion)" PrivateAssets="all" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(NonShipping)' == 'true' or '$(IsVsixProject)' == 'true' or '$(FxCopAnalyzersProject)' == 'true'">
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(NonShipping)' == 'true' or '$(IsVsixProject)' == 'true'">
     <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
   </PropertyGroup>
 
@@ -57,38 +57,20 @@
       Properties="TargetFramework=%(_TargetFramework.Identity)" />
   </Target>
 
-  <Target Name="OuterGenerateCoverageResult" AfterTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' == ''">
+  <Target Name="OuterGenerateCoverageResult" BeforeTargets="Test" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' == ''">
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
       Targets="InnerGenerateCoverageResult"
       Properties="TargetFramework=%(_TargetFramework.Identity)" />
   </Target>
 
-  <Target Name="InnerInstrumentModulesNoBuild" BeforeTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' != ''">
-    <Coverlet.MSbuild.Tasks.InstrumentationTask
-      Condition="'$(CollectCoverage)' == 'true'"
-      Path="$(TargetPath)"
-      Include="$(Include)"
-      IncludeDirectory="$(IncludeDirectory)"
-      Exclude="$(Exclude)"
-      ExcludeByFile="$(ExcludeByFile)"
-      ExcludeByAttribute="$(ExcludeByAttribute)"
-      IncludeTestAssembly="$(IncludeTestAssembly)"
-      SingleHit="$(SingleHit)"
-      MergeWith="$(MergeWith)"
-      UseSourceLink="$(UseSourceLink)" >
-      <Output TaskParameter="InstrumenterState" PropertyName="InstrumenterState"/>
-    </Coverlet.MSbuild.Tasks.InstrumentationTask>
-  </Target>
+  <Target Name="InnerInstrumentModulesNoBuild"
+          BeforeTargets="RunTests"
+          DependsOnTargets="InstrumentModules"
+          Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' != '' AND '$(CollectCoverage)' == 'true'" />
 
-  <Target Name="InnerGenerateCoverageResult" AfterTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' != ''">
-    <Coverlet.MSbuild.Tasks.CoverageResultTask
-      Condition="'$(CollectCoverage)' == 'true'"
-      Output="$(CoverletOutput)"
-      OutputFormat="$(CoverletOutputFormat)"
-      Threshold="$(Threshold)"
-      ThresholdType="$(ThresholdType)"
-      ThresholdStat="$(ThresholdStat)"
-      InstrumenterState="$(InstrumenterState)"/>
-  </Target>
+  <Target Name="InnerGenerateCoverageResult"
+          BeforeTargets="Test"
+          DependsOnTargets="GenerateCoverageResult"
+          Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' != '' AND '$(CollectCoverage)' == 'true'" />
 </Project>

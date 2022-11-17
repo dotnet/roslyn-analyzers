@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -18,23 +18,31 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
         #region Verifiers
 
         private DiagnosticResult CSharpResult1401(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyCS.Diagnostic(PInvokeDiagnosticAnalyzer.RuleCA1401)
                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
         private DiagnosticResult BasicResult1401(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(PInvokeDiagnosticAnalyzer.RuleCA1401)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
 
         private DiagnosticResult CSharpResult2101(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyCS.Diagnostic(PInvokeDiagnosticAnalyzer.RuleCA2101)
                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
         private DiagnosticResult BasicResult2101(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(PInvokeDiagnosticAnalyzer.RuleCA2101)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
 
         #endregion
@@ -42,7 +50,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
         #region CA1401 tests
 
         [Fact]
-        public async Task CA1401CSharpTest()
+        public async Task CA1401CSharpTestAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
@@ -67,7 +75,7 @@ public class C
         }
 
         [Fact]
-        public async Task CA1401CSharpTestWithScope()
+        public async Task CA1401CSharpTestWithScopeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
@@ -90,7 +98,7 @@ public class C
         }
 
         [Fact]
-        public async Task CA1401BasicSubTest()
+        public async Task CA1401BasicSubTestAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
@@ -119,7 +127,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1401BasicSubTestWithScope()
+        public async Task CA1401BasicSubTestWithScopeAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
@@ -145,7 +153,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1401BasicFunctionTest()
+        public async Task CA1401BasicFunctionTestAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
@@ -174,7 +182,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1401BasicDeclareSubTest()
+        public async Task CA1401BasicDeclareSubTestAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
@@ -195,7 +203,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1401BasicDeclareFunctionTest()
+        public async Task CA1401BasicDeclareFunctionTestAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
@@ -217,7 +225,7 @@ End Class
 
         [WorkItem(792, "https://github.com/dotnet/roslyn-analyzers/issues/792")]
         [Fact]
-        public async Task CA1401CSharpNonPublic()
+        public async Task CA1401CSharpNonPublicAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -236,7 +244,7 @@ public sealed class TimerFontContainer
 
         [WorkItem(792, "https://github.com/dotnet/roslyn-analyzers/issues/792")]
         [Fact]
-        public async Task CA1401BasicNonPublic()
+        public async Task CA1401BasicNonPublicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public NotInheritable Class TimerFontContainer
@@ -252,7 +260,7 @@ End Class
         #region CA2101 tests
 
         [Fact]
-        public async Task CA2101SimpleCSharpTest()
+        public async Task CA2101SimpleCSharpTestAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
@@ -280,7 +288,7 @@ class C
         }
 
         [Fact]
-        public async Task CA2101SimpleCSharpTestWithScope()
+        public async Task CA2101SimpleCSharpTestWithScopeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
@@ -304,7 +312,7 @@ class C
         }
 
         [Fact]
-        public async Task CA2101SimpleBasicTest()
+        public async Task CA2101SimpleBasicTestAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
@@ -335,7 +343,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2101SimpleBasicTestWithScope()
+        public async Task CA2101SimpleBasicTestWithScopeAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
@@ -362,7 +370,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2101SimpleDeclareBasicTest()
+        public async Task CA2101SimpleDeclareBasicTestAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Text
@@ -384,7 +392,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2101ParameterMarshaledCSharpTest()
+        public async Task CA2101ParameterMarshaledCSharpTestAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
@@ -438,7 +446,7 @@ class C
         }
 
         [Fact]
-        public async Task CA2101ParameterMarshaledBasicTest()
+        public async Task CA2101ParameterMarshaledBasicTestAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
@@ -502,7 +510,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2101CharSetCSharpTest()
+        public async Task CA2101CharSetCSharpTestAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
@@ -536,7 +544,7 @@ class C
         }
 
         [Fact]
-        public async Task CA2101CharSetBasicTest()
+        public async Task CA2101CharSetBasicTestAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
@@ -575,7 +583,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2101ReturnTypeCSharpTest()
+        public async Task CA2101ReturnTypeCSharpTestAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
@@ -601,7 +609,7 @@ class C
         }
 
         [Fact]
-        public async Task CA2101ReturnTypeBasicTest()
+        public async Task CA2101ReturnTypeBasicTestAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
@@ -630,6 +638,43 @@ End Class
                 BasicResult2101(6, 6),
                 BasicResult2101(10, 6),
                 BasicResult2101(22, 30));
+        }
+
+        [Fact]
+        public async Task CA2101WithoutBestFitMappingCSharpTestAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System.Runtime.InteropServices;
+using System.Text;
+
+class C
+{
+
+    [DllImport(""user32.dll"", BestFitMapping = false)]
+    private static extern void Method1(string s);
+
+    [DllImport(""user32.dll"", CharSet = CharSet.Ansi, BestFitMapping = false)]
+    private static extern void Method2(string s);
+
+    [DllImport(""user32.dll"", BestFitMapping = false)]
+    private static extern void Method3(StringBuilder s);
+
+    [DllImport(""user32.dll"", CharSet = CharSet.Ansi, BestFitMapping = false)]
+    private static extern void Method4(StringBuilder s);
+
+    [DllImport(""user32.dll"", BestFitMapping = false)]
+    private static extern string Method5();
+
+    [DllImport(""user32.dll"", BestFitMapping = false)]
+    private static extern StringBuilder Method6();
+
+    [DllImport(""user32.dll"", CharSet = CharSet.Ansi, BestFitMapping = false)]
+    private static extern string Method7();
+
+    [DllImport(""user32.dll"", CharSet = CharSet.Ansi, BestFitMapping = false)]
+    private static extern StringBuilder Method8();
+}
+");
         }
 
         #endregion

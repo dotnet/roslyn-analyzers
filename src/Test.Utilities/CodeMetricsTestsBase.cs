@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Globalization;
@@ -71,7 +71,7 @@ namespace Test.Utilities.CodeMetrics
         {
             var project = CreateProject(sources, language);
             var compilation = project.GetCompilationAsync(CancellationToken.None).Result!;
-            var diagnostics = compilation.GetDiagnostics().Where(d => d.Severity == DiagnosticSeverity.Warning || d.Severity == DiagnosticSeverity.Error);
+            var diagnostics = compilation.GetDiagnostics().Where(d => d.Severity is DiagnosticSeverity.Warning or DiagnosticSeverity.Error);
             if (expectDiagnostics)
             {
                 Assert.True(diagnostics.Any());

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
@@ -9,44 +9,47 @@ using System.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1044: Properties should not be write only
+    /// CA1044: <inheritdoc cref="PropertiesShouldNotBeWriteOnlyTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PropertiesShouldNotBeWriteOnlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1044";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PropertiesShouldNotBeWriteOnlyTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageAddGetter = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageAddGetter), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageMakeMoreAccessible = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageMakeMoreAccessible), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PropertiesShouldNotBeWriteOnlyDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(PropertiesShouldNotBeWriteOnlyTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(PropertiesShouldNotBeWriteOnlyDescription));
 
-        internal static DiagnosticDescriptor AddGetterRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageAddGetter,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor MakeMoreAccessibleRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageMakeMoreAccessible,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor AddGetterRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(PropertiesShouldNotBeWriteOnlyMessageAddGetter)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AddGetterRule, MakeMoreAccessibleRule);
+        internal static readonly DiagnosticDescriptor MakeMoreAccessibleRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(PropertiesShouldNotBeWriteOnlyMessageMakeMoreAccessible)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(AddGetterRule, MakeMoreAccessibleRule);
+
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property);
+            context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property);
         }
 
         /// <summary>
@@ -54,27 +57,27 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         /// </summary>
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            if (!(context.Symbol is IPropertySymbol property))
+            if (context.Symbol is not IPropertySymbol property)
             {
                 return;
             }
 
-            // not raising a violation for when: 
-            //     property is overridden because the issue can only be fixed in the base type 
-            //     property is the implementaton of any interface member 
+            // not raising a violation for when:
+            //     property is overridden because the issue can only be fixed in the base type
+            //     property is the implementation of any interface member
             if (property.IsOverride || property.IsImplementationOfAnyInterfaceMember())
             {
                 return;
             }
 
             // Only analyze externally visible properties by default
-            if (!property.MatchesConfiguredVisibility(context.Options, AddGetterRule, context.Compilation, context.CancellationToken))
+            if (!context.Options.MatchesConfiguredVisibility(AddGetterRule, property, context.Compilation))
             {
-                Debug.Assert(!property.MatchesConfiguredVisibility(context.Options, MakeMoreAccessibleRule, context.Compilation, context.CancellationToken));
+                Debug.Assert(!context.Options.MatchesConfiguredVisibility(MakeMoreAccessibleRule, property, context.Compilation));
                 return;
             }
 
-            Debug.Assert(property.MatchesConfiguredVisibility(context.Options, MakeMoreAccessibleRule, context.Compilation, context.CancellationToken));
+            Debug.Assert(context.Options.MatchesConfiguredVisibility(MakeMoreAccessibleRule, property, context.Compilation));
 
             // We handled the non-CA1044 cases earlier.  Now, we handle CA1044 cases
             // If there is no getter then it is not accessible

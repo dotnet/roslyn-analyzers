@@ -1,17 +1,20 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.Lightup;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1063: Implement IDisposable Correctly
+    /// CA1063: <inheritdoc cref="ImplementIDisposableCorrectlyTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ImplementIDisposableCorrectlyAnalyzer : DiagnosticAnalyzer
@@ -22,103 +25,110 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private const string GarbageCollectorTypeName = "System.GC";
         private const string SuppressFinalizeMethodName = "SuppressFinalize";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableMessageIDisposableReimplementation = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageFinalizeOverride = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageDisposeOverride = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeOverride), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageDisposeSignature = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeSignature), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageRenameDispose = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageRenameDispose), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageDisposeBoolSignature = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeBoolSignature), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageDisposeImplementation = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeImplementation), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageFinalizeImplementation = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeImplementation), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageProvideDisposeBool = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageProvideDisposeBool), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(ImplementIDisposableCorrectlyTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(ImplementIDisposableCorrectlyDescription));
 
         // Rules disabled by default until https://github.com/dotnet/docs/issues/8463 is resolved.
 
-        internal static DiagnosticDescriptor IDisposableReimplementationRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageIDisposableReimplementation,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor FinalizeOverrideRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageFinalizeOverride,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor DisposeOverrideRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageDisposeOverride,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor DisposeSignatureRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageDisposeSignature,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor RenameDisposeRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageRenameDispose,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor DisposeBoolSignatureRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageDisposeBoolSignature,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor DisposeImplementationRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageDisposeImplementation,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor FinalizeImplementationRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageFinalizeImplementation,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor ProvideDisposeBoolRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageProvideDisposeBool,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor IDisposableReimplementationRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(ImplementIDisposableCorrectlyMessageIDisposableReimplementation)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
+        internal static readonly DiagnosticDescriptor FinalizeOverrideRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(ImplementIDisposableCorrectlyMessageFinalizeOverride)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor DisposeOverrideRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(ImplementIDisposableCorrectlyMessageDisposeOverride)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor DisposeSignatureRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(ImplementIDisposableCorrectlyMessageDisposeSignature)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor RenameDisposeRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(ImplementIDisposableCorrectlyMessageRenameDispose)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor DisposeBoolSignatureRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(ImplementIDisposableCorrectlyMessageDisposeBoolSignature)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor DisposeImplementationRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(ImplementIDisposableCorrectlyMessageDisposeImplementation)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor FinalizeImplementationRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(ImplementIDisposableCorrectlyMessageFinalizeImplementation)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor ProvideDisposeBoolRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(ImplementIDisposableCorrectlyMessageProvideDisposeBool)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(IDisposableReimplementationRule, FinalizeOverrideRule, DisposeOverrideRule, DisposeSignatureRule, RenameDisposeRule, DisposeBoolSignatureRule, DisposeImplementationRule, FinalizeImplementationRule, ProvideDisposeBoolRule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 context =>
                 {
                     INamedTypeSymbol? disposableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
@@ -127,7 +137,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    if (!(disposableType.GetMembers(DisposeMethodName).FirstOrDefault() is IMethodSymbol disposeInterfaceMethod))
+                    if (disposableType.GetMembers(DisposeMethodName).FirstOrDefault() is not IMethodSymbol disposeInterfaceMethod)
                     {
                         return;
                     }
@@ -138,7 +148,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    if (!(garbageCollectorType.GetMembers(SuppressFinalizeMethodName).FirstOrDefault() is IMethodSymbol suppressFinalizeMethod))
+                    if (garbageCollectorType.GetMembers(SuppressFinalizeMethodName).FirstOrDefault() is not IMethodSymbol suppressFinalizeMethod)
                     {
                         return;
                     }
@@ -176,7 +186,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 // will always have identical configured visibility.
                 if (context.Symbol is INamedTypeSymbol type &&
                     type.TypeKind == TypeKind.Class &&
-                    type.MatchesConfiguredVisibility(context.Options, IDisposableReimplementationRule, context.Compilation, context.CancellationToken))
+                    context.Options.MatchesConfiguredVisibility(IDisposableReimplementationRule, type, context.Compilation))
                 {
                     bool implementsDisposableInBaseType = ImplementsDisposableInBaseType(type);
 
@@ -224,7 +234,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             private void AnalyzeOperationBlock(OperationBlockAnalysisContext context)
             {
-                if (!(context.OwningSymbol is IMethodSymbol method))
+                if (context.OwningSymbol is not IMethodSymbol method)
                 {
                     return;
                 }
@@ -237,7 +247,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // will always have identical configured visibility.
                     INamedTypeSymbol type = method.ContainingType;
                     if (type != null && type.TypeKind == TypeKind.Class &&
-                        !type.IsSealed && type.MatchesConfiguredVisibility(context.Options, IDisposableReimplementationRule, context.Compilation, context.CancellationToken))
+                        !type.IsSealed && context.Options.MatchesConfiguredVisibility(IDisposableReimplementationRule, type, context.Compilation))
                     {
                         if (ImplementsDisposableDirectly(type))
                         {
@@ -331,10 +341,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 if (type.HasFinalizer())
                 {
                     // Flag the finalizer if there is any base type with a finalizer, this can cause duplicate Dispose(false) invocations.
-                    var baseTypeWithFinalizerOpt = GetFirstBaseTypeWithFinalizerOrDefault(type);
-                    if (baseTypeWithFinalizerOpt != null)
+                    var baseTypeWithFinalizer = GetFirstBaseTypeWithFinalizerOrDefault(type);
+                    if (baseTypeWithFinalizer != null)
                     {
-                        context.ReportDiagnostic(type.CreateDiagnostic(FinalizeOverrideRule, type.Name, baseTypeWithFinalizerOpt.Name));
+                        context.ReportDiagnostic(type.CreateDiagnostic(FinalizeOverrideRule, type.Name, baseTypeWithFinalizer.Name));
                     }
                 }
             }
@@ -493,12 +503,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         /// </summary>
         private sealed class DisposeImplementationValidator
         {
-            // this type will be created per compilation
-            // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
-#pragma warning disable RS1008
             private readonly IMethodSymbol _suppressFinalizeMethod;
             private readonly INamedTypeSymbol _type;
-#pragma warning restore RS1008
             private bool _callsDisposeBool;
             private bool _callsSuppressFinalize;
 
@@ -527,7 +533,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 foreach (IOperation operation in operations)
                 {
-                    if (!operation.IsImplicit && !ValidateOperation(operation))
+                    if (!operation.IsImplicit && operation.Kind != OperationKindEx.Attribute && !ValidateOperation(operation))
                     {
                         return false;
                     }
@@ -625,11 +631,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         /// </summary>
         private sealed class FinalizeImplementationValidator
         {
-            // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
-            // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
-#pragma warning disable RS1008
             private readonly INamedTypeSymbol _type;
-#pragma warning restore RS1008
             private bool _callDispose;
 
             public FinalizeImplementationValidator(INamedTypeSymbol type)
@@ -659,7 +661,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // call to the base finalizer in the finally section. We need to validate the contents
                     // of the try block
                     // Also analyze the implicit expression statement created for expression bodied implementation.
-                    var shouldAnalyze = !operation.IsImplicit || operation.Kind == OperationKind.Try || operation.Kind == OperationKind.ExpressionStatement;
+                    var shouldAnalyze = (!operation.IsImplicit && operation.Kind != OperationKindEx.Attribute) || operation.Kind == OperationKind.Try || operation.Kind == OperationKind.ExpressionStatement;
                     if (shouldAnalyze && !ValidateOperation(operation))
                     {
                         return false;
@@ -671,21 +673,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             private bool ValidateOperation(IOperation operation)
             {
-                switch (operation.Kind)
+                return operation.Kind switch
                 {
-                    case OperationKind.Empty:
-                    case OperationKind.Labeled:
-                        return true;
-                    case OperationKind.Block:
-                        return ValidateOperations(((IBlockOperation)operation).Operations);
-                    case OperationKind.ExpressionStatement:
-                        return ValidateExpression((IExpressionStatementOperation)operation);
-                    case OperationKind.Try:
-                        return ValidateTryOperation((ITryOperation)operation);
-                    default:
-                        // Ignore operation roots with no IOperation API support (OperationKind.None)
-                        return operation.IsOperationNoneRoot();
-                }
+                    OperationKind.Empty or OperationKind.Labeled => true,
+                    OperationKind.Block => ValidateOperations(((IBlockOperation)operation).Operations),
+                    OperationKind.ExpressionStatement => ValidateExpression((IExpressionStatementOperation)operation),
+                    OperationKind.Try => ValidateTryOperation((ITryOperation)operation),
+                    _ => operation.IsOperationNoneRoot(),// Ignore operation roots with no IOperation API support (OperationKind.None)
+                };
             }
 
             private bool ValidateExpression(IExpressionStatementOperation expressionStatement)

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -16,7 +16,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class UriParametersShouldNotBeStringsTests
     {
         [Fact]
-        public async Task CA1054NoWarningWithUrlNotStringType()
+        public async Task CA1054NoWarningWithUrlNotStringTypeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task CA1054WarningWithUrl()
+        public async Task CA1054WarningWithUrlAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
@@ -42,7 +42,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task CA1054NoWarningWithUrlWithOverload()
+        public async Task CA1054NoWarningWithUrlWithOverloadAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
@@ -56,7 +56,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact, WorkItem(1495, "https://github.com/dotnet/roslyn-analyzers/issues/1495")]
-        public async Task CA1054NoWarningWithUrlWithOverload_IdenticalTypeParameters()
+        public async Task CA1054NoWarningWithUrlWithOverload_IdenticalTypeParametersAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
@@ -81,7 +81,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact, WorkItem(1495, "https://github.com/dotnet/roslyn-analyzers/issues/1495")]
-        public async Task CA1054WarningWithUrlWithOverload_DifferingTypeParameters()
+        public async Task CA1054WarningWithUrlWithOverload_DifferingTypeParametersAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
@@ -107,7 +107,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task CA1054MultipleWarningWithUrl()
+        public async Task CA1054MultipleWarningWithUrlAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
@@ -121,7 +121,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task CA1054NoMultipleWarningWithUrlWithOverload()
+        public async Task CA1054NoMultipleWarningWithUrlWithOverloadAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
@@ -137,7 +137,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task CA1054MultipleWarningWithUrlWithOverload()
+        public async Task CA1054MultipleWarningWithUrlWithOverloadAsync()
         {
             // Following original FxCop implementation. but this seems strange.
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -154,7 +154,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task CA1054NoWarningNotPublic()
+        public async Task CA1054NoWarningNotPublicAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
@@ -167,7 +167,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task CA1054NoWarningDerivedFromAttribute()
+        public async Task CA1054NoWarningDerivedFromAttributeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
@@ -180,7 +180,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task CA1054WarningVB()
+        public async Task CA1054WarningVBAsync()
         {
             // C# and VB shares same implementation. so just one vb test
             await VerifyVB.VerifyAnalyzerAsync(@"
@@ -193,14 +193,84 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 ", GetCA1054BasicResultAt(5, 27, "firstUri", "A.Method(String)"));
         }
 
+        [Theory, WorkItem(6005, "https://github.com/dotnet/roslyn-analyzers/issues/6005")]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = Method")]
+        [InlineData("dotnet_code_quality.CA1054.excluded_symbol_names = Method")]
+        [InlineData("dotnet_code_quality.CA1054.excluded_symbol_names = Metho*")]
+        public async Task CA1054_EditorConfigConfiguration_ExcludedSymbolNamesWithValueOptionAsync(string editorConfigText)
+        {
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System;
+
+public class A
+{
+    public static void Method(string url) { }
+}
+"                    },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
+                }
+            };
+
+            if (editorConfigText.Length == 0)
+            {
+                csharpTest.ExpectedDiagnostics.Add(GetCA1054CSharpResultAt(6, 38, "url", "A.Method(string)"));
+            }
+
+            await csharpTest.RunAsync();
+
+            var basicTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+Imports System
+
+Public Module A
+    Public Sub Method(url As String)
+    End Sub
+End Module"
+                    },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
+                }
+            };
+
+            if (editorConfigText.Length == 0)
+            {
+                basicTest.ExpectedDiagnostics.Add(GetCA1054BasicResultAt(5, 23, "url", "A.Method(String)"));
+            }
+
+            await basicTest.RunAsync();
+        }
+
         private static DiagnosticResult GetCA1054CSharpResultAt(int line, int column, params string[] args)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(args);
 
         private static DiagnosticResult GetCA1054BasicResultAt(int line, int column, params string[] args)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(args);
     }
 }

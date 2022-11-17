@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public partial class ImplementSerializationConstructorsTests
     {
         [Fact]
-        public async Task CA2229NoConstructor()
+        public async Task CA2229NoConstructorAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2229NoConstructorInternal()
+        public async Task CA2229NoConstructorInternalAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -73,7 +73,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2229HasConstructor()
+        public async Task CA2229HasConstructorAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -106,7 +106,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2229HasConstructor1()
+        public async Task CA2229HasConstructor1Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -139,7 +139,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2229HasConstructorWrongAccessibility()
+        public async Task CA2229HasConstructorWrongAccessibilityAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -174,7 +174,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2229HasConstructorWrongAccessibility1()
+        public async Task CA2229HasConstructorWrongAccessibility1Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -209,7 +209,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2229HasConstructorWrongAccessibility2()
+        public async Task CA2229HasConstructorWrongAccessibility2Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -244,7 +244,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2229HasConstructorWrongAccessibility3()
+        public async Task CA2229HasConstructorWrongAccessibility3Async()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -279,7 +279,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2229HasConstructorWrongOrder()
+        public async Task CA2229HasConstructorWrongOrderAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -314,7 +314,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2229SerializableProper()
+        public async Task CA2229SerializableProperAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -344,33 +344,45 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         private static DiagnosticResult GetCA2229CSharpResultAt(int line, int column, string objectName) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyCS.Diagnostic(SerializationRulesDiagnosticAnalyzer.RuleCA2229Default)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(objectName);
 
         private static DiagnosticResult GetCA2229BasicResultAt(int line, int column, string objectName) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyVB.Diagnostic(SerializationRulesDiagnosticAnalyzer.RuleCA2229Default)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(objectName);
 
         private static DiagnosticResult GetCA2229SealedCSharpResultAt(int line, int column, string objectName) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyCS.Diagnostic(SerializationRulesDiagnosticAnalyzer.RuleCA2229Sealed)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(objectName);
 
         private static DiagnosticResult GetCA2229SealedBasicResultAt(int line, int column, string objectName) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyVB.Diagnostic(SerializationRulesDiagnosticAnalyzer.RuleCA2229Sealed)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(objectName);
 
         private static DiagnosticResult GetCA2229UnsealedCSharpResultAt(int line, int column, string objectName) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyCS.Diagnostic(SerializationRulesDiagnosticAnalyzer.RuleCA2229Unsealed)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(objectName);
 
         private static DiagnosticResult GetCA2229UnsealedBasicResultAt(int line, int column, string objectName) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyVB.Diagnostic(SerializationRulesDiagnosticAnalyzer.RuleCA2229Unsealed)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(objectName);
     }
 }

@@ -1,0 +1,48 @@
+name: Label community PRs
+on:
+  pull_request_target:
+    types: [opened]
+permissions:
+  issues: write
+  pull-requests: write
+jobs:
+  add_community_label:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'dotnet/roslyn-analyzers' && github.event.pull_request.user.login != 'dotnet-bot' && github.event.pull_request.user.login != 'dotnet-maestro[bot]' }}
+    steps:
+    - name: Get data
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ORGANIZATION: dotnet
+        REPOSITORY: roslyn-analyzers
+        LABEL_NAME: Community
+        PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+      run: |
+        gh api graphql -f query='
+          query($org: String!, $repo: String!, $pull: Int!, $label: String!) {
+            repository(name: $repo, owner: $org) {
+              label(name: $label) {
+                id
+              }
+              pullRequest(number: $pull) {
+                authorAssociation
+              }
+            }
+          }' -f org=$ORGANIZATION -f repo=$REPOSITORY -F pull=$PULL_REQUEST_NUMBER -f label="$LABEL_NAME" > data.json
+
+        cat data.json
+        echo 'LABEL_ID='$(jq -r '.data.repository.label.id' data.json) >> $GITHUB_ENV
+        echo 'AUTHOR_ASSOCIATION='$(jq -r '.data.repository.pullRequest.authorAssociation' data.json) >> $GITHUB_ENV
+
+    - name: Assign label
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PULL_REQUEST_ID: ${{ github.event.pull_request.node_id }}
+      if: ${{ env.LABEL_ID != '' && env.LABEL_ID != 'null' && env.AUTHOR_ASSOCIATION != 'MEMBER' }}
+      run: |
+        gh api graphql -f query='
+          mutation($pull: ID!, $label: ID!) {
+            addLabelsToLabelable(input: {labelableId: $pull, labelIds: [$label]}) {
+              clientMutationId
+            }
+          }' -f pull=$PULL_REQUEST_ID -f label=$LABEL_ID

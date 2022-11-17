@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities.PooledObjects;
@@ -47,6 +47,25 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     "UpdateCommand",
                 },
                 sinkMethodParameters: null);
+            sinkInfosBuilder.AddSinkInfo(
+                WellKnownTypeNames.MicrosoftEntityFrameworkCoreRelationalQueryableExtensions,
+                SinkKind.Sql,
+                isInterface: false,
+                isAnyStringParameterInConstructorASink: false,
+                sinkProperties: null,
+                sinkMethodParameters: new[] {
+                    ( "FromSql", new[] { "sql", } ),
+                });
+
+            sinkInfosBuilder.AddSinkInfo(
+                WellKnownTypeNames.SystemDataEntityDbSet1,
+                SinkKind.Sql,
+                isInterface: false,
+                isAnyStringParameterInConstructorASink: false,
+                sinkProperties: null,
+                sinkMethodParameters: new[] {
+                    ( "SqlQuery", new[] { "sql", } ),
+                });
 
             SinkInfos = sinkInfosBuilder.ToImmutableAndFree();
         }

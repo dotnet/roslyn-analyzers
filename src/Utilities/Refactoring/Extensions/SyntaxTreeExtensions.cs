@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -24,7 +24,7 @@ namespace Analyzer.Utilities.Extensions
                 {
                     // implements the ASP.NET IsHidden rule
                     var lineVisibility = tree.GetLineVisibility(position, cancellationToken2);
-                    return lineVisibility == LineVisibility.Hidden || lineVisibility == LineVisibility.BeforeFirstLineDirective;
+                    return lineVisibility is LineVisibility.Hidden or LineVisibility.BeforeFirstLineDirective;
                 },
                 cancellationToken);
         }

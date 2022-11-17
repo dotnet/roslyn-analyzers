@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.UnitTests
     public class UpgradeMSBuildWorkspaceAnalyzerTests
     {
         [Fact]
-        public async Task CSharp_VerifyWithMSBuildWorkspace()
+        public async Task CSharp_VerifyWithMSBuildWorkspaceAsync()
         {
             const string source1 = @"
 namespace Microsoft.CodeAnalysis.MSBuild
@@ -44,7 +44,7 @@ class Usage
         }
 
         [Fact]
-        public async Task CSharp_VerifyWithoutMSBuildWorkspace()
+        public async Task CSharp_VerifyWithoutMSBuildWorkspaceAsync()
         {
             const string source = @"
 using Microsoft.CodeAnalysis.MSBuild;
@@ -57,26 +57,17 @@ class Usage
     }
 }";
 
-            await new VerifyCS.Test
-            {
-                TestBehaviors = TestBehaviors.SkipGeneratedCodeCheck,
-                TestState =
-                {
-                    Sources = { source },
-                    ExpectedDiagnostics =
-                    {
-                        // Test0.cs(2,30): error CS0234: The type or namespace name 'MSBuild' does not exist in the namespace 'Microsoft.CodeAnalysis' (are you missing an assembly reference?)
-                        DiagnosticResult.CompilerError("CS0234").WithSpan(2, 30, 2, 37).WithArguments("MSBuild", "Microsoft.CodeAnalysis"),
-                        // Test0.cs(8,25): error CS0103: The name 'MSBuildWorkspace' does not exist in the current context
-                        DiagnosticResult.CompilerError("CS0103").WithSpan(8, 25, 8, 41).WithArguments("MSBuildWorkspace"),
-                        GetCSharpExpectedDiagnostic(8, 25),
-                    },
-                },
-            }.RunAsync();
+            await VerifyCS.VerifyAnalyzerAsync(
+                source,
+                // Test0.cs(2,30): error CS0234: The type or namespace name 'MSBuild' does not exist in the namespace 'Microsoft.CodeAnalysis' (are you missing an assembly reference?)
+                DiagnosticResult.CompilerError("CS0234").WithSpan(2, 30, 2, 37).WithArguments("MSBuild", "Microsoft.CodeAnalysis"),
+                // Test0.cs(8,25): error CS0103: The name 'MSBuildWorkspace' does not exist in the current context
+                DiagnosticResult.CompilerError("CS0103").WithSpan(8, 25, 8, 41).WithArguments("MSBuildWorkspace"),
+                GetCSharpExpectedDiagnostic(8, 25));
         }
 
         [Fact]
-        public async Task VisualBasic_VerifyWithMSBuildWorkspace()
+        public async Task VisualBasic_VerifyWithMSBuildWorkspaceAsync()
         {
             const string source1 = @"
 Namespace Microsoft.CodeAnalysis.MSBuild
@@ -100,7 +91,7 @@ End Class";
         }
 
         [Fact]
-        public async Task VisualBasic_VerifyWithoutMSBuildWorkspace()
+        public async Task VisualBasic_VerifyWithoutMSBuildWorkspaceAsync()
         {
             const string source = @"
 Imports Microsoft.CodeAnalysis.MSBuild
@@ -111,27 +102,22 @@ Class Usage
     End Sub
 End Class";
 
-            await new VerifyVB.Test
-            {
-                TestBehaviors = TestBehaviors.SkipGeneratedCodeCheck,
-                TestState =
-                {
-                    Sources = { source },
-                    ExpectedDiagnostics =
-                    {
-                        // Test0.vb(6) : error BC30451: 'MSBuildWorkspace' is not declared. It may be inaccessible due to its protection level.
-                        DiagnosticResult.CompilerError("BC30451").WithSpan(6, 25, 6, 41).WithArguments("MSBuildWorkspace"),
-                        GetBasicExpectedDiagnostic(6, 25),
-                    },
-                },
-            }.RunAsync();
+            await VerifyVB.VerifyAnalyzerAsync(
+                source,
+                // Test0.vb(6) : error BC30451: 'MSBuildWorkspace' is not declared. It may be inaccessible due to its protection level.
+                DiagnosticResult.CompilerError("BC30451").WithSpan(6, 25, 6, 41).WithArguments("MSBuildWorkspace"),
+                GetBasicExpectedDiagnostic(6, 25));
         }
 
         private static DiagnosticResult GetCSharpExpectedDiagnostic(int line, int column) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyCS.Diagnostic().WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         private static DiagnosticResult GetBasicExpectedDiagnostic(int line, int column) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyVB.Diagnostic().WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used via new() constraint: https://github.com/dotnet/roslyn-analyzers/issues/3199")]
         internal class TestCSharpUpgradeMSBuildWorkspaceAnalyzer : CSharpUpgradeMSBuildWorkspaceAnalyzer

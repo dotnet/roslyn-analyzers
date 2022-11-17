@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
@@ -11,38 +11,36 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1823: Avoid unused private fields
+    /// CA1823: <inheritdoc cref="AvoidUnusedPrivateFieldsTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AvoidUnusedPrivateFieldsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1823";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(AvoidUnusedPrivateFieldsTitle)),
+            CreateLocalizableResourceString(nameof(AvoidUnusedPrivateFieldsMessage)),
+            DiagnosticCategory.Performance,
+            RuleLevel.Disabled,       // Need to figure out how to handle runtime only references. We also have an implementation in the IDE.
+            description: CreateLocalizableResourceString(nameof(AvoidUnusedPrivateFieldsDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                                      s_localizableTitle,
-                                                                                      s_localizableMessage,
-                                                                                      DiagnosticCategory.Performance,
-                                                                                      RuleLevel.Disabled,       // Need to figure out how to handle runtime only references. We also have an implementation in the IDE.
-                                                                                      description: s_localizableDescription,
-                                                                                      isPortedFxCopRule: true,
-                                                                                      isDataflowRule: false);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
+            context.EnableConcurrentExecution();
 
             // We need to analyze generated code, but don't intend to report diagnostics for generated code fields.
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
 
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 (compilationContext) =>
                 {
                     ConcurrentDictionary<IFieldSymbol, UnusedValue> maybeUnreferencedPrivateFields = new ConcurrentDictionary<IFieldSymbol, UnusedValue>();
@@ -123,7 +121,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                 var namedType = (INamedTypeSymbol)context.Symbol;
                                 foreach (var member in namedType.GetMembers())
                                 {
-                                    if (!(member is IFieldSymbol field))
+                                    if (member is not IFieldSymbol field)
                                     {
                                         continue;
                                     }
@@ -133,7 +131,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                         continue;
                                     }
 
-                                    context.ReportDiagnostic(Diagnostic.Create(Rule, field.Locations[0], field.Name));
+                                    context.ReportDiagnostic(field.CreateDiagnostic(Rule, field.Name));
                                 }
                             });
                         },

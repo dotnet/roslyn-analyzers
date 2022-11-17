@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Reflection;
 using Microsoft.CodeAnalysis;
@@ -24,6 +24,11 @@ namespace Analyzer.Utilities
             }
         }
 
+        /// <summary>
+        /// Annotates a syntax node representing a type so that any missing imports get automatically added. Does not work in any other kinds of nodes.
+        /// </summary>
+        /// <param name="syntaxNode">The type node to annotate.</param>
+        /// <returns>The annotated type node.</returns>
         public static SyntaxNode WithAddImportsAnnotation(this SyntaxNode syntaxNode)
         {
             if (AddImportsAnnotation is null)

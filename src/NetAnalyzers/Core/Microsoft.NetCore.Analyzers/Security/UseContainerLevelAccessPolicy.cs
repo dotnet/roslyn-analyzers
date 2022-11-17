@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -14,33 +14,25 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
+    /// <summary>
+    /// CA5377: <inheritdoc cref="UseContainerLevelAccessPolicy"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseContainerLevelAccessPolicy : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5377";
-        private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.UseContainerLevelAccessPolicy),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.UseContainerLevelAccessPolicyMessage),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.UseContainerLevelAccessPolicyDescription),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
-                DiagnosticId,
-                s_Title,
-                s_Message,
-                DiagnosticCategory.Security,
-                RuleLevel.Disabled,
-                description: s_Description,
-                isPortedFxCopRule: false,
-                isDataflowRule: true,
-                isEnabledByDefaultInFxCopAnalyzers: false);
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            DiagnosticId,
+            CreateLocalizableResourceString(nameof(UseContainerLevelAccessPolicy)),
+            CreateLocalizableResourceString(nameof(UseContainerLevelAccessPolicyMessage)),
+            DiagnosticCategory.Security,
+            RuleLevel.Disabled,
+            description: CreateLocalizableResourceString(nameof(UseContainerLevelAccessPolicyDescription)),
+            isPortedFxCopRule: false,
+            isDataflowRule: true);
 
         internal static ImmutableArray<(string nspace, string policyIdentifierName)> NamespaceAndPolicyIdentifierNamePairs = ImmutableArray.Create(
                                                                                                     ("Blob", "groupPolicyIdentifier"),
@@ -48,8 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                                                     ("Queue", "accessPolicyIdentifier"),
                                                                                                     ("Table", "accessPolicyIdentifier"));
 
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -104,8 +95,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     var owningSymbol = operationBlockStartContext.OwningSymbol;
-                    if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options,
-                            Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
+                    if (operationBlockStartContext.Options.IsConfiguredToSkipAnalysis(Rule, owningSymbol, operationBlockStartContext.Compilation))
                     {
                         return;
                     }
@@ -138,16 +128,14 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                 if (argumentOperation != null)
                                 {
-                                    var cfg = invocationOperation.GetTopmostParentBlock()?.GetEnclosingControlFlowGraph();
-                                    if (cfg != null)
+                                    if (invocationOperation.TryGetEnclosingControlFlowGraph(out var cfg))
                                     {
                                         var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
                                                                                 operationAnalysisContext.Options,
                                                                                 SupportedDiagnostics,
-                                                                                operationAnalysisContext.Operation.Syntax.SyntaxTree,
+                                                                                operationAnalysisContext.Operation,
                                                                                 operationAnalysisContext.Compilation,
                                                                                 defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
-                                                                                cancellationToken: operationAnalysisContext.CancellationToken,
                                                                                 defaultMaxInterproceduralMethodCallChain: 1);
                                         var pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
                                                                         cfg,
@@ -156,7 +144,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                         wellKnownTypeProvider,
                                                                         PointsToAnalysisKind.Complete,
                                                                         interproceduralAnalysisConfig,
-                                                                        interproceduralAnalysisPredicateOpt: null,
+                                                                        interproceduralAnalysisPredicate: null,
                                                                         false);
                                         if (pointsToAnalysisResult == null)
                                         {
@@ -170,11 +158,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             return;
                                         }
                                     }
+                                    else
+                                    {
+                                        return;
+                                    }
                                 }
 
                                 operationAnalysisContext.ReportDiagnostic(
-                                            invocationOperation.CreateDiagnostic(
-                                                Rule));
+                                    invocationOperation.CreateDiagnostic(
+                                        Rule));
                             }
                         }
                     }, OperationKind.Invocation);

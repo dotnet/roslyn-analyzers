@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -12,14 +12,12 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
 {
     public static class SecurityDiagnosticHelpers
     {
-        public static bool IsXslCompiledTransformLoad([NotNullWhen(returnValue: true)] IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
-        {
-            return method != null
+        public static bool IsXslCompiledTransformLoad([NotNullWhen(returnValue: true)] this IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
+            => method != null
                 && xmlTypes.XslCompiledTransform != null
                 && method.MatchMethodByName(xmlTypes.XslCompiledTransform, SecurityMemberNames.Load);
-        }
 
-        public static bool IsXmlDocumentCtorDerived([NotNullWhen(returnValue: true)] IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlDocumentCtorDerived([NotNullWhen(returnValue: true)] this IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
                 && xmlTypes.XmlDocument != null
@@ -31,7 +29,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             return IsSpecifiedProperty(symbol, xmlTypes.XmlDocument, SecurityMemberNames.XmlResolver);
         }
 
-        public static bool IsXmlTextReaderCtorDerived([NotNullWhen(returnValue: true)] IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlTextReaderCtorDerived([NotNullWhen(returnValue: true)] this IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
                 && xmlTypes.XmlTextReader != null
@@ -58,7 +56,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             return IsSpecifiedProperty(symbol, xmlTypes.XmlTextReader, SecurityMemberNames.DtdProcessing);
         }
 
-        public static bool IsXmlReaderSettingsCtor([NotNullWhen(returnValue: true)] IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlReaderSettingsCtor([NotNullWhen(returnValue: true)] this IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
                 && xmlTypes.XmlReaderSettings != null
@@ -80,32 +78,22 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             return IsSpecifiedProperty(symbol, xmlTypes.XmlReaderSettings, SecurityMemberNames.MaxCharactersFromEntities);
         }
 
-        public static bool IsXsltSettingsCtor([NotNullWhen(returnValue: true)] IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
-        {
-            return method != null
+        public static bool IsXsltSettingsCtor([NotNullWhen(returnValue: true)] this IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
+            => method != null
                 && xmlTypes.XsltSettings != null
                 && method.MatchMethodByName(xmlTypes.XsltSettings, WellKnownMemberNames.InstanceConstructorName);
-        }
 
-        public static bool IsXsltSettingsTrustedXsltProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
-        {
-            return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.TrustedXslt);
-        }
+        public static bool IsXsltSettingsTrustedXsltProperty([NotNullWhen(returnValue: true)] this IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
+            => IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.TrustedXslt);
 
-        public static bool IsXsltSettingsDefaultProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
-        {
-            return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.Default);
-        }
+        public static bool IsXsltSettingsDefaultProperty([NotNullWhen(returnValue: true)] this IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
+            => IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.Default);
 
-        public static bool IsXsltSettingsEnableDocumentFunctionProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
-        {
-            return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.EnableDocumentFunction);
-        }
+        public static bool IsXsltSettingsEnableDocumentFunctionProperty([NotNullWhen(returnValue: true)] this IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
+            => IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.EnableDocumentFunction);
 
-        public static bool IsXsltSettingsEnableScriptProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
-        {
-            return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.EnableScript);
-        }
+        public static bool IsXsltSettingsEnableScriptProperty([NotNullWhen(returnValue: true)] this IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
+            => IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.EnableScript);
 
         public static bool IsXmlResolverType([NotNullWhen(returnValue: true)] ITypeSymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
@@ -113,11 +101,9 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
                 && symbol.DerivesFrom(xmlTypes.XmlResolver, baseTypesOnly: true);
         }
 
-        public static bool IsXmlSecureResolverType([NotNullWhen(returnValue: true)] ITypeSymbol? symbol, CompilationSecurityTypes xmlTypes)
-        {
-            return symbol != null
+        public static bool IsXmlSecureResolverType([NotNullWhen(returnValue: true)] this ITypeSymbol? symbol, CompilationSecurityTypes xmlTypes)
+            => symbol != null
                 && symbol.DerivesFrom(xmlTypes.XmlSecureResolver, baseTypesOnly: true);
-        }
 
         public static bool IsXsltSettingsType([NotNullWhen(returnValue: true)] ITypeSymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
@@ -129,17 +115,13 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             return Equals(symbol, xmlTypes.XmlReaderSettings);
         }
 
-        public static int GetXmlResolverParameterIndex(IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
-        {
-            return GetSpecifiedParameterIndex(method, xmlTypes, IsXmlResolverType);
-        }
+        public static int GetXmlResolverParameterIndex(this IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
+            => GetSpecifiedParameterIndex(method, xmlTypes, IsXmlResolverType);
 
-        public static int GetXsltSettingsParameterIndex(IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
-        {
-            return GetSpecifiedParameterIndex(method, xmlTypes, IsXsltSettingsType);
-        }
+        public static int GetXsltSettingsParameterIndex(this IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
+            => GetSpecifiedParameterIndex(method, xmlTypes, IsXsltSettingsType);
 
-        public static int GetXmlReaderSettingsParameterIndex(IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
+        public static int GetXmlReaderSettingsParameterIndex(this IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
             return GetSpecifiedParameterIndex(method, xmlTypes, IsXmlReaderSettingsType);
         }
@@ -168,7 +150,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         public static bool IsExpressionEqualsIntZero([NotNullWhen(returnValue: true)] IOperation? operation)
         {
 
-            if (!(operation is ILiteralOperation literal) || !literal.ConstantValue.HasValue)
+            if (operation is not ILiteralOperation literal || !literal.ConstantValue.HasValue)
             {
                 return false;
             }
@@ -264,6 +246,30 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         }
 
         /// <summary>
+        /// Get class or method name which encloses the current symbol node
+        /// </summary>
+        public static string GetNonEmptyParentName(ISymbol symbol)
+        {
+            var current = symbol;
+            while (current.ContainingSymbol != null)
+            {
+                switch (current)
+                {
+                    case IMethodSymbol method:
+                        return method.MethodKind == MethodKind.Ordinary
+                            ? method.Name
+                            : method.ContainingType.Name;
+                    case INamedTypeSymbol namedType:
+                        return namedType.Name;
+                }
+
+                current = symbol.ContainingSymbol;
+            }
+
+            return string.Empty;
+        }
+
+        /// <summary>
         /// Gets the version of the target .NET framework of the compilation.
         /// </summary>
         /// <returns>
@@ -304,16 +310,6 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
                 return typeSymbol.GetMembers("CurrentThreadActivityId").IsEmpty ? new Version(4, 5) : new Version(4, 5, 1);
             }
             return new Version(4, 0);
-        }
-
-        public static LocalizableResourceString GetLocalizableResourceString(string resourceName)
-        {
-            return new LocalizableResourceString(resourceName, MicrosoftNetFrameworkAnalyzersResources.ResourceManager, typeof(MicrosoftNetFrameworkAnalyzersResources));
-        }
-
-        public static LocalizableResourceString GetLocalizableResourceString(string resourceName, params string[] formatArguments)
-        {
-            return new LocalizableResourceString(resourceName, MicrosoftNetFrameworkAnalyzersResources.ResourceManager, typeof(MicrosoftNetFrameworkAnalyzersResources), formatArguments);
         }
     }
 }

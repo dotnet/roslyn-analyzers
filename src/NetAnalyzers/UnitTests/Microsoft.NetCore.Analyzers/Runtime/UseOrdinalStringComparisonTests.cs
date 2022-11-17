@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -17,19 +17,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         #region Helper methods
 
         private DiagnosticResult CSharpResult(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         private DiagnosticResult BasicResult(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         #endregion
 
         #region Diagnostic tests
 
         [Fact]
-        public async Task CA1309CompareOverloadTestCSharp()
+        public async Task CA1309CompareOverloadTestCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -75,7 +79,7 @@ class C
         }
 
         [Fact]
-        public async Task CA1309CompareOverloadTestBasic()
+        public async Task CA1309CompareOverloadTestBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -122,7 +126,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1309EqualsOverloadTestCSharp()
+        public async Task CA1309EqualsOverloadTestCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -148,7 +152,7 @@ class C
         }
 
         [Fact]
-        public async Task CA1309EqualsOverloadTestBasic()
+        public async Task CA1309EqualsOverloadTestBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -172,7 +176,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1309InstanceEqualsTestCSharp()
+        public async Task CA1309InstanceEqualsTestCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -198,7 +202,7 @@ class C
         }
 
         [Fact]
-        public async Task CA1309InstanceEqualsTestBasic()
+        public async Task CA1309InstanceEqualsTestBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -222,7 +226,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1309OperatorOverloadTestCSharp_NoDiagnostic()
+        public async Task CA1309OperatorOverloadTestCSharp_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -242,7 +246,7 @@ class C
         }
 
         [Fact]
-        public async Task CA1309OperatorOverloadTestBasic_NoDiagnostic()
+        public async Task CA1309OperatorOverloadTestBasic_NoDiagnosticAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -266,7 +270,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1309NotReallyCompareOrEqualsTestCSharp()
+        public async Task CA1309NotReallyCompareOrEqualsTestCSharpAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 class C
@@ -296,7 +300,7 @@ static class Extensions
         }
 
         [Fact]
-        public async Task CA1309NotReallyCompareOrEqualsTestBasic()
+        public async Task CA1309NotReallyCompareOrEqualsTestBasicAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.CompilerServices

@@ -1,21 +1,15 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
-using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
-    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
-using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
-    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
         [Fact]
-        public async Task XmlReaderSettingsDefaultAsFieldShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsDefaultAsFieldShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -54,7 +48,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsFieldSetDtdProcessingToParseWithNoCreateShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsFieldSetDtdProcessingToParseWithNoCreateShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -91,7 +85,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsFieldDefaultAndDtdProcessingToIgnoreShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsFieldDefaultAndDtdProcessingToIgnoreShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -132,7 +126,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputSetDtdProcessingToParseShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputSetDtdProcessingToParseShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -166,7 +160,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInGetShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInGetShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -206,7 +200,7 @@ End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInTryShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInTryShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -251,7 +245,7 @@ End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInCatchShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInCatchShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -294,7 +288,7 @@ End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInFinallyShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInFinallyShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -338,7 +332,7 @@ End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInAsyncAwaitShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInAsyncAwaitShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -387,7 +381,7 @@ End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInDelegateShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInDelegateShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -426,7 +420,7 @@ End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputSetDtdProcessingToProhibitShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputSetDtdProcessingToProhibitShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -463,7 +457,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputSetPropertiesToSecureValuesShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputSetPropertiesToSecureValuesShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net472.Default,
@@ -504,7 +498,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task RealCodeSnippetFromCustomerPre452ShouldGenerateDiagnostic()
+        public async Task RealCodeSnippetFromCustomerPre452ShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net451.Default,
@@ -602,7 +596,7 @@ End Namespace",
         }
 
         [Fact]
-        public async Task RealCodeSnippetFromCustomerPost452ShouldNotGenerateDiagnostic()
+        public async Task RealCodeSnippetFromCustomerPost452ShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net452.Default,

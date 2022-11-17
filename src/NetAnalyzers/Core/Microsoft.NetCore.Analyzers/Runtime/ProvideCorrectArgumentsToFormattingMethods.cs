@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -12,36 +12,34 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
-    /// CA2241: Provide correct arguments to formatting methods
+    /// CA2241: <inheritdoc cref="ProvideCorrectArgumentsToFormattingMethodsTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class ProvideCorrectArgumentsToFormattingMethodsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2241";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(ProvideCorrectArgumentsToFormattingMethodsTitle)),
+            CreateLocalizableResourceString(nameof(ProvideCorrectArgumentsToFormattingMethodsMessage)),
+            DiagnosticCategory.Usage,
+            RuleLevel.BuildWarningCandidate,
+            description: CreateLocalizableResourceString(nameof(ProvideCorrectArgumentsToFormattingMethodsDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.BuildWarningCandidate,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(compilationContext =>
             {
                 var formatInfo = new StringFormatInfo(compilationContext.Compilation);
 
@@ -57,7 +55,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     IArgumentOperation formatStringArgument = invocation.Arguments[info.FormatStringIndex];
-                    if (!object.Equals(formatStringArgument?.Value?.Type, formatInfo.String) ||
+                    if (!Equals(formatStringArgument?.Value?.Type, formatInfo.String) ||
                         !(formatStringArgument?.Value?.ConstantValue.Value is string))
                     {
                         // wrong argument
@@ -87,15 +85,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     // ensure argument is an array
                     IArgumentOperation paramsArgument = invocation.Arguments[info.FormatStringIndex + 1];
-                    if (paramsArgument.ArgumentKind != ArgumentKind.ParamArray && paramsArgument.ArgumentKind != ArgumentKind.Explicit)
+                    if (paramsArgument.ArgumentKind is not ArgumentKind.ParamArray and not ArgumentKind.Explicit)
                     {
                         // wrong format
                         return;
                     }
 
-                    if (!(paramsArgument.Value is IArrayCreationOperation arrayCreation) ||
-                        !(arrayCreation.GetElementType() is ITypeSymbol elementType) ||
-                        !object.Equals(elementType, formatInfo.Object) ||
+                    if (paramsArgument.Value is not IArrayCreationOperation arrayCreation ||
+                        arrayCreation.GetElementType() is not ITypeSymbol elementType ||
+                        !Equals(elementType, formatInfo.Object) ||
                         arrayCreation.DimensionSizes.Length != 1)
                     {
                         // wrong format
@@ -234,7 +232,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         ch = format[pos];
                     }
 
-                    if (ch < '0' || ch > '9')
+                    if (ch is < '0' or > '9')
                     {
                         // wrong format after "-"
                         return -1;
@@ -261,7 +259,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     pos++;
                 }
 
-                // searching for embeded format string
+                // searching for embedded format string
                 if (ch == ':')
                 {
                     pos++;
@@ -348,7 +346,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // Check if this the underlying method is user configured string formatting method.
-                var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(Rule, context.Operation.Syntax.SyntaxTree, context.Compilation, context.CancellationToken);
+                var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(Rule, context.Operation.Syntax.SyntaxTree, context.Compilation);
                 if (additionalStringFormatMethodsOption.Contains(method.OriginalDefinition) &&
                     TryGetFormatInfo(method, out info))
                 {
@@ -358,7 +356,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // Check if the user configured automatic determination of formatting methods.
                 // If so, check if the method called has a 'string format' parameter followed by an params array.
                 var determineAdditionalStringFormattingMethodsAutomatically = context.Options.GetBoolOptionValue(EditorConfigOptionNames.TryDetermineAdditionalStringFormattingMethodsAutomatically,
-                        Rule, context.Operation.Syntax.SyntaxTree, context.Compilation, defaultValue: false, context.CancellationToken);
+                        Rule, context.Operation.Syntax.SyntaxTree, context.Compilation, defaultValue: false);
                 if (determineAdditionalStringFormattingMethodsAutomatically &&
                     TryGetFormatInfo(method, out info) &&
                     info.ExpectedStringFormatArgumentCount == -1)

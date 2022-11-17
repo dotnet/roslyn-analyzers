@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -28,7 +28,6 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         public INamedTypeSymbol? XmlResolver { get; private set; }
         public INamedTypeSymbol? XmlSecureResolver { get; private set; }
         public INamedTypeSymbol? XsltSettings { get; private set; }
-
 
         public CompilationSecurityTypes(Compilation compilation)
         {

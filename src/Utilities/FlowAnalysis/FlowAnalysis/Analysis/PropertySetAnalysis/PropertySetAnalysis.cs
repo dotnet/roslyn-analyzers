@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
     /// </summary>
     internal partial class PropertySetAnalysis : ForwardDataFlowAnalysis<PropertySetAnalysisData, PropertySetAnalysisContext, PropertySetAnalysisResult, PropertySetBlockAnalysisResult, PropertySetAbstractValue>
     {
-        public static readonly PropertySetAnalysisDomain PropertySetAnalysisDomainInstance = new PropertySetAnalysisDomain(PropertySetAbstractValueDomain.Default);
+        public static readonly PropertySetAnalysisDomain PropertySetAnalysisDomainInstance = new(PropertySetAbstractValueDomain.Default);
 
         private PropertySetAnalysis(PropertySetAnalysisDomain analysisDomain, PropertySetDataFlowOperationVisitor operationVisitor)
             : base(analysisDomain, operationVisitor)
@@ -76,7 +76,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
 
             PointsToAnalysisResult? pointsToAnalysisResult;
-            ValueContentAnalysisResult? valueContentAnalysisResultOpt;
+            ValueContentAnalysisResult? valueContentAnalysisResult;
             if (!constructorMapper.RequiresValueContentAnalysis && !propertyMappers.RequiresValueContentAnalysis)
             {
                 pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
@@ -86,7 +86,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
                     wellKnownTypeProvider,
                     PointsToAnalysisKind.Complete,
                     interproceduralAnalysisConfig,
-                    interproceduralAnalysisPredicateOpt: null,
+                    interproceduralAnalysisPredicate: null,
                     pessimisticAnalysis,
                     performCopyAnalysis: false);
                 if (pointsToAnalysisResult == null)
@@ -94,11 +94,11 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
                     return null;
                 }
 
-                valueContentAnalysisResultOpt = null;
+                valueContentAnalysisResult = null;
             }
             else
             {
-                valueContentAnalysisResultOpt = ValueContentAnalysis.TryGetOrComputeResult(
+                valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
                     cfg,
                     owningSymbol,
                     analyzerOptions,
@@ -109,7 +109,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
                     out pointsToAnalysisResult,
                     pessimisticAnalysis,
                     performCopyAnalysis: false);
-                if (valueContentAnalysisResultOpt == null)
+                if (valueContentAnalysisResult == null)
                 {
                     return null;
                 }
@@ -124,7 +124,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
                 interproceduralAnalysisConfig,
                 pessimisticAnalysis,
                 pointsToAnalysisResult,
-                valueContentAnalysisResultOpt,
+                valueContentAnalysisResult,
                 TryGetOrComputeResultForAnalysisContext,
                 typeToTrackMetadataNames,
                 constructorMapper,
@@ -324,6 +324,6 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
         }
 
         protected override PropertySetBlockAnalysisResult ToBlockResult(BasicBlock basicBlock, PropertySetAnalysisData blockAnalysisData)
-            => new PropertySetBlockAnalysisResult(basicBlock, blockAnalysisData);
+            => new(basicBlock, blockAnalysisData);
     }
 }

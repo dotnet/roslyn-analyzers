@@ -1,7 +1,6 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -9,9 +8,10 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1003: Use generic event handler instances
-    /// CA1009: A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.
+    /// CA1003: <inheritdoc cref="UseGenericEventHandlerInstancesTitle"/>
     ///
     /// Recommends that event handlers use <see cref="System.EventHandler{TEventArgs}"/>
     /// </summary>
@@ -24,55 +24,47 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     public sealed class UseGenericEventHandlerInstancesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1003";
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageForDelegate = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForDelegateMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionForDelegate = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForDelegateDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageForEvent = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForEventMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionForEvent = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForEventDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageForEvent2 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForEvent2Message), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionForEvent2 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForEvent2Description), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        internal static DiagnosticDescriptor RuleForDelegates = DiagnosticDescriptorHelper.Create(
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(UseGenericEventHandlerInstancesTitle));
+
+        internal static readonly DiagnosticDescriptor RuleForDelegates = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
-            s_localizableMessageForDelegate,
+            CreateLocalizableResourceString(nameof(UseGenericEventHandlerInstancesForDelegateMessage)),
             DiagnosticCategory.Design,
             RuleLevel.Disabled,
-            description: s_localizableDescriptionForDelegate,
+            description: CreateLocalizableResourceString(nameof(UseGenericEventHandlerInstancesForDelegateDescription)),
             isPortedFxCopRule: true,
-            isDataflowRule: false,
-            isEnabledByDefaultInFxCopAnalyzers: false);
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor RuleForEvents = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor RuleForEvents = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
-            s_localizableMessageForEvent,
+            CreateLocalizableResourceString(nameof(UseGenericEventHandlerInstancesForEventMessage)),
             DiagnosticCategory.Design,
             RuleLevel.Disabled,
-            description: s_localizableDescriptionForEvent,
+            description: CreateLocalizableResourceString(nameof(UseGenericEventHandlerInstancesForEventDescription)),
             isPortedFxCopRule: true,
-            isDataflowRule: false,
-            isEnabledByDefaultInFxCopAnalyzers: false);
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor RuleForEvents2 = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor RuleForEvents2 = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
-            s_localizableMessageForEvent2,
+            CreateLocalizableResourceString(nameof(UseGenericEventHandlerInstancesForEvent2Message)),
             DiagnosticCategory.Design,
             RuleLevel.Disabled,
-            description: s_localizableDescriptionForEvent2,
+            description: CreateLocalizableResourceString(nameof(UseGenericEventHandlerInstancesForEvent2Description)),
             isPortedFxCopRule: true,
-            isDataflowRule: false,
-            isEnabledByDefaultInFxCopAnalyzers: false);
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleForDelegates, RuleForEvents, RuleForEvents2);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(RuleForDelegates, RuleForEvents, RuleForEvents2);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 (context) =>
                 {
                     INamedTypeSymbol? eventArgs = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
@@ -95,7 +87,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         // Note all the descriptors/rules for this analyzer have the same ID and category and hence
                         // will always have identical configured visibility.
                         var namedType = (INamedTypeSymbol)symbolContext.Symbol;
-                        if (namedType.MatchesConfiguredVisibility(symbolContext.Options, RuleForDelegates, symbolContext.Compilation, symbolContext.CancellationToken) &&
+                        if (symbolContext.Options.MatchesConfiguredVisibility(RuleForDelegates, namedType, symbolContext.Compilation) &&
                             IsDelegateTypeWithInvokeMethod(namedType) &&
                             namedType.DelegateInvokeMethod.HasEventHandlerSignature(eventArgs))
                         {
@@ -107,7 +99,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     INamedTypeSymbol? comSourceInterfacesAttribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComSourceInterfacesAttribute);
                     bool ContainingTypeHasComSourceInterfacesAttribute(IEventSymbol eventSymbol) =>
                         comSourceInterfacesAttribute != null &&
-                        eventSymbol.ContainingType.GetAttributes().Any(a => Equals(a.AttributeClass, comSourceInterfacesAttribute));
+                        eventSymbol.ContainingType.HasAttribute(comSourceInterfacesAttribute);
 
                     context.RegisterSymbolAction(symbolContext =>
                     {
@@ -117,7 +109,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         // Note all the descriptors/rules for this analyzer have the same ID and category and hence
                         // will always have identical configured visibility.
                         var eventSymbol = (IEventSymbol)symbolContext.Symbol;
-                        if (eventSymbol.MatchesConfiguredVisibility(symbolContext.Options, RuleForEvents, symbolContext.Compilation, symbolContext.CancellationToken) &&
+                        if (symbolContext.Options.MatchesConfiguredVisibility(RuleForEvents, eventSymbol, symbolContext.Compilation) &&
                             !eventSymbol.IsOverride &&
                             !eventSymbol.IsImplementationOfAnyInterfaceMember() &&
                             !ContainingTypeHasComSourceInterfacesAttribute(eventSymbol) &&
@@ -134,7 +126,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                 // CA1003: Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs
                                 symbolContext.ReportDiagnostic(eventSymbol.CreateDiagnostic(RuleForEvents, eventSymbol.Name, eventType.ToDisplayString()));
                             }
-
                         }
                     }, SymbolKind.Event);
                 });

@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+
+#nullable disable warnings
 
 using System;
 using System.Linq;
@@ -62,16 +64,13 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
 
             private bool ShouldAnalyzeExpression(SyntaxNode expression, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                switch (expression.Kind())
+                return expression.Kind() switch
                 {
-                    case SyntaxKind.ArrayCreationExpression:
-                    case SyntaxKind.ImplicitArrayCreationExpression:
-                        return ShouldAnalyzeArrayCreationExpression(expression, semanticModel, cancellationToken);
-                    case SyntaxKind.SimpleMemberAccessExpression:
-                        return true;
-                    default:
-                        return false;
-                }
+                    SyntaxKind.ArrayCreationExpression
+                    or SyntaxKind.ImplicitArrayCreationExpression => ShouldAnalyzeArrayCreationExpression(expression, semanticModel, cancellationToken),
+                    SyntaxKind.SimpleMemberAccessExpression => true,
+                    _ => false,
+                };
             }
 
             private static void AnalyzeArrayCreationExpression(ArrayCreationExpressionSyntax arrayCreationExpression, Action<Diagnostic> addDiagnostic)
@@ -82,7 +81,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
                     // Check for explicit specification of empty or singleton array
 
                     if (arrayType.RankSpecifiers[0].ChildNodes()
-                        .FirstOrDefault(n => n.Kind() == SyntaxKind.NumericLiteralExpression) is LiteralExpressionSyntax literalRankSpecifier)
+                        .FirstOrDefault(n => n.IsKind(SyntaxKind.NumericLiteralExpression)) is LiteralExpressionSyntax literalRankSpecifier)
                     {
                         AnalyzeArrayLength((int)literalRankSpecifier.Token.Value, arrayCreationExpression, addDiagnostic);
                         return;

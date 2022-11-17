@@ -1,6 +1,15 @@
+parameters:
+  # Optionally do not publish to TSA. Useful for e.g. verifying fixes before PR.
+- name: TSAEnabled
+  displayName: Publish results to TSA
+  type: boolean
+  default: true
+
 # Branches that trigger a build on commit
 trigger:
-  - master
+  - main
+  - release/*
+  - features/*
   - 2.9.x
 
 variables:
@@ -8,11 +17,24 @@ variables:
     value: Roslyn
   - name: _DotNetArtifactsCategory
     value: .NETCore
+  - name: _DotNetValidationArtifactsCategory
+    value: .NETCoreValidation
+  - group: DotNet-Roslyn-SDLValidation-Params
+  - group: DotNet-Blob-Feed
+  - group: DotNet-Symbol-Server-Pats
+  - group: DotNet-Versions-Publish
+  - group: ManagedLanguageSecrets
 
 stages:
 - stage: build
   displayName: Build
   jobs:
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    - template: /eng/common/templates/job/onelocbuild.yml
+      parameters:
+        MirrorRepo: roslyn-analyzers
+        LclSource: lclFilesfromPackage
+        LclPackageId: 'LCL-JUNO-PROD-ROSANLZR'
   - template: /eng/common/templates/jobs/jobs.yml
     parameters:
       enableMicrobuild: true
@@ -21,11 +43,12 @@ stages:
       enablePublishBuildAssets: true
       enablePublishUsingPipelines: true
       enableTelemetry: true
+      enableSourceBuild: true
       jobs:
       - job: Signed_Build
         pool:
-          name: NetCoreInternal-Pool
-          queue: BuildPool.Windows.10.Amd64.VS2019
+          name: NetCore1ESPool-Internal
+          demands: ImageOverride -equals windows.vs2022preview.amd64
         variables:
           - group: DotNet-Blob-Feed
           - group: Publish-Build-Assets
@@ -36,7 +59,7 @@ stages:
         steps:
         - checkout: self
           clean: true
-        - script: eng\common\CIBuild.cmd 
+        - script: eng\common\CIBuild.cmd
                     -configuration $(_BuildConfig)
                     /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
                     /p:DotNetSignType=$(_SignType)
@@ -65,9 +88,43 @@ stages:
             PathtoPublish: 'artifacts\VSSetup\$(_BuildConfig)'
             ArtifactName: 'VSIXes'
           condition: succeeded()
-
+- stage: analysis
+  displayName: Code analysis
+  pool:
+    name: NetCore1ESPool-Internal
+    demands: ImageOverride -equals windows.vs2022preview.amd64
+  jobs:
+    - job: codeql
+      displayName: CodeQL
+      timeoutInMinutes: 120
+      variables:
+        # CG is handled in the primary CI pipeline
+      - name: skipComponentGovernanceDetection
+        value: true
+        # Force CodeQL enabled so it may be run on any branch
+      - name: Codeql.Enabled
+        value: true
+        # Do not let CodeQL 3000 Extension gate scan frequency
+      - name: Codeql.Cadence
+        value: 0
+      - name: Codeql.TSAEnabled
+        value: true 
+      steps:
+        - task: UseDotNet@2
+          inputs:
+            useGlobalJson: true
+        - task: CodeQL3000Init@0
+          displayName: CodeQL Initialize
+        - script: eng\common\cibuild.cmd
+            -configuration Release
+            -prepareMachine
+            /p:Test=false
+          displayName: Windows Build
+        - task: CodeQL3000Finalize@0
+          displayName: CodeQL Finalize
 - template: eng\common\templates\post-build\post-build.yml
   parameters:
+    publishingInfraVersion: 3
     enableSymbolValidation: false
     enableSigningValidation: false
     enableSourceLinkValidation: false

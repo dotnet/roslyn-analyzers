@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -9,41 +9,39 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
+    /// <summary>
+    /// CA1066: <inheritdoc cref="ImplementIEquatableWhenOverridingObjectEqualsTitle"/>
+    /// CA1067: <inheritdoc cref="OverrideObjectEqualsTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class EquatableAnalyzer : DiagnosticAnalyzer
     {
         internal const string ImplementIEquatableRuleId = "CA1066";
         internal const string OverrideObjectEqualsRuleId = "CA1067";
 
-        private static readonly LocalizableString s_localizableTitleImplementIEquatable = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageImplementIEquatable = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionImplementIEquatable = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-
         internal static readonly DiagnosticDescriptor ImplementIEquatableDescriptor = DiagnosticDescriptorHelper.Create(
             ImplementIEquatableRuleId,
-            s_localizableTitleImplementIEquatable,
-            s_localizableMessageImplementIEquatable,
+            CreateLocalizableResourceString(nameof(ImplementIEquatableWhenOverridingObjectEqualsTitle)),
+            CreateLocalizableResourceString(nameof(ImplementIEquatableWhenOverridingObjectEqualsMessage)),
             DiagnosticCategory.Design,
             RuleLevel.Disabled,
-            description: s_localizableDescriptionImplementIEquatable,
+            description: CreateLocalizableResourceString(nameof(ImplementIEquatableWhenOverridingObjectEqualsDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
-
-        private static readonly LocalizableString s_localizableTitleOverridesObjectEquals = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageOverridesObjectEquals = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionOverridesObjectEquals = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static readonly DiagnosticDescriptor OverridesObjectEqualsDescriptor = DiagnosticDescriptorHelper.Create(
             OverrideObjectEqualsRuleId,
-            s_localizableTitleOverridesObjectEquals,
-            s_localizableMessageOverridesObjectEquals,
+            CreateLocalizableResourceString(nameof(OverrideObjectEqualsTitle)),
+            CreateLocalizableResourceString(nameof(OverrideObjectEqualsMessage)),
             DiagnosticCategory.Design,
             RuleLevel.BuildWarningCandidate,
-            description: s_localizableDescriptionOverridesObjectEquals,
+            description: CreateLocalizableResourceString(nameof(OverrideObjectEqualsDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ImplementIEquatableDescriptor, OverridesObjectEqualsDescriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(ImplementIEquatableDescriptor, OverridesObjectEqualsDescriptor);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -55,9 +53,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            INamedTypeSymbol? objectType = context.Compilation.GetSpecialType(SpecialType.System_Object);
             INamedTypeSymbol? equatableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIEquatable1);
-            if (objectType != null && equatableType != null)
+            if (equatableType != null)
             {
                 context.RegisterSymbolAction(c => AnalyzeSymbol(c, equatableType), SymbolKind.NamedType);
             }
@@ -65,7 +62,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol equatableType)
         {
-            if (!(context.Symbol is INamedTypeSymbol namedType)
+            if (context.Symbol is not INamedTypeSymbol namedType
                 || (namedType.TypeKind != TypeKind.Struct && namedType.TypeKind != TypeKind.Class)
                 || (namedType.TypeKind == TypeKind.Struct && namedType.IsRefLikeType))
             {
@@ -90,7 +87,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 //       class A<T> : IEquatable<T>
                 //          where T: A<T>
                 //       { ... }
-                if (!(constructedEquatable.GetMembers("Equals").FirstOrDefault() is IMethodSymbol equatableEqualsMethod) ||
+                if (constructedEquatable.GetMembers("Equals").FirstOrDefault() is not IMethodSymbol equatableEqualsMethod ||
                     !Equals(namedType, namedType.FindImplementationForInterfaceMember(equatableEqualsMethod)?.ContainingType))
                 {
                     return;

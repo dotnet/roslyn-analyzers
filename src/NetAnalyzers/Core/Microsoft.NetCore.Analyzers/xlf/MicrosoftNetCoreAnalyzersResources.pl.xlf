@@ -7,6 +7,11 @@
         <target state="translated">Dodaj atrybut „NonSerialized” do tego pola.</target>
         <note />
       </trans-unit>
+      <trans-unit id="AddPublicParameterlessConstructor">
+        <source>Add a public constructor that takes zero parameters</source>
+        <target state="translated">Dodaj konstruktora publicznego, który przyjmuje zero parametrów</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AddSerializableAttributeCodeActionTitle">
         <source>Add Serializable attribute</source>
         <target state="translated">Dodaj atrybut Serializable</target>
@@ -33,18 +38,33 @@
         <note />
       </trans-unit>
       <trans-unit id="AttributeStringLiteralsShouldParseCorrectlyMessageDefault">
-        <source>In the constructor of '{0}', change the value of argument '{1}', which is currently "{2}", to something that can be correctly parsed as '{3}'.</source>
-        <target state="translated">W konstruktorze typu „{0}” zmień wartość argumentu „{1}” (aktualnie „{2}”) na wartość, którą można poprawnie przeanalizować jako „{3}”.</target>
+        <source>In the constructor of '{0}', change the value of argument '{1}', which is currently "{2}", to something that can be correctly parsed as '{3}'</source>
+        <target state="translated">W konstruktorze typu „{0}” zmień wartość argumentu „{1}” (aktualnie „{2}”) na wartość, którą można poprawnie przeanalizować jako „{3}”</target>
         <note />
       </trans-unit>
       <trans-unit id="AttributeStringLiteralsShouldParseCorrectlyMessageEmpty">
-        <source>In the constructor of '{0}', change the value of argument '{1}', which is currently an empty string (""), to something that can be correctly parsed as '{2}'.</source>
-        <target state="translated">W konstruktorze typu „{0}” zmień wartość argumentu „{1}” (aktualnie pusty ciąg — "") na wartość, którą można poprawnie przeanalizować jako „{2}”.</target>
+        <source>In the constructor of '{0}', change the value of argument '{1}', which is currently an empty string (""), to something that can be correctly parsed as '{2}'</source>
+        <target state="translated">W konstruktorze typu „{0}” zmień wartość argumentu „{1}” (aktualnie pusty ciąg — "") na wartość, którą można poprawnie przeanalizować jako „{2}”</target>
         <note />
       </trans-unit>
       <trans-unit id="AttributeStringLiteralsShouldParseCorrectlyTitle">
         <source>Attribute string literals should parse correctly</source>
         <target state="translated">Analiza literałów ciągu atrybutu powinna kończyć się powodzeniem</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidStringBuilderPInvokeParametersDescription">
+        <source>Marshalling of 'StringBuilder' always creates a native buffer copy, resulting in multiple allocations for one marshalling operation.</source>
+        <target state="translated">Marshalling elementu „StringBuilder” zawsze tworzy natywną kopię buforu, co powoduje powstanie wielu alokacji dla jednej operacji marshallingu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidStringBuilderPInvokeParametersMessage">
+        <source>Avoid 'StringBuilder' parameters for P/Invokes. Consider using a character buffer instead.</source>
+        <target state="translated">Unikaj parametrów „StringBuilder” dla elementów P/Invoke. Zamiast tego rozważ użycie bufora znaku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidStringBuilderPInvokeParametersTitle">
+        <source>Avoid 'StringBuilder' parameters for P/Invokes</source>
+        <target state="translated">Unikaj parametrów „StringBuilder” dla elementów P/Invoke</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesDescription">
@@ -68,8 +88,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidZeroLengthArrayAllocationsTitle">
-        <source>Avoid zero-length array allocations.</source>
-        <target state="translated">Unikaj alokowania tablic o długości zero.</target>
+        <source>Avoid zero-length array allocations</source>
+        <target state="translated">Unikaj alokowania tablic o długości zero</target>
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeMaybeWithoutBinderSetMessage">
@@ -107,8 +127,23 @@
         <target state="translated">Nie używaj niezabezpieczonego deserializatora BinaryFormatter</target>
         <note />
       </trans-unit>
+      <trans-unit id="BufferBlockCopyDescription">
+        <source>'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument. Using 'Array.Length' may not match the number of bytes that needs to be copied.</source>
+        <target state="translated">Element „Buffer.BlockCopy” oczekuje, że liczba bajtów zostanie skopiowana dla argumentu „count”. Użycie elementu „Array.Length” może nie odpowiadać liczbie bajtów, które należy skopiować.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BufferBlockCopyLengthMessage">
+        <source>'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument. Using 'Array.Length' may not match the number of bytes that needs to be copied.</source>
+        <target state="translated">Element „Buffer.BlockCopy” oczekuje, że liczba bajtów zostanie skopiowana dla argumentu „count”. Użycie elementu „Array.Length” może nie odpowiadać liczbie bajtów, które należy skopiować.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BufferBlockCopyLengthTitle">
+        <source>'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument</source>
+        <target state="translated">Element „Buffer.BlockCopy” oczekuje skopiowania liczby bajtów dla argumentu „count”</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CallGCSuppressFinalizeCorrectlyDescription">
-        <source>A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual?Basic).</source>
+        <source>A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual Basic).</source>
         <target state="translated">Implementacja metody Dispose nie wywołuje metody GC.SuppressFinalize lub metoda niebędąca implementacją metody Dispose wywołuje metodę GC.SuppressFinalize lub metoda wywołuje metodę GC.SuppressFinalize i przekazuje coś innego niż obiekt this (Me w języku Visual Basic).</target>
         <note />
       </trans-unit>
@@ -142,6 +177,161 @@
         <target state="translated">Niezawodność</target>
         <note />
       </trans-unit>
+      <trans-unit id="CommaSeparator">
+        <source>, </source>
+        <target state="translated">, </target>
+        <note>Separator used for separating list of platform names: {API} is only supported on: {‘windows’, ‘browser’, ‘linux’}</note>
+      </trans-unit>
+      <trans-unit id="ConstantExpectedApplicationDescription">
+        <source>ConstantExpected attribute is not applied correctly on the parameter.</source>
+        <target state="new">ConstantExpected attribute is not applied correctly on the parameter.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedApplicationTitle">
+        <source>Incorrect usage of ConstantExpected attribute</source>
+        <target state="new">Incorrect usage of ConstantExpected attribute</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedAttributExpectedMessage">
+        <source>The ConstantExpected attribute is required for the parameter due to the parent method annotation</source>
+        <target state="new">The ConstantExpected attribute is required for the parameter due to the parent method annotation</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedIncompatibleConstantTypeMessage">
+        <source>The '{0}' value is not compatible with parameter type of '{1}'</source>
+        <target state="new">The '{0}' value is not compatible with parameter type of '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedInvalidBoundsMessage">
+        <source>The '{0}' value does not fit within the parameter value bounds of '{1}' to '{2}'</source>
+        <target state="new">The '{0}' value does not fit within the parameter value bounds of '{1}' to '{2}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedInvalidMessage">
+        <source>The constant is not of the same '{0}' type as the parameter</source>
+        <target state="new">The constant is not of the same '{0}' type as the parameter</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedInvertedRangeMessage">
+        <source>The Min and Max values are inverted</source>
+        <target state="new">The Min and Max values are inverted</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedNotConstantMessage">
+        <source>The argument should be a constant for optimal performance</source>
+        <target state="new">The argument should be a constant for optimal performance</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedNotSupportedMessage">
+        <source>The '{0}' type is not supported for ConstantExpected attribute</source>
+        <target state="new">The '{0}' type is not supported for ConstantExpected attribute</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedOutOfBoundsMessage">
+        <source>The constant does not fit within the value bounds of '{0}' to '{1}'</source>
+        <target state="new">The constant does not fit within the value bounds of '{0}' to '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedUsageDescription">
+        <source>The parameter expects a constant for optimal performance.</source>
+        <target state="new">The parameter expects a constant for optimal performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstantExpectedUsageTitle">
+        <source>A constant is expected for the parameter</source>
+        <target state="new">A constant is expected for the parameter</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInDeserializableObjectGraphMessage">
+        <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}</source>
+        <target state="translated">Deserializowanie obiektu {0} podczas deserializacji niezaufanych danych wejściowych nie jest bezpieczne. Element „{1}” jest elementem {0} lub pochodzi od niego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInDeserializableObjectGraphTitle">
+        <source>Unsafe DataSet or DataTable type found in deserializable object graph</source>
+        <target state="translated">W wykresie obiektu, który można deserializować, znaleziono niebezpieczny typ DataSet lub DataTable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInRceAutogeneratedSerializableTypeMessage">
+        <source>When deserializing untrusted input with an IFormatter-based serializer, deserializing a {0} object is insecure. '{1}' either is or derives from {0}. Ensure that the auto-generated type is never deserialized with untrusted data.</source>
+        <target state="translated">Deserializowanie obiektu {0} podczas deserializacji niezaufanych danych wejściowych za pomocą serializatora opartego na elemencie IFormatter nie jest bezpieczne. Element „{1}” jest elementem {0} lub pochodzi od niego. Upewnij się, że automatycznie wygenerowany typ nie jest nigdy deserializowany za pomocą niezaufanych danych.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInRceAutogeneratedSerializableTypeTitle">
+        <source>Unsafe DataSet or DataTable in auto-generated serializable type can be vulnerable to remote code execution attacks</source>
+        <target state="translated">Niebezpieczny element DataSet lub DataTable w automatycznie wygenerowanym typie, który można serializować, może być podatny na zagrożenia polegające na zdalnym wykonaniu kodu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInRceDeserializableObjectGraphMessage">
+        <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}</source>
+        <target state="translated">Deserializowanie obiektu {0} podczas deserializacji niezaufanych danych wejściowych nie jest bezpieczne. Element „{1}” jest elementem {0} lub pochodzi od niego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInRceDeserializableObjectGraphTitle">
+        <source>Unsafe DataSet or DataTable in deserialized object graph can be vulnerable to remote code execution attacks</source>
+        <target state="translated">Niebezpieczny element DataSet lub DataTable w zdeserializowanym wykresie obiektu może być narażony na ataki polegające na zdalnym wykonaniu kodu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInRceSerializableTypeMessage">
+        <source>When deserializing untrusted input with an IFormatter-based serializer, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.</source>
+        <target state="translated">Deserializowanie obiektu {0} podczas deserializacji niezaufanych danych wejściowych przy użyciu serializatora opartego na interfejsie IFormatter nie jest bezpieczne. Element „{1}” jest elementem {0} lub pochodzi od niego.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInRceSerializableTypeTitle">
+        <source>Unsafe DataSet or DataTable in serializable type can be vulnerable to remote code execution attacks</source>
+        <target state="translated">Niebezpieczny element DataSet lub DataTable w typie, który można serializować, może być narażony na ataki polegające na zdalnym wykonaniu kodu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInSerializableTypeMessage">
+        <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}</source>
+        <target state="translated">Deserializowanie obiektu {0} podczas deserializacji niezaufanych danych wejściowych nie jest bezpieczne. Element „{1}” jest elementem {0} lub pochodzi od niego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInSerializableTypeTitle">
+        <source>Unsafe DataSet or DataTable in serializable type</source>
+        <target state="translated">Niebezpieczny element DataSet lub DataTable w typie, który można serializować</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInWebDeserializableObjectGraphMessage">
+        <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}</source>
+        <target state="translated">Deserializowanie obiektu {0} podczas deserializacji niezaufanych danych wejściowych nie jest bezpieczne. Element „{1}” jest elementem {0} lub pochodzi od niego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInWebDeserializableObjectGraphTitle">
+        <source>Unsafe DataSet or DataTable type in web deserializable object graph</source>
+        <target state="translated">W internetowym wykresie obiektu, który można deserializować, znaleziono niebezpieczny typ DataSet lub DataTable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetReadXmlAutogeneratedMessage">
+        <source>The method '{0}' is insecure when deserializing untrusted data. Make sure that auto-generated class containing the '{0}' call is not deserialized with untrusted data.</source>
+        <target state="translated">Metoda „{0}” jest niezabezpieczona podczas deserializacji niezaufanych danych. Upewnij się, że automatycznie wygenerowana klasa zawierająca wywołanie „{0}” nie jest deserializowana za pomocą niezaufanych danych.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetReadXmlAutogeneratedTitle">
+        <source>Ensure auto-generated class containing DataSet.ReadXml() is not used with untrusted data</source>
+        <target state="translated">Upewnij się, że automatycznie wygenerowana klasa zawierająca element DataSet.ReadXml() nie jest używana w połączeniu z niezaufanymi danymi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetReadXmlMessage">
+        <source>The method '{0}' is insecure when deserializing untrusted data</source>
+        <target state="translated">Metoda „{0}” jest niezabezpieczona podczas deserializacji niezaufanych danych</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetReadXmlTitle">
+        <source>Do not use DataSet.ReadXml() with untrusted data</source>
+        <target state="translated">Nie używaj elementu DataSet.ReadXml() z niezaufanymi danymi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataTableReadXmlMessage">
+        <source>The method '{0}' is insecure when deserializing untrusted data</source>
+        <target state="translated">Metoda „{0}” jest niezabezpieczona podczas deserializacji niezaufanych danych</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataTableReadXmlTitle">
+        <source>Do not use DataTable.ReadXml() with untrusted data</source>
+        <target state="translated">Nie używaj elementu DataTable.ReadXml() z niezaufanymi danymi</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DefinitelyDisableHttpClientCRLCheck">
         <source>HttpClients should enable certificate revocation list checks</source>
         <target state="translated">Klienci HttpClients powinni włączyć sprawdzanie listy odwołania certyfikatów</target>
@@ -173,8 +363,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCore">
-        <source>Use Secure Cookies In ASP.Net Core</source>
-        <target state="translated">Użyj bezpiecznych plików cookie na platformie ASP.Net Core</target>
+        <source>Use Secure Cookies In ASP.NET Core</source>
+        <target state="translated">Użyj bezpiecznych plików cookie na platformie ASP.NET Core</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCoreMessage">
@@ -205,6 +395,36 @@
       <trans-unit id="DeprecatedSslProtocolsTitle">
         <source>Do not use deprecated SslProtocols values</source>
         <target state="translated">Nie używaj przestarzałych wartości SslProtocols</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DerivesFromPreviewClassMessage">
+        <source>'{0}' derives from preview class '{1}' and therefore needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">„{0}” jest elementem pochodnym klasy w wersji zapoznawczej „{1}” i dlatego wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DerivesFromPreviewClassMessageWithCustomMessagePlaceholder">
+        <source>{3} '{0}' derives from preview class '{1}' and therefore needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">{3} „{0}” jest elementem pochodnym klasy w wersji zapoznawczej „{1}” i dlatego wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DetectPreviewFeaturesDescription">
+        <source>An assembly has to opt into preview features before using them.</source>
+        <target state="translated">Zestaw musi wyrazić zgodę na korzystanie z funkcji w wersji zapoznawczej przed ich użyciem.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DetectPreviewFeaturesMessage">
+        <source>Using '{0}' requires opting into preview features. See {1} for more information.</source>
+        <target state="translated">Korzystanie z „{0}” wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DetectPreviewFeaturesMessageWithCustomMessagePlaceholder">
+        <source>{2} Using '{0}' requires opting into preview features. See {1} for more information.</source>
+        <target state="translated">{2} Korzystanie z „{0}” wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DetectPreviewFeaturesTitle">
+        <source>This API requires opting into preview features</source>
+        <target state="translated">Ten interfejs API wymaga zgody na funkcje w wersji zapoznawczej</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
@@ -243,8 +463,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
-        <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
-        <target state="translated">Upewnij się, że metoda „{0}” wywołuje element „{1}” we wszystkich możliwych ścieżkach przepływu sterowania.</target>
+        <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths</source>
+        <target state="translated">Upewnij się, że metoda „{0}” wywołuje element „{1}” we wszystkich możliwych ścieżkach przepływu sterowania</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
@@ -268,8 +488,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeNotDisposedMessage">
-        <source>Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.</source>
-        <target state="translated">Wywołaj metodę System.IDisposable.Dispose dla obiektu utworzonego przez „{0}”, zanim wszystkie odwołania do niego będą poza zakresem.</target>
+        <source>Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope</source>
+        <target state="translated">Wywołaj metodę System.IDisposable.Dispose dla obiektu utworzonego przez element „{0}”, zanim wszystkie odwołania do niego będą poza zakresem</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeNotDisposedOnExceptionPathsMessage">
@@ -312,6 +532,21 @@
         <target state="translated">To przeciążenie metody Add jest potencjalnie niebezpieczne, ponieważ może spowodować powstanie niebezpiecznych odwołań zewnętrznych</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotAlwaysSkipTokenValidationInDelegatesDescription">
+        <source>By setting critical TokenValidationParameter validation delegates to true, important authentication safeguards are disabled which can lead to tokens from any issuer or expired tokens being wrongly validated.</source>
+        <target state="translated">Poprzez ustawienie krytycznych delegowań walidacji TokenValidationParameter na wartość true nastąpi wyłączenie ważnych zabezpieczeń uwierzytelniania, co może spowodować nieprawidłową walidację tokenów od dowolnego wystawcy lub wygasłych tokenów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAlwaysSkipTokenValidationInDelegatesMessage">
+        <source>The {0} is set to a function that is always returning true. By setting the validation delegate, you are overriding default validation and by always returning true, this validation is completely disabled.</source>
+        <target state="translated">{0} jest ustawiana na funkcję, która zawsze zwraca wartość true. Ustawienie delegowania walidacji spowoduje zastąpienie domyślnych ustawień walidacji i zwracanie wartości true, a ta walidacja zostanie całkowicie wyłączona.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAlwaysSkipTokenValidationInDelegatesTitle">
+        <source>Do not always skip token validation in delegates</source>
+        <target state="translated">Nigdy nie pomijaj walidacji tokenów w delegacjach</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserialization">
         <source>Do Not Call Dangerous Methods In Deserialization</source>
         <target state="translated">Nie wywołuj niebezpiecznych metod w deserializacji</target>
@@ -323,8 +558,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserializationMessage">
-        <source>When deserializing an instance of class {0}, method {1} can call dangerous method {2}.</source>
-        <target state="translated">Podczas deserializacji wystąpienia klasy {0} metoda {1} może wywołać niebezpieczną metodę {2}.</target>
+        <source>When deserializing an instance of class {0}, method {1} can call dangerous method {2}. The potential method invocations are: {3}.</source>
+        <target state="translated">Podczas deserializacji wystąpienia klasy {0} metoda {1} może wywołać niebezpieczną metodę {2}. Potencjalne wywołania metod to: {3}.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">
@@ -378,13 +613,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCreateTaskCompletionSourceWithWrongArgumentsMessage">
-        <source>Argument contains TaskContinuationsOptions enum instead of TaskCreationOptions enum.</source>
-        <target state="translated">Argument zawiera wyliczenie opcji TaskContinuationsOptions zamiast wyliczenia opcji TaskCreationOptions.</target>
+        <source>Argument contains TaskContinuationsOptions enum instead of TaskCreationOptions enum</source>
+        <target state="translated">Argument zawiera wyliczenie opcji TaskContinuationsOptions zamiast wyliczenia opcji TaskCreationOptions</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCreateTaskCompletionSourceWithWrongArgumentsTitle">
-        <source>Argument passed to TaskCompletionSource constructor should be TaskCreationOptions enum instead of TaskContinuationOptions enum.</source>
-        <target state="translated">Argument przekazany do konstruktora TaskCompletionSource musi być wyliczeniem opcji TaskCreationOptions a nie wyliczeniem opcji TaskContinuationOptions.</target>
+        <source>Argument passed to TaskCompletionSource constructor should be TaskCreationOptions enum instead of TaskContinuationOptions enum</source>
+        <target state="translated">Argument przekazany do konstruktora TaskCompletionSource musi być wyliczeniem opcji TaskCreationOptions, a nie wyliczeniem opcji TaskContinuationOptions</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCreateTasksWithoutPassingATaskSchedulerDescription">
@@ -408,8 +643,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDefineFinalizersForTypesDerivedFromMemoryManagerMessage">
-        <source>Adding a finalizer to a type derived from MemoryManager&lt;T&gt; may permit memory to be freed while it is still in use by a Span&lt;T&gt;.</source>
-        <target state="translated">Dodanie finalizatora do typu pochodzącego od typu MemoryManager&lt;T&gt; może umożliwić zwalnianie pamięci, gdy jest ona nadal używana przez typ Span&lt;T&gt;.</target>
+        <source>Adding a finalizer to a type derived from MemoryManager&lt;T&gt; may permit memory to be freed while it is still in use by a Span&lt;T&gt;</source>
+        <target state="translated">Dodanie finalizatora do typu pochodzącego od typu MemoryManager&lt;T&gt; może umożliwić zwalnianie pamięci, gdy jest ona nadal używana przez typ Span&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDefineFinalizersForTypesDerivedFromMemoryManagerTitle">
@@ -473,13 +708,28 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCryptoDescription">
-        <source>Starting with the .NET Framework 4.6, the System.Net.ServicePointManager and System.Net.Security.SslStream classes are recommeded to use new protocols. The old ones have protocol weaknesses and are not supported. Setting Switch.System.Net.DontEnableSchUseStrongCrypto with true will use the old weak crypto check and opt out of the protocol migration.</source>
+        <source>Starting with the .NET Framework 4.6, the System.Net.ServicePointManager and System.Net.Security.SslStream classes are recommended to use new protocols. The old ones have protocol weaknesses and are not supported. Setting Switch.System.Net.DontEnableSchUseStrongCrypto with true will use the old weak crypto check and opt out of the protocol migration.</source>
         <target state="translated">Zaczynając od programu .NET Framework 4.6, klasy System.Net.ServicePointManager i System.Net.Security.SslStream są zalecane do użycia dla nowych protokołów. W starych występują słabości protokołu i nie są one obsługiwane. Ustawienie wartości true dla parametru Switch.System.Net.DontEnableSchUseStrongCrypto spowoduje użycie starego i słabego sprawdzania kryptograficznego oraz rezygnację z migracji protokołu.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCryptoMessage">
         <source>{0} disables TLS 1.2 and enables SSLv3</source>
         <target state="translated">Metoda {0} wyłącza protokół TLS 1.2 i włącza protokół SSLv3</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableTokenValidationChecksDescription">
+        <source>Token validation checks ensure that while validating tokens, all aspects are analyzed and verified. Turning off validation can lead to security holes by allowing untrusted tokens to make it through validation.</source>
+        <target state="translated">Sprawdzanie walidacji tokenu zagwarantuje, że podczas weryfikowania tokenów wszystkie aspekty zostaną poddane analizie i zweryfikowane. Wyłączenie walidacji może spowodować powstanie luk w zabezpieczeniach, umożliwiając niezaufanym tokenom przechodzenie przez proces walidacji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableTokenValidationChecksMessage">
+        <source>TokenValidationParameters.{0} should not be set to false as it disables important validation</source>
+        <target state="translated">TokenValidationParameters. {0} nie należy ustawiać na wartość false, ponieważ spowoduje to wyłączenie ważnych weryfikacji</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableTokenValidationChecksTitle">
+        <source>Do not disable token validation checks</source>
+        <target state="translated">Nie wyłączaj sprawdzania walidacji tokenów</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsMessage">
@@ -490,6 +740,21 @@
       <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsTitle">
         <source>Do not disable ServicePointManagerSecurityProtocols</source>
         <target state="translated">Nie wyłączaj protokołów ServicePointManagerSecurityProtocols</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyDescription">
+        <source>Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The former already checks whether the key exists, and will not throw if it does not.</source>
+        <target state="translated">Nie należy chronić elementu \"Dictionary.Remove(key)\" za pomocą elementu \"Dictionary.ContainsKey(key)\". Pierwszy element sprawdza, czy klucz istnieje i nie generuje go w przypadku jego braku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyMessage">
+        <source>Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'</source>
+        <target state="translated">Nie należy chronić elementu \"Dictionary.Remove(key)\" za pomocą elementu \"Dictionary.ContainsKey(key)\"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyTitle">
+        <source>Unnecessary call to 'Dictionary.ContainsKey(key)'</source>
+        <target state="translated">Niepotrzebne wywołanie metody \"Dictionary.ContainsKey(key)\"</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeCertificate">
@@ -523,8 +788,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
-        <source>By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</source>
-        <target state="translated">Domyślnie magazyn certyfikatów zaufanych głównych urzędów certyfikacji jest skonfigurowany przy użyciu zbioru publicznych urzędów certyfikacji, który spełnia wymagania programu certyfikatów głównych firmy Microsoft. Ponieważ wszystkie zaufane główne urzędy certyfikacji mogą wystawiać certyfikaty dla dowolnej domeny, osoba atakująca może wybrać słaby lub wymuszony urząd certyfikacji zainstalowany przez Ciebie, aby umożliwić atak — a jeden narażony na ataki, złośliwy lub wymuszony urząd certyfikacji osłabia bezpieczeństwo całego systemu. Ponadto tego typu ataki mogą nawet zostać niezauważone.</target>
+        <source>By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack - and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</source>
+        <target state="translated">Domyślnie magazyn certyfikatów Zaufanych głównych urzędów certyfikacji jest skonfigurowany przy użyciu zbioru publicznych urzędów certyfikacji, który spełniają wymagania programu certyfikatów głównych firmy Microsoft. Ponieważ wszystkie Zaufane główne urzędy certyfikacji mogą wystawiać certyfikaty dla dowolnej domeny, osoba atakująca może wybrać słaby lub wymuszony urząd certyfikacji zainstalowany przez Ciebie, aby zainicjować atak — a jeden narażony na ataki, złośliwy lub wymuszony urząd certyfikacji osłabia bezpieczeństwo całego systemu. Co gorsza, tego typu ataki, w łatwy sposób mogą nawet zostać niezauważone.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotLockOnObjectsWithWeakIdentityDescription">
@@ -563,13 +828,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesMessageReserved">
-        <source>Exception type {0} is reserved by the runtime.</source>
-        <target state="translated">Typ wyjątku {0} został zastrzeżony przez środowisko uruchomieniowe.</target>
+        <source>Exception type {0} is reserved by the runtime</source>
+        <target state="translated">Typ wyjątku {0} został zastrzeżony przez środowisko uruchomieniowe</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesMessageTooGeneric">
-        <source>Exception type {0} is not sufficiently specific.</source>
-        <target state="translated">Typ wyjątku {0} nie jest wystarczająco specyficzny.</target>
+        <source>Exception type {0} is not sufficiently specific</source>
+        <target state="translated">Typ wyjątku {0} nie jest wystarczająco specyficzny</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesTitle">
@@ -588,8 +853,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotSerializeTypesWithPointerFieldsMessage">
-        <source>Pointer field {0} on serializable type.</source>
-        <target state="translated">Pole wskaźnika {0} w typie przeznaczonym do serializacji.</target>
+        <source>Pointer field {0} on serializable type</source>
+        <target state="translated">Pole wskaźnika {0} w typie przeznaczonym do serializacji</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseAccountSAS">
@@ -628,8 +893,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage">
-        <source>{0}() is used where AnyAsync() could be used instead to improve performance.</source>
-        <target state="translated">Funkcja {0}() jest używana w miejscach, w których można użyć funkcji AnyAsync() w celu zwiększenia wydajności.</target>
+        <source>{0}() is used where AnyAsync() could be used instead to improve performance</source>
+        <target state="translated">Funkcja {0}() jest używana w miejscach, w których można użyć funkcji AnyAsync() w celu zwiększenia wydajności</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle">
@@ -643,9 +908,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountWhenAnyCanBeUsedMessage">
-        <source>{0}() is used where Any() could be used instead to improve performance.</source>
-        <target state="translated">Funkcja {0}() jest używana w miejscach, w których można użyć funkcji Any() w celu zwiększenia wydajności.
-</target>
+        <source>{0}() is used where Any() could be used instead to improve performance</source>
+        <target state="translated">Funkcja {0}() jest używana w miejscach, w których można użyć funkcji Any() w celu zwiększenia wydajności</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountWhenAnyCanBeUsedTitle">
@@ -684,8 +948,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSAMessage">
-        <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</source>
-        <target state="translated">Algorytm szyfrowania asymetrycznego {0} jest słaby. Przełącz się na algorytm RSA z kluczem o rozmiarze co najmniej 2048, algorytm ECDH lub algorytm ECDSA</target>
+        <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
+        <target state="translated">Algorytm szyfrowania asymetrycznego {0} jest słaby. Przełącz się na algorytm RSA z kluczem o rozmiarze co najmniej 2048, algorytm ECDH lub algorytm ECDSA.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyDescription">
@@ -694,13 +958,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyMessage">
-        <source>Do not use Enumerable methods on indexable collections. Instead use the collection directly</source>
-        <target state="translated">Nie używaj metod typu Enumerable dla kolekcji indeksowalnych. Zamiast tego użyj kolekcji bezpośrednio</target>
+        <source>Do not use Enumerable methods on indexable collections. Instead use the collection directly.</source>
+        <target state="translated">Nie używaj metod typu Enumerable dla kolekcji indeksowalnych. Zamiast tego użyj kolekcji bezpośrednio.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTitle">
-        <source>Do not use Enumerable methods on indexable collections. Instead use the collection directly</source>
-        <target state="translated">Nie używaj metod typu Enumerable dla kolekcji indeksowalnych. Zamiast tego użyj kolekcji bezpośrednio</target>
+        <source>Do not use Enumerable methods on indexable collections</source>
+        <target state="translated">Nie używaj metod typu Enumerable dla kolekcji indeksowalnych</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomness">
@@ -714,7 +978,7 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessMessage">
-        <source>{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security</source>
+        <source>{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security.</source>
         <target state="translated">{0} to niezabezpieczony generator liczb losowych. Użyj kryptograficznie zabezpieczonego generatora liczb losowych, gdy losowość jest wymagana ze względów bezpieczeństwa.</target>
         <note />
       </trans-unit>
@@ -741,6 +1005,21 @@
       <trans-unit id="DoNotUseObsoleteKDFAlgorithmMessage">
         <source>Call to obsolete key derivation function {0}.{1}</source>
         <target state="translated">Wywołanie przestarzałej funkcji wyprowadzania klucza {0}.{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseOutAttributeStringPInvokeParametersDescription">
+        <source>String parameters passed by value with the 'OutAttribute' can destabilize the runtime if the string is an interned string.</source>
+        <target state="translated">Parametry ciągu przekazywane przez wartość przy użyciu elementu „OutAttribute” mogą destabilizować środowisko uruchomieniowe, jeśli ciąg jest ciągiem internalizowanym.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseOutAttributeStringPInvokeParametersMessage">
+        <source>Do not use the 'OutAttribute' for string parameter '{0}' which is passed by value. If marshalling of modified data back to the caller is required, use the 'out' keyword to pass the string by reference instead.</source>
+        <target state="translated">Nie używaj elementu „OutAttribute” dla parametru ciągu „{0}”, który jest przekazywany przez wartość. Jeśli jest wymagane kierowanie zmodyfikowanych danych z powrotem do obiektu wywołującego, użyj słowa kluczowego „out”, aby zamiast tego przekazać ciąg przez odwołanie.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseOutAttributeStringPInvokeParametersTitle">
+        <source>Do not use 'OutAttribute' on string parameters for P/Invokes</source>
+        <target state="translated">Nie używaj elementu „OutAttribute” w przypadku parametrów ciągu dla elementów P/Invoke</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReferenceEqualsWithValueTypesComparerMessage">
@@ -784,8 +1063,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseStackallocInLoopsTitle">
-        <source>Do not use stackalloc in loops.</source>
-        <target state="translated">Nie używaj słowa kluczowego stackalloc w pętlach.</target>
+        <source>Do not use stackalloc in loops</source>
+        <target state="translated">Nie używaj słowa kluczowego stackalloc w pętlach</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseTimersThatPreventPowerStateChangesDescription">
@@ -818,6 +1097,21 @@
         <target state="translated">Użycie niebezpiecznej wartości DllImportSearchPath {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseWaitAllWithSingleTaskDescription">
+        <source>Using 'WaitAll' with a single task may result in performance loss, await or return the task instead.</source>
+        <target state="translated">Użycie wywołania „WaitAll” z pojedynczym zadaniem może spowodować utratę wydajności, pojawienie się parametru await lub zwrócenie zadania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWaitAllWithSingleTaskFix">
+        <source>Replace 'WaitAll' with single 'Wait'</source>
+        <target state="translated">Zastąp wywołanie „WaitAll” pojedynczym wywołaniem „Wait”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWaitAllWithSingleTaskTitle">
+        <source>Do not use 'WaitAll' with a single task</source>
+        <target state="translated">Nie używaj wywołania „WaitAll” z pojedynczym zadaniem</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithms">
         <source>Do Not Use Weak Cryptographic Algorithms</source>
         <target state="translated">Nie używaj słabych algorytmów kryptograficznych</target>
@@ -834,8 +1128,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithm">
-        <source>Do Not Use Weak Key Derivation Function Algorithm</source>
-        <target state="translated">Nie używaj słabego algorytmu funkcji wyprowadzania kluczy</target>
+        <source>Ensure Key Derivation Function algorithm is sufficiently strong</source>
+        <target state="translated">Upewnij się, że algorytm funkcji wyprowadzania klucza jest dostatecznie silny</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmDescription">
@@ -844,13 +1138,28 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmMessage">
-        <source>{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</source>
-        <target state="translated">Element {0} utworzono przy użyciu słabego algorytmu wyznaczania wartości skrótu. Aby utworzyć silny klucz na podstawie hasła, użyj algorytmu SHA256, SHA384 lub SHA512</target>
+        <source>{0} might be using a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password.</source>
+        <target state="translated">Element {0} prawdopodobnie używa słabego algorytmu wyznaczania wartości skrótu. Aby utworzyć silny klucz na podstawie hasła, użyj algorytmu SHA256, SHA384 lub SHA512.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFInsufficientIterationCountDescription">
         <source>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</source>
         <target state="translated">Wyprowadzając klucze kryptograficzne z danych wejściowych wprowadzonych przez użytkownika, takich jak hasło, użyj wystarczającej liczby iteracji (co najmniej 100 tys.).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWhenAllWithSingleTaskDescription">
+        <source>Using 'WhenAll' with a single task may result in performance loss, await or return the task instead.</source>
+        <target state="translated">Użycie wywołania „WhenAll” z pojedynczym zadaniem może spowodować utratę wydajności, pojawienie się parametru await lub zwrócenie zadania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWhenAllWithSingleTaskFix">
+        <source>Replace 'WhenAll' call with argument</source>
+        <target state="translated">Zastąp wywołanie „WhenAll” argumentem</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWhenAllWithSingleTaskTitle">
+        <source>Do not use 'WhenAll' with a single task</source>
+        <target state="translated">Nie używaj wywołania „WhenAll” z pojedynczym zadaniem</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
@@ -861,6 +1170,81 @@
       <trans-unit id="DoNotUseXslTransformMessage">
         <source>Do not use XslTransform. It does not restrict potentially dangerous external references.</source>
         <target state="translated">Nie używaj klasy XslTransform. Nie ogranicza to potencjalnie niebezpiecznych odwołań zewnętrznych.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DynamicInterfaceCastableImplementationUnsupportedDescription">
+        <source>Providing a functional 'DynamicInterfaceCastableImplementationAttribute'-attributed interface requires the Default Interface Members feature, which is unsupported in Visual Basic.</source>
+        <target state="translated">Udostępnienie funkcjonalnego atrybutu „DynamicInterfaceCastableImplementationAttribute” wymaga funkcji Domyślne składowe interfejsu, która nie jest obsługiwana w języku Visual Basic.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DynamicInterfaceCastableImplementationUnsupportedMessage">
+        <source>Providing a 'DynamicInterfaceCastableImplementation' interface in Visual Basic is unsupported</source>
+        <target state="translated">Udostępnianie interfejsu „DynamicInterfaceCastableImplementation” w języku Visual Basic nie jest obsługiwane</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DynamicInterfaceCastableImplementationUnsupportedTitle">
+        <source>Providing a 'DynamicInterfaceCastableImplementation' interface in Visual Basic is unsupported</source>
+        <target state="translated">Udostępnianie interfejsu „DynamicInterfaceCastableImplementation” w języku Visual Basic nie jest obsługiwane</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledDescription">
+        <source>Using features that require runtime marshalling when runtime marshalling is disabled will result in runtime exceptions.</source>
+        <target state="translated">Użycie funkcji, które wymagają kierowania środowiska uruchomieniowego, gdy kierowanie środowiska uruchomieniowego jest wyłączone, spowoduje wyjątki środowiska uruchomieniowego.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageAutoLayoutTypes">
+        <source>Types with '[StructLayout(LayoutKind.Auto)]' require runtime marshalling to be enabled</source>
+        <target state="translated">Typy z elementem „[StructLayout(LayoutKind.Auto)]“ wymagają włączenia kierowania środowiska uruchomieniowego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageByRefParameters">
+        <source>By-ref parameters require runtime marshalling to be enabled</source>
+        <target state="translated">Parametry by-ref wymagają włączenia kierowania środowiska uruchomieniowego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage">
+        <source>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined</source>
+        <target state="translated">Pełnomocnicy z typami zarządzanymi jako parametrami lub zwracanym typem wymagają włączenia kierowania środowiska uruchomieniowego w zestawie, w którym zdefiniowano pełnomocnika.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageHResultSwapping">
+        <source>HResult-swapping requires runtime marshalling to be enabled</source>
+        <target state="translated">Zamiana HResult wymaga włączenia kierowania środowiska uruchomieniowego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageLCIDConversionAttribute">
+        <source>Using 'LCIDConversionAttribute' requires runtime marshalling to be enabled</source>
+        <target state="translated">Użycie atrybutu „LCIDConversionAttribute“ wymaga włączenia kierowania środowiska uruchomieniowego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageManagedParameterOrReturnTypes">
+        <source>Managed parameter or return types require runtime marshalling to be enabled</source>
+        <target state="translated">Typy parametrów zarządzanych lub zwracanych wymagają włączenia kierowania środowiska uruchomieniowego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageSetLastError">
+        <source>Setting SetLastError to 'true' requires runtime marshalling to be enabled</source>
+        <target state="translated">Ustawienie wartości SetLastError na wartość „True“ wymaga włączenia kierowania środowiska uruchomieniowego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageVarargPInvokes">
+        <source>Varadic P/Invoke signatures require runtime marshalling to be enabled</source>
+        <target state="translated">Sygnatury Varadic P/Invoke wymagają włączenia kierowania środowiska uruchomieniowego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FeatureUnsupportedWhenRuntimeMarshallingDisabledTitle">
+        <source>Property, type, or attribute requires runtime marshalling</source>
+        <target state="translated">Właściwość, typ lub atrybut wymaga kierowania środowiska uruchomieniowego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FieldIsPreviewTypeMessage">
+        <source>'{0}''s type contains the preview type '{1}' and requires opting into preview features. See {2} for more information.</source>
+        <target state="translated">Typ elementu „{0}” zawiera typ w wersji zapoznawczej „{1}” i wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FieldIsPreviewTypeMessageWithCustomMessagePlaceholder">
+        <source>{3} '{0}''s type contains the preview type '{1}' and requires opting into preview features. See {2} for more information.</source>
+        <target state="translated">{3} „{0}” — typ tego elementu zawiera typ w wersji zapoznawczej „{1}” i wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
         <note />
       </trans-unit>
       <trans-unit id="FinalizersShouldCallBaseClassFinalizerDescription">
@@ -879,8 +1263,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ForwardCancellationTokenToInvocationsDescription">
-        <source>Forward the 'CancellationToken' parameter to methods that take one to ensure the operation cancellation notifications gets properly propagated, or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.</source>
-        <target state="translated">Prześlij dalej parametr „CancellationToken” do metod, które go przyjmują, aby upewnić się, że powiadomienia o anulowaniu operacji zostaną prawidłowo rozpropagowane, lub przekaż element „CancellationToken.None” jawnie, aby wskazać celowe niepropagowanie tokenu.</target>
+        <source>Forward the 'CancellationToken' parameter to methods to ensure the operation cancellation notifications gets properly propagated, or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.</source>
+        <target state="translated">Prześlij dalej parametr „CancellationToken” do metod, aby upewnić się, że powiadomienia o anulowaniu operacji zostaną prawidłowo rozpropagowane, lub przekaż element „CancellationToken.None” jawnie, aby wskazać celowe niepropagowanie tokenu.</target>
         <note />
       </trans-unit>
       <trans-unit id="ForwardCancellationTokenToInvocationsMessage">
@@ -889,8 +1273,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ForwardCancellationTokenToInvocationsTitle">
-        <source>Forward the 'CancellationToken' parameter to methods that take one</source>
-        <target state="translated">Prześlij dalej parametr „CancellationToken” do metod, które go przyjmują</target>
+        <source>Forward the 'CancellationToken' parameter to methods</source>
+        <target state="translated">Prześlij dalej parametr „CancellationToken” do metod</target>
         <note />
       </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolMessage">
@@ -918,29 +1302,49 @@
         <target state="translated">Unikaj kodowania na stałe wartości SslProtocols</target>
         <note />
       </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyDescription">
+        <source>Generic math interfaces require the derived type itself to be used for the self recurring type parameter.</source>
+        <target state="translated">Ogólne interfejsy matematyczne wymagają, aby sam typ pochodny był używany dla parametru typu cyklicznego.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyMessage">
+        <source>The '{0}' requires the '{1}' type parameter to be filled with the derived type '{2}'</source>
+        <target state="translated">Element „{0}” wymaga wypełnienia parametru typu „{1}” typem pochodnym „{2}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementGenericMathInterfacesCorrectlyTitle">
+        <source>Use correct type parameter</source>
+        <target state="translated">Użyj poprawnego parametru typu</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyDescription">
         <source>To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</source>
         <target state="translated">Aby naprawić naruszenie tej reguły, ustaw metodę GetObjectData jako widoczną i możliwą do przesłonięcia oraz upewnij się, że wszystkie pola wystąpienia są uwzględnione w procesie serializacji lub jawnie oznaczone atrybutem NonSerializedAttribute.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageDefault">
-        <source>Add an implementation of GetObjectData to type {0}.</source>
-        <target state="translated">Dodaj implementację metody GetObjectData do typu {0}.</target>
+        <source>Add an implementation of GetObjectData to type {0}</source>
+        <target state="translated">Dodaj implementację metody GetObjectData do typu {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageMakeOverridable">
-        <source>Make {0}.GetObjectData virtual and overridable.</source>
-        <target state="translated">Przekształć metodę {0}.GetObjectData w wirtualną i możliwą do przesłonięcia.</target>
+        <source>Make {0}.GetObjectData virtual and overridable</source>
+        <target state="translated">Przekształć metodę {0}.GetObjectData w wirtualną i możliwą do przesłonięcia</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageMakeVisible">
-        <source>Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</source>
-        <target state="translated">Zwiększ dostępność metody {0}.GetObjectData, aby była widoczna dla typów pochodnych.</target>
+        <source>Increase the accessibility of {0}.GetObjectData so that it is visible to derived types</source>
+        <target state="translated">Zwiększ dostępność metody {0}.GetObjectData, aby była widoczna dla typów pochodnych</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyTitle">
         <source>Implement ISerializable correctly</source>
         <target state="translated">Poprawnie zaimplementuj interfejs ISerializable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementInterfacesOnDynamicCastableImplementation">
+        <source>Implement inherited interfaces</source>
+        <target state="translated">Implementuj interfejsy dziedziczone</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsCodeActionTitle">
@@ -979,33 +1383,53 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageGeneric">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</source>
-        <target state="translated">Ponieważ metoda {0} jest oznaczona atrybutem OnSerializing, OnSerialized, OnDeserializing lub OnDeserialized, zmień jej sygnaturę tak, aby już nie była ogólna.</target>
+        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic</source>
+        <target state="translated">Ponieważ metoda {0} jest oznaczona atrybutem OnSerializing, OnSerialized, OnDeserializing lub OnDeserialized, zmień jej sygnaturę tak, aby już nie była ogólna</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageParameters">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</source>
-        <target state="translated">Ponieważ metoda {0} jest oznaczona atrybutem OnSerializing, OnSerialized, OnDeserializing lub OnDeserialized, zmień jej sygnaturę tak, aby przyjmowała jeden parametr typu System.Runtime.Serialization.StreamingContext.</target>
+        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'</source>
+        <target state="translated">Ponieważ metoda {0} jest oznaczona atrybutem OnSerializing, OnSerialized, OnDeserializing lub OnDeserialized, zmień jej sygnaturę tak, aby przyjmowała jeden parametr typu „System.Runtime.Serialization.StreamingContext”</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageReturnType">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</source>
-        <target state="translated">Ponieważ metoda {0} jest oznaczona atrybutem OnSerializing, OnSerialized, OnDeserializing lub OnDeserialized, zmień jej typ zwracany z {1} na void (Sub w języku Visual Basic).</target>
+        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic)</source>
+        <target state="translated">Ponieważ metoda {0} jest oznaczona atrybutem OnSerializing, OnSerialized, OnDeserializing lub OnDeserialized, zmień jej typ zwracany z {1} na void (Sub w języku Visual Basic)</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageStatic">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</source>
-        <target state="translated">Ponieważ metoda {0} jest oznaczona atrybutem OnSerializing, OnSerialized, OnDeserializing lub OnDeserialized, zmień ją ze statycznej (Shared w języku Visual Basic) na metodę wystąpienia.</target>
+        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method</source>
+        <target state="translated">Ponieważ metoda {0} jest oznaczona atrybutem OnSerializing, OnSerialized, OnDeserializing lub OnDeserialized, zmień ją ze statycznej (Shared w języku Visual Basic) na metodę wystąpienia</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageVisibility">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</source>
-        <target state="translated">Ponieważ metoda {0} jest oznaczona atrybutem OnSerializing, OnSerialized, OnDeserializing lub OnDeserialized, zmień jej dostępność na prywatną.</target>
+        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private</source>
+        <target state="translated">Ponieważ metoda {0} jest oznaczona atrybutem OnSerializing, OnSerialized, OnDeserializing lub OnDeserialized, zmień jej dostępność na prywatną</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyTitle">
         <source>Implement serialization methods correctly</source>
         <target state="translated">Poprawnie implementuj metody serializacji</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementsPreviewInterfaceMessage">
+        <source>'{0}' implements the preview interface '{1}' and therefore needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">„{0}” ma zaimplementowany interfejs w wersji zapoznawczej „{1}” i dlatego wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementsPreviewInterfaceMessageWithCustomMessagePlaceholder">
+        <source>{3} '{0}' implements the preview interface '{1}' and therefore needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">{3} „{0}” ma zaimplementowany interfejs w wersji zapoznawczej „{1}” i dlatego wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementsPreviewMethodMessage">
+        <source>'{0}' implements the preview method '{1}' and therefore needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">„{0}” ma zaimplementowaną metodę w wersji zapoznawczej „{1}” i dlatego wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementsPreviewMethodMessageWithCustomMessagePlaceholder">
+        <source>{3} '{0}' implements the preview method '{1}' and therefore needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">{3} „{0}” ma zaimplementowaną metodę w wersji zapoznawczej „{1}” i dlatego wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
         <note />
       </trans-unit>
       <trans-unit id="InitializeReferenceTypeStaticFieldsInlineDescription">
@@ -1059,13 +1483,28 @@
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyMessageNoArguments">
-        <source>Call the {0} constructor that contains a message and/or paramName parameter.</source>
-        <target state="translated">Wywołaj konstruktor {0}, który zawiera komunikat i/lub parametr paramName.</target>
+        <source>Call the {0} constructor that contains a message and/or paramName parameter</source>
+        <target state="translated">Wywołaj konstruktor {0}, który zawiera komunikat i/lub parametr paramName</target>
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyTitle">
         <source>Instantiate argument exceptions correctly</source>
         <target state="translated">Utwórz poprawnie wystąpienia wyjątków argumentu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InterfaceMembersMissingImplementationDescription">
+        <source>Types attributed with 'DynamicInterfaceCastableImplementationAttribute' act as an interface implementation for a type that implements the 'IDynamicInterfaceCastable' type. As a result, it must provide an implementation of all of the members defined in the inherited interfaces, because the type that implements 'IDynamicInterfaceCastable' will not provide them otherwise.</source>
+        <target state="translated">Typy z atrybutem „DynamicInterfaceCastableImplementationAttribute” działają jako implementacja interfejsu dla typu, który implementuje typ „IDynamicInterfaceCastable”. W związku z tym musi dostarczać implementację wszystkich składowych zdefiniowanych w dziedziczonych interfejsach, ponieważ typ implementujący interfejs „IDynamicInterfaceCastable” nie udostępni ich w inny sposób.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InterfaceMembersMissingImplementationMessage">
+        <source>Type '{0}' has the 'DynamicInterfaceCastableImplementationAttribute' applied to it but does not provide an implementation of all interface members defined in inherited interfaces</source>
+        <target state="translated">Typ „{0}” ma zastosowany atrybut „DynamicInterfaceCastableImplementationAttribute”, ale nie udostępnia implementacji wszystkich składowych interfejsu zdefiniowanych w dziedziczonych interfejsach</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InterfaceMembersMissingImplementationTitle">
+        <source>All members declared in parent interfaces must have an implementation in a DynamicInterfaceCastableImplementation-attributed interface</source>
+        <target state="translated">Wszystkie składowe zadeklarowane w interfejsach nadrzędnych muszą mieć implementację w interfejsie DynamicInterfaceCastableImplementation-attributed</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage">
@@ -1151,6 +1590,21 @@
       <trans-unit id="LosFormatterMethodUsedTitle">
         <source>Do not use insecure deserializer LosFormatter</source>
         <target state="translated">Nie używaj niezabezpieczonego deserializatora LosFormatter</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MakeMethodDeclaredOnImplementationTypeStatic">
+        <source>Convert to static method</source>
+        <target state="translated">Konwertuj na metodę statyczną</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MakeMethodDeclaredOnImplementationTypeStaticMayProduceInvalidCode">
+        <source>Converting an instance method to a static method may produce invalid code</source>
+        <target state="translated">Konwertowanie metody wystąpienia na metodę statyczną może spowodować wygenerowanie nieprawidłowego kodu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MakeParameterlessConstructorPublic">
+        <source>Make the constructor that takes zero parameters 'public'</source>
+        <target state="translated">Ustaw konstruktora publicznego, który przyjmuje zero parametrów jako „publiczny”</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsDescription">
@@ -1244,13 +1698,13 @@
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIVMessage">
-        <source>The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</source>
-        <target state="translated">W szyfrowaniu używany jest wektor inicjowania inny niż domyślny, który potencjalnie może być powtarzalny. Upewnij się, że używasz domyślnego wektora inicjowania.</target>
+        <source>The non-default initialization vector, which can be potentially repeatable, is used in the encryption. Ensure use the default one.</source>
+        <target state="translated">W szyfrowaniu jest używany wektor inicjowania inny niż domyślny, który może być powtarzalny. Upewnij się, że używasz domyślnego wektora inicjowania.</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCore">
-        <source>Ensure Use Secure Cookies In ASP.Net Core</source>
-        <target state="translated">Upewnij się, że używasz bezpiecznych plików cookie na platformie ASP.Net Core</target>
+        <source>Ensure Use Secure Cookies In ASP.NET Core</source>
+        <target state="translated">Upewnij się, że używasz bezpiecznych plików cookie na platformie ASP.NET Core</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCoreMessage">
@@ -1268,6 +1722,56 @@
         <target state="translated">Wyprowadzając klucz kryptograficzny z hasła, upewnij się, że liczba iteracji to co najmniej {0}. Domyślnie wartość IterationCount dla klasy Rfc2898DeriveByte to tylko 1000</target>
         <note />
       </trans-unit>
+      <trans-unit id="MembersDeclaredOnImplementationTypeMustBeStaticDescription">
+        <source>Since a type that implements 'IDynamicInterfaceCastable' may not implement a dynamic interface in metadata, calls to an instance interface member that is not an explicit implementation defined on this type are likely to fail at runtime. Mark new interface members 'static' to avoid runtime errors.</source>
+        <target state="translated">Ponieważ typ implementujący interfejs „IDynamicInterfaceCastable” może nie implementować interfejsu dynamicznego w metadanych, wywołania do składowej interfejsu wystąpienia, który nie jest jawną implementacją zdefiniowaną w tym typie, mogą zakończyć się niepowodzeniem w czasie wykonywania. Oznacz nowe składowe interfejsu jako „statyczne”, aby uniknąć błędów środowiska uruchomieniowego.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MembersDeclaredOnImplementationTypeMustBeStaticMessage">
+        <source>The '{0}' member on the '{1}' type should be marked 'static' as '{1}' has the 'DynamicInterfaceImplementationAttribute' applied</source>
+        <target state="translated">Składowa „{0}” w typie „{1}” powinna być oznaczony jako „statyczny”, ponieważ element „{1}” ma zastosowany atrybut „DynamicInterfaceImplementationAttribute”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MembersDeclaredOnImplementationTypeMustBeStaticTitle">
+        <source>Members defined on an interface with the 'DynamicInterfaceCastableImplementationAttribute' should be 'static'</source>
+        <target state="translated">Składowe zdefiniowane w interfejsie z atrybutem „DynamicInterfaceCastableImplementationAttribute” powinny mieć wartość „statyczne”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MethodReturnsPreviewTypeMessage">
+        <source>'{0}' returns the preview type '{1}' and therefore needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">„{0}” zwraca typ w wersji zapoznawczej „{1}” i dlatego wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MethodReturnsPreviewTypeMessageWithCustomMessagePlaceholder">
+        <source>{3} '{0}' returns the preview type '{1}' and therefore needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">{3} „{0}” zwraca typ w wersji zapoznawczej „{1}” i dlatego wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MethodUsesPreviewTypeAsParameterMessage">
+        <source>'{0}' takes in a preview parameter of type '{1}' and needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">„{0}” przyjmuje parametr w wersji zapoznawczej typu „{1}” i wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MethodUsesPreviewTypeAsParameterMessageWithCustomMessagePlaceholder">
+        <source>{3} '{0}' takes in a preview parameter of type '{1}' and needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">{3} „{0}” przyjmuje parametr w wersji zapoznawczej typu „{1}” i wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MethodUsesRuntimeMarshallingEvenWhenMarshallingDisabledDescription">
+        <source>This method uses runtime marshalling even when runtime marshalling is disabled, which can cause unexpected behavior differences at runtime due to different expectations of a type's native layout.</source>
+        <target state="translated">Ta metoda używa kierowania środowiska uruchomieniowego nawet wtedy, gdy kierowanie środowiska uruchomieniowego jest wyłączone, co może powodować nieoczekiwane różnice w zachowaniu środowiska uruchomieniowego ze względu na różne oczekiwania dotyczące układu natywnego typu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MethodUsesRuntimeMarshallingEvenWhenMarshallingDisabledMessage">
+        <source>'{0}' uses runtime marshalling even when 'DisableRuntimeMarshallingAttribute' is applied. Use features like 'sizeof' and pointers directly to ensure accurate results.</source>
+        <target state="translated">Element „{0}“ używa kierowania środowiska uruchomieniowego nawet wtedy, gdy jest zastosowany atrybut „DisableRuntimeMarsbezpieczeńingAttribute“. Użyj bezpośrednio funkcji, takich jak „sizeof“ i wskaźników, aby zapewnić dokładne wyniki.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MethodUsesRuntimeMarshallingEvenWhenMarshallingDisabledTitle">
+        <source>This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied</source>
+        <target state="translated">Ta metoda używa kierowania środowiska uruchomieniowego nawet wtedy, gdy jest stosowany atrybut „DisableRuntimeMarsbezpieczeńingAttribute“</target>
+        <note />
+      </trans-unit>
       <trans-unit id="MissHttpVerbAttribute">
         <source>Miss HttpVerb attribute for action methods</source>
         <target state="translated">Pomiń atrybut HttpVerb dla metod akcji</target>
@@ -1279,8 +1783,23 @@
         <note />
       </trans-unit>
       <trans-unit id="MissHttpVerbAttributeMessage">
-        <source>Action method {0} needs to specify the Http request kind explictly</source>
-        <target state="translated">Metoda akcji {0} musi jawnie określać rodzaj żądania Http</target>
+        <source>Action method {0} needs to specify the HTTP request kind explicitly</source>
+        <target state="translated">Metoda akcji {0} musi jawnie określać rodzaj żądania HTTP</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ModuleInitializerAttributeShouldNotBeUsedInLibrariesDescription">
+        <source>Module initializers are intended to be used by application code to ensure an application's components are initialized before the application code begins executing. If library code declares a method with the 'ModuleInitializerAttribute', it can interfere with application initialization and also lead to limitations in that application's trimming abilities. Instead of using methods marked with 'ModuleInitializerAttribute', the library should expose methods that can be used to initialize any components within the library and allow the application to invoke the method during application initialization.</source>
+        <target state="translated">Inicjatory modułów są przeznaczone do użycia przez kod aplikacji w celu zapewnienia, że składniki aplikacji zostaną zainicjowane przed rozpoczęciem wykonywania kodu aplikacji. Jeśli kod biblioteki deklaruje metodę za pomocą atrybutu „ModuleInitializer”, może zakłócać inicjowanie aplikacji, a także prowadzić do ograniczeń w możliwościach przycinania tej aplikacji. Zamiast używać metod oznaczonych atrybutem „ModuleInitializer”, biblioteka powinna uwidaczniać metody, których można użyć do zainicjowania składników w bibliotece i umożliwienia aplikacji wywołania metody podczas inicjowania aplikacji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ModuleInitializerAttributeShouldNotBeUsedInLibrariesMessage">
+        <source>The 'ModuleInitializer' attribute is only intended to be used in application code or advanced source generator scenarios</source>
+        <target state="translated">Atrybut „ModuleInitializer” jest przeznaczony tylko do użycia w kodzie aplikacji lub w zaawansowanych scenariuszach generatora źródła</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ModuleInitializerAttributeShouldNotBeUsedInLibrariesTitle">
+        <source>The 'ModuleInitializer' attribute should not be used in libraries</source>
+        <target state="translated">Atrybut „ModuleInitializer” nie powinien być używany w bibliotekach</target>
         <note />
       </trans-unit>
       <trans-unit id="NetDataContractSerializerDeserializeMaybeWithoutBinderSetMessage">
@@ -1324,8 +1843,8 @@
         <note />
       </trans-unit>
       <trans-unit id="NormalizeStringsToUppercaseMessageToUpper">
-        <source>In method '{0}', replace the call to '{1}' with '{2}'.</source>
-        <target state="translated">W metodzie „{0}” zastąp wywołanie metody „{1}” wywołaniem „{2}”.</target>
+        <source>In method '{0}', replace the call to '{1}' with '{2}'</source>
+        <target state="translated">W metodzie „{0}” zastąp wywołanie metody „{1}” wywołaniem „{2}”</target>
         <note />
       </trans-unit>
       <trans-unit id="NormalizeStringsToUppercaseTitle">
@@ -1341,6 +1860,16 @@
       <trans-unit id="ObjectStateFormatterMethodUsedTitle">
         <source>Do not use insecure deserializer ObjectStateFormatter</source>
         <target state="translated">Nie używaj niezabezpieczonego deserializatora ObjectStateFormatter</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OverridesPreviewMethodMessage">
+        <source>'{0}' overrides the preview method '{1}' and therefore needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">„{0}” przesłania metodę w wersji zapoznawczej „{1}” i dlatego wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OverridesPreviewMethodMessageWithCustomMessagePlaceholder">
+        <source>{3} '{0}' overrides the preview method '{1}' and therefore needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">{3} „{0}” przesłania metodę w wersji zapoznawczej „{1}” i dlatego wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
         <note />
       </trans-unit>
       <trans-unit id="PInvokeDeclarationsShouldBePortableDescription">
@@ -1378,6 +1907,91 @@
         <target state="translated">Elementy P/Invoke nie powinny być widoczne</target>
         <note />
       </trans-unit>
+      <trans-unit id="ParenthesisWithPlaceHolder">
+        <source> ({0})</source>
+        <target state="translated"> ({0})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityAllPlatforms">
+        <source>and all other platforms</source>
+        <target state="translated">i wszystkie inne platformy</target>
+        <note>This call site is reachable on: 'windows' 10.0.2000 and later, and all other platforms</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityAllVersions">
+        <source>'{0}' all versions</source>
+        <target state="translated">wszystkie wersje systemu „{0}”</target>
+        <note>This call site is reachable on: 'Windows' all versions.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityDescription">
+        <source>Using platform dependent API on a component makes the code no longer work across all platforms.</source>
+        <target state="translated">Użycie w składniku interfejsu API zależnego od platformy powoduje, że kod nie działa na różnych platformach.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityFromVersionToVersion">
+        <source>'{0}' from version {1} to {2}</source>
+        <target state="translated">system „{0}” w wersji od {1} do {2}</target>
+        <note>'SupportedOnWindows1903UnsupportedOn2004()' is supported on: 'windows' from version 10.0.1903 to 10.0.2004.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityObsoletedCsAllPlatformMessage">
+        <source>This call site is reachable on all platforms. '{0}' is obsoleted on: {1}.</source>
+        <target state="translated">To miejsce wywołania jest osiągalne na wszystkich platformach. „{0}” jest przestarzałe na: {1}.</target>
+        <note>This call site is reachable on all platforms. 'OboletedOnMacOS()' is obsoleted on: 'macos'.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityObsoletedCsReachableMessage">
+        <source>This call site is reachable on: {2}. '{0}' is obsoleted on: {1}.</source>
+        <target state="translated">To miejsce wywołania jest osiągalne na platformie: {2}. „{0}” jest przestarzałe na następujących platformach: {1}.</target>
+        <note>This call site is reachable on 'macos', 'linux'. 'OboletedOnMacOS()' is obsoleted on: 'macos'.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityOnlySupportedCsAllPlatformMessage">
+        <source>This call site is reachable on all platforms. '{0}' is only supported on: {1}.</source>
+        <target state="translated">To miejsce wywołania jest osiągalne na wszystkich platformach. Metoda „{0}” jest obsługiwana tylko na następujących platformach: {1}.</target>
+        <note>This call site is reachable on all platforms. 'SupportedOnWindowsAndBrowser()' is only supported on: 'windows', 'browser' .</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityOnlySupportedCsReachableMessage">
+        <source>This call site is reachable on: {2}. '{0}' is only supported on: {1}.</source>
+        <target state="translated">To miejsce wywołania jest osiągalne na platformie: {2}. Metoda „{0}” jest obsługiwana tylko na następujących platformach: {1}.</target>
+        <note>This call site is reachable on: 'windows' all versions.'SupportedOnWindowsUnsupportedFromWindows2004()' is only supported on: 'windows' 10.0.2004 and before</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityOnlySupportedCsUnreachableMessage">
+        <source>This call site is unreachable on: {2}. '{0}' is only supported on: {1}.</source>
+        <target state="translated">To miejsce wywołania jest nieosiągalne na platformie: {2}. Metoda „{0}” jest obsługiwana tylko na następujących platformach: {1}.</target>
+        <note>This call site is unreachable on: 'browser'. 'SupportedOnWindowsAndBrowser()' is only supported on: 'browser', 'windows'.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilitySupportedCsAllPlatformMessage">
+        <source>This call site is reachable on all platforms. '{0}' is supported on: {1}.</source>
+        <target state="translated">To miejsce wywołania jest osiągalne na wszystkich platformach. Metoda „{0}” jest obsługiwana na następujących platformach: {1}.</target>
+        <note>This call site is reachable on all platforms. 'SupportedOnWindows1903UnsupportedFrom2004()' is supported on: 'windows' from version 10.0.1903 to 10.0.2004.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilitySupportedCsReachableMessage">
+        <source>This call site is reachable on: {2}. '{0}' is supported on: {1}.</source>
+        <target state="translated">To miejsce wywołania jest osiągalne na platformie: {2}. Metoda „{0}” jest obsługiwana na następujących platformach: {1}.</target>
+        <note>This call site is reachable on: 'windows' 10.0.2000 and before. 'UnsupportedOnWindowsSupportedOn1903()' is supported on: 'windows' 10.0.1903 and later.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityTitle">
+        <source>Validate platform compatibility</source>
+        <target state="translated">Walidacja zgodności z platformą</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityUnsupportedCsAllPlatformMessage">
+        <source>This call site is reachable on all platforms. '{0}' is unsupported on: {1}.</source>
+        <target state="translated">To miejsce wywołania jest osiągalne na wszystkich platformach. Metoda „{0}” nie jest obsługiwana na następujących platformach: {1}.</target>
+        <note>This call site is reachable on all platforms. 'UnsupportedOnWindows()' is unsupported on: 'windows'</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityUnsupportedCsReachableMessage">
+        <source>This call site is reachable on: {2}. '{0}' is unsupported on: {1}.</source>
+        <target state="translated">To miejsce wywołania jest osiągalne na platformie: {2}. Metoda „{0}” nie jest obsługiwana na następujących platformach: {1}.</target>
+        <note>This call site is reachable on: 'windows', 'browser'. 'UnsupportedOnBrowser()' is unsupported on: 'browser'.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityVersionAndBefore">
+        <source>'{0}' {1} and before</source>
+        <target state="translated">system „{0}” w wersji {1} lub wcześniejszej</target>
+        <note>'SupportedOnWindowsUnsupportedFromWindows2004()' is only supported on: 'windows' 10.0.2004 and before.</note>
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityVersionAndLater">
+        <source>'{0}' {1} and later</source>
+        <target state="translated">system „{0}” w wersji {1} lub nowszej</target>
+        <note>'SupportedOnWindows10()' is only supported on: 'windows' 10.0 and later.</note>
+      </trans-unit>
       <trans-unit id="PotentialReferenceCycleInDeserializedObjectGraphDescription">
         <source>Review code that processes untrusted deserialized data for handling of unexpected reference cycles. An unexpected reference cycle should not cause the code to enter an infinite loop. Otherwise, an unexpected reference cycle can allow an attacker to DOS or exhaust the memory of the process when deserializing untrusted data.</source>
         <target state="translated">Przejrzyj kod, który przetwarza zdeserializowane niezaufane dane, pod kątem obsługi nieoczekiwanych cykli odwołań. Nieoczekiwany cykl odwołań nie powinien powodować wejścia kodu w nieskończoną pętlę. W przeciwnym razie nieoczekiwany cykl odwołań może pozwolić osobie atakującej na przeprowadzenie ataku DoS lub wyczerpanie pamięci procesu podczas deserializacji niezaufanych danych.</target>
@@ -1393,6 +2007,81 @@
         <target state="translated">Potencjalny cykl odwołań w deserializowanym grafie obiektów</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferAsSpanOverSubstringCodefixTitle">
+        <source>Replace 'Substring' with 'AsSpan'</source>
+        <target state="translated">Zamień ciąg „Substring” na „AsSpan”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferAsSpanOverSubstringDescription">
+        <source>'AsSpan' is more efficient then 'Substring'. 'Substring' performs an O(n) string copy, while 'AsSpan' does not and has a constant cost.</source>
+        <target state="translated">Ciąg „AsSpan” jest bardziej wydajny niż ciąg „Substring”. Ciąg „Substring” wykonuje kopię ciągu O(n), natomiast ciąg „AsSpan” nie wykonuje i ponadto ma stały koszt.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferAsSpanOverSubstringMessage">
+        <source>Prefer 'AsSpan' over 'Substring' when span-based overloads are available</source>
+        <target state="translated">Preferuj ciąg „AsSpan” niż „Substring”, gdy są dostępne przeciążenia oparte na zakresie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferAsSpanOverSubstringTitle">
+        <source>Prefer 'AsSpan' over 'Substring'</source>
+        <target state="translated">Preferuj ciąg „AsSpan” niż „Substring”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryContainsKeyCodeFixTitle">
+        <source>Use 'ContainsKey'</source>
+        <target state="translated">Użyj elementu „ContainsKey”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryContainsKeyDescription">
+        <source>'ContainsKey' is usually O(1), while 'Keys.Contains' may be O(n) in some cases. Additionally, many dictionary implementations lazily initialize the Keys collection to cut back on allocations.</source>
+        <target state="translated">Element „ContainsKey” ma zazwyczaj wartość O(1), a element „Keys.Contains” może w niektórych przypadkach mieć wartość O(n). Ponadto wiele implementacji słownika bardzo wolno inicjuje kolekcję kluczy, aby ograniczyć alokacje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryContainsKeyMessage">
+        <source>Prefer 'ContainsKey' over 'Keys.Contains' for dictionary type '{0}'</source>
+        <target state="translated">Preferuj element „ContainsKey” niż „Keys.Contains” dla typu słownika „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryContainsMethodsTitle">
+        <source>Prefer Dictionary.Contains methods</source>
+        <target state="translated">Preferuj metody Dictionary.Contains</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryContainsValueCodeFixTitle">
+        <source>Use 'ContainsValue'</source>
+        <target state="translated">Użyj wartości „ContainsValue”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryContainsValueDescription">
+        <source>Many dictionary implementations lazily initialize the Values collection. To avoid unnecessary allocations, prefer 'ContainsValue' over 'Values.Contains'.</source>
+        <target state="translated">Wiele implementacji słowników bardzo wolno inicjalizuje kolekcję Values. Aby uniknąć niepotrzebnych alokacji, preferuj wartość „ContainsValue” zamiast wartości „Values.Contains”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryContainsValueMessage">
+        <source>Prefer 'ContainsValue' over 'Values.Contains' for dictionary type '{0}'</source>
+        <target state="translated">Preferuj wartość „ContainsValue” niż wartość „Values.Contains” dla typu słownika „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferHashDataCodefixTitle">
+        <source>Replace with 'HashData' method</source>
+        <target state="translated">Zamień na metodę „HashData”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferHashDataOverComputeHashAnalyzerDescription">
+        <source>It is more efficient to use the static 'HashData' method over creating and managing a HashAlgorithm instance to call 'ComputeHash'.</source>
+        <target state="translated">Korzystanie z metody statycznej „HashData” jest wydajniejsze niż tworzenie wystąpienia HashAlgorithm i zarządzanie nim w celu wywołania „ComputeHash”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferHashDataOverComputeHashAnalyzerMessage">
+        <source>Prefer static '{0}.HashData' method over 'ComputeHash'</source>
+        <target state="translated">Preferuj metodę statyczną „{0}.HashData”, nie „ComputeHash”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferHashDataOverComputeHashAnalyzerTitle">
+        <source>Prefer static 'HashData' method over 'ComputeHash'</source>
+        <target state="translated">Preferuj metodę statyczną „HashData”, nie „ComputeHash”</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">
         <source>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</source>
         <target state="translated">Element „Stream” ma przeciążenie „ReadAsync”, które przyjmuje „Memory&lt;Byte&gt;” jako pierwszy argument i przeciążenie „WriteAsync”, które przyjmuje „ReadOnlyMemory&lt;Byte&gt;” jako pierwszy argument. Preferuj wywoływanie przeciążeń opartych na pamięci, co jest bardziej wydajne.</target>
@@ -1404,8 +2093,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferIsEmptyOverCountMessage">
-        <source>Prefer 'IsEmpty' over 'Count' to determine whether the object contains or not any items.</source>
-        <target state="translated">Preferuj właściwość „IsEmpty” przed właściwością „Count” do określania, czy obiekt zawiera elementy.</target>
+        <source>Prefer 'IsEmpty' over 'Count' to determine whether the object is empty</source>
+        <target state="translated">Preferuj właściwość „IsEmpty” przed właściwością „Count” do określania, czy obiekt jest pusty</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsEmptyOverCountTitle">
@@ -1423,9 +2112,14 @@
         <target state="translated">Preferuj „przeciążanie oparte na elemencie „Memory” dla elementów „ReadAsync” i „WriteAsync”</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferStringContainsOverIndexOfCodeFixTitle">
+        <source>Replace with 'string.Contains'</source>
+        <target state="translated">Zamień na „string.Contains”</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferStringContainsOverIndexOfDescription">
-        <source>Calls to 'string.IndexOf' where the result is used to check for the presence/absence of a substring can be replaced by 'string.Contains'</source>
-        <target state="translated">Wywołania elementu „string.IndexOf”, w przypadku których wynik jest używany do sprawdzania obecności/nieobecności podciągu, mogą zostać zastąpione przez wyrażenie „string.Contains”</target>
+        <source>Calls to 'string.IndexOf' where the result is used to check for the presence/absence of a substring can be replaced by 'string.Contains'.</source>
+        <target state="translated">Wywołania elementu „string.IndexOf”, w przypadku których wynik jest używany do sprawdzania obecności/nieobecności podciągu, mogą zostać zastąpione przez wyrażenie „string.Contains”.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStringContainsOverIndexOfMessage">
@@ -1444,8 +2138,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferTypedStringBuilderAppendOverloadsMessage">
-        <source>Remove the ToString call in order to use a strongly-typed StringBuilder overload.</source>
-        <target state="translated">Usuń wywołanie metody ToString, aby użyć silnie typizowanego przeciążenia elementu StringBuilder.</target>
+        <source>Remove the ToString call in order to use a strongly-typed StringBuilder overload</source>
+        <target state="translated">Usuń wywołanie metody ToString, aby użyć silnie typizowanego przeciążenia elementu StringBuilder</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferTypedStringBuilderAppendOverloadsRemoveToString">
@@ -1454,8 +2148,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferTypedStringBuilderAppendOverloadsTitle">
-        <source>Prefer strongly-typed Append and Insert method overloads on StringBuilder.</source>
-        <target state="translated">Preferuj silnie typizowane metody Append i Insert w elemencie StringBuilder.</target>
+        <source>Prefer strongly-typed Append and Insert method overloads on StringBuilder</source>
+        <target state="translated">Preferuj silnie typizowane metody Append i Insert w elemencie StringBuilder</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
@@ -1464,13 +2158,38 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
-        <source>Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string.</source>
-        <target state="translated">Użyj elementu „StringBuilder.Append(char)” zamiast elementu „StringBuilder.Append(string)”, gdy dane wejściowe są stałym ciągiem jednostki.</target>
+        <source>Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string</source>
+        <target state="translated">Użyj metody „StringBuilder.Append(char)” zamiast metody „StringBuilder.Append(string)”, gdy dane wejściowe są stałym ciągiem jednostki</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
-        <source>Consider using 'StringBuilder.Append(char)' when applicable.</source>
-        <target state="translated">Rozważ użycie elementu „StringBuilder.Append(char)”, jeśli ma to zastosowanie.</target>
+        <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
+        <target state="translated">Rozważ użycie elementu „StringBuilder.Append(char)”, jeśli ma to zastosowanie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage">
+        <source>Starting with .NET 7 the explicit conversion '{0}' will not throw when overflowing in an unchecked context. Wrap the expression with a 'checked' statement to restore the .NET 6 behavior.</source>
+        <target state="translated">Począwszy od platformy .NET 7 jawna konwersja „{0}” nie będzie zgłaszać przepełnienia w niezaznaczonym kontekście. Opatrz wyrażenie za pomocą instrukcji „checked”, aby przywrócić zachowanie platformy .NET 6.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage">
+        <source>Starting with .NET 7 the explicit conversion '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</source>
+        <target state="translated">Począwszy od platformy .NET 7 jawna konwersja „{0}” będzie zgłaszać przepełnienie w zaznaczonym kontekście. Opatrz wyrażenie za pomocą instrukcji „unchecked”, aby przywrócić zachowanie platformy .NET 6.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesDescription">
+        <source>Some built in operators added in .NET 7 behave differently than the user defined operatorsi in .NET 6 and below. Some operators that used to throw in unchecked context while overflowing will not throw anymore unless wrapped within checked context, and some operators that not used to throw in checked context now would throw unless wrapped within unchecked context.</source>
+        <target state="translated">Niektóre wbudowane operatory dodane na platformie .NET 7 zachowują się inaczej niż operatory zdefiniowane przez użytkownika na platformie .NET 6 i niżej. Niektóre operatory, które zgłaszały niezaznaczony kontekst podczas przepełnienia, nie będą już jego zgłaszać, chyba że zostaną opatrzone w sprawdzony kontekst, a niektóre operatory, które nie były używane do zgłaszania sprawdzonego kontekstu, będą teraz go zgłaszać, chyba że zostaną opatrzone w niezaznaczony kontekst.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorThrowsMessage">
+        <source>Starting with .NET 7 the operator '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</source>
+        <target state="translated">Począwszy od platformy .NET 7, operator „{0}” będzie zgłaszać przepełnienie w zaznaczonym kontekście. Opatrz wyrażenie za pomocą instrukcji „unchecked”, aby przywrócić zachowanie platformy .NET 6.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesTitle">
+        <source>Prevent from behavioral change</source>
+        <target state="translated">Zapobiegaj zmianie zachowania</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentToEnumHasFlagDescription">
@@ -1481,11 +2200,6 @@
       <trans-unit id="ProvideCorrectArgumentToEnumHasFlagMessageDifferentType">
         <source>The argument type, '{0}', must be the same as the enum type '{1}'</source>
         <target state="translated">Typ argumentu „{0}” musi być taki sam jak typ wyliczenia „{1}”.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideCorrectArgumentToEnumHasFlagMessageNotFlags">
-        <source>This call will always returns 'false' because the enum type '{0}' is not marked with 'FlagsAttribute'</source>
-        <target state="translated">To wywołanie będzie zawsze zwracać wartość „false”, ponieważ typ wyliczenia „{0}” nie jest oznaczony przy użyciu elementu „FlagsAttribute”</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentToEnumHasFlagTitle">
@@ -1514,13 +2228,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserialized">
-        <source>Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</source>
-        <target state="translated">Dodaj metodę private void OnDeserialized(StreamingContext) do typu {0} i oznacz ją atrybutem System.Runtime.Serialization.OnDeserializedAttribute.</target>
+        <source>Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute</source>
+        <target state="translated">Dodaj metodę private void OnDeserialized(StreamingContext) do typu {0} i oznacz ją atrybutem System.Runtime.Serialization.OnDeserializedAttribute</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserializing">
-        <source>Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</source>
-        <target state="translated">Dodaj metodę private void OnDeserializing(StreamingContext) do typu {0} i oznacz ją atrybutem System.Runtime.Serialization.OnDeserializingAttribute.</target>
+        <source>Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute</source>
+        <target state="translated">Dodaj metodę private void OnDeserializing(StreamingContext) do typu {0} i oznacz ją atrybutem System.Runtime.Serialization.OnDeserializingAttribute</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsTitle">
@@ -1528,9 +2242,49 @@
         <target state="translated">Udostępnij metody deserializacji dla pól opcjonalnych</target>
         <note />
       </trans-unit>
+      <trans-unit id="ProvidePublicParameterlessSafeHandleConstructorDescription">
+        <source>Providing a parameterless constructor that is as visible as the containing type for a type derived from 'System.Runtime.InteropServices.SafeHandle' enables better performance and usage with source-generated interop solutions.</source>
+        <target state="translated">Udostępnienie konstruktora bez parametrów, który jest tak widoczny jak typ zawierający dla typu pochodzącego z elementu „System.Runtime.InteropServices.SafeHandle”, zapewnia lepszą wydajność i użycie dzięki wygenerowanym przez źródło rozwiązaniom międzyoperacyjnym.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvidePublicParameterlessSafeHandleConstructorMessage">
+        <source>Provide a parameterless constructor that is as visible as the containing type for the '{0}' type that is derived from 'System.Runtime.InteropServices.SafeHandle'</source>
+        <target state="translated">Podaj konstruktora bez parametrów, który jest tak widoczny jak typ zawierający dla typu „{0}” pochodzącego z elementu „System.Runtime.InteropServices.SafeHandle”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvidePublicParameterlessSafeHandleConstructorTitle">
+        <source>Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle'</source>
+        <target state="translated">Podaj konstruktora bez parametrów, który jest tak widoczny jak typ zawierający dla konkretnych typów pochodzących z elementu „System.Runtime.InteropServices.SafeHandle”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvideStreamMemoryBasedAsyncOverridesDescription">
+        <source>To improve performance, override the memory-based async methods when subclassing 'Stream'. Then implement the array-based methods in terms of the memory-based methods.</source>
+        <target state="translated">Aby zwiększyć wydajność, zastąp metody asynchroniczne oparte na pamięci podczas tworzenia podklasy „Stream”. Następnie zaimplementuj metody oparte na tablicy w zakresie metod opartych na pamięci.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvideStreamMemoryBasedAsyncOverridesMessage">
+        <source>'{0}' overrides array-based '{1}' but does not override memory-based '{2}'. Consider overriding memory-based '{2}' to improve performance.</source>
+        <target state="translated">Metoda „{0}” przesłania metodę „{1}” opartą na tablicy, ale nie przesłania metody opartej na pamięci „{2}”. Rozważ zastąpienie metody opartej na pamięci „{2}”, aby zwiększyć wydajność.</target>
+        <note>0 = type that subclasses Stream directly, 1 = array-based method, 2 = memory-based method</note>
+      </trans-unit>
+      <trans-unit id="ProvideStreamMemoryBasedAsyncOverridesTitle">
+        <source>Provide memory-based overrides of async methods when subclassing 'Stream'</source>
+        <target state="translated">Podaj oparte na pamięci przesłonięcia metod asynchronicznych podczas tworzenia podklasy „Stream”</target>
+        <note />
+      </trans-unit>
       <trans-unit id="RemoveRedundantCall">
         <source>Remove redundant call</source>
         <target state="translated">Usuń nadmiarowe wywołanie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveRedundantGuardCallCodeFixTitle">
+        <source>Remove unnecessary call</source>
+        <target state="translated">Usuń niepotrzebne wywołanie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReplaceStringLiteralWithCharLiteralCodeActionTitle">
+        <source>Replace string literal with char literal</source>
+        <target state="translated">Zamień literał ciągu na literał char</target>
         <note />
       </trans-unit>
       <trans-unit id="RethrowToPreserveStackDetailsDescription">
@@ -1674,13 +2428,33 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesMessageNoNonLiterals">
-        <source>Review if the query string passed to '{0}' in '{1}', accepts any user input.</source>
-        <target state="translated">Sprawdź, czy ciąg zapytania przekazany do elementu „{0}” w elemencie „{1}” akceptuje dowolne dane wejściowe użytkownika.</target>
+        <source>Review if the query string passed to '{0}' in '{1}', accepts any user input</source>
+        <target state="translated">Sprawdź, czy ciąg zapytania przekazany do elementu „{0}” w elemencie „{1}” akceptuje dowolne dane wejściowe użytkownika</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesTitle">
         <source>Review SQL queries for security vulnerabilities</source>
         <target state="translated">Sprawdź zapytania SQL pod kątem luk w zabezpieczeniach</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SealInternalTypesCodeFixTitle">
+        <source>Seal class</source>
+        <target state="translated">Klasa pieczęci</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SealInternalTypesDescription">
+        <source>When a type is not accessible outside its assembly and has no subtypes within its containing assembly, it can be safely sealed. Sealing types can improve performance.</source>
+        <target state="translated">Jeśli typ jest niedostępny poza swoim zestawem i nie ma żadnych podtypów w obrębie swojego zawierającego zestawu, to można go bezpiecznie zapieczętować. Zapieczętowanie typów może zwiększyć wydajność.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SealInternalTypesMessage">
+        <source>Type '{0}' can be sealed because it has no subtypes in its containing assembly and is not externally visible</source>
+        <target state="translated">Typ „{0}” może być zapieczętowany, ponieważ nie ma żadnych podtypów w swoim zawierającym zestawie i nie jest widoczny zewnętrznie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SealInternalTypesTitle">
+        <source>Seal internal types</source>
+        <target state="translated">Zapieczętuj typy wewnętrzne</target>
         <note />
       </trans-unit>
       <trans-unit id="SetHttpOnlyForHttpCookie">
@@ -1713,6 +2487,21 @@
         <target state="translated">Klasa {0} pochodząca z biblioteki System.Web.UI.Page nie ustawia właściwości ViewStateUserKey w metodzie OnInit lub metodzie Page_Init</target>
         <note />
       </trans-unit>
+      <trans-unit id="SpecifyCultureForToLowerAndToUpperDescription">
+        <source>Specify culture to help avoid accidental implicit dependency on current culture. Using an invariant version yields consistent results regardless of the culture of an application.</source>
+        <target state="translated">Określ kulturę, aby uniknąć przypadkowej, niejawnej zależności od bieżącej kultury. Użycie niezmiennej wersji daje spójne wyniki niezależnie od kultury aplikacji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecifyCultureForToLowerAndToUpperMessage">
+        <source>Specify a culture or use an invariant version to avoid implicit dependency on current culture</source>
+        <target state="translated">Określ kulturę lub użyj niezmiennej wersji, aby uniknąć niejawnej zależności od bieżącej kultury</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecifyCultureForToLowerAndToUpperTitle">
+        <source>Specify a culture or use an invariant version</source>
+        <target state="translated">Określ kulturę lub użyj niezmiennej wersji</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SpecifyCultureInfoDescription">
         <source>A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter. When a CultureInfo or System.IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'CultureInfo' parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify 'CultureInfo.InvariantCulture'.</source>
         <target state="translated">Metoda lub konstruktor wywołuje element członkowski z przeciążeniem akceptującym parametr System.Globalization.CultureInfo, a nie wywołuje przeciążenia pobierającego parametr CultureInfo. Jeśli parametr CultureInfo lub obiekt System.IFormatProvider nie zostanie określony, wartość domyślna podana przez przeciążony element członkowski może nie dawać pożądanego efektu w przypadku wszystkich ustawień regionalnych. Jeśli wynik będzie wyświetlany dla użytkownika, określ dla parametru „CultureInfo” wartość „CultureInfo.CurrentCulture”. W przeciwnym przypadku, jeśli wynik będzie przechowywany i używany przez oprogramowanie — tak jak przy utrwalaniu na dysku lub w bazie danych, określ wartość „CultureInfo.InvariantCulture”.</target>
@@ -1728,9 +2517,14 @@
         <target state="translated">Określ parametr CultureInfo</target>
         <note />
       </trans-unit>
+      <trans-unit id="SpecifyCurrentCulture">
+        <source>Specify current culture</source>
+        <target state="translated">Określ bieżącą kulturę</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SpecifyIFormatProviderDescription">
-        <source>A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be based on the input from/output displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider'. Otherwise, if the result will be stored and accessed by software, such as when it is loaded from disk/database and when it is persisted to disk/database, specify 'CultureInfo.InvariantCulture'</source>
-        <target state="translated">Metoda lub konstruktor wywołuje co najmniej jeden element członkowski z przeciążeniem akceptującym parametr System.IFormatProvider, a nie wywołuje przeciążenia pobierającego parametr IFormatProvider. Jeśli parametr System.Globalization.CultureInfo lub obiekt IFormatProvider nie zostanie określony, wartość domyślna podana przez przeciążony element członkowski może nie dawać pożądanego efektu w przypadku wszystkich ustawień regionalnych. Jeśli wynik będzie oparty na danych wprowadzanych przez użytkownika lub wyświetlanych dla użytkownika, określ dla parametru „IFormatProvider” wartość „CultureInfo.CurrentCulture”. W przeciwnym przypadku, jeśli wynik będzie przechowywany i używany przez oprogramowanie — tak jak przy ładowaniu z dysku lub bazy danych i utrwalaniu na dysku lub w bazie danych, określ wartość „CultureInfo.InvariantCulture”.</target>
+        <source>A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be based on the input from/output displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider'. Otherwise, if the result will be stored and accessed by software, such as when it is loaded from disk/database and when it is persisted to disk/database, specify 'CultureInfo.InvariantCulture'.</source>
+        <target state="translated">Metoda lub konstruktor wywołuje co najmniej jedną składową z przeciążeniem akceptującym parametr System.IFormatProvider, a nie wywołuje przeciążenia pobierającego parametr IFormatProvider. Jeśli parametr System.Globalization.CultureInfo lub obiekt IFormatProvider nie zostanie określony, wartość domyślna podana przez przeciążoną składową może nie dawać pożądanego efektu w przypadku wszystkich ustawień regionalnych. Jeśli wynik będzie oparty na danych wprowadzanych przez użytkownika lub wyświetlanych dla użytkownika, określ dla parametru „IFormatProvider” wartość „CultureInfo.CurrentCulture”. W przeciwnym przypadku, jeśli wynik będzie przechowywany i używany przez oprogramowanie — tak jak przy ładowaniu z dysku lub bazy danych i utrwalaniu na dysku lub w bazie danych, określ wartość „CultureInfo.InvariantCulture”.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyIFormatProviderMessageIFormatProviderAlternate">
@@ -1741,6 +2535,11 @@
       <trans-unit id="SpecifyIFormatProviderMessageIFormatProviderAlternateString">
         <source>The behavior of '{0}' could vary based on the current user's locale settings. Replace this call in '{1}' with a call to '{2}'.</source>
         <target state="translated">Zachowanie elementu „{0}” może być różne w zależności od bieżących ustawień regionalnych użytkownika. Zastąp to wywołanie w metodzie „{1}” wywołaniem metody „{2}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecifyIFormatProviderMessageIFormatProviderOptional">
+        <source>The behavior of '{0}' could vary based on the current user's locale settings. Provide a value for the 'IFormatProvider' argument.</source>
+        <target state="translated">Zachowanie elementu „{0}” może się różnić w zależności od ustawień regionalnych bieżącego użytkownika. Podaj wartość argumentu „IFormatProvider”.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyIFormatProviderMessageUICulture">
@@ -1788,19 +2587,39 @@
         <target state="translated">Określ kierowanie dla argumentów ciągu P/Invoke</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecifyStringComparisonDescription">
-        <source>A string comparison operation uses a method overload that does not set a StringComparison parameter. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.</source>
-        <target state="translated">Operacja porównywania ciągów używa przeciążenia metody, które nie używa parametru StringComparison. Jeśli wynik będzie wyświetlany dla użytkownika, tak jak w przypadku sortowania listy elementów do wyświetlenia w polu listy, określ wartość „StringComparison.CurrentCulture” lub „StringComparison.CurrentCultureIgnoreCase” dla parametru „StringComparison”. W przypadku porównywania identyfikatorów nieuwzględniających wielkości liter, takich jak ścieżki do plików, zmienne środowiskowe czy klucze i wartości rejestru, określ wartość „StringComparison.OrdinalIgnoreCase”. W przeciwnym przypadku, przy porównywaniu identyfikatorów uwzględniających wielkość liter, określ wartość „StringComparison.Ordinal”.</target>
+      <trans-unit id="SpecifyStringComparisonCA1307Description">
+        <source>A string comparison operation uses a method overload that does not set a StringComparison parameter. It is recommended to use the overload with StringComparison parameter for clarity of intent. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.</source>
+        <target state="translated">Operacja porównywania ciągów używa przeciążenia metody bez ustawionego parametru StringComparison. Zalecamy użycie przeciążenia z parametrem StringComparison, aby wyjaśnić intencję. Jeśli wynik będzie wyświetlany dla użytkownika, tak jak w przypadku sortowania listy elementów do wyświetlenia w polu listy, określ wartość „StringComparison.CurrentCulture” lub „StringComparison.CurrentCultureIgnoreCase” dla parametru „StringComparison”. W przypadku porównywania identyfikatorów nieuwzględniających wielkości liter, takich jak ścieżki do plików, zmienne środowiskowe czy klucze i wartości rejestru, określ wartość „StringComparison.OrdinalIgnoreCase”. W przeciwnym przypadku, jeśli porównywane są identyfikatory uwzględniające wielkość liter, określ wartość „StringComparison.Ordinal”.</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecifyStringComparisonMessage">
+      <trans-unit id="SpecifyStringComparisonCA1307Message">
+        <source>'{0}' has a method overload that takes a 'StringComparison' parameter. Replace this call in '{1}' with a call to '{2}' for clarity of intent.</source>
+        <target state="translated">Element „{0}” ma przeciążenie metody, które przyjmuje parametr „StringComparison”. Zamień to wywołanie w elemencie „{1}” na wywołanie elementu „{2}”, aby wyjaśnić intencję.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecifyStringComparisonCA1307Title">
+        <source>Specify StringComparison for clarity</source>
+        <target state="translated">Określ parametr StringComparison w celu wyjaśnienia</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecifyStringComparisonCA1310Description">
+        <source>A string comparison operation uses a method overload that does not set a StringComparison parameter, hence its behavior could vary based on the current user's locale settings. It is strongly recommended to use the overload with StringComparison parameter for correctness and clarity of intent. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.</source>
+        <target state="translated">Operacja porównywania ciągów używa przeciążenia metody bez ustawionego parametru StringComparison, dlatego jej działanie może różnić się w zależności od bieżących ustawień regionalnych użytkownika. Stanowczo zalecamy użycie przeciążenia z parametrem StringComparison w celu osiągnięcia poprawności i wyjaśnienia intencji. Jeśli wynik będzie wyświetlany dla użytkownika, tak jak w przypadku sortowania listy elementów do wyświetlenia w polu listy, określ wartość „StringComparison.CurrentCulture” lub „StringComparison.CurrentCultureIgnoreCase” dla parametru „StringComparison”. W przypadku porównywania identyfikatorów nieuwzględniających wielkości liter, takich jak ścieżki do plików, zmienne środowiskowe czy klucze i wartości rejestru, określ wartość „StringComparison.OrdinalIgnoreCase”. W przeciwnym przypadku, jeśli porównywane są identyfikatory uwzględniające wielkość liter, określ wartość „StringComparison.Ordinal”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecifyStringComparisonCA1310Message">
         <source>The behavior of '{0}' could vary based on the current user's locale settings. Replace this call in '{1}' with a call to '{2}'.</source>
         <target state="translated">Zachowanie elementu „{0}” może być różne w zależności od bieżących ustawień regionalnych użytkownika. Zastąp to wywołanie w metodzie „{1}” wywołaniem metody „{2}”.</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecifyStringComparisonTitle">
-        <source>Specify StringComparison</source>
-        <target state="translated">Określ parametr StringComparison</target>
+      <trans-unit id="SpecifyStringComparisonCA1310Title">
+        <source>Specify StringComparison for correctness</source>
+        <target state="translated">Określ parametr StringComparison w celu osiągnięcia poprawności</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StaticAndAbstractRequiresPreviewFeatures">
+        <source>Using both 'static' and 'abstract' modifiers requires opting into preview features. See https://aka.ms/dotnet-warnings/preview-features for more information.</source>
+        <target state="translated">Używanie modyfikatorów „statycznych” i „abstrakcyjnych” wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz https://aka.ms/dotnet-warnings/preview-features.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestForEmptyStringsUsingStringLengthDescription">
@@ -1809,8 +2628,8 @@
         <note />
       </trans-unit>
       <trans-unit id="TestForEmptyStringsUsingStringLengthMessage">
-        <source>Test for empty strings using 'string.Length' property or 'string.IsNullOrEmpty' method instead of an Equality check.</source>
-        <target state="translated">Sprawdzenie pod kątem ciągu pustego wykonuj za pomocą właściwości „string.Length” lub metody „string.IsNullOrEmpty” zamiast sprawdzania pod kątem równości.</target>
+        <source>Test for empty strings using 'string.Length' property or 'string.IsNullOrEmpty' method instead of an Equality check</source>
+        <target state="translated">Testowanie pod kątem pustego ciągu wykonuj za pomocą właściwości „string.Length” lub metody „string.IsNullOrEmpty” zamiast sprawdzania pod kątem równości</target>
         <note />
       </trans-unit>
       <trans-unit id="TestForEmptyStringsUsingStringLengthTitle">
@@ -1833,6 +2652,36 @@
         <target state="translated">Sprawdzaj poprawnie pod kątem wartości NaN</target>
         <note />
       </trans-unit>
+      <trans-unit id="ThreadStaticInitializedInlineDescription">
+        <source>'ThreadStatic' fields should be initialized lazily on use, not with inline initialization nor explicitly in a static constructor, which would only initialize the field on the thread that runs the type's static constructor.</source>
+        <target state="translated">Pola „ThreadStatic“ powinny być inicjowane z opóźnieniem w użyciu, a nie z inicjacją śródwierszową ani jawnie w konstruktorze statycznym, co spowodowałoby zainicjowanie pola tylko w wątku, w którym działa konstruktor statyczny typu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ThreadStaticInitializedInlineMessage">
+        <source>'ThreadStatic' fields should not use inline initialization</source>
+        <target state="translated">Pola „ThreadStatic“ nie powinny używać inicjowania wbudowanego</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ThreadStaticInitializedInlineTitle">
+        <source>Improper 'ThreadStatic' field initialization</source>
+        <target state="translated">Nieprawidłowe inicjowanie pola „ThreadStatic“</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ThreadStaticOnNonStaticFieldDescription">
+        <source>'ThreadStatic' only affects static fields. When applied to instance fields, it has no impact on behavior.</source>
+        <target state="translated">Element „ThreadStatic“ ma wpływ tylko na pola statyczne. Po zastosowaniu do pól wystąpienia, nie ma on wpływu na zachowanie.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ThreadStaticOnNonStaticFieldMessage">
+        <source>Ensure 'ThreadStatic' is only used with static fields</source>
+        <target state="translated">Upewnij się, że element „ThreadStatic“ jest używany tylko z polami statycznymi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ThreadStaticOnNonStaticFieldTitle">
+        <source>'ThreadStatic' only affects static fields</source>
+        <target state="translated">Element „ThreadStatic“ ma wpływ tylko na pola statyczne</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseArrayEmpty">
         <source>Use Array.Empty</source>
         <target state="translated">Użyj metody Array.Empty</target>
@@ -1844,8 +2693,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseAsSpanInsteadOfRangeIndexerMessage">
-        <source>Use '{0}' instead of the '{1}'-based indexer on '{2}' to avoid creating unnecessary data copies.</source>
-        <target state="translated">Użyj metody „{0}” zamiast indeksatora opartego na „{1}” w przypadku wartości „{2}”, aby uniknąć tworzenia niepotrzebnych kopii danych.</target>
+        <source>Use '{0}' instead of the '{1}'-based indexer on '{2}' to avoid creating unnecessary data copies</source>
+        <target state="translated">Użyj metody „{0}” zamiast indeksatora opartego na elementu „{1}” w przypadku wartości „{2}”, aby uniknąć tworzenia niepotrzebnych kopii danych</target>
         <note />
       </trans-unit>
       <trans-unit id="UseAsSpanInsteadOfRangeIndexerOnAStringCodeFixTitle">
@@ -1873,6 +2722,26 @@
         <target state="translated">Użycie indeksatora opartego na zakresie w przypadku wartości tablicy powoduje utworzenie kopii żądanej części tablicy. Ta kopia jest zwykle niepotrzebna, gdy jest niejawnie używana jako wartość ReadOnlySpan lub ReadOnlyMemory. Użyj metody AsSpan, aby uniknąć zbędnego kopiowania.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseAsyncMethodInAsyncContextDescription">
+        <source>When inside a Task-returning method, use the async version of methods, if they exist.</source>
+        <target state="translated">W metodzie zwracającej Task użyj asynchronicznej wersji metod, jeśli istnieją.</target>
+        <note>{Locked="Task"}</note>
+      </trans-unit>
+      <trans-unit id="UseAsyncMethodInAsyncContextMessage">
+        <source>'{0}' synchronously blocks. Await '{1}' instead.</source>
+        <target state="translated">Metoda „{0}” powoduje blokowanie synchroniczne. Zamiast tego używaj operatora await „{1}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAsyncMethodInAsyncContextMessage_NoAlternative">
+        <source>'{0}' synchronously blocks. Use await instead.</source>
+        <target state="translated">Metoda „{0}” powoduje blokowanie synchroniczne. Zamiast tego używaj operatora await.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAsyncMethodInAsyncContextTitle">
+        <source>Call async methods when in an async method</source>
+        <target state="translated">Wywoływanie metod asynchronicznych w metodzie asynchronicznej</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseAutoValidateAntiforgeryToken">
         <source>Use antiforgery tokens in ASP.NET Core MVC controllers</source>
         <target state="translated">Użyj tokenów zabezpieczających przed fałszerstwem w kontrolerach MVC ASP.NET Core</target>
@@ -1888,6 +2757,26 @@
         <target state="translated">Metoda {0} obsługuje żądanie {1} bez przeprowadzania weryfikacji tokenu zabezpieczającego przed fałszerstwem. Należy również upewnić się, że formularz HTML wysyła token zabezpieczający przed fałszerstwem.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseCancellationTokenThrowIfCancellationRequestedCodeFixTitle">
+        <source>Replace with 'CancellationToken.ThrowIfCancellationRequested'</source>
+        <target state="translated">Zamień na element „CancellationToken.ThrowIfCancellationRequested”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseCancellationTokenThrowIfCancellationRequestedDescription">
+        <source>'ThrowIfCancellationRequested' automatically checks whether the token has been canceled, and throws an 'OperationCanceledException' if it has.</source>
+        <target state="translated">Polecenie „ThrowIfCancellationRequested” automatycznie sprawdza, czy token został anulowany, i zgłasza wyjątek „OperationCanceledException”, jeśli go ma.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseCancellationTokenThrowIfCancellationRequestedMessage">
+        <source>Use 'ThrowIfCancellationRequested' instead of checking 'IsCancellationRequested' and throwing 'OperationCanceledException'</source>
+        <target state="translated">Użyj polecenia „ThrowIfCancellationRequested” zamiast sprawdzania elementu „IsCancellationRequested” i zgłaszania wyjątku „OperationCanceledException”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseCancellationTokenThrowIfCancellationRequestedTitle">
+        <source>Use 'ThrowIfCancellationRequested'</source>
+        <target state="translated">Użyj polecenia „ThrowIfCancellationRequested”</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">
         <source>Use Container Level Access Policy</source>
         <target state="translated">Użyj zasad dostępu na poziomie kontenera</target>
@@ -1899,8 +2788,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicyMessage">
-        <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</source>
-        <target state="translated">Jeśli to możliwe, rozważ użycie kontroli dostępu opartej na rolach platformy Azure zamiast sygnatury dostępu współdzielonego (SAS). Jeśli nadal chcesz używać sygnatury SAS, podczas jej tworzenia użyj zasad dostępu na poziomie kontenera</target>
+        <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS.</source>
+        <target state="translated">Jeśli to możliwe, rozważ użycie kontroli dostępu opartej na rolach platformy Azure zamiast sygnatury dostępu współdzielonego (SAS). Jeśli nadal chcesz używać sygnatury SAS, podczas jej tworzenia użyj zasad dostępu na poziomie kontenera.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseDefaultDllImportSearchPathsAttribute">
@@ -1918,9 +2807,79 @@
         <target state="translated">Metoda {0} nie korzystała z atrybutu DefaultDllImportSearchPaths dla elementów P/Invoke.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseDisabledMarshallingEquivalentCodeFix">
+        <source>Use equivalent code that works when marshalling is disabled</source>
+        <target state="translated">Użyj równoważnego kodu, który działa, gdy kierowanie jest wyłączone</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseEnvironmentCurrentManagedThreadIdDescription">
+        <source>'Environment.CurrentManagedThreadId' is simpler and faster than 'Thread.CurrentThread.ManagedThreadId'.</source>
+        <target state="translated">Element „Environment. CurrentManagedThreadId” jest prostszy i szybszy niż element „Thread.CurrentThread. ManagedThreadId”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseEnvironmentCurrentManagedThreadIdFix">
+        <source>Use 'Environment.CurrentManagedThreadId'</source>
+        <target state="translated">Użyj elementu „Environment.CurrentManagedThreadId”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseEnvironmentCurrentManagedThreadIdMessage">
+        <source>Use 'Environment.CurrentManagedThreadId' instead of 'Thread.CurrentThread.ManagedThreadId'</source>
+        <target state="translated">Użyj elementu „Environment. CurrentManagedThreadId” zamiast elementu „Thread.CurrentThread.ManagedThreadId”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseEnvironmentCurrentManagedThreadIdTitle">
+        <source>Use 'Environment.CurrentManagedThreadId'</source>
+        <target state="translated">Użyj elementu „Environment.CurrentManagedThreadId”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseEnvironmentProcessIdDescription">
+        <source>'Environment.ProcessId' is simpler and faster than 'Process.GetCurrentProcess().Id'.</source>
+        <target state="translated">Element „Environment.ProcessId” jest prostszy i szybszy niż element „Process.GetCurrentProcess().Id”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseEnvironmentProcessIdFix">
+        <source>Use 'Environment.ProcessId'</source>
+        <target state="translated">Użyj elementu „Environment.ProcessId”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseEnvironmentProcessIdMessage">
+        <source>Use 'Environment.ProcessId' instead of 'Process.GetCurrentProcess().Id'</source>
+        <target state="translated">Użyj elementu „Environment.ProcessId” zamiast elementu „Process.GetCurrentProcess().Id”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseEnvironmentProcessIdTitle">
+        <source>Use 'Environment.ProcessId'</source>
+        <target state="translated">Użyj elementu „Environment.ProcessId”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseEnvironmentProcessPathDescription">
+        <source>'Environment.ProcessPath' is simpler and faster than 'Process.GetCurrentProcess().MainModule.FileName'.</source>
+        <target state="translated">Element „Environment.ProcessPath” jest prostszy i szybszy niż element „Process.GetCurrentProcess(). MainModule.FileName”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseEnvironmentProcessPathFix">
+        <source>Use 'Environment.ProcessPath'</source>
+        <target state="translated">Użyj ścieżki „Environment.ProcessPath”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseEnvironmentProcessPathMessage">
+        <source>Use 'Environment.ProcessPath' instead of 'Process.GetCurrentProcess().MainModule.FileName'</source>
+        <target state="translated">Użyj elementu „Environment.ProcessPath” zamiast elementu „Process.GetCurrentProcess ().MainModule.FileName”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseEnvironmentProcessPathTitle">
+        <source>Use 'Environment.ProcessPath'</source>
+        <target state="translated">Użyj ścieżki „Environment.ProcessPath”</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseIndexer">
         <source>Use indexer</source>
         <target state="translated">Użyj indeksatora</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseInvariantVersion">
+        <source>Use an invariant version</source>
+        <target state="translated">Użyj niezmiennej wersji</target>
         <note />
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiDescription">
@@ -1954,8 +2913,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonTitle">
-        <source>Use ordinal stringcomparison</source>
-        <target state="translated">Użyj operacji porównywania ciągów opartej na porównywaniu wartości</target>
+        <source>Use ordinal string comparison</source>
+        <target state="translated">Użyj porównywania ciągów porządkowych</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableDescription">
@@ -1964,8 +2923,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableMessage">
-        <source>Use the "{0}" property instead of Enumerable.Count().</source>
-        <target state="translated">Użyj właściwości „{0}” zamiast metody Enumerable.Count().</target>
+        <source>Use the "{0}" property instead of Enumerable.Count()</source>
+        <target state="translated">Użyj właściwości „{0}” zamiast metody Enumerable.Count()</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableTitle">
@@ -1974,7 +2933,7 @@
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">
-        <source>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</source>
+        <source>Use Rivest-Shamir-Adleman (RSA) Algorithm With Sufficient Key Size</source>
         <target state="translated">Użyj algorytmu Rivest-Shamir-Adleman (RSA) z wystarczającym rozmiarem klucza</target>
         <note />
       </trans-unit>
@@ -2004,8 +2963,108 @@
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
-        <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
-        <target state="translated">Jeśli to możliwe, rozważ użycie kontroli dostępu opartej na rolach platformy Azure zamiast sygnatury dostępu współdzielonego (SAS). Jeśli nadal chcesz używać sygnatury SAS, określ właściwość SharedAccessProtocol.HttpsOnly</target>
+        <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly.</source>
+        <target state="translated">Jeśli to możliwe, rozważ użycie kontroli dostępu opartej na rolach platformy Azure zamiast sygnatury dostępu współdzielonego (SAS). Jeśli nadal chcesz używać sygnatury SAS, określ właściwość SharedAccessProtocol.HttpsOnly.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillCodeFixTitle">
+        <source>Use 'Clear()'</source>
+        <target state="translated">Użyj polecenia „Clear()”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillDescription">
+        <source>It is more efficient to use 'Clear', instead of 'Fill' with default value.</source>
+        <target state="translated">Użycie opcji „Wyczyść” zamiast opcji „Wypełnij” z wartością domyślną jest efektywniejsze.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillMessage">
+        <source>Prefer 'Span&lt;T&gt;.Clear()' instead of 'Span&lt;T&gt;.Fill(default)'</source>
+        <target state="translated">Preferuj polecenie „Span&lt;T&gt;. Clear()” zamiast „Span&lt;T&gt;. Fill(domyślnie)”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillTitle">
+        <source>Prefer 'Clear' over 'Fill'</source>
+        <target state="translated">Preferuj opcję „Wyczyść” niż „Wypełnij”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">
+        <source>Use 'string.Equals'</source>
+        <target state="translated">Użyj ciągu „string. Equals”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringEqualsOverStringCompareDescription">
+        <source>It is both clearer and likely faster to use 'string.Equals' instead of comparing the result of 'string.Compare' to zero.</source>
+        <target state="translated">Użycie ciągu „string.Equals” jest wyraźniejsze i prawdopodobnie szybsze zamiast porównywania wyniku „string.Compare” z zerem.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringEqualsOverStringCompareMessage">
+        <source>Use 'string.Equals' instead of comparing the result of 'string.Compare' to 0</source>
+        <target state="translated">Użyj ciągu „string.Equals” zamiast porównywania wyniku ciągu „string.Compare” z wartością 0</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringEqualsOverStringCompareTitle">
+        <source>Use 'string.Equals'</source>
+        <target state="translated">Użyj ciągu „string. Equals”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatCodeFixTitle">
+        <source>Use 'AsSpan' with 'string.Concat'</source>
+        <target state="translated">Użyj ciągu „AsSpan” z ciągiem „String.Concat”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatDescription">
+        <source>It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.</source>
+        <target state="translated">Bardziej wydajne jest użycie ciągów „AsSpan” i "string.Concat", zamiast ciągu „Substring” i operatora złączenia.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatMessage">
+        <source>Use span-based 'string.Concat' and 'AsSpan' instead of 'Substring'</source>
+        <target state="translated">Użyj ciągu „string.Concat” opartego na zakresie i ciągu „AsSpan” zamiast ciągu „Substring”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatTitle">
+        <source>Use span-based 'string.Concat'</source>
+        <target state="translated">Użyj ciągu „string.Concat” opartego na zakresie. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersDescription">
+        <source>'string.Contains(char)' is available as a better performing overload for single char lookup.</source>
+        <target state="translated">Ciąg „string.Contains(char)” jest dostępny jako przeciążenie o lepszej wydajności dla wyszukiwania pojedynczego znaku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersMessage">
+        <source>Use 'string.Contains(char)' instead of 'string.Contains(string)' when searching for a single character</source>
+        <target state="translated">Użyj ciągu „string.Contains(char)”, zamiast ciągu „string.Contains(string)” podczas wyszukiwania pojedynczego znaku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersTitle">
+        <source>Use char literal for a single character lookup</source>
+        <target state="translated">Użyj literału char do wyszukiwania pojedynczego znaku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseValidPlatformStringDescription">
+        <source>Platform compatibility analyzer requires a valid platform name and version.</source>
+        <target state="translated">Analizator zgodności platformy wymaga prawidłowej nazwy i wersji platformy.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseValidPlatformStringInvalidVersion">
+        <source>Version '{0}' is not valid for platform '{1}'. Use a version with 2{2} parts for this platform.</source>
+        <target state="translated">Wersja „{0}” jest nieprawidłowa dla platformy „{1}”. Użyj wersji z 2{2} częściami dla tej platformy.</target>
+        <note>Version '7' is not valid for platform 'windows'. Use a version with 2-4 parts for this platform.</note>
+      </trans-unit>
+      <trans-unit id="UseValidPlatformStringNoVersion">
+        <source>Version '{0}' is not valid for platform '{1}'. Do not use versions for this platform.</source>
+        <target state="translated">Wersja „{0}” nie jest prawidłowa dla platformy „{1}”. Nie używaj wersji dla tej platformy.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseValidPlatformStringTitle">
+        <source>Use valid platform string</source>
+        <target state="translated">Użyj prawidłowego ciągu platformy</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseValidPlatformStringUnknownPlatform">
+        <source>The platform '{0}' is not a known platform name</source>
+        <target state="translated">Platforma „{0}” nie jest znaną nazwą platformy</target>
         <note />
       </trans-unit>
       <trans-unit id="UseValueTasksCorrectlyDescription">
@@ -2044,33 +3103,63 @@
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataSetReadXml">
-        <source>Use XmlReader For DataSet Read Xml</source>
-        <target state="translated">Użyj czytnika XmlReader na potrzeby pliku XML odczytu zestawu danych</target>
+        <source>Use XmlReader for 'DataSet.ReadXml()'</source>
+        <target state="translated">Użyj elementu XmlReader dla metody „DataSet.ReadXml()”</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDeserialize">
-        <source>Use XmlReader For Deserialize</source>
-        <target state="translated">Użyj czytnika XmlReader do deserializacji</target>
+        <source>Use XmlReader for 'XmlSerializer.Deserialize()'</source>
+        <target state="translated">Użyj elementu XmlReader dla metody „XmlSerializer.Deserialize()”</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForSchemaRead">
-        <source>Use XmlReader For Schema Read</source>
-        <target state="translated">Użyj czytnika XmlReader do odczytu schematu</target>
+        <source>Use XmlReader for 'XmlSchema.Read()'</source>
+        <target state="translated">Użyj elementu XmlReader dla metody „XmlSchema.Read()”</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForValidatingReader">
-        <source>Use XmlReader For Validating Reader</source>
-        <target state="translated">Użyj czytnika XmlReader do weryfikacji czytnika</target>
+        <source>Use XmlReader for XmlValidatingReader constructor</source>
+        <target state="translated">Użyj elementu XmlReader dla konstruktora XmlValidatingReader</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForXPathDocument">
-        <source>Use XmlReader For XPathDocument</source>
-        <target state="translated">Użyj czytnika XmlReader na potrzeby elementu XPathDocument</target>
+        <source>Use XmlReader for XPathDocument constructor</source>
+        <target state="translated">Użyj elementu XmlReader dla konstruktora XPathDocument</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderMessage">
-        <source>This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</source>
-        <target state="translated">Przeciążenie metody {0}.{1} jest potencjalnie niebezpieczne. Zamiast tego użyj przeciążenia przyjmującego wystąpienie czytnika XmlReader</target>
+        <source>This overload of the '{0}.{1}' method is potentially unsafe. It may enable Document Type Definition (DTD) which can be vulnerable to denial of service attacks, or might use an XmlResolver which can be vulnerable to information disclosure. Use an overload that takes a XmlReader instance instead, with DTD processing disabled and no XmlResolver.</source>
+        <target state="translated">To przeciążenie metody „{0}.{1}” jest potencjalnie niebezpieczne. Być może włącza definicję typu dokumentu podatną na ataki typu „odmowa usługi” lub używa elementu XmlResolver podatnego na ujawnienie informacji. Użyj zamiast tego przeciążenia, które przyjmuje wystąpienie elementu XmlReader, ma wyłączone przetwarzanie definicji typu dokumentu i nie używa elementu XmlResolver.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsesPreviewTypeParameterMessage">
+        <source>'{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">„{0}” używa typu w wersji zapoznawczej „{1}” i wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder">
+        <source>{3} '{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</source>
+        <target state="translated">{3} „{0}” używa typu w wersji zapoznawczej „{1}” i wymaga wyrażenia zgody na korzystanie z funkcji w wersji zapoznawczej. Aby uzyskać więcej informacji, zobacz {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="translated">Użyj polecenia „TryGetValue(TKey, out TValue)”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
+        <target state="translated">Preferuj metodę „IDictionary.TryGetValue(TKey, out TValue)”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
+        <target state="translated">Preferuj wywołanie „TryGetValue” względem dostępu indeksatora słownika chronionego przez kontrolę „ContainsKey”, aby uniknąć podwójnego wyszukiwania</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
+        <target state="translated">Preferuj wywołanie „TryGetValue” względem dostępu indeksatora słownika chronionego przez kontrolę „ContainsKey”. Element „ContainsKey” i indeksator wyszukają klucz pod maską, więc użycie polecenia „TryGetValue” spowoduje usunięcie dodatkowego wyszukiwania.</target>
         <note />
       </trans-unit>
     </body>

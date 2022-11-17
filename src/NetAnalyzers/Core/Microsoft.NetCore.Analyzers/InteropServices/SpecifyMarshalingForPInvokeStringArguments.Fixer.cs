@@ -1,6 +1,5 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         protected const string LPWStrText = "LPWStr";
         protected const string UnicodeText = "Unicode";
 
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PInvokeDiagnosticAnalyzer.RuleCA2101Id);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(PInvokeDiagnosticAnalyzer.RuleCA2101Id);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -44,15 +44,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             if (IsAttribute(node))
             {
-                context.RegisterCodeFix(new MyCodeAction(title,
-                                                         async ct => await FixAttributeArguments(context.Document, node, charSetType, dllImportType, marshalAsType, unmanagedType, ct).ConfigureAwait(false),
+                context.RegisterCodeFix(CodeAction.Create(title,
+                                                         async ct => await FixAttributeArgumentsAsync(context.Document, node, charSetType, dllImportType, marshalAsType, unmanagedType, ct).ConfigureAwait(false),
                                                          equivalenceKey: title),
                                         context.Diagnostics);
             }
             else if (IsDeclareStatement(node))
             {
-                context.RegisterCodeFix(new MyCodeAction(title,
-                                                         async ct => await FixDeclareStatement(context.Document, node, ct).ConfigureAwait(false),
+                context.RegisterCodeFix(CodeAction.Create(title,
+                                                         async ct => await FixDeclareStatementAsync(context.Document, node, ct).ConfigureAwait(false),
                                                          equivalenceKey: title),
                                         context.Diagnostics);
             }
@@ -60,10 +60,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         protected abstract bool IsAttribute(SyntaxNode node);
         protected abstract bool IsDeclareStatement(SyntaxNode node);
-        protected abstract Task<Document> FixDeclareStatement(Document document, SyntaxNode node, CancellationToken cancellationToken);
+        protected abstract Task<Document> FixDeclareStatementAsync(Document document, SyntaxNode node, CancellationToken cancellationToken);
         protected abstract SyntaxNode FindNamedArgument(IReadOnlyList<SyntaxNode> arguments, string argumentName);
 
-        private async Task<Document> FixAttributeArguments(Document document, SyntaxNode attributeDeclaration,
+        private async Task<Document> FixAttributeArgumentsAsync(Document document, SyntaxNode attributeDeclaration,
             INamedTypeSymbol charSetType, INamedTypeSymbol dllImportType, INamedTypeSymbol marshalAsType, INamedTypeSymbol unmanagedType, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
@@ -106,16 +106,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
 
             return editor.GetChangedDocument();
-        }
-
-
-        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
-        private class MyCodeAction : DocumentChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument, equivalenceKey)
-            {
-            }
         }
 
         public sealed override FixAllProvider GetFixAllProvider()

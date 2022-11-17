@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         #region Diagnostic Tests
 
         [Fact]
-        public async Task CA2241CSharpString()
+        public async Task CA2241CSharpStringAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -54,7 +54,7 @@ public class C
         }
 
         [Fact]
-        public async Task CA2241CSharpConsoleWrite()
+        public async Task CA2241CSharpConsoleWriteAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -79,7 +79,7 @@ public class C
         }
 
         [Fact]
-        public async Task CA2241CSharpConsoleWriteLine()
+        public async Task CA2241CSharpConsoleWriteLineAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -104,7 +104,7 @@ public class C
         }
 
         [Fact]
-        public async Task CA2241CSharpPassing()
+        public async Task CA2241CSharpPassingAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -138,7 +138,7 @@ public class C
         }
 
         [Fact]
-        public async Task CA2241CSharpExplicitObjectArraySupported()
+        public async Task CA2241CSharpExplicitObjectArraySupportedAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -159,7 +159,7 @@ public class C
         }
 
         [Fact]
-        public async Task CA2241CSharpVarArgsNotSupported()
+        public async Task CA2241CSharpVarArgsNotSupportedAsync()
         {
             // currently not supported due to "https://github.com/dotnet/roslyn/issues/7346"
             await new VerifyCS.Test
@@ -181,7 +181,7 @@ public class C
         }
 
         [Fact]
-        public async Task CA2241VBString()
+        public async Task CA2241VBStringAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -213,13 +213,13 @@ End Class
         }
 
         [Fact]
-        public async Task CA2241VBConsoleWrite()
+        public async Task CA2241VBConsoleWriteAsync()
         {
             // this works in VB
             // Dim s = Console.WriteLine(""{0} {1} {2}"", 1, 2, 3, 4)
             // since VB bind it to __arglist version where we skip analysis
             // due to a bug - https://github.com/dotnet/roslyn/issues/7346
-            // we might skip it only in C# since VB doesnt support __arglist
+            // we might skip it only in C# since VB doesn't support __arglist
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
@@ -243,13 +243,13 @@ End Class
         }
 
         [Fact]
-        public async Task CA2241VBConsoleWriteLine()
+        public async Task CA2241VBConsoleWriteLineAsync()
         {
             // this works in VB
             // Dim s = Console.WriteLine(""{0} {1} {2}"", 1, 2, 3, 4)
             // since VB bind it to __arglist version where we skip analysis
             // due to a bug - https://github.com/dotnet/roslyn/issues/7346
-            // we might skip it only in C# since VB doesnt support __arglist
+            // we might skip it only in C# since VB doesn't support __arglist
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
@@ -273,7 +273,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2241VBPassing()
+        public async Task CA2241VBPassingAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -302,7 +302,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2241VBExplicitObjectArraySupported()
+        public async Task CA2241VBExplicitObjectArraySupportedAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -321,7 +321,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2241CSharpFormatStringParser()
+        public async Task CA2241CSharpFormatStringParserAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -353,7 +353,7 @@ public class C
         [InlineData(false)]
         // Configured and enabled
         [InlineData(true)]
-        public async Task EditorConfigConfiguration_HeuristicAdditionalStringFormattingMethods(bool? editorConfig)
+        public async Task EditorConfigConfiguration_HeuristicAdditionalStringFormattingMethodsAsync(bool? editorConfig)
         {
             string editorConfigText = editorConfig == null ? string.Empty :
                 "dotnet_code_quality.try_determine_additional_string_formatting_methods_automatically = " + editorConfig.Value;
@@ -375,10 +375,13 @@ class Test
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
-
 
             if (editorConfig == true)
             {
@@ -406,10 +409,13 @@ Class Test
     End Sub
 End Class"
 },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
-
 
             if (editorConfig == true)
             {
@@ -433,7 +439,7 @@ End Class"
         [InlineData("dotnet_code_quality.additional_string_formatting_methods = Test.MyFormat(System.String,System.Object[])~System.String")]
         // Match by documentation ID with "M:" prefix
         [InlineData("dotnet_code_quality.additional_string_formatting_methods = M:Test.MyFormat(System.String,System.Object[])~System.String")]
-        public async Task EditorConfigConfiguration_AdditionalStringFormattingMethods(string editorConfigText)
+        public async Task EditorConfigConfiguration_AdditionalStringFormattingMethodsAsync(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -452,10 +458,13 @@ class Test
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
-
 
             if (editorConfigText.Length > 0)
             {
@@ -483,10 +492,13 @@ Class Test
     End Sub
 End Class"
 },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
-
 
             if (editorConfigText.Length > 0)
             {
@@ -501,11 +513,15 @@ End Class"
         #endregion
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         private static DiagnosticResult GetBasicResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
     }
 }

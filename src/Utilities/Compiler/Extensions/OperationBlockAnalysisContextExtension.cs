@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 #if HAS_IOPERATION
 
@@ -11,7 +11,7 @@ namespace Analyzer.Utilities.Extensions
     internal static class OperationBlockAnalysisContextExtension
     {
 #pragma warning disable RS1012 // Start action has no registered actions.
-        public static bool IsMethodNotImplementedOrSupported(this OperationBlockStartAnalysisContext context)
+        public static bool IsMethodNotImplementedOrSupported(this OperationBlockStartAnalysisContext context, bool checkPlatformNotSupported = false)
 #pragma warning restore RS1012 // Start action has no registered actions.
         {
             // Note that VB method bodies with 1 action have 3 operations.
@@ -53,8 +53,16 @@ namespace Analyzer.Utilities.Extensions
                     descendants[0] is IThrowOperation throwOperation &&
                     throwOperation.GetThrownExceptionType() is ITypeSymbol createdExceptionType)
                 {
-                    if (Equals(context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException), createdExceptionType.OriginalDefinition)
-                        || Equals(context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotSupportedException), createdExceptionType.OriginalDefinition))
+                    if (SymbolEqualityComparer.Default.Equals(
+                            context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException),
+                            createdExceptionType.OriginalDefinition) ||
+                        SymbolEqualityComparer.Default.Equals(
+                            context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotSupportedException),
+                            createdExceptionType.OriginalDefinition) ||
+                        (checkPlatformNotSupported &&
+                        SymbolEqualityComparer.Default.Equals(
+                            context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemPlatformNotSupportedException),
+                            createdExceptionType.OriginalDefinition)))
                     {
                         return true;
                     }

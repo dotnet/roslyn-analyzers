@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 #pragma warning disable CA1801 // Remove unused parameter
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -15,7 +15,7 @@ namespace OtherDll
     /// <remarks>
     /// Since Roslyn doesn't support cross-binary DFA, and this class is
     /// defined in a different binary, using this class from test source code
-    /// is a way to test handling of non-interprocedural results in dataflow 
+    /// is a way to test handling of non-interprocedural results in dataflow
     /// analysis implementations.
     /// </remarks>
     public class OtherDllClass<T>
@@ -30,7 +30,7 @@ namespace OtherDll
 
         public T? Default
         {
-            get { return default; }
+            get => default;
             set { }
         }
 
@@ -41,7 +41,7 @@ namespace OtherDll
                 Random r = new Random();
                 byte[] bytes = new byte[r.Next(20) + 10];
                 r.NextBytes(bytes);
-                bytes = bytes.Where(b => (byte)' ' <= b && b <= (byte)'~').ToArray();
+                bytes = bytes.Where(b => b is >= ((byte)' ') and <= ((byte)'~')).ToArray();
                 return Encoding.ASCII.GetString(bytes);
             }
 
@@ -73,7 +73,7 @@ namespace OtherDll
             Random r = new Random();
             byte[] bytes = new byte[r.Next(20) + 10];
             r.NextBytes(bytes);
-            bytes = bytes.Where(b => (byte)' ' <= b && b <= (byte)'~').ToArray();
+            bytes = bytes.Where(b => b is >= ((byte)' ') and <= ((byte)'~')).ToArray();
             return Encoding.ASCII.GetString(bytes);
         }
 
@@ -102,7 +102,7 @@ namespace OtherDll
             Random r = new Random();
             byte[] bytes = new byte[r.Next(20) + 10];
             r.NextBytes(bytes);
-            bytes = bytes.Where(b => (byte)' ' <= b && b <= (byte)'~').ToArray();
+            bytes = bytes.Where(b => b is >= ((byte)' ') and <= ((byte)'~')).ToArray();
             output = Encoding.ASCII.GetString(bytes);
         }
 
@@ -131,7 +131,7 @@ namespace OtherDll
             Random r = new Random();
             byte[] bytes = new byte[r.Next(20) + 10];
             r.NextBytes(bytes);
-            bytes = bytes.Where(b => (byte)' ' <= b && b <= (byte)'~').ToArray();
+            bytes = bytes.Where(b => b is >= ((byte)' ') and <= ((byte)'~')).ToArray();
             output = Encoding.ASCII.GetString(bytes);
         }
     }

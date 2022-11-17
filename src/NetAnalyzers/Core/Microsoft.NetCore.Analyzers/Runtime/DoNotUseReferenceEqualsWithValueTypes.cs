@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
@@ -9,52 +9,49 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
-    /// CA2013: Do not use ReferenceEquals with value types.
+    /// CA2013: <inheritdoc cref="DoNotUseReferenceEqualsWithValueTypesTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotUseReferenceEqualsWithValueTypesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2013";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseReferenceEqualsWithValueTypesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableComparerMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseReferenceEqualsWithValueTypesComparerMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMethodMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseReferenceEqualsWithValueTypesMethodMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseReferenceEqualsWithValueTypesDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(DoNotUseReferenceEqualsWithValueTypesTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(DoNotUseReferenceEqualsWithValueTypesDescription));
 
-        internal static readonly DiagnosticDescriptor ComparerRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static readonly DiagnosticDescriptor ComparerRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
             s_localizableTitle,
-            s_localizableComparerMessage,
+            CreateLocalizableResourceString(nameof(DoNotUseReferenceEqualsWithValueTypesComparerMessage)),
             DiagnosticCategory.Reliability,
             RuleLevel.BuildWarning,
             description: s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor MethodRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static readonly DiagnosticDescriptor MethodRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
             s_localizableTitle,
-            s_localizableMethodMessage,
+            CreateLocalizableResourceString(nameof(DoNotUseReferenceEqualsWithValueTypesMethodMessage)),
             DiagnosticCategory.Reliability,
             RuleLevel.BuildWarning,
             description: s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MethodRule, ComparerRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(MethodRule, ComparerRule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationStartContext =>
+            context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 var objectType = compilationStartContext.Compilation.GetSpecialType(SpecialType.System_Object);
-
-                if (objectType == null)
-                {
-                    return;
-                }
 
                 var objectObjectParameters = new[]
                 {

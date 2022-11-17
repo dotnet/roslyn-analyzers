@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -25,7 +25,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <value>The fixable diagnostic ids.</value>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(UseCountProperlyAnalyzer.CA1829);
 
-
         /// <summary>
         /// Gets an optional <see cref="FixAllProvider" /> that can fix all/multiple occurrences of diagnostics fixed by this code fix provider.
         /// Return null if the provider doesn't support fix all/multiple occurrences.
@@ -34,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <returns>FixAllProvider.</returns>
         public sealed override FixAllProvider GetFixAllProvider()
         {
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
+            // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
             return WellKnownFixAllProviders.BatchFixer;
         }
 

@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+
+#nullable disable warnings
 
 using System;
 using System.Collections.Generic;
@@ -10,27 +12,33 @@ namespace Analyzer.Utilities.Extensions
 {
     internal static class ITypeSymbolExtensions
     {
+#if CODEANALYSIS_V3_OR_BETTER
+        public static bool IsAssignableTo(
+            [NotNullWhen(returnValue: true)] this ITypeSymbol? fromSymbol,
+            [NotNullWhen(returnValue: true)] ITypeSymbol? toSymbol,
+            Compilation compilation)
+            => fromSymbol != null && toSymbol != null && compilation.ClassifyCommonConversion(fromSymbol, toSymbol).IsImplicit;
+#endif
+
         public static bool IsPrimitiveType(this ITypeSymbol type)
         {
-            switch (type.SpecialType)
+            return type.SpecialType switch
             {
-                case SpecialType.System_Boolean:
-                case SpecialType.System_Byte:
-                case SpecialType.System_Char:
-                case SpecialType.System_Double:
-                case SpecialType.System_Int16:
-                case SpecialType.System_Int32:
-                case SpecialType.System_Int64:
-                case SpecialType.System_UInt16:
-                case SpecialType.System_UInt32:
-                case SpecialType.System_UInt64:
-                case SpecialType.System_SByte:
-                case SpecialType.System_Single:
-                case SpecialType.System_String:
-                    return true;
-                default:
-                    return false;
-            }
+                SpecialType.System_Boolean
+                or SpecialType.System_Byte
+                or SpecialType.System_Char
+                or SpecialType.System_Double
+                or SpecialType.System_Int16
+                or SpecialType.System_Int32
+                or SpecialType.System_Int64
+                or SpecialType.System_UInt16
+                or SpecialType.System_UInt32
+                or SpecialType.System_UInt64
+                or SpecialType.System_SByte
+                or SpecialType.System_Single
+                or SpecialType.System_String => true,
+                _ => false,
+            };
         }
 
         public static bool Inherits([NotNullWhen(returnValue: true)] this ITypeSymbol? type, [NotNullWhen(returnValue: true)] ITypeSymbol? possibleBase)
@@ -58,11 +66,11 @@ namespace Analyzer.Utilities.Extensions
             }
         }
 
-        public static IEnumerable<INamedTypeSymbol> GetBaseTypes(this ITypeSymbol type, Func<INamedTypeSymbol, bool>? takeWilePredicate = null)
+        public static IEnumerable<INamedTypeSymbol> GetBaseTypes(this ITypeSymbol type, Func<INamedTypeSymbol, bool>? takeWhilePredicate = null)
         {
             INamedTypeSymbol current = type.BaseType;
             while (current != null &&
-                (takeWilePredicate == null || takeWilePredicate(current)))
+                (takeWhilePredicate == null || takeWhilePredicate(current)))
             {
                 yield return current;
                 current = current.BaseType;
@@ -89,7 +97,7 @@ namespace Analyzer.Utilities.Extensions
             if (!baseTypesOnly && candidateBaseType.TypeKind == TypeKind.Interface)
             {
                 var allInterfaces = symbol.AllInterfaces.OfType<ITypeSymbol>();
-                if (candidateBaseType.OriginalDefinition.Equals(candidateBaseType))
+                if (SymbolEqualityComparer.Default.Equals(candidateBaseType.OriginalDefinition, candidateBaseType))
                 {
                     // Candidate base type is not a constructed generic type, so use original definition for interfaces.
                     allInterfaces = allInterfaces.Select(i => i.OriginalDefinition);
@@ -115,7 +123,7 @@ namespace Analyzer.Utilities.Extensions
 
             while (symbol != null)
             {
-                if (symbol.Equals(candidateBaseType))
+                if (SymbolEqualityComparer.Default.Equals(symbol, candidateBaseType))
                 {
                     return true;
                 }
@@ -152,7 +160,7 @@ namespace Analyzer.Utilities.Extensions
 
             static bool IsInterfaceOrImplementsInterface(ITypeSymbol type, INamedTypeSymbol? interfaceType)
                 => interfaceType != null &&
-                   (Equals(type, interfaceType) || type.AllInterfaces.Contains(interfaceType));
+                   (SymbolEqualityComparer.Default.Equals(type, interfaceType) || type.AllInterfaces.Contains(interfaceType));
         }
 
         /// <summary>
@@ -200,7 +208,7 @@ namespace Analyzer.Utilities.Extensions
                 {
                     foreach (var attributeClassData in currentAttributeClass.GetAttributes())
                     {
-                        if (!Equals(attributeClassData.AttributeClass, attributeUsageAttribute))
+                        if (!SymbolEqualityComparer.Default.Equals(attributeClassData.AttributeClass, attributeUsageAttribute))
                         {
                             continue;
                         }
@@ -241,13 +249,10 @@ namespace Analyzer.Utilities.Extensions
                     {
                         attributes.Add(attribute);
                     }
-                    else if (!onlyIncludeInherited)
+                    else if (!onlyIncludeInherited &&
+                        (attribute.AttributeClass.Inherits(exportAttributeV1) || attribute.AttributeClass.Inherits(exportAttributeV2)))
                     {
-                        if (attribute.AttributeClass.Inherits(exportAttributeV1)
-                            || attribute.AttributeClass.Inherits(exportAttributeV2))
-                        {
-                            attributes.Add(attribute);
-                        }
+                        attributes.Add(attribute);
                     }
                 }
 
@@ -295,6 +300,9 @@ namespace Analyzer.Utilities.Extensions
 
         public static bool IsNullableOfBoolean([NotNullWhen(returnValue: true)] this ITypeSymbol? typeSymbol)
             => typeSymbol.IsNullableValueType() && ((INamedTypeSymbol)typeSymbol).TypeArguments[0].SpecialType == SpecialType.System_Boolean;
+
+        public static ITypeSymbol? GetNullableValueTypeUnderlyingType(this ITypeSymbol? typeSymbol)
+            => typeSymbol.IsNullableValueType() ? ((INamedTypeSymbol)typeSymbol).TypeArguments[0] : null;
 
 #if HAS_IOPERATION
         public static ITypeSymbol GetUnderlyingValueTupleTypeOrThis(this ITypeSymbol typeSymbol)
@@ -364,9 +372,9 @@ namespace Analyzer.Utilities.Extensions
                 RoslynDebug.Assert(iReadOnlyCollectionOfT != null);
 
                 return type.OriginalDefinition is INamedTypeSymbol originalDefinition &&
-                    (iCollection.Equals(originalDefinition) ||
-                     iCollectionOfT.Equals(originalDefinition) ||
-                     iReadOnlyCollectionOfT.Equals(originalDefinition));
+                    (SymbolEqualityComparer.Default.Equals(iCollection, originalDefinition) ||
+                     SymbolEqualityComparer.Default.Equals(iCollectionOfT, originalDefinition) ||
+                     SymbolEqualityComparer.Default.Equals(iReadOnlyCollectionOfT, originalDefinition));
             }
         }
     }

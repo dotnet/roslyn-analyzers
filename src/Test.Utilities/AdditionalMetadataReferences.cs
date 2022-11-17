@@ -1,6 +1,8 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
+using System.IO;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
@@ -20,8 +22,10 @@ namespace Test.Utilities
 
         public static ReferenceAssemblies DefaultForTaintedDataAnalysis { get; } = ReferenceAssemblies.NetFramework.Net472.Default
             .AddAssemblies(ImmutableArray.Create("PresentationFramework", "System.DirectoryServices", "System.Web", "System.Web.Extensions", "System.Xaml"))
-            .AddPackages(ImmutableArray.Create(new PackageIdentity("AntiXSS", "4.3.0")))
-            .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.AspNetCore.Mvc", "2.2.0")));
+            .AddPackages(ImmutableArray.Create(
+                new PackageIdentity("AntiXSS", "4.3.0"),
+                new PackageIdentity("Microsoft.AspNetCore.Mvc", "2.2.0"),
+                new PackageIdentity("Microsoft.EntityFrameworkCore.Relational", "2.0.3")));
 
         public static ReferenceAssemblies DefaultWithSerialization { get; } = ReferenceAssemblies.NetFramework.Net472.Default
             .AddAssemblies(ImmutableArray.Create("System.Runtime.Serialization"));
@@ -34,6 +38,12 @@ namespace Test.Utilities
 
         public static ReferenceAssemblies DefaultWithNewtonsoftJson12 { get; } = Default
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Newtonsoft.Json", "12.0.1")));
+
+        public static ReferenceAssemblies DefaultWithMELogging { get; } = Default
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.Extensions.Logging", "5.0.0")));
+
+        public static ReferenceAssemblies DefaultWithWilson { get; } = Default
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.IdentityModel.Tokens", "6.12.0")));
 
         public static ReferenceAssemblies DefaultWithWinForms { get; } = ReferenceAssemblies.NetFramework.Net472.WindowsForms;
 
@@ -60,7 +70,6 @@ namespace Test.Utilities
 
         public static MetadataReference SystemCollectionsImmutableReference { get; } = MetadataReference.CreateFromFile(typeof(ImmutableHashSet<>).Assembly.Location);
         public static MetadataReference SystemComponentModelCompositionReference { get; } = MetadataReference.CreateFromFile(typeof(System.ComponentModel.Composition.ExportAttribute).Assembly.Location);
-        public static MetadataReference SystemCompositionReference { get; } = MetadataReference.CreateFromFile(typeof(System.Composition.ExportAttribute).Assembly.Location);
         public static MetadataReference SystemXmlDataReference { get; } = MetadataReference.CreateFromFile(typeof(System.Data.Rule).Assembly.Location);
         public static MetadataReference CodeAnalysisReference { get; } = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
         public static MetadataReference CSharpSymbolsReference { get; } = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
@@ -76,7 +85,21 @@ namespace Test.Utilities
         public static MetadataReference PresentationFramework { get; } = MetadataReference.CreateFromFile(typeof(System.Windows.Markup.XamlReader).Assembly.Location);
         public static MetadataReference SystemWeb { get; } = MetadataReference.CreateFromFile(typeof(System.Web.HttpRequest).Assembly.Location);
         public static MetadataReference SystemWebExtensions { get; } = MetadataReference.CreateFromFile(typeof(System.Web.Script.Serialization.JavaScriptSerializer).Assembly.Location);
+        public static MetadataReference SystemServiceModel { get; } = MetadataReference.CreateFromFile(typeof(System.ServiceModel.OperationContractAttribute).Assembly.Location);
 #endif
+
+        private static readonly Lazy<ReferenceAssemblies> _lazyNet60 =
+            new(() =>
+            {
+                return new ReferenceAssemblies(
+                    "net6.0",
+                    new PackageIdentity(
+                        "Microsoft.NETCore.App.Ref",
+                        "6.0.0-rc.1.21451.13"),
+                    Path.Combine("ref", "net6.0"));
+            });
+
+        public static ReferenceAssemblies Net60 => _lazyNet60.Value;
 
         private static ReferenceAssemblies CreateDefaultReferenceAssemblies()
         {

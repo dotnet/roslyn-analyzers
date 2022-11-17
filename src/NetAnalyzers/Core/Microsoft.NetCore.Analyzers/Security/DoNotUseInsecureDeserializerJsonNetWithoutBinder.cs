@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -19,7 +19,11 @@ using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
+    /// CA2329: <inheritdoc cref="JsonNetInsecureSerializerTitle"/>
+    /// CA2330: <inheritdoc cref="JsonNetMaybeInsecureSerializerTitle"/>
     /// For detecting deserialization with <see cref="T:Newtonsoft.Json.JsonSerializer"/> when its TypeNameHandling != None
     /// and its Binder/SerializationBinder is null.
     /// </summary>
@@ -30,21 +34,24 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static readonly DiagnosticDescriptor DefinitelyInsecureSerializer =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2329",
-                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSerializerTitle),
-                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSerializerMessage),
+                nameof(JsonNetInsecureSerializerTitle),
+                nameof(JsonNetInsecureSerializerMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
-                isDataflowRule: true);
+                isDataflowRule: true,
+                isReportedAtCompilationEnd: true);
+
         internal static readonly DiagnosticDescriptor MaybeInsecureSerializer =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2330",
-                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSerializerTitle),
-                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSerializerMessage),
+                nameof(JsonNetMaybeInsecureSerializerTitle),
+                nameof(JsonNetMaybeInsecureSerializerMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
-                isDataflowRule: true);
+                isDataflowRule: true,
+                isReportedAtCompilationEnd: true);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(
                 DefinitelyInsecureSerializer,
                 MaybeInsecureSerializer);
@@ -59,7 +66,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// </summary>
         private const int SerializationBinderIndex = 1;
 
-        private static readonly ConstructorMapper ConstructorMapper = new ConstructorMapper(
+        private static readonly ConstructorMapper ConstructorMapper = new(
             (IMethodSymbol constructorMethod, IReadOnlyList<PointsToAbstractValue> argumentPointsToAbstractValues) =>
             {
                 if (constructorMethod.Parameters.IsEmpty)
@@ -77,7 +84,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 }
             });
 
-        private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
+        private static readonly PropertyMapperCollection PropertyMappers = new(
             new PropertyMapper(
                 "TypeNameHandling",
                 (ValueContentAbstractValue valueContentAbstractValue) =>
@@ -94,7 +101,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 PropertySetCallbacks.FlagIfNull,
                 SerializationBinderIndex));     // Binder & SerializationBinder have the same underlying value.
 
-        private static readonly HazardousUsageEvaluatorCollection HazardousUsageEvaluators = new HazardousUsageEvaluatorCollection(
+        private static readonly HazardousUsageEvaluatorCollection HazardousUsageEvaluators = new(
             SecurityHelpers.JsonSerializerDeserializationMethods.Select(
                 (string methodName) => new HazardousUsageEvaluator(
                     methodName,
@@ -129,16 +136,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                             ISymbol owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
 
                             // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
-                            if (owningSymbol.IsConfiguredToSkipAnalysis(
-                                    operationBlockStartAnalysisContext.Options,
+                            if (operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(
                                     DefinitelyInsecureSerializer,
-                                    operationBlockStartAnalysisContext.Compilation,
-                                    operationBlockStartAnalysisContext.CancellationToken)
-                                && owningSymbol.IsConfiguredToSkipAnalysis(
-                                    operationBlockStartAnalysisContext.Options,
+                                    owningSymbol,
+                                    operationBlockStartAnalysisContext.Compilation)
+                                && operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(
                                     MaybeInsecureSerializer,
-                                    operationBlockStartAnalysisContext.Compilation,
-                                    operationBlockStartAnalysisContext.CancellationToken))
+                                    owningSymbol,
+                                    operationBlockStartAnalysisContext.Compilation))
                             {
                                 return;
                             }
@@ -202,10 +207,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
-                                            rootOperationsNeedingAnalysis.First().Operation.Syntax.SyntaxTree,
+                                            rootOperationsNeedingAnalysis.First().Operation,
                                             compilationAnalysisContext.Compilation,
-                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                            cancellationToken: compilationAnalysisContext.CancellationToken));
+                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive));
                                 }
 
                                 if (allResults == null)
@@ -240,8 +244,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                             finally
                             {
-                                rootOperationsNeedingAnalysis.Free();
-                                allResults?.Free();
+                                rootOperationsNeedingAnalysis.Free(compilationAnalysisContext.CancellationToken);
+                                allResults?.Free(compilationAnalysisContext.CancellationToken);
                             }
                         });
                 });

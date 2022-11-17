@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -13,32 +13,32 @@ using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 
 namespace Microsoft.NetCore.Analyzers.Data
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
+    /// <summary>
+    /// CA2100: <inheritdoc cref="ReviewSQLQueriesForSecurityVulnerabilitiesTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ReviewSqlQueriesForSecurityVulnerabilities : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2100";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(ReviewSQLQueriesForSecurityVulnerabilitiesTitle)),
+            CreateLocalizableResourceString(nameof(ReviewSQLQueriesForSecurityVulnerabilitiesMessageNoNonLiterals)),
+            DiagnosticCategory.Security,
+            RuleLevel.Disabled,
+            description: CreateLocalizableResourceString(nameof(ReviewSQLQueriesForSecurityVulnerabilitiesDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: true);
 
-        private static readonly LocalizableString s_localizableMessageNoNonLiterals = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesMessageNoNonLiterals), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageNoNonLiterals,
-                                                                             DiagnosticCategory.Security,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: true);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
             context.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol? iDbCommandType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataIDbCommand);
@@ -108,7 +108,7 @@ namespace Microsoft.NetCore.Analyzers.Data
                         }
 
                         // Make sure we're in assignment statement
-                        if (!(propertyReference.Parent is IAssignmentOperation assignment))
+                        if (propertyReference.Parent is not IAssignmentOperation assignment)
                         {
                             return;
                         }
@@ -203,8 +203,7 @@ namespace Microsoft.NetCore.Analyzers.Data
                                                  ISymbol invokedSymbol,
                                                  ISymbol containingMethod)
         {
-            if (containingMethod.IsConfiguredToSkipAnalysis(operationContext.Options,
-                    Rule, operationContext.Compilation, operationContext.CancellationToken))
+            if (operationContext.Options.IsConfiguredToSkipAnalysis(Rule, containingMethod, operationContext.Compilation))
             {
                 return false;
             }
@@ -216,7 +215,7 @@ namespace Microsoft.NetCore.Analyzers.Data
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
                     var valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
-                        operationContext.Options, Rule, PointsToAnalysisKind.Complete, operationContext.CancellationToken);
+                        operationContext.Options, Rule, PointsToAnalysisKind.Complete);
                     if (valueContentResult != null)
                     {
                         ValueContentAbstractValue value = valueContentResult[argumentValue.Kind, argumentValue.Syntax];

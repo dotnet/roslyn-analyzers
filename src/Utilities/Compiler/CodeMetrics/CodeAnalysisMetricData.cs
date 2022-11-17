@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 #if HAS_IOPERATION
 
@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.CodeMetrics
 {
     /// <summary>
     /// Code analysis metrics data.
-    /// See https://docs.microsoft.com/visualstudio/code-quality/code-metrics-values for more details
+    /// See https://learn.microsoft.com/visualstudio/code-quality/code-metrics-values for more details
     /// </summary>
     public abstract partial class CodeAnalysisMetricData
     {
@@ -33,13 +33,13 @@ namespace Microsoft.CodeAnalysis.CodeMetrics
             ImmutableArray<CodeAnalysisMetricData> children)
         {
             Debug.Assert(
-                symbol.Kind == SymbolKind.Assembly ||
-                symbol.Kind == SymbolKind.Namespace ||
-                symbol.Kind == SymbolKind.NamedType ||
-                symbol.Kind == SymbolKind.Method ||
-                symbol.Kind == SymbolKind.Field ||
-                symbol.Kind == SymbolKind.Event ||
-                symbol.Kind == SymbolKind.Property);
+                symbol.Kind is SymbolKind.Assembly or
+                SymbolKind.Namespace or
+                SymbolKind.NamedType or
+                SymbolKind.Method or
+                SymbolKind.Field or
+                SymbolKind.Event or
+                SymbolKind.Property);
             Debug.Assert(depthOfInheritance.HasValue == (symbol.Kind == SymbolKind.Assembly || symbol.Kind == SymbolKind.Namespace || symbol.Kind == SymbolKind.NamedType));
 
             var executableLines = !computationalComplexityMetrics.IsDefault ?
@@ -140,7 +140,7 @@ namespace Microsoft.CodeAnalysis.CodeMetrics
                     var index = symbolName.LastIndexOf(".", StringComparison.OrdinalIgnoreCase);
                     if (index >= 0 && index < symbolName.Length)
                     {
-                        symbolName = symbolName.Substring(index + 1);
+                        symbolName = symbolName[(index + 1)..];
                     }
 
                     break;
@@ -162,7 +162,7 @@ namespace Microsoft.CodeAnalysis.CodeMetrics
                 builder.Append($", DepthInherit: {DepthOfInheritance}");
             }
 
-            builder.Append($")");
+            builder.Append(')');
             appendChildren(indent: "   ");
             return builder.ToString();
 

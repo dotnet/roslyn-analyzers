@@ -1,9 +1,8 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -13,54 +12,58 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1065: Do not raise exceptions in unexpected locations
+    /// CA1065: <inheritdoc cref="DoNotRaiseExceptionsInUnexpectedLocationsTitle"/>
     /// </summary>
-    public abstract class DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1065";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(DoNotRaiseExceptionsInUnexpectedLocationsTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(DoNotRaiseExceptionsInUnexpectedLocationsDescription));
 
-        private static readonly LocalizableString s_localizableMessagePropertyGetter = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessagePropertyGetter), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageHasAllowedExceptions = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessageHasAllowedExceptions), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageNoAllowedExceptions = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessageNoAllowedExceptions), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor PropertyGetterRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DoNotRaiseExceptionsInUnexpectedLocationsMessagePropertyGetter)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled, // Could consider Suggestion level if we could exclude test code by default.
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor PropertyGetterRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessagePropertyGetter,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled, // Could consider Suggestion level if we could exclude test code by default.
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor HasAllowedExceptionsRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageHasAllowedExceptions,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled, // Could consider Suggestion level if we could exclude test code by default.
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor NoAllowedExceptionsRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageNoAllowedExceptions,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled, // Could consider Suggestion level if we could exclude test code by default.
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor HasAllowedExceptionsRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DoNotRaiseExceptionsInUnexpectedLocationsMessageHasAllowedExceptions)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled, // Could consider Suggestion level if we could exclude test code by default.
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-            => ImmutableArray.Create(PropertyGetterRule, HasAllowedExceptionsRule, NoAllowedExceptionsRule);
+        internal static readonly DiagnosticDescriptor NoAllowedExceptionsRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(DoNotRaiseExceptionsInUnexpectedLocationsMessageNoAllowedExceptions)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled, // Could consider Suggestion level if we could exclude test code by default.
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+            ImmutableArray.Create(PropertyGetterRule, HasAllowedExceptionsRule, NoAllowedExceptionsRule);
+
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationStartContext =>
+            context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 Compilation compilation = compilationStartContext.Compilation;
                 INamedTypeSymbol? exceptionType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException);
@@ -74,13 +77,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 compilationStartContext.RegisterOperationBlockStartAction(operationBlockContext =>
                 {
-                    if (!(operationBlockContext.OwningSymbol is IMethodSymbol methodSymbol))
+                    if (operationBlockContext.OwningSymbol is not IMethodSymbol methodSymbol)
                     {
                         return;
                     }
 
                     // Find out if this given method is one of the interesting categories of methods.
-                    // For eg: certain Equals methods or certain accessors etc.
+                    // For example, certain Equals methods or certain accessors etc.
                     MethodCategory methodCategory = methodCategories.FirstOrDefault(l => l.IsMatch(methodSymbol, compilation));
                     if (methodCategory == null)
                     {
@@ -95,7 +98,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         if (((IThrowOperation)operationContext.Operation).GetThrownExceptionType() is INamedTypeSymbol thrownExceptionType && thrownExceptionType.DerivesFrom(exceptionType))
                         {
                             // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
-                            if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Any(n => IsAssignableTo(thrownExceptionType, n, compilation)))
+                            if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Any(n => thrownExceptionType.IsAssignableTo(n, compilation)))
                             {
                                 operationContext.ReportDiagnostic(
                                     operationContext.Operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, thrownExceptionType.Name));
@@ -105,11 +108,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 });
             });
         }
-
-        protected abstract bool IsAssignableTo(
-            [NotNullWhen(returnValue: true)] ITypeSymbol? fromSymbol,
-            [NotNullWhen(returnValue: true)] ITypeSymbol? toSymbol,
-            Compilation compilation);
 
         /// <summary>
         /// This object describes a class of methods where exception throwing statements should be analyzed.
@@ -189,7 +187,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 new MethodCategory(IsEqualsOverrideOrInterfaceImplementation, true,
                     NoAllowedExceptionsRule),
 
-                new MethodCategory(IsEqualityOperator, true,
+                new MethodCategory(IsComparisonOperator, true,
                     NoAllowedExceptionsRule),
 
                 new MethodCategory(IsGetHashCodeOverride, true,
@@ -291,7 +289,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return true;
                 }
 
-
                 INamedTypeSymbol? iHashCodeProvider = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIHashCodeProvider);
                 if (method.IsImplementationOfInterfaceMethod(null, iHashCodeProvider, WellKnownMemberNames.ObjectGetHashCode))
                 {
@@ -322,18 +319,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return method.IsFinalizer();
         }
 
-        private static bool IsEqualityOperator(IMethodSymbol method, Compilation compilation)
+        private static bool IsComparisonOperator(IMethodSymbol method, Compilation compilation)
         {
             if (!method.IsStatic || !method.IsPublic())
                 return false;
-            switch (method.Name)
+
+            return method.Name switch
             {
-                case WellKnownMemberNames.EqualityOperatorName:
-                case WellKnownMemberNames.InequalityOperatorName:
-                    return true;
-                default:
-                    return false;
-            }
+                WellKnownMemberNames.EqualityOperatorName
+                or WellKnownMemberNames.InequalityOperatorName
+                or WellKnownMemberNames.LessThanOperatorName
+                or WellKnownMemberNames.GreaterThanOperatorName
+                or WellKnownMemberNames.LessThanOrEqualOperatorName
+                or WellKnownMemberNames.GreaterThanOrEqualOperatorName => true,
+                _ => false,
+            };
         }
 
         private static bool IsImplicitCastOperator(IMethodSymbol method, Compilation compilation)

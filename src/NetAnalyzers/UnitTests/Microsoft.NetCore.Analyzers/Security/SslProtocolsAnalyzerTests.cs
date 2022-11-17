@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     public class SslProtocolsAnalyzerTests
     {
         [Fact]
-        public async Task DocSample1_CSharp_Violation()
+        public async Task DocSample1_CSharp_ViolationAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -35,7 +35,7 @@ public class ExampleClass
         }
 
         [Fact]
-        public async Task DocSample1_VB_Violation()
+        public async Task DocSample1_VB_ViolationAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -53,7 +53,7 @@ End Class
         }
 
         [Fact]
-        public async Task DocSample2_CSharp_Violation()
+        public async Task DocSample2_CSharp_ViolationAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -71,7 +71,7 @@ public class ExampleClass
         }
 
         [Fact]
-        public async Task DocSample2_VB_Violation()
+        public async Task DocSample2_VB_ViolationAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -88,7 +88,7 @@ End Class
         }
 
         [Fact]
-        public async Task DocSample1_CSharp_Solution()
+        public async Task DocSample1_CSharp_SolutionAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -99,14 +99,14 @@ public class TestClass
     public void Method()
     {
         // Let the operating system decide what TLS protocol version to use.
-        // See https://docs.microsoft.com/dotnet/framework/network-programming/tls
+        // See https://learn.microsoft.com/dotnet/framework/network-programming/tls
         SslProtocols sslProtocols = SslProtocols.None;
     }
 }");
         }
 
         [Fact]
-        public async Task DocSample1_VB_Solution()
+        public async Task DocSample1_VB_SolutionAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -115,7 +115,7 @@ Imports System.Security.Authentication
 Public Class TestClass
     Public Sub ExampleMethod()
         ' Let the operating system decide what TLS protocol version to use.
-        ' See https://docs.microsoft.com/dotnet/framework/network-programming/tls
+        ' See https://learn.microsoft.com/dotnet/framework/network-programming/tls
         Dim sslProtocols As SslProtocols = SslProtocols.None
     End Sub
 End Class
@@ -123,7 +123,7 @@ End Class
         }
 
         [Fact]
-        public async Task DocSample3_CSharp_Violation()
+        public async Task DocSample3_CSharp_ViolationAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -141,7 +141,7 @@ public class ExampleClass
         }
 
         [Fact]
-        public async Task DocSample3_VB_Violation()
+        public async Task DocSample3_VB_ViolationAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -158,7 +158,7 @@ End Class
         }
 
         [Fact]
-        public async Task DocSample4_CSharp_Violation()
+        public async Task DocSample4_CSharp_ViolationAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -176,7 +176,7 @@ public class ExampleClass
         }
 
         [Fact]
-        public async Task DocSample4_VB_Violation()
+        public async Task DocSample4_VB_ViolationAsync()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -193,7 +193,7 @@ End Class
         }
 
         [Fact]
-        public async Task Argument_Ssl2_Diagnostic()
+        public async Task Argument_Ssl2_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -212,7 +212,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task Argument_Tls12_Diagnostic()
+        public async Task Argument_Tls12_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -231,7 +231,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task Argument_None_Diagnostic()
+        public async Task Argument_None_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -249,7 +249,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task UseSsl3_Diagnostic()
+        public async Task UseSsl3_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -266,7 +266,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task UseTls_Diagnostic()
+        public async Task UseTls_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -283,7 +283,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task UseTls11_Diagnostic()
+        public async Task UseTls11_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -300,7 +300,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task UseSystemDefault_NoDiagnostic()
+        public async Task UseSystemDefault_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -317,7 +317,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task UseTls12_Diagnostic()
+        public async Task UseTls12_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -334,7 +334,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task UseTls13_Diagnostic()
+        public async Task UseTls13_DiagnosticAsync()
         {
             await new VerifyCS.Test
             {
@@ -364,7 +364,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task UseTls12OrdTls11_Diagnostic()
+        public async Task UseTls12OrdTls11_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -382,7 +382,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task Use192CompoundAssignment_Diagnostic()
+        public async Task Use192CompoundAssignment_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -401,7 +401,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task Use384SimpleAssignment_Diagnostic()
+        public async Task Use384SimpleAssignment_DiagnosticAsync()
         {
             // 384 = SchProtocols.Tls11Server | SchProtocols.Tls10Client
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -421,7 +421,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task Use768SimpleAssignmentOrExpression_Diagnostic()
+        public async Task Use768SimpleAssignmentOrExpression_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -440,7 +440,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task Use12288SimpleAssignmentOrExpression_Diagnostic()
+        public async Task Use12288SimpleAssignmentOrExpression_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -459,7 +459,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task UseTls12OrTls11Or192_Diagnostic()
+        public async Task UseTls12OrTls11Or192_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -479,7 +479,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task UseTls12Or192_Diagnostic()
+        public async Task UseTls12Or192_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -497,7 +497,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task Use768DeconstructionAssignment_NoDiagnostic()
+        public async Task Use768DeconstructionAssignment_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -517,7 +517,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task Use24Plus24SimpleAssignment_Diagnostic()
+        public async Task Use24Plus24SimpleAssignment_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -534,7 +534,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task Use768NotSslProtocols_NoDiagnostic()
+        public async Task Use768NotSslProtocols_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -550,13 +550,17 @@ class TestClass
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
     }
 }

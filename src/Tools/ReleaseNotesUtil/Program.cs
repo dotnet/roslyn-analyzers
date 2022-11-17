@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -43,13 +43,13 @@ namespace ReleaseNotesUtil
         private static void PrintUsage()
         {
             Console.WriteLine("Usage: ReleaseNoteUtil command commandArgs ...");
-            Console.WriteLine("  getrulesjson pathToNugetInstalledPackages fxCopAnalyzersVersion out.json");
+            Console.WriteLine("  getrulesjson pathToNugetInstalledPackages netAnalyzersVersion out.json");
             Console.WriteLine("  diffrules old.json new.json out.md");
         }
 
         private static void GetRulesJson(string nugetInstalledPackagesPath, string version, string outputPath)
         {
-            IEnumerable<string> dllPaths = GetFxCopAnalyzerBinaries(nugetInstalledPackagesPath, version);
+            IEnumerable<string> dllPaths = GetNetAnalyzerBinaries(nugetInstalledPackagesPath, version);
             RuleFileContent ruleFileContent = new RuleFileContent
             {
                 Rules = GetRules(dllPaths)
@@ -114,7 +114,7 @@ namespace ReleaseNotesUtil
         {
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(RuleFileContent));
             using FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-            return (RuleFileContent)serializer.ReadObject(fs);
+            return (RuleFileContent)serializer.ReadObject(fs)!;
         }
 
         private static void GenerateAddRemovedRulesDiffMarkdown(StringBuilder sb, string heading, IEnumerable<RuleInfo> rules)
@@ -163,7 +163,7 @@ namespace ReleaseNotesUtil
             }
         }
 
-        private static IEnumerable<string> GetFxCopAnalyzerBinaries(string nugetInstalledPackagesPath, string version)
+        private static IEnumerable<string> GetNetAnalyzerBinaries(string nugetInstalledPackagesPath, string version)
         {
             if (!Directory.Exists(nugetInstalledPackagesPath))
             {
@@ -171,6 +171,7 @@ namespace ReleaseNotesUtil
             }
 
             string[] roslynAnalyzerPackages = new string[] {
+                "Microsoft.CodeAnalysis.NetAnalyzers",
                 "Microsoft.CodeQuality.Analyzers",
                 "Microsoft.NetCore.Analyzers",
                 "Microsoft.NetFramework.Analyzers",

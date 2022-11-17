@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -10,64 +10,68 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
-    /// CA1816: Dispose methods should call SuppressFinalize
+    /// CA1816: <inheritdoc cref="CallGCSuppressFinalizeCorrectlyTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class CallGCSuppressFinalizeCorrectlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1816";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(CallGCSuppressFinalizeCorrectlyTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(CallGCSuppressFinalizeCorrectlyDescription));
 
-        private static readonly LocalizableString s_localizableMessageNotCalledWithFinalizer = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotCalledWithFinalizer), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageNotCalled = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotCalled), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageNotPassedThis = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotPassedThis), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageOutsideDispose = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageOutsideDispose), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        internal static readonly DiagnosticDescriptor NotCalledWithFinalizerRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(CallGCSuppressFinalizeCorrectlyMessageNotCalledWithFinalizer)),
+            DiagnosticCategory.Usage,
+            RuleLevel.BuildWarningCandidate,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor NotCalledWithFinalizerRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageNotCalledWithFinalizer,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.BuildWarningCandidate,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor NotCalledRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageNotCalled,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.BuildWarningCandidate,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor NotPassedThisRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageNotPassedThis,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.BuildWarningCandidate,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor OutsideDisposeRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageOutsideDispose,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.BuildWarningCandidate,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor NotCalledRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(CallGCSuppressFinalizeCorrectlyMessageNotCalled)),
+            DiagnosticCategory.Usage,
+            RuleLevel.BuildWarningCandidate,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(NotCalledWithFinalizerRule, NotCalledRule, NotPassedThisRule, OutsideDisposeRule);
+        internal static readonly DiagnosticDescriptor NotPassedThisRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(CallGCSuppressFinalizeCorrectlyMessageNotPassedThis)),
+            DiagnosticCategory.Usage,
+            RuleLevel.BuildWarningCandidate,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        internal static readonly DiagnosticDescriptor OutsideDisposeRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(CallGCSuppressFinalizeCorrectlyMessageOutsideDispose)),
+            DiagnosticCategory.Usage,
+            RuleLevel.BuildWarningCandidate,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(NotCalledWithFinalizerRule, NotCalledRule, NotPassedThisRule, OutsideDisposeRule);
+
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
+            context.EnableConcurrentExecution();
 
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(compilationContext =>
             {
                 var gcSuppressFinalizeMethodSymbol = compilationContext.Compilation
                                                         .GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemGC)
@@ -149,7 +153,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    if (!(invocationExpression.SemanticModel.GetSymbolInfo(invocationExpression.Arguments.Single().Value.Syntax, analysisContext.CancellationToken).Symbol is IParameterSymbol parameterSymbol) || !parameterSymbol.IsThis)
+                    if (invocationExpression.SemanticModel.GetSymbolInfo(invocationExpression.Arguments.Single().Value.Syntax, analysisContext.CancellationToken).Symbol is not IParameterSymbol parameterSymbol || !parameterSymbol.IsThis)
                     {
                         analysisContext.ReportDiagnostic(invocationExpression.Syntax.CreateDiagnostic(
                             NotPassedThisRule,
@@ -183,7 +187,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return SuppressFinalizeUsage.CanCall;
                 }
 
-                if (!method.IsDisposeImplementation(_compilation))
+                if (!method.IsDisposeImplementation(_compilation) && !method.IsAsyncDisposeImplementation(_compilation))
                 {
                     return SuppressFinalizeUsage.MustNotCall;
                 }

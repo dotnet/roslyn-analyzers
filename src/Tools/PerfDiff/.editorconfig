@@ -1,0 +1,8 @@
+### Configuration for PublicAPI analyzers executed on this folder ###
+[*.{cs,vb}]
+
+dotnet_diagnostic.IDE1030.severity = none
+dotnet_diagnostic.CA1052.severity = none
+dotnet_diagnostic.CA1063.severity = none
+dotnet_diagnostic.CA1724.severity = none
+dotnet_diagnostic.CA1819.severity = none

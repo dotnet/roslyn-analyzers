@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+
+#nullable disable warnings
 
 using System.Linq;
 using System.Threading;
@@ -47,7 +49,7 @@ namespace Roslyn.Diagnostics.Analyzers
             if (location is null)
                 return;
 
-            if (!(testAccessorType.ContainingSymbol is ITypeSymbol containingType))
+            if (testAccessorType.ContainingSymbol is not ITypeSymbol containingType)
                 return;
 
             foreach (var member in containingType.GetMembers())
@@ -60,8 +62,8 @@ namespace Roslyn.Diagnostics.Analyzers
 
                 switch (member)
                 {
-                    case IFieldSymbol _:
-                    case IPropertySymbol _:
+                    case IFieldSymbol:
+                    case IPropertySymbol:
                         context.RegisterRefactoring(
                             CodeAction.Create(
                                 memberName,
@@ -85,12 +87,12 @@ namespace Roslyn.Diagnostics.Analyzers
         }
 
         private static bool IsClassOrStruct(ITypeSymbol typeSymbol)
-            => typeSymbol.TypeKind == TypeKind.Class || typeSymbol.TypeKind == TypeKind.Struct;
+            => typeSymbol.TypeKind is TypeKind.Class or TypeKind.Struct;
 
         private static string GetTestAccessorName(ISymbol symbol)
         {
             var name = symbol.Name.TrimStart('_');
-            return char.ToUpperInvariant(name[0]) + name.Substring(1);
+            return char.ToUpperInvariant(name[0]) + name[1..];
         }
 
         private async Task<Solution> AddMemberToTestAccessorAsync(Document document, TextSpan sourceSpan, string memberName, string memberDocumentationCommentId, CancellationToken cancellationToken)

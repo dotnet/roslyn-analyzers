@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
@@ -29,7 +29,7 @@ namespace Analyzer.Utilities
                 "System.Resources.IResourceReader",
             };
         private static readonly BoundedCacheWithFactory<Compilation, DisposeAnalysisHelper> s_DisposeHelperCache =
-            new BoundedCacheWithFactory<Compilation, DisposeAnalysisHelper>();
+            new();
 
         private static readonly ImmutableHashSet<OperationKind> s_DisposableCreationKinds = ImmutableHashSet.Create(
             OperationKind.ObjectCreation,
@@ -44,6 +44,8 @@ namespace Analyzer.Utilities
         public INamedTypeSymbol? IAsyncDisposable { get; }
         public INamedTypeSymbol? Task { get; }
         public INamedTypeSymbol? ValueTask { get; }
+        public INamedTypeSymbol? StringReader { get; }
+        public INamedTypeSymbol? MemoryStream { get; }
 
         private DisposeAnalysisHelper(Compilation compilation)
         {
@@ -53,6 +55,8 @@ namespace Analyzer.Utilities
             IAsyncDisposable = _wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIAsyncDisposable);
             Task = _wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
             ValueTask = _wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksValueTask);
+            StringReader = _wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIOStringReader);
+            MemoryStream = _wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIOMemoryStream);
 
             _disposeOwnershipTransferLikelyTypes = IDisposable != null ?
                 GetDisposeOwnershipTransferLikelyTypes(compilation) :
@@ -95,7 +99,7 @@ namespace Analyzer.Utilities
 
             // Local functions
             static DisposeAnalysisHelper CreateDisposeAnalysisHelper(Compilation compilation)
-                => new DisposeAnalysisHelper(compilation);
+                => new(compilation);
         }
 
         public bool TryGetOrComputeResult(
@@ -106,10 +110,9 @@ namespace Analyzer.Utilities
             PointsToAnalysisKind defaultPointsToAnalysisKind,
             bool trackInstanceFields,
             bool trackExceptionPaths,
-            CancellationToken cancellationToken,
             [NotNullWhen(returnValue: true)] out DisposeAnalysisResult? disposeAnalysisResult,
             [NotNullWhen(returnValue: true)] out PointsToAnalysisResult? pointsToAnalysisResult,
-            InterproceduralAnalysisPredicate? interproceduralAnalysisPredicateOpt = null,
+            InterproceduralAnalysisPredicate? interproceduralAnalysisPredicate = null,
             bool defaultDisposeOwnershipTransferAtConstructor = false)
         {
             var cfg = operationBlocks.GetControlFlowGraph();
@@ -117,8 +120,7 @@ namespace Analyzer.Utilities
             {
                 disposeAnalysisResult = DisposeAnalysis.TryGetOrComputeResult(cfg, containingMethod, _wellKnownTypeProvider,
                     analyzerOptions, rule, _disposeOwnershipTransferLikelyTypes, defaultPointsToAnalysisKind, trackInstanceFields,
-                    trackExceptionPaths, cancellationToken, out pointsToAnalysisResult,
-                    interproceduralAnalysisPredicateOpt: interproceduralAnalysisPredicateOpt,
+                    trackExceptionPaths, out pointsToAnalysisResult, interproceduralAnalysisPredicate: interproceduralAnalysisPredicate,
                     defaultDisposeOwnershipTransferAtConstructor: defaultDisposeOwnershipTransferAtConstructor);
                 if (disposeAnalysisResult != null)
                 {
@@ -147,6 +149,16 @@ namespace Analyzer.Utilities
                 HasDisposableOwnershipTransferForConstructorParameter(containingMethod);
         }
 
+        public bool IsDisposableTypeNotRequiringToBeDisposed(ITypeSymbol typeSymbol) =>
+            // Common case doesn't require dispose. https://learn.microsoft.com/dotnet/api/system.threading.tasks.task.dispose
+            typeSymbol.DerivesFrom(Task, baseTypesOnly: true) ||
+            // StringReader doesn't need to be disposed: https://learn.microsoft.com/dotnet/api/system.io.stringreader
+            SymbolEqualityComparer.Default.Equals(typeSymbol, StringReader) ||
+            // MemoryStream doesn't need to be disposed. https://learn.microsoft.com/dotnet/api/system.io.memorystream
+            // Subclasses *might* need to be disposed, but that is the less common case,
+            // and the common case is a huge source of noisy warnings.
+            SymbolEqualityComparer.Default.Equals(typeSymbol, MemoryStream);
+
         public ImmutableHashSet<IFieldSymbol> GetDisposableFields(INamedTypeSymbol namedType)
         {
             EnsureDisposableFieldsMap();
@@ -165,7 +177,7 @@ namespace Analyzer.Utilities
             {
                 disposableFields = namedType.GetMembers()
                     .OfType<IFieldSymbol>()
-                    .Where(f => IsDisposable(f.Type) && !f.Type.DerivesFrom(Task))
+                    .Where(f => IsDisposable(f.Type) && !IsDisposableTypeNotRequiringToBeDisposed(f.Type))
                     .ToImmutableHashSet();
             }
 
@@ -178,13 +190,13 @@ namespace Analyzer.Utilities
         /// </summary>
         public bool IsDisposableCreationOrDisposeOwnershipTransfer(AbstractLocation location, IMethodSymbol containingMethod)
         {
-            if (location.CreationOpt == null)
+            if (location.Creation == null)
             {
-                return location.SymbolOpt?.Kind == SymbolKind.Parameter &&
+                return location.Symbol?.Kind == SymbolKind.Parameter &&
                     HasDisposableOwnershipTransferForConstructorParameter(containingMethod);
             }
 
-            return IsDisposableCreation(location.CreationOpt);
+            return IsDisposableCreation(location.Creation);
         }
 
         public bool IsDisposable([NotNullWhen(returnValue: true)] ITypeSymbol? type)

@@ -1,6 +1,5 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
@@ -12,9 +11,8 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Text;
-using DiagnosticIds = Roslyn.Diagnostics.Analyzers.RoslynDiagnosticIds;
 
-#nullable enable
+using DiagnosticIds = Roslyn.Diagnostics.Analyzers.RoslynDiagnosticIds;
 
 namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 {
@@ -23,8 +21,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
     {
         private const char ObliviousMarker = '~';
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds
-            => ImmutableArray.Create(DiagnosticIds.AnnotatePublicApiRuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(DiagnosticIds.AnnotatePublicApiRuleId, DiagnosticIds.AnnotateInternalApiRuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
             => new PublicSurfaceAreaFixAllProvider();
@@ -36,17 +34,19 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 string minimalSymbolName = diagnostic.Properties[DeclarePublicApiAnalyzer.MinimalNamePropertyBagKey];
-                string publicSymbolName = diagnostic.Properties[DeclarePublicApiAnalyzer.PublicApiNamePropertyBagKey];
-                string publicSymbolNameWithNullability = diagnostic.Properties[DeclarePublicApiAnalyzer.PublicApiNameWithNullabilityPropertyBagKey];
-                bool isShippedDocument = diagnostic.Properties[DeclarePublicApiAnalyzer.PublicApiIsShippedPropertyBagKey] == "true";
+                string publicSymbolName = diagnostic.Properties[DeclarePublicApiAnalyzer.ApiNamePropertyBagKey];
+                string publicSymbolNameWithNullability = diagnostic.Properties[DeclarePublicApiAnalyzer.ApiNameWithNullabilityPropertyBagKey];
+                string fileName = diagnostic.Properties[DeclarePublicApiAnalyzer.FileName];
 
-                TextDocument? document = isShippedDocument ? DeclarePublicApiFix.GetShippedDocument(project) : DeclarePublicApiFix.GetUnshippedDocument(project);
+                TextDocument? document = project.GetPublicApiDocument(fileName);
 
                 if (document != null)
                 {
                     context.RegisterCodeFix(
                             new DeclarePublicApiFix.AdditionalDocumentChangeAction(
                                 $"Annotate {minimalSymbolName} in public API",
+                                document.Id,
+                                isPublic: diagnostic.Id == DiagnosticIds.AnnotatePublicApiRuleId,
                                 c => GetFix(document, publicSymbolName, publicSymbolNameWithNullability, c)),
                             diagnostic);
                 }
@@ -81,7 +81,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 }
             }
 
-            SourceText newSourceText = sourceText.Replace(new TextSpan(0, sourceText.Length), string.Join(Environment.NewLine, lines) + DeclarePublicApiFix.GetEndOfFileText(sourceText));
+            var endOfLine = sourceText.GetEndOfLine();
+            SourceText newSourceText = sourceText.Replace(new TextSpan(0, sourceText.Length), string.Join(endOfLine, lines) + sourceText.GetEndOfFileText(endOfLine));
             return newSourceText;
         }
 
@@ -101,32 +102,22 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             protected override async Task<Solution> GetChangedSolutionAsync(CancellationToken cancellationToken)
             {
-                var updatedPublicSurfaceAreaText = new List<KeyValuePair<DocumentId, SourceText>>();
+                var updatedPublicSurfaceAreaText = new List<(DocumentId, SourceText)>();
 
-                foreach (KeyValuePair<Project, ImmutableArray<Diagnostic>> pair in _diagnosticsToFix)
+                foreach (var (project, diagnostics) in _diagnosticsToFix)
                 {
-                    Project project = pair.Key;
-                    ImmutableArray<Diagnostic> diagnostics = pair.Value;
-
-                    TextDocument? unshippedDocument = DeclarePublicApiFix.GetUnshippedDocument(project);
-                    TextDocument? shippedDocument = DeclarePublicApiFix.GetShippedDocument(project);
-
-                    SourceText? unshippedSourceText = unshippedDocument is null ? null : await unshippedDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
-                    SourceText? shippedSourceText = shippedDocument is null ? null : await shippedDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
-
                     IEnumerable<IGrouping<SyntaxTree, Diagnostic>> groupedDiagnostics =
                         diagnostics
                             .Where(d => d.Location.IsInSource)
                             .GroupBy(d => d.Location.SourceTree);
 
-                    var shippedChanges = new Dictionary<string, string>();
-                    var unshippedChanges = new Dictionary<string, string>();
+                    var allChanges = new Dictionary<string, Dictionary<string, string>>();
 
                     foreach (IGrouping<SyntaxTree, Diagnostic> grouping in groupedDiagnostics)
                     {
                         Document document = project.GetDocument(grouping.Key);
 
-                        if (document == null)
+                        if (document is null)
                         {
                             continue;
                         }
@@ -136,36 +127,48 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                         foreach (Diagnostic diagnostic in grouping)
                         {
-                            if (diagnostic.Id != DeclarePublicApiAnalyzer.AnnotateApiRule.Id)
+                            switch (diagnostic.Id)
                             {
-                                continue;
+                                case DiagnosticIds.AnnotateInternalApiRuleId:
+                                case DiagnosticIds.AnnotatePublicApiRuleId:
+                                    break;
+                                default:
+                                    continue;
                             }
 
-                            string oldName = diagnostic.Properties[DeclarePublicApiAnalyzer.PublicApiNamePropertyBagKey];
-                            string newName = diagnostic.Properties[DeclarePublicApiAnalyzer.PublicApiNameWithNullabilityPropertyBagKey];
-                            bool isShipped = diagnostic.Properties[DeclarePublicApiAnalyzer.PublicApiIsShippedPropertyBagKey] == "true";
-                            (isShipped ? shippedChanges : unshippedChanges).Add(oldName, newName);
+                            string oldName = diagnostic.Properties[DeclarePublicApiAnalyzer.ApiNamePropertyBagKey];
+                            string newName = diagnostic.Properties[DeclarePublicApiAnalyzer.ApiNameWithNullabilityPropertyBagKey];
+                            bool isShipped = diagnostic.Properties[DeclarePublicApiAnalyzer.ApiIsShippedPropertyBagKey] == "true";
+                            string fileName = diagnostic.Properties[DeclarePublicApiAnalyzer.FileName];
+
+                            if (!allChanges.TryGetValue(fileName, out var mapToUpdate))
+                            {
+                                mapToUpdate = new();
+                                allChanges.Add(fileName, mapToUpdate);
+                            }
+
+                            mapToUpdate[oldName] = newName;
                         }
                     }
 
-                    if (shippedSourceText is object)
+                    foreach (var (path, changes) in allChanges)
                     {
-                        SourceText newShippedSourceText = AnnotateSymbolNamesInSourceText(shippedSourceText, shippedChanges);
-                        updatedPublicSurfaceAreaText.Add(new KeyValuePair<DocumentId, SourceText>(shippedDocument!.Id, newShippedSourceText));
-                    }
+                        var doc = project.GetPublicApiDocument(path);
 
-                    if (unshippedSourceText is object)
-                    {
-                        SourceText newUnshippedSourceText = AnnotateSymbolNamesInSourceText(unshippedSourceText, unshippedChanges);
-                        updatedPublicSurfaceAreaText.Add(new KeyValuePair<DocumentId, SourceText>(unshippedDocument!.Id, newUnshippedSourceText));
+                        if (doc is not null)
+                        {
+                            var text = await doc.GetTextAsync(cancellationToken).ConfigureAwait(false);
+                            SourceText newShippedSourceText = AnnotateSymbolNamesInSourceText(text, changes);
+                            updatedPublicSurfaceAreaText.Add((doc.Id, newShippedSourceText));
+                        }
                     }
                 }
 
                 Solution newSolution = _solution;
 
-                foreach (KeyValuePair<DocumentId, SourceText> pair in updatedPublicSurfaceAreaText)
+                foreach (var (docId, text) in updatedPublicSurfaceAreaText)
                 {
-                    newSolution = newSolution.WithAdditionalDocumentText(pair.Key, pair.Value);
+                    newSolution = newSolution.WithAdditionalDocumentText(docId, text);
                 }
 
                 return newSolution;
@@ -184,7 +187,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         {
                             ImmutableArray<Diagnostic> diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(fixAllContext.Document).ConfigureAwait(false);
                             diagnosticsToFix.Add(new KeyValuePair<Project, ImmutableArray<Diagnostic>>(fixAllContext.Project, diagnostics));
-                            title = string.Format(CultureInfo.InvariantCulture, PublicApiAnalyzerResources.AddAllItemsInDocumentToThePublicApiTitle, fixAllContext.Document.Name);
+                            title = string.Format(CultureInfo.InvariantCulture, PublicApiAnalyzerResources.AddAllItemsInDocumentToTheApiTitle, fixAllContext.Document.Name);
                             break;
                         }
 
@@ -193,7 +196,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                             Project project = fixAllContext.Project;
                             ImmutableArray<Diagnostic> diagnostics = await fixAllContext.GetAllDiagnosticsAsync(project).ConfigureAwait(false);
                             diagnosticsToFix.Add(new KeyValuePair<Project, ImmutableArray<Diagnostic>>(fixAllContext.Project, diagnostics));
-                            title = string.Format(CultureInfo.InvariantCulture, PublicApiAnalyzerResources.AddAllItemsInProjectToThePublicApiTitle, fixAllContext.Project.Name);
+                            title = string.Format(CultureInfo.InvariantCulture, PublicApiAnalyzerResources.AddAllItemsInProjectToTheApiTitle, fixAllContext.Project.Name);
                             break;
                         }
 
@@ -205,7 +208,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                                 diagnosticsToFix.Add(new KeyValuePair<Project, ImmutableArray<Diagnostic>>(project, diagnostics));
                             }
 
-                            title = PublicApiAnalyzerResources.AddAllItemsInTheSolutionToThePublicApiTitle;
+                            title = PublicApiAnalyzerResources.AddAllItemsInTheSolutionToTheApiTitle;
                             break;
                         }
 

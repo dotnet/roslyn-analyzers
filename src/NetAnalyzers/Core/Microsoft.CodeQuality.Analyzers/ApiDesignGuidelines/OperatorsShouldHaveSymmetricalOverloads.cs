@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
@@ -8,44 +8,39 @@ using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA2226: Operators should have symmetrical overloads
+    /// CA2226: <inheritdoc cref="OperatorsShouldHaveSymmetricalOverloadsTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class OperatorsShouldHaveSymmetricalOverloadsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2226";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OperatorsShouldHaveSymmetricalOverloadsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(OperatorsShouldHaveSymmetricalOverloadsTitle)),
+            CreateLocalizableResourceString(nameof(Since_0_redefines_operator_1_it_should_also_redefine_operator_2)),
+            DiagnosticCategory.Usage,
+            RuleLevel.CandidateForRemoval,     // C# compiler reports an error
+            description: CreateLocalizableResourceString(nameof(OperatorsShouldHaveSymmetricalOverloadsDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(
-            nameof(MicrosoftCodeQualityAnalyzersResources.Since_0_redefines_operator_1_it_should_also_redefine_operator_2),
-            MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OperatorsShouldHaveSymmetricalOverloadsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.CandidateForRemoval,     // C# compiler reports an error
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
+            context.RegisterSymbolAction(symbolAnalysisContext =>
             {
                 var namedType = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
 
                 // FxCop compat: only analyze externally visible symbols by default.
-                if (!namedType.MatchesConfiguredVisibility(symbolAnalysisContext.Options, Rule, symbolAnalysisContext.Compilation, symbolAnalysisContext.CancellationToken))
+                if (!symbolAnalysisContext.Options.MatchesConfiguredVisibility(Rule, namedType, symbolAnalysisContext.Compilation))
                 {
                     return;
                 }
@@ -77,7 +72,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             foreach (var operator1 in operators1)
             {
                 // FxCop compat: only analyze externally visible symbols by default.
-                if (!operator1.MatchesConfiguredVisibility(analysisContext.Options, Rule, analysisContext.Compilation, analysisContext.CancellationToken))
+                if (!analysisContext.Options.MatchesConfiguredVisibility(Rule, operator1, analysisContext.Compilation))
                 {
                     return;
                 }

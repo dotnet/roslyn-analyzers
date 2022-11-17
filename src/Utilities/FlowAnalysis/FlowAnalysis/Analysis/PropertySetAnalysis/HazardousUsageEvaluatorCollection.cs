@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -101,30 +101,22 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
 
         internal ImmutableDictionary<(INamedTypeSymbol, bool), string> GetTypeToNameMapping(WellKnownTypeProvider wellKnownTypeProvider)
         {
-            PooledDictionary<(INamedTypeSymbol, bool), string> pooledDictionary = PooledDictionary<(INamedTypeSymbol, bool), string>.GetInstance();
-            try
-            {
-                foreach (KeyValuePair<(HazardousUsageEvaluatorKind Kind, string? InstanceTypeName, string? MethodName, string? ParameterName, bool derivedClasses), HazardousUsageEvaluator> kvp
+            using PooledDictionary<(INamedTypeSymbol, bool), string> pooledDictionary = PooledDictionary<(INamedTypeSymbol, bool), string>.GetInstance();
+            foreach (KeyValuePair<(HazardousUsageEvaluatorKind Kind, string? InstanceTypeName, string? MethodName, string? ParameterName, bool derivedClasses), HazardousUsageEvaluator> kvp
                     in this.HazardousUsageEvaluators)
+            {
+                if (kvp.Key.InstanceTypeName == null || kvp.Key.Kind != HazardousUsageEvaluatorKind.Invocation)
                 {
-                    if (kvp.Key.InstanceTypeName == null || kvp.Key.Kind != HazardousUsageEvaluatorKind.Invocation)
-                    {
-                        continue;
-                    }
-
-                    if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(kvp.Key.InstanceTypeName, out INamedTypeSymbol? namedTypeSymbol))
-                    {
-                        pooledDictionary[(namedTypeSymbol, kvp.Key.derivedClasses)] = kvp.Key.InstanceTypeName;
-                    }
+                    continue;
                 }
 
-                return pooledDictionary.ToImmutableDictionaryAndFree();
+                if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(kvp.Key.InstanceTypeName, out INamedTypeSymbol? namedTypeSymbol))
+                {
+                    pooledDictionary[(namedTypeSymbol, kvp.Key.derivedClasses)] = kvp.Key.InstanceTypeName;
+                }
             }
-            catch (Exception)
-            {
-                pooledDictionary.Free();
-                throw;
-            }
+
+            return pooledDictionary.ToImmutableDictionary();
         }
     }
 }

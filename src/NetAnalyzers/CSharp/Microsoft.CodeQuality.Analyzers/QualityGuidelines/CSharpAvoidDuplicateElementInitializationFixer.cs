@@ -1,13 +1,11 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeQuality.Analyzers;
@@ -21,8 +19,8 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpAvoidDuplicateElementInitializationFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds
-            => ImmutableArray.Create(AvoidDuplicateElementInitialization.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(AvoidDuplicateElementInitialization.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
             => WellKnownFixAllProviders.BatchFixer;
@@ -36,16 +34,17 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
             }
 
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            if (!(root.FindNode(diagnostic.AdditionalLocations[0].SourceSpan) is ExpressionSyntax elementInitializer) ||
-                !(elementInitializer.Parent is InitializerExpressionSyntax objectInitializer))
+            if (root.FindNode(diagnostic.AdditionalLocations[0].SourceSpan) is not ExpressionSyntax elementInitializer ||
+                elementInitializer.Parent is not InitializerExpressionSyntax objectInitializer)
             {
                 return;
             }
 
             context.RegisterCodeFix(
-                new MyCodeAction(
+                CodeAction.Create(
                     MicrosoftCodeQualityAnalyzersResources.RemoveRedundantElementInitializationCodeFixTitle,
-                    _ => Task.FromResult(RemoveElementInitializer(elementInitializer, objectInitializer, root, context.Document))),
+                    _ => Task.FromResult(RemoveElementInitializer(elementInitializer, objectInitializer, root, context.Document)),
+                    nameof(MicrosoftCodeQualityAnalyzersResources.RemoveRedundantElementInitializationCodeFixTitle)),
                 context.Diagnostics);
         }
 
@@ -58,14 +57,6 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
             var newElementInitializers = objectInitializer.Expressions.Remove(elementInitializer);
             var newRoot = root.ReplaceNode(objectInitializer, objectInitializer.WithExpressions(newElementInitializers));
             return document.WithSyntaxRoot(newRoot);
-        }
-
-        private sealed class MyCodeAction : DocumentChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument, equivalenceKey: title)
-            {
-            }
         }
     }
 }

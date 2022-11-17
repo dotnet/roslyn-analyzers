@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -14,22 +14,27 @@ using DiagnosticIds = Roslyn.Diagnostics.Analyzers.RoslynDiagnosticIds;
 
 namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
 {
+    using static BannedApiAnalyzerResources;
+
+    /// <summary>
+    /// RS0035: <inheritdoc cref="RestrictedInternalsVisibleToTitle"/>
+    /// </summary>
     public abstract class RestrictedInternalsVisibleToAnalyzer<TNameSyntax, TSyntaxKind> : DiagnosticAnalyzer
         where TNameSyntax : SyntaxNode
         where TSyntaxKind : struct
     {
-        public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+        public static readonly DiagnosticDescriptor Rule = new(
             id: DiagnosticIds.RestrictedInternalsVisibleToRuleId,
-            title: BannedApiAnalyzerResources.RestrictedInternalsVisibleToTitle,
-            messageFormat: BannedApiAnalyzerResources.RestrictedInternalsVisibleToMessage,
+            title: CreateLocalizableResourceString(nameof(RestrictedInternalsVisibleToTitle)),
+            messageFormat: CreateLocalizableResourceString(nameof(RestrictedInternalsVisibleToMessage)),
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Error,  // Force build break on invalid external access.
             isEnabledByDefault: true,
-            description: BannedApiAnalyzerResources.RestrictedInternalsVisibleToDescription,
+            description: CreateLocalizableResourceString(nameof(RestrictedInternalsVisibleToDescription)),
             helpLinkUri: null, // TODO: Add help link
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         protected abstract ImmutableArray<TSyntaxKind> NameSyntaxKinds { get; }
 
@@ -129,9 +134,10 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
                 {
                     // Look for ctor: "RestrictedInternalsVisibleToAttribute(string assemblyName, params string[] namespaces)"
                     if (!Equals(assemblyAttribute.AttributeClass, restrictedInternalsVisibleToAttribute) ||
+                        assemblyAttribute.AttributeConstructor is null ||
                         assemblyAttribute.AttributeConstructor.Parameters.Length != 2 ||
                         assemblyAttribute.AttributeConstructor.Parameters[0].Type.SpecialType != SpecialType.System_String ||
-                        !(assemblyAttribute.AttributeConstructor.Parameters[1].Type is IArrayTypeSymbol arrayType) ||
+                        assemblyAttribute.AttributeConstructor.Parameters[1].Type is not IArrayTypeSymbol arrayType ||
                         arrayType.Rank != 1 ||
                         arrayType.ElementType.SpecialType != SpecialType.System_String ||
                         !assemblyAttribute.AttributeConstructor.Parameters[1].IsParams)
@@ -142,7 +148,7 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
                     // Ensure the Restricted IVT is for the current compilation's assembly.
                     if (assemblyAttribute.ConstructorArguments.Length != 2 ||
                         assemblyAttribute.ConstructorArguments[0].Kind != TypedConstantKind.Primitive ||
-                        !(assemblyAttribute.ConstructorArguments[0].Value is string assemblyName) ||
+                        assemblyAttribute.ConstructorArguments[0].Value is not string assemblyName ||
                         !string.Equals(assemblyName, compilation.Assembly.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
@@ -256,5 +262,4 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
         }
     }
 }
-
 

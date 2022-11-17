@@ -1,6 +1,5 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Globalization;
@@ -9,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
@@ -17,7 +17,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class DefineAccessorsForAttributeArgumentsFixer : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DefineAccessorsForAttributeArgumentsAnalyzer.RuleId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(DefineAccessorsForAttributeArgumentsAnalyzer.RuleId);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -37,8 +37,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             if (parameter != null)
                             {
                                 title = MicrosoftCodeQualityAnalyzersResources.CreatePropertyAccessorForParameter;
-                                context.RegisterCodeFix(new MyCodeAction(title,
-                                                             async ct => await AddAccessor(context.Document, parameter, ct).ConfigureAwait(false),
+                                context.RegisterCodeFix(CodeAction.Create(title,
+                                                             async ct => await AddAccessorAsync(context.Document, parameter, ct).ConfigureAwait(false),
                                                              equivalenceKey: title),
                                                         diagnostic);
                             }
@@ -49,8 +49,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             if (property != null)
                             {
                                 title = MicrosoftCodeQualityAnalyzersResources.MakeGetterPublic;
-                                context.RegisterCodeFix(new MyCodeAction(title,
-                                                                 async ct => await MakePublic(context.Document, node, property, ct).ConfigureAwait(false),
+                                context.RegisterCodeFix(CodeAction.Create(title,
+                                                                 async ct => await MakePublicAsync(context.Document, node, property, ct).ConfigureAwait(false),
                                                                  equivalenceKey: title),
                                                         diagnostic);
                             }
@@ -58,8 +58,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                         case DefineAccessorsForAttributeArgumentsAnalyzer.RemoveSetterCase:
                             title = MicrosoftCodeQualityAnalyzersResources.MakeSetterNonPublic;
-                            context.RegisterCodeFix(new MyCodeAction(title,
-                                                         async ct => await RemoveSetter(context.Document, node, ct).ConfigureAwait(false),
+                            context.RegisterCodeFix(CodeAction.Create(title,
+                                                         async ct => await RemoveSetterAsync(context.Document, node, ct).ConfigureAwait(false),
                                                          equivalenceKey: title),
                                                     diagnostic);
                             return;
@@ -71,18 +71,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        private static async Task<Document> AddAccessor(Document document, SyntaxNode parameter, CancellationToken cancellationToken)
+        private static async Task<Document> AddAccessorAsync(Document document, SyntaxNode parameter, CancellationToken cancellationToken)
         {
             SymbolEditor symbolEditor = SymbolEditor.Create(document);
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            if (!(model.GetDeclaredSymbol(parameter, cancellationToken) is IParameterSymbol parameterSymbol))
+            if (model.GetDeclaredSymbol(parameter, cancellationToken) is not IParameterSymbol parameterSymbol)
             {
                 return document;
             }
 
             // Make the first character uppercase since we are generating a property.
-            string propName = char.ToUpper(parameterSymbol.Name[0], CultureInfo.InvariantCulture).ToString() + parameterSymbol.Name.Substring(1);
+            string propName = char.ToUpper(parameterSymbol.Name[0], CultureInfo.InvariantCulture).ToString() + parameterSymbol.Name[1..];
 
             INamedTypeSymbol typeSymbol = parameterSymbol.ContainingType;
             ISymbol propertySymbol = typeSymbol.GetMembers(propName).FirstOrDefault(m => m.Kind == SymbolKind.Property);
@@ -117,7 +117,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return symbolEditor.GetChangedDocuments().First();
         }
 
-        private static async Task<Document> MakePublic(Document document, SyntaxNode getMethod, SyntaxNode property, CancellationToken cancellationToken)
+        private static async Task<Document> MakePublicAsync(Document document, SyntaxNode getMethod, SyntaxNode property, CancellationToken cancellationToken)
         {
             // Clear the accessibility on the getter.
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
@@ -145,20 +145,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return editor.GetChangedDocument();
         }
 
-        private static async Task<Document> RemoveSetter(Document document, SyntaxNode setMethod, CancellationToken cancellationToken)
+        private static async Task<Document> RemoveSetterAsync(Document document, SyntaxNode setMethod, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             editor.SetAccessibility(setMethod, Accessibility.Internal);
             return editor.GetChangedDocument();
-        }
-
-        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
-        private class MyCodeAction : DocumentChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument, equivalenceKey)
-            {
-            }
         }
 
         public override FixAllProvider GetFixAllProvider()

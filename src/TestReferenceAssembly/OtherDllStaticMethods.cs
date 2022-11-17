@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 #pragma warning disable CA1801 // Remove unused parameter
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -37,7 +37,7 @@ namespace OtherDll
             Random r = new Random();
             byte[] bytes = new byte[r.Next(20) + 10];
             r.NextBytes(bytes);
-            bytes = bytes.Where(b => (byte)' ' <= b && b <= (byte)'~').ToArray();
+            bytes = bytes.Where(b => b is >= ((byte)' ') and <= ((byte)'~')).ToArray();
             return Encoding.ASCII.GetString(bytes);
         }
 
@@ -75,7 +75,7 @@ namespace OtherDll
             Random r = new Random();
             byte[] bytes = new byte[r.Next(20) + 10];
             r.NextBytes(bytes);
-            bytes = bytes.Where(b => (byte)' ' <= b && b <= (byte)'~').ToArray();
+            bytes = bytes.Where(b => b is >= ((byte)' ') and <= ((byte)'~')).ToArray();
             output = Encoding.ASCII.GetString(bytes);
         }
     }

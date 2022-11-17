@@ -1,8 +1,9 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
-using VerifyCS = Test.Utilities.CSharpCodeRefactoringVerifier<Roslyn.Diagnostics.Analyzers.NumberCommentslRefactoring>;
+using VerifyCS = Test.Utilities.CSharpCodeRefactoringVerifier<Roslyn.Diagnostics.Analyzers.NumberCommentsRefactoring>;
 
 namespace Roslyn.Diagnostics.Analyzers.UnitTests
 {
@@ -26,6 +27,74 @@ class D { } // 1
 "";
 }";
             await VerifyCS.VerifyRefactoringAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task TestAsync_RawStringLiteral()
+        {
+            const string source = """"
+public class C
+{
+    string s = """
+[||]class D { } //
+""";
+}
+"""";
+            const string fixedSource = """"
+public class C
+{
+    string s = """
+class D { } // 1
+""";
+}
+"""";
+            await VerifyCSharp11Async(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task TestAsync_RawStringLiteral_Indented()
+        {
+            const string source = """"
+public class C
+{
+    string s = """
+        [||]class D { } //
+        """;
+}
+"""";
+            const string fixedSource = """"
+public class C
+{
+    string s = """
+        class D { } // 1
+        """;
+}
+"""";
+            await VerifyCSharp11Async(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task TestAsync_RawStringLiteral_Indented_Multiple()
+        {
+            const string source = """"
+public class C
+{
+    string s = """
+        [||]class D { } //
+        class E { } //,
+        """;
+}
+"""";
+            const string fixedSource = """"
+public class C
+{
+    string s = """
+        class D { } // 1
+        class E { } // 2, 3
+        """;
+}
+"""";
+            await VerifyCSharp11Async(source, fixedSource);
         }
 
         [Fact]
@@ -117,7 +186,7 @@ public class C
         }
 
         [Fact]
-        public async Task CountOverTen()
+        public async Task CountOverTenAsync()
         {
             const string source = @"
 public class C
@@ -137,7 +206,7 @@ class D { } // 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
         }
 
         [Fact]
-        public async Task EmptyNumberIsImproper()
+        public async Task EmptyNumberIsImproperAsync()
         {
             const string source = @"
 public class C
@@ -163,7 +232,7 @@ class D // 1
         }
 
         [Fact]
-        public async Task EmptyNumberBeforeCommaIsImproper()
+        public async Task EmptyNumberBeforeCommaIsImproperAsync()
         {
             const string source = @"
 public class C
@@ -189,7 +258,7 @@ class C // 1
         }
 
         [Fact]
-        public async Task EmptyCommentOnEmptyLineIsProper()
+        public async Task EmptyCommentOnEmptyLineIsProperAsync()
         {
             const string source = @"
 public class C
@@ -220,22 +289,19 @@ class C // 1
             await VerifyCS.VerifyRefactoringAsync(source, fixedSource);
         }
 
-        [Fact]
-        public async Task LastLineIsAnalyzed()
+        #region Utilities
+        private async Task VerifyCSharp11Async(string source, string fixedSource)
         {
-            const string source = @"
-public class C
-{
-    string s = @""[||]class D { } //"";
-}";
+            var test = new VerifyCS.Test
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp11,
+            };
 
-            const string fixedSource = @"
-public class C
-{
-    string s = @""class D { } // 1"";
-}";
-
-            await VerifyCS.VerifyRefactoringAsync(source, fixedSource);
+            test.ExpectedDiagnostics.AddRange(DiagnosticResult.EmptyDiagnosticResults);
+            await test.RunAsync();
         }
+        #endregion
     }
 }

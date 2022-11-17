@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -16,12 +16,14 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1501: Avoid excessive inheritance
-    /// CA1502: Avoid excessive complexity
-    /// CA1505: Avoid unmaintainable code
-    /// CA1506: Avoid excessive class coupling
-    /// CA1509: Invalid entry in code metrics rule specification file
+    /// CA1501: <inheritdoc cref="AvoidExcessiveInheritanceTitle"/>
+    /// CA1502: <inheritdoc cref="AvoidExcessiveComplexityTitle"/>
+    /// CA1505: <inheritdoc cref="AvoidUnmantainableCodeTitle"/>
+    /// CA1506: <inheritdoc cref="AvoidExcessiveClassCouplingTitle"/>
+    /// CA1509: <inheritdoc cref="InvalidEntryInCodeMetricsConfigFileTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class CodeMetricsAnalyzer : DiagnosticAnalyzer
@@ -46,86 +48,76 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
         // New rule for invalid entries in CodeMetricsConfigurationFile.
         internal const string CA1509RuleId = "CA1509";
 
-        private static readonly LocalizableString s_localizableTitleCA1501 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveInheritanceTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1501 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveInheritanceMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1501 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveInheritanceDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor CA1501Rule = DiagnosticDescriptorHelper.Create(
+            CA1501RuleId,
+            CreateLocalizableResourceString(nameof(AvoidExcessiveInheritanceTitle)),
+            CreateLocalizableResourceString(nameof(AvoidExcessiveInheritanceMessage)),
+            DiagnosticCategory.Maintainability,
+            RuleLevel.CandidateForRemoval,
+            description: CreateLocalizableResourceString(nameof(AvoidExcessiveInheritanceDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false,
+            isEnabledByDefaultInAggressiveMode: false,
+            isReportedAtCompilationEnd: true);
 
-        private static readonly LocalizableString s_localizableTitleCA1502 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveComplexityTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1502 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveComplexityMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1502 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveComplexityDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor CA1502Rule = DiagnosticDescriptorHelper.Create(
+            CA1502RuleId,
+            CreateLocalizableResourceString(nameof(AvoidExcessiveComplexityTitle)),
+            CreateLocalizableResourceString(nameof(AvoidExcessiveComplexityMessage)),
+            DiagnosticCategory.Maintainability,
+            RuleLevel.CandidateForRemoval,
+            description: CreateLocalizableResourceString(nameof(AvoidExcessiveComplexityDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false,
+            isEnabledByDefaultInAggressiveMode: false,
+            isReportedAtCompilationEnd: true);
 
-        private static readonly LocalizableString s_localizableTitleCA1505 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUnmantainableCodeTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1505 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUnmantainableCodeMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1505 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUnmantainableCodeDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor CA1505Rule = DiagnosticDescriptorHelper.Create(
+            CA1505RuleId,
+            CreateLocalizableResourceString(nameof(AvoidUnmantainableCodeTitle)),
+            CreateLocalizableResourceString(nameof(AvoidUnmantainableCodeMessage)),
+            DiagnosticCategory.Maintainability,
+            RuleLevel.CandidateForRemoval,
+            description: CreateLocalizableResourceString(nameof(AvoidUnmantainableCodeDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false,
+            isEnabledByDefaultInAggressiveMode: false,
+            isReportedAtCompilationEnd: true);
 
-        private static readonly LocalizableString s_localizableTitleCA1506 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveClassCouplingTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1506 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveClassCouplingMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1506 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveClassCouplingDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor CA1506Rule = DiagnosticDescriptorHelper.Create(
+            CA1506RuleId,
+            CreateLocalizableResourceString(nameof(AvoidExcessiveClassCouplingTitle)),
+            CreateLocalizableResourceString(nameof(AvoidExcessiveClassCouplingMessage)),
+            DiagnosticCategory.Maintainability,
+            RuleLevel.CandidateForRemoval,
+            description: CreateLocalizableResourceString(nameof(AvoidExcessiveClassCouplingDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false,
+            isEnabledByDefaultInAggressiveMode: false,
+            isReportedAtCompilationEnd: true);
 
-        private static readonly LocalizableString s_localizableTitleCA1509 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1509 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1509 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor InvalidEntryInCodeMetricsConfigFileRule = DiagnosticDescriptorHelper.Create(
+            CA1509RuleId,
+            CreateLocalizableResourceString(nameof(InvalidEntryInCodeMetricsConfigFileTitle)),
+            CreateLocalizableResourceString(nameof(InvalidEntryInCodeMetricsConfigFileMessage)),
+            DiagnosticCategory.Maintainability,
+            RuleLevel.CandidateForRemoval,
+            description: CreateLocalizableResourceString(nameof(InvalidEntryInCodeMetricsConfigFileDescription)),
+            isPortedFxCopRule: false,
+            isDataflowRule: false,
+            isEnabledByDefaultInAggressiveMode: false,
+            isReportedAtCompilationEnd: true);
 
-        internal static DiagnosticDescriptor CA1501Rule = DiagnosticDescriptorHelper.Create(CA1501RuleId,
-                                                                     s_localizableTitleCA1501,
-                                                                     s_localizableMessageCA1501,
-                                                                     DiagnosticCategory.Maintainability,
-                                                                     RuleLevel.CandidateForRemoval,
-                                                                     description: s_localizableDescriptionCA1501,
-                                                                     isPortedFxCopRule: true,
-                                                                     isDataflowRule: false,
-                                                                     isEnabledByDefaultInFxCopAnalyzers: false);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(CA1501Rule, CA1502Rule, CA1505Rule, CA1506Rule, InvalidEntryInCodeMetricsConfigFileRule);
 
-        internal static DiagnosticDescriptor CA1502Rule = DiagnosticDescriptorHelper.Create(CA1502RuleId,
-                                                                     s_localizableTitleCA1502,
-                                                                     s_localizableMessageCA1502,
-                                                                     DiagnosticCategory.Maintainability,
-                                                                     RuleLevel.CandidateForRemoval,
-                                                                     description: s_localizableDescriptionCA1502,
-                                                                     isPortedFxCopRule: true,
-                                                                     isDataflowRule: false,
-                                                                     isEnabledByDefaultInFxCopAnalyzers: false);
-
-        internal static DiagnosticDescriptor CA1505Rule = DiagnosticDescriptorHelper.Create(CA1505RuleId,
-                                                                     s_localizableTitleCA1505,
-                                                                     s_localizableMessageCA1505,
-                                                                     DiagnosticCategory.Maintainability,
-                                                                     RuleLevel.CandidateForRemoval,
-                                                                     description: s_localizableDescriptionCA1505,
-                                                                     isPortedFxCopRule: true,
-                                                                     isDataflowRule: false,
-                                                                     isEnabledByDefaultInFxCopAnalyzers: false);
-
-        internal static DiagnosticDescriptor CA1506Rule = DiagnosticDescriptorHelper.Create(CA1506RuleId,
-                                                                     s_localizableTitleCA1506,
-                                                                     s_localizableMessageCA1506,
-                                                                     DiagnosticCategory.Maintainability,
-                                                                     RuleLevel.CandidateForRemoval,
-                                                                     description: s_localizableDescriptionCA1506,
-                                                                     isPortedFxCopRule: true,
-                                                                     isDataflowRule: false,
-                                                                     isEnabledByDefaultInFxCopAnalyzers: false);
-
-        internal static DiagnosticDescriptor InvalidEntryInCodeMetricsConfigFileRule = DiagnosticDescriptorHelper.Create(CA1509RuleId,
-                                                                     s_localizableTitleCA1509,
-                                                                     s_localizableMessageCA1509,
-                                                                     DiagnosticCategory.Maintainability,
-                                                                     RuleLevel.CandidateForRemoval,
-                                                                     description: s_localizableDescriptionCA1509,
-                                                                     isPortedFxCopRule: false,
-                                                                     isDataflowRule: false,
-                                                                     isEnabledByDefaultInFxCopAnalyzers: false);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(CA1501Rule, CA1502Rule, CA1505Rule, CA1506Rule, InvalidEntryInCodeMetricsConfigFileRule);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationAction(compilationContext =>
+            context.RegisterCompilationAction(compilationContext =>
             {
-                if (!(compilationContext.Compilation.SyntaxTrees.FirstOrDefault() is SyntaxTree tree))
+                if (compilationContext.Compilation.SyntaxTrees.FirstOrDefault() is not SyntaxTree tree)
                 {
                     return;
                 }
@@ -148,17 +140,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                     return;
                 }
 
-                // Compute code metrics.
-                // For the calculation of the inheritance tree, we are allowing specific exclusions:
-                //   - all types from System namespaces
-                //   - all types/namespaces provided by the user
-                // so that the calculation isn't unfair.
-                // For example inheriting from WPF/WinForms UserControl makes your class over the default threshold, yet there isn't anything you can do about it.
-                var inheritanceExcludedTypes = compilationContext.Options.GetInheritanceExcludedSymbolNamesOption(CA1501Rule, tree, compilationContext.Compilation,
-                    defaultForcedValue: "N:System.*", compilationContext.CancellationToken);
-
                 var metricsAnalysisContext = new CodeMetricsAnalysisContext(compilationContext.Compilation, compilationContext.CancellationToken,
-                    namedType => inheritanceExcludedTypes.Contains(namedType));
+                    namedType => IsConfiguredToSkipFromInheritanceCount(namedType, compilationContext, tree));
                 var computeTask = CodeAnalysisMetricData.ComputeAsync(metricsAnalysisContext);
                 computeTask.Wait(compilationContext.CancellationToken);
 
@@ -179,7 +162,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                             var arg1 = symbol.Name;
                             var arg2 = codeAnalysisMetricData.DepthOfInheritance;
                             var arg3 = inheritanceThreshold + 1;
-                            var arg4 = string.Join(", ", ((INamedTypeSymbol)symbol).GetBaseTypes(t => !inheritanceExcludedTypes.Contains(t)).Select(t => t.Name));
+                            var arg4 = string.Join(", ", ((INamedTypeSymbol)symbol).GetBaseTypes(t => !IsConfiguredToSkipFromInheritanceCount(t, compilationContext, tree)).Select(t => t.Name));
                             var diagnostic = symbol.CreateDiagnostic(CA1501Rule, arg1, arg2, arg3, arg4);
                             compilationContext.ReportDiagnostic(diagnostic);
                         }
@@ -255,45 +238,22 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
 
                 static bool isApplicableByDefault(string ruleId, SymbolKind symbolKind)
                 {
-                    switch (ruleId)
+                    return ruleId switch
                     {
-                        case CA1501RuleId:
-                            return symbolKind == SymbolKind.NamedType;
-
-                        case CA1502RuleId:
-                            return symbolKind == SymbolKind.Method;
-
-                        case CA1505RuleId:
-                            switch (symbolKind)
-                            {
-                                case SymbolKind.NamedType:
-                                case SymbolKind.Method:
-                                case SymbolKind.Field:
-                                case SymbolKind.Property:
-                                case SymbolKind.Event:
-                                    return true;
-
-                                default:
-                                    return false;
-                            }
-
-                        case CA1506RuleId:
-                            switch (symbolKind)
-                            {
-                                case SymbolKind.NamedType:
-                                case SymbolKind.Method:
-                                case SymbolKind.Field:
-                                case SymbolKind.Property:
-                                case SymbolKind.Event:
-                                    return true;
-
-                                default:
-                                    return false;
-                            }
-
-                        default:
-                            throw new NotImplementedException();
-                    }
+                        CA1501RuleId => symbolKind == SymbolKind.NamedType,
+                        CA1502RuleId => symbolKind == SymbolKind.Method,
+                        CA1505RuleId => symbolKind switch
+                        {
+                            SymbolKind.NamedType or SymbolKind.Method or SymbolKind.Field or SymbolKind.Property or SymbolKind.Event => true,
+                            _ => false,
+                        },
+                        CA1506RuleId => symbolKind switch
+                        {
+                            SymbolKind.NamedType or SymbolKind.Method or SymbolKind.Field or SymbolKind.Property or SymbolKind.Event => true,
+                            _ => false,
+                        },
+                        _ => throw new NotImplementedException(),
+                    };
                 }
 
                 static uint? getDefaultThreshold(string ruleId, SymbolKind symbolKind)
@@ -394,7 +354,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                 }
                 else
                 {
-                    SymbolKind? symbolKindOpt = null;
+                    SymbolKind? symbolKind = null;
                     string[] keyParts = key.Split('(');
                     switch (keyParts[0])
                     {
@@ -424,25 +384,25 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                             switch (symbolKindStr)
                             {
                                 case "Assembly":
-                                    symbolKindOpt = SymbolKind.Assembly;
+                                    symbolKind = SymbolKind.Assembly;
                                     break;
                                 case "Namespace":
-                                    symbolKindOpt = SymbolKind.Namespace;
+                                    symbolKind = SymbolKind.Namespace;
                                     break;
                                 case "Type":
-                                    symbolKindOpt = SymbolKind.NamedType;
+                                    symbolKind = SymbolKind.NamedType;
                                     break;
                                 case "Method":
-                                    symbolKindOpt = SymbolKind.Method;
+                                    symbolKind = SymbolKind.Method;
                                     break;
                                 case "Field":
-                                    symbolKindOpt = SymbolKind.Field;
+                                    symbolKind = SymbolKind.Field;
                                     break;
                                 case "Event":
-                                    symbolKindOpt = SymbolKind.Event;
+                                    symbolKind = SymbolKind.Event;
                                     break;
                                 case "Property":
-                                    symbolKindOpt = SymbolKind.Property;
+                                    symbolKind = SymbolKind.Property;
                                     break;
 
                                 default:
@@ -460,7 +420,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                             builder.Add(keyParts[0], values);
                         }
 
-                        ((List<(SymbolKind?, uint)>)values).Add((symbolKindOpt, threshold));
+                        ((List<(SymbolKind?, uint)>)values).Add((symbolKind, threshold));
                     }
                 }
 
@@ -493,6 +453,37 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
             }
 
             return distinctNamespaces.Count;
+        }
+
+        private static bool IsConfiguredToSkipFromInheritanceCount(ISymbol symbol,
+            CompilationAnalysisContext context, SyntaxTree tree)
+        {
+            // Compute code metrics.
+            // For the calculation of the inheritance tree, we are allowing specific exclusions:
+            //   - all types from System namespaces
+            //   - all types/namespaces provided by the user
+            // so that the calculation isn't unfair.
+            // For example inheriting from WPF/WinForms UserControl makes your class over the default threshold,
+            // yet there isn't anything you can do about it.
+            var inheritanceExcludedTypes = context.Options.GetInheritanceExcludedSymbolNamesOption(CA1501Rule,
+                tree, context.Compilation, defaultForcedValue: "N:System");
+
+            if (inheritanceExcludedTypes.IsEmpty)
+            {
+                return false;
+            }
+
+            while (symbol != null)
+            {
+                if (inheritanceExcludedTypes.Contains(symbol))
+                {
+                    return true;
+                }
+
+                symbol = symbol.ContainingSymbol;
+            }
+
+            return false;
         }
     }
 }

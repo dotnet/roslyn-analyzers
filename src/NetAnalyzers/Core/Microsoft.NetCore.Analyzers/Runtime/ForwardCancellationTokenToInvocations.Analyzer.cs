@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -12,8 +12,10 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
-    /// CA2016: Forward CancellationToken to invocations.
+    /// CA2016: <inheritdoc cref="ForwardCancellationTokenToInvocationsTitle"/>
     /// 
     /// Conditions for positive cases:
     ///     - The containing method signature receives a ct parameter. It can be a method, a nested method, an action or a func.
@@ -27,6 +29,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     ///     - The invocation method signature receives a ct and one is already being explicitly passed, or...
     ///     - The invocation method does not have an overload with the exact same arguments that also receives a ct, or...
     ///     - The invocation method only has overloads that receive more than one ct.
+    ///     - The invocation method return types are not implicitly convertable to one another.
     /// </summary>
     public abstract class ForwardCancellationTokenToInvocationsAnalyzer : DiagnosticAnalyzer
     {
@@ -38,19 +41,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         // Check if any of the other arguments is implicit or a named argument
         protected abstract bool ArgumentsImplicitOrNamed(INamedTypeSymbol cancellationTokenType, ImmutableArray<IArgumentOperation> arguments);
 
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-
-        internal static DiagnosticDescriptor ForwardCancellationTokenToInvocationsRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor ForwardCancellationTokenToInvocationsRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            s_localizableTitle,
-            s_localizableMessage,
+            CreateLocalizableResourceString(nameof(ForwardCancellationTokenToInvocationsTitle)),
+            CreateLocalizableResourceString(nameof(ForwardCancellationTokenToInvocationsMessage)),
             DiagnosticCategory.Reliability,
             RuleLevel.IdeSuggestion,
-            s_localizableDescription,
+            CreateLocalizableResourceString(nameof(ForwardCancellationTokenToInvocationsDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false
         );
@@ -59,14 +56,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string ArgumentName = "ArgumentName";
         internal const string ParameterName = "ParameterName";
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(ForwardCancellationTokenToInvocationsRule);
 
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterCompilationStartAction(context => AnalyzeCompilationStart(context));
+            context.RegisterCompilationStartAction(AnalyzeCompilationStart);
         }
 
         private void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
@@ -76,19 +73,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
+            // We don't care if these symbols are not defined in our compilation. They are used to special case the Task<T> <-> ValueTask<T> logic
+            context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask1, out INamedTypeSymbol? genericTask);
+            context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksValueTask1, out INamedTypeSymbol? genericValueTask);
+
             context.RegisterOperationAction(context =>
             {
                 IInvocationOperation invocation = (IInvocationOperation)context.Operation;
 
-                if (!(context.ContainingSymbol is IMethodSymbol containingMethod))
+                if (context.ContainingSymbol is not IMethodSymbol containingMethod)
                 {
                     return;
                 }
 
                 if (!ShouldDiagnose(
+                    context.Compilation,
                     invocation,
                     containingMethod,
                     cancellationTokenType,
+                    genericTask,
+                    genericValueTask,
                     out int shouldFix,
                     out string? cancellationTokenArgumentName,
                     out string? invocationTokenParameterName))
@@ -115,12 +119,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         // Determines if an invocation should trigger a diagnostic for this rule or not.
         private bool ShouldDiagnose(
+            Compilation compilation,
             IInvocationOperation invocation,
             IMethodSymbol containingSymbol,
             INamedTypeSymbol cancellationTokenType,
-            out int shouldFix,
-            [NotNullWhen(returnValue: true)] out string? ancestorTokenParameterName,
-            out string? invocationTokenParameterName)
+            INamedTypeSymbol? genericTask,
+            INamedTypeSymbol? genericValueTask,
+            out int shouldFix, [NotNullWhen(returnValue: true)] out string? ancestorTokenParameterName, out string? invocationTokenParameterName)
         {
             shouldFix = 1;
             ancestorTokenParameterName = null;
@@ -130,7 +135,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             // Verify that the current invocation is not passing an explicit token already
             if (AnyArgument(invocation.Arguments,
-                            a => a.Parameter.Type.Equals(cancellationTokenType) && !a.IsImplicit))
+                            a => cancellationTokenType.Equals(a.Parameter?.Type) && !a.IsImplicit))
             {
                 return false;
             }
@@ -145,7 +150,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
             // or an overload that takes a ct at the end
-            else if (MethodHasCancellationTokenOverload(method, cancellationTokenType, out overload))
+            else if (MethodHasCancellationTokenOverload(compilation, method, cancellationTokenType, genericTask, genericValueTask, out overload))
             {
                 if (ArgumentsImplicitOrNamed(cancellationTokenType, invocation.Arguments))
                 {
@@ -321,20 +326,29 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         // Check if there's a method overload with the same parameters as this one, in the same order, plus a ct at the end.
         private static bool MethodHasCancellationTokenOverload(
+            Compilation compilation,
             IMethodSymbol method,
             ITypeSymbol cancellationTokenType,
+            INamedTypeSymbol? genericTask,
+            INamedTypeSymbol? genericValueTask,
             [NotNullWhen(returnValue: true)] out IMethodSymbol? overload)
         {
             overload = method.ContainingType
                                 .GetMembers(method.Name)
                                 .OfType<IMethodSymbol>()
                                 .FirstOrDefault(methodToCompare =>
-                HasSameParametersPlusCancellationToken(cancellationTokenType, method, methodToCompare));
+                HasSameParametersPlusCancellationToken(compilation, cancellationTokenType, genericTask, genericValueTask, method, methodToCompare));
 
             return overload != null;
 
             // Checks if the parameters of the two passed methods only differ in a ct.
-            static bool HasSameParametersPlusCancellationToken(ITypeSymbol cancellationTokenType, IMethodSymbol originalMethod, IMethodSymbol methodToCompare)
+            static bool HasSameParametersPlusCancellationToken(
+                Compilation compilation,
+                ITypeSymbol cancellationTokenType,
+                INamedTypeSymbol? genericTask,
+                INamedTypeSymbol? genericValueTask,
+                IMethodSymbol originalMethod,
+                IMethodSymbol methodToCompare)
             {
                 // Avoid comparing to itself, or when there are no parameters, or when the last parameter is not a ct
                 if (originalMethod.Equals(methodToCompare) ||
@@ -365,7 +379,61 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
                 }
 
+                // Overload is  valid if its return type is implicitly convertable
+                var toCompareReturnType = methodToCompareWithAllParameters.ReturnType;
+                var originalReturnType = originalMethodWithAllParameters.ReturnType;
+                if (!toCompareReturnType.IsAssignableTo(originalReturnType, compilation))
+                {
+                    // Generic Task-like types are special since awaiting them essentially erases the task-like type.
+                    // If both types are Task-like we will warn if their generic arguments are convertable to each other.
+                    if (IsTaskLikeType(originalReturnType) && IsTaskLikeType(toCompareReturnType) &&
+                        originalReturnType is INamedTypeSymbol originalNamedType &&
+                        toCompareReturnType is INamedTypeSymbol toCompareNamedType &&
+                        TypeArgumentsAreConvertable(originalNamedType, toCompareNamedType))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+
                 return true;
+
+                bool IsTaskLikeType(ITypeSymbol typeSymbol)
+                {
+                    if (genericTask is not null &&
+                        typeSymbol.OriginalDefinition.Equals(genericTask))
+                    {
+                        return true;
+                    }
+
+                    if (genericValueTask is not null &&
+                        typeSymbol.OriginalDefinition.Equals(genericValueTask))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                bool TypeArgumentsAreConvertable(INamedTypeSymbol left, INamedTypeSymbol right)
+                {
+                    if (left.Arity != 1 ||
+                        right.Arity != 1 ||
+                        left.Arity != right.Arity)
+                    {
+                        return false;
+                    }
+
+                    var leftTypeArgument = left.TypeArguments[0];
+                    var rightTypeArgument = right.TypeArguments[0];
+                    if (!leftTypeArgument.IsAssignableTo(rightTypeArgument, compilation))
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
             }
         }
     }

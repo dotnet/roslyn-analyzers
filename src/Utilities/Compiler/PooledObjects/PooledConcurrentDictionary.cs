@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 #pragma warning disable CA1000 // Do not declare static members on generic types
 
@@ -28,18 +29,24 @@ namespace Analyzer.Utilities.PooledObjects
             _pool = pool;
         }
 
-        public void Dispose() => Free();
+        public void Dispose() => Free(CancellationToken.None);
 
-        public void Free()
+        public void Free(CancellationToken cancellationToken)
         {
+            // Do not free in presence of cancellation.
+            // See https://github.com/dotnet/roslyn/issues/46859 for details.
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             this.Clear();
-            _pool?.Free(this);
+            _pool?.Free(this, cancellationToken);
         }
 
         // global pool
         private static readonly ObjectPool<PooledConcurrentDictionary<K, V>> s_poolInstance = CreatePool();
-        private static readonly ConcurrentDictionary<IEqualityComparer<K>, ObjectPool<PooledConcurrentDictionary<K, V>>> s_poolInstancesByComparer
-            = new ConcurrentDictionary<IEqualityComparer<K>, ObjectPool<PooledConcurrentDictionary<K, V>>>();
+        private static readonly ConcurrentDictionary<IEqualityComparer<K>, ObjectPool<PooledConcurrentDictionary<K, V>>> s_poolInstancesByComparer = new();
 
         // if someone needs to create a pool;
         public static ObjectPool<PooledConcurrentDictionary<K, V>> CreatePool(IEqualityComparer<K>? keyComparer = null)
@@ -57,7 +64,7 @@ namespace Analyzer.Utilities.PooledObjects
         {
             var pool = keyComparer == null ?
                 s_poolInstance :
-                s_poolInstancesByComparer.GetOrAdd(keyComparer, c => CreatePool(c));
+                s_poolInstancesByComparer.GetOrAdd(keyComparer, CreatePool);
             var instance = pool.Allocate();
             Debug.Assert(instance.IsEmpty);
             return instance;

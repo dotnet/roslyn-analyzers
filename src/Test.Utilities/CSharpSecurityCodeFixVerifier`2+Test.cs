@@ -1,11 +1,11 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Testing;
 
 namespace Test.Utilities
 {
@@ -15,21 +15,31 @@ namespace Test.Utilities
     {
         public class Test : CSharpCodeFixVerifier<TAnalyzer, TCodeFix>.Test
         {
-            public Test()
+            static Test()
             {
-                // These analyzers run on generated code by default.
-                TestBehaviors |= TestBehaviors.SkipGeneratedCodeCheck;
+                // If we have outdated defaults from the host unit test application targeting an older .NET Framework, use more
+                // reasonable TLS protocol version for outgoing connections.
+#pragma warning disable CA5364 // Do Not Use Deprecated Security Protocols
+#pragma warning disable CS0618 // Type or member is obsolete
+                if (ServicePointManager.SecurityProtocol == (SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls))
+#pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning restore CA5364 // Do Not Use Deprecated Security Protocols
+                {
+#pragma warning disable CA5386 // Avoid hardcoding SecurityProtocolType value
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+#pragma warning restore CA5386 // Avoid hardcoding SecurityProtocolType value
+                }
             }
 
-            protected override Project ApplyCompilationOptions(Project project)
+            public Test()
             {
-                var newProject = base.ApplyCompilationOptions(project);
+            }
 
-                var parseOptions = newProject.ParseOptions!.WithFeatures(
-                    newProject.ParseOptions.Features.Concat(
-                        new[] { new KeyValuePair<string, string>("flow-analysis", "true") }));
-
-                return newProject.WithParseOptions(parseOptions);
+            protected override ParseOptions CreateParseOptions()
+            {
+                var parseOptions = base.CreateParseOptions();
+                return parseOptions.WithFeatures(parseOptions.Features.Concat(
+                    new[] { new KeyValuePair<string, string>("flow-analysis", "true") }));
             }
         }
     }

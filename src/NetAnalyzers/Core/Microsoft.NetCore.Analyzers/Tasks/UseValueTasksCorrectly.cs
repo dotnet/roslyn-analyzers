@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -15,52 +15,60 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Tasks
 {
-    /// <summary>CA2012: Use ValueTasks correctly.</summary>
+    using static MicrosoftNetCoreAnalyzersResources;
+
+    /// <summary>
+    /// CA2012: <inheritdoc cref="UseValueTasksCorrectlyTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseValueTasksCorrectlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2012";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseValueTasksCorrectlyTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseValueTasksCorrectlyDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(UseValueTasksCorrectlyTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(UseValueTasksCorrectlyDescription));
 
-        internal static readonly DiagnosticDescriptor GeneralRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static readonly DiagnosticDescriptor GeneralRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
             s_localizableTitle,
-            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseValueTasksCorrectlyMessage_General), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
+            CreateLocalizableResourceString(nameof(UseValueTasksCorrectlyMessage_General)),
             DiagnosticCategory.Reliability,
-            RuleLevel.IdeHidden_BulkConfigurable,
+            RuleLevel.IdeSuggestion,
             s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor UnconsumedRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static readonly DiagnosticDescriptor UnconsumedRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
             s_localizableTitle,
-            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseValueTasksCorrectlyMessage_Unconsumed), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
+            CreateLocalizableResourceString(nameof(UseValueTasksCorrectlyMessage_Unconsumed)),
             DiagnosticCategory.Reliability,
-            RuleLevel.IdeHidden_BulkConfigurable,
+            RuleLevel.IdeSuggestion,
             s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor DoubleConsumptionRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static readonly DiagnosticDescriptor DoubleConsumptionRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
             s_localizableTitle,
-            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseValueTasksCorrectlyMessage_DoubleConsumption), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
+            CreateLocalizableResourceString(nameof(UseValueTasksCorrectlyMessage_DoubleConsumption)),
             DiagnosticCategory.Reliability,
-            RuleLevel.IdeHidden_BulkConfigurable,
+            RuleLevel.IdeSuggestion,
             s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor AccessingIncompleteResultRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static readonly DiagnosticDescriptor AccessingIncompleteResultRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
             s_localizableTitle,
-            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseValueTasksCorrectlyMessage_AccessingIncompleteResult), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
+            CreateLocalizableResourceString(nameof(UseValueTasksCorrectlyMessage_AccessingIncompleteResult)),
             DiagnosticCategory.Reliability,
-            RuleLevel.IdeHidden_BulkConfigurable,
+            RuleLevel.IdeSuggestion,
             s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(GeneralRule, UnconsumedRule, DoubleConsumptionRule, AccessingIncompleteResultRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(GeneralRule, UnconsumedRule, DoubleConsumptionRule, AccessingIncompleteResultRule);
 
         public sealed override void Initialize(AnalysisContext context)
         {
@@ -72,7 +80,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
 
                 // Get the target ValueTask / ValueTask<T> types. If they don't exist, nothing more to do.
                 if (!typeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksValueTask, out var valueTaskType) ||
-                    !typeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericValueTask, out var valueTaskOfTType))
+                    !typeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksValueTask1, out var valueTaskOfTType))
                 {
                     return;
                 }
@@ -114,7 +122,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                                 // Use Preserve to enable subsequent unlimited consumption is acceptable.
                                 return;
 
-                            case nameof(ValueTask.GetAwaiter) when parentIo.Parent is IInvocationOperation { TargetMethod: { Name: nameof(ValueTaskAwaiter.GetResult) } }:
+                            case nameof(ValueTask.GetAwaiter) when parentIo.Parent is IInvocationOperation { TargetMethod.Name: nameof(ValueTaskAwaiter.GetResult) }:
                                 // Warn! Trying to block waiting for a value task isn't supported.
                                 operationContext.ReportDiagnostic(invocation.CreateDiagnostic(AccessingIncompleteResultRule));
                                 return;
@@ -125,7 +133,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                                 break;
                         }
                     }
-                    else if (invocation.Parent is IPropertyReferenceOperation { Property: { Name: nameof(ValueTask<int>.Result) } })
+                    else if (invocation.Parent is IPropertyReferenceOperation { Property.Name: nameof(ValueTask<int>.Result) })
                     {
                         operationContext.ReportDiagnostic(invocation.CreateDiagnostic(AccessingIncompleteResultRule));
                         return;
@@ -169,6 +177,16 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                                 // Warn! This is a statement or discard. The result should have been used.
                                 operationContext.ReportDiagnostic(invocation.CreateDiagnostic(UnconsumedRule));
                                 return;
+
+                            case OperationKind.Conversion:
+                                var conversion = (IConversionOperation)operation.Parent;
+                                if (conversion.Conversion.IsIdentity)
+                                {
+                                    // Ignore identity conversions, which can pop in from time to time.
+                                    operation = operation.Parent;
+                                    continue;
+                                }
+                                goto default;
 
                             // At this point, we're "in the weeds", but there are still some rare-but-used valid patterns to check for.
 
@@ -416,7 +434,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                         OperationKind.Return => true,
                         OperationKind.Argument => true,
                         OperationKind.Invocation => true, // e.g. AsTask()
-                        OperationKind.PropertyReference when op.Parent is IPropertyReferenceOperation { Property: { Name: "Result" } } => true,
+                        OperationKind.PropertyReference when op.Parent is IPropertyReferenceOperation { Property.Name: "Result" } => true,
                         _ => false
                     })
                 {
@@ -496,8 +514,8 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                 IsLocalOrParameterSymbolReference(op, valueTaskSymbol) &&
                 op.Parent?.Kind switch
                 {
-                    OperationKind.PropertyReference when op.Parent is IPropertyReferenceOperation { Property: { Name: nameof(ValueTask<int>.Result) } } => true,
-                    OperationKind.Invocation when op.Parent is IInvocationOperation { TargetMethod: { Name: nameof(ValueTask.GetAwaiter) } } => true,
+                    OperationKind.PropertyReference when op.Parent is IPropertyReferenceOperation { Property.Name: nameof(ValueTask<int>.Result) } => true,
+                    OperationKind.Invocation when op.Parent is IInvocationOperation { TargetMethod.Name: nameof(ValueTask.GetAwaiter) } => true,
                     _ => false
                 };
         }

@@ -1,36 +1,38 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA2246: Prevent objects from being referenced in statements where they are reassigned
+    /// CA2246: <inheritdoc cref="AssigningSymbolAndItsMemberInSameStatementTitle"/>
     /// </summary>
+#pragma warning disable RS1004 // Recommend adding language support to diagnostic analyzer - Construct not valid in VB.NET
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+#pragma warning restore RS1004 // Recommend adding language support to diagnostic analyzer
     public sealed class AssigningSymbolAndItsMemberInSameStatement : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2246";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-            s_localizableTitle,
-            s_localizableMessage,
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(AssigningSymbolAndItsMemberInSameStatementTitle)),
+            CreateLocalizableResourceString(nameof(AssigningSymbolAndItsMemberInSameStatementMessage)),
             DiagnosticCategory.Usage,
             RuleLevel.IdeSuggestion,
-            description: s_localizableDescription,
+            description: CreateLocalizableResourceString(nameof(AssigningSymbolAndItsMemberInSameStatementDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -45,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             var assignmentOperation = (ISimpleAssignmentOperation)context.Operation;
 
             // Check if there are more then one assignment in a statement
-            if (!(assignmentOperation.Target is IMemberReferenceOperation operationTarget))
+            if (assignmentOperation.Target is not IMemberReferenceOperation operationTarget)
             {
                 return;
             }
@@ -69,7 +71,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             if (isViolationFound)
             {
-                var diagnostic = Diagnostic.Create(Rule, operationTarget.Syntax.GetLocation(), operationTarget.Instance.Syntax, operationTarget.Member.Name);
+                var diagnostic = operationTarget.CreateDiagnostic(Rule, operationTarget.Instance.Syntax, operationTarget.Member.Name);
                 context.ReportDiagnostic(diagnostic);
             }
         }

@@ -204,9 +204,9 @@ End Class";
 
         #region No Diagnostic
         [Fact, WorkItem(6141, "https://github.com/dotnet/roslyn-analyzers/issues/6141")]
-        public Task TopLevelStatementsProgram(string accessModifier)
+        public Task TopLevelStatementsProgram()
         {
-            await new VerifyCS.Test()
+            return new VerifyCS.Test()
             {
                 TestState =
                 {

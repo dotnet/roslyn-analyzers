@@ -15,7 +15,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1008: Enums should have zero value
+    /// CA1008: <inheritdoc cref="EnumsShouldHaveZeroValueTitle"/>
     ///
     /// Cause:
     /// An enumeration without an applied System.FlagsAttribute does not define a member that has a value of zero;
@@ -176,7 +176,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal static IEnumerable<IFieldSymbol> GetZeroValuedFields(INamedTypeSymbol enumType)
         {
             SpecialType specialType = enumType.EnumUnderlyingType.SpecialType;
-            foreach (IFieldSymbol field in enumType.GetMembers().Where(m => m.Kind == SymbolKind.Field))
+            foreach (IFieldSymbol field in enumType.GetMembers().Where(m => m.Kind == SymbolKind.Field).Cast<IFieldSymbol>())
             {
                 if (field.HasConstantValue && IsZeroValueConstant(field.ConstantValue, specialType))
                 {

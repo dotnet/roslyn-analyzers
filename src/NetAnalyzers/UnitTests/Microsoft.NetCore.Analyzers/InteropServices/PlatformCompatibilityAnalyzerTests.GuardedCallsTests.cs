@@ -4581,7 +4581,6 @@ class WindowsOnlyType
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
-#if DEBUG
         [Fact]
         public async Task IosGuardsMacCatalystAsync()
         {
@@ -4614,7 +4613,7 @@ class Test
 
     void M1()
     {
-        if (MockOperatingSystem.IsIOS())
+        if (OperatingSystem.IsIOS())
         {
             SupportedOnIOSLinuxMacCatalyst();
             [|SupportsMacCatalyst()|]; // This call site is reachable on: 'IOS'. 'Test.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.
@@ -4624,7 +4623,7 @@ class Test
             [|UnsupportsMacCatalyst()|];     // This call site is reachable on: 'maccatalyst'. 'Test.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
         }
 
-        if (MockOperatingSystem.IsMacCatalyst())
+        if (OperatingSystem.IsMacCatalyst())
         {          
             SupportedOnIOSLinuxMacCatalyst();
             SupportsMacCatalyst();
@@ -4634,7 +4633,7 @@ class Test
             [|UnsupportsMacCatalyst()|];     // This call site is reachable on: 'MacCatalyst'. 'Test.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
         }
 
-        if (MockOperatingSystem.IsIOS() && !MockOperatingSystem.IsMacCatalyst())
+        if (OperatingSystem.IsIOS() && !OperatingSystem.IsMacCatalyst())
         {            
             SupportedOnIOSLinuxMacCatalyst();              
             [|SupportsMacCatalyst()|];       // This call site is reachable on: 'IOS'. 'Test.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.     
@@ -4644,7 +4643,7 @@ class Test
             UnsupportsMacCatalyst();      
         }
     }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
@@ -4735,7 +4734,7 @@ class Test
             UnsupportsMacCatalyst(); 
         }
     }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
@@ -4811,7 +4810,196 @@ class Test
             UnsupportsMacCatalyst();     // This call site is reachable on: 'MacCatalyst'. 'Test.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
         }
     }
-}" + MockApisCsSource;
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task DynamicallyLoadGuardingVersionFromCallingApiArguments()
+        {
+            var source = @"
+using System;
+using System.Diagnostics;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [SupportedOSPlatformGuard(""ios"")]
+    private bool IsIosSupported(int major, int minor) => true;
+
+    [UnsupportedOSPlatformGuard(""ios"")]
+    private bool IosNotSupportedFrom(int major) => true;
+
+    void M1()
+    {
+        [|SupportedOniOS11()|]; 
+        [|UnsupportedOniOS11()|];
+
+        if (IsIosSupported(11, 0))
+        {
+            SupportedOniOS11();    
+            [|UnsupportedOniOS11()|];
+        }
+        else
+        {
+            [|SupportedOniOS11()|];    
+            UnsupportedOniOS11();
+        }
+
+        if (IosNotSupportedFrom(11))
+        {
+            [|SupportedOniOS11()|];    
+            UnsupportedOniOS11();
+        }
+        else
+        {
+            SupportedOniOS11();    
+            [|UnsupportedOniOS11()|];
+        }
+    }
+
+    [SupportedOSPlatform(""ios11.0"")]
+    void SupportedOniOS11() { }
+
+    [UnsupportedOSPlatform(""ios11.0"")]
+    void UnsupportedOniOS11() { }
+}";
+
+            await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task DynamicallyLoadGuardingVersionFromCallingApiArguments_MultipleAttriubtesApplied()
+        {
+            var source = @"
+using System;
+using System.Diagnostics;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [SupportedOSPlatformGuard(""ios"")]
+    [SupportedOSPlatformGuard(""watchos"")]
+    private bool IsIosWatchOsSupported(int major, int minor, int build = 0) => true;
+
+    [SupportedOSPlatformGuard(""ios"")]
+    private bool IsIosSupported(int major, int minor, int build = 0) => true;
+
+    [SupportedOSPlatform(""ios13.0.2"")]
+    [SupportedOSPlatform(""watchos13.0"")]
+    void SupportedOnIosAndWatchOs13() { }
+
+    [SupportedOSPlatform(""ios13.0.2"")]
+    void SupportedOnIos13() { }
+
+    [SupportedOSPlatform(""watchos10.0"")]
+    void SupportedOnWatchOs10() { }
+
+    void M1()
+    {
+        if (IsIosWatchOsSupported(13, 0, 2))
+        {
+            [|SupportedOnIos13()|];    
+            [|SupportedOnWatchOs10()|];
+            SupportedOnIosAndWatchOs13();
+        }
+
+        if (OperatingSystem.IsIOSVersionAtLeast(13, 0, 2) || OperatingSystem.IsWatchOSVersionAtLeast(13))
+        {
+            [|SupportedOnIos13()|];    
+            [|SupportedOnWatchOs10()|];
+            SupportedOnIosAndWatchOs13();
+        }
+
+        if (IsIosSupported(13, 0, 2))
+        {
+            SupportedOnIos13();    
+            [|SupportedOnWatchOs10()|];
+            SupportedOnIosAndWatchOs13();
+        }
+    }
+}";
+
+            await VerifyAnalyzerCSAsync(source);
+        }
+
+        [Fact]
+        public async Task DynamicallyLoadGuardingVersionFromCallingApiArguments_NotWarningCases()
+        {
+            var source = @"
+using System;
+using System.Diagnostics;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [SupportedOSPlatformGuard(""ios"")]
+    private bool IsIosSupported(int major, string minor, int build = 0) => true; // string parameter not accepted
+
+    [SupportedOSPlatformGuard(""ios"")]
+    private bool IsIosSupported(int major, long minor, int build = 0) => true; // long parameter not accepted
+
+    [SupportedOSPlatformGuard(""ios"")]
+    private string IsIosSupported(int major, int minor, int build = 0) => ""true""; // not return boolean
+
+    [SupportedOSPlatform(""ios13.0.2"")]
+    void SupportedOnIos13() { }
+
+    void M1()
+    {
+        if (IsIosSupported(13, ""0"", 2))
+        {
+            [|SupportedOnIos13()|];    
+        }
+
+        if (IsIosSupported(13, 0l, 2))
+        {
+            [|SupportedOnIos13()|];    
+        }
+
+        if (IsIosSupported(13, 0, 2) == ""true"")
+        {
+            [|SupportedOnIos13()|];
+        }
+    }
+}";
+
+            await VerifyAnalyzerCSAsync(source);
+        }
+
+        [Fact]
+        public async Task ApiAndGuardAttributeBothHasVersions_AttributeVersionWins()
+        {
+            var source = @"
+using System;
+using System.Diagnostics;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [SupportedOSPlatformGuard(""ios10.0"")]
+    private bool IsIos10Supported(int major, int minor) => true;
+
+    [SupportedOSPlatformGuard(""ios11.0"")]
+    private bool IsIos11Supported(int major, int minor) => true;
+
+    [SupportedOSPlatform(""ios11.0"")]
+    void SupportedOnIos11() { }
+
+    void M1()
+    {
+        if (IsIos10Supported(11, 0))
+        {
+            [|SupportedOnIos11()|];  // Warns because API version 11.0+ is ignored and attribute version ios 10.0+ accounted 
+        }
+
+        if (IsIos11Supported(10, 0))
+        {
+            SupportedOnIos11();  // Not warn because API version 10.0+ is ignored and attribute version ios 11.0+ accounted 
+        }
+    }
+}";
 
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
@@ -4854,7 +5042,7 @@ class MyUsage
 [SupportedOSPlatform(""windows10.0.10240"")]
 [UnsupportedOSPlatform(""MacCatalyst13.0"")]
 class MyType { }
-" + MockApisCsSource;
+";
 
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
@@ -4976,26 +5164,10 @@ class MyUsage
 [UnsupportedOSPlatform(""windows8.1"")]
 [SupportedOSPlatform(""MacCatalyst13.0"")]
 class MyType { }
-" + MockApisCsSource;
+";
 
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
-
-        private readonly string MockApisCsSource = @"
-namespace System
-{
-    public class MockOperatingSystem
-    {
-        [SupportedOSPlatformGuard(""maccatalyst"")]
-        public static bool IsIOS() => true;
-        [SupportedOSPlatformGuard(""maccatalyst"")]
-        public static bool IsIOSVersionAtLeast(int major, int minor = 0, int build = 0) => false;
-        public static bool IsMacCatalyst() => false;
-        public static bool IsMacCatalystVersionAtLeast(int major, int minor = 0, int build = 0) => true;
-    }
-}
-";
-#endif
 
         private readonly string TargetTypesForTest = @"
 namespace PlatformCompatDemo.SupportedUnupported

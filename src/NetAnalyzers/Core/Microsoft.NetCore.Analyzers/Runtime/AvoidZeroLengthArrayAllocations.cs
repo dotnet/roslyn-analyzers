@@ -13,7 +13,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
-    /// <summary>Base type for an analyzer that looks for empty array allocations and recommends their replacement.</summary>
+    /// <summary>
+    /// CA1825: <inheritdoc cref="AvoidZeroLengthArrayAllocationsTitle"/>
+    /// Base type for an analyzer that looks for empty array allocations and recommends their replacement.
+    /// </summary>
     public abstract class AvoidZeroLengthArrayAllocationsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1825";
@@ -66,13 +69,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             AnalyzeOperation(context, arrayEmptyMethodSymbol, IsAttributeSyntax);
         }
 
-        private static void AnalyzeOperation(OperationAnalysisContext context, IMethodSymbol arrayEmptyMethodSymbol, Func<SyntaxNode, bool> isAttributeSytnax)
+        private static void AnalyzeOperation(OperationAnalysisContext context, IMethodSymbol arrayEmptyMethodSymbol, Func<SyntaxNode, bool> isAttributeSyntax)
         {
             IArrayCreationOperation arrayCreationExpression = (IArrayCreationOperation)context.Operation;
 
             // We can't replace array allocations in attributes, as they're persisted to metadata
             // TODO: Once we have operation walkers, we can replace this syntactic check with an operation-based check.
-            if (arrayCreationExpression.Syntax.Ancestors().Any(isAttributeSytnax))
+            if (arrayCreationExpression.Syntax.AncestorsAndSelf().Any(isAttributeSyntax))
             {
                 return;
             }

@@ -13,6 +13,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers
 {
     using static CodeAnalysisDiagnosticsResources;
 
+    /// <summary>
+    /// RS1014: <inheritdoc cref="DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpImmutableObjectMethodAnalyzer : DiagnosticAnalyzer
     {
@@ -95,7 +98,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers
             var baseTypesAndSelf = methodSymbol.ReceiverType.GetBaseTypes().ToList();
             baseTypesAndSelf.Add(parentType);
 
-            if (!baseTypesAndSelf.Any(n => immutableTypeSymbols.Contains(n)))
+            if (!baseTypesAndSelf.Any(immutableTypeSymbols.Contains))
             {
                 return;
             }

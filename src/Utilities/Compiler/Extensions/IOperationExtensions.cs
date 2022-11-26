@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using Analyzer.Utilities.Lightup;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis;
@@ -404,6 +405,24 @@ namespace Analyzer.Utilities.Extensions
                 _ => false,
             };
 
+        /// <summary>
+        /// Indicates if the given <paramref name="binaryOperation"/> is an addition or substaction operation.
+        /// </summary>
+        /// <param name="binaryOperation"></param>
+        /// <returns>true if the operation is addition or substruction</returns>
+        public static bool IsAdditionOrSubstractionOperation(this IBinaryOperation binaryOperation, out char binaryOperator)
+        {
+            binaryOperator = '\0';
+            switch (binaryOperation.OperatorKind)
+            {
+                case BinaryOperatorKind.Add:
+                    binaryOperator = '+'; return true;
+                case BinaryOperatorKind.Subtract:
+                    binaryOperator = '-'; return true;
+            }
+            return false;
+        }
+
         public static IOperation GetRoot(this IOperation operation)
         {
             while (operation.Parent != null)
@@ -463,10 +482,10 @@ namespace Analyzer.Utilities.Extensions
                     return null;
 
                 default:
-                    // Attribute blocks have OperationKind.None, but ControlFlowGraph.Create does not
-                    // have an overload for such operation roots.
+                    // Attribute blocks have OperationKind.None (prior to IAttributeOperation support) or
+                    // OperationKind.Attribute, but we do not support flow analysis for attributes.
                     // Gracefully return null for this case and fire an assert for any other OperationKind.
-                    Debug.Assert(operation.Kind == OperationKind.None, $"Unexpected root operation kind: {operation.Kind}");
+                    Debug.Assert(operation.Kind is OperationKind.None or OperationKindEx.Attribute, $"Unexpected root operation kind: {operation.Kind}");
                     return null;
             }
         }

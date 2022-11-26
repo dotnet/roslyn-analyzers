@@ -13,6 +13,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
     using static CodeAnalysisDiagnosticsResources;
 
+    /// <summary>
+    /// RS1024: <inheritdoc cref="CompareSymbolsCorrectlyTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class CompareSymbolsCorrectlyAnalyzer : DiagnosticAnalyzer
     {
@@ -347,6 +350,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         }
 
         public static bool UseSymbolEqualityComparer(Compilation compilation)
-        => compilation.GetOrCreateTypeByMetadataName(SymbolEqualityComparerName) is object;
+            => compilation.GetOrCreateTypeByMetadataName(SymbolEqualityComparerName) is object;
     }
 }

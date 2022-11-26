@@ -13,7 +13,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1711: Identifiers should not have incorrect suffix
+    /// CA1711: <inheritdoc cref="IdentifiersShouldNotHaveIncorrectSuffixTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class IdentifiersShouldNotHaveIncorrectSuffixAnalyzer : DiagnosticAnalyzer
@@ -307,7 +307,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             return IsInvalidSuffix(namedTypeSymbol.Name, suffix, allowedSuffixes)
-                && !parentTypes.Any(parentType => namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf(parentType));
+                && !parentTypes.Any(namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf);
         }
 
         private static bool IsInvalidSuffix(string name, string suffix, ImmutableHashSet<string> allowedSuffixes)

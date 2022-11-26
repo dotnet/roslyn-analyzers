@@ -1878,6 +1878,42 @@
   <data name="UsesPreviewTypeParameterMessage" xml:space="preserve">
     <value>'{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</value>
   </data>
+  <data name="ConstantExpectedApplicationTitle" xml:space="preserve">
+    <value>Incorrect usage of ConstantExpected attribute</value>
+  </data>
+  <data name="ConstantExpectedApplicationDescription" xml:space="preserve">
+    <value>ConstantExpected attribute is not applied correctly on the parameter.</value>
+  </data>
+  <data name="ConstantExpectedUsageTitle" xml:space="preserve">
+    <value>A constant is expected for the parameter</value>
+  </data>
+  <data name="ConstantExpectedUsageDescription" xml:space="preserve">
+    <value>The parameter expects a constant for optimal performance.</value>
+  </data>
+  <data name="ConstantExpectedNotSupportedMessage" xml:space="preserve">
+    <value>The '{0}' type is not supported for ConstantExpected attribute</value>
+  </data>
+  <data name="ConstantExpectedIncompatibleConstantTypeMessage" xml:space="preserve">
+    <value>The '{0}' value is not compatible with parameter type of '{1}'</value>
+  </data>
+  <data name="ConstantExpectedInvalidBoundsMessage" xml:space="preserve">
+    <value>The '{0}' value does not fit within the parameter value bounds of '{1}' to '{2}'</value>
+  </data>
+  <data name="ConstantExpectedInvertedRangeMessage" xml:space="preserve">
+    <value>The Min and Max values are inverted</value>
+  </data>
+  <data name="ConstantExpectedOutOfBoundsMessage" xml:space="preserve">
+    <value>The constant does not fit within the value bounds of '{0}' to '{1}'</value>
+  </data>
+  <data name="ConstantExpectedInvalidMessage" xml:space="preserve">
+    <value>The constant is not of the same '{0}' type as the parameter</value>
+  </data>
+  <data name="ConstantExpectedNotConstantMessage" xml:space="preserve">
+    <value>The argument should be a constant for optimal performance</value>
+  </data>
+  <data name="ConstantExpectedAttributExpectedMessage" xml:space="preserve">
+    <value>The ConstantExpected attribute is required for the parameter due to the parent method annotation</value>
+  </data>
   <data name="SpecifyCultureForToLowerAndToUpperTitle" xml:space="preserve">
     <value>Specify a culture or use an invariant version</value>
   </data>
@@ -1945,7 +1981,7 @@
     <value>Seal class</value>
   </data>
   <data name="FeatureUnsupportedWhenRuntimeMarshallingDisabledMessageDelegateUsage" xml:space="preserve">
-    <value>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined.</value>
+    <value>Delegates with managed types as parameters or the return type require runtime marshalling to be enabled in the assembly where the delegate is defined</value>
   </data>
   <data name="PreferDictionaryTryGetValueCodeFixTitle" xml:space="preserve">
     <value>Use 'TryGetValue(TKey, out TValue)'</value>
@@ -1958,5 +1994,55 @@
   </data>
   <data name="PreferDictionaryTryGetValueDescription" xml:space="preserve">
     <value>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</value>
+  </data>
+  <data name="SpecifyIFormatProviderMessageIFormatProviderOptional" xml:space="preserve">
+    <value>The behavior of '{0}' could vary based on the current user's locale settings. Provide a value for the 'IFormatProvider' argument.</value>
+  </data>
+  <data name="PlatformCompatibilityObsoletedCsAllPlatformMessage" xml:space="preserve">
+    <value>This call site is reachable on all platforms. '{0}' is obsoleted on: {1}.</value>
+    <comment>This call site is reachable on all platforms. 'OboletedOnMacOS()' is obsoleted on: 'macos'.</comment>
+  </data>
+  <data name="PlatformCompatibilityObsoletedCsReachableMessage" xml:space="preserve">
+    <value>This call site is reachable on: {2}. '{0}' is obsoleted on: {1}.</value>
+    <comment>This call site is reachable on 'macos', 'linux'. 'OboletedOnMacOS()' is obsoleted on: 'macos'.</comment>
+  </data>
+  <data name="ParenthesisWithPlaceHolder" xml:space="preserve">
+    <value> ({0})</value>
+  </data>
+  <data name="ImplementGenericMathInterfacesCorrectlyDescription" xml:space="preserve">
+    <value>Generic math interfaces require the derived type itself to be used for the self recurring type parameter.</value>
+  </data>
+  <data name="ImplementGenericMathInterfacesCorrectlyMessage" xml:space="preserve">
+    <value>The '{0}' requires the '{1}' type parameter to be filled with the derived type '{2}'</value>
+  </data>
+  <data name="ImplementGenericMathInterfacesCorrectlyTitle" xml:space="preserve">
+    <value>Use correct type parameter</value>
+  </data>
+  <data name="UseSpanClearInsteadOfFillCodeFixTitle" xml:space="preserve">
+    <value>Use 'Clear()'</value>
+  </data>
+  <data name="UseSpanClearInsteadOfFillDescription" xml:space="preserve">
+    <value>It is more efficient to use 'Clear', instead of 'Fill' with default value.</value>
+  </data>
+  <data name="UseSpanClearInsteadOfFillMessage" xml:space="preserve">
+    <value>Prefer 'Span&lt;T&gt;.Clear()' instead of 'Span&lt;T&gt;.Fill(default)'</value>
+  </data>
+  <data name="UseSpanClearInsteadOfFillTitle" xml:space="preserve">
+    <value>Prefer 'Clear' over 'Fill'</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesDescription" xml:space="preserve">
+    <value>Some built in operators added in .NET 7 behave differently than the user defined operatorsi in .NET 6 and below. Some operators that used to throw in unchecked context while overflowing will not throw anymore unless wrapped within checked context, and some operators that not used to throw in checked context now would throw unless wrapped within unchecked context.</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage" xml:space="preserve">
+    <value>Starting with .NET 7 the explicit conversion '{0}' will not throw when overflowing in an unchecked context. Wrap the expression with a 'checked' statement to restore the .NET 6 behavior.</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorThrowsMessage" xml:space="preserve">
+    <value>Starting with .NET 7 the operator '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesTitle" xml:space="preserve">
+    <value>Prevent from behavioral change</value>
+  </data>
+  <data name="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage" xml:space="preserve">
+    <value>Starting with .NET 7 the explicit conversion '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</value>
   </data>
 </root>

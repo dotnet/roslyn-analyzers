@@ -53,6 +53,7 @@ namespace Analyzer.Utilities
         public const string MicrosoftCodeAnalysisDiagnosticsSymbolAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.SymbolAnalysisContext";
         public const string MicrosoftCodeAnalysisDiagnosticsSyntaxNodeAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext";
         public const string MicrosoftCodeAnalysisDiagnosticsSyntaxTreeAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.SyntaxTreeAnalysisContext";
+        public const string MicrosoftCodeAnalysisGeneratorAttribute = "Microsoft.CodeAnalysis.GeneratorAttribute";
         public const string MicrosoftCodeAnalysisHostMefMefConstruction = "Microsoft.CodeAnalysis.Host.Mef.MefConstruction";
         public const string MicrosoftCodeAnalysisLocalizableResourceString = "Microsoft.CodeAnalysis.LocalizableResourceString";
         public const string MicrosoftCodeAnalysisLocalizableString = "Microsoft.CodeAnalysis.LocalizableString";
@@ -126,7 +127,10 @@ namespace Analyzer.Utilities
         public const string SystemCollectionsGenericIEqualityComparer1 = "System.Collections.Generic.IEqualityComparer`1";
         public const string SystemCollectionsGenericIList1 = "System.Collections.Generic.IList`1";
         public const string SystemCollectionsGenericIReadOnlyCollection1 = "System.Collections.Generic.IReadOnlyCollection`1";
+        public const string SystemCollectionsGenericIReadOnlyDictionary2 = "System.Collections.Generic.IReadOnlyDictionary`2";
         public const string SystemCollectionsGenericIReadOnlyList1 = "System.Collections.Generic.IReadOnlyList`1";
+        public const string SystemCollectionsGenericIReadOnlySet1 = "System.Collections.Generic.IReadOnlySet`1";
+        public const string SystemCollectionsGenericISet1 = "System.Collections.Generic.ISet`1";
         public const string SystemCollectionsGenericKeyNotFoundException = "System.Collections.Generic.KeyNotFoundException";
         public const string SystemCollectionsGenericLinkedList1 = "System.Collections.Generic.LinkedList`1";
         public const string SystemCollectionsGenericList1 = "System.Collections.Generic.List`1";
@@ -135,6 +139,7 @@ namespace Analyzer.Utilities
         public const string SystemCollectionsGenericStack1 = "System.Collections.Generic.Stack`1";
         public const string SystemCollectionsGenericSortedSet1 = "System.Collections.Generic.SortedSet`1";
         public const string SystemCollectionsICollection = "System.Collections.ICollection";
+        public const string SystemCollectionsIDictionary = "System.Collections.IDictionary";
         public const string SystemCollectionsIEnumerable = "System.Collections.IEnumerable";
         public const string SystemCollectionsIEnumerator = "System.Collections.IEnumerator";
         public const string SystemCollectionsIHashCodeProvider = "System.Collections.IHashCodeProvider";
@@ -160,7 +165,9 @@ namespace Analyzer.Utilities
         public const string SystemCollectionsObjectModelReadOnlyCollection1 = "System.Collections.ObjectModel.ReadOnlyCollection`1";
         public const string SystemCollectionsObjectModelReadOnlyDictionary2 = "System.Collections.ObjectModel.ReadOnlyDictionary`2";
         public const string SystemCollectionsObjectModelReadOnlyObservableCollection1 = "System.Collections.ObjectModel.ReadOnlyObservableCollection`1";
+        public const string SystemCollectionsQueue = "System.Collections.Queue";
         public const string SystemCollectionsSpecializedNameValueCollection = "System.Collections.Specialized.NameValueCollection";
+        public const string SystemCollectionsStack = "System.Collections.Stack";
         public const string SystemComponentModelComponent = "System.ComponentModel.Component";
         public const string SystemComponentModelCompositionExportAttribute = "System.ComponentModel.Composition.ExportAttribute";
         public const string SystemComponentModelCompositionImportingConstructorAttribute = "System.ComponentModel.Composition.ImportingConstructorAttribute";
@@ -190,6 +197,7 @@ namespace Analyzer.Utilities
         public const string SystemDateTimeOffset = "System.DateTimeOffset";
         public const string SystemDecimal = "System.Decimal";
         public const string SystemDiagnosticContractsContract = "System.Diagnostics.Contracts.Contract";
+        public const string SystemDiagnosticsCodeAnalysisConstantExpectedAttribute = "System.Diagnostics.CodeAnalysis.ConstantExpectedAttribute";
         public const string SystemDiagnosticsCodeAnalysisNotNullAttribute = "System.Diagnostics.CodeAnalysis.NotNullAttribute";
         public const string SystemDiagnosticsConditionalAttribute = "System.Diagnostics.ConditionalAttribute";
         public const string SystemDiagnosticsContractsPureAttribute = "System.Diagnostics.Contracts.PureAttribute";
@@ -240,6 +248,7 @@ namespace Analyzer.Utilities
         public const string SystemIOStream = "System.IO.Stream";
         public const string SystemIOStringReader = "System.IO.StringReader";
         public const string SystemIOUnmanagedMemoryStream = "System.IO.UnmanagedMemoryStream";
+        public const string SystemIParsable1 = "System.IParsable`1";
         public const string SystemIProgress1 = "System.IProgress`1";
         public const string SystemLinqEnumerable = "System.Linq.Enumerable";
         public const string SystemLinqExpressionsExpression1 = "System.Linq.Expressions.Expression`1";
@@ -260,6 +269,7 @@ namespace Analyzer.Utilities
         public const string SystemNotSupportedException = "System.NotSupportedException";
         public const string SystemNullable1 = "System.Nullable`1";
         public const string SystemNumber = "System.Number";
+        public const string SystemNumericsINumber1 = "System.Numerics.INumber`1";
         public const string SystemObject = "System.Object";
         public const string SystemObsoleteAttribute = "System.ObsoleteAttribute";
         public const string SystemOperatingSystem = "System.OperatingSystem";
@@ -365,6 +375,8 @@ namespace Analyzer.Utilities
         public const string SystemSecurityCryptographyX509CertificatesX509Certificate2 = "System.Security.Cryptography.X509Certificates.X509Certificate2";
         public const string SystemSecurityCryptographyX509CertificatesX509Chain = "System.Security.Cryptography.X509Certificates.X509Chain";
         public const string SystemSecurityCryptographyX509CertificatesX509Store = "System.Security.Cryptography.X509Certificates.X509Store";
+        public const string SystemSecurityIPermission = "System.Security.IPermission";
+        public const string SystemSecurityPolicyIMembershipCondition = "System.Security.Policy.IMembershipCondition";
         public const string SystemSerializableAttribute = "System.SerializableAttribute";
         public const string SystemServiceModelMessageContractAttribute = "System.ServiceModel.MessageContractAttribute";
         public const string SystemServiceModelOperationContractAttribute = "System.ServiceModel.OperationContractAttribute";

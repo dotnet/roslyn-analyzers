@@ -12,7 +12,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1054: Uri parameters should not be strings
+    /// CA1054: <inheritdoc cref="UriParametersShouldNotBeStringsTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class UriParametersShouldNotBeStringsAnalyzer : DiagnosticAnalyzer
@@ -101,6 +101,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 if (method.ContainingType.DerivesFrom(_attribute, baseTypesOnly: true))
                 {
                     // Attributes cannot accept System.Uri objects as positional or optional attributes
+                    return;
+                }
+
+                if (context.Options.IsConfiguredToSkipAnalysis(Rule, method, context.Compilation))
+                {
+                    // property is excluded from analysis
                     return;
                 }
 

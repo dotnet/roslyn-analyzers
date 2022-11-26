@@ -24,6 +24,17 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
     using PooledResourcesDataValueConcurrentDictionary = PooledConcurrentDictionary<string, ImmutableDictionary<string, (string value, Location location)>>;
     using PooledFieldToResourceNameAndFileNameConcurrentDictionary = PooledConcurrentDictionary<IFieldSymbol, (string nameOfResource, string resourceFileName)>;
 
+    /// <summary>
+    /// RS1007 <inheritdoc cref="UseLocalizableStringsInDescriptorTitle"/>
+    /// RS1015 <inheritdoc cref="ProvideHelpUriInDescriptorTitle"/>
+    /// RS1017 <inheritdoc cref="DiagnosticIdMustBeAConstantTitle"/>
+    /// RS1019 <inheritdoc cref="UseUniqueDiagnosticIdTitle"/>
+    /// RS1028 <inheritdoc cref="ProvideCustomTagsInDescriptorTitle"/>
+    /// RS1029 <inheritdoc cref="DoNotUseReservedDiagnosticIdTitle"/>
+    /// RS1031 <inheritdoc cref="DefineDiagnosticTitleCorrectlyTitle"/>
+    /// RS1032 <inheritdoc cref="DefineDiagnosticMessageCorrectlyTitle"/>
+    /// RS1033 <inheritdoc cref="DefineDiagnosticDescriptionCorrectlyTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed partial class DiagnosticDescriptorCreationAnalyzer : DiagnosticAnalyzer
     {
@@ -58,9 +69,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             "Text.CSharp.Analyzers",
             "Text.VisualBasic.Analyzers");
 
-        /// <summary>
-        /// RS1007 (<inheritdoc cref="UseLocalizableStringsInDescriptorTitle"/>)
-        /// </summary>
         public static readonly DiagnosticDescriptor UseLocalizableStringsInDescriptorRule = new(
             DiagnosticIds.UseLocalizableStringsInDescriptorRuleId,
             CreateLocalizableResourceString(nameof(UseLocalizableStringsInDescriptorTitle)),
@@ -71,9 +79,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             description: CreateLocalizableResourceString(nameof(UseLocalizableStringsInDescriptorDescription)),
             customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        /// <summary>
-        /// RS1015 (<inheritdoc cref="ProvideHelpUriInDescriptorTitle"/>)
-        /// </summary>
         public static readonly DiagnosticDescriptor ProvideHelpUriInDescriptorRule = new(
             DiagnosticIds.ProvideHelpUriInDescriptorRuleId,
             CreateLocalizableResourceString(nameof(ProvideHelpUriInDescriptorTitle)),
@@ -84,9 +89,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             description: CreateLocalizableResourceString(nameof(ProvideHelpUriInDescriptorDescription)),
             customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        /// <summary>
-        /// RS1017 (<inheritdoc cref="DiagnosticIdMustBeAConstantTitle"/>)
-        /// </summary>
         public static readonly DiagnosticDescriptor DiagnosticIdMustBeAConstantRule = new(
             DiagnosticIds.DiagnosticIdMustBeAConstantRuleId,
             CreateLocalizableResourceString(nameof(DiagnosticIdMustBeAConstantTitle)),
@@ -97,9 +99,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             description: CreateLocalizableResourceString(nameof(DiagnosticIdMustBeAConstantDescription)),
             customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        /// <summary>
-        /// RS1019 (<inheritdoc cref="UseUniqueDiagnosticIdTitle"/>)
-        /// </summary>
         public static readonly DiagnosticDescriptor UseUniqueDiagnosticIdRule = new(
             DiagnosticIds.UseUniqueDiagnosticIdRuleId,
             CreateLocalizableResourceString(nameof(UseUniqueDiagnosticIdTitle)),
@@ -110,9 +109,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             description: CreateLocalizableResourceString(nameof(UseUniqueDiagnosticIdDescription)),
             customTags: WellKnownDiagnosticTagsExtensions.CompilationEndAndTelemetry);
 
-        /// <summary>
-        /// RS1028 (<inheritdoc cref="ProvideCustomTagsInDescriptorTitle"/>)
-        /// </summary>
         public static readonly DiagnosticDescriptor ProvideCustomTagsInDescriptorRule = new(
             DiagnosticIds.ProvideCustomTagsInDescriptorRuleId,
             CreateLocalizableResourceString(nameof(ProvideCustomTagsInDescriptorTitle)),
@@ -123,9 +119,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             description: CreateLocalizableResourceString(nameof(ProvideCustomTagsInDescriptorDescription)),
             customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        /// <summary>
-        /// RS1029 (<inheritdoc cref="DoNotUseReservedDiagnosticIdTitle"/>)
-        /// </summary>
         public static readonly DiagnosticDescriptor DoNotUseReservedDiagnosticIdRule = new(
             DiagnosticIds.DoNotUseReservedDiagnosticIdRuleId,
             CreateLocalizableResourceString(nameof(DoNotUseReservedDiagnosticIdTitle)),
@@ -136,9 +129,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             description: CreateLocalizableResourceString(nameof(DoNotUseReservedDiagnosticIdDescription)),
             customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        /// <summary>
-        /// RS1031 (<inheritdoc cref="DefineDiagnosticTitleCorrectlyTitle"/>)
-        /// </summary>
         public static readonly DiagnosticDescriptor DefineDiagnosticTitleCorrectlyRule = new(
             DiagnosticIds.DefineDiagnosticTitleCorrectlyRuleId,
             CreateLocalizableResourceString(nameof(DefineDiagnosticTitleCorrectlyTitle)),
@@ -148,9 +138,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             isEnabledByDefault: true,
             customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        /// <summary>
-        /// RS1032 (<inheritdoc cref="DefineDiagnosticMessageCorrectlyTitle"/>)
-        /// </summary>
         public static readonly DiagnosticDescriptor DefineDiagnosticMessageCorrectlyRule = new(
             DiagnosticIds.DefineDiagnosticMessageCorrectlyRuleId,
             CreateLocalizableResourceString(nameof(DefineDiagnosticMessageCorrectlyTitle)),
@@ -160,9 +147,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             isEnabledByDefault: true,
             customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        /// <summary>
-        /// RS1033 (<inheritdoc cref="DefineDiagnosticDescriptionCorrectlyTitle"/>)
-        /// </summary>
         public static readonly DiagnosticDescriptor DefineDiagnosticDescriptionCorrectlyRule = new(
             DiagnosticIds.DefineDiagnosticDescriptionCorrectlyRuleId,
             CreateLocalizableResourceString(nameof(DefineDiagnosticDescriptionCorrectlyTitle)),
@@ -393,7 +377,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             [NotNullWhen(returnValue: true)] out IMethodSymbol? creationMethod,
             [NotNullWhen(returnValue: true)] out ImmutableArray<IArgumentOperation> creationArguments)
         {
-            (creationMethod, creationArguments) = fieldInitializer.Value switch
+            (creationMethod, creationArguments) = fieldInitializer.Value.WalkDownConversion() switch
             {
                 IObjectCreationOperation objectCreation when IsDescriptorConstructor(objectCreation.Constructor)
                     => (objectCreation.Constructor, objectCreation.Arguments),
@@ -764,6 +748,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 fieldReferenceOperation.Syntax.SyntaxTree == argumentValueOperation.Syntax.SyntaxTree &&
                 fieldReferenceOperation.Field.DeclaringSyntaxReferences.Length == 1 &&
                 fieldReferenceOperation.Field.DeclaringSyntaxReferences[0].GetSyntax() is { } fieldDeclaration &&
+                fieldDeclaration.SyntaxTree == argumentValueOperation.Syntax.SyntaxTree &&
                 GetFieldInitializer(fieldDeclaration, argumentValueOperation.SemanticModel) is { } fieldInitializer &&
                 fieldInitializer.Value.WalkDownConversion() is ILiteralOperation fieldInitializerLiteral)
             {
@@ -827,7 +812,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         {
             Debug.Assert(IsMultiSentences(s));
             var index = s.IndexOf(MultiSentenceSeparator, StringComparison.OrdinalIgnoreCase);
-            return s.Substring(0, index);
+            return s[..index];
         }
 
         private static bool EndsWithPeriod(string s)
@@ -878,12 +863,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             var lastChar = s[^1];
 
             return lastChar.Equals('.') || lastChar.Equals('!') || lastChar.Equals('?');
-        }
-
-        private static string RemoveTrailingPunctuation(string s)
-        {
-            Debug.Assert(EndsWithPunctuation(s));
-            return s[0..^1];
         }
 
         private static bool HasLeadingOrTrailingWhitespaces(string s)
@@ -1140,7 +1119,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 return false;
             }
 
-            if (!ruleId[2..].All(c => char.IsDigit(c)))
+            if (!ruleId[2..].All(char.IsDigit))
             {
                 return false;
             }

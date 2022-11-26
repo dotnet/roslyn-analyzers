@@ -13,7 +13,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1064: Exceptions should be public
+    /// CA1064: <inheritdoc cref="ExceptionsShouldBePublicTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ExceptionsShouldBePublicAnalyzer : DiagnosticAnalyzer
@@ -51,7 +51,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             // Get named type symbols for targetted exception types
             ImmutableHashSet<INamedTypeSymbol> exceptionTypes = s_exceptionTypeNames
-                .Select(name => csContext.Compilation.GetOrCreateTypeByMetadataName(name))
+                .Select(csContext.Compilation.GetOrCreateTypeByMetadataName)
                 .WhereNotNull()
                 .ToImmutableHashSet();
 

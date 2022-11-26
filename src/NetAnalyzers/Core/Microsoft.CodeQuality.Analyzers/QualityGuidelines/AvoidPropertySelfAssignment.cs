@@ -12,7 +12,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA2245: Prevent properties from being assigned to themselves
+    /// CA2245: <inheritdoc cref="AvoidPropertySelfAssignmentTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
 
@@ -101,7 +101,6 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     return Equals(targetArg.ConstantValue.Value, valueArg.ConstantValue.Value);
                 }
 
-#pragma warning disable IDE0055 // Fix formatting - Does not seem to be handling switch expressions.
                 return targetArg switch
                 {
                     ILocalReferenceOperation targetLocalReference =>
@@ -110,7 +109,6 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         Equals(targetParameterReference.Parameter, ((IParameterReferenceOperation)valueArg).Parameter),
                     _ => false,
                 };
-#pragma warning restore IDE0055 // Fix formatting
             }
         }
     }

@@ -18,6 +18,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
+    /// <summary>
+    /// CA2213: <inheritdoc cref="DisposableFieldsShouldBeDisposedTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DisposableFieldsShouldBeDisposed : DiagnosticAnalyzer
     {
@@ -98,6 +101,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (IsDisposeMethod(method))
                     {
                         return true;
+                    }
+                }
+
+                foreach (var type in namedType.GetBaseTypes())
+                {
+                    foreach (var method in type.GetMembers().WhereAsArray(x => x.IsVirtual && x.Kind == SymbolKind.Method))
+                    {
+                        if (IsDisposeMethod((IMethodSymbol)method))
+                        {
+                            return true;
+                        }
                     }
                 }
 

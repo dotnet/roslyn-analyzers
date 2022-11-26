@@ -14,7 +14,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1019: Define accessors for attribute arguments
+    /// CA1019: <inheritdoc cref="DefineAccessorsForAttributeArgumentsTitle"/>
     ///
     /// Cause:
     /// In its constructor, an attribute defines arguments that do not have corresponding properties.
@@ -124,7 +124,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var propertiesMap = new Dictionary<string, IPropertySymbol>(StringComparer.OrdinalIgnoreCase);
             foreach (INamedTypeSymbol currentType in attributeType.GetBaseTypesAndThis())
             {
-                foreach (IPropertySymbol property in currentType.GetMembers().Where(m => m.Kind == SymbolKind.Property))
+                foreach (IPropertySymbol property in currentType.GetMembers().Where(m => m.Kind == SymbolKind.Property).Cast<IPropertySymbol>())
                 {
                     if (!propertiesMap.ContainsKey(property.Name))
                     {

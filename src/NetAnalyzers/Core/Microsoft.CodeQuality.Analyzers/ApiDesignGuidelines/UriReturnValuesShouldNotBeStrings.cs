@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1055: Uri return values should not be strings
+    /// CA1055: <inheritdoc cref="UriReturnValuesShouldNotBeStringsTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class UriReturnValuesShouldNotBeStringsAnalyzer : DiagnosticAnalyzer
@@ -95,6 +95,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 if (!method.SymbolNameContainsUriWords(context.CancellationToken))
                 {
                     // doesn't contain uri word in its name
+                    return;
+                }
+
+                if (context.Options.IsConfiguredToSkipAnalysis(Rule, method, context.Compilation))
+                {
+                    // property is excluded from analysis
                     return;
                 }
 

@@ -87,6 +87,36 @@ public class A
 }
 ");
 
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+
+namespace Z
+{
+    public class A
+    {
+        public void B()
+        {
+            Console.WriteLine({|CA1855:new int[]{ 1, 2, 3 }|});
+        }
+    }
+}
+", @"
+using System;
+
+namespace Z
+{
+    public class A
+    {
+        private static readonly int[] value = new int[]{ 1, 2, 3 };
+
+        public void B()
+        {
+            Console.WriteLine(value);
+        }
+    }
+}
+");
+
             await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 

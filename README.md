@@ -34,9 +34,9 @@ Recently the set of analyzer packages produced by this repository have been cons
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)</sub>
 
-*Latest pre-release version (.NET6 analyzers):* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet6/NuGet/Microsoft.CodeAnalysis.NetAnalyzers/6.0.0-rtm.21518.1/versions)
+*Latest pre-release version (.NET6 analyzers):* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet6/NuGet/Microsoft.CodeAnalysis.NetAnalyzers/versions)
 
-*Latest pre-release version (.NET7 analyzers):* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.NetAnalyzers/7.0.0-preview1.22204.1/versions)
+*Latest pre-release version (.NET7 analyzers):* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.NetAnalyzers/versions)
 
 This is the **primary analyzer package** for this repo that contains all **the .NET code analysis rules (CAxxxx)** that are built into the .NET SDK starting .NET5 release. The documentation for CA rules can be found at [docs.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings](https://docs.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings).
 
@@ -102,7 +102,7 @@ This package contains rules for correct usage of APIs that are present only in *
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers)</sub>
 
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.Analyzers/3.3.4-beta1.22204.1/versions)
+*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.Analyzers/versions)
 
 This package contains rules for correct usage of APIs from the [Microsoft.CodeAnalysis](https://www.nuget.org/packages/Microsoft.CodeAnalysis) NuGet package, i.e. .NET Compiler Platform ("Roslyn") APIs. These are primarily aimed towards helping authors of diagnostic analyzers and code fix providers to invoke the Microsoft.CodeAnalysis APIs in a recommended manner. [More info about rules in this package](src/Microsoft.CodeAnalysis.Analyzers/Microsoft.CodeAnalysis.Analyzers.md)
 
@@ -110,7 +110,7 @@ This package contains rules for correct usage of APIs from the [Microsoft.CodeAn
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Roslyn.Diagnostics.Analyzers.svg)](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers)</sub>
 
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Roslyn.Diagnostics.Analyzers/3.3.4-beta1.22204.1/versions)
+*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Roslyn.Diagnostics.Analyzers/versions)
 
 This package contains rules that are very specific to the .NET Compiler Platform ("Roslyn") project, i.e. [dotnet/roslyn](https://github.com/dotnet/roslyn) repo. This analyzer package is *not intended for general consumption* outside the Roslyn repo. [More info about rules in this package](src/Roslyn.Diagnostics.Analyzers/Roslyn.Diagnostics.Analyzers.md)
 
@@ -118,7 +118,7 @@ This package contains rules that are very specific to the .NET Compiler Platform
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.BannedApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.BannedApiAnalyzers)</sub>
 
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.BannedApiAnalyzers/3.3.4-beta1.22204.1/versions)
+*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.BannedApiAnalyzers/versions)
 
 This package contains customizable rules for identifying references to banned APIs. [More info about rules in this package](src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Microsoft.CodeAnalysis.BannedApiAnalyzers.md)
 
@@ -126,7 +126,7 @@ This package contains customizable rules for identifying references to banned AP
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.PublicApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.PublicApiAnalyzers)</sub>
 
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.PublicApiAnalyzers/3.3.4-beta1.22204.1/versions)
+*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.PublicApiAnalyzers/versions)
 
 This package contains rules to help library authors monitoring change to their public APIs. [More info about rules in this package](src/PublicApiAnalyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.md)
 

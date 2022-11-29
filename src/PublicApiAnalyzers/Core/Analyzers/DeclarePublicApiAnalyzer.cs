@@ -118,7 +118,11 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                             context.ReportDiagnostic(cur);
                         }
                     });
+
+                    return;
                 }
+
+                Debug.Assert(errors.Count == 0);
 
                 RegisterImplActions(compilationContext, new Impl(compilationContext.Compilation, shippedData, unshippedData, isPublic, compilationContext.Options));
 

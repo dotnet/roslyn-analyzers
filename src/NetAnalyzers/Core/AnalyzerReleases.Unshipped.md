@@ -6,3 +6,7 @@ Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 CA1856 | Performance | Error | ConstantExpectedAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856)
 CA1857 | Performance | Warning | ConstantExpectedAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857)
+CA1858 | Performance | Info | UseExceptionThrowHelpers, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858)
+CA1859 | Performance | Info | UseExceptionThrowHelpers, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859)
+CA1860 | Performance | Info | UseExceptionThrowHelpers, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860)
+CA1861 | Performance | Info | UseExceptionThrowHelpers, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861)

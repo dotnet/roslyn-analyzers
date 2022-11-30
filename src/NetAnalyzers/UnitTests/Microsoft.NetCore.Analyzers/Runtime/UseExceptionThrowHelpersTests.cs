@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.UseExceptionThrowHelpers,
@@ -114,6 +115,10 @@ class C
         {
             throw new ArgumentNullException(nameof(arg));
         }|}
+        {|CA1858:if (null == arg)
+        {
+            throw new ArgumentNullException(""something else"");
+        }|}
 
         if (arg is null)
             throw new ArgumentNullException(nameof(arg), ""possibly meaningful message"");
@@ -182,6 +187,7 @@ class C
         ArgumentNullException.ThrowIfNull(arg);
         ArgumentNullException.ThrowIfNull(arg);
         ArgumentNullException.ThrowIfNull(arg);
+        ArgumentNullException.ThrowIfNull(arg);
 
         if (arg is null)
             throw new ArgumentNullException(nameof(arg), ""possibly meaningful message"");
@@ -220,6 +226,36 @@ class C
             ArgumentNullException.ThrowIfNull(name);
             return name;
         }
+    }
+}
+"
+            }.RunAsync();
+        }
+
+
+        [Fact]
+        public async Task ArgumentNullExceptionThrowIfNull_EnsureSystemIsUsed()
+        {
+            await new VerifyCS.Test()
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
+                TestCode =
+@"
+class C
+{
+    void M(string arg)
+    {
+        {|CA1858:if (arg is null) throw new System.ArgumentNullException(nameof(arg));|}
+    }
+}
+",
+                FixedCode =
+@"
+class C
+{
+    void M(string arg)
+    {
+        System.ArgumentNullException.ThrowIfNull(arg);
     }
 }
 "

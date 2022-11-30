@@ -168,9 +168,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                     }
 
-                    // Now match the exception type against one of our known types.  If it matches,
-                    // validate that it's the only expression inside an if block with an appropriate condition.
-                    // In such a case, report a diagnostic.
+                    // Now match the exception type against one of our known types.
 
                     // Handle ArgumentNullException.ThrowIfNull.
                     if (SymbolEqualityComparer.Default.Equals(objectCreationOperation.Type, ane))
@@ -337,8 +335,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             if (condition is IInvocationOperation invocationOperation)
             {
                 // (string.IsNullOrEmpty(arg))
-                if (stringIsNullOrEmpty is not null &&
-                    SymbolEqualityComparer.Default.Equals(invocationOperation.TargetMethod, stringIsNullOrEmpty) &&
+                if (SymbolEqualityComparer.Default.Equals(invocationOperation.TargetMethod, stringIsNullOrEmpty) &&
                     invocationOperation.Arguments is [IArgumentOperation arg] &&
                     arg.Value is IParameterReferenceOperation parameterReferenceOperation)
                 {
@@ -353,18 +350,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // arg is null ||
 
                 // arg.Length == 0
-                if (stringLength is not null &&
-                    (IsArgLengthEqual0(stringLength, nullCheckParameter.Parameter, lengthCheckOperation.LeftOperand, lengthCheckOperation.RightOperand) ||
-                     IsArgLengthEqual0(stringLength, nullCheckParameter.Parameter, lengthCheckOperation.RightOperand, lengthCheckOperation.LeftOperand)))
+                if (IsArgLengthEqual0(stringLength, nullCheckParameter.Parameter, lengthCheckOperation.LeftOperand, lengthCheckOperation.RightOperand) ||
+                    IsArgLengthEqual0(stringLength, nullCheckParameter.Parameter, lengthCheckOperation.RightOperand, lengthCheckOperation.LeftOperand))
                 {
                     parameterReference = nullCheckParameter;
                     return true;
                 }
 
                 // arg == string.Empty
-                if (stringEmpty is not null &&
-                    (IsArgEqualStringEmpty(stringEmpty, nullCheckParameter.Parameter, lengthCheckOperation.LeftOperand, lengthCheckOperation.RightOperand) ||
-                     IsArgEqualStringEmpty(stringEmpty, nullCheckParameter.Parameter, lengthCheckOperation.RightOperand, lengthCheckOperation.LeftOperand)))
+                if (IsArgEqualStringEmpty(stringEmpty, nullCheckParameter.Parameter, lengthCheckOperation.LeftOperand, lengthCheckOperation.RightOperand) ||
+                    IsArgEqualStringEmpty(stringEmpty, nullCheckParameter.Parameter, lengthCheckOperation.RightOperand, lengthCheckOperation.LeftOperand))
                 {
                     parameterReference = nullCheckParameter;
                     return true;
@@ -435,26 +430,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         break;
 
                     case BinaryOperatorKind.LessThanOrEqual or BinaryOperatorKind.LessThan:
-                        if (binaryOperation.LeftOperand is IParameterReferenceOperation &&
+                        if (binaryOperation.LeftOperand is IParameterReferenceOperation leftOperandParameterReference &&
                             binaryOperation.RightOperand.WalkDownConversion() is ILiteralOperation { ConstantValue: { HasValue: true, Value: 0 } })
                         {
                             // arg < 0
                             // arg <= 0
                             methodName = binaryOperation.OperatorKind == BinaryOperatorKind.LessThanOrEqual ? ThrowIfNegativeOrZero : ThrowIfNegative;
-                            parameterReferenceOperation = binaryOperation.LeftOperand as IParameterReferenceOperation;
-                            return parameterReferenceOperation is not null;
+                            parameterReferenceOperation = leftOperandParameterReference;
+                            return true;
                         }
                         break;
 
                     case BinaryOperatorKind.GreaterThanOrEqual or BinaryOperatorKind.GreaterThan:
-                        if (binaryOperation.RightOperand is IParameterReferenceOperation &&
+                        if (binaryOperation.RightOperand is IParameterReferenceOperation rightOperationParameterReference &&
                             binaryOperation.LeftOperand.WalkDownConversion() is ILiteralOperation { ConstantValue: { HasValue: true, Value: 0 } })
                         {
                             // 0 > arg
                             // 0 >= arg
                             methodName = binaryOperation.OperatorKind == BinaryOperatorKind.GreaterThanOrEqual ? ThrowIfNegativeOrZero : ThrowIfNegative;
-                            parameterReferenceOperation = binaryOperation.RightOperand as IParameterReferenceOperation;
-                            return parameterReferenceOperation is not null;
+                            parameterReferenceOperation = rightOperationParameterReference;
+                            return true;
                         }
                         break;
                 }

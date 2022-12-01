@@ -9,3 +9,4 @@ CA1853 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1855 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1855> | Prefer 'Clear' over 'Fill' |
 CA1856 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856> | Incorrect usage of ConstantExpected attribute |
 CA1857 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857> | A constant is expected for the parameter |
+CA1858 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858> | Use 'StartsWith' |

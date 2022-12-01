@@ -158,5 +158,57 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
             await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
         }
+
+        [Fact]
+        public async Task FixAll_CSharp_Diagnostic()
+        {
+            var testCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = [|a.IndexOf("abc") != 0|];
+                        _ = [|a.IndexOf("abcd") != 0|];
+                    }
+                }
+                """;
+
+            var fixedCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = !a.StartsWith("abc");
+                        _ = !a.StartsWith("abcd");
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(testCode, fixedCode);
+        }
+
+        [Fact]
+        public async Task FixAll_VB_Diagnostic()
+        {
+            var testCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused1 = [|a.IndexOf("abc") <> 0|]
+                        Dim unused2 = [|a.IndexOf("abcd") <> 0|]
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused1 = Not a.StartsWith("abc")
+                        Dim unused2 = Not a.StartsWith("abcd")
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
+        }
     }
 }

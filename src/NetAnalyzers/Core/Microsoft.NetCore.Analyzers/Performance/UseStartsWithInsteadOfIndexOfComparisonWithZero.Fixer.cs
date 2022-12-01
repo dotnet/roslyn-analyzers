@@ -15,6 +15,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(UseStartsWithInsteadOfIndexOfComparisonWithZero.RuleId);
 
+        public override FixAllProvider GetFixAllProvider()
+            => WellKnownFixAllProviders.BatchFixer;
+
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var document = context.Document;

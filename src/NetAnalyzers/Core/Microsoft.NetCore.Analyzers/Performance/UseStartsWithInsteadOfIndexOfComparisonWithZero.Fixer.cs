@@ -24,15 +24,20 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var diagnostic = context.Diagnostics[0];
             var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var node = root.FindNode(context.Span, getInnermostNodeForTie: true);
-            var instance = root.FindNode(diagnostic.AdditionalLocations[0].SourceSpan);
-            var argument = root.FindNode(diagnostic.AdditionalLocations[1].SourceSpan);
 
             context.RegisterCodeFix(
                 CodeAction.Create(MicrosoftNetCoreAnalyzersResources.UseStartsWithInsteadOfIndexOfComparisonWithZeroTitle,
                 createChangedDocument: cancellationToken =>
                 {
+                    var instance = root.FindNode(diagnostic.AdditionalLocations[0].SourceSpan);
+                    var arguments = new SyntaxNode[diagnostic.AdditionalLocations.Count - 1];
+                    for (int i = 1; i < diagnostic.AdditionalLocations.Count; i++)
+                    {
+                        arguments[i - 1] = root.FindNode(diagnostic.AdditionalLocations[i].SourceSpan);
+                    }
+
                     var generator = SyntaxGenerator.GetGenerator(document);
-                    var expression = generator.InvocationExpression(generator.MemberAccessExpression(instance, "StartsWith"), argument);
+                    var expression = generator.InvocationExpression(generator.MemberAccessExpression(instance, "StartsWith"), arguments);
 
                     var shouldNegate = diagnostic.Properties.TryGetValue(UseStartsWithInsteadOfIndexOfComparisonWithZero.ShouldNegateKey, out _);
                     if (shouldNegate)

@@ -40,11 +40,33 @@ namespace Microsoft.NetCore.Analyzers.Performance
             context.RegisterCompilationStartAction(context =>
             {
                 var stringType = context.Compilation.GetSpecialType(SpecialType.System_String);
+                var indexOf = stringType.GetMembers("IndexOf").OfType<IMethodSymbol>();
+                var indexOfString = indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_String }]);
+                var indexOfChar = indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_Char }]);
+                var indexOfStringStringComparison = indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_String }, { Name: "comparisonType" }]);
                 if (stringType.GetMembers("StartsWith").FirstOrDefault() is not IMethodSymbol ||
-                    stringType.GetMembers("IndexOf").FirstOrDefault() is not IMethodSymbol indexOfSymbol)
+                    (indexOfString is null && indexOfChar is null && indexOfStringStringComparison is null))
                 {
                     return;
                 }
+
+                var indexOfMethodsBuilder = ImmutableArray.CreateBuilder<IMethodSymbol>();
+                if (indexOfChar is not null)
+                {
+                    indexOfMethodsBuilder.Add(indexOfChar);
+                }
+
+                if (indexOfString is not null)
+                {
+                    indexOfMethodsBuilder.Add(indexOfString);
+                }
+
+                if (indexOfStringStringComparison is not null)
+                {
+                    indexOfMethodsBuilder.Add(indexOfStringStringComparison);
+                }
+
+                var indexOfMethods = indexOfMethodsBuilder.ToImmutable();
 
                 context.RegisterOperationAction(context =>
                 {
@@ -54,8 +76,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         return;
                     }
 
-                    if (IsIndexOfComparedWithZero(binaryOperation.LeftOperand, binaryOperation.RightOperand, indexOfSymbol, out var instanceLocation, out var argumentLocation) ||
-                        IsIndexOfComparedWithZero(binaryOperation.RightOperand, binaryOperation.LeftOperand, indexOfSymbol, out instanceLocation, out argumentLocation))
+                    if (IsIndexOfComparedWithZero(binaryOperation.LeftOperand, binaryOperation.RightOperand, indexOfMethods, out var additionalLocations) ||
+                        IsIndexOfComparedWithZero(binaryOperation.RightOperand, binaryOperation.LeftOperand, indexOfMethods, out additionalLocations))
                     {
                         var properties = ImmutableDictionary<string, string?>.Empty;
                         if (binaryOperation.OperatorKind == BinaryOperatorKind.NotEquals)
@@ -63,29 +85,33 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             properties = properties.Add(ShouldNegateKey, "");
                         }
 
-                        context.ReportDiagnostic(binaryOperation.CreateDiagnostic(Rule, additionalLocations: ImmutableArray.Create(instanceLocation, argumentLocation), properties: properties));
+                        context.ReportDiagnostic(binaryOperation.CreateDiagnostic(Rule, additionalLocations: additionalLocations, properties: properties));
                     }
 
                 }, OperationKind.Binary);
             });
         }
 
-        private static bool IsIndexOfComparedWithZero(IOperation left, IOperation right, IMethodSymbol indexOfSymbol, [NotNullWhen(true)] out Location? instanceLocation, [NotNullWhen(true)] out Location? argumentLocation)
+        private static bool IsIndexOfComparedWithZero(IOperation left, IOperation right, ImmutableArray<IMethodSymbol> indexOfMethods, out ImmutableArray<Location> additionalLocations)
         {
-            if (right.ConstantValue is not { HasValue: true, Value: 0 } ||
-                left is not IInvocationOperation invocation ||
-                invocation.Arguments.Length != 1 ||
-                SymbolEqualityComparer.Default.Equals(invocation.TargetMethod, indexOfSymbol))
+            if (right.ConstantValue is { HasValue: true, Value: 0 } &&
+                left is IInvocationOperation invocation)
             {
-                instanceLocation = null;
-                argumentLocation = null;
-                return false;
+                foreach (var indexOfMethod in indexOfMethods)
+                {
+                    if (indexOfMethod.Parameters.Length == invocation.Arguments.Length && indexOfMethod.Equals(invocation.TargetMethod, SymbolEqualityComparer.Default))
+                    {
+                        var locationsBuilder = ImmutableArray.CreateBuilder<Location>();
+                        locationsBuilder.Add(invocation.Instance.Syntax.GetLocation());
+                        locationsBuilder.AddRange(invocation.Arguments.Select(arg => arg.Syntax.GetLocation()));
+                        additionalLocations = locationsBuilder.ToImmutable();
+                        return true;
+                    }
+                }
             }
 
-
-            instanceLocation = invocation.Instance.Syntax.GetLocation();
-            argumentLocation = invocation.Arguments[0].Syntax.GetLocation();
-            return true;
+            additionalLocations = ImmutableArray<Location>.Empty;
+            return false;
         }
     }
 }

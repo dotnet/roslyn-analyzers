@@ -64,6 +64,54 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task ZeroOnLeft_CSharp_Diagnostic()
+        {
+            var testCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = [|0 == a.IndexOf("")|];
+                    }
+                }
+                """;
+
+            var fixedCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = a.StartsWith("");
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(testCode, fixedCode);
+        }
+
+        [Fact]
+        public async Task ZeroOnLeft_VB_Diagnostic()
+        {
+            var testCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = [|0 = a.IndexOf("abc")|]
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = a.StartsWith("abc")
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
+        }
+
+        [Fact]
         public async Task Negated_CSharp_Diagnostic()
         {
             var testCode = """
@@ -252,6 +300,108 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 Class C
                     Sub M(a As String)
                         Dim unused = a.StartsWith(("abc2".StartsWith("abc3")).ToString())
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
+        }
+
+        [Fact]
+        public async Task StringStringComparison_CSharp_Diagnostic()
+        {
+            var testCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = [|a.IndexOf("abc", System.StringComparison.Ordinal) == 0|];
+                    }
+                }
+                """;
+
+            var fixedCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = a.StartsWith("abc", System.StringComparison.Ordinal);
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(testCode, fixedCode);
+        }
+
+        [Fact]
+        public async Task StringStringComparison_VB_Diagnostic()
+        {
+            var testCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = [|a.IndexOf("abc", System.StringComparison.Ordinal) = 0|]
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = a.StartsWith("abc", System.StringComparison.Ordinal)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
+        }
+
+        [Fact]
+        public async Task OutOfOrderNamedArguments_CSharp_Diagnostic()
+        {
+            var testCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = [|a.IndexOf(comparisonType: System.StringComparison.Ordinal, value: "abc") == 0|];
+                    }
+                }
+                """;
+
+            var fixedCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = a.StartsWith(comparisonType: System.StringComparison.Ordinal, value: "abc");
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(testCode, fixedCode);
+        }
+
+        [Fact]
+        public async Task OutOfOrderNamedArguments_VB_Diagnostic()
+        {
+            // IInvocationOperation.Arguments appears to behave differently in C# vs VB.
+            // In C#, the order of arguments are preserved, as they appear in source.
+            // In VB, the order of arguments is the same as parameters order.
+            // If we wanted to make VB behavior similar to OutOfOrderNamedArguments_CSharp_Diagnostic, we will need
+            // to go back to syntax. This scenario doesn't seem important/common, so might be good for now until
+            // we hear any user feedback.
+            var testCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = [|a.IndexOf(comparisonType:=System.StringComparison.Ordinal, value:="abc") = 0|]
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = a.StartsWith(value:="abc", comparisonType:=System.StringComparison.Ordinal)
                     End Sub
                 End Class
                 """;

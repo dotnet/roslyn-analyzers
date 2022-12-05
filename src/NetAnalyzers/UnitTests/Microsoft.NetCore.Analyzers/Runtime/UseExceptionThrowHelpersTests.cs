@@ -97,27 +97,36 @@ class C
 {
     void M(string arg)
     {
-        {|CA1858:if (arg is null)
+        {|CA1510:if (arg is null)
             throw new ArgumentNullException(nameof(arg));|}
-        {|CA1858:if (arg == null)
+        {|CA1510:if (arg == null)
             throw new ArgumentNullException(nameof(arg), (string)null);|}
-        {|CA1858:if (null == arg)
+        {|CA1510:if (null == arg)
             throw new ArgumentNullException(nameof(arg));|}
-        {|CA1858:if (arg is null)
+        {|CA1510:if (arg is null)
         {
             throw new ArgumentNullException(nameof(arg));
         }|}
-        {|CA1858:if (arg == null)
+        {|CA1510:if (arg == null)
         {
             throw new ArgumentNullException(nameof(arg), """");
         }|}
-        {|CA1858:if (null == arg)
+        {|CA1510:if (null == arg)
         {
             throw new ArgumentNullException(nameof(arg));
         }|}
-        {|CA1858:if (null == arg)
+        {|CA1510:if (null == arg)
         {
             throw new ArgumentNullException(""something else"");
+        }|}
+
+        if (arg == ""test"")
+        {
+            Console.WriteLine(arg);
+        }
+        else {|CA1510:if (arg is null)
+        {
+            throw new ArgumentNullException(nameof(arg));
         }|}
 
         if (arg is null)
@@ -147,6 +156,15 @@ class C
             throw new ArgumentNullException(nameof(arg));
         }
 
+        if (arg is null)
+        {
+            throw new ArgumentNullException(nameof(arg));
+        }
+        else if (arg == ""test"")
+        {
+            Console.WriteLine(arg);
+        }
+
         throw new ArgumentNullException(nameof(arg)); // no guard
     }
 
@@ -154,7 +172,7 @@ class C
     {
         get
         {
-            {|CA1858:if (name is null)
+            {|CA1510:if (name is null)
                 throw new ArgumentNullException(nameof(name));|}
             return name;
         }
@@ -189,6 +207,12 @@ class C
         ArgumentNullException.ThrowIfNull(arg);
         ArgumentNullException.ThrowIfNull(arg);
 
+        if (arg == ""test"")
+        {
+            Console.WriteLine(arg);
+        }
+        else ArgumentNullException.ThrowIfNull(arg);
+
         if (arg is null)
             throw new ArgumentNullException(nameof(arg), ""possibly meaningful message"");
 
@@ -214,6 +238,15 @@ class C
         if (null != arg) // inverted condition
         {
             throw new ArgumentNullException(nameof(arg));
+        }
+
+        if (arg is null)
+        {
+            throw new ArgumentNullException(nameof(arg));
+        }
+        else if (arg == ""test"")
+        {
+            Console.WriteLine(arg);
         }
 
         throw new ArgumentNullException(nameof(arg)); // no guard
@@ -245,7 +278,7 @@ class C
 {
     void M(string arg)
     {
-        {|CA1858:if (arg is null) throw new System.ArgumentNullException(nameof(arg));|}
+        {|CA1510:if (arg is null) throw new System.ArgumentNullException(nameof(arg));|}
     }
 }
 ",
@@ -327,34 +360,34 @@ class C
 {
     void M0(string arg)
     {
-        {|CA1859:if (string.IsNullOrEmpty(arg))
+        {|CA1511:if (string.IsNullOrEmpty(arg))
             throw new ArgumentException("""", ""arg"");|}
 
-        {|CA1859:if (arg is null || arg.Length == 0)
+        {|CA1511:if (arg is null || arg.Length == 0)
             throw new ArgumentException("""", ""arg"");|}
 
-        {|CA1859:if (arg == null || 0 == arg.Length)
+        {|CA1511:if (arg == null || 0 == arg.Length)
             throw new ArgumentException("""", ""arg"");|}
 
-        {|CA1859:if (arg == null || arg == string.Empty)
+        {|CA1511:if (arg == null || arg == string.Empty)
             throw new ArgumentException("""", ""arg"");|}
 
-        {|CA1859:if (string.IsNullOrEmpty(arg))
+        {|CA1511:if (string.IsNullOrEmpty(arg))
         {
             throw new ArgumentException();
         }|}
 
-        {|CA1859:if (arg is null || arg.Length == 0)
+        {|CA1511:if (arg is null || arg.Length == 0)
         {
             throw new ArgumentException("""");
         }|}
 
-        {|CA1859:if (arg == null || 0 == arg.Length)
+        {|CA1511:if (arg == null || 0 == arg.Length)
         {
             throw new ArgumentException("""", ""arg"");
         }|}
 
-        {|CA1859:if (arg == null || arg == string.Empty)
+        {|CA1511:if (arg == null || arg == string.Empty)
         {
             throw new ArgumentException();
         }|}
@@ -598,56 +631,56 @@ class C
 {
     void M(int arg)
     {
-        {|CA1860:if (arg is 0)
+        {|CA1512:if (arg is 0)
             throw new ArgumentOutOfRangeException(nameof(arg));|}
-        {|CA1860:if (arg == 0)
+        {|CA1512:if (arg == 0)
             throw new ArgumentOutOfRangeException(nameof(arg));|}
-        {|CA1860:if (0 == arg)
-            throw new ArgumentOutOfRangeException(nameof(arg));|}
-
-        {|CA1860:if (arg < 0)
-            throw new ArgumentOutOfRangeException(nameof(arg));|}
-        {|CA1860:if (0 > arg)
+        {|CA1512:if (0 == arg)
             throw new ArgumentOutOfRangeException(nameof(arg));|}
 
-        {|CA1860:if (arg <= 0)
+        {|CA1512:if (arg < 0)
             throw new ArgumentOutOfRangeException(nameof(arg));|}
-        {|CA1860:if (0 >= arg)
-            throw new ArgumentOutOfRangeException(nameof(arg));|}
-
-        {|CA1860:if (arg <= 42)
-            throw new ArgumentOutOfRangeException(nameof(arg));|}
-        {|CA1860:if (42 >= arg)
+        {|CA1512:if (0 > arg)
             throw new ArgumentOutOfRangeException(nameof(arg));|}
 
-        {|CA1860:if (arg < 42)
+        {|CA1512:if (arg <= 0)
             throw new ArgumentOutOfRangeException(nameof(arg));|}
-        {|CA1860:if (42 > arg)
+        {|CA1512:if (0 >= arg)
             throw new ArgumentOutOfRangeException(nameof(arg));|}
 
-        {|CA1860:if (arg > 42)
+        {|CA1512:if (arg <= 42)
+            throw new ArgumentOutOfRangeException(nameof(arg));|}
+        {|CA1512:if (42 >= arg)
+            throw new ArgumentOutOfRangeException(nameof(arg));|}
+
+        {|CA1512:if (arg < 42)
+            throw new ArgumentOutOfRangeException(nameof(arg));|}
+        {|CA1512:if (42 > arg)
+            throw new ArgumentOutOfRangeException(nameof(arg));|}
+
+        {|CA1512:if (arg > 42)
         {
             throw new ArgumentOutOfRangeException(nameof(arg));
         }|}
-        {|CA1860:if (42 < arg)
-        {
-            throw new ArgumentOutOfRangeException(nameof(arg));
-        }|}
-
-        {|CA1860:if (arg >= 42)
-        {
-            throw new ArgumentOutOfRangeException(nameof(arg));
-        }|}
-        {|CA1860:if (42 <= arg)
+        {|CA1512:if (42 < arg)
         {
             throw new ArgumentOutOfRangeException(nameof(arg));
         }|}
 
-        {|CA1860:if (arg > (int)TimeSpan.FromSeconds(42).TotalSeconds)
+        {|CA1512:if (arg >= 42)
         {
             throw new ArgumentOutOfRangeException(nameof(arg));
         }|}
-        {|CA1860:if ((int)TimeSpan.FromSeconds(42).TotalSeconds < arg)
+        {|CA1512:if (42 <= arg)
+        {
+            throw new ArgumentOutOfRangeException(nameof(arg));
+        }|}
+
+        {|CA1512:if (arg > (int)TimeSpan.FromSeconds(42).TotalSeconds)
+        {
+            throw new ArgumentOutOfRangeException(nameof(arg));
+        }|}
+        {|CA1512:if ((int)TimeSpan.FromSeconds(42).TotalSeconds < arg)
         {
             throw new ArgumentOutOfRangeException(nameof(arg));
         }|}
@@ -670,6 +703,18 @@ class C
         }
 
         if (arg > 42 && arg < 84) // we could augment the analyzer in the future to support this
+            throw new ArgumentOutOfRangeException(nameof(arg));
+    }
+
+    void Enums(DayOfWeek dow)
+    {
+        if (dow > DayOfWeek.Sunday)
+            throw new ArgumentOutOfRangeException(nameof(dow));
+    }
+
+    void Nullables(int? arg)
+    {
+        if (arg < 0)
             throw new ArgumentOutOfRangeException(nameof(arg));
     }
 }
@@ -741,6 +786,18 @@ class C
         }
 
         if (arg > 42 && arg < 84) // we could augment the analyzer in the future to support this
+            throw new ArgumentOutOfRangeException(nameof(arg));
+    }
+
+    void Enums(DayOfWeek dow)
+    {
+        if (dow > DayOfWeek.Sunday)
+            throw new ArgumentOutOfRangeException(nameof(dow));
+    }
+
+    void Nullables(int? arg)
+    {
+        if (arg < 0)
             throw new ArgumentOutOfRangeException(nameof(arg));
     }
 }
@@ -824,20 +881,20 @@ class C
 
     void M(object something)
     {
-        {|CA1861:if (IsDisposed) throw new ObjectDisposedException(null);|}
+        {|CA1513:if (IsDisposed) throw new ObjectDisposedException(null);|}
 
-        {|CA1861:if (IsDisposed)
+        {|CA1513:if (IsDisposed)
         {
             throw new ObjectDisposedException(this.GetType().FullName);
         }|}
 
-        {|CA1861:if (IsDisposed)
+        {|CA1513:if (IsDisposed)
             throw new ObjectDisposedException(something.GetType().Name);|}
 
-        {|CA1861:if (_state.IsDisposed)
+        {|CA1513:if (_state.IsDisposed)
             throw new ObjectDisposedException(_state.GetType().Name);|}
 
-        {|CA1861:if (DateTime.UtcNow.Hour == 0)
+        {|CA1513:if (DateTime.UtcNow.Hour == 0)
         {
             throw new ObjectDisposedException(nameof(DateTime));
         }|}
@@ -852,7 +909,7 @@ class C
     {
         get
         {
-            {|CA1861:if (IsDisposed)
+            {|CA1513:if (IsDisposed)
                 throw new ObjectDisposedException(null);|}
             return ""test"";
         }
@@ -882,7 +939,7 @@ class C
 
     void M(object something)
     {
-        {|CA1861:if (IsDisposed) throw new ObjectDisposedException(null);|}
+        {|CA1513:if (IsDisposed) throw new ObjectDisposedException(null);|}
 
         ObjectDisposedException.ThrowIf(IsDisposed, this);
 
@@ -890,7 +947,7 @@ class C
 
         ObjectDisposedException.ThrowIf(_state.IsDisposed, _state);
 
-        {|CA1861:if (DateTime.UtcNow.Hour == 0)
+        {|CA1513:if (DateTime.UtcNow.Hour == 0)
         {
             throw new ObjectDisposedException(nameof(DateTime));
         }|}
@@ -905,7 +962,7 @@ class C
     {
         get
         {
-            {|CA1861:if (IsDisposed)
+            {|CA1513:if (IsDisposed)
                 throw new ObjectDisposedException(null);|}
             return ""test"";
         }
@@ -926,19 +983,19 @@ Imports System
  
 Class C
     Public  Sub M(ByVal arg As String, ByVal value As Integer)
-        {|CA1858:If arg Is Nothing Then
+        {|CA1510:If arg Is Nothing Then
         	 Throw New ArgumentNullException(nameof(arg))
         End If|}
 
-        {|CA1859:If String.IsNullOrEmpty(arg) Then
+        {|CA1511:If String.IsNullOrEmpty(arg) Then
         	 Throw New ArgumentException("""", nameof(arg))
         End If|}
 
-        {|CA1861:If arg Is Nothing Then
+        {|CA1513:If arg Is Nothing Then
         	 Throw New ObjectDisposedException(Me.GetType().Name)
         End If|}
 
-        {|CA1860:If value < 42 Then
+        {|CA1512:If value < 42 Then
         	 Throw New ArgumentOutOfRangeException(nameof(value))
         End If|}
     End Sub

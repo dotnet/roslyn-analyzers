@@ -2031,8 +2031,17 @@
   <data name="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage" xml:space="preserve">
     <value>Starting with .NET 7 the explicit conversion '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</value>
   </data>
-  <data name="UseThrowHelperTitle" xml:space="preserve">
-    <value>Use Throw helper</value>
+  <data name="UseArgumentNullExceptionThrowHelperTitle" xml:space="preserve">
+    <value>Use ArgumentNullException throw helper</value>
+  </data>
+  <data name="UseArgumentExceptionThrowHelperTitle" xml:space="preserve">
+    <value>Use ArgumentException throw helper</value>
+  </data>
+  <data name="UseArgumentOutOfRangeExceptionThrowHelperTitle" xml:space="preserve">
+    <value>Use ArgumentOutOfRangeException throw helper</value>
+  </data>
+  <data name="UseObjectDisposedExceptionThrowHelperTitle" xml:space="preserve">
+    <value>Use ObjectDisposedException throw helper</value>
   </data>
   <data name="UseThrowHelperMessage" xml:space="preserve">
     <value>Use '{0}.{1}' instead of explicitly throwing a new exception instance</value>

@@ -864,6 +864,54 @@ Invalid entry in code metrics rule specification file.
 |CodeFix|False|
 ---
 
+## [CA1510](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510): Use ArgumentNullException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1511](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1511): Use ArgumentException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1512](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1512): Use ArgumentOutOfRangeException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1513](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1513): Use ObjectDisposedException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA1700](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1700): Do not name enum values 'Reserved'
 
 This rule assumes that an enumeration member that has a name that contains "reserved" is not currently used but is a placeholder to be renamed or removed in a future version. Renaming or removing a member is a breaking change.
@@ -1606,54 +1654,6 @@ The parameter expects a constant for optimal performance.
 |Enabled|True|
 |Severity|Warning|
 |CodeFix|False|
----
-
-## [CA1858](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858): Use Throw helper
-
-Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
-
-|Item|Value|
-|-|-|
-|Category|Performance|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|True|
----
-
-## [CA1859](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859): Use Throw helper
-
-Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
-
-|Item|Value|
-|-|-|
-|Category|Performance|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|True|
----
-
-## [CA1860](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Use Throw helper
-
-Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
-
-|Item|Value|
-|-|-|
-|Category|Performance|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|True|
----
-
-## [CA1861](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Use Throw helper
-
-Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
-
-|Item|Value|
-|-|-|
-|Category|Performance|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|True|
 ---
 
 ## [CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope

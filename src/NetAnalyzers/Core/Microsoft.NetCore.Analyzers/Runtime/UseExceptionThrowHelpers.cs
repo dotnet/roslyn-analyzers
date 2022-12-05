@@ -18,10 +18,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseExceptionThrowHelpers : DiagnosticAnalyzer
     {
-        internal const string UseArgumentNullExceptionThrowIfNullRuleId = "CA1858";
-        internal const string UseArgumentExceptionThrowIfNullOrEmptyRuleId = "CA1859";
-        internal const string UseArgumentOutOfRangeExceptionThrowIfRuleId = "CA1860";
-        internal const string UseObjectDisposedExceptionThrowIfRuleId = "CA1861";
+        internal const string UseArgumentNullExceptionThrowIfNullRuleId = "CA1510";
+        internal const string UseArgumentExceptionThrowIfNullOrEmptyRuleId = "CA1511";
+        internal const string UseArgumentOutOfRangeExceptionThrowIfRuleId = "CA1512";
+        internal const string UseObjectDisposedExceptionThrowIfRuleId = "CA1513";
 
         /// <summary>Name of the key into the properties dictionary where an optional throw helper method name is stored for the fixer.</summary>
         internal const string MethodNamePropertyKey = "MethodNameProperty";
@@ -29,9 +29,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         // if (arg is null) throw new ArgumentNullException(nameof(arg)); => ArgumentNullException.ThrowIfNull(arg);
         // if (arg == null) throw new ArgumentNullException(nameof(arg)); => ArgumentNullException.ThrowIfNull(arg);
         internal static readonly DiagnosticDescriptor UseArgumentNullExceptionThrowIfNullRule = DiagnosticDescriptorHelper.Create(UseArgumentNullExceptionThrowIfNullRuleId,
-            CreateLocalizableResourceString(nameof(UseThrowHelperTitle)),
+            CreateLocalizableResourceString(nameof(UseArgumentNullExceptionThrowHelperTitle)),
             CreateLocalizableResourceString(nameof(UseThrowHelperMessage)),
-            DiagnosticCategory.Performance,
+            DiagnosticCategory.Maintainability,
             RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(UseThrowHelperDescription)),
             isPortedFxCopRule: false,
@@ -41,9 +41,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         // if (arg is null || arg.Length == 0) throw new ArgumentException(...); => ArgumentException.ThrowIfNullOrEmpty(arg);
         // if (arg == null || arg == string.Empty) throw new ArgumentException(...); => ArgumentException.ThrowIfNullOrEmpty(arg);
         internal static readonly DiagnosticDescriptor UseArgumentExceptionThrowIfNullOrEmptyRule = DiagnosticDescriptorHelper.Create(UseArgumentExceptionThrowIfNullOrEmptyRuleId,
-            CreateLocalizableResourceString(nameof(UseThrowHelperTitle)),
+            CreateLocalizableResourceString(nameof(UseArgumentExceptionThrowHelperTitle)),
             CreateLocalizableResourceString(nameof(UseThrowHelperMessage)),
-            DiagnosticCategory.Performance,
+            DiagnosticCategory.Maintainability,
             RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(UseThrowHelperDescription)),
             isPortedFxCopRule: false,
@@ -58,9 +58,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         // if (arg < 42) throw new ArgumentOutOfRangeException(...); => ArgumentOutOfRangeException.ThrowIfLessThan(arg, 42);
         // if (arg <= 42) throw new ArgumentOutOfRangeException(...); => ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(arg, 42);
         internal static readonly DiagnosticDescriptor UseArgumentOutOfRangeExceptionThrowIfRule = DiagnosticDescriptorHelper.Create(UseArgumentOutOfRangeExceptionThrowIfRuleId,
-            CreateLocalizableResourceString(nameof(UseThrowHelperTitle)),
+            CreateLocalizableResourceString(nameof(UseArgumentOutOfRangeExceptionThrowHelperTitle)),
             CreateLocalizableResourceString(nameof(UseThrowHelperMessage)),
-            DiagnosticCategory.Performance,
+            DiagnosticCategory.Maintainability,
             RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(UseThrowHelperDescription)),
             isPortedFxCopRule: false,
@@ -68,9 +68,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         // if (condition) throw new ObjectDisposedException(...)
         internal static readonly DiagnosticDescriptor UseObjectDisposedExceptionThrowIfRule = DiagnosticDescriptorHelper.Create(UseObjectDisposedExceptionThrowIfRuleId,
-            CreateLocalizableResourceString(nameof(UseThrowHelperTitle)),
+            CreateLocalizableResourceString(nameof(UseObjectDisposedExceptionThrowHelperTitle)),
             CreateLocalizableResourceString(nameof(UseThrowHelperMessage)),
-            DiagnosticCategory.Performance,
+            DiagnosticCategory.Maintainability,
             RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(UseThrowHelperDescription)),
             isPortedFxCopRule: false,
@@ -168,6 +168,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                     }
 
+                    // If the condition has an else block, give up.  These are rare.
+                    if (condition.WhenFalse is not null)
+                    {
+                        return;
+                    }
+
                     // Now match the exception type against one of our known types.
 
                     // Handle ArgumentNullException.ThrowIfNull.
@@ -211,22 +217,29 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         if (hasAnyAooreThrow)
                         {
+                            ImmutableArray<Location> additionalLocations = ImmutableArray<Location>.Empty;
+
                             if (IsNegativeAndOrZeroComparison(condition.Condition, out IParameterReferenceOperation? aooreParameter, out string? methodName))
                             {
-                                context.ReportDiagnostic(condition.CreateDiagnostic(
-                                    UseArgumentOutOfRangeExceptionThrowIfRule,
-                                    additionalLocations: ImmutableArray.Create(aooreParameter.Syntax.GetLocation()),
-                                    properties: ImmutableDictionary<string, string?>.Empty.Add(MethodNamePropertyKey, methodName),
-                                    args: new object[] { nameof(ArgumentOutOfRangeException), methodName }));
+                                additionalLocations = ImmutableArray.Create(aooreParameter.Syntax.GetLocation());
                             }
                             else if (IsGreaterLessThanComparison(condition.Condition, out aooreParameter, out methodName, out SyntaxNode? other))
                             {
+                                additionalLocations = ImmutableArray.Create(aooreParameter.Syntax.GetLocation(), other.GetLocation());
+                            }
+
+                            if (additionalLocations.Length != 0 && !AvoidComparing(aooreParameter!))
+                            {
                                 context.ReportDiagnostic(condition.CreateDiagnostic(
                                     UseArgumentOutOfRangeExceptionThrowIfRule,
-                                    additionalLocations: ImmutableArray.Create(aooreParameter.Syntax.GetLocation(), other.GetLocation()),
+                                    additionalLocations,
                                     properties: ImmutableDictionary<string, string?>.Empty.Add(MethodNamePropertyKey, methodName),
-                                    args: new object[] { nameof(ArgumentOutOfRangeException), methodName }));
+                                    args: new object[] { nameof(ArgumentOutOfRangeException), methodName! }));
                             }
+
+                            static bool AvoidComparing(IParameterReferenceOperation p) =>
+                                p.Type.IsNullableValueType() ||
+                                p.Type.TypeKind == TypeKind.Enum;
                         }
                         return;
                     }

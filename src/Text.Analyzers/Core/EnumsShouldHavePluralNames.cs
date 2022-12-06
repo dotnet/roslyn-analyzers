@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -16,8 +14,8 @@ namespace Text.Analyzers
     using static TextAnalyzersResources;
 
     /// <summary>
-    /// CA1714: Flags enums should have plural names
-    /// CA1717: Only Flags enums should have plural names
+    /// CA1714: <inheritdoc cref="FlagsEnumsShouldHavePluralNamesTitle"/>
+    /// CA1717: <inheritdoc cref="OnlyFlagsEnumsShouldHavePluralNamesTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class EnumsShouldHavePluralNamesAnalyzer : DiagnosticAnalyzer

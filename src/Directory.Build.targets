@@ -24,6 +24,12 @@
   <!-- Unshipped release -->
   <ItemGroup Condition="'$(ReleaseTrackingOptOut)' != 'true' AND Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md')">
     <AdditionalFiles Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md" />
+    <!-- Copy the unshipped releases file to output directory so it can be used in 'GenerateGlobalAnalyzerConfigs' post-build target -->
+    <!-- Include unshipped file also as 'None' - Workaround for 'CopyToOutputDirectory' not being respected for additional files -->
+    <None Update="AnalyzerReleases.Unshipped.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>AnalyzerReleases\$(AssemblyName)\AnalyzerReleases.Unshipped.md</Link>
+    </None>
   </ItemGroup>
   <!-- Shipped releases -->
   <ItemGroup  Condition="'$(ReleaseTrackingOptOut)' != 'true' AND Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md')">

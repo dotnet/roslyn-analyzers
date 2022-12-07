@@ -5,11 +5,11 @@ using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.UseStartsWithInsteadOfIndexOfComparisonWithZero,
-    Microsoft.NetCore.Analyzers.Performance.UseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFix>;
+    Microsoft.NetCore.CSharp.Analyzers.Performance.CSharpUseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFix>;
 
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.UseStartsWithInsteadOfIndexOfComparisonWithZero,
-    Microsoft.NetCore.Analyzers.Performance.UseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFix>;
+    Microsoft.NetCore.VisualBasic.Analyzers.Performance.BasicUseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFix>;
 
 namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
@@ -402,7 +402,17 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            var fixedCode = """
+            var fixedCode20 = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = a.Length > 0 && a[0] == 'a';
+                    }
+                }
+                """;
+
+            var fixedCode21 = """
                 class C
                 {
                     void M(string a)
@@ -412,8 +422,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
-            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
+            await VerifyCodeFixCSAsync(testCode, fixedCode20, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixCSAsync(testCode, fixedCode21, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -427,7 +437,15 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            var fixedCode = """
+            var fixedCode20 = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = a.Length > 0 AndAlso a(0) = "a"c
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode21 = """
                 Class C
                     Sub M(a As String)
                         Dim unused = a.StartsWith("a"c)
@@ -435,8 +453,76 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
-            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
+            await VerifyCodeFixVBAsync(testCode, fixedCode20, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixVBAsync(testCode, fixedCode21, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Fact]
+        public async Task Char_Negation_CSharp_Diagnostic()
+        {
+            var testCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = [|a.IndexOf('a') != 0|];
+                    }
+                }
+                """;
+
+            var fixedCode20 = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = a.Length == 0 || a[0] != 'a';
+                    }
+                }
+                """;
+
+            var fixedCode21 = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = !a.StartsWith('a');
+                    }
+                }
+                """;
+
+            await VerifyCodeFixCSAsync(testCode, fixedCode20, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixCSAsync(testCode, fixedCode21, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Fact]
+        public async Task Char_Negation_VB_Diagnostic()
+        {
+            var testCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = [|a.IndexOf("a"c) <> 0|]
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode20 = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = a.Length = 0 OrElse a(0) <> "a"c
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode21 = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = Not a.StartsWith("a"c)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyCodeFixVBAsync(testCode, fixedCode20, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixVBAsync(testCode, fixedCode21, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]

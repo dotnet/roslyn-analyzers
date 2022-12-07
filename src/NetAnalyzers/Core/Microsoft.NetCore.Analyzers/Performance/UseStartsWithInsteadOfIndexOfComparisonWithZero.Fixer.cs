@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -11,8 +12,7 @@ using Microsoft.CodeAnalysis.Editing;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
-    public sealed class UseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFix : CodeFixProvider
+    public abstract class UseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFix : CodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(UseStartsWithInsteadOfIndexOfComparisonWithZero.RuleId);
 
@@ -28,7 +28,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             context.RegisterCodeFix(
                 CodeAction.Create(MicrosoftNetCoreAnalyzersResources.UseStartsWithInsteadOfIndexOfComparisonWithZeroTitle,
-                createChangedDocument: cancellationToken =>
+                createChangedDocument: async cancellationToken =>
                 {
                     var instance = root.FindNode(diagnostic.AdditionalLocations[0].SourceSpan);
                     var arguments = new SyntaxNode[diagnostic.AdditionalLocations.Count - 1];
@@ -46,33 +46,57 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         // For 'IndexOf(string)' and 'IndexOf(string, stringComparison)', we replace with StartsWith(same arguments)
                         case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadString:
                         case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadString_StringComparison:
-                            var expression = generator.InvocationExpression(generator.MemberAccessExpression(instance, "StartsWith"), arguments);
-                            if (shouldNegate)
-                            {
-                                expression = generator.LogicalNotExpression(expression);
-                            }
-                            return Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(node, expression)));
+                            return document.WithSyntaxRoot(root.ReplaceNode(node, CreateStartsWithInvocationFromArguments(generator, instance, arguments, shouldNegate)));
 
                         // For 'a.IndexOf(ch, stringComparison)', we use 'a.StartsWith(stackalloc char[1] { ch }, stringComparison)'
                         // https://learn.microsoft.com/dotnet/api/system.memoryextensions.startswith?view=net-7.0#system-memoryextensions-startswith(system-readonlyspan((system-char))-system-readonlyspan((system-char))-system-stringcomparison)
                         case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadChar_StringComparison:
                             // TODO:
-                            return Task.FromResult(document);
+                            return document;
 
                         // If 'StartsWith(char)' is available, use it. Otherwise check '.Length > 0 && [0] == ch'
+                        // For negation, we use '.Length == 0 || [0] != ch'
                         case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadChar:
-                            // TODO:
-                            return Task.FromResult(document);
+                            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+                            var startsWithSymbols = semanticModel.Compilation.GetSpecialType(SpecialType.System_String).GetMembers("StartsWith");
+                            if (startsWithSymbols.Any(s => s is IMethodSymbol { Parameters: [{ Type.SpecialType: SpecialType.System_Char }] }))
+                            {
+                                return document.WithSyntaxRoot(root.ReplaceNode(node, CreateStartsWithInvocationFromArguments(generator, instance, arguments, shouldNegate)));
+                            }
+
+                            var lengthAccess = generator.MemberAccessExpression(instance, "Length");
+                            var zeroLiteral = generator.LiteralExpression(0);
+
+                            var indexed = generator.ElementAccessExpression(instance, zeroLiteral);
+                            var ch = root.FindNode(arguments[0].Span, getInnermostNodeForTie: true);
+
+                            var replacement = shouldNegate
+                                ? generator.LogicalOrExpression(
+                                    generator.ValueEqualsExpression(lengthAccess, zeroLiteral),
+                                    generator.ValueNotEqualsExpression(indexed, ch))
+                                : generator.LogicalAndExpression(
+                                    generator.GreaterThanExpression(lengthAccess, zeroLiteral),
+                                    generator.ValueEqualsExpression(indexed, ch));
+
+                            return document.WithSyntaxRoot(root.ReplaceNode(node, AppendElasticMarker(replacement)));
 
                         default:
                             // Should never happen.
                             Debug.Fail("This should never happen.");
-                            return Task.FromResult(document);
+                            return document;
                     }
 
                 },
                 equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.UseStartsWithInsteadOfIndexOfComparisonWithZeroTitle)),
                 context.Diagnostics);
+        }
+
+        protected abstract SyntaxNode AppendElasticMarker(SyntaxNode replacement);
+
+        private static SyntaxNode CreateStartsWithInvocationFromArguments(SyntaxGenerator generator, SyntaxNode instance, SyntaxNode[] arguments, bool shouldNegate)
+        {
+            var expression = generator.InvocationExpression(generator.MemberAccessExpression(instance, "StartsWith"), arguments);
+            return shouldNegate ? generator.LogicalNotExpression(expression) : expression;
         }
     }
 }

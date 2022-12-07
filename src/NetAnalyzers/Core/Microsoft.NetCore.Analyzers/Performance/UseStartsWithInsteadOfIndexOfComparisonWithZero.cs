@@ -39,20 +39,20 @@ namespace Microsoft.NetCore.Analyzers.Performance
             context.RegisterCompilationStartAction(context =>
             {
                 var stringType = context.Compilation.GetSpecialType(SpecialType.System_String);
-                var indexOf = stringType.GetMembers("IndexOf").OfType<IMethodSymbol>();
-                var indexOfString = indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_String }]);
-                var indexOfChar = indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_Char }]);
-                var indexOfStringStringComparison = indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_String }, { Name: "comparisonType" }]);
-                if (stringType.GetMembers("StartsWith").FirstOrDefault() is not IMethodSymbol ||
-                    (indexOfString is null && indexOfChar is null && indexOfStringStringComparison is null))
+                if (stringType.GetMembers("StartsWith").FirstOrDefault() is not IMethodSymbol)
                 {
                     return;
                 }
 
+                var indexOf = stringType.GetMembers("IndexOf").OfType<IMethodSymbol>();
                 var indexOfMethodsBuilder = ImmutableArray.CreateBuilder<IMethodSymbol>();
-                AddIfNotNull(indexOfMethodsBuilder, indexOfChar);
-                AddIfNotNull(indexOfMethodsBuilder, indexOfString);
-                AddIfNotNull(indexOfMethodsBuilder, indexOfStringStringComparison);
+                AddIfNotNull(indexOfMethodsBuilder, indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_String }]));
+                AddIfNotNull(indexOfMethodsBuilder, indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_Char }]));
+                AddIfNotNull(indexOfMethodsBuilder, indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_String }, { Name: "comparisonType" }]));
+                if (indexOfMethodsBuilder.Count == 0)
+                {
+                    return;
+                }
 
                 var indexOfMethods = indexOfMethodsBuilder.ToImmutable();
 

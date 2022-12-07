@@ -81,7 +81,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             return document.WithSyntaxRoot(root.ReplaceNode(node, AppendElasticMarker(replacement)));
 
                         default:
-                            // Should never happen.
                             Debug.Fail("This should never happen.");
                             return document;
                     }

@@ -18,6 +18,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string RuleId = "CA1858";
         internal const string ShouldNegateKey = "ShouldNegate";
 
+        internal const string ExistingOverloadKey = "ExistingOverload";
+
+        internal const string OverloadString = "String";
+        internal const string OverloadString_StringComparison = "String,StringComparison";
+        internal const string OverloadChar = "Char";
+        internal const string OverloadChar_StringComparison = "Char,StringComparison";
+
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             id: "CA1858",
             title: CreateLocalizableResourceString(nameof(UseStartsWithInsteadOfIndexOfComparisonWithZeroTitle)),
@@ -45,10 +52,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
 
                 var indexOf = stringType.GetMembers("IndexOf").OfType<IMethodSymbol>();
-                var indexOfMethodsBuilder = ImmutableArray.CreateBuilder<IMethodSymbol>();
-                AddIfNotNull(indexOfMethodsBuilder, indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_String }]));
-                AddIfNotNull(indexOfMethodsBuilder, indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_Char }]));
-                AddIfNotNull(indexOfMethodsBuilder, indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_String }, { Name: "comparisonType" }]));
+                var indexOfMethodsBuilder = ImmutableArray.CreateBuilder<(IMethodSymbol IndexOfSymbol, string OverloadPropertyValue)>();
+                AddIfNotNull((indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_String }]), OverloadString));
+                AddIfNotNull((indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_Char }]), OverloadChar));
+                AddIfNotNull((indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_String }, { Name: "comparisonType" }]), OverloadString_StringComparison));
+                AddIfNotNull((indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_Char }, { Name: "comparisonType" }]), OverloadChar_StringComparison));
                 if (indexOfMethodsBuilder.Count == 0)
                 {
                     return;
@@ -64,36 +72,41 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         return;
                     }
 
-                    if (IsIndexOfComparedWithZero(binaryOperation.LeftOperand, binaryOperation.RightOperand, indexOfMethods, out var additionalLocations) ||
-                        IsIndexOfComparedWithZero(binaryOperation.RightOperand, binaryOperation.LeftOperand, indexOfMethods, out additionalLocations))
+                    if (IsIndexOfComparedWithZero(binaryOperation.LeftOperand, binaryOperation.RightOperand, indexOfMethods, out var additionalLocations, out var properties) ||
+                        IsIndexOfComparedWithZero(binaryOperation.RightOperand, binaryOperation.LeftOperand, indexOfMethods, out additionalLocations, out properties))
                     {
-                        var properties = ImmutableDictionary<string, string?>.Empty;
                         if (binaryOperation.OperatorKind == BinaryOperatorKind.NotEquals)
                         {
                             properties = properties.Add(ShouldNegateKey, "");
                         }
 
-                        context.ReportDiagnostic(binaryOperation.CreateDiagnostic(Rule, additionalLocations: additionalLocations, properties: properties));
+                        context.ReportDiagnostic(binaryOperation.CreateDiagnostic(Rule, additionalLocations, properties));
                     }
 
                 }, OperationKind.Binary);
 
-                static void AddIfNotNull(ImmutableArray<IMethodSymbol>.Builder builder, IMethodSymbol? symbol)
+                void AddIfNotNull((IMethodSymbol? Symbol, string OverloadPropertyValue) item)
                 {
-                    if (symbol is not null)
+                    if (item.Symbol is not null)
                     {
-                        builder.Add(symbol);
+                        indexOfMethodsBuilder.Add((item.Symbol, item.OverloadPropertyValue));
                     }
                 }
             });
         }
 
-        private static bool IsIndexOfComparedWithZero(IOperation left, IOperation right, ImmutableArray<IMethodSymbol> indexOfMethods, out ImmutableArray<Location> additionalLocations)
+        private static bool IsIndexOfComparedWithZero(
+            IOperation left, IOperation right,
+            ImmutableArray<(IMethodSymbol Symbol, string OverloadPropertyValue)> indexOfMethods,
+            out ImmutableArray<Location> additionalLocations,
+            out ImmutableDictionary<string, string?> properties)
         {
+            properties = ImmutableDictionary<string, string?>.Empty;
+
             if (right.ConstantValue is { HasValue: true, Value: 0 } &&
                 left is IInvocationOperation invocation)
             {
-                foreach (var indexOfMethod in indexOfMethods)
+                foreach (var (indexOfMethod, overloadPropertyValue) in indexOfMethods)
                 {
                     if (indexOfMethod.Parameters.Length == invocation.Arguments.Length && indexOfMethod.Equals(invocation.TargetMethod, SymbolEqualityComparer.Default))
                     {
@@ -101,6 +114,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         locationsBuilder.Add(invocation.Instance.Syntax.GetLocation());
                         locationsBuilder.AddRange(invocation.Arguments.Select(arg => arg.Syntax.GetLocation()));
                         additionalLocations = locationsBuilder.ToImmutable();
+
+                        properties = properties.Add(ExistingOverloadKey, overloadPropertyValue);
                         return true;
                     }
                 }

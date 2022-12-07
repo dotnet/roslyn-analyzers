@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -37,15 +38,38 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
 
                     var generator = SyntaxGenerator.GetGenerator(document);
-                    var expression = generator.InvocationExpression(generator.MemberAccessExpression(instance, "StartsWith"), arguments);
-
                     var shouldNegate = diagnostic.Properties.TryGetValue(UseStartsWithInsteadOfIndexOfComparisonWithZero.ShouldNegateKey, out _);
-                    if (shouldNegate)
+
+                    _ = diagnostic.Properties.TryGetValue(UseStartsWithInsteadOfIndexOfComparisonWithZero.ExistingOverloadKey, out var overloadValue);
+                    switch (overloadValue)
                     {
-                        expression = generator.LogicalNotExpression(expression);
+                        // For 'IndexOf(string)' and 'IndexOf(string, stringComparison)', we replace with StartsWith(same arguments)
+                        case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadString:
+                        case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadString_StringComparison:
+                            var expression = generator.InvocationExpression(generator.MemberAccessExpression(instance, "StartsWith"), arguments);
+                            if (shouldNegate)
+                            {
+                                expression = generator.LogicalNotExpression(expression);
+                            }
+                            return Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(node, expression)));
+
+                        // For 'a.IndexOf(ch, stringComparison)', we use 'a.StartsWith(stackalloc char[1] { ch }, stringComparison)'
+                        // https://learn.microsoft.com/dotnet/api/system.memoryextensions.startswith?view=net-7.0#system-memoryextensions-startswith(system-readonlyspan((system-char))-system-readonlyspan((system-char))-system-stringcomparison)
+                        case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadChar_StringComparison:
+                            // TODO:
+                            return Task.FromResult(document);
+
+                        // If 'StartsWith(char)' is available, use it. Otherwise check '.Length > 0 && [0] == ch'
+                        case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadChar:
+                            // TODO:
+                            return Task.FromResult(document);
+
+                        default:
+                            // Should never happen.
+                            Debug.Fail("This should never happen.");
+                            return Task.FromResult(document);
                     }
 
-                    return Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(node, expression)));
                 },
                 equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.UseStartsWithInsteadOfIndexOfComparisonWithZeroTitle)),
                 context.Diagnostics);

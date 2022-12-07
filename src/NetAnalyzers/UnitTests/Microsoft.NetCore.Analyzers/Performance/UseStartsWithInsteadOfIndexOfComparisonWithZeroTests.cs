@@ -15,6 +15,26 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public class UseStartsWithInsteadOfIndexOfComparisonWithZeroTests
     {
+        private static async Task VerifyCodeFixVBAsync(string source, string fixedSource, ReferenceAssemblies referenceAssemblies)
+        {
+            await new VerifyVB.Test
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                ReferenceAssemblies = referenceAssemblies,
+            }.RunAsync();
+        }
+
+        private static async Task VerifyCodeFixCSAsync(string source, string fixedSource, ReferenceAssemblies referenceAssemblies)
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                ReferenceAssemblies = referenceAssemblies,
+            }.RunAsync();
+        }
+
         [Fact]
         public async Task SimpleScenario_CSharp_Diagnostic()
         {
@@ -38,7 +58,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCS.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -60,7 +81,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -86,7 +108,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCS.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -108,7 +131,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -134,7 +158,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCS.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -156,7 +181,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -182,7 +208,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCS.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -204,7 +231,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -232,7 +260,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCS.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -256,7 +285,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -282,7 +312,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCS.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -304,7 +335,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -330,7 +362,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCS.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -352,9 +385,109 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
+        [Fact]
+        public async Task Char_CSharp_Diagnostic()
+        {
+            var testCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = [|a.IndexOf('a') == 0|];
+                    }
+                }
+                """;
+
+            var fixedCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = a.StartsWith('a');
+                    }
+                }
+                """;
+
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Fact]
+        public async Task Char_VB_Diagnostic()
+        {
+            var testCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = [|a.IndexOf("a"c) = 0|]
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = a.StartsWith("a"c)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Fact]
+        public async Task CharStringComparison_CSharp_Diagnostic()
+        {
+            var testCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = [|a.IndexOf('a', System.StringComparison.Ordinal) == 0|];
+                    }
+                }
+                """;
+
+            var fixedCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = a.StartsWith('a', System.StringComparison.Ordinal);
+                    }
+                }
+                """;
+
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Fact]
+        public async Task CharStringComparison_VB_Diagnostic()
+        {
+            var testCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = [|a.IndexOf("a"c, System.StringComparison.Ordinal) = 0|]
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = a.StartsWith("a"c, System.StringComparison.Ordinal)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        // TODO: Add OutOfOrderNamedArguments test for IndexOf(char, StringComparison) overload.
         [Fact]
         public async Task OutOfOrderNamedArguments_CSharp_Diagnostic()
         {
@@ -378,7 +511,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCS.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
         [Fact]
@@ -406,7 +540,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyVB.VerifyCodeFixAsync(testCode, fixedCode);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
     }
 }

@@ -50,20 +50,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
 
                 var indexOfMethodsBuilder = ImmutableArray.CreateBuilder<IMethodSymbol>();
-                if (indexOfChar is not null)
-                {
-                    indexOfMethodsBuilder.Add(indexOfChar);
-                }
-
-                if (indexOfString is not null)
-                {
-                    indexOfMethodsBuilder.Add(indexOfString);
-                }
-
-                if (indexOfStringStringComparison is not null)
-                {
-                    indexOfMethodsBuilder.Add(indexOfStringStringComparison);
-                }
+                AddIfNotNull(indexOfMethodsBuilder, indexOfChar);
+                AddIfNotNull(indexOfMethodsBuilder, indexOfString);
+                AddIfNotNull(indexOfMethodsBuilder, indexOfStringStringComparison);
 
                 var indexOfMethods = indexOfMethodsBuilder.ToImmutable();
 
@@ -88,6 +77,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
 
                 }, OperationKind.Binary);
+
+                static void AddIfNotNull(ImmutableArray<IMethodSymbol>.Builder builder, IMethodSymbol? symbol)
+                {
+                    if (symbol is not null)
+                    {
+                        builder.Add(symbol);
+                    }
+                }
             });
         }
 

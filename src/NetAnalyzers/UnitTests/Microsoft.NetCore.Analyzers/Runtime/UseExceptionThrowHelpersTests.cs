@@ -187,6 +187,21 @@ class C
     {
         if (arg is null) throw new ArgumentNullException(nameof(arg));
     }
+
+    void GenericMethodWithClassConstraint<T>(T arg) where T : class
+    {
+        {|CA1510:if (arg is null) throw new ArgumentNullException(nameof(arg));|}
+    }
+
+    void GenericMethodWithTypeConstraint<T>(T arg) where T : C
+    {
+        {|CA1510:if (arg is null) throw new ArgumentNullException(nameof(arg));|}
+    }
+
+    void GenericMethodWithInterfaceConstraint<T>(T arg) where T : IDisposable
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
 }
 
 class GenericType<T>
@@ -285,6 +300,21 @@ class C
     }
 
     void GenericMethod<T>(T arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
+
+    void GenericMethodWithClassConstraint<T>(T arg) where T : class
+    {
+        ArgumentNullException.ThrowIfNull(arg);
+    }
+
+    void GenericMethodWithTypeConstraint<T>(T arg) where T : C
+    {
+        ArgumentNullException.ThrowIfNull(arg);
+    }
+
+    void GenericMethodWithInterfaceConstraint<T>(T arg) where T : IDisposable
     {
         if (arg is null) throw new ArgumentNullException(nameof(arg));
     }

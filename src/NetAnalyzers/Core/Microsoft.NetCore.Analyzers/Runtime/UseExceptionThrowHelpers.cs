@@ -181,7 +181,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         if (aneThrowIfNull is not null &&
                             IsParameterNullCheck(condition.Condition, out IParameterReferenceOperation? nullCheckParameter) &&
-                            nullCheckParameter.Type.TypeKind == TypeKind.Class)
+                            nullCheckParameter.Type.IsReferenceType)
                         {
                             context.ReportDiagnostic(condition.CreateDiagnostic(
                                 UseArgumentNullExceptionThrowIfNullRule,

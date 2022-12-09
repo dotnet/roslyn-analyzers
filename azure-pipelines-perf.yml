@@ -21,8 +21,8 @@ jobs:
         _configuration: Release
         _codeCoverage: False
   pool:
-    name: Azure Pipelines
-    queue: Windows.10.Amd64.ClientRS4.DevEx.15.8.Open
+    name: NetCore-Public
+    demands: ImageOverride -equals Windows.10.Amd64.19H1.Tiger.Perf.Open
   timeoutInMinutes: 150
 
   steps:

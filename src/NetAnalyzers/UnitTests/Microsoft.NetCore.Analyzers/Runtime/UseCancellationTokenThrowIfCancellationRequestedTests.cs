@@ -620,6 +620,28 @@ End If";
             };
             return test.RunAsync();
         }
+
+        [Fact]
+        public async Task NoDiagnosticForNullConstructor()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Threading
+
+Class C
+    Protected Structure S
+    End Structure
+End Class
+
+Class D
+    Sub M(token As CancellationToken)
+        If token.IsCancellationRequested Then
+            Throw New {|BC30389:C.S|}()
+        End If
+    End Sub
+End Class
+
+");
+        }
         #endregion
 
         #region Helpers

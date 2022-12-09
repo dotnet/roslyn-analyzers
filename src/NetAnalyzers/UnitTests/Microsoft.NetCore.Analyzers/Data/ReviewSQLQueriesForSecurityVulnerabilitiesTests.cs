@@ -1783,5 +1783,20 @@ End Module"
             await VerifyVB.VerifyAnalyzerAsync(@"
 <assembly: System.Diagnostics.CodeAnalysis.SuppressMessage(""Category"", ""Id"")>");
         }
+
+        [Fact]
+        public async Task NoDiagnosticForNullConstructor()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Class C
+    Protected Structure S
+    End Structure
+End Class
+Class D
+    Shared Sub M(o)
+        M(New {|BC30389:C.S|}())
+    End Sub
+End Class");
+        }
     }
 }

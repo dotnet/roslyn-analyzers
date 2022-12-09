@@ -51,7 +51,12 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                             case OperationKind.ObjectCreation:
                                 // `new TCS(object)` with an expression of type `TaskContinuationOptions` as the argument
                                 var objectCreation = (IObjectCreationOperation)operationContext.Operation;
-                                conversionOperation = MatchInvalidContinuationOptions(objectCreation.Constructor, objectCreation.Arguments);
+                                if (objectCreation.Constructor is not { } consturctor)
+                                {
+                                    return;
+                                }
+
+                                conversionOperation = MatchInvalidContinuationOptions(consturctor, objectCreation.Arguments);
                                 break;
 
                             case OperationKind.Invocation:

@@ -184,7 +184,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return false;
             }
 
-            private bool IsDefaultOrTokenOperationCanceledExceptionCtor(IMethodSymbol method)
+            private bool IsDefaultOrTokenOperationCanceledExceptionCtor(IMethodSymbol? method)
             {
                 return SymbolEqualityComparer.Default.Equals(method, OperationCanceledExceptionDefaultCtor) ||
                     SymbolEqualityComparer.Default.Equals(method, OperationCanceledExceptionTokenCtor);

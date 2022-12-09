@@ -83,6 +83,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     return;
                             }
 
+                            if (method is null)
+                            {
+                                return;
+                            }
+
                             INamedTypeSymbol type = method.ContainingType;
                             DiagnosticDescriptor rule;
                             string algorithmName;

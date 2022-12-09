@@ -32,6 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 TestCode = source,
                 FixedCode = fixedSource,
                 ReferenceAssemblies = referenceAssemblies,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8,
             }.RunAsync();
         }
 
@@ -526,7 +527,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task CharStringComparison_CSharp_Diagnostic()
+        public async Task CharStringComparison_HardCodedChar_CSharp_Diagnostic()
         {
             var testCode = """
                 class C
@@ -539,11 +540,15 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 """;
 
             var fixedCode = """
+                using System;
+
                 class C
                 {
                     void M(string a)
                     {
-                        _ = a.StartsWith('a', System.StringComparison.Ordinal);
+                        _ = a.AsSpan().StartsWith(stackalloc char[1] {
+                            'a'
+                        }, System.StringComparison.Ordinal);
                     }
                 }
                 """;
@@ -552,7 +557,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task CharStringComparison_VB_Diagnostic()
+        public async Task CharStringComparison_HardCodedChar_VB_Diagnostic()
         {
             var testCode = """
                 Class C
@@ -565,7 +570,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             var fixedCode = """
                 Class C
                     Sub M(a As String)
-                        Dim unused = a.StartsWith("a"c, System.StringComparison.Ordinal)
+                        Dim unused = a.StartsWith("a", System.StringComparison.Ordinal)
                     End Sub
                 End Class
                 """;
@@ -573,7 +578,162 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
-        // TODO: Add OutOfOrderNamedArguments test for IndexOf(char, StringComparison) overload.
+        [Fact]
+        public async Task CharStringComparison_Expression_CSharp_Diagnostic()
+        {
+            var testCode = """
+                class C
+                {
+                    void M(string a, char exp)
+                    {
+                        _ = [|a.IndexOf(exp, System.StringComparison.Ordinal) == 0|];
+                    }
+                }
+                """;
+
+            var fixedCode = """
+                using System;
+
+                class C
+                {
+                    void M(string a, char exp)
+                    {
+                        _ = a.AsSpan().StartsWith(stackalloc char[1] {
+                            exp
+                        }, System.StringComparison.Ordinal);
+                    }
+                }
+                """;
+
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Fact]
+        public async Task CharStringComparison_Expression_VB_Diagnostic()
+        {
+            var testCode = """
+                Class C
+                    Sub M(a As String, exp As Char)
+                        Dim unused = [|a.IndexOf(exp, System.StringComparison.Ordinal) = 0|]
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode = """
+                Class C
+                    Sub M(a As String, exp As Char)
+                        Dim unused = a.StartsWith(exp.ToString(), System.StringComparison.Ordinal)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Fact]
+        public async Task CharStringComparison_HardCodedChar_OutOfOrder_CSharp_Diagnostic()
+        {
+            var testCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = [|a.IndexOf(comparisonType: System.StringComparison.Ordinal, value: 'a') == 0|];
+                    }
+                }
+                """;
+
+            var fixedCode = """
+                using System;
+
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = a.AsSpan().StartsWith(comparisonType: System.StringComparison.Ordinal, value: stackalloc char[1] {
+                            'a'
+                        });
+                    }
+                }
+                """;
+
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Fact]
+        public async Task CharStringComparison_HardCodedChar_OutOfOrder_VB_Diagnostic()
+        {
+            var testCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = [|a.IndexOf(comparisonType:=System.StringComparison.Ordinal, value:="a"c) = 0|]
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = a.StartsWith(value:="a", comparisonType:=System.StringComparison.Ordinal)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Fact]
+        public async Task CharStringComparison_Expression_OutOfOrder_CSharp_Diagnostic()
+        {
+            var testCode = """
+                class C
+                {
+                    void M(string a, char exp)
+                    {
+                        _ = [|a.IndexOf(comparisonType: System.StringComparison.Ordinal, value: exp) == 0|];
+                    }
+                }
+                """;
+
+            var fixedCode = """
+                using System;
+
+                class C
+                {
+                    void M(string a, char exp)
+                    {
+                        _ = a.AsSpan().StartsWith(comparisonType: System.StringComparison.Ordinal, value: stackalloc char[1] {
+                            exp
+                        });
+                    }
+                }
+                """;
+
+            await VerifyCodeFixCSAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Fact]
+        public async Task CharStringComparison_Expression_OutOfOrder_VB_Diagnostic()
+        {
+            var testCode = """
+                Class C
+                    Sub M(a As String, exp As Char)
+                        Dim unused = [|a.IndexOf(comparisonType:=System.StringComparison.Ordinal, value:=exp) = 0|]
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode = """
+                Class C
+                    Sub M(a As String, exp As Char)
+                        Dim unused = a.StartsWith(value:=exp.ToString(), comparisonType:=System.StringComparison.Ordinal)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyCodeFixVBAsync(testCode, fixedCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
         [Fact]
         public async Task OutOfOrderNamedArguments_CSharp_Diagnostic()
         {

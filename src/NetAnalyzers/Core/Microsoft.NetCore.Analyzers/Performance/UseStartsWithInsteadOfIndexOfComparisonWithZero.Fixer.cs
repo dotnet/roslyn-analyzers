@@ -47,11 +47,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadString_StringComparison:
                             return document.WithSyntaxRoot(root.ReplaceNode(node, CreateStartsWithInvocationFromArguments(generator, instance, arguments, shouldNegate)));
 
-                        // For 'a.IndexOf(ch, stringComparison)', we use 'a.StartsWith(stackalloc char[1] { ch }, stringComparison)'
+                        // For 'a.IndexOf(ch, stringComparison)':
+                        // C#: Use 'a.AsSpan().StartsWith(stackalloc char[1] { ch }, stringComparison)'
                         // https://learn.microsoft.com/dotnet/api/system.memoryextensions.startswith?view=net-7.0#system-memoryextensions-startswith(system-readonlyspan((system-char))-system-readonlyspan((system-char))-system-stringcomparison)
+                        // VB: Use a.StartsWith(c.ToString(), stringComparison)
                         case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadChar_StringComparison:
                             // TODO:
-                            return document;
+                            return document.WithSyntaxRoot(root.ReplaceNode(node, HandleCharStringComparisonOverload(generator, instance, arguments, shouldNegate)));
 
                         // If 'StartsWith(char)' is available, use it. Otherwise check '.Length > 0 && [0] == ch'
                         // For negation, we use '.Length == 0 || [0] != ch'
@@ -89,9 +91,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 context.Diagnostics);
         }
 
+        protected abstract SyntaxNode HandleCharStringComparisonOverload(SyntaxGenerator generator, SyntaxNode instance, SyntaxNode[] arguments, bool shouldNegate);
         protected abstract SyntaxNode AppendElasticMarker(SyntaxNode replacement);
 
-        private static SyntaxNode CreateStartsWithInvocationFromArguments(SyntaxGenerator generator, SyntaxNode instance, SyntaxNode[] arguments, bool shouldNegate)
+        protected static SyntaxNode CreateStartsWithInvocationFromArguments(SyntaxGenerator generator, SyntaxNode instance, SyntaxNode[] arguments, bool shouldNegate)
         {
             var expression = generator.InvocationExpression(generator.MemberAccessExpression(instance, "StartsWith"), arguments);
             return shouldNegate ? generator.LogicalNotExpression(expression) : expression;

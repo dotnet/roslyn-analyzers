@@ -7,10 +7,21 @@ trigger:
 
 # Branch(es) that trigger(s) build(s) on PR
 pr:
-- main
-- release/*
-- features/*
-- 2.9.x
+  branches:
+    include:
+    - main
+    - release/*
+    - features/*
+    - 2.9.x
+  paths:
+    exclude:
+      - docs/*
+      - .github/*
+      - .devcontainer/*
+      - .vsconfig
+      - CODE-OF-CONDUCT.md
+      - CONTRIBUTING.md
+      - README.md
 
 jobs:
 - job: Windows

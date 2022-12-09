@@ -18,9 +18,7 @@ pr:
       - docs/*
       - .github/*
       - .devcontainer/*
-      - .vsconfig
       - CODE-OF-CONDUCT.md
-      - CONTRIBUTING.md
       - README.md
 
 jobs:

@@ -177,6 +177,24 @@ class C
             return name;
         }
     }
+
+    void NullableArg(int? arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
+
+    void GenericMethod<T>(T arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
+}
+
+class GenericType<T>
+{
+    void M(T arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
 }
 ",
                 FixedCode =
@@ -259,6 +277,24 @@ class C
             ArgumentNullException.ThrowIfNull(name);
             return name;
         }
+    }
+
+    void NullableArg(int? arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
+
+    void GenericMethod<T>(T arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
+}
+
+class GenericType<T>
+{
+    void M(T arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
     }
 }
 "

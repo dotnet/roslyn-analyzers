@@ -52,7 +52,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         // https://learn.microsoft.com/dotnet/api/system.memoryextensions.startswith?view=net-7.0#system-memoryextensions-startswith(system-readonlyspan((system-char))-system-readonlyspan((system-char))-system-stringcomparison)
                         // VB: Use a.StartsWith(c.ToString(), stringComparison)
                         case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadChar_StringComparison:
-                            // TODO:
                             return document.WithSyntaxRoot(root.ReplaceNode(node, HandleCharStringComparisonOverload(generator, instance, arguments, shouldNegate)));
 
                         // If 'StartsWith(char)' is available, use it. Otherwise check '.Length > 0 && [0] == ch'

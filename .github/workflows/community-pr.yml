@@ -2,9 +2,7 @@ name: Label community PRs
 on:
   pull_request_target:
     types: [opened]
-permissions:
-  issues: write
-  pull-requests: write
+permissions: write-all
 jobs:
   add_community_label:
     runs-on: ubuntu-latest

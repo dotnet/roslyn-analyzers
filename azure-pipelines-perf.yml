@@ -33,7 +33,7 @@ jobs:
       inputs:
         filePath: $(Build.SourcesDirectory)\eng\common\build.ps1
         arguments: -configuration Release -prepareMachine -ci -restore -binaryLog
-    - pwsh: $(Build.SourcesDirectory)\eng\perf\PerfCore.ps1 -v diag -diff -ci 
+    - pwsh: $(Build.SourcesDirectory)\eng\perf\PerfCore.ps1 -v diag -ci 
       displayName: Validate Performance
     - task: PublishBuildArtifacts@1
       displayName: Publish Performance Results

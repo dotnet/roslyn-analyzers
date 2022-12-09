@@ -22,7 +22,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
                 if (usingDirective.Alias != null &&
                     usingDirective.Name.IsKind(SyntaxKind.GenericName) &&
                     context.SemanticModel.GetDeclaredSymbol(usingDirective) is IAliasSymbol aliasSymbol &&
-                    aliasSymbol.Target is INamedTypeSymbol { IsGenericType: true })
+                    aliasSymbol.Target is INamedTypeSymbol { IsGenericType: true } namedTypeSymbol)
                 {
                     var generics = namedTypeSymbol.TypeParameters.Zip(namedTypeSymbol.TypeArguments, (parameter, argument) => (parameter, argument));
                     ProcessGenericTypes(generics, instantiatedTypes);

@@ -22,7 +22,7 @@ jobs:
         _codeCoverage: False
   pool:
     name: NetCore-Public
-    demands: ImageOverride -equals Windows.10.Amd64.19H1.Tiger.Perf.Open
+    demands: ImageOverride -equals Windows.10.Amd64.ClientRS4.DevEx.15.8.Open
   timeoutInMinutes: 150
 
   steps:

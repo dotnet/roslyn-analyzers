@@ -20,10 +20,9 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
                 var usingDirective = (UsingDirectiveSyntax)context.Node;
 
                 if (usingDirective.Alias != null &&
-                    usingDirective.DescendantNodes().OfType<GenericNameSyntax>().Any() &&
+                    usingDirective.Name.IsKind(SyntaxKind.GenericName) &&
                     context.SemanticModel.GetDeclaredSymbol(usingDirective) is IAliasSymbol aliasSymbol &&
-                    aliasSymbol.Target is INamedTypeSymbol namedTypeSymbol &&
-                    namedTypeSymbol.IsGenericType)
+                    aliasSymbol.Target is INamedTypeSymbol { IsGenericType: true })
                 {
                     var generics = namedTypeSymbol.TypeParameters.Zip(namedTypeSymbol.TypeArguments, (parameter, argument) => (parameter, argument));
                     ProcessGenericTypes(generics, instantiatedTypes);

@@ -34,7 +34,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         private static (ArgumentSyntax Argument, int Index) GetCharacterArgumentAndIndex(SyntaxNode[] arguments)
         {
             var firstArgument = (ArgumentSyntax)arguments[0];
-            if (firstArgument.NameColon is null or { Name.Identifier.Value: "value"})
+            if (firstArgument.NameColon is null or { Name.Identifier.Value: "value" })
             {
                 return (firstArgument, 0);
             }

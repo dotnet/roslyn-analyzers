@@ -1,23 +1,25 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
     /// CA1825: Avoid zero-length array allocations.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
-    public sealed class AvoidZeroLengthArrayAllocationsFixer : CodeFixProvider
+    public abstract class AvoidZeroLengthArrayAllocationsFixer : CodeFixProvider
     {
+        protected abstract T AddElasticMarker<T>(T syntaxNode) where T : SyntaxNode;
+
         public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(AvoidZeroLengthArrayAllocationsAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
@@ -43,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     context.Diagnostics);
         }
 
-        private static async Task<Document> ConvertToArrayEmptyAsync(Document document, SyntaxNode nodeToFix, CancellationToken cancellationToken)
+        private async Task<Document> ConvertToArrayEmptyAsync(Document document, SyntaxNode nodeToFix, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
 
@@ -56,25 +58,49 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return document;
             }
 
-            ITypeSymbol? elementType = GetArrayElementType(nodeToFix, semanticModel, cancellationToken);
+            ITypeSymbol? elementType = GetArrayElementType(nodeToFix, semanticModel, cancellationToken, out var variableName);
             if (elementType == null)
             {
                 return document;
             }
 
             SyntaxNode arrayEmptyInvocation = GenerateArrayEmptyInvocation(generator, arrayTypeSymbol, elementType).WithTriviaFrom(nodeToFix);
-            editor.ReplaceNode(nodeToFix, arrayEmptyInvocation);
+
+            if (variableName is null)
+            {
+                editor.ReplaceNode(nodeToFix, arrayEmptyInvocation);
+            }
+            else
+            {
+                editor.ReplaceNode(nodeToFix, AddElasticMarker(generator.LocalDeclarationStatement(variableName, arrayEmptyInvocation)));
+            }
+
             return editor.GetChangedDocument();
         }
 
-        private static ITypeSymbol? GetArrayElementType(SyntaxNode arrayCreationExpression, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static ITypeSymbol? GetArrayElementType(SyntaxNode arrayCreationExpression, SemanticModel semanticModel, CancellationToken cancellationToken, out string? variableName)
         {
-            var typeInfo = semanticModel.GetTypeInfo(arrayCreationExpression, cancellationToken);
-            // When Type is null in cases like 'T[] goo = { }', use ConvertedType instead (https://github.com/dotnet/roslyn/issues/23545).
-            // When Type isn't null, do not use ConvertedType. For cases like `object[] goo = new string[0]`,
-            // we want to return the string type symbol, not the object one.
-            var arrayType = (IArrayTypeSymbol)(typeInfo.Type ?? typeInfo.ConvertedType);
-            return arrayType?.ElementType;
+            var operation = semanticModel.GetOperation(arrayCreationExpression, cancellationToken);
+
+            // If we have `string[] x = { }`, we get IArrayInitializerOperation whose parent is IArrayCreationOperation.
+            if (operation.Kind == OperationKind.ArrayInitializer)
+            {
+                operation = operation.Parent;
+            }
+
+            if (operation is IArrayCreationOperation arrayCreation)
+            {
+                variableName = null;
+                return arrayCreation.GetElementType();
+            }
+            else if (operation is IVariableDeclaratorOperation { Initializer.Value: IArrayCreationOperation arrayCreationInDeclarator, Symbol.Name: var symbolName })
+            {
+                variableName = symbolName;
+                return arrayCreationInDeclarator.GetElementType();
+            }
+
+            variableName = null;
+            return null;
         }
 
         private static SyntaxNode GenerateArrayEmptyInvocation(SyntaxGenerator generator, INamedTypeSymbol arrayTypeSymbol, ITypeSymbol elementType)

@@ -132,13 +132,13 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.AvoidMultipleEnumera
         {
             var other = (GlobalFlowStateDictionaryAnalysisValue)obj;
             return HashUtilities.Combine(TrackedEntities) == HashUtilities.Combine(other.TrackedEntities)
-                && Kind.GetHashCode() == other.Kind.GetHashCode();
+                && ((int)Kind).GetHashCode() == ((int)other.Kind).GetHashCode();
         }
 
         protected override void ComputeHashCodeParts(ref RoslynHashCode hashCode)
         {
             hashCode.Add(HashUtilities.Combine(TrackedEntities));
-            hashCode.Add(Kind.GetHashCode());
+            hashCode.Add(((int)Kind).GetHashCode());
         }
     }
 }

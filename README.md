@@ -66,7 +66,7 @@ You do not need to manually install this NuGet package to your project if you ar
 
 This is a migration analyzer package for existing binary FxCop users. It contains all **the ported FxCop code analysis rules (CAxxxx)**. It's recommended to use Microsoft.CodeAnalysis.NetAnalyzers instead. The documentation for that can be found at [learn.microsoft.com/visualstudio/code-quality/install-net-analyzers](https://learn.microsoft.com/visualstudio/code-quality/install-net-analyzers).
 
-The documentation for all the ported and unported FxCop rules can be found at [learn.microsoft.com/en-us/visualstudio/code-quality/fxcop-rule-port-status](https://learn.microsoft.com/visualstudio/code-quality/fxcop-rule-port-status).
+The documentation for all the ported and unported FxCop rules can be found at [learn.microsoft.com/visualstudio/code-quality/fxcop-rule-port-status](https://learn.microsoft.com/visualstudio/code-quality/fxcop-rule-port-status).
 
 This analyzer package contains all the ported FxCop rules that are applicable for both *.NetCore/.NetStandard* and *Desktop .NetFramework* projects. You **do not need to install any separate analyzer package from this repo to get target-framework specific FxCop rules**.
 

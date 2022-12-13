@@ -97,6 +97,16 @@
         <target state="translated">Unikaj parametrów out</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidUnusedResourceMessage">
+        <source>Remove unused resources '{0}'</source>
+        <target state="new">Remove unused resources '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidUnusedResourcesTitle">
+        <source>Remove unused resource</source>
+        <target state="new">Remove unused resource</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMultipleMessage">
         <source>Type '{0}' directly or indirectly inherits '{1}' without implementing any of '{2}'. Publicly-visible types should implement the generic version to broaden usability.</source>
         <target state="translated">Typ „{0}” bezpośrednio lub pośrednio dziedziczy element „{1}”, bez implementowania żadnego z elementów „{2}”. Typy widoczne publicznie powinny implementować wersję ogólną, aby zwiększyć użyteczność.</target>

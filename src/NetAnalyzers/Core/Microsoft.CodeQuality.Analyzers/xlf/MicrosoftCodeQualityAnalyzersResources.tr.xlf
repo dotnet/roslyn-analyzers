@@ -97,6 +97,16 @@
         <target state="translated">out parametrelerinden kaçının</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidUnusedResourceMessage">
+        <source>Remove unused resources '{0}'</source>
+        <target state="new">Remove unused resources '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidUnusedResourcesTitle">
+        <source>Remove unused resource</source>
+        <target state="new">Remove unused resource</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMultipleMessage">
         <source>Type '{0}' directly or indirectly inherits '{1}' without implementing any of '{2}'. Publicly-visible types should implement the generic version to broaden usability.</source>
         <target state="translated">'{0}' türü, herhangi bir '{2}' uygulamaksızın doğrudan veya dolaylı olarak şunu devralır: '{1}'. Herkese görünür türler, kullanılabilirliği genişletmek için genel sürümü uygulamalıdır.</target>

@@ -4803,7 +4803,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "DoNotAddSchemaByURL",
+            "typeName": "DoNotAddSchemaByURLAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -4963,7 +4963,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "DoNotDisableCertificateValidation",
+            "typeName": "DoNotDisableCertificateValidationAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -4983,7 +4983,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "DoNotCallDangerousMethodsInDeserialization",
+            "typeName": "DoNotCallDangerousMethodsInDeserializationAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5046,7 +5046,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "DoNotDisableRequestValidation",
+            "typeName": "DoNotDisableRequestValidationAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5066,7 +5066,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "DoNotUseDeprecatedSecurityProtocols",
+            "typeName": "DoNotUseDeprecatedSecurityProtocolsAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5086,7 +5086,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "DoNotDisableHTTPHeaderChecking",
+            "typeName": "DoNotDisableHTTPHeaderCheckingAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5106,7 +5106,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "UseXmlReaderForDataSetReadXml",
+            "typeName": "UseXmlReaderForDataSetReadXmlAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5147,7 +5147,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "SetViewStateUserKey",
+            "typeName": "SetViewStateUserKeyAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5167,7 +5167,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "UseXmlReaderForDeserialize",
+            "typeName": "UseXmlReaderForDeserializeAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5187,7 +5187,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "UseXmlReaderForValidatingReader",
+            "typeName": "UseXmlReaderForValidatingReaderAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5207,7 +5207,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "UseXmlReaderForSchemaRead",
+            "typeName": "UseXmlReaderForSchemaReadAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5227,7 +5227,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "UseXmlReaderForXPathDocument",
+            "typeName": "UseXmlReaderForXPathDocumentAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5247,7 +5247,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "DoNotUseObsoleteKDFAlgorithm",
+            "typeName": "DoNotUseObsoleteKDFAlgorithmAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5267,7 +5267,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "DoNotUseXslTransform",
+            "typeName": "DoNotUseXslTransformAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5287,7 +5287,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "DoNotUseAccountSAS",
+            "typeName": "DoNotUseAccountSASAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5307,7 +5307,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "UseSharedAccessProtocolHttpsOnly",
+            "typeName": "UseSharedAccessProtocolHttpsOnlyAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5328,7 +5328,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "UseContainerLevelAccessPolicy",
+            "typeName": "UseContainerLevelAccessPolicyAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5370,7 +5370,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "DoNotUseWeakKDFAlgorithm",
+            "typeName": "DoNotUseWeakKDFAlgorithmAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5478,7 +5478,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "DoNotUseDSA",
+            "typeName": "DoNotUseDSAAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5498,7 +5498,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "typeName": "UseRSAWithSufficientKeySize",
+            "typeName": "UseRSAWithSufficientKeySizeAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5518,7 +5518,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "DoNotUseDeprecatedSecurityProtocols",
+            "typeName": "DoNotUseDeprecatedSecurityProtocolsAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5582,7 +5582,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "DoNotAddArchiveItemPathToTheTargetFileSystemPath",
+            "typeName": "DoNotAddArchiveItemPathToTheTargetFileSystemPathAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5603,7 +5603,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "DoNotHardCodeEncryptionKey",
+            "typeName": "DoNotHardCodeEncryptionKeyAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5624,7 +5624,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "UseAutoValidateAntiforgeryToken",
+            "typeName": "UseAutoValidateAntiforgeryTokenAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5645,7 +5645,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "UseDefaultDllImportSearchPathsAttribute",
+            "typeName": "UseDefaultDllImportSearchPathsAttributeAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5665,7 +5665,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "UseDefaultDllImportSearchPathsAttribute",
+            "typeName": "UseDefaultDllImportSearchPathsAttributeAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5685,7 +5685,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "DoNotUseInsecureRandomness",
+            "typeName": "DoNotUseInsecureRandomnessAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5705,7 +5705,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "UseAutoValidateAntiforgeryToken",
+            "typeName": "UseAutoValidateAntiforgeryTokenAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5726,7 +5726,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "SetHttpOnlyForHttpCookie",
+            "typeName": "SetHttpOnlyForHttpCookieAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -5876,7 +5876,7 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "DoNotHardCodeCertificate",
+            "typeName": "DoNotHardCodeCertificateAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"

@@ -23,7 +23,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5395: <inheritdoc cref="MissHttpVerbAttribute"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class UseAutoValidateAntiforgeryToken : DiagnosticAnalyzer
+    public sealed class UseAutoValidateAntiforgeryTokenAnalyzer : DiagnosticAnalyzer
     {
         internal static readonly DiagnosticDescriptor UseAutoValidateAntiforgeryTokenRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5391",

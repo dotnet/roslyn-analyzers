@@ -21,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5360: <inheritdoc cref="DoNotCallDangerousMethodsInDeserialization"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotCallDangerousMethodsInDeserialization : DiagnosticAnalyzer
+    public sealed class DoNotCallDangerousMethodsInDeserializationAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5360";
 

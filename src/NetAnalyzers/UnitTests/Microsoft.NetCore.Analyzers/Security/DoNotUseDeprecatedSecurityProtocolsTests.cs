@@ -5,10 +5,10 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Security.DoNotUseDeprecatedSecurityProtocols,
+    Microsoft.NetCore.Analyzers.Security.DoNotUseDeprecatedSecurityProtocolsAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Security.DoNotUseDeprecatedSecurityProtocols,
+    Microsoft.NetCore.Analyzers.Security.DoNotUseDeprecatedSecurityProtocolsAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
@@ -30,8 +30,8 @@ public class ExampleClass
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
     }
 }",
-            GetCSharpResultAt(10, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls11"),
-            GetCSharpResultAt(10, 77, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"));
+            GetCSharpResultAt(10, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "Tls11"),
+            GetCSharpResultAt(10, 77, DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule, "Tls12"));
         }
 
         [Fact]
@@ -48,8 +48,8 @@ Public Class TestClass
     End Sub
 End Class
 ",
-            GetBasicResultAt(8, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls11"),
-            GetBasicResultAt(8, 78, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"));
+            GetBasicResultAt(8, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "Tls11"),
+            GetBasicResultAt(8, 78, DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule, "Tls12"));
         }
 
         [Fact]
@@ -67,7 +67,7 @@ public class ExampleClass
         ServicePointManager.SecurityProtocol = (SecurityProtocolType) 768;    // TLS 1.1
     }
 }",
-            GetCSharpResultAt(10, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "768"));
+            GetCSharpResultAt(10, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "768"));
         }
 
         [Fact]
@@ -84,7 +84,7 @@ Public Class TestClass
     End Sub
 End Class
 ",
-            GetBasicResultAt(8, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "768"));
+            GetBasicResultAt(8, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "768"));
         }
 
         [Fact]
@@ -135,7 +135,7 @@ public class ExampleClass
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
     }
 }",
-            GetCSharpResultAt(10, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"));
+            GetCSharpResultAt(10, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule, "Tls12"));
         }
 
         [Fact]
@@ -152,7 +152,7 @@ Public Class TestClass
     End Sub
 End Class
 ",
-            GetBasicResultAt(8, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"));
+            GetBasicResultAt(8, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule, "Tls12"));
         }
 
         [Fact]
@@ -170,7 +170,7 @@ public class ExampleClass
         ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072;    // TLS 1.2
     }
 }",
-            GetCSharpResultAt(10, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "3072"));
+            GetCSharpResultAt(10, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule, "3072"));
         }
 
         [Fact]
@@ -187,7 +187,7 @@ Public Class TestClass
     End Sub
 End Class
 ",
-            GetBasicResultAt(8, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "3072"));
+            GetBasicResultAt(8, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule, "3072"));
         }
 
         [Fact]
@@ -204,7 +204,7 @@ class TestClass
         var a = SecurityProtocolType.Ssl3;
     }
 }",
-            GetCSharpResultAt(9, 17, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Ssl3"));
+            GetCSharpResultAt(9, 17, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "Ssl3"));
         }
 
         [Fact]
@@ -221,7 +221,7 @@ class TestClass
         var a = SecurityProtocolType.Tls;
     }
 }",
-            GetCSharpResultAt(9, 17, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls"));
+            GetCSharpResultAt(9, 17, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "Tls"));
         }
 
         [Fact]
@@ -238,7 +238,7 @@ class TestClass
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11;
     }
 }",
-            GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls11"));
+            GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "Tls11"));
         }
 
         [Fact]
@@ -281,7 +281,7 @@ class TestClass
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
     }
 }",
-                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"));
+                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule, "Tls12"));
         }
 
         [Fact]
@@ -308,7 +308,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls13"),
+                        GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule, "Tls13"),
                     },
                 }
             }.RunAsync();
@@ -328,8 +328,8 @@ class TestClass
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
     }
 }",
-                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"),
-                GetCSharpResultAt(9, 77, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls11"));
+                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule, "Tls12"),
+                GetCSharpResultAt(9, 77, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "Tls11"));
         }
 
         [Fact]
@@ -346,7 +346,7 @@ class TestClass
         ServicePointManager.SecurityProtocol |= (SecurityProtocolType)192;
     }
 }",
-                GetCSharpResultAt(9, 49, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "192"));
+                GetCSharpResultAt(9, 49, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "192"));
         }
 
         [Fact]
@@ -364,7 +364,7 @@ class TestClass
         ServicePointManager.SecurityProtocol = (SecurityProtocolType)384;
     }
 }",
-                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "384"));
+                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "384"));
         }
 
         [Fact]
@@ -381,7 +381,7 @@ class TestClass
         ServicePointManager.SecurityProtocol = ServicePointManager.SecurityProtocol | (SecurityProtocolType)768;
     }
 }",
-                GetCSharpResultAt(9, 87, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "768"));
+                GetCSharpResultAt(9, 87, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "768"));
         }
 
         [Fact]
@@ -398,7 +398,7 @@ class TestClass
         ServicePointManager.SecurityProtocol = ServicePointManager.SecurityProtocol | (SecurityProtocolType)12288;
     }
 }",
-                GetCSharpResultAt(9, 87, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "12288"));
+                GetCSharpResultAt(9, 87, DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule, "12288"));
         }
 
         [Fact]
@@ -415,8 +415,8 @@ class TestClass
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | (SecurityProtocolType)192;
     }
 }",
-                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"),
-                GetCSharpResultAt(9, 77, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls11"));
+                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule, "Tls12"),
+                GetCSharpResultAt(9, 77, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "Tls11"));
         }
 
         [Fact]
@@ -433,8 +433,8 @@ class TestClass
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)192;
     }
 }",
-                VerifyCS.Diagnostic(DoNotUseDeprecatedSecurityProtocols.DeprecatedRule).WithSpan(9, 48, 9, 102).WithArguments("3264"),
-                VerifyCS.Diagnostic(DoNotUseDeprecatedSecurityProtocols.HardCodedRule).WithSpan(9, 48, 9, 74).WithArguments("Tls12"));
+                VerifyCS.Diagnostic(DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule).WithSpan(9, 48, 9, 102).WithArguments("3264"),
+                VerifyCS.Diagnostic(DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule).WithSpan(9, 48, 9, 74).WithArguments("Tls12"));
         }
 
         [Fact]
@@ -469,7 +469,7 @@ class TestClass
         ServicePointManager.SecurityProtocol = (SecurityProtocolType)(24 + 24);
     }
 }",
-                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "48"));
+                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "48"));
         }
 
         [Fact]
@@ -519,10 +519,10 @@ class TestClass
         t &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11);
     }
 }",
-                GetCSharpResultAt(10, 14, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "-1009"),
-                GetCSharpResultAt(10, 16, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Ssl3"),
-                GetCSharpResultAt(10, 44, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls"),
-                GetCSharpResultAt(10, 71, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls11"));
+                GetCSharpResultAt(10, 14, DoNotUseDeprecatedSecurityProtocolsAnalyzer.HardCodedRule, "-1009"),
+                GetCSharpResultAt(10, 16, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "Ssl3"),
+                GetCSharpResultAt(10, 44, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "Tls"),
+                GetCSharpResultAt(10, 71, DoNotUseDeprecatedSecurityProtocolsAnalyzer.DeprecatedRule, "Tls11"));
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)

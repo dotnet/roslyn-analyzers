@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA3061: <inheritdoc cref="DoNotAddSchemaByURL"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotAddSchemaByURL : DiagnosticAnalyzer
+    public sealed class DoNotAddSchemaByURLAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA3061";
 

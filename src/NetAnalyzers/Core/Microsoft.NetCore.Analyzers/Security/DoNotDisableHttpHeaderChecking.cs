@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5365: <inheritdoc cref="DoNotDisableHTTPHeaderChecking"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotDisableHTTPHeaderChecking : DiagnosticAnalyzer
+    public sealed class DoNotDisableHTTPHeaderCheckingAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5365";
 

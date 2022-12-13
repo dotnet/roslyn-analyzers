@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5368: <inheritdoc cref="SetViewStateUserKey"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class SetViewStateUserKey : DiagnosticAnalyzer
+    public sealed class SetViewStateUserKeyAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5368";
 

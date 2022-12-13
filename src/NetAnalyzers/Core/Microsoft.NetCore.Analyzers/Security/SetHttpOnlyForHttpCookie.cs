@@ -22,7 +22,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5396: <inheritdoc cref="SetHttpOnlyForHttpCookie"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    internal class SetHttpOnlyForHttpCookie : DiagnosticAnalyzer
+    internal class SetHttpOnlyForHttpCookieAnalyzer : DiagnosticAnalyzer
     {
         internal static readonly DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5396",

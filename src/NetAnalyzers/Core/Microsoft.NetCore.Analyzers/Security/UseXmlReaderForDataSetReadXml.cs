@@ -9,7 +9,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     using static MicrosoftNetCoreAnalyzersResources;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class UseXmlReaderForDataSetReadXml : UseXmlReaderBase
+    public sealed class UseXmlReaderForDataSetReadXmlAnalyzer : UseXmlReaderBase
     {
         internal const string DiagnosticId = "CA5366";
 

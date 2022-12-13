@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Security.UseDefaultDllImportSearchPathsAttribute,
+    Microsoft.NetCore.Analyzers.Security.UseDefaultDllImportSearchPathsAttributeAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
@@ -36,7 +36,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.UseDefaultDllImportSearchPathsAttributeRule, "MessageBox"));
+            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.UseDefaultDllImportSearchPathsAttributeRule, "MessageBox"));
         }
 
         [Fact]
@@ -56,7 +56,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.UseDefaultDllImportSearchPathsAttributeRule, "MessageBox"));
+            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.UseDefaultDllImportSearchPathsAttributeRule, "MessageBox"));
         }
 
         [Fact]
@@ -76,7 +76,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.UseDefaultDllImportSearchPathsAttributeRule, "MessageBox"));
+            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.UseDefaultDllImportSearchPathsAttributeRule, "MessageBox"));
         }
 
         [Fact]
@@ -97,7 +97,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory"));
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory"));
         }
 
         [Fact]
@@ -118,7 +118,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory"));
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory"));
         }
 
         [Fact]
@@ -139,7 +139,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory, ApplicationDirectory"));
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory, ApplicationDirectory"));
         }
 
         [Fact]
@@ -160,7 +160,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "LegacyBehavior"));
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.DoNotUseUnsafeDllImportSearchPathRule, "LegacyBehavior"));
         }
 
         [Fact]
@@ -181,7 +181,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "UseDllDirectoryForDependencies"));
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.DoNotUseUnsafeDllImportSearchPathRule, "UseDllDirectoryForDependencies"));
         }
 
         [Fact]
@@ -203,7 +203,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(10, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory"));
+            GetCSharpResultAt(10, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory"));
         }
 
         [Fact]
@@ -226,7 +226,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(11, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "ApplicationDirectory"));
+            GetCSharpResultAt(11, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.DoNotUseUnsafeDllImportSearchPathRule, "ApplicationDirectory"));
         }
 
         [Fact]
@@ -249,7 +249,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(11, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory"));
+            GetCSharpResultAt(11, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory"));
         }
 
         [Theory]
@@ -282,7 +282,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory, ApplicationDirectory"),
+                        GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory, ApplicationDirectory"),
                     },
                     AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
 
@@ -321,7 +321,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "System32"),
+                        GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.DoNotUseUnsafeDllImportSearchPathRule, "System32"),
                     },
                     AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
 
@@ -360,7 +360,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "UserDirectories"),
+                        GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttributeAnalyzer.DoNotUseUnsafeDllImportSearchPathRule, "UserDirectories"),
                     },
                     AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
 

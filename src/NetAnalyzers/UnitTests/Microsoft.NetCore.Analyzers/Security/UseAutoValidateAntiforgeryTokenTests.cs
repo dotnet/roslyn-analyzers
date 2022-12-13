@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Security.UseAutoValidateAntiforgeryToken,
+    Microsoft.NetCore.Analyzers.Security.UseAutoValidateAntiforgeryTokenAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
@@ -78,7 +78,7 @@ class BlahClass
         filterCollection.Add(typeof(FilterClass));
     }
 }",
-            GetCSharpResultAt(26, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
+            GetCSharpResultAt(26, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
         }
 
         [Fact]
@@ -122,7 +122,7 @@ class BlahClass
         filterCollection.Add(typeof(FilterClass));
     }
 }",
-            GetCSharpResultAt(25, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
+            GetCSharpResultAt(25, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
         }
 
         [Fact]
@@ -174,7 +174,7 @@ class BlahClass
         filterCollection.Add(typeof(FilterClass));
     }
 }",
-            GetCSharpResultAt(33, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
+            GetCSharpResultAt(33, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
         }
 
         [Fact]
@@ -197,7 +197,7 @@ class TestClass : Controller
         return null;
     }
 }",
-            GetCSharpResultAt(13, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPost"));
+            GetCSharpResultAt(13, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPost"));
         }
 
         [Fact]
@@ -220,7 +220,7 @@ class TestClass : Controller
         return null;
     }
 }",
-            GetCSharpResultAt(13, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPatch"));
+            GetCSharpResultAt(13, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPatch"));
         }
 
         [Fact]
@@ -242,7 +242,7 @@ class TestClass : Controller
         return null;
     }
 }",
-            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPost"));
+            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPost"));
         }
 
         [Fact]
@@ -264,7 +264,7 @@ class TestClass : Controller
         return null;
     }
 }",
-            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPut"));
+            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPut"));
         }
 
         [Fact]
@@ -286,7 +286,7 @@ class TestClass : Controller
         return null;
     }
 }",
-            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
+            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
         }
 
         [Fact]
@@ -313,7 +313,7 @@ class TestClass : Controller
         return null;
     }
 }",
-            GetCSharpResultAt(17, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
+            GetCSharpResultAt(17, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
         }
 
         [Fact]
@@ -338,7 +338,7 @@ class TestClass : Controller
         return null;
     }
 }",
-            GetCSharpResultAt(15, 35, UseAutoValidateAntiforgeryToken.MissHttpVerbAttributeRule, "CustomizedActionMethod"));
+            GetCSharpResultAt(15, 35, UseAutoValidateAntiforgeryTokenAnalyzer.MissHttpVerbAttributeRule, "CustomizedActionMethod"));
         }
 
         [Fact, WorkItem(2844, "https://github.com/dotnet/roslyn-analyzers/issues/2844")]
@@ -396,11 +396,11 @@ class TestClass5 : Controller
         return null;
     }
 }",
-            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPut"),
-            GetCSharpResultAt(21, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod2", "HttpPut"),
-            GetCSharpResultAt(30, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod3", "HttpPut"),
-            GetCSharpResultAt(39, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod4", "HttpPut"),
-            GetCSharpResultAt(48, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod5", "HttpPut"));
+            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPut"),
+            GetCSharpResultAt(21, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod2", "HttpPut"),
+            GetCSharpResultAt(30, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod3", "HttpPut"),
+            GetCSharpResultAt(39, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod4", "HttpPut"),
+            GetCSharpResultAt(48, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod5", "HttpPut"));
         }
 
         [Fact]
@@ -441,7 +441,7 @@ dotnet_code_quality.CA5391.exclude_aspnet_core_mvc_controllerbase = false") }
             };
 
             csharpTest.ExpectedDiagnostics.Add(
-                GetCSharpResultAt(15, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete")
+                GetCSharpResultAt(15, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete")
             );
 
             await csharpTest.RunAsync();
@@ -595,7 +595,7 @@ class BlahClass
         filterCollection.Add(typeof(FilterClass));
     }
 }",
-                GetCSharpResultAt(36, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPost"));
+                GetCSharpResultAt(36, 35, UseAutoValidateAntiforgeryTokenAnalyzer.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPost"));
         }
 
         [Fact]

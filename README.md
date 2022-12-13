@@ -10,7 +10,7 @@ Roslyn is the compiler platform for .NET. It consists of the compiler itself and
 
 ## What are Roslyn Analyzers?
 
-Roslyn analyzers analyze your code for style, quality and maintainability, design and other issues. The documentation for Roslyn Analyzers can be found at [docs.microsoft.com/dotnet/fundamentals/code-analysis/overview](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/overview).
+Roslyn analyzers analyze your code for style, quality and maintainability, design and other issues. The documentation for Roslyn Analyzers can be found at [learn.microsoft.com/dotnet/fundamentals/code-analysis/overview](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/overview).
 
 Microsoft created a set of analyzers called [Microsoft.CodeAnalysis.NetAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers) that contains the most important "FxCop" rules from static code analysis, converted to Roslyn analyzers, in addition to more analyzers. These analyzers check your code for security, performance, and design issues, among others. The documentation for .NET analyzers can be found [here](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/overview#code-quality-analysis).
 
@@ -38,7 +38,7 @@ Recently the set of analyzer packages produced by this repository have been cons
 
 *Latest pre-release version (.NET7 analyzers):* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.NetAnalyzers/versions)
 
-This is the **primary analyzer package** for this repo that contains all **the .NET code analysis rules (CAxxxx)** that are built into the .NET SDK starting .NET5 release. The documentation for CA rules can be found at [docs.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings](https://learn.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings).
+This is the **primary analyzer package** for this repo that contains all **the .NET code analysis rules (CAxxxx)** that are built into the .NET SDK starting .NET5 release. The documentation for CA rules can be found at [learn.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings](https://learn.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings).
 
 You do not need to manually install this NuGet package to your project if you are using .NET5 SDK or later. These analyzers are enabled by default for projects targeting .NET5 or later. For projects targeting earlier .NET frameworks, you can enable them in your MSBuild project file by setting one of the following properties:
 
@@ -64,9 +64,9 @@ You do not need to manually install this NuGet package to your project if you ar
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)</sub>
 
-This is a migration analyzer package for existing binary FxCop users. It contains all **the ported FxCop code analysis rules (CAxxxx)**. It's recommended to use Microsoft.CodeAnalysis.NetAnalyzers instead. The documentation for that can be found at [docs.microsoft.com/visualstudio/code-quality/install-net-analyzers](https://learn.microsoft.com/visualstudio/code-quality/install-net-analyzers).
+This is a migration analyzer package for existing binary FxCop users. It contains all **the ported FxCop code analysis rules (CAxxxx)**. It's recommended to use Microsoft.CodeAnalysis.NetAnalyzers instead. The documentation for that can be found at [learn.microsoft.com/visualstudio/code-quality/install-net-analyzers](https://learn.microsoft.com/visualstudio/code-quality/install-net-analyzers).
 
-The documentation for all the ported and unported FxCop rules can be found at [docs.microsoft.com/en-us/visualstudio/code-quality/fxcop-rule-port-status](https://learn.microsoft.com/visualstudio/code-quality/fxcop-rule-port-status).
+The documentation for all the ported and unported FxCop rules can be found at [learn.microsoft.com/visualstudio/code-quality/fxcop-rule-port-status](https://learn.microsoft.com/visualstudio/code-quality/fxcop-rule-port-status).
 
 This analyzer package contains all the ported FxCop rules that are applicable for both *.NetCore/.NetStandard* and *Desktop .NetFramework* projects. You **do not need to install any separate analyzer package from this repo to get target-framework specific FxCop rules**.
 

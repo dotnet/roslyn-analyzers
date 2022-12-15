@@ -91,6 +91,7 @@ namespace PerfDiff
                     etlPath = null;
                     return false;
                 }
+
                 return true;
             }
             else if (File.Exists(path) || !path.EndsWith(ETLFileExtension, StringComparison.OrdinalIgnoreCase))

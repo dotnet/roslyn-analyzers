@@ -29,9 +29,19 @@ namespace Analyzer.Utilities.Extensions
         {
             if (invocation.Instance != null)
             {
-                return beforeConversion ?
-                    GetReceiverType(invocation.Instance.Syntax, compilation, cancellationToken) :
-                    invocation.Instance.Type as INamedTypeSymbol;
+                if (beforeConversion)
+                {
+                    if (invocation is { Parent: IConditionalAccessOperation conditionalAccess })
+                    {
+                        return GetReceiverType(conditionalAccess.Operation.Syntax, compilation, cancellationToken);
+                    }
+
+                    return GetReceiverType(invocation.Instance.Syntax, compilation, cancellationToken);
+                }
+                else
+                {
+                    return invocation.Instance.Type as INamedTypeSymbol;
+                }
             }
             else if (invocation.TargetMethod.IsExtensionMethod && !invocation.TargetMethod.Parameters.IsEmpty)
             {

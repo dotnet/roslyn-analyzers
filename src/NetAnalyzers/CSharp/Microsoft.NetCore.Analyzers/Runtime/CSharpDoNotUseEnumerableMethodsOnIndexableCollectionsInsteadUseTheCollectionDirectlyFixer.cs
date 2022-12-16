@@ -4,7 +4,9 @@ using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.NetCore.Analyzers.Runtime;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
@@ -19,6 +21,16 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
 
             return syntaxNode;
+        }
+
+        private protected override bool IsConditionalAccess(SyntaxNode? syntaxNode)
+            => syntaxNode is ConditionalAccessExpressionSyntax;
+
+        private protected override SyntaxNode? ConditionalElementAccessExpression(SyntaxNode expression, SyntaxNode whenNotNull)
+        {
+            var arguments = SeparatedList(new ArgumentSyntax[] { Argument((ExpressionSyntax)whenNotNull) });
+            var elementBinding = ElementBindingExpression(BracketedArgumentList(arguments));
+            return ConditionalAccessExpression((ExpressionSyntax)expression, elementBinding);
         }
     }
 }

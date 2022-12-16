@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -51,12 +52,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            if (semanticModel.GetOperation(invocationNode, context.CancellationToken) is not IInvocationOperation invocationOperation)
+            var operation = semanticModel.GetOperation(invocationNode, context.CancellationToken);
+            if (!TryExtractInvocationOperation(operation, out var invocationOperation))
             {
                 return;
             }
 
             var collectionSyntax = invocationOperation.GetInstanceSyntax();
+
+            if (invocationOperation is { Instance: IConversionOperation { Operand: IConditionalAccessInstanceOperation conditionalAccessInstance } })
+                collectionSyntax = conditionalAccessInstance.Syntax;
+
             if (collectionSyntax == null)
             {
                 return;
@@ -78,6 +84,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                         ct => UseCollectionDirectlyAsync(context.Document, root, invocationNode, collectionSyntax, method),
                                         equivalenceKey: title),
                                     diagnostic);
+        }
+
+        private static bool TryExtractInvocationOperation(IOperation originalOperation, [NotNullWhen(returnValue: true)] out IInvocationOperation? invocation)
+        {
+            if (originalOperation is IInvocationOperation directInvocation)
+            {
+                invocation = directInvocation;
+                return true;
+            }
+
+            if (originalOperation is IConditionalAccessOperation conditionalAccess)
+            {
+                if (conditionalAccess.Children.Last() is IInvocationOperation conditionalInvocation)
+                {
+                    invocation = conditionalInvocation;
+                    return true;
+                }
+            }
+
+            invocation = null;
+            return false;
         }
 
         private Task<Document> UseCollectionDirectlyAsync(Document document, SyntaxNode root, SyntaxNode invocationNode, SyntaxNode collectionSyntax, string methodName)
@@ -115,7 +142,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 // The SubstractExpression method will wrap left and right in parenthesis but those will be automatically removed later on
                 var substraction = generator.SubtractExpression(countMemberAccess, oneLiteral);
-                return generator.ElementAccessExpression(adjustedCollectionSyntaxNoTrailingTrivia, substraction);
+
+                if (IsConditionalAccess(collectionSyntax.Parent))
+                {
+                    return ConditionalElementAccessExpression(adjustedCollectionSyntaxNoTrailingTrivia, substraction);
+                }
+                else
+                {
+                    return generator.ElementAccessExpression(adjustedCollectionSyntaxNoTrailingTrivia, substraction);
+                }
             }
 
             if (methodName == CountPropertyName)
@@ -127,7 +162,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return null;
         }
 
-        [return: NotNullIfNotNull("syntaxNode")]
+        [return: NotNullIfNotNull(nameof(syntaxNode))]
         private protected abstract SyntaxNode? AdjustSyntaxNode(SyntaxNode? syntaxNode);
+
+        private protected abstract bool IsConditionalAccess(SyntaxNode? syntaxNode);
+
+        private protected abstract SyntaxNode? ConditionalElementAccessExpression(SyntaxNode expression, SyntaxNode whenNotNull);
     }
 }

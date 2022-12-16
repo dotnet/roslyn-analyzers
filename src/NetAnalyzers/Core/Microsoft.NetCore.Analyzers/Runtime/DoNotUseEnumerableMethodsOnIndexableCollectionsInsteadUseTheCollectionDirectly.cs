@@ -85,7 +85,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 var properties = new Dictionary<string, string?> { [MethodPropertyKey] = invocation.TargetMethod.Name }.ToImmutableDictionary();
-                operationContext.ReportDiagnostic(invocation.CreateDiagnostic(Rule, properties));
+                IOperation reportDiagnosticOn = invocation;
+
+                // If the parent of invocation is IConditionalAccessOperation then we need to report
+                // diagnostic on it in order to be consistent with diagnostic location.
+                // If we don't do that the diagnostic is reported here: x?[|.Last()|],
+                // while the expected placement is [|x?.Last()|]
+                if (invocation is { Parent: IConditionalAccessOperation conditionalAccess })
+                    reportDiagnosticOn = conditionalAccess;
+
+                operationContext.ReportDiagnostic(reportDiagnosticOn.CreateDiagnostic(Rule, properties));
             }, OperationKind.Invocation);
         }
 

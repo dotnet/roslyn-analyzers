@@ -1182,5 +1182,57 @@ public class Test
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8,
             }.RunAsync();
         }
+
+        [Fact, WorkItem(6348, "https://github.com/dotnet/roslyn-analyzers/issues/6348")]
+        public async Task CA1826_CSharp_ConditionalAccess()
+        {
+            await VerifyCS.VerifyCodeFixAsync("""
+                using System.Collections.Generic;
+                using System.Linq;
+                
+                class C
+                {
+                    void M(IReadOnlyList<string> x)
+                    {
+                        _ = [|x?.Last()|];
+                    }
+                }
+                """, """
+                using System.Collections.Generic;
+                using System.Linq;
+                
+                class C
+                {
+                    void M(IReadOnlyList<string> x)
+                    {
+                        _ = x?[x.Count - 1];
+                    }
+                }
+                """);
+        }
+
+        [Fact, WorkItem(6348, "https://github.com/dotnet/roslyn-analyzers/issues/6348")]
+        public async Task CA1826_Basic_ConditionalAccess()
+        {
+            await VerifyVB.VerifyCodeFixAsync("""
+                Imports System.Collections.Generic
+                Imports System.Linq
+
+                Class C
+                    Sub M(x As IReadOnlyList(Of String))
+                        Dim result = [|x?.Last()|]
+                    End Sub
+                End Class
+                """, """
+                Imports System.Collections.Generic
+                Imports System.Linq
+
+                Class C
+                    Sub M(x As IReadOnlyList(Of String))
+                        Dim result = x?(x.Count - 1)
+                    End Sub
+                End Class
+                """);
+        }
     }
 }

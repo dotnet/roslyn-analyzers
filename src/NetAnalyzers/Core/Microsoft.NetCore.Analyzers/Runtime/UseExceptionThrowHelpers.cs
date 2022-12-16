@@ -146,7 +146,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     // any exceptions where a meaningful message may have been provided.  This is an attempt to reduce
                     // false positives, at the expense of potentially more false negatives in cases where a non-valuable
                     // error message was used.
-                    if (throwOperation.Exception.WalkDownConversion() is not IObjectCreationOperation objectCreationOperation ||
+                    if (throwOperation.GetThrownException() is not IObjectCreationOperation objectCreationOperation ||
                         HasPossiblyMeaningfulAdditionalArguments(objectCreationOperation))
                     {
                         return;
@@ -180,7 +180,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (SymbolEqualityComparer.Default.Equals(objectCreationOperation.Type, ane))
                     {
                         if (aneThrowIfNull is not null &&
-                            IsParameterNullCheck(condition.Condition, out IParameterReferenceOperation? nullCheckParameter))
+                            IsParameterNullCheck(condition.Condition, out IParameterReferenceOperation? nullCheckParameter) &&
+                            nullCheckParameter.Type.IsReferenceType)
                         {
                             context.ReportDiagnostic(condition.CreateDiagnostic(
                                 UseArgumentNullExceptionThrowIfNullRule,
@@ -188,6 +189,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 properties: null,
                                 args: new object[] { nameof(ArgumentNullException), "ThrowIfNull" }));
                         }
+
                         return;
                     }
 
@@ -203,6 +205,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 properties: null,
                                 args: new object[] { nameof(ArgumentException), "ThrowIfNullOrEmpty" }));
                         }
+
                         return;
                     }
 
@@ -241,6 +244,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 p.Type.IsNullableValueType() ||
                                 p.Type.TypeKind == TypeKind.Enum;
                         }
+
                         return;
                     }
 
@@ -273,6 +277,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 properties: null,
                                 args: new object[] { nameof(ObjectDisposedException), "ThrowIf" }));
                         }
+
                         return;
                     }
                 }, OperationKind.Throw);
@@ -440,6 +445,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             parameterReferenceOperation = binaryOperation.LeftOperand as IParameterReferenceOperation;
                             return parameterReferenceOperation is not null;
                         }
+
                         break;
 
                     case BinaryOperatorKind.LessThanOrEqual or BinaryOperatorKind.LessThan:
@@ -452,6 +458,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             parameterReferenceOperation = leftOperandParameterReference;
                             return true;
                         }
+
                         break;
 
                     case BinaryOperatorKind.GreaterThanOrEqual or BinaryOperatorKind.GreaterThan:
@@ -464,6 +471,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             parameterReferenceOperation = rightOperationParameterReference;
                             return true;
                         }
+
                         break;
                 }
             }
@@ -521,6 +529,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             parameterReferenceOperation = rightParameter;
                             return true;
                         }
+
                         break;
                 }
             }

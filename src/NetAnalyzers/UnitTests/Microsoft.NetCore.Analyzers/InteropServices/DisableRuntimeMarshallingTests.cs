@@ -160,7 +160,6 @@ class C
             await VerifyCSAnalyzerAsync(source);
         }
 
-
         [Fact]
         public async Task VB_PInvokeWithClassReturnValue_Emits_Diagnostic()
         {
@@ -1613,8 +1612,7 @@ End Structure
             var test = new VerifyCS.Test
             {
                 LanguageVersion = LanguageVersion.CSharp9,
-                ReferenceAssemblies = new ReferenceAssemblies("net7.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "7.0.0-preview.1.22075.6"), Path.Combine("ref", "net7.0"))
-                    .WithNuGetConfigFilePath(Path.Combine(Path.GetDirectoryName(typeof(DisableRuntimeMarshallingTests).Assembly.Location), "NuGet.config")),
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
                 TestCode = source,
                 MarkupOptions = MarkupOptions.UseFirstDescriptor
             };
@@ -1623,13 +1621,13 @@ End Structure
 
             await test.RunAsync();
         }
+
         private static async Task VerifyCSAnalyzerWithAdditionalAssemblyAsync(string source, string additionalReferencedAssemblySource)
         {
             var test = new VerifyCS.Test
             {
                 LanguageVersion = LanguageVersion.CSharp9,
-                ReferenceAssemblies = new ReferenceAssemblies("net7.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "7.0.0-preview.1.22075.6"), Path.Combine("ref", "net7.0"))
-                    .WithNuGetConfigFilePath(Path.Combine(Path.GetDirectoryName(typeof(DisableRuntimeMarshallingTests).Assembly.Location), "NuGet.config")),
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
                 TestCode = source,
                 MarkupOptions = MarkupOptions.UseFirstDescriptor
             };
@@ -1656,8 +1654,7 @@ End Structure
             var test = new VerifyCS.Test
             {
                 LanguageVersion = LanguageVersion.CSharp9,
-                ReferenceAssemblies = new ReferenceAssemblies("net7.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "7.0.0-preview.1.22075.6"), Path.Combine("ref", "net7.0"))
-                    .WithNuGetConfigFilePath(Path.Combine(Path.GetDirectoryName(typeof(DisableRuntimeMarshallingTests).Assembly.Location), "NuGet.config")),
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
                 TestCode = source,
                 FixedCode = codeFix,
                 SolutionTransforms =
@@ -1684,8 +1681,7 @@ End Structure
         {
             var test = new VerifyVB.Test
             {
-                ReferenceAssemblies = new ReferenceAssemblies("net7.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "7.0.0-preview.1.22075.6"), Path.Combine("ref", "net7.0"))
-                    .WithNuGetConfigFilePath(Path.Combine(Path.GetDirectoryName(typeof(DisableRuntimeMarshallingTests).Assembly.Location), "NuGet.config")),
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
                 TestCode = source,
                 FixedCode = source
             };

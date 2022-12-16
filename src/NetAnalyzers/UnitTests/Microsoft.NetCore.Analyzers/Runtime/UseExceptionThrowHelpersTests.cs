@@ -177,6 +177,39 @@ class C
             return name;
         }
     }
+
+    void NullableArg(int? arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
+
+    void GenericMethod<T>(T arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
+
+    void GenericMethodWithClassConstraint<T>(T arg) where T : class
+    {
+        {|CA1510:if (arg is null) throw new ArgumentNullException(nameof(arg));|}
+    }
+
+    void GenericMethodWithTypeConstraint<T>(T arg) where T : C
+    {
+        {|CA1510:if (arg is null) throw new ArgumentNullException(nameof(arg));|}
+    }
+
+    void GenericMethodWithInterfaceConstraint<T>(T arg) where T : IDisposable
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
+}
+
+class GenericType<T>
+{
+    void M(T arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
 }
 ",
                 FixedCode =
@@ -260,11 +293,43 @@ class C
             return name;
         }
     }
+
+    void NullableArg(int? arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
+
+    void GenericMethod<T>(T arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
+
+    void GenericMethodWithClassConstraint<T>(T arg) where T : class
+    {
+        ArgumentNullException.ThrowIfNull(arg);
+    }
+
+    void GenericMethodWithTypeConstraint<T>(T arg) where T : C
+    {
+        ArgumentNullException.ThrowIfNull(arg);
+    }
+
+    void GenericMethodWithInterfaceConstraint<T>(T arg) where T : IDisposable
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
+}
+
+class GenericType<T>
+{
+    void M(T arg)
+    {
+        if (arg is null) throw new ArgumentNullException(nameof(arg));
+    }
 }
 "
             }.RunAsync();
         }
-
 
         [Fact]
         public async Task ArgumentNullExceptionThrowIfNull_EnsureSystemIsUsed()

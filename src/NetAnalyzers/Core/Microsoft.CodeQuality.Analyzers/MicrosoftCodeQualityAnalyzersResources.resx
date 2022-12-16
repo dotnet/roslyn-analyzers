@@ -1095,15 +1095,6 @@
   <data name="MarkMembersAsStaticMessage" xml:space="preserve">
     <value>Member '{0}' does not access instance data and can be marked as static</value>
   </data>
-  <data name="ReviewVisibleEventHandlersTitle" xml:space="preserve">
-    <value>Review visible event handlers</value>
-  </data>
-  <data name="ReviewVisibleEventHandlersDescription" xml:space="preserve">
-    <value>A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary.</value>
-  </data>
-  <data name="ReviewVisibleEventHandlersMessageDefault" xml:space="preserve">
-    <value>Consider making '{0}' not externally visible</value>
-  </data>
   <data name="SealMethodsThatSatisfyPrivateInterfacesTitle" xml:space="preserve">
     <value>Seal methods that satisfy private interfaces</value>
   </data>
@@ -1165,10 +1156,10 @@
     <value>Remove redundant element initializer</value>
   </data>
   <data name="ValidateArgumentsOfPublicMethodsDescription" xml:space="preserve">
-    <value>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</value>
+    <value>An externally visible method dereferences one of its reference arguments without verifying whether that argument is 'null' ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against 'null'. If appropriate, throw an 'ArgumentNullException' when the argument is 'null'. If the method is designed to be called only by known assemblies, you should make the method internal.</value>
   </data>
   <data name="ValidateArgumentsOfPublicMethodsMessage" xml:space="preserve">
-    <value>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.</value>
+    <value>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an 'ArgumentNullException' when the argument is 'null'.</value>
   </data>
   <data name="ValidateArgumentsOfPublicMethodsTitle" xml:space="preserve">
     <value>Validate arguments of public methods</value>

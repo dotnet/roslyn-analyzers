@@ -470,7 +470,7 @@ A method in a base type is hidden by an identically named method in a derived ty
 
 ## [CA1062](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062): Validate arguments of public methods
 
-An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.
+An externally visible method dereferences one of its reference arguments without verifying whether that argument is 'null' ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against 'null'. If appropriate, throw an 'ArgumentNullException' when the argument is 'null'. If the method is designed to be called only by known assemblies, you should make the method internal.
 
 |Item|Value|
 |-|-|
@@ -1836,9 +1836,9 @@ Number of parameters supplied in the logging message template do not match the n
 |CodeFix|False|
 ---
 
-## [CA2020](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020): Prevent from behavioral change
+## [CA2020](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020): Prevent behavioral change
 
-Some built in operators added in .NET 7 behave differently than the user defined operatorsi in .NET 6 and below. Some operators that used to throw in unchecked context while overflowing will not throw anymore unless wrapped within checked context, and some operators that not used to throw in checked context now would throw unless wrapped within unchecked context.
+Some built-in operators added in .NET 7 behave differently when overflowing than did the corresponding user-defined operators in .NET 6 and earlier versions. Some operators that previously threw in an unchecked context now don't throw unless wrapped within a checked context. Also, some operators that did not previously throw in a checked context now throw unless wrapped in an unchecked context.
 
 |Item|Value|
 |-|-|
@@ -1870,18 +1870,6 @@ A platform invoke member allows partially trusted callers, has a string paramete
 |Enabled|True|
 |Severity|Info|
 |CodeFix|True|
----
-
-## [CA2109](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2109): Review visible event handlers
-
-A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary.
-
-|Item|Value|
-|-|-|
-|Category|Security|
-|Enabled|False|
-|Severity|Warning|
-|CodeFix|False|
 ---
 
 ## [CA2119](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119): Seal methods that satisfy private interfaces

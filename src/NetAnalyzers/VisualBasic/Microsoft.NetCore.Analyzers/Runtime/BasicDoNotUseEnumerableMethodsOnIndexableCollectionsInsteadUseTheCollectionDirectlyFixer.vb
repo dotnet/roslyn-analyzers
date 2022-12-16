@@ -3,8 +3,8 @@
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
-Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
+Imports Microsoft.CodeAnalysis.VisualBasic.SyntaxFactory
 Imports Microsoft.NetCore.Analyzers.Runtime
 
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
@@ -20,9 +20,8 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
         End Function
 
         Private Protected Overrides Function ConditionalElementAccessExpression(expression As SyntaxNode, whenNotNull As SyntaxNode) As SyntaxNode
-            Dim arguments As IEnumerable(Of ArgumentSyntax) = {SyntaxFactory.SimpleArgument(DirectCast(whenNotNull, ExpressionSyntax))}
-            Dim argumentList = SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(arguments))
-            Return SyntaxFactory.ConditionalAccessExpression(DirectCast(expression, ExpressionSyntax), SyntaxFactory.InvocationExpression(Nothing, argumentList))
+            Dim arguments As IEnumerable(Of ArgumentSyntax) = {SimpleArgument(DirectCast(whenNotNull, ExpressionSyntax))}
+            Return ConditionalAccessExpression(DirectCast(expression, ExpressionSyntax), InvocationExpression(Nothing, ArgumentList(SeparatedList(arguments))))
         End Function
     End Class
 End Namespace

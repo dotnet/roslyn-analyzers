@@ -3,7 +3,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -96,7 +95,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (originalOperation is IConditionalAccessOperation conditionalAccess)
             {
-                if (conditionalAccess.Children.Last() is IInvocationOperation conditionalInvocation)
+                if (conditionalAccess.WhenNotNull is IInvocationOperation conditionalInvocation)
                 {
                     invocation = conditionalInvocation;
                     return true;

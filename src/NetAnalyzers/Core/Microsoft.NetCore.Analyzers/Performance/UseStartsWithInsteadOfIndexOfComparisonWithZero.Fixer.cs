@@ -2,7 +2,6 @@
 
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -82,7 +81,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             Debug.Fail("This should never happen.");
                             return Task.FromResult(document);
                     }
-
                 },
                 equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.UseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFixTitle)),
                 context.Diagnostics);

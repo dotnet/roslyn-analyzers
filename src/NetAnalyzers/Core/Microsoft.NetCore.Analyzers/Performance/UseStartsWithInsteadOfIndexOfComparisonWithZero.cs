@@ -59,8 +59,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             hasStartsWithCharOverload = true;
                             break;
                         }
-                    }
-                    
+                    }    
                 }
 
                 if (!hasAnyStartsWith)

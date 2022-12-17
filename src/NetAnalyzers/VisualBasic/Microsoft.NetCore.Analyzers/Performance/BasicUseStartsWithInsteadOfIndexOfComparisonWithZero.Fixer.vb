@@ -29,7 +29,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                 arguments(0) = charArgumentSyntax.WithExpression(DirectCast(generator.InvocationExpression(generator.MemberAccessExpression(charArgumentSyntax.Expression, "ToString")), ExpressionSyntax))
             End If
 
-
             Return CreateStartsWithInvocationFromArguments(generator, instance, arguments, shouldNegate)
         End Function
     End Class

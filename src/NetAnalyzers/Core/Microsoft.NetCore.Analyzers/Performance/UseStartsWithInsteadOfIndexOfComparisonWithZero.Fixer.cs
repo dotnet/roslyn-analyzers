@@ -26,8 +26,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var node = root.FindNode(context.Span, getInnermostNodeForTie: true);
 
             context.RegisterCodeFix(
-                CodeAction.Create(MicrosoftNetCoreAnalyzersResources.UseStartsWithInsteadOfIndexOfComparisonWithZeroTitle,
-                createChangedDocument: async cancellationToken =>
+                CodeAction.Create(MicrosoftNetCoreAnalyzersResources.UseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFixTitle,
+                createChangedDocument: cancellationToken =>
                 {
                     var instance = root.FindNode(diagnostic.AdditionalLocations[0].SourceSpan);
                     var arguments = new SyntaxNode[diagnostic.AdditionalLocations.Count - 1];
@@ -38,30 +38,28 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                     var generator = SyntaxGenerator.GetGenerator(document);
                     var shouldNegate = diagnostic.Properties.TryGetValue(UseStartsWithInsteadOfIndexOfComparisonWithZero.ShouldNegateKey, out _);
-
+                    var compilationHasStartsWithCharOverload = diagnostic.Properties.TryGetKey(UseStartsWithInsteadOfIndexOfComparisonWithZero.CompilationHasStartsWithCharOverloadKey, out _);
                     _ = diagnostic.Properties.TryGetValue(UseStartsWithInsteadOfIndexOfComparisonWithZero.ExistingOverloadKey, out var overloadValue);
                     switch (overloadValue)
                     {
                         // For 'IndexOf(string)' and 'IndexOf(string, stringComparison)', we replace with StartsWith(same arguments)
                         case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadString:
                         case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadString_StringComparison:
-                            return document.WithSyntaxRoot(root.ReplaceNode(node, CreateStartsWithInvocationFromArguments(generator, instance, arguments, shouldNegate)));
+                            return Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(node, CreateStartsWithInvocationFromArguments(generator, instance, arguments, shouldNegate))));
 
                         // For 'a.IndexOf(ch, stringComparison)':
                         // C#: Use 'a.AsSpan().StartsWith(stackalloc char[1] { ch }, stringComparison)'
                         // https://learn.microsoft.com/dotnet/api/system.memoryextensions.startswith?view=net-7.0#system-memoryextensions-startswith(system-readonlyspan((system-char))-system-readonlyspan((system-char))-system-stringcomparison)
                         // VB: Use a.StartsWith(c.ToString(), stringComparison)
                         case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadChar_StringComparison:
-                            return document.WithSyntaxRoot(root.ReplaceNode(node, HandleCharStringComparisonOverload(generator, instance, arguments, shouldNegate)));
+                            return Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(node, HandleCharStringComparisonOverload(generator, instance, arguments, shouldNegate))));
 
                         // If 'StartsWith(char)' is available, use it. Otherwise check '.Length > 0 && [0] == ch'
                         // For negation, we use '.Length == 0 || [0] != ch'
                         case UseStartsWithInsteadOfIndexOfComparisonWithZero.OverloadChar:
-                            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-                            var startsWithSymbols = semanticModel.Compilation.GetSpecialType(SpecialType.System_String).GetMembers("StartsWith");
-                            if (startsWithSymbols.Any(s => s is IMethodSymbol { Parameters: [{ Type.SpecialType: SpecialType.System_Char }] }))
+                            if (compilationHasStartsWithCharOverload)
                             {
-                                return document.WithSyntaxRoot(root.ReplaceNode(node, CreateStartsWithInvocationFromArguments(generator, instance, arguments, shouldNegate)));
+                                return Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(node, CreateStartsWithInvocationFromArguments(generator, instance, arguments, shouldNegate))));
                             }
 
                             var lengthAccess = generator.MemberAccessExpression(instance, "Length");
@@ -78,15 +76,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
                                     generator.GreaterThanExpression(lengthAccess, zeroLiteral),
                                     generator.ValueEqualsExpression(indexed, ch));
 
-                            return document.WithSyntaxRoot(root.ReplaceNode(node, AppendElasticMarker(replacement)));
+                            return Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(node, AppendElasticMarker(replacement))));
 
                         default:
                             Debug.Fail("This should never happen.");
-                            return document;
+                            return Task.FromResult(document);
                     }
 
                 },
-                equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.UseStartsWithInsteadOfIndexOfComparisonWithZeroTitle)),
+                equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.UseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFixTitle)),
                 context.Diagnostics);
         }
 

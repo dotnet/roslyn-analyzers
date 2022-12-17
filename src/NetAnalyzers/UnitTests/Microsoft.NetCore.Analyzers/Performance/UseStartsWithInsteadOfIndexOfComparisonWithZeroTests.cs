@@ -37,6 +37,38 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task GreaterThanZero_CSharp_NoDiagnostic()
+        {
+            var testCode = """
+                class C
+                {
+                    void M(string a)
+                    {
+                        _ = a.IndexOf("") > 0;
+                    }
+                }
+                """;
+
+            await VerifyCodeFixCSAsync(testCode, testCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixCSAsync(testCode, testCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Fact]
+        public async Task GreaterThanZero_VB_Diagnostic()
+        {
+            var testCode = """
+                Class C
+                    Sub M(a As String)
+                        Dim unused = a.IndexOf("abc") > 0
+                    End Sub
+                End Class
+                """;
+
+            await VerifyCodeFixVBAsync(testCode, testCode, ReferenceAssemblies.NetStandard.NetStandard20);
+            await VerifyCodeFixVBAsync(testCode, testCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Fact]
         public async Task SimpleScenario_CSharp_Diagnostic()
         {
             var testCode = """

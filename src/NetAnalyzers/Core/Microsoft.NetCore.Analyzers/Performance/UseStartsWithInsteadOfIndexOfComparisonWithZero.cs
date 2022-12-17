@@ -17,6 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     {
         internal const string RuleId = "CA1858";
         internal const string ShouldNegateKey = "ShouldNegate";
+        internal const string CompilationHasStartsWithCharOverloadKey = "CompilationHasStartsWithCharOverload";
 
         internal const string ExistingOverloadKey = "ExistingOverload";
 
@@ -26,7 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string OverloadChar_StringComparison = "Char,StringComparison";
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
-            id: "CA1858",
+            id: RuleId,
             title: CreateLocalizableResourceString(nameof(UseStartsWithInsteadOfIndexOfComparisonWithZeroTitle)),
             messageFormat: CreateLocalizableResourceString(nameof(UseStartsWithInsteadOfIndexOfComparisonWithZeroMessage)),
             category: DiagnosticCategory.Performance,
@@ -46,17 +47,51 @@ namespace Microsoft.NetCore.Analyzers.Performance
             context.RegisterCompilationStartAction(context =>
             {
                 var stringType = context.Compilation.GetSpecialType(SpecialType.System_String);
-                if (stringType.GetMembers("StartsWith").FirstOrDefault() is not IMethodSymbol)
+                var hasAnyStartsWith = false;
+                var hasStartsWithCharOverload = false;
+                foreach (var startsWith in stringType.GetMembers("StartsWith"))
+                {
+                    if (startsWith is IMethodSymbol startsWithMethod)
+                    {
+                        hasAnyStartsWith = true;
+                        if (startsWithMethod.Parameters is [{ Type.SpecialType: SpecialType.System_Char }])
+                        {
+                            hasStartsWithCharOverload = true;
+                            break;
+                        }
+                    }
+                    
+                }
+
+                if (!hasAnyStartsWith)
                 {
                     return;
                 }
 
-                var indexOf = stringType.GetMembers("IndexOf").OfType<IMethodSymbol>();
                 var indexOfMethodsBuilder = ImmutableArray.CreateBuilder<(IMethodSymbol IndexOfSymbol, string OverloadPropertyValue)>();
-                AddIfNotNull((indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_String }]), OverloadString));
-                AddIfNotNull((indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_Char }]), OverloadChar));
-                AddIfNotNull((indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_String }, { Name: "comparisonType" }]), OverloadString_StringComparison));
-                AddIfNotNull((indexOf.SingleOrDefault(s => s.Parameters is [{ Type.SpecialType: SpecialType.System_Char }, { Name: "comparisonType" }]), OverloadChar_StringComparison));
+                foreach (var indexOf in stringType.GetMembers("IndexOf"))
+                {
+                    if (indexOf is IMethodSymbol indexOfMethod)
+                    {
+                        if (indexOfMethod.Parameters is [{ Type.SpecialType: SpecialType.System_String }])
+                        {
+                            indexOfMethodsBuilder.Add((indexOfMethod, OverloadString));
+                        }
+                        else if (indexOfMethod.Parameters is [{ Type.SpecialType: SpecialType.System_Char }])
+                        {
+                            indexOfMethodsBuilder.Add((indexOfMethod, OverloadChar));
+                        }
+                        else if (indexOfMethod.Parameters is [{ Type.SpecialType: SpecialType.System_String }, { Name: "comparisonType" }])
+                        {
+                            indexOfMethodsBuilder.Add((indexOfMethod, OverloadString_StringComparison));
+                        }
+                        else if (indexOfMethod.Parameters is [{ Type.SpecialType: SpecialType.System_Char }, { Name: "comparisonType" }])
+                        {
+                            indexOfMethodsBuilder.Add((indexOfMethod, OverloadChar_StringComparison));
+                        }
+                    }
+                }
+
                 if (indexOfMethodsBuilder.Count == 0)
                 {
                     return;
@@ -80,18 +115,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             properties = properties.Add(ShouldNegateKey, "");
                         }
 
+                        if (hasStartsWithCharOverload)
+                        {
+                            properties = properties.Add(CompilationHasStartsWithCharOverloadKey, "");
+                        }
+
                         context.ReportDiagnostic(binaryOperation.CreateDiagnostic(Rule, additionalLocations, properties));
                     }
-
                 }, OperationKind.Binary);
-
-                void AddIfNotNull((IMethodSymbol? Symbol, string OverloadPropertyValue) item)
-                {
-                    if (item.Symbol is not null)
-                    {
-                        indexOfMethodsBuilder.Add((item.Symbol, item.OverloadPropertyValue));
-                    }
-                }
             });
         }
 
@@ -108,7 +139,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 foreach (var (indexOfMethod, overloadPropertyValue) in indexOfMethods)
                 {
-                    if (indexOfMethod.Parameters.Length == invocation.Arguments.Length && indexOfMethod.Equals(invocation.TargetMethod, SymbolEqualityComparer.Default))
+                    if (indexOfMethod.Equals(invocation.TargetMethod, SymbolEqualityComparer.Default))
                     {
                         var locationsBuilder = ImmutableArray.CreateBuilder<Location>();
                         locationsBuilder.Add(invocation.Instance.Syntax.GetLocation());

@@ -3078,7 +3078,7 @@
         "CA1858": {
           "id": "CA1858",
           "shortDescription": "Use 'StartsWith'",
-          "fullDescription": "It is both clearer and likely faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.",
+          "fullDescription": "It is both clearer and faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858",
           "properties": {

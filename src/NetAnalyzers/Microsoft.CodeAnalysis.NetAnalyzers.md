@@ -1658,7 +1658,7 @@ The parameter expects a constant for optimal performance.
 
 ## [CA1858](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858): Use 'StartsWith'
 
-It is both clearer and likely faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.
+It is both clearer and faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.
 
 |Item|Value|
 |-|-|

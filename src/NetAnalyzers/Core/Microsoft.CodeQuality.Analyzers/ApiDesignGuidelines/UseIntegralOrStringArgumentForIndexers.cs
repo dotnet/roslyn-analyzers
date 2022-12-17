@@ -54,7 +54,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             context.RegisterCompilationStartAction(context =>
             {
-                var allowedTypes = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+                var allowedTypes = ImmutableArray.CreateBuilder<INamedTypeSymbol>();
 
                 if (context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRange, out var rangeType))
                 {
@@ -66,11 +66,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     allowedTypes.Add(indexType);
                 }
 
-                context.RegisterSymbolAction(context => AnalyzeSymbol(context, allowedTypes.ToImmutableHashSet()), SymbolKind.Property);
+                context.RegisterSymbolAction(context => AnalyzeSymbol(context, allowedTypes.ToImmutable()), SymbolKind.Property);
             });
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext context, ImmutableHashSet<INamedTypeSymbol> allowedTypes)
+        private static void AnalyzeSymbol(SymbolAnalysisContext context, ImmutableArray<INamedTypeSymbol> allowedTypes)
         {
             var symbol = (IPropertySymbol)context.Symbol;
             if (!symbol.IsIndexer || symbol.IsOverride)
@@ -85,14 +85,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             ITypeSymbol paramType = symbol.Parameters[0].Type;
 
-            if (paramType.TypeKind == TypeKind.TypeParameter)
+            if (paramType.TypeKind is TypeKind.TypeParameter or TypeKind.Enum)
             {
                 return;
-            }
-
-            if (paramType.TypeKind == TypeKind.Enum)
-            {
-                paramType = ((INamedTypeSymbol)paramType).EnumUnderlyingType;
             }
 
             if (s_allowedSpecialTypes.Contains(paramType.SpecialType) || allowedTypes.Contains(paramType))

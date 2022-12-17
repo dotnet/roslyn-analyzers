@@ -1656,7 +1656,7 @@ The parameter expects a constant for optimal performance.
 |CodeFix|False|
 ---
 
-## [CA1858](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858): Use 'StartsWith'
+## [CA1858](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858): Use 'StartsWith' instead of 'IndexOf'
 
 It is both clearer and faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.
 

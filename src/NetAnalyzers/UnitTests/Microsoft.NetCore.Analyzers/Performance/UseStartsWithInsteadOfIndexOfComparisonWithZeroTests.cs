@@ -562,8 +562,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         public async Task CharStringComparison_HardCodedChar_CSharp_Diagnostic()
         {
             var testCode = """
-                using System.Collections.Generic; // Intentionally unused.
-
                 class C
                 {
                     void M(string a)
@@ -575,7 +573,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
             var fixedCode = """
                 using System;
-                using System.Collections.Generic; // Intentionally unused.
 
                 class C
                 {

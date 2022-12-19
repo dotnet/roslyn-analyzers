@@ -49,16 +49,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 var stringType = context.Compilation.GetSpecialType(SpecialType.System_String);
                 var hasAnyStartsWith = false;
                 var hasStartsWithCharOverload = false;
-                foreach (var startsWith in stringType.GetMembers("StartsWith"))
+                foreach (var startsWithMethod in stringType.GetMembers("StartsWith").OfType<IMethodSymbol>())
                 {
-                    if (startsWith is IMethodSymbol startsWithMethod)
+                    hasAnyStartsWith = true;
+                    if (startsWithMethod.Parameters is [{ Type.SpecialType: SpecialType.System_Char }])
                     {
-                        hasAnyStartsWith = true;
-                        if (startsWithMethod.Parameters is [{ Type.SpecialType: SpecialType.System_Char }])
-                        {
-                            hasStartsWithCharOverload = true;
-                            break;
-                        }
+                        hasStartsWithCharOverload = true;
+                        break;
                     }
                 }
 
@@ -68,26 +65,23 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
 
                 var indexOfMethodsBuilder = ImmutableArray.CreateBuilder<(IMethodSymbol IndexOfSymbol, string OverloadPropertyValue)>();
-                foreach (var indexOf in stringType.GetMembers("IndexOf"))
+                foreach (var indexOfMethod in stringType.GetMembers("IndexOf").OfType<IMethodSymbol>())
                 {
-                    if (indexOf is IMethodSymbol indexOfMethod)
+                    if (indexOfMethod.Parameters is [{ Type.SpecialType: SpecialType.System_String }])
                     {
-                        if (indexOfMethod.Parameters is [{ Type.SpecialType: SpecialType.System_String }])
-                        {
-                            indexOfMethodsBuilder.Add((indexOfMethod, OverloadString));
-                        }
-                        else if (indexOfMethod.Parameters is [{ Type.SpecialType: SpecialType.System_Char }])
-                        {
-                            indexOfMethodsBuilder.Add((indexOfMethod, OverloadChar));
-                        }
-                        else if (indexOfMethod.Parameters is [{ Type.SpecialType: SpecialType.System_String }, { Name: "comparisonType" }])
-                        {
-                            indexOfMethodsBuilder.Add((indexOfMethod, OverloadString_StringComparison));
-                        }
-                        else if (indexOfMethod.Parameters is [{ Type.SpecialType: SpecialType.System_Char }, { Name: "comparisonType" }])
-                        {
-                            indexOfMethodsBuilder.Add((indexOfMethod, OverloadChar_StringComparison));
-                        }
+                        indexOfMethodsBuilder.Add((indexOfMethod, OverloadString));
+                    }
+                    else if (indexOfMethod.Parameters is [{ Type.SpecialType: SpecialType.System_Char }])
+                    {
+                        indexOfMethodsBuilder.Add((indexOfMethod, OverloadChar));
+                    }
+                    else if (indexOfMethod.Parameters is [{ Type.SpecialType: SpecialType.System_String }, { Name: "comparisonType" }])
+                    {
+                        indexOfMethodsBuilder.Add((indexOfMethod, OverloadString_StringComparison));
+                    }
+                    else if (indexOfMethod.Parameters is [{ Type.SpecialType: SpecialType.System_Char }, { Name: "comparisonType" }])
+                    {
+                        indexOfMethodsBuilder.Add((indexOfMethod, OverloadChar_StringComparison));
                     }
                 }
 

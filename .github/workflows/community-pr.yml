@@ -8,7 +8,7 @@ permissions:
 jobs:
   add_community_label:
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'dotnet/roslyn-analyzers' && github.event.pull_request.user.login != 'dotnet-bot' && github.event.pull_request.user.login != 'dotnet-maestro[bot]' }}
+    if: ${{ github.repository == 'dotnet/roslyn-analyzers' && github.event.pull_request.user.login != 'dotnet-bot' && github.event.pull_request.user.login != 'dotnet-maestro[bot]' && github.event.pull_request.user.login != 'mavasani' }}
     steps:
     - name: Get data
       env:

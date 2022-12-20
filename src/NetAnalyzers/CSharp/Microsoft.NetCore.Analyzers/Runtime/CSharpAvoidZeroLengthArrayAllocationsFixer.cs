@@ -8,7 +8,7 @@ using Microsoft.NetCore.Analyzers.Runtime;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpAvoidZeroLengthArrayAllocationsFixer : AvoidZeroLengthArrayAllocationsFixer
     {
         protected override T AddElasticMarker<T>(T syntaxNode)

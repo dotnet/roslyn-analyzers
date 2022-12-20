@@ -144,7 +144,7 @@ For instructions on using this tutorial, see [Instructions](https://github.com/d
 
 ## Getting Started
 
-1. Install Visual Studio 2019 or later, with at least the following workloads:
+1. Install Visual Studio 2022 or later, with at least the following workloads:
    1. .NET desktop development
    2. .NET Core cross-platform development
    3. Visual Studio extension development

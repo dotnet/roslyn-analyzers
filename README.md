@@ -34,9 +34,7 @@ Recently the set of analyzer packages produced by this repository have been cons
 
 *Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)</sub>
 
-*Latest pre-release version (.NET6 analyzers):* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet6/NuGet/Microsoft.CodeAnalysis.NetAnalyzers/versions)
-
-*Latest pre-release version (.NET7 analyzers):* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.NetAnalyzers/versions)
+*Latest pre-release version (.NET8 analyzers):* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet8/NuGet/Microsoft.CodeAnalysis.NetAnalyzers/versions)
 
 This is the **primary analyzer package** for this repo that contains all **the .NET code analysis rules (CAxxxx)** that are built into the .NET SDK starting .NET5 release. The documentation for CA rules can be found at [learn.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings](https://learn.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings).
 

@@ -44,7 +44,6 @@ public class Test
             await VerifyAnalyzerCSAsync(csSource, VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.ObsoletedCsReachable).WithLocation(0)
                 .WithArguments("Test.ObsoletedOnLinux4()", "'Linux' 4.1 and later", "'Linux'"));
 
-
             var vbSource = @"
 Imports System
 Imports System.Runtime.Versioning
@@ -452,6 +451,37 @@ public class Test
     public void ObsoletedOnLinuxAndWindows10() { }
 }" + MockObsoletedAttributeCS;
             await VerifyAnalyzerCSAsync(csSource, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task CalledApiHasSupportedAndObsoletedAttributes_CallsiteSupressesSupportedAttributeWarnsForObsoletedOnly()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+
+class Program
+{
+    [Mock.ObsoletedOSPlatform(""ios7.0"", ""Use 'NSString.GetBoundingRect (CGSize, NSStringDrawingOptions, UIStringAttributes, NSStringDrawingContext)' instead."")]
+    [Mock.ObsoletedOSPlatform(""maccatalyst7.0"", ""Use 'NSString.GetBoundingRect (CGSize, NSStringDrawingOptions, UIStringAttributes, NSStringDrawingContext)' instead."")]
+    [SupportedOSPlatform(""ios"")]
+    [SupportedOSPlatform(""maccatalyst"")]
+    public static void M3() { }
+    
+    [SupportedOSPlatform(""ios"")]
+    public static void M1()
+    {
+         {|CA1422:M3()|}; // This call site is reachable on: 'ios', 'maccatalyst'. 'Program.M3()' is obsoleted on: 'ios' 7.0 and later (Use 'NSString.GetBoundingRect (CGSize, NSStringDrawingOptions, UIStringAttributes, NSStringDrawingContext)' instead.), 'maccatalyst' 7.0 and later (Use 'NSString.GetBoundingRect (CGSize, NSStringDrawingOptions, UIStringAttributes, NSStringDrawingContext)' instead.).
+    }
+
+    [SupportedOSPlatform(""ios10.0"")]
+    public static void M2()
+    {
+         {|CA1422:M3()|}; // This call site is reachable on: 'ios' 10.0 and later, 'maccatalyst' 10.0 and later. 'Program.M3()' is obsoleted on: 'ios' 7.0 and later (Use 'NSString.GetBoundingRect (CGSize, NSStringDrawingOptions, UIStringAttributes, NSStringDrawingContext)' instead.), 'maccatalyst' 7.0 and later (Use 'NSString.GetBoundingRect (CGSize, NSStringDrawingOptions, UIStringAttributes, NSStringDrawingContext)' instead.).
+    }
+}" + MockObsoletedAttributeCS;
+
+            await VerifyAnalyzerCSAsync(source);
         }
 
         private readonly string MockObsoletedAttributeCS = @"

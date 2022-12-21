@@ -50,6 +50,7 @@ namespace PerformanceTests.Utilities
                         references.Add(assembly);
                     }
                 }
+
                 return Task.FromResult(references.ToImmutable());
             }
 

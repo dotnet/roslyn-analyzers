@@ -242,6 +242,21 @@ dotnet_diagnostic.IDE0130.severity = silent
 # IDE0150: Null check can be clarified
 dotnet_diagnostic.IDE0150.severity = silent
 
+# IDE2000: Allow multiple blank lines
+dotnet_style_allow_multiple_blank_lines_experimental = false
+
+# IDE2001: Embedded statements must be on their own line
+csharp_style_allow_embedded_statements_on_same_line_experimental = false
+
+# IDE2002: Consecutive braces must not have blank line between them
+csharp_style_allow_blank_lines_between_consecutive_braces_experimental = false
+
+# IDE2003: Blank line required between block and subsequent statement
+dotnet_style_allow_statement_immediately_after_block_experimental = false
+
+# IDE2004: Blank line not allowed after constructor initializer colon
+csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = false
+
 ### Configuration for FxCop analyzers executed on this repo ###
 [*.{cs,vb}]
 

@@ -8,8 +8,6 @@
     <Rule Id="CA1000" Action="None" />
     <!-- Nested types should not be visible (we use nested types as test helpers) -->
     <Rule Id="CA1034" Action="None" />
-    <!-- IdentifiersShouldNotContainUnderscores - test names contain underscores and this is fine -->
-    <Rule Id="CA1707" Action="None" />
     <!-- Type names should not match namespaces (not needed for test code) -->
     <Rule Id="CA1724" Action="None" />
     <!-- Do not directly await a Task (makes tests unnecessarily noisy) -->

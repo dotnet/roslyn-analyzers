@@ -9,7 +9,7 @@ dotnet_analyzer_diagnostic.category-CodeQuality.severity = warning
 ### Configuration for RSxxxx rules ###
 
 # RS1024: Compare symbols correctly
-# https://github.com/dotnet/roslyn-analyzers/issues/3389
+# https://github.com/dotnet/roslyn-analyzers/issues/6381
 dotnet_diagnostic.RS1024.severity = none
 
 # Parts exported with MEFv2 must be marked with 'SharedAttribute', un-needed here
@@ -25,11 +25,6 @@ dotnet_diagnostic.RS0038.severity = none
 #dotnet_diagnostic.RS0041.severity = none
 
 ### Configuration for IDE code style by diagnostic IDs ###
-
-# IDE0078: Use pattern matching
-# https://github.com/dotnet/roslyn/issues/51691
-# https://github.com/dotnet/roslyn/issues/51693
-dotnet_diagnostic.IDE0078.severity = silent
 
 # IDE0066: Convert switch statement to expression
 dotnet_diagnostic.IDE0066.severity = suggestion

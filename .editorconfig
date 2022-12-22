@@ -257,7 +257,7 @@ dotnet_style_allow_statement_immediately_after_block_experimental = false
 # IDE2004: Blank line not allowed after constructor initializer colon
 csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = false
 
-### Configuration for FxCop analyzers executed on this repo ###
+### Configuration for .Net analyzers executed on this repo ###
 [*.{cs,vb}]
 
 # Default analyzed API surface = 'all' (public APIs + non-public APIs)
@@ -292,6 +292,12 @@ dotnet_diagnostic.CA1711.severity = suggestion
 
 # CA1309: Use ordinal string comparison
 dotnet_diagnostic.CA1309.severity = suggestion
+
+# CA1305: Pass IFormatProvider - https://github.com/dotnet/roslyn-analyzers/issues/6379
+dotnet_diagnostic.CA1305.severity = suggestion
+
+# CA1851: Possible multiple enumerations of 'IEnumerable' collection - https://github.com/dotnet/roslyn-analyzers/issues/6379
+dotnet_diagnostic.CA1851.severity = suggestion
 
 ### Configuration for PublicAPI analyzers executed on this repo ###
 [*.{cs,vb}]

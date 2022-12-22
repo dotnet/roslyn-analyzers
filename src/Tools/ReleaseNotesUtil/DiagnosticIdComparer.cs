@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace ReleaseNotesUtil
 {
-    internal class DiagnosticIdComparer : IEqualityComparer<DiagnosticDescriptor>
+    internal sealed class DiagnosticIdComparer : IEqualityComparer<DiagnosticDescriptor>
     {
         public static readonly DiagnosticIdComparer Instance = new();
 

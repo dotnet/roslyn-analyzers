@@ -9,7 +9,7 @@ namespace ReleaseNotesUtil
     /// Info that we care about from a DiagnosticDescriptor.
     /// </summary>
     [DataContract]
-    internal class RuleInfo
+    internal sealed class RuleInfo
     {
         public RuleInfo(string id, string title, string category, bool isEnabledByDefault, bool hasCodeFix, string messageFormat, string description, string helpLink)
         {

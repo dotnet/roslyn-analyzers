@@ -257,7 +257,7 @@ dotnet_style_allow_statement_immediately_after_block_experimental = false
 # IDE2004: Blank line not allowed after constructor initializer colon
 csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = false
 
-### Configuration for FxCop analyzers executed on this repo ###
+### Configuration for .Net analyzers executed on this repo ###
 [*.{cs,vb}]
 
 # Default analyzed API surface = 'all' (public APIs + non-public APIs)
@@ -291,6 +291,9 @@ dotnet_diagnostic.CA1307.severity = suggestion
 dotnet_diagnostic.CA1711.severity = suggestion
 
 # CA1309: Use ordinal string comparison
+dotnet_diagnostic.CA1309.severity = suggestion
+
+# CA1305: Pass IFormatProvider - TODO: File an issue to fix or suppress CA1305 violations in the repo.
 dotnet_diagnostic.CA1309.severity = suggestion
 
 ### Configuration for PublicAPI analyzers executed on this repo ###

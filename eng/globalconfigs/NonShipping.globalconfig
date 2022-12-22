@@ -1,7 +1,5 @@
 is_global = true
 
-### Configuration for RSxxxx rules ###
-
 # Do not declare static members on generic types (we use generic static classes in test helpers)
 dotnet_diagnostic.CA1000.severity = none
 
@@ -19,6 +17,8 @@ dotnet_diagnostic.CA1822.severity = none
 
 # Do not directly await a Task (makes tests unnecessarily noisy)
 dotnet_diagnostic.CA2007.severity = none
+
+### Configuration for RSxxxx rules ###
 
 # Do not call 'GetTestAccessor()'
 dotnet_diagnostic.RS0043.severity = none

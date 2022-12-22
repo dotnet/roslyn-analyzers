@@ -296,6 +296,9 @@ dotnet_diagnostic.CA1309.severity = suggestion
 # CA1305: Pass IFormatProvider - TODO: File an issue to fix or suppress CA1305 violations in the repo.
 dotnet_diagnostic.CA1305.severity = suggestion
 
+# CA1851: Possible multiple enumerations of 'IEnumerable' collection - TODO: File an issue to fix or suppress CA1851 violations in the repo.
+dotnet_diagnostic.CA1851.severity = suggestion
+
 ### Configuration for PublicAPI analyzers executed on this repo ###
 [*.{cs,vb}]
 

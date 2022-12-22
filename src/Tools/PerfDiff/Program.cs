@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace PerfDiff
 {
-    internal class Program
+    internal sealed class Program
     {
         internal const int UnhandledExceptionExitCode = 1;
         private static ParseResult? s_parseResult;

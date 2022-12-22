@@ -293,10 +293,10 @@ dotnet_diagnostic.CA1711.severity = suggestion
 # CA1309: Use ordinal string comparison
 dotnet_diagnostic.CA1309.severity = suggestion
 
-# CA1305: Pass IFormatProvider - TODO: File an issue to fix or suppress CA1305 violations in the repo.
+# CA1305: Pass IFormatProvider - https://github.com/dotnet/roslyn-analyzers/issues/6379
 dotnet_diagnostic.CA1305.severity = suggestion
 
-# CA1851: Possible multiple enumerations of 'IEnumerable' collection - TODO: File an issue to fix or suppress CA1851 violations in the repo.
+# CA1851: Possible multiple enumerations of 'IEnumerable' collection - https://github.com/dotnet/roslyn-analyzers/issues/6379
 dotnet_diagnostic.CA1851.severity = suggestion
 
 ### Configuration for PublicAPI analyzers executed on this repo ###

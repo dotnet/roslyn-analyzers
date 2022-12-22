@@ -64,7 +64,9 @@ namespace PerfDiff
             }
             catch (FileNotFoundException fex)
             {
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
                 logger.LogError(fex.Message);
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
                 return UnhandledExceptionExitCode;
             }
             catch (OperationCanceledException)

@@ -22,30 +22,40 @@ namespace PerfDiff
 
             if (!compareSucceeded)
             {
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
                 logger.LogError("Failed to compare the performance results see log.");
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
                 return 1;
             }
 
             if (!regressionDetected)
             {
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogTrace(ILogger, string?, params object?[])'
                 logger.LogTrace("No performance regression found.");
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogTrace(ILogger, string?, params object?[])'
                 return 0;
             }
 
             var (etlCompareSucceeded, etlRegressionDetected) = CheckEltTraces(baselineFolder, resultsFolder, failOnRegression);
             if (!etlCompareSucceeded)
             {
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogTrace(ILogger, string?, params object?[])'
                 logger.LogTrace("We detected a regression in BMDN and there is no ETL info.");
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogTrace(ILogger, string?, params object?[])'
                 return 1;
             }
 
             if (etlRegressionDetected)
             {
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogTrace(ILogger, string?, params object?[])'
                 logger.LogTrace(" We detected a regression in BMDN and there _is_ ETL info which agress there was a regression.");
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogTrace(ILogger, string?, params object?[])'
                 return 1;
             }
 
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogTrace(ILogger, string?, params object?[])'
             logger.LogTrace("We detected a regression in BMDN but examining the ETL trace determined that is was noise.");
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogTrace(ILogger, string?, params object?[])'
             return 0;
         }
 

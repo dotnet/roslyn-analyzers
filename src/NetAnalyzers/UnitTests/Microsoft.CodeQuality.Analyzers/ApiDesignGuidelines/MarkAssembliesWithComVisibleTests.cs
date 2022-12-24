@@ -1,52 +1,44 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MarkAssembliesWithComVisibleAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MarkAssembliesWithComVisibleFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class MarkAllAssembliesWithComVisibleTests : DiagnosticAnalyzerTestBase
+    public class MarkAllAssembliesWithComVisibleTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        [Fact]
+        public async Task NoTypesComVisibleMissingAsync()
         {
-            return new MarkAssembliesWithComVisibleAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new MarkAssembliesWithComVisibleAnalyzer();
+            await VerifyCS.VerifyAnalyzerAsync("");
         }
 
         [Fact]
-        public void NoTypesComVisibleMissing()
+        public async Task NoTypesComVisibleTrueAsync()
         {
-            VerifyCSharp("");
-        }
-
-        [Fact]
-        public void NoTypesComVisibleTrue()
-        {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 [assembly: ComVisible(true)]");
         }
 
         [Fact]
-        public void NoTypesComVisibleFalse()
+        public async Task NoTypesComVisibleFalseAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]");
         }
 
         [Fact]
-        public void PublicTypeComVisibleMissing()
+        public async Task PublicTypeComVisibleMissingAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
 }",
@@ -54,9 +46,9 @@ public class C
         }
 
         [Fact]
-        public void PublicTypeComVisibleTrue()
+        public async Task PublicTypeComVisibleTrueAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 [assembly: ComVisible(true)]
@@ -68,9 +60,9 @@ public class C
         }
 
         [Fact]
-        public void PublicTypeComVisibleFalse()
+        public async Task PublicTypeComVisibleFalseAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
@@ -81,18 +73,18 @@ public class C
         }
 
         [Fact]
-        public void InternalTypeComVisibleMissing()
+        public async Task InternalTypeComVisibleMissingAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 internal class C
 {
 }");
         }
 
         [Fact]
-        public void InternalTypeComVisibleTrue()
+        public async Task InternalTypeComVisibleTrueAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 [assembly: ComVisible(true)]
@@ -103,9 +95,9 @@ internal class C
         }
 
         [Fact]
-        public void InternalTypeComVisibleFalse()
+        public async Task InternalTypeComVisibleFalseAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
@@ -116,13 +108,11 @@ internal class C
         }
 
         private static DiagnosticResult GetExposeIndividualTypesResult()
-        {
-            return GetGlobalResult(MarkAssembliesWithComVisibleAnalyzer.RuleId, string.Format(MicrosoftCodeQualityAnalyzersResources.ChangeAssemblyLevelComVisibleToFalse, "TestProject"));
-        }
+            => VerifyCS.Diagnostic(MarkAssembliesWithComVisibleAnalyzer.RuleChangeComVisible)
+                .WithArguments("TestProject");
 
         private static DiagnosticResult GetAddComVisibleFalseResult()
-        {
-            return GetGlobalResult(MarkAssembliesWithComVisibleAnalyzer.RuleId, string.Format(MicrosoftCodeQualityAnalyzersResources.AddAssemblyLevelComVisibleFalse, "TestProject"));
-        }
+            => VerifyCS.Diagnostic(MarkAssembliesWithComVisibleAnalyzer.RuleAddComVisible)
+                .WithArguments("TestProject");
     }
 }

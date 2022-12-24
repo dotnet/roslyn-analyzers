@@ -1,61 +1,64 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1034: Nested types should not be visible
+    /// CA1034: <inheritdoc cref="NestedTypesShouldNotBeVisibleTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class NestedTypesShouldNotBeVisibleAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1034";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.NestedTypesShouldNotBeVisibleTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(NestedTypesShouldNotBeVisibleTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(NestedTypesShouldNotBeVisibleDescription));
 
-        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.NestedTypesShouldNotBeVisibleMessageDefault), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageVisualBasicModule = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.NestedTypesShouldNotBeVisibleMessageVisualBasicModule), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.NestedTypesShouldNotBeVisibleDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(NestedTypesShouldNotBeVisibleMessageDefault)),
+            DiagnosticCategory.Design,
+            RuleLevel.CandidateForRemoval,     // Need to validate cases where people want it.
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageDefault,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.CandidateForRemoval,     // Need to validate cases where people want it.
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor VisualBasicModuleRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageVisualBasicModule,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.CandidateForRemoval,     // Need to validate cases where people want it.
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor VisualBasicModuleRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(NestedTypesShouldNotBeVisibleMessageVisualBasicModule)),
+            DiagnosticCategory.Design,
+            RuleLevel.CandidateForRemoval,     // Need to validate cases where people want it.
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, VisualBasicModuleRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DefaultRule, VisualBasicModuleRule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 compilationStartContext =>
                 {
-                    Compilation compilation = compilationStartContext.Compilation;
+                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartContext.Compilation);
 
-                    INamedTypeSymbol? enumeratorType = compilation.GetSpecialType(SpecialType.System_Collections_IEnumerator);
-                    INamedTypeSymbol? dataSetType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataSet);
-                    INamedTypeSymbol? dataTableType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataTable);
-                    INamedTypeSymbol? dataRowType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataRow);
+                    INamedTypeSymbol? enumeratorType = wellKnownTypeProvider.Compilation.GetSpecialType(SpecialType.System_Collections_IEnumerator);
+                    INamedTypeSymbol? dataSetType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataSet);
+                    INamedTypeSymbol? dataTableType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataTable);
+                    INamedTypeSymbol? dataRowType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataRow);
 
                     compilationStartContext.RegisterSymbolAction(
                         symbolAnalysisContext =>
@@ -98,6 +101,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             // FxCop allowed public nested enums to accommodate .NET types such as
                             // Environment.SpecialFolders.
                             if (nestedType.TypeKind == TypeKind.Enum)
+                            {
+                                return;
+                            }
+
+                            // Allow builder pattern
+                            if (nestedType.Name.EndsWith("Builder", StringComparison.Ordinal) &&
+                                containingType.ContainingType == null &&
+                                !containingType.InstanceConstructors.Any(ctor => ctor.IsExternallyVisible()))
                             {
                                 return;
                             }

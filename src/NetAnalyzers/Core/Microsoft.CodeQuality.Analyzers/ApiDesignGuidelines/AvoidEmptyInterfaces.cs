@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
@@ -9,36 +9,34 @@ using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1040: Avoid empty interfaces
+    /// CA1040: <inheritdoc cref="AvoidEmptyInterfacesTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AvoidEmptyInterfacesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1040";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidEmptyInterfacesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(AvoidEmptyInterfacesTitle)),
+            CreateLocalizableResourceString(nameof(AvoidEmptyInterfacesMessage)),
+            DiagnosticCategory.Design,
+            RuleLevel.CandidateForRemoval,
+            CreateLocalizableResourceString(nameof(AvoidEmptyInterfacesDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidEmptyInterfacesMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidEmptyInterfacesDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                                     s_localizableTitle,
-                                                                                     s_localizableMessage,
-                                                                                     DiagnosticCategory.Design,
-                                                                                     RuleLevel.CandidateForRemoval,
-                                                                                     s_localizableDescription,
-                                                                                     isPortedFxCopRule: true,
-                                                                                     isDataflowRule: false);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(AnalyzeInterface, SymbolKind.NamedType);
+            context.RegisterSymbolAction(AnalyzeInterface, SymbolKind.NamedType);
         }
 
         private static void AnalyzeInterface(SymbolAnalysisContext context)
@@ -46,7 +44,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var symbol = (INamedTypeSymbol)context.Symbol;
 
             if (symbol.TypeKind == TypeKind.Interface &&
-                symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken) &&
+                context.Options.MatchesConfiguredVisibility(Rule, symbol, context.Compilation) &&
                 symbol.GetMembers().IsEmpty &&
                 !symbol.AllInterfaces.SelectMany(s => s.GetMembers()).Any())
             {

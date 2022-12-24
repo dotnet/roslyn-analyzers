@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -10,7 +10,7 @@ namespace Analyzer.Utilities
     /// <summary>
     ///     Provides <see langword="static"/> methods for parsing words from text.
     /// </summary>
-    internal class WordParser
+    internal sealed class WordParser
     {
         // WordParser has two distinct modes; one where it breaks up only words in
         // a given piece of text, and the other where it breaks up both words
@@ -98,7 +98,7 @@ namespace Analyzer.Utilities
         {
             if (options is < WordParserOptions.None or > (WordParserOptions.IgnoreMnemonicsIndicators | WordParserOptions.SplitCompoundWords))
             {
-                throw new ArgumentException($"'{nameof(options)}' ({(int)options}) is invalid for Enum type'{nameof(WordParserOptions)}'");
+                throw new ArgumentException($"'{(int)options}' is invalid for enum type '{nameof(WordParserOptions)}'", nameof(options));
             }
 
             _text = text ?? throw new ArgumentNullException(nameof(text));
@@ -281,10 +281,7 @@ namespace Analyzer.Utilities
         /// </returns>
         public string? PeekWord()
         {
-            if (_peekedWord == null)
-            {
-                _peekedWord = NextWordCore();
-            }
+            _peekedWord ??= NextWordCore();
 
             return _peekedWord;
         }
@@ -305,7 +302,7 @@ namespace Analyzer.Utilities
         private bool ParseNext()
         {
             if (TryParsePrefix())
-            {   // Try parse the prefix ie 'I' in 'IInterface'.
+            {   // Try parse the prefix e.g. 'I' in 'IInterface'.
                 return true;
             }
 
@@ -317,7 +314,7 @@ namespace Analyzer.Utilities
                 if (!TryParseWord(c))
                 {
                     if (punctuation != NullChar)
-                    { // Intra-word punctuation next to unrecognized character ie 'Foo-?'
+                    { // Intra-word punctuation next to unrecognized character e.g. 'Foo-?'
                         Unread();
                         Skip();
                         return true;
@@ -331,7 +328,7 @@ namespace Analyzer.Utilities
                 c = Peek();
 
                 if (IsIntraWordPunctuation(c))
-                { // Intra-word punctuation ie '-' in 'Foo-Bar'
+                { // Intra-word punctuation e.g. '-' in 'Foo-Bar'
                     punctuation = c;
                     Read();
                     continue;
@@ -342,7 +339,7 @@ namespace Analyzer.Utilities
             }
 
             if (punctuation != NullChar)
-            {   // Ends with intra-word punctuation ie '-' in 'Foo-'
+            {   // Ends with intra-word punctuation e.g. '-' in 'Foo-'
                 Unread();
                 return true;
             }
@@ -373,7 +370,7 @@ namespace Analyzer.Utilities
                 }
 
                 if (IsLetterWithoutCase(c))
-                {   // ie Japanese characters
+                {   // e.g. Japanese characters
                     ParseWithoutCase();
                     return true;
                 }
@@ -505,8 +502,8 @@ namespace Analyzer.Utilities
         }
 
         private void ParseWithoutCase()
-        {   // Parses letters without any concept of case,
-            // ie Japanese
+        {
+            // Parses letters without any concept of case e.g. Japanese
 
             char c;
             do

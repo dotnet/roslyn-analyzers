@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -28,7 +28,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         public abstract SyntaxNode? GetInvocationExpressionNode(SyntaxNode? node);
         public abstract SyntaxNode? GetDefaultValueForAnOptionalParameter(SyntaxNode? declNode, int paramIndex);
         public abstract IEnumerable<SyntaxNode> GetObjectInitializerExpressionNodes(SyntaxNode? node);
-        // This will return true iff the SyntaxNode is either InvocationExpression or ObjectCreationExpression (in C# or VB)
+        // This will return true if the SyntaxNode is either InvocationExpression or ObjectCreationExpression (in C# or VB)
         public abstract bool IsMethodInvocationNode(SyntaxNode node);
         protected abstract IEnumerable<SyntaxNode> GetCallArgumentExpressionNodes(SyntaxNode? node, CallKinds callKind);
         public abstract IEnumerable<SyntaxNode> GetDescendantAssignmentExpressionNodes(SyntaxNode? node);
@@ -49,10 +49,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
 
             ISymbol? symbol = GetCallerMethodSymbol(node, semanticModel);
 
-            if (symbol == null)
-            {
-                symbol = GetEnclosingTypeSymbol(node, semanticModel);
-            }
+            symbol ??= GetEnclosingTypeSymbol(node, semanticModel);
 
             return symbol;
         }
@@ -132,6 +129,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             {
                 return false;
             }
+
             Optional<object> value = model.GetConstantValue(node);
             return value.HasValue && value.Value == null;
         }
@@ -142,6 +140,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             {
                 return false;
             }
+
             Optional<object> value = model.GetConstantValue(node);
             return value.HasValue &&
                    value.Value is false;

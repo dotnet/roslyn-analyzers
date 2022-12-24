@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Threading.Tasks;
@@ -37,7 +37,11 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
             };
 
@@ -47,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         }
 
         [Fact]
-        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterDiagnostic()
+        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -67,7 +71,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestPropertyInitializerGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterDiagnostic()
+        public async Task TestPropertyInitializerGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -77,13 +81,12 @@ using Microsoft.WindowsAzure.Storage.File;
 class TestClass
 {
     public string SAS { get; } = new CloudFile(null).GetSharedAccessSignature(null, null, null, SharedAccessProtocol.HttpsOrHttp, null);
-}"
-            /* , GetCSharpResultAt(8, 34)    // Can't get CFG in 2.9.x => don't warn */
-            );
+}",
+            GetCSharpResultAt(8, 34));
         }
 
         [Fact]
-        public async Task TestFieldInitializerGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterDiagnostic()
+        public async Task TestFieldInitializerGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -93,13 +96,12 @@ using Microsoft.WindowsAzure.Storage.File;
 class TestClass
 {
     public string SAS = new CloudFile(null).GetSharedAccessSignature(null, null, null, SharedAccessProtocol.HttpsOrHttp, null);
-}"
-            /* , GetCSharpResultAt(8, 25)    // Can't get CFG in 2.9.x => don't warn */
-            );
+}",
+            GetCSharpResultAt(8, 25));
         }
 
         [Fact]
-        public async Task TestPropertyInitializerGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterNoDiagnostic()
+        public async Task TestPropertyInitializerGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterNoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -113,7 +115,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestFieldInitializerGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterNoDiagnostic()
+        public async Task TestFieldInitializerGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterNoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -127,7 +129,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithoutProtocolsParameterNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithoutProtocolsParameterNoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -144,7 +146,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterNoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -163,7 +165,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterOfTypeIntNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterOfTypeIntNoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -181,7 +183,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestGetSharedAccessSignatureOfANormalTypeNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureOfANormalTypeNoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -202,7 +204,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestWithoutMicrosoftWindowsAzureNamespaceNoDiagnostic()
+        public async Task TestWithoutMicrosoftWindowsAzureNamespaceNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -216,7 +218,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestMicrosoftWindowsAzureNamespaceNoDiagnostic()
+        public async Task TestMicrosoftWindowsAzureNamespaceNoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -241,9 +243,10 @@ class TestClass
         [Theory]
         [InlineData("")]
         [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
-        [InlineData("dotnet_code_quality." + UseSharedAccessProtocolHttpsOnly.DiagnosticId + ".excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality.CA5376.excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality.CA5376.excluded_symbol_names = TestMet*")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
-        public async Task EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOptionAsync(string editorConfigText)
         {
             var expected = Array.Empty<DiagnosticResult>();
             if (editorConfigText.Length == 0)
@@ -271,7 +274,9 @@ class TestClass
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not use banned APIs
            => VerifyCS.Diagnostic()
                .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not use banned APIs
     }
 }

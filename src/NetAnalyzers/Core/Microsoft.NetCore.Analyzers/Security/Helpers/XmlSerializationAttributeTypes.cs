@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Linq;
 using Analyzer.Utilities;
@@ -10,7 +10,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
     /// Just a common way to get <see cref="INamedTypeSymbol"/>s for attributes that affect XML serialization.
     /// </summary>
     /// <remarks>
-    /// https://docs.microsoft.com/en-us/dotnet/standard/serialization/attributes-that-control-xml-serialization
+    /// https://learn.microsoft.com/dotnet/standard/serialization/attributes-that-control-xml-serialization
     /// </remarks>
     public class XmlSerializationAttributeTypes
     {

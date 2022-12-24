@@ -1,185 +1,228 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
-using System.Collections.Generic;
-using System;
-using System.Linq;
-using Analyzer.Utilities.Extensions;
-using System.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1710: Identifiers should have correct suffix
+    /// CA1710: <inheritdoc cref="IdentifiersShouldHaveCorrectSuffixTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class IdentifiersShouldHaveCorrectSuffixAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1710";
+        private const string CollectionSuffix = "Collection";
+        private const string DictionarySuffix = "Dictionary";
+        private const string SetSuffix = "Set";
+        private const string QueueSuffix = "Queue";
+        private const string StackSuffix = "Stack";
+        private const string EventHandlerString = "EventHandler";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSpecialCollection = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly ImmutableArray<string> s_setCollectionSuffixes = ImmutableArray.Create(SetSuffix, CollectionSuffix);
+        private static readonly ImmutableArray<string> s_queueCollectionSuffixes = ImmutableArray.Create(QueueSuffix, CollectionSuffix);
+        private static readonly ImmutableArray<string> s_stackCollectionSuffixes = ImmutableArray.Create(StackSuffix, CollectionSuffix);
+        private static readonly ImmutableArray<string> s_dictionaryCollectionSuffixes = ImmutableArray.Create(DictionarySuffix, CollectionSuffix);
+        private static readonly ImmutableArray<string> s_collectionDictionarySetStackQueueSuffixes = ImmutableArray.Create(CollectionSuffix, DictionarySuffix, SetSuffix, StackSuffix, QueueSuffix);
 
-        internal static DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageDefault,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor SpecialCollectionRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageSpecialCollection,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(IdentifiersShouldHaveCorrectSuffixTitle));
+        private static readonly LocalizableString s_localizableMessageDefault = CreateLocalizableResourceString(nameof(IdentifiersShouldHaveCorrectSuffixMessageDefault));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(IdentifiersShouldHaveCorrectSuffixDescription));
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SpecialCollectionRule);
+        internal static readonly DiagnosticDescriptor OneSuffixRule = DiagnosticDescriptorHelper.Create(RuleId,
+            s_localizableTitle,
+            s_localizableMessageDefault,
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor MultipleSuffixesRule = DiagnosticDescriptorHelper.Create(RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldHaveCorrectSuffixMessageMultiple)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor UserSuffixRule = DiagnosticDescriptorHelper.Create(RuleId,
+            s_localizableTitle,
+            s_localizableMessageDefault,
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        // Tuple says <TypeInheritedOrImplemented, AppropriateSuffix, Bool value saying if the suffix can `Collection` or the `AppropriateSuffix`>s
-        // The bool values are as mentioned in the Uri
-        private static readonly List<(string typeName, string suffix, bool canSuffixBeCollection)> s_baseTypesAndTheirSuffix = new List<(string, string, bool)>()
-                                                    {
-                                                        ("System.Attribute", "Attribute", false),
-                                                        ("System.EventArgs", "EventArgs", false),
-                                                        ("System.Exception", "Exception", false),
-                                                        ("System.Collections.ICollection", "Collection", false),
-                                                        ("System.Collections.IDictionary", "Dictionary", false),
-                                                        ("System.Collections.IEnumerable", "Collection", false),
-                                                        ("System.Collections.Queue", "Queue", true),
-                                                        ("System.Collections.Stack", "Stack", true),
-                                                        ("System.Collections.Generic.Queue`1", "Queue", true),
-                                                        ("System.Collections.Generic.Stack`1", "Stack", true),
-                                                        ("System.Collections.Generic.ICollection`1", "Collection", false),
-                                                        ("System.Collections.Generic.IDictionary`2", "Dictionary", false),
-                                                        ("System.Data.DataSet", "DataSet", false),
-                                                        ("System.Data.DataTable", "DataTable", true),
-                                                        ("System.IO.Stream", "Stream", false),
-                                                        ("System.Security.IPermission","Permission", false),
-                                                        ("System.Security.Policy.IMembershipCondition", "Condition", false)
-                                                    };
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(OneSuffixRule, MultipleSuffixesRule, UserSuffixRule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        // Define for each interface/type the collection of allowed suffixes (first item is the preferred suffix),
+        // note that the order matters as the algorithm works on a first match basis.
+        private static readonly ImmutableArray<(string typeName, ImmutableArray<string> suffixes)> s_baseTypesAndTheirSuffix =
+            ImmutableArray.Create(
+                // types
+                (WellKnownTypeNames.SystemAttribute, ImmutableArray.Create("Attribute")),
+                (WellKnownTypeNames.SystemEventArgs, ImmutableArray.Create("EventArgs")),
+                (WellKnownTypeNames.SystemException, ImmutableArray.Create("Exception")),
+                (WellKnownTypeNames.SystemCollectionsQueue, s_queueCollectionSuffixes),
+                (WellKnownTypeNames.SystemCollectionsStack, s_stackCollectionSuffixes),
+                (WellKnownTypeNames.SystemCollectionsGenericQueue1, s_queueCollectionSuffixes),
+                (WellKnownTypeNames.SystemCollectionsGenericStack1, s_stackCollectionSuffixes),
+                (WellKnownTypeNames.SystemDataDataSet, ImmutableArray.Create("DataSet")),
+                (WellKnownTypeNames.SystemDataDataTable, ImmutableArray.Create("DataTable", CollectionSuffix)),
+                (WellKnownTypeNames.SystemIOStream, ImmutableArray.Create("Stream")),
+                // interfaces
+                (WellKnownTypeNames.SystemCollectionsGenericIDictionary2, s_dictionaryCollectionSuffixes),
+                (WellKnownTypeNames.SystemCollectionsGenericIReadOnlyDictionary2, s_dictionaryCollectionSuffixes),
+                (WellKnownTypeNames.SystemCollectionsGenericISet1, s_setCollectionSuffixes),
+                (WellKnownTypeNames.SystemCollectionsGenericIReadOnlySet1, s_setCollectionSuffixes),
+                (WellKnownTypeNames.SystemCollectionsGenericICollection1, s_collectionDictionarySetStackQueueSuffixes),
+                (WellKnownTypeNames.SystemCollectionsGenericIReadOnlyCollection1, s_collectionDictionarySetStackQueueSuffixes),
+                (WellKnownTypeNames.SystemCollectionsIDictionary, s_dictionaryCollectionSuffixes),
+                (WellKnownTypeNames.SystemCollectionsICollection, s_collectionDictionarySetStackQueueSuffixes),
+                (WellKnownTypeNames.SystemCollectionsIEnumerable, s_collectionDictionarySetStackQueueSuffixes),
+                (WellKnownTypeNames.SystemSecurityIPermission, ImmutableArray.Create("Permission")),
+                (WellKnownTypeNames.SystemSecurityPolicyIMembershipCondition, ImmutableArray.Create("Condition"))
+            );
+
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(AnalyzeCompilationStart);
+            context.RegisterCompilationStartAction(AnalyzeCompilationStart);
         }
 
         private static void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
         {
-            var baseTypeSuffixMapBuilder = ImmutableDictionary.CreateBuilder<INamedTypeSymbol, SuffixInfo>();
-            var interfaceTypeSuffixMapBuilder = ImmutableDictionary.CreateBuilder<INamedTypeSymbol, SuffixInfo>();
+            var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
 
-            foreach (var (typeName, suffix, canSuffixBeCollection) in s_baseTypesAndTheirSuffix)
+            var baseTypeSuffixMapBuilder = ImmutableDictionary.CreateBuilder<INamedTypeSymbol, ImmutableArray<string>>(SymbolEqualityComparer.Default);
+            var interfaceTypeSuffixMapBuilder = ImmutableDictionary.CreateBuilder<INamedTypeSymbol, ImmutableArray<string>>(SymbolEqualityComparer.Default);
+
+            foreach (var (typeName, suffixes) in s_baseTypesAndTheirSuffix)
             {
-                var wellKnownNamedType = context.Compilation.GetOrCreateTypeByMetadataName(typeName);
-
-                if (wellKnownNamedType != null && wellKnownNamedType.OriginalDefinition != null)
+                if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(typeName, out var wellKnownNamedType)
+                    || wellKnownNamedType.OriginalDefinition == null)
                 {
-                    // If the type is interface
-                    if (wellKnownNamedType.OriginalDefinition.TypeKind == TypeKind.Interface)
-                    {
-                        interfaceTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(suffix, canSuffixBeCollection));
-                    }
-                    else
-                    {
-                        baseTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(suffix, canSuffixBeCollection));
-                    }
+                    continue;
+                }
+
+                // If the type is interface
+                if (wellKnownNamedType.OriginalDefinition.TypeKind == TypeKind.Interface)
+                {
+                    interfaceTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, suffixes);
+                }
+                else
+                {
+                    baseTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, suffixes);
                 }
             }
 
-            if (baseTypeSuffixMapBuilder.Count > 0 || interfaceTypeSuffixMapBuilder.Count > 0)
+            var baseTypeSuffixMap = baseTypeSuffixMapBuilder.ToImmutable();
+            var interfaceTypeSuffixMap = interfaceTypeSuffixMapBuilder.ToImmutable();
+
+            context.RegisterSymbolAction(context =>
             {
-                var baseTypeSuffixMap = baseTypeSuffixMapBuilder.ToImmutable();
-                var interfaceTypeSuffixMap = interfaceTypeSuffixMapBuilder.ToImmutable();
-                context.RegisterSymbolAction((saContext) =>
+                var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+                if (!context.Options.MatchesConfiguredVisibility(OneSuffixRule, namedTypeSymbol, context.Compilation))
                 {
-                    var namedTypeSymbol = (INamedTypeSymbol)saContext.Symbol;
-                    if (!namedTypeSymbol.MatchesConfiguredVisibility(saContext.Options, DefaultRule, saContext.CancellationToken))
+                    Debug.Assert(!context.Options.MatchesConfiguredVisibility(MultipleSuffixesRule, namedTypeSymbol, context.Compilation));
+                    Debug.Assert(!context.Options.MatchesConfiguredVisibility(UserSuffixRule, namedTypeSymbol, context.Compilation));
+                    return;
+                }
+
+                Debug.Assert(context.Options.MatchesConfiguredVisibility(MultipleSuffixesRule, namedTypeSymbol, context.Compilation));
+                Debug.Assert(context.Options.MatchesConfiguredVisibility(UserSuffixRule, namedTypeSymbol, context.Compilation));
+
+                var excludeIndirectBaseTypes = context.Options.GetBoolOptionValue(EditorConfigOptionNames.ExcludeIndirectBaseTypes, OneSuffixRule,
+                   namedTypeSymbol, context.Compilation, defaultValue: true);
+
+                var baseTypes = excludeIndirectBaseTypes
+                    ? namedTypeSymbol.BaseType != null ? ImmutableArray.Create(namedTypeSymbol.BaseType) : ImmutableArray<INamedTypeSymbol>.Empty
+                    : namedTypeSymbol.GetBaseTypes();
+
+                var userTypeSuffixMap = context.Options.GetAdditionalRequiredSuffixesOption(UserSuffixRule, context.Symbol, context.Compilation);
+
+                if (TryGetTypeSuffix(baseTypes, baseTypeSuffixMap, userTypeSuffixMap, out var typesSuffixes, out var rule))
+                {
+                    if (!typesSuffixes.Any(suffix => namedTypeSymbol.Name.EndsWith(suffix, StringComparison.Ordinal)))
                     {
-                        Debug.Assert(!namedTypeSymbol.MatchesConfiguredVisibility(saContext.Options, SpecialCollectionRule, saContext.CancellationToken));
-                        return;
-                    }
-
-                    Debug.Assert(namedTypeSymbol.MatchesConfiguredVisibility(saContext.Options, SpecialCollectionRule, saContext.CancellationToken));
-
-                    var baseType = namedTypeSymbol.GetBaseTypes().FirstOrDefault(bt => baseTypeSuffixMap.ContainsKey(bt.OriginalDefinition));
-                    if (baseType != null)
-                    {
-                        var suffixInfo = baseTypeSuffixMap[baseType.OriginalDefinition];
-
-                        // SpecialCollectionRule - Rename 'LastInFirstOut<T>' to end in either 'Collection' or 'Stack'.
-                        // DefaultRule - Rename 'MyStringObjectHashtable' to end in 'Dictionary'.
-                        var rule = suffixInfo.CanSuffixBeCollection ? SpecialCollectionRule : DefaultRule;
-                        if ((suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith("Collection", StringComparison.Ordinal) && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix, StringComparison.Ordinal)) ||
-                            (!suffixInfo.CanSuffixBeCollection && !namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix, StringComparison.Ordinal)))
-                        {
-
-                            saContext.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(rule, namedTypeSymbol.ToDisplayString(), suffixInfo.Suffix));
-                        }
-
-                        return;
-                    }
-
-                    var implementedInterface = namedTypeSymbol.AllInterfaces.FirstOrDefault(i => interfaceTypeSuffixMap.ContainsKey(i.OriginalDefinition));
-                    if (implementedInterface != null)
-                    {
-                        var suffixInfo = interfaceTypeSuffixMap[implementedInterface.OriginalDefinition];
-                        if (!namedTypeSymbol.Name.EndsWith(suffixInfo.Suffix, StringComparison.Ordinal))
-                        {
-                            saContext.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(DefaultRule, namedTypeSymbol.ToDisplayString(), suffixInfo.Suffix));
-                        }
+                        context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(rule, namedTypeSymbol.ToDisplayString(), typesSuffixes[0],
+                            string.Join("', '", typesSuffixes.Skip(1))));
                     }
                 }
-                , SymbolKind.NamedType);
-
-                var eventArgsType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
-                if (eventArgsType != null)
+                else
                 {
-                    context.RegisterSymbolAction((saContext) =>
+                    var interfaces = excludeIndirectBaseTypes
+                        ? namedTypeSymbol.Interfaces
+                        : namedTypeSymbol.AllInterfaces;
+
+                    if (TryGetTypeSuffix(interfaces, interfaceTypeSuffixMap, userTypeSuffixMap, out var interfaceSuffixes, out rule) &&
+                        !interfaceSuffixes.Any(suffix => namedTypeSymbol.Name.EndsWith(suffix, StringComparison.Ordinal)))
                     {
-                        const string eventHandlerString = "EventHandler";
-                        var eventSymbol = (IEventSymbol)saContext.Symbol;
-                        if (!eventSymbol.Type.Name.EndsWith(eventHandlerString, StringComparison.Ordinal) &&
-                            eventSymbol.Type.IsInSource() &&
-                            eventSymbol.Type.TypeKind == TypeKind.Delegate &&
-                            ((INamedTypeSymbol)eventSymbol.Type).DelegateInvokeMethod?.HasEventHandlerSignature(eventArgsType) == true)
-                        {
-                            saContext.ReportDiagnostic(eventSymbol.CreateDiagnostic(DefaultRule, eventSymbol.Type.Name, eventHandlerString));
-                        }
-                    },
-                    SymbolKind.Event);
+                        context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(rule, namedTypeSymbol.ToDisplayString(), interfaceSuffixes[0],
+                            string.Join("', '", interfaceSuffixes.Skip(1))));
+                    }
                 }
             }
+            , SymbolKind.NamedType);
+
+            var eventArgsType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
+            if (eventArgsType == null)
+            {
+                return;
+            }
+
+            context.RegisterSymbolAction(context =>
+            {
+                var eventSymbol = (IEventSymbol)context.Symbol;
+                if (!eventSymbol.Type.Name.EndsWith(EventHandlerString, StringComparison.Ordinal) &&
+                    eventSymbol.Type.IsInSource() &&
+                    eventSymbol.Type.TypeKind == TypeKind.Delegate &&
+                    ((INamedTypeSymbol)eventSymbol.Type).DelegateInvokeMethod?.HasEventHandlerSignature(eventArgsType) == true)
+                {
+                    context.ReportDiagnostic(eventSymbol.CreateDiagnostic(OneSuffixRule, eventSymbol.Type.Name, EventHandlerString));
+                }
+            },
+            SymbolKind.Event);
         }
-    }
 
-    internal class SuffixInfo
-    {
-        public string Suffix { get; private set; }
-        public bool CanSuffixBeCollection { get; private set; }
-
-        private SuffixInfo(
-            string suffix,
-            bool canSuffixBeCollection)
+        private static bool TryGetTypeSuffix(IEnumerable<INamedTypeSymbol> typeSymbols, ImmutableDictionary<INamedTypeSymbol, ImmutableArray<string>> hardcodedMap,
+            SymbolNamesWithValueOption<string?> userMap, out ImmutableArray<string> suffixes, [NotNullWhen(true)] out DiagnosticDescriptor? rule)
         {
-            Suffix = suffix;
-            CanSuffixBeCollection = canSuffixBeCollection;
-        }
+            foreach (var type in typeSymbols)
+            {
+                // User specific mapping has higher priority than hardcoded one
+                if (userMap.TryGetValue(type.OriginalDefinition, out var suffix))
+                {
+                    if (!RoslynString.IsNullOrWhiteSpace(suffix))
+                    {
+                        suffixes = ImmutableArray.Create(suffix);
+                        rule = UserSuffixRule;
+                        return true;
+                    }
+                }
+                else if (hardcodedMap.TryGetValue(type.OriginalDefinition, out suffixes))
+                {
+                    rule = suffixes.Length == 1 ? OneSuffixRule : MultipleSuffixesRule;
+                    return true;
+                }
+            }
 
-        internal static SuffixInfo Create(string suffix, bool canSuffixBeCollection)
-        {
-            return new SuffixInfo(suffix, canSuffixBeCollection);
+            suffixes = ImmutableArray<string>.Empty;
+            rule = null;
+            return false;
         }
     }
 }

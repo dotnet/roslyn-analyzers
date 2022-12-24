@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -11,7 +11,7 @@ namespace Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.UnitTests
         where TAnalyzer : DiagnosticAnalyzer, new()
         where TCodeFix : CodeFixProvider, new()
     {
-        internal class Test : VisualBasicCodeFixTest<TAnalyzer, TCodeFix, XUnitVerifier>
+        internal sealed class Test : VisualBasicCodeFixTest<TAnalyzer, TCodeFix, XUnitVerifier>
         {
         }
     }

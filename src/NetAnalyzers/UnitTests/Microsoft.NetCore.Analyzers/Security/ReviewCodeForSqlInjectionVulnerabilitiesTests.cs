@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Threading.Tasks;
@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         protected override DiagnosticDescriptor Rule => ReviewCodeForSqlInjectionVulnerabilities.Rule;
 
         [Fact]
-        public async Task EntityFramework_FromSql_Constant_NoDiagnostic()
+        public async Task EntityFramework_FromSql_Constant_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -44,7 +44,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_Item_EntityFramework_FromSql_Diagnostic()
+        public async Task HttpRequest_Form_Item_EntityFramework_FromSql_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -74,7 +74,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task DocSample1_CSharp_Violation_Diagnostic()
+        public async Task DocSample1_CSharp_Violation_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -108,7 +108,7 @@ namespace TestNamespace
         }
 
         [Fact]
-        public async Task DocSample1_CSharp_ParameterizedSolution_NoDiagnostic()
+        public async Task DocSample1_CSharp_ParameterizedSolution_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -143,7 +143,7 @@ namespace TestNamespace
         }
 
         [Fact]
-        public async Task DocSample1_CSharp_StoredProcedureSolution_NoDiagnostic()
+        public async Task DocSample1_CSharp_StoredProcedureSolution_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -178,7 +178,7 @@ namespace TestNamespace
         }
 
         [Fact]
-        public async Task DocSample1_VB_Violation_Diagnostic()
+        public async Task DocSample1_VB_Violation_DiagnosticAsync()
         {
             await VerifyVisualBasicWithDependenciesAsync(@"
 Imports System
@@ -207,7 +207,7 @@ End Namespace
         }
 
         [Fact]
-        public async Task DocSample1_VB_ParameterizedSolution_NoDiagnostic()
+        public async Task DocSample1_VB_ParameterizedSolution_NoDiagnosticAsync()
         {
             await VerifyVisualBasicWithDependenciesAsync(@"
 Imports System
@@ -236,7 +236,7 @@ End Namespace
         }
 
         [Fact]
-        public async Task DocSample1_VB_StoredProcedureSolution_NoDiagnostic()
+        public async Task DocSample1_VB_StoredProcedureSolution_NoDiagnosticAsync()
         {
             await VerifyVisualBasicWithDependenciesAsync(@"
 Imports System
@@ -265,7 +265,7 @@ End Namespace
         }
 
         [Fact]
-        public async Task HttpRequest_Form_LocalString_Diagnostic()
+        public async Task HttpRequest_Form_LocalString_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -298,7 +298,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_LocalString_VB_Diagnostic()
+        public async Task HttpRequest_Form_LocalString_VB_DiagnosticAsync()
         {
             await VerifyVisualBasicWithDependenciesAsync(@"
 Imports System
@@ -326,7 +326,7 @@ End Namespace
         }
 
         [Fact]
-        public async Task HttpRequest_Form_DelegateInvocation_OutParam_LocalString_Diagnostic()
+        public async Task HttpRequest_Form_DelegateInvocation_OutParam_LocalString_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -363,7 +363,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_InterfaceInvocation_OutParam_LocalString_Diagnostic()
+        public async Task HttpRequest_Form_InterfaceInvocation_OutParam_LocalString_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -400,7 +400,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_LocalStringMoreBlocks_Diagnostic()
+        public async Task HttpRequest_Form_LocalStringMoreBlocks_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -439,7 +439,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_And_QueryString_LocalStringMoreBlocks_Diagnostic()
+        public async Task HttpRequest_Form_And_QueryString_LocalStringMoreBlocks_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -479,7 +479,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_Direct_Diagnostic()
+        public async Task HttpRequest_Form_Direct_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -508,7 +508,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_Substring_Diagnostic()
+        public async Task HttpRequest_Form_Substring_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -536,9 +536,8 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
-
         [Fact]
-        public async Task Sanitized_HttpRequest_Form_Direct_NoDiagnostic()
+        public async Task Sanitized_HttpRequest_Form_Direct_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -566,7 +565,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task Sanitized_HttpRequest_Form_TryParse_NoDiagnostic()
+        public async Task Sanitized_HttpRequest_Form_TryParse_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -596,9 +595,8 @@ namespace VulnerableWebApp
             ");
         }
 
-
         [Fact]
-        public async Task HttpRequest_Form_Item_Diagnostic()
+        public async Task HttpRequest_Form_Item_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -627,7 +625,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_Item_Enters_SqlParameters_NoDiagnostic()
+        public async Task HttpRequest_Form_Item_Enters_SqlParameters_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -659,7 +657,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_Item_Sql_Constructor_Diagnostic()
+        public async Task HttpRequest_Form_Item_Sql_Constructor_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -684,7 +682,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_Method_GenericsSink_Diagnostic()
+        public async Task HttpRequest_Form_Method_GenericsSink_DiagnosticAsync()
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -716,7 +714,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_Method_Diagnostic()
+        public async Task HttpRequest_Form_Method_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -746,7 +744,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_LocalNameValueCollectionString_Diagnostic()
+        public async Task HttpRequest_Form_LocalNameValueCollectionString_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -777,7 +775,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_List_Diagnostic()
+        public async Task HttpRequest_Form_List_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -809,7 +807,7 @@ namespace VulnerableWebApp
         }
 
         [Fact(Skip = "Would be nice to distinguish between tainted and non-tainted elements in the List, but for now we taint the entire List from its construction.  FxCop also has a false positive.")]
-        public async Task HttpRequest_Form_List_SafeElement_Diagnostic()
+        public async Task HttpRequest_Form_List_SafeElement_DiagnosticAsync()
         {
             // Would be nice to distinguish between tainted and non-tainted elements in the List, but for now we taint the entire List from its construction.  FxCop also has a false positive.
 
@@ -843,7 +841,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_Array_List_Diagnostic()
+        public async Task HttpRequest_Form_Array_List_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -875,9 +873,8 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(21, 17, 17, 45, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
-
         [Fact]
-        public async Task HttpRequest_Form_Array_Diagnostic()
+        public async Task HttpRequest_Form_Array_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -909,7 +906,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_LocalStructNameValueCollectionString_Diagnostic()
+        public async Task HttpRequest_Form_LocalStructNameValueCollectionString_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -949,7 +946,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_LocalStructConstructorNameValueCollectionString_Diagnostic()
+        public async Task HttpRequest_Form_LocalStructConstructorNameValueCollectionString_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 
@@ -996,7 +993,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_Form_LocalStructConstructorNameValueCollectionString_VB_Diagnostic()
+        public async Task HttpRequest_Form_LocalStructConstructorNameValueCollectionString_VB_DiagnosticAsync()
         {
             await VerifyVisualBasicWithDependenciesAsync(@"
 Imports System
@@ -1038,7 +1035,7 @@ End Namespace
         }
 
         [Fact]
-        public async Task HttpRequest_UserLanguages_Direct_Diagnostic()
+        public async Task HttpRequest_UserLanguages_Direct_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1067,7 +1064,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_UserLanguages_LocalStringArray_Diagnostic()
+        public async Task HttpRequest_UserLanguages_LocalStringArray_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1097,7 +1094,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HttpRequest_UserLanguages_LocalStringModified_Diagnostic()
+        public async Task HttpRequest_UserLanguages_LocalStringModified_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1127,7 +1124,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task OkayInputLocalStructNameValueCollectionString_NoDiagnostic()
+        public async Task OkayInputLocalStructNameValueCollectionString_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1168,7 +1165,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task OkayInputConst_NoDiagnostic()
+        public async Task OkayInputConst_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1186,7 +1183,7 @@ namespace VulnerableWebApp
         {
             SqlCommand sqlCommand = new SqlCommand()
             {
-                CommandText = ""SELECT * FROM users WHERE username = 'foo'"",
+                CommandText = ""SELECT * FROM users WHERE username = 'aaa'"",
                 CommandType = CommandType.Text,
             };
         }
@@ -1196,7 +1193,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task DataBoundLiteralControl_DirectImplementation_Text()
+        public async Task DataBoundLiteralControl_DirectImplementation_TextAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1225,7 +1222,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task DataBoundLiteralControl_Interface_Text()
+        public async Task DataBoundLiteralControl_Interface_TextAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1254,7 +1251,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task HtmlInputButton_Value()
+        public async Task HtmlInputButton_ValueAsync()
         {
             // HtmlInputButton derives from HtmlInputControl, and HtmlInputControl.Value is a tainted data source.
             await VerifyCSharpWithDependenciesAsync(@"
@@ -1284,7 +1281,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task SimpleInterprocedural()
+        public async Task SimpleInterproceduralAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1322,7 +1319,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task SimpleInterproceduralTwice()
+        public async Task SimpleInterproceduralTwiceAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1361,7 +1358,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task SimpleLocalFunction()
+        public async Task SimpleLocalFunctionAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1396,7 +1393,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task SimpleLambda()
+        public async Task SimpleLambdaAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1431,7 +1428,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task IntermediateMethodReturnsTainted()
+        public async Task IntermediateMethodReturnsTaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1473,7 +1470,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task IntermediateMethodReturnsTaintedButOutputUntainted()
+        public async Task IntermediateMethodReturnsTaintedButOutputUntaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1490,7 +1487,7 @@ namespace VulnerableWebApp
         protected void Page_Load(object sender, EventArgs e)
         {
             string taintedInput = this.Request[""input""];
-            
+
             string sqlCommandText = StillTainted(taintedInput, out string notTaintedSqlCommandText);
 
             ExecuteSql(notTaintedSqlCommandText);
@@ -1515,7 +1512,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task IntermediateMethodReturnsTaintedButRefUntainted()
+        public async Task IntermediateMethodReturnsTaintedButRefUntaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1532,7 +1529,7 @@ namespace VulnerableWebApp
         protected void Page_Load(object sender, EventArgs e)
         {
             string taintedInput = this.Request[""input""];
-            
+
             string notTaintedSqlCommandText = taintedInput;
             string sqlCommandText = StillTainted(taintedInput, ref notTaintedSqlCommandText);
 
@@ -1558,7 +1555,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task IntermediateMethodReturnsUntaintedButOutputTainted()
+        public async Task IntermediateMethodReturnsUntaintedButOutputTaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1575,7 +1572,7 @@ namespace VulnerableWebApp
         protected void Page_Load(object sender, EventArgs e)
         {
             string taintedInput = this.Request[""input""];
-            
+
             string sqlCommandText = StillTainted(taintedInput, out string taintedSqlCommandText);
 
             ExecuteSql(taintedSqlCommandText);
@@ -1601,7 +1598,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task IntermediateMethodReturnsUntaintedButRefTainted()
+        public async Task IntermediateMethodReturnsUntaintedButRefTaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1618,7 +1615,7 @@ namespace VulnerableWebApp
         protected void Page_Load(object sender, EventArgs e)
         {
             string taintedInput = this.Request[""input""];
-            
+
             string taintedSqlCommandText = null;
             string sqlCommandText = StillTainted(taintedInput, ref taintedSqlCommandText);
 
@@ -1645,7 +1642,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task IntermediateMethodReturnsNotTainted()
+        public async Task IntermediateMethodReturnsNotTaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1686,7 +1683,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task IntermediateMethodSanitizesTainted()
+        public async Task IntermediateMethodSanitizesTaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1727,7 +1724,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task IntermediateMethodOutParameterTainted()
+        public async Task IntermediateMethodOutParameterTaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1769,7 +1766,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task IntermediateMethodOutParameterNotTainted()
+        public async Task IntermediateMethodOutParameterNotTaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1810,7 +1807,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task IntermediateMethodOutParameterSanitizesTainted()
+        public async Task IntermediateMethodOutParameterSanitizesTaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1851,7 +1848,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinaryReturnsDefaultStillTainted()
+        public async Task CrossBinaryReturnsDefaultStillTaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1897,7 +1894,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinaryReturnsInputStillTainted()
+        public async Task CrossBinaryReturnsInputStillTaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1942,7 +1939,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinarySetsOutputToDefaultStillTainted()
+        public async Task CrossBinarySetsOutputToDefaultStillTaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -1988,7 +1985,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinarySetsReferenceToDefaultStillTainted()
+        public async Task CrossBinarySetsReferenceToDefaultStillTaintedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2035,7 +2032,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_TaintedObject_Property_ConstructedInput()
+        public async Task CrossBinary_TaintedObject_Property_ConstructedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2075,7 +2072,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_TaintedObject_Property_Default()
+        public async Task CrossBinary_TaintedObject_Property_DefaultAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2116,7 +2113,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_TaintedObject_Method_ReturnsConstructedInput()
+        public async Task CrossBinary_TaintedObject_Method_ReturnsConstructedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2156,7 +2153,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_TaintedObject_Method_SetsOutputToConstructedInput()
+        public async Task CrossBinary_TaintedObject_Method_SetsOutputToConstructedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2198,7 +2195,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_TaintedObject_Method_SetsReferenceToConstructedInput()
+        public async Task CrossBinary_TaintedObject_Method_SetsReferenceToConstructedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2241,7 +2238,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_TaintedObject_Method_ReturnsDefault()
+        public async Task CrossBinary_TaintedObject_Method_ReturnsDefaultAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2282,7 +2279,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_TaintedObject_Method_SetsReferenceToDefault()
+        public async Task CrossBinary_TaintedObject_Method_SetsReferenceToDefaultAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2326,7 +2323,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_TaintedObject_Method_ReturnsDefault_UntaintedInput()
+        public async Task CrossBinary_TaintedObject_Method_ReturnsDefault_UntaintedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2367,7 +2364,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Property_ConstructedInput()
+        public async Task CrossBinary_UntaintedObject_Property_ConstructedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2406,7 +2403,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Property_Default()
+        public async Task CrossBinary_UntaintedObject_Property_DefaultAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2445,7 +2442,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Method_ReturnsConstructedInput()
+        public async Task CrossBinary_UntaintedObject_Method_ReturnsConstructedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2484,7 +2481,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Method_SetsOutputToConstructedInput()
+        public async Task CrossBinary_UntaintedObject_Method_SetsOutputToConstructedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2525,7 +2522,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Method_SetsReferenceToConstructedInput()
+        public async Task CrossBinary_UntaintedObject_Method_SetsReferenceToConstructedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2567,7 +2564,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Method_ReturnsDefault()
+        public async Task CrossBinary_UntaintedObject_Method_ReturnsDefaultAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2607,7 +2604,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Method_SetsReferenceToDefault()
+        public async Task CrossBinary_UntaintedObject_Method_SetsReferenceToDefaultAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2649,7 +2646,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Method_ReturnsDefault_UntaintedInput()
+        public async Task CrossBinary_UntaintedObject_Method_ReturnsDefault_UntaintedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2688,7 +2685,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Method_ReturnsDefault_TaintedInput()
+        public async Task CrossBinary_UntaintedObject_Method_ReturnsDefault_TaintedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2729,7 +2726,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Method_ReturnsInput_TaintedInput()
+        public async Task CrossBinary_UntaintedObject_Method_ReturnsInput_TaintedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2769,7 +2766,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Method_ReturnsRandom_TaintedInput()
+        public async Task CrossBinary_UntaintedObject_Method_ReturnsRandom_TaintedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2810,7 +2807,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Method_SetsOutputToDefault_TaintedInput()
+        public async Task CrossBinary_UntaintedObject_Method_SetsOutputToDefault_TaintedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2852,7 +2849,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Method_SetsOutputToInput_TaintedInput()
+        public async Task CrossBinary_UntaintedObject_Method_SetsOutputToInput_TaintedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2893,7 +2890,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task CrossBinary_UntaintedObject_Method_SetsOutputToRandom_TaintedInput()
+        public async Task CrossBinary_UntaintedObject_Method_SetsOutputToRandom_TaintedInputAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 namespace VulnerableWebApp
@@ -2935,7 +2932,7 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        public async Task NonMonotonicMergeAssert()
+        public async Task NonMonotonicMergeAssertAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -3013,7 +3010,7 @@ public class Class1
         }
 
         [Fact]
-        public async Task PointsToAnalysisAssertsLocationSetsComparison()
+        public async Task PointsToAnalysisAssertsLocationSetsComparisonAsync()
         {
             await new VerifyCS.Test
             {
@@ -3194,7 +3191,7 @@ public class Class1
         }
 
         [Fact]
-        public async Task LotsOfAnalysisEntities_1()
+        public async Task LotsOfAnalysisEntities_1Async()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -3245,7 +3242,7 @@ namespace TestNamespace
                 StringProperty = ""This is tainted: "" + name,
             };
 
-            if ((new Random()).Next(6) == 4) 
+            if ((new Random()).Next(6) == 4)
             {
                 return null;
             }
@@ -3290,7 +3287,7 @@ namespace TestNamespace
         }
 
         [Fact]
-        public async Task LotsOfAnalysisEntities_2()
+        public async Task LotsOfAnalysisEntities_2Async()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System;
@@ -3341,7 +3338,7 @@ namespace TestNamespace
                 StringProperty = ""This is tainted: "" + name,
             };
 
-            if ((new Random()).Next(6) == 4) 
+            if ((new Random()).Next(6) == 4)
             {
                 return null;
             }
@@ -3386,7 +3383,7 @@ namespace TestNamespace
         }
 
         [Fact]
-        public async Task TaintFunctionArguments_MvcFromServices_NoDiagnostic()
+        public async Task TaintFunctionArguments_MvcFromServices_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data.SqlClient;
@@ -3407,7 +3404,7 @@ public class MyController : Controller
         }
 
         [Fact]
-        public async Task TaintFunctionArguments_MvcNoFromServices_Diagnostic()
+        public async Task TaintFunctionArguments_MvcNoFromServices_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data.SqlClient;
@@ -3429,7 +3426,7 @@ public class MyController : Controller
         }
 
         [Fact]
-        public async Task TaintFunctionArguments_MultipleActions_Diagnostic()
+        public async Task TaintFunctionArguments_MultipleActions_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data.SqlClient;
@@ -3452,7 +3449,7 @@ public class MyController : Controller
         }
 
         [Fact]
-        public async Task TaintFunctionArguments_MultipleActions_NotController_NoDiagnostic()
+        public async Task TaintFunctionArguments_MultipleActions_NotController_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data.SqlClient;
@@ -3560,7 +3557,7 @@ public class MyController : Controller
         }
 
         [Fact]
-        public async Task TaintFunctionArguments_InheritedNonController_NoDiagnostic()
+        public async Task TaintFunctionArguments_InheritedNonController_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data.SqlClient;
@@ -3581,7 +3578,7 @@ public class MyController : TotallyNonController
         }
 
         [Fact]
-        public async Task TaintFunctionArguments_InheritedNonAction_NoDiagnostic()
+        public async Task TaintFunctionArguments_InheritedNonAction_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data.SqlClient;
@@ -3606,7 +3603,7 @@ public class MyController : MyControllerBase
         }
 
         [Fact]
-        public async Task TaintFunctionArguments_ControllerAttribute()
+        public async Task TaintFunctionArguments_ControllerAttributeAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data.SqlClient;
@@ -3624,7 +3621,7 @@ public class My
         }
 
         [Fact]
-        public async Task TaintFunctionArguments_ControllerSuffix_Inherited()
+        public async Task TaintFunctionArguments_ControllerSuffix_InheritedAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data.SqlClient;
@@ -3645,7 +3642,7 @@ public class My : Controller
         }
 
         [Fact]
-        public async Task TaintFunctionArguments_ControllerSuffix()
+        public async Task TaintFunctionArguments_ControllerSuffixAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data.SqlClient;
@@ -3662,7 +3659,7 @@ public class MyController
         }
 
         [Fact]
-        public async Task TaintFunctionArguments_Reassignment_NoDiagnostic()
+        public async Task TaintFunctionArguments_Reassignment_NoDiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data.SqlClient;
@@ -3679,7 +3676,7 @@ public class MyController
         }
 
         [Fact]
-        public async Task TaintFunctionArguments_NoMvcReferenced_NoDiagnostic()
+        public async Task TaintFunctionArguments_NoMvcReferenced_NoDiagnosticAsync()
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -3704,7 +3701,7 @@ public class MyController
         }
 
         [Fact]
-        public async Task AspNetMvcController_HasPropertySetter()
+        public async Task AspNetMvcController_HasPropertySetterAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data.SqlClient;
@@ -3723,7 +3720,7 @@ public class MyController
         }
 
         [Fact]
-        public async Task TaintFunctionArguments()
+        public async Task TaintFunctionArgumentsAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data.SqlClient;
@@ -3794,7 +3791,7 @@ public class MyController : Controller
         [InlineData("st.Append(stringParam); st.Clear()", false)]
 
         [InlineData("StaticString = stringParam", false)]
-        public async Task TaintThis_StringBuilder(string payload, bool warn, string source = "", int sourceColumn = 36, string sinkArg = "st.ToString()")
+        public async Task TaintThis_StringBuilderAsync(string payload, bool warn, string source = "", int sourceColumn = 36, string sinkArg = "st.ToString()")
         {
             string code = $@"
 using System.Data.SqlClient;
@@ -3831,7 +3828,7 @@ public class MyController
         }
 
         [Fact]
-        public async Task HttpServerUtility_HtmlEncode_StringWriterOverload_WrongSanitizer()
+        public async Task HttpServerUtility_HtmlEncode_StringWriterOverload_WrongSanitizerAsync()
         {
             await new VerifyCS.Test
             {
@@ -3850,8 +3847,14 @@ public class MyController
             }.RunAsync();
         }
 
+        [Fact, WorkItem(4491, "https://github.com/dotnet/roslyn-analyzers/issues/4491")]
+        public async Task AssemblyAttributeRegressionTestAsync()
+        {
+            await VerifyVisualBasicWithDependenciesAsync(@"<Assembly: System.Reflection.AssemblyTitle(""Title"")>");
+        }
+
         [Fact]
-        public async Task AspNetCoreHttpRequest_Form_Direct_Diagnostic()
+        public async Task AspNetCoreHttpRequest_Form_Direct_DiagnosticAsync()
         {
             await VerifyCSharpWithDependenciesAsync(@"
 using System.Data;

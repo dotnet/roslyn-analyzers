@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -15,9 +15,11 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
         [Fact]
-        public async Task UseXmlDocumentSetInnerXmlShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentSetInnerXmlShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 using System.Data;
 
@@ -35,7 +37,9 @@ namespace TestNamespace
                 GetCA3075InnerXmlCSharpResultAt(12, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 Imports System.Data
 
@@ -54,9 +58,11 @@ End Namespace",
         }
 
         [Fact]
-        public async Task UseXmlDocumentSetInnerXmlInGetShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentSetInnerXmlInGetShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 class TestClass
@@ -74,7 +80,9 @@ class TestClass
                 GetCA3075InnerXmlCSharpResultAt(11, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Class TestClass
@@ -94,9 +102,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDocumentSetInnerXmlInSetShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentSetInnerXmlInSetShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 class TestClass
@@ -121,7 +131,9 @@ public XmlDocument GetDoc
                 GetCA3075InnerXmlCSharpResultAt(15, 21)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Class TestClass
@@ -146,9 +158,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDocumentSetInnerXmlInTryBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentSetInnerXmlInTryBlockShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System;
 using System.Xml;
 
@@ -169,7 +183,9 @@ class TestClass
                 GetCA3075InnerXmlCSharpResultAt(13, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Xml
 
@@ -192,9 +208,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDocumentSetInnerXmlInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentSetInnerXmlInCatchBlockShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System;
 using System.Xml;
 
@@ -215,7 +233,9 @@ class TestClass
                 GetCA3075InnerXmlCSharpResultAt(14, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Xml
 
@@ -237,9 +257,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDocumentSetInnerXmlInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentSetInnerXmlInFinallyBlockShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System;
 using System.Xml;
 
@@ -260,7 +282,9 @@ class TestClass
                 GetCA3075InnerXmlCSharpResultAt(15, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Xml
 
@@ -283,9 +307,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDocumentSetInnerXmlInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentSetInnerXmlInAsyncAwaitShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -308,7 +334,9 @@ class TestClass
                 GetCA3075InnerXmlCSharpResultAt(12, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Threading.Tasks
 Imports System.Xml
 
@@ -333,9 +361,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDocumentSetInnerXmlInDelegateShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentSetInnerXmlInDelegateShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 class TestClass
@@ -351,7 +381,9 @@ class TestClass
                 GetCA3075InnerXmlCSharpResultAt(11, 9)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Class TestClass
@@ -371,9 +403,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDocumentSetInnerXmlInlineShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentSetInnerXmlInlineShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 using System.Data;
 
@@ -394,7 +428,9 @@ namespace TestNamespace
                 GetCA3075InnerXmlCSharpResultAt(14, 17)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 Imports System.Data
 
@@ -413,9 +449,11 @@ End Namespace",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentInnerXmlShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentInnerXmlShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 using System.Data;
 
@@ -433,7 +471,9 @@ namespace TestNamespace
                 GetCA3075InnerXmlCSharpResultAt(12, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 Imports System.Data
 
@@ -452,9 +492,11 @@ End Namespace",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentSetInnerXmlInGetShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentSetInnerXmlInGetShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 class TestClass
@@ -472,7 +514,9 @@ class TestClass
                 GetCA3075InnerXmlCSharpResultAt(11, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Class TestClass
@@ -492,9 +536,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentSetInnerXmlInSetShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentSetInnerXmlInSetShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 class TestClass
@@ -519,7 +565,9 @@ public XmlDataDocument GetDoc
                 GetCA3075InnerXmlCSharpResultAt(15, 21)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Class TestClass
@@ -545,9 +593,11 @@ End Class
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentSetInnerXmlInTryBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentSetInnerXmlInTryBlockShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System;
 using System.Xml;
 
@@ -568,7 +618,9 @@ class TestClass
                 GetCA3075InnerXmlCSharpResultAt(13, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Xml
 
@@ -591,9 +643,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentSetInnerXmlInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentSetInnerXmlInCatchBlockShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System;
 using System.Xml;
 
@@ -614,7 +668,9 @@ class TestClass
                 GetCA3075InnerXmlCSharpResultAt(14, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Xml
 
@@ -636,9 +692,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentSetInnerXmlInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentSetInnerXmlInFinallyBlockShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System;
 using System.Xml;
 
@@ -659,7 +717,9 @@ class TestClass
                 GetCA3075InnerXmlCSharpResultAt(15, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Xml
 
@@ -682,9 +742,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentSetInnerXmlInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentSetInnerXmlInAsyncAwaitShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -707,7 +769,9 @@ class TestClass
                 GetCA3075InnerXmlCSharpResultAt(12, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Threading.Tasks
 Imports System.Xml
 
@@ -732,9 +796,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentSetInnerXmlInDelegateShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentSetInnerXmlInDelegateShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 
 class TestClass
@@ -750,7 +816,9 @@ class TestClass
                 GetCA3075InnerXmlCSharpResultAt(11, 9)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 
 Class TestClass
@@ -770,9 +838,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseXmlDataDocumentSetInnerXmlInlineShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentSetInnerXmlInlineShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Xml;
 using System.Data;
 
@@ -793,7 +863,9 @@ namespace TestNamespace
                 GetCA3075InnerXmlCSharpResultAt(14, 17)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Xml
 Imports System.Data
 
@@ -812,9 +884,13 @@ End Namespace",
         }
 
         private static DiagnosticResult GetCA3075InnerXmlCSharpResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseSetInnerXml).WithLocation(line, column);
+#pragma warning restore RS0030 // Do not use banned APIs
 
         private static DiagnosticResult GetCA3075InnerXmlBasicResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyVB.Diagnostic(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseSetInnerXml).WithLocation(line, column);
+#pragma warning restore RS0030 // Do not use banned APIs
     }
 }

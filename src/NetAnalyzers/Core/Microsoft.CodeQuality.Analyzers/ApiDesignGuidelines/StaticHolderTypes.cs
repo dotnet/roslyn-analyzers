@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
@@ -8,9 +8,10 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1052: Static holder classes should be marked static, and should not have default
-    /// constructors.
+    /// CA1052: <inheritdoc cref="StaticHolderTypesShouldBeStaticOrNotInheritable"/>
     /// </summary>
     /// <remarks>
     /// <para>
@@ -27,7 +28,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// even though the title of CA1053 is "Static holder types should not have constructors".
     /// Like FxCop, this analyzer does emit a diagnostic when the type has a private default
     /// constructor, even though the documentation of CA1053 says it should only trigger for public
-    /// or protected default constructor. Like FxCop, this analyzer does not emit a diagnostic when 
+    /// or protected default constructor. Like FxCop, this analyzer does not emit a diagnostic when
     /// class has a base class, however the diagnostic is emitted if class supports empty interface.
     /// </para>
     /// <para>
@@ -40,27 +41,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         public const string RuleId = "CA1052";
 
-        private static readonly LocalizableString s_title = new LocalizableResourceString(
-            nameof(MicrosoftCodeQualityAnalyzersResources.StaticHolderTypesShouldBeStaticOrNotInheritable),
-            MicrosoftCodeQualityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftCodeQualityAnalyzersResources));
-
-        private static readonly LocalizableString s_messageFormat = new LocalizableResourceString(
-            nameof(MicrosoftCodeQualityAnalyzersResources.StaticHolderTypeIsNotStatic),
-            MicrosoftCodeQualityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftCodeQualityAnalyzersResources));
-
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            s_title,
-            s_messageFormat,
+            CreateLocalizableResourceString(nameof(StaticHolderTypesShouldBeStaticOrNotInheritable)),
+            CreateLocalizableResourceString(nameof(StaticHolderTypeIsNotStatic)),
             DiagnosticCategory.Design,
             RuleLevel.Disabled,
             description: null,
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -73,13 +64,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var symbol = (INamedTypeSymbol)context.Symbol;
+
             if (!symbol.IsStatic &&
-                symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken) &&
+                !symbol.IsAbstract &&
+                !IsSealedAndVisualBasic(symbol) &&
                 symbol.IsStaticHolderType() &&
-                !symbol.IsAbstract)
+                context.Options.MatchesConfiguredVisibility(Rule, symbol, context.Compilation))
             {
                 context.ReportDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Name));
             }
+
+            static bool IsSealedAndVisualBasic(INamedTypeSymbol symbol)
+                => symbol.IsSealed && symbol.Language == LanguageNames.VisualBasic;
         }
     }
 }

@@ -1,12 +1,12 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
-using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.SerializationRulesDiagnosticAnalyzer,
     Microsoft.NetCore.Analyzers.Runtime.MarkTypesWithSerializableFixer>;
-using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.SerializationRulesDiagnosticAnalyzer,
     Microsoft.NetCore.Analyzers.Runtime.MarkTypesWithSerializableFixer>;
 
@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public partial class MarkISerializableTypesWithSerializableTests
     {
         [Fact]
-        public async Task CA2237SerializableMissingAttr()
+        public async Task CA2237SerializableMissingAttrAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -46,7 +46,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2237SerializableInternal()
+        public async Task CA2237SerializableInternalAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -75,7 +75,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2237SerializableProperWithScope()
+        public async Task CA2237SerializableProperWithScopeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -90,13 +90,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 }
 
                 [Serializable]
-                public class {|CA2229:CA2237SerializableProper|} : ISerializable
+                public class CA2237SerializableProper : ISerializable
                 {
                     public void GetObjectData(SerializationInfo info, StreamingContext context)
                     {
                         throw new NotImplementedException();
                     }
-                }");
+                }",
+                GetCA2229DefaultCSharpResultAt(14, 30, "CA2237SerializableProper"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
@@ -114,17 +115,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 End Class
 
                 <Serializable>
-                Public Class {|CA2229:CA2237SerializableProper|} 
+                Public Class CA2237SerializableProper
                     Implements ISerializable
 
                     Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
-                End Class");
+                End Class",
+                GetCA2229DefaultBasicResultAt(17, 30, "CA2237SerializableProper"));
         }
 
         [Fact]
-        public async Task CA2237SerializableWithBase()
+        public async Task CA2237SerializableWithBaseAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -157,7 +159,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2237SerializableWithBaseAttr()
+        public async Task CA2237SerializableWithBaseAttrAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -194,7 +196,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2237_CA2229_NoDiagnosticForInterfaceAndDelegate()
+        public async Task CA2237_CA2229_NoDiagnosticForInterfaceAndDelegateAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -226,14 +228,32 @@ Public Interface I
 End Interface");
         }
 
-        private static DiagnosticResult GetCA2237CSharpResultAt(int line, int column, string objectName)
-        {
-            return new DiagnosticResult(SerializationRulesDiagnosticAnalyzer.RuleCA2237).WithLocation(line, column).WithArguments(objectName);
-        }
+        private static DiagnosticResult GetCA2237CSharpResultAt(int line, int column, string objectName) =>
+#pragma warning disable RS0030 // Do not use banned APIs
+            VerifyCS.Diagnostic(SerializationRulesDiagnosticAnalyzer.RuleCA2237)
+                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not use banned APIs
+                .WithArguments(objectName);
 
-        private static DiagnosticResult GetCA2237BasicResultAt(int line, int column, string objectName)
-        {
-            return new DiagnosticResult(SerializationRulesDiagnosticAnalyzer.RuleCA2237).WithLocation(line, column).WithArguments(objectName);
-        }
+        private static DiagnosticResult GetCA2237BasicResultAt(int line, int column, string objectName) =>
+#pragma warning disable RS0030 // Do not use banned APIs
+            VerifyVB.Diagnostic(SerializationRulesDiagnosticAnalyzer.RuleCA2237)
+                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not use banned APIs
+                .WithArguments(objectName);
+
+        private static DiagnosticResult GetCA2229DefaultCSharpResultAt(int line, int column, string objectName) =>
+#pragma warning disable RS0030 // Do not use banned APIs
+            VerifyCS.Diagnostic(SerializationRulesDiagnosticAnalyzer.RuleCA2229Default)
+                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not use banned APIs
+                .WithArguments(objectName);
+
+        private static DiagnosticResult GetCA2229DefaultBasicResultAt(int line, int column, string objectName) =>
+#pragma warning disable RS0030 // Do not use banned APIs
+            VerifyVB.Diagnostic(SerializationRulesDiagnosticAnalyzer.RuleCA2229Default)
+                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not use banned APIs
+                .WithArguments(objectName);
     }
 }

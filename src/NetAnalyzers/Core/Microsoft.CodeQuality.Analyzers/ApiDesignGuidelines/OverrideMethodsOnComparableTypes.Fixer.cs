@@ -1,6 +1,5 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
@@ -16,7 +16,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class OverrideMethodsOnComparableTypesFixer : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(OverrideMethodsOnComparableTypesAnalyzer.RuleId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(OverrideMethodsOnComparableTypesAnalyzer.RuleId);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -31,7 +31,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var typeSymbol = model.GetDeclaredSymbol(declaration) as INamedTypeSymbol;
+            var typeSymbol = model.GetDeclaredSymbol(declaration, context.CancellationToken) as INamedTypeSymbol;
             if (typeSymbol?.TypeKind is not TypeKind.Class and
                 not TypeKind.Struct)
             {
@@ -40,7 +40,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             string title = MicrosoftCodeQualityAnalyzersResources.ImplementComparable;
             context.RegisterCodeFix(
-                new MyCodeAction(title,
+                CodeAction.Create(title,
                     async ct => await ImplementComparableAsync(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false),
                     equivalenceKey: title),
                 context.Diagnostics);
@@ -108,15 +108,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             return editor.GetChangedDocument();
-        }
-
-        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
-        private class MyCodeAction : DocumentChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument, equivalenceKey)
-            {
-            }
         }
 
         public override FixAllProvider GetFixAllProvider()

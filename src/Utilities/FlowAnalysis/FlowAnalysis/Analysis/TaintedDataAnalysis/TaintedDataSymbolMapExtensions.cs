@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -46,10 +46,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 {
                     if (methodMatcher(method.Name, arguments))
                     {
-                        if (allTaintedTargets == null)
-                        {
-                            allTaintedTargets = PooledHashSet<string>.GetInstance();
-                        }
+                        allTaintedTargets ??= PooledHashSet<string>.GetInstance();
 
                         allTaintedTargets.UnionWith(taintedTargets);
                     }
@@ -71,10 +68,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                                     pointsToAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray()));
                         if (positivePointsToTaintedTargets.Any())
                         {
-                            if (allTaintedTargets == null)
-                            {
-                                allTaintedTargets = PooledHashSet<string>.GetInstance();
-                            }
+                            allTaintedTargets ??= PooledHashSet<string>.GetInstance();
 
                             allTaintedTargets.UnionWith(positivePointsToTaintedTargets.Select(s => s.target));
                         }
@@ -98,10 +92,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                                 arguments.Select(o => valueContentAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray()));
                         if (positiveValueContentTaintedTargets.Any())
                         {
-                            if (allTaintedTargets == null)
-                            {
-                                allTaintedTargets = PooledHashSet<string>.GetInstance();
-                            }
+                            allTaintedTargets ??= PooledHashSet<string>.GetInstance();
 
                             allTaintedTargets.UnionWith(positiveValueContentTaintedTargets.Select(s => s.target));
                         }
@@ -200,10 +191,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 {
                     if (methodMatcher(method.Name, arguments))
                     {
-                        if (taintedParameterPairs == null)
-                        {
-                            taintedParameterPairs = PooledHashSet<(string, string)>.GetInstance();
-                        }
+                        taintedParameterPairs ??= PooledHashSet<(string, string)>.GetInstance();
 
                         taintedParameterPairs.UnionWith(sourceToEnds.Where(s => taintedParameterNames.Contains(s.source)));
                     }

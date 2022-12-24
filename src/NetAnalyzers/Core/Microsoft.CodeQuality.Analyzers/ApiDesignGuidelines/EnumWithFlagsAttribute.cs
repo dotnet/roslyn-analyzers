@@ -1,28 +1,29 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.Helpers;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// Implements CA1027 and CA2217
-    ///
-    /// 1) CA1027: Mark enums with FlagsAttribute
+    /// CA1027: <inheritdoc cref="MarkEnumsWithFlagsTitle"/>
     ///
     /// Cause:
     /// The values of a public enumeration are powers of two or are combinations of other values that are defined in the enumeration,
     /// and the System.FlagsAttribute attribute is not present.
     /// To reduce false positives, this rule does not report a violation for enumerations that have contiguous values.
     ///
-    /// 2) CA2217: Do not mark enums with FlagsAttribute
+    /// CA2217: <inheritdoc cref="DoNotMarkEnumsWithFlagsTitle"/>
     ///
     /// Cause:
     /// An externally visible enumeration is marked with FlagsAttribute and it has one or more values that are not powers of two or
@@ -35,33 +36,27 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal const string RuleIdDoNotMarkEnumsWithFlags = "CA2217";
         internal const string RuleNameForExportAttribute = "EnumWithFlagsAttributeRules";
 
-        private static readonly LocalizableString s_localizableTitleCA1027 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1027 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1027 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        internal static DiagnosticDescriptor Rule1027 = DiagnosticDescriptorHelper.Create(RuleIdMarkEnumsWithFlags,
-                                                                             s_localizableTitleCA1027,
-                                                                             s_localizableMessageCA1027,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescriptionCA1027,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false,
-                                                                             isEnabledByDefaultInFxCopAnalyzers: false);
+        internal static readonly DiagnosticDescriptor Rule1027 = DiagnosticDescriptorHelper.Create(
+            RuleIdMarkEnumsWithFlags,
+            CreateLocalizableResourceString(nameof(MarkEnumsWithFlagsTitle)),
+            CreateLocalizableResourceString(nameof(MarkEnumsWithFlagsMessage)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: CreateLocalizableResourceString(nameof(MarkEnumsWithFlagsDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        private static readonly LocalizableString s_localizableTitleCA2217 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA2217 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA2217 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        internal static DiagnosticDescriptor Rule2217 = DiagnosticDescriptorHelper.Create(RuleIdDoNotMarkEnumsWithFlags,
-                                                                             s_localizableTitleCA2217,
-                                                                             s_localizableMessageCA2217,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.Disabled,
-                                                                             description: s_localizableDescriptionCA2217,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false,
-                                                                             isEnabledByDefaultInFxCopAnalyzers: false);
+        internal static readonly DiagnosticDescriptor Rule2217 = DiagnosticDescriptorHelper.Create(
+            RuleIdDoNotMarkEnumsWithFlags,
+            CreateLocalizableResourceString(nameof(DoNotMarkEnumsWithFlagsTitle)),
+            CreateLocalizableResourceString(nameof(DoNotMarkEnumsWithFlagsMessage)),
+            DiagnosticCategory.Usage,
+            RuleLevel.Disabled,
+            description: CreateLocalizableResourceString(nameof(DoNotMarkEnumsWithFlagsDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule1027, Rule2217);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule1027, Rule2217);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -90,8 +85,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             if (symbol != null &&
                 symbol.TypeKind == TypeKind.Enum)
             {
-                var reportCA1027 = symbol.MatchesConfiguredVisibility(symbolContext.Options, Rule1027, symbolContext.CancellationToken);
-                var reportCA2217 = symbol.MatchesConfiguredVisibility(symbolContext.Options, Rule2217, symbolContext.CancellationToken);
+                var reportCA1027 = symbolContext.Options.MatchesConfiguredVisibility(Rule1027, symbol, symbolContext.Compilation);
+                var reportCA2217 = symbolContext.Options.MatchesConfiguredVisibility(Rule2217, symbol, symbolContext.Compilation);
                 if (!reportCA1027 && !reportCA2217)
                 {
                     return;
@@ -99,15 +94,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (EnumHelpers.TryGetEnumMemberValues(symbol, out IList<ulong> memberValues))
                 {
-                    bool hasFlagsAttribute = symbol.GetAttributes().Any(a => Equals(a.AttributeClass, flagsAttributeType));
-                    if (hasFlagsAttribute)
+                    if (symbol.HasAttribute(flagsAttributeType))
                     {
                         // Check "CA2217: Do not mark enums with FlagsAttribute"
                         if (reportCA2217 && !ShouldBeFlags(memberValues, out IEnumerable<ulong> missingValues))
                         {
                             Debug.Assert(missingValues != null);
 
-                            string missingValuesString = missingValues.Select(v => v.ToString()).Aggregate((i, j) => i + ", " + j);
+                            string missingValuesString = missingValues.Select(v => v.ToString(CultureInfo.InvariantCulture)).Aggregate((i, j) => i + ", " + j);
                             symbolContext.ReportDiagnostic(symbol.CreateDiagnostic(Rule2217, symbol.Name, missingValuesString));
                         }
                     }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -12,10 +12,12 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(DoNotUseInsecureDtdProcessingAnalyzer.RuleXmlDocumentWithNoSecureResolver).WithLocation(line, column);
+#pragma warning restore RS0030 // Do not use banned APIs
 
         [Fact]
-        public async Task XmlDocumentDefaultResolversInXmlReaderSettingsPre452ShouldGenerateDiagnostic()
+        public async Task XmlDocumentDefaultResolversInXmlReaderSettingsPre452ShouldGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net451.Default,
@@ -44,7 +46,7 @@ namespace TestNamespace
         }
 
         [Fact]
-        public async Task XmlDocumentDefaultResolversInXmlReaderSettingsPre452ShouldNotGenerateDiagnostic()
+        public async Task XmlDocumentDefaultResolversInXmlReaderSettingsPre452ShouldNotGenerateDiagnosticAsync()
         {
             await VerifyCSharpAnalyzerAsync(
                 ReferenceAssemblies.NetFramework.Net452.Default,

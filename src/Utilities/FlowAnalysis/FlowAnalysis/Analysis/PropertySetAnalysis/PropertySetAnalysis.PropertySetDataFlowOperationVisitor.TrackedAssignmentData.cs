@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
@@ -47,10 +47,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
 
                 public void TrackAssignmentWithUnknownLocation(IAssignmentOperation assignmentOperation)
                 {
-                    if (this.AssignmentsWithUnknownLocation == null)
-                    {
-                        this.AssignmentsWithUnknownLocation = PooledHashSet<IAssignmentOperation>.GetInstance();
-                    }
+                    this.AssignmentsWithUnknownLocation ??= PooledHashSet<IAssignmentOperation>.GetInstance();
 
                     this.AssignmentsWithUnknownLocation.Add(assignmentOperation);
                 }
@@ -59,11 +56,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
                     IAssignmentOperation assignmentOperation,
                     AbstractLocation abstractLocation)
                 {
-                    if (this.AbstractLocationsToAssignments == null)
-                    {
-                        this.AbstractLocationsToAssignments =
+                    this.AbstractLocationsToAssignments ??=
                             PooledDictionary<AbstractLocation, PooledHashSet<IAssignmentOperation>>.GetInstance();
-                    }
 
                     if (!this.AbstractLocationsToAssignments.TryGetValue(
                             abstractLocation,

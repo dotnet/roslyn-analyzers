@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -9,24 +9,22 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
-    /// <summary> 
-    /// CA1720-redefined: Identifiers should not contain type names 
-    /// Cause: 
-    /// The name of a parameter or a member contains a language-specific data type name. 
-    ///  
-    /// Description: 
-    /// Names of parameters and members are better used to communicate their meaning than  
-    /// to describe their type, which is expected to be provided by development tools. For names of members,  
-    /// if a data type name must be used, use a language-independent name instead of a language-specific one.  
+    using static MicrosoftCodeQualityAnalyzersResources;
+
+    /// <summary>
+    /// CA1720: <inheritdoc cref="IdentifiersShouldNotContainTypeNamesTitle"/>
+    /// Cause:
+    /// The name of a parameter or a member contains a language-specific data type name.
+    ///
+    /// Description:
+    /// Names of parameters and members are better used to communicate their meaning than
+    /// to describe their type, which is expected to be provided by development tools. For names of members,
+    /// if a data type name must be used, use a language-independent name instead of a language-specific one.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class IdentifiersShouldNotContainTypeNames : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1720";
-
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainTypeNamesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainTypeNamesMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainTypeNamesDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly ImmutableHashSet<string> s_typeNames =
             ImmutableHashSet.CreateRange(StringComparer.OrdinalIgnoreCase, new[]
@@ -65,27 +63,27 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 "decimal",
                 "guid",
                 "object",
-                "obj",
                 "string"
             });
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainTypeNamesTitle)),
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainTypeNamesMessage)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainTypeNamesDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationStartAnalysisContext =>
+            context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
                 // Analyze named types and fields.
                 compilationStartAnalysisContext.RegisterSymbolAction(
@@ -122,7 +120,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeSymbol(ISymbol symbol, SymbolAnalysisContext context)
         {
             // FxCop compat: only analyze externally visible symbols by default.
-            if (!symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
+            if (!context.Options.MatchesConfiguredVisibility(Rule, symbol, context.Compilation))
             {
                 return;
             }
@@ -130,7 +128,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var identifier = symbol.Name;
             if (s_typeNames.Contains(identifier))
             {
-                Diagnostic diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier);
+                Diagnostic diagnostic = symbol.CreateDiagnostic(Rule, identifier);
                 context.ReportDiagnostic(diagnostic);
             }
         }

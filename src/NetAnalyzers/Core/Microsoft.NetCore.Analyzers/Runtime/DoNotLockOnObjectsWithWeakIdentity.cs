@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
@@ -9,8 +9,10 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
-    /// CA2002: Do not lock on objects with weak identities
+    /// CA2002: <inheritdoc cref="DoNotLockOnObjectsWithWeakIdentityTitle"/>
     ///
     /// Cause:
     /// A thread that attempts to acquire a lock on an object that has a weak identity could cause hangs.
@@ -24,40 +26,68 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     public sealed class DoNotLockOnObjectsWithWeakIdentityAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2002";
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                         s_localizableTitle,
-                                                                         s_localizableMessage,
-                                                                         DiagnosticCategory.Reliability,
-                                                                         RuleLevel.CandidateForRemoval,     // .NET core only has one appdomain
-                                                                         description: s_localizableDescription,
-                                                                         isPortedFxCopRule: true,
-                                                                         isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(DoNotLockOnObjectsWithWeakIdentityTitle)),
+            CreateLocalizableResourceString(nameof(DoNotLockOnObjectsWithWeakIdentityMessage)),
+            DiagnosticCategory.Reliability,
+            RuleLevel.CandidateForRemoval,     // .NET core only has one appdomain
+            description: CreateLocalizableResourceString(nameof(DoNotLockOnObjectsWithWeakIdentityDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationStartContext =>
+            context.RegisterCompilationStartAction(compilationStartContext =>
             {
-                Compilation compilation = compilationStartContext.Compilation;
+                var compilation = compilationStartContext.Compilation;
+
+                compilationStartContext.RegisterOperationAction(
+                    context => ReportOnWeakIdentityObject(((ILockOperation)context.Operation).LockedValue, context),
+                    OperationKind.Lock);
+
                 compilationStartContext.RegisterOperationAction(context =>
                 {
-                    var lockStatement = (ILockOperation)context.Operation;
-                    if (lockStatement.LockedValue?.Type is ITypeSymbol type &&
-                        TypeHasWeakIdentity(type, compilation))
+                    var invocationOperation = (IInvocationOperation)context.Operation;
+                    var method = invocationOperation.TargetMethod;
+
+                    if ((method.Name != "Enter" && method.Name != "TryEnter") ||
+                        invocationOperation.Arguments.IsEmpty)
                     {
-                        context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
+                        return;
+                    }
+
+                    if (compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingMonitor, out var monitorType) &&
+                        method.ContainingType.Equals(monitorType) &&
+                        invocationOperation.Arguments[0].Value is IConversionOperation conversionOperation)
+                    {
+                        ReportOnWeakIdentityObject(conversionOperation.Operand, context);
                     }
                 },
-                OperationKind.Lock);
+                OperationKind.Invocation);
             });
+        }
+
+        private static void ReportOnWeakIdentityObject(IOperation operation, OperationAnalysisContext context)
+        {
+            if (operation is IInstanceReferenceOperation instanceReference &&
+                instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
+            {
+                context.ReportDiagnostic(operation.CreateDiagnostic(Rule, operation.Syntax.ToString()));
+            }
+            else
+            {
+                if (operation.Type is ITypeSymbol type && TypeHasWeakIdentity(type, context.Compilation))
+                {
+                    context.ReportDiagnostic(operation.CreateDiagnostic(Rule, type.ToDisplayString()));
+                }
+            }
         }
 
         private static bool TypeHasWeakIdentity(ITypeSymbol type, Compilation compilation)

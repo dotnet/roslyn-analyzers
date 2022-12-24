@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Linq;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -10,8 +10,10 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1033: Interface methods should be callable by child types
+    /// CA1033: <inheritdoc cref="InterfaceMethodsShouldBeCallableByChildTypesTitle"/>
     /// <para>
     /// Consider a base type that explicitly implements a public interface method.
     /// A type that derives from the base type can access the inherited interface method only through a reference to the current instance ('this' in C#) that is cast to the interface.
@@ -27,28 +29,24 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA1033";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        public static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(InterfaceMethodsShouldBeCallableByChildTypesTitle)),
+            CreateLocalizableResourceString(nameof(InterfaceMethodsShouldBeCallableByChildTypesMessage)),
+            DiagnosticCategory.Design,
+            RuleLevel.Disabled,
+            description: CreateLocalizableResourceString(nameof(InterfaceMethodsShouldBeCallableByChildTypesDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                          s_localizableTitle,
-                                                                          s_localizableMessage,
-                                                                          DiagnosticCategory.Design,
-                                                                          RuleLevel.Disabled,
-                                                                          description: s_localizableDescription,
-                                                                          isPortedFxCopRule: true,
-                                                                          isDataflowRule: false,
-                                                                          isEnabledByDefaultInFxCopAnalyzers: false);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public sealed override void Initialize(AnalysisContext analysisContext)
+        public sealed override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(compilationContext =>
             {
                 if (compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable, out var iDisposableTypeSymbol))
                 {

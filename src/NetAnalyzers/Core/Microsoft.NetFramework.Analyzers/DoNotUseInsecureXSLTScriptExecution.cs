@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -12,32 +12,37 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetFramework.Analyzers
 {
+    using static MicrosoftNetFrameworkAnalyzersResources;
+
+    /// <summary>
+    /// CA3076: <inheritdoc cref="InsecureXsltScriptProcessingMessage"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotUseInsecureXSLTScriptExecutionAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA3076";
 
-        internal static DiagnosticDescriptor RuleDoNotUseInsecureXSLTScriptExecution =
+        internal static readonly DiagnosticDescriptor RuleDoNotUseInsecureXSLTScriptExecution =
             DiagnosticDescriptorHelper.Create(
                 RuleId,
-                SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(MicrosoftNetFrameworkAnalyzersResources.InsecureXsltScriptProcessingMessage)),
-                SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(MicrosoftNetFrameworkAnalyzersResources.DoNotUseInsecureDtdProcessingGenericMessage)),
+                CreateLocalizableResourceString(nameof(InsecureXsltScriptProcessingMessage)),
+                CreateLocalizableResourceString(nameof(DoNotUseInsecureDtdProcessingGenericMessage)),
                 DiagnosticCategory.Security,
-                RuleLevel.IdeSuggestion,
-                SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(MicrosoftNetFrameworkAnalyzersResources.DoNotUseInsecureXSLTScriptExecutionDescription)),
+                RuleLevel.IdeHidden_BulkConfigurable,
+                CreateLocalizableResourceString(nameof(DoNotUseInsecureXSLTScriptExecutionDescription)),
                 isPortedFxCopRule: false,
                 isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleDoNotUseInsecureXSLTScriptExecution);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(RuleDoNotUseInsecureXSLTScriptExecution);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
+            context.EnableConcurrentExecution();
 
             // Security analyzer - analyze and report diagnostics in generated code.
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 context =>
                 {
                     Compilation compilation = context.Compilation;
@@ -161,10 +166,10 @@ namespace Microsoft.NetFramework.Analyzers
 
                 if (!isSecureSettings && !isSecureResolver)
                 {
-                    LocalizableResourceString message = SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                    LocalizableResourceString message = CreateLocalizableResourceString(
                         isSetInBlock
-                            ? nameof(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage)
-                            : nameof(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage),
+                            ? nameof(XslCompiledTransformLoadInsecureConstructedMessage)
+                            : nameof(XslCompiledTransformLoadInsecureInputMessage),
                         SecurityDiagnosticHelpers.GetNonEmptyParentName(_enclosingSymbol)
                     );
 

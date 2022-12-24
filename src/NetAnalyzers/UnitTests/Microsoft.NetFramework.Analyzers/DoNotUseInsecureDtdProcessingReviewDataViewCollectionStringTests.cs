@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -15,15 +15,21 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
         private static DiagnosticResult GetCA3075DataViewCSharpResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(DoNotUseInsecureDtdProcessingAnalyzer.RuleReviewDtdProcessingProperties).WithLocation(line, column);
+#pragma warning restore RS0030 // Do not use banned APIs
 
         private static DiagnosticResult GetCA3075DataViewBasicResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyVB.Diagnostic(DoNotUseInsecureDtdProcessingAnalyzer.RuleReviewDtdProcessingProperties).WithLocation(line, column);
+#pragma warning restore RS0030 // Do not use banned APIs
 
         [Fact]
-        public async Task UseDataSetDefaultDataViewManagerSetCollectionStringShouldGenerateDiagnostic()
+        public async Task UseDataSetDefaultDataViewManagerSetCollectionStringShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Data;
 
 namespace TestNamespace
@@ -41,7 +47,9 @@ namespace TestNamespace
                 GetCA3075DataViewCSharpResultAt(11, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Data
 
 Namespace TestNamespace
@@ -57,9 +65,11 @@ End Namespace",
         }
 
         [Fact]
-        public async Task UseDataSetDefaultDataViewManagernInGetShouldGenerateDiagnostic()
+        public async Task UseDataSetDefaultDataViewManagernInGetShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Data;
 
 class TestClass
@@ -77,7 +87,9 @@ class TestClass
                 GetCA3075DataViewCSharpResultAt(11, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Data
 
 Class TestClass
@@ -95,9 +107,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataSetDefaultDataViewManagerInSetShouldGenerateDiagnostic()
+        public async Task UseDataSetDefaultDataViewManagerInSetShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Data;
 
 class TestClass
@@ -122,7 +136,9 @@ public DataSet GetDoc
                 GetCA3075DataViewCSharpResultAt(15, 21)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Data
 
 Class TestClass
@@ -145,9 +161,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataSetDefaultDataViewManagerInTryBlockShouldGenerateDiagnostic()
+        public async Task UseDataSetDefaultDataViewManagerInTryBlockShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
   using System;
   using System.Data;
 
@@ -168,7 +186,9 @@ End Class",
                 GetCA3075DataViewCSharpResultAt(13, 17)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Data
 
@@ -189,9 +209,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataSetDefaultDataViewManagerInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseDataSetDefaultDataViewManagerInCatchBlockShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
    using System;
    using System.Data;
 
@@ -212,7 +234,9 @@ End Class",
                 GetCA3075DataViewCSharpResultAt(14, 17)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Data
 
@@ -232,9 +256,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataSetDefaultDataViewManagerInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseDataSetDefaultDataViewManagerInFinallyBlockShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
    using System;
    using System.Data;
 
@@ -255,7 +281,9 @@ End Class",
                 GetCA3075DataViewCSharpResultAt(15, 17)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Data
 
@@ -276,9 +304,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataSetDefaultDataViewManagerInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseDataSetDefaultDataViewManagerInAsyncAwaitShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
  using System.Threading.Tasks;
 using System.Data;
 
@@ -301,7 +331,9 @@ using System.Data;
                 GetCA3075DataViewCSharpResultAt(12, 17)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Threading.Tasks
 Imports System.Data
 
@@ -324,9 +356,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataSetDefaultDataViewManagerInDelegateShouldGenerateDiagnostic()
+        public async Task UseDataSetDefaultDataViewManagerInDelegateShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Data;
 
 class TestClass
@@ -342,7 +376,9 @@ class TestClass
                 GetCA3075DataViewCSharpResultAt(11, 9)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Data
 
 Class TestClass
@@ -360,9 +396,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataViewManagerSetCollectionStringShouldGenerateDiagnostic()
+        public async Task UseDataViewManagerSetCollectionStringShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Data;
 
 namespace TestNamespace
@@ -380,7 +418,9 @@ namespace TestNamespace
                 GetCA3075DataViewCSharpResultAt(11, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Data
 
 Namespace TestNamespace
@@ -396,9 +436,11 @@ End Namespace",
         }
 
         [Fact]
-        public async Task UseDataViewManagerInGetShouldGenerateDiagnostic()
+        public async Task UseDataViewManagerInGetShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Data;
 
 class TestClass
@@ -416,7 +458,9 @@ class TestClass
                 GetCA3075DataViewCSharpResultAt(11, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Data
 
 Class TestClass
@@ -434,9 +478,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataViewManagerInSetShouldGenerateDiagnostic()
+        public async Task UseDataViewManagerInSetShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Data;
 
 class TestClass
@@ -461,7 +507,9 @@ public DataViewManager GetDoc
                 GetCA3075DataViewCSharpResultAt(15, 21)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Data
 
 Class TestClass
@@ -484,9 +532,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataViewManagerInTryBlockShouldGenerateDiagnostic()
+        public async Task UseDataViewManagerInTryBlockShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
   using System;
   using System.Data;
 
@@ -507,7 +557,9 @@ End Class",
                 GetCA3075DataViewCSharpResultAt(13, 17)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Data
 
@@ -528,9 +580,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataViewManagerInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseDataViewManagerInCatchBlockShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
    using System;
    using System.Data;
 
@@ -551,7 +605,9 @@ End Class",
                 GetCA3075DataViewCSharpResultAt(14, 17)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Data
 
@@ -571,9 +627,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataViewManagerInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseDataViewManagerInFinallyBlockShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
    using System;
    using System.Data;
 
@@ -594,7 +652,9 @@ End Class",
                 GetCA3075DataViewCSharpResultAt(15, 17)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.Data
 
@@ -615,9 +675,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataViewManagerInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseDataViewManagerInAsyncAwaitShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
  using System.Threading.Tasks;
 using System.Data;
 
@@ -640,7 +702,9 @@ using System.Data;
                 GetCA3075DataViewCSharpResultAt(12, 17)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Threading.Tasks
 Imports System.Data
 
@@ -663,9 +727,11 @@ End Class",
         }
 
         [Fact]
-        public async Task UseDataViewManagerInDelegateShouldGenerateDiagnostic()
+        public async Task UseDataViewManagerInDelegateShouldGenerateDiagnosticAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.Data;
 
 class TestClass
@@ -681,7 +747,9 @@ class TestClass
                 GetCA3075DataViewCSharpResultAt(11, 9)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.Data
 
 Class TestClass

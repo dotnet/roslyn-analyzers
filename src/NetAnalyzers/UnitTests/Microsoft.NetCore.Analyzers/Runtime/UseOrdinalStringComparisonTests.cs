@@ -1,46 +1,41 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.NetCore.CSharp.Analyzers.Runtime;
-using Microsoft.NetCore.VisualBasic.Analyzers.Runtime;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpUseOrdinalStringComparisonAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicUseOrdinalStringComparisonAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class UseOrdinalStringComparisonTests : DiagnosticAnalyzerTestBase
+    public class UseOrdinalStringComparisonTests
     {
         #region Helper methods
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpUseOrdinalStringComparisonAnalyzer();
-        }
+        private DiagnosticResult CSharpResult(int line, int column)
+#pragma warning disable RS0030 // Do not use banned APIs
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not use banned APIs
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicUseOrdinalStringComparisonAnalyzer();
-        }
-
-        private static DiagnosticResult CSharpResult(int line, int column)
-        {
-            return GetCSharpResultAt(line, column, UseOrdinalStringComparisonAnalyzer.Rule);
-        }
-
-        private static DiagnosticResult BasicResult(int line, int column)
-        {
-            return GetBasicResultAt(line, column, UseOrdinalStringComparisonAnalyzer.Rule);
-        }
+        private DiagnosticResult BasicResult(int line, int column)
+#pragma warning disable RS0030 // Do not use banned APIs
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not use banned APIs
 
         #endregion
 
-        #region Diagnostic tests 
+        #region Diagnostic tests
 
         [Fact]
-        public void CA1309CompareOverloadTestCSharp()
+        public async Task CA1309CompareOverloadTestCSharpAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -84,9 +79,9 @@ class C
         }
 
         [Fact]
-        public void CA1309CompareOverloadTestBasic()
+        public async Task CA1309CompareOverloadTestBasicAsync()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -131,9 +126,9 @@ End Class
         }
 
         [Fact]
-        public void CA1309EqualsOverloadTestCSharp()
+        public async Task CA1309EqualsOverloadTestCSharpAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class C
@@ -157,9 +152,9 @@ class C
         }
 
         [Fact]
-        public void CA1309EqualsOverloadTestBasic()
+        public async Task CA1309EqualsOverloadTestBasicAsync()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class C
@@ -181,9 +176,9 @@ End Class
         }
 
         [Fact]
-        public void CA1309InstanceEqualsTestCSharp()
+        public async Task CA1309InstanceEqualsTestCSharpAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class C
@@ -207,9 +202,9 @@ class C
         }
 
         [Fact]
-        public void CA1309InstanceEqualsTestBasic()
+        public async Task CA1309InstanceEqualsTestBasicAsync()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class C
@@ -231,9 +226,9 @@ End Class
         }
 
         [Fact]
-        public void CA1309OperatorOverloadTestCSharp_NoDiagnostic()
+        public async Task CA1309OperatorOverloadTestCSharp_NoDiagnosticAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class C
@@ -251,9 +246,9 @@ class C
         }
 
         [Fact]
-        public void CA1309OperatorOverloadTestBasic_NoDiagnostic()
+        public async Task CA1309OperatorOverloadTestBasic_NoDiagnosticAsync()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class C
@@ -275,9 +270,9 @@ End Class
         }
 
         [Fact]
-        public void CA1309NotReallyCompareOrEqualsTestCSharp()
+        public async Task CA1309NotReallyCompareOrEqualsTestCSharpAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Method()
@@ -305,9 +300,9 @@ static class Extensions
         }
 
         [Fact]
-        public void CA1309NotReallyCompareOrEqualsTestBasic()
+        public async Task CA1309NotReallyCompareOrEqualsTestBasicAsync()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.CompilerServices
 
 Class C

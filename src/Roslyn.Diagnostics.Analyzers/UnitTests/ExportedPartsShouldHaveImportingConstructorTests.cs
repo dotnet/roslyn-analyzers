@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Test.Utilities;
@@ -17,7 +17,7 @@ namespace Roslyn.Diagnostics.Analyzers.UnitTests
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task SingleExpectedConstructor_CSharp(string mefNamespace)
+        public async Task SingleExpectedConstructor_CSharpAsync(string mefNamespace)
         {
             var source = $@"
 using {mefNamespace};
@@ -34,7 +34,7 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
             }.RunAsync();
         }
@@ -42,7 +42,7 @@ class C {{
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task SingleExpectedConstructor_VisualBasic(string mefNamespace)
+        public async Task SingleExpectedConstructor_VisualBasicAsync(string mefNamespace)
         {
             var source = $@"
 Imports {mefNamespace}
@@ -60,7 +60,7 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
             }.RunAsync();
         }
@@ -70,7 +70,7 @@ End Class
         [InlineData("System.Composition", false)]
         [InlineData("System.ComponentModel.Composition", true)]
         [InlineData("System.ComponentModel.Composition", false)]
-        public async Task NotInheritedAttribute_CSharp(string mefNamespace, bool reflectionInherited)
+        public async Task NotInheritedAttribute_CSharpAsync(string mefNamespace, bool reflectionInherited)
         {
             var source = $@"
 using {mefNamespace};
@@ -93,7 +93,7 @@ class D : C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
             }.RunAsync();
         }
@@ -103,7 +103,7 @@ class D : C {{
         [InlineData("System.Composition", false)]
         [InlineData("System.ComponentModel.Composition", true)]
         [InlineData("System.ComponentModel.Composition", false)]
-        public async Task NotInheritedAttribute_VisualBasic(string mefNamespace, bool reflectionInherited)
+        public async Task NotInheritedAttribute_VisualBasicAsync(string mefNamespace, bool reflectionInherited)
         {
             var source = $@"
 Imports {mefNamespace}
@@ -130,14 +130,14 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
             }.RunAsync();
         }
 
         [Theory(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2490")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task InheritedExportAttribute_CSharp(string mefNamespace)
+        public async Task InheritedExportAttribute_CSharpAsync(string mefNamespace)
         {
             var source = $@"
 using {mefNamespace};
@@ -173,7 +173,7 @@ class D : C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(4, 2, 4, 17).WithArguments("D") },
                 },
                 FixedState =
@@ -185,7 +185,7 @@ class D : C {{
 
         [Theory(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2490")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task InheritedExportAttribute_VisualBasic(string mefNamespace)
+        public async Task InheritedExportAttribute_VisualBasicAsync(string mefNamespace)
         {
             var source = $@"
 Imports {mefNamespace}
@@ -224,7 +224,7 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(4, 2, 4, 17).WithArguments("D") },
                 },
                 FixedState =
@@ -237,7 +237,7 @@ End Class
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task ExportAttributeNotInherited_CSharp(string mefNamespace)
+        public async Task ExportAttributeNotInherited_CSharpAsync(string mefNamespace)
         {
             var source = $@"
 using {mefNamespace};
@@ -256,7 +256,7 @@ class D : C {{ }}
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
             }.RunAsync();
         }
@@ -264,7 +264,7 @@ class D : C {{ }}
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task ExportAttributeNotInherited_VisualBasic(string mefNamespace)
+        public async Task ExportAttributeNotInherited_VisualBasicAsync(string mefNamespace)
         {
             var source = $@"
 Imports {mefNamespace}
@@ -286,7 +286,7 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
             }.RunAsync();
         }
@@ -294,7 +294,7 @@ End Class
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task InstanceAndImplicitStaticConstructor_CSharp(string mefNamespace)
+        public async Task InstanceAndImplicitStaticConstructor_CSharpAsync(string mefNamespace)
         {
             var source = $@"
 using {mefNamespace};
@@ -313,7 +313,7 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
             }.RunAsync();
         }
@@ -321,7 +321,7 @@ class C {{
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task InstanceAndImplicitStaticConstructor_VisualBasic(string mefNamespace)
+        public async Task InstanceAndImplicitStaticConstructor_VisualBasicAsync(string mefNamespace)
         {
             var source = $@"
 Imports {mefNamespace}
@@ -341,7 +341,7 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
             }.RunAsync();
         }
@@ -349,7 +349,7 @@ End Class
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task InstanceAndExplicitStaticConstructor_CSharp(string mefNamespace)
+        public async Task InstanceAndExplicitStaticConstructor_CSharpAsync(string mefNamespace)
         {
             var source = $@"
 using {mefNamespace};
@@ -370,7 +370,7 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
             }.RunAsync();
         }
@@ -378,7 +378,7 @@ class C {{
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task InstanceAndExplicitStaticConstructor_VisualBasic(string mefNamespace)
+        public async Task InstanceAndExplicitStaticConstructor_VisualBasicAsync(string mefNamespace)
         {
             var source = $@"
 Imports {mefNamespace}
@@ -402,7 +402,7 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
             }.RunAsync();
         }
@@ -410,7 +410,7 @@ End Class
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task ImplicitConstructor_CSharp(string mefNamespace)
+        public async Task ImplicitConstructor_CSharpAsync(string mefNamespace)
         {
             var source = $@"
 using {mefNamespace};
@@ -435,7 +435,7 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(4, 2, 4, 8).WithArguments("C") },
                 },
                 FixedState =
@@ -445,10 +445,10 @@ class C {{
             }.RunAsync();
         }
 
-        [Theory(Skip = "https://github.com/dotnet/roslyn/issues/31720")]
+        [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task ImplicitConstructor_VisualBasic(string mefNamespace)
+        public async Task ImplicitConstructor_VisualBasicAsync(string mefNamespace)
         {
             var source = $@"
 Imports {mefNamespace}
@@ -473,7 +473,7 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(4, 2, 4, 8).WithArguments("C") },
                 },
                 FixedState =
@@ -486,7 +486,79 @@ End Class
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task ImplicitConstructorPlacement_CSharp(string mefNamespace)
+        public async Task ImplicitConstructorAddImport_CSharpAsync(string mefNamespace)
+        {
+            var source = $@"
+[{mefNamespace}.Export]
+class C {{ }}
+";
+            var fixedSource = $@"
+using {mefNamespace};
+
+[{mefNamespace}.Export]
+class C {{
+    [ImportingConstructor]
+    public C()
+    {{
+    }}
+}}
+";
+
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(2, 2, 2, mefNamespace.Length + 9).WithArguments("C") },
+                },
+                FixedState =
+                {
+                    Sources = { fixedSource },
+                },
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("System.Composition")]
+        [InlineData("System.ComponentModel.Composition")]
+        public async Task ImplicitConstructorAddImport_VisualBasicAsync(string mefNamespace)
+        {
+            var source = $@"
+<{mefNamespace}.Export>
+Class C
+End Class
+";
+            var fixedSource = $@"
+Imports {mefNamespace}
+
+<{mefNamespace}.Export>
+Class C
+    <ImportingConstructor>
+    Public Sub New()
+    End Sub
+End Class
+";
+
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(2, 2, 2, mefNamespace.Length + 9).WithArguments("C") },
+                },
+                FixedState =
+                {
+                    Sources = { fixedSource },
+                },
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("System.Composition")]
+        [InlineData("System.ComponentModel.Composition")]
+        public async Task ImplicitConstructorPlacement_CSharpAsync(string mefNamespace)
         {
             var source = $@"
 using {mefNamespace};
@@ -519,7 +591,7 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(4, 2, 4, 8).WithArguments("C") },
                 },
                 FixedState =
@@ -529,10 +601,10 @@ class C {{
             }.RunAsync();
         }
 
-        [Theory(Skip = "https://github.com/dotnet/roslyn/issues/31720")]
+        [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task ImplicitConstructorPlacement_VisualBasic(string mefNamespace)
+        public async Task ImplicitConstructorPlacement_VisualBasicAsync(string mefNamespace)
         {
             var source = $@"
 Imports {mefNamespace}
@@ -572,7 +644,7 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(4, 2, 4, 8).WithArguments("C") },
                 },
                 FixedState =
@@ -585,7 +657,7 @@ End Class
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task MissingAttributeConstructor_CSharp(string mefNamespace)
+        public async Task MissingAttributeConstructor_CSharpAsync(string mefNamespace)
         {
             var source = $@"
 using {mefNamespace};
@@ -610,7 +682,7 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(6, 5, 6, 19).WithArguments("C") },
                 },
                 FixedState =
@@ -620,10 +692,10 @@ class C {{
             }.RunAsync();
         }
 
-        [Theory(Skip = "https://github.com/dotnet/roslyn/issues/31720")]
+        [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task MissingAttributeConstructor_VisualBasic(string mefNamespace)
+        public async Task MissingAttributeConstructor_VisualBasicAsync(string mefNamespace)
         {
             var source = $@"
 Imports {mefNamespace}
@@ -650,7 +722,7 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(6, 5, 6, 21).WithArguments("C") },
                 },
                 FixedState =
@@ -663,7 +735,81 @@ End Class
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task NonPublicConstructor_CSharp(string mefNamespace)
+        public async Task MissingAttributeConstructorAddImport_CSharpAsync(string mefNamespace)
+        {
+            var source = $@"
+[{mefNamespace}.Export]
+class C {{
+    public C() {{ }}
+}}
+";
+            var fixedSource = $@"
+using {mefNamespace};
+
+[{mefNamespace}.Export]
+class C {{
+    [ImportingConstructor]
+    public C() {{ }}
+}}
+";
+
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(4, 5, 4, 19).WithArguments("C") },
+                },
+                FixedState =
+                {
+                    Sources = { fixedSource },
+                },
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("System.Composition")]
+        [InlineData("System.ComponentModel.Composition")]
+        public async Task MissingAttributeConstructorAddImport_VisualBasicAsync(string mefNamespace)
+        {
+            var source = $@"
+<{mefNamespace}.Export>
+Class C
+    Public Sub New()
+    End Sub
+End Class
+";
+            var fixedSource = $@"
+Imports {mefNamespace}
+
+<{mefNamespace}.Export>
+Class C
+    <ImportingConstructor>
+    Public Sub New()
+    End Sub
+End Class
+";
+
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(4, 5, 4, 21).WithArguments("C") },
+                },
+                FixedState =
+                {
+                    Sources = { fixedSource },
+                },
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("System.Composition")]
+        [InlineData("System.ComponentModel.Composition")]
+        public async Task NonPublicConstructor_CSharpAsync(string mefNamespace)
         {
             var source = $@"
 using {mefNamespace};
@@ -689,7 +835,7 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(6, 6, 6, 26).WithArguments("C") },
                 },
                 FixedState =
@@ -702,7 +848,7 @@ class C {{
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task NonPublicConstructor_VisualBasic(string mefNamespace)
+        public async Task NonPublicConstructor_VisualBasicAsync(string mefNamespace)
         {
             var source = $@"
 Imports {mefNamespace}
@@ -730,7 +876,7 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(6, 6, 6, 26).WithArguments("C") },
                 },
                 FixedState =
@@ -743,7 +889,7 @@ End Class
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task MultipleConstructors_CSharp(string mefNamespace)
+        public async Task MultipleConstructors_CSharpAsync(string mefNamespace)
         {
             var source = $@"
 using {mefNamespace};
@@ -764,7 +910,7 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics =
                     {
                         VerifyCS.Diagnostic().WithSpan(9, 5, 9, 29).WithArguments("C"),
@@ -782,7 +928,7 @@ class C {{
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
-        public async Task MultipleConstructors_VisualBasic(string mefNamespace)
+        public async Task MultipleConstructors_VisualBasicAsync(string mefNamespace)
         {
             var source = $@"
 Imports {mefNamespace}
@@ -806,7 +952,7 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics =
                     {
                         VerifyVB.Diagnostic().WithSpan(10, 5, 10, 32).WithArguments("C"),

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -184,10 +184,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     TaintedDataAbstractValue childValue = Visit(childOperation, argument);
                     if (childValue.Kind == TaintedDataAbstractValueKind.Tainted)
                     {
-                        if (taintedValues == null)
-                        {
-                            taintedValues = new List<TaintedDataAbstractValue>();
-                        }
+                        taintedValues ??= new List<TaintedDataAbstractValue>();
 
                         taintedValues.Add(childValue);
                     }
@@ -307,8 +304,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     if (this.DataFlowAnalysisContext.SourceInfos.IsSourceMethod(
                         method,
                         visitedArguments,
-                        new Lazy<PointsToAnalysisResult?>(() => DataFlowAnalysisContext.PointsToAnalysisResultOpt),
-                        new Lazy<(PointsToAnalysisResult?, ValueContentAnalysisResult?)>(() => (DataFlowAnalysisContext.PointsToAnalysisResultOpt, DataFlowAnalysisContext.ValueContentAnalysisResultOpt)),
+                        new Lazy<PointsToAnalysisResult?>(() => DataFlowAnalysisContext.PointsToAnalysisResult),
+                        new Lazy<(PointsToAnalysisResult?, ValueContentAnalysisResult?)>(() => (DataFlowAnalysisContext.PointsToAnalysisResult, DataFlowAnalysisContext.ValueContentAnalysisResult)),
                         out taintedTargets))
                     {
                         bool rebuildTaintedParameterNames = false;
@@ -487,7 +484,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 
                 IEnumerable<TaintedDataAbstractValue> taintedAbstractValues =
                     operation.ElementValues
-                        .Select<IOperation, TaintedDataAbstractValue>(e => this.GetCachedAbstractValue(e))
+                        .Select<IOperation, TaintedDataAbstractValue>(this.GetCachedAbstractValue)
                         .Where(v => v.Kind == TaintedDataAbstractValueKind.Tainted);
                 if (baseAbstractValue.Kind == TaintedDataAbstractValueKind.Tainted)
                 {
@@ -645,10 +642,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     {
                         if (methodMatcher(method.Name, arguments))
                         {
-                            if (taintedParameterPairs == null)
-                            {
-                                taintedParameterPairs = PooledHashSet<(string, string)>.GetInstance();
-                            }
+                            taintedParameterPairs ??= PooledHashSet<(string, string)>.GetInstance();
 
                             taintedParameterPairs.UnionWith(sourceToEnds.Where(s => taintedParameterNames.Contains(s.source)));
                         }

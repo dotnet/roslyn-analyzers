@@ -1,22 +1,35 @@
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information. -->
 <Project>
   <PropertyGroup>
     <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
     <AssetsDir>$(MSBuildThisFileDirectory)assets\</AssetsDir>
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
+    <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
+
+    <!-- Set 'NoDefaultExcludes' to ensure that we can package .editorconfig files into our analyzer NuGet packages -->
+    <NoDefaultExcludes>true</NoDefaultExcludes>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <Import Project="eng/Testing.props"/>
 
+  <PropertyGroup>
+    <!-- Do not ship packages by default -->
+    <IsShippingPackage>false</IsShippingPackage>
+  </PropertyGroup>
+  
   <PropertyGroup>
     <LangVersion Condition="'$(Language)' == 'C#'">preview</LangVersion>
     <LangVersion Condition="'$(Language)' == 'VB'">16</LangVersion>
 
-    <!-- suppress NETSDK1138 warnings for EOL frameworks -->
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
 
+    <!-- Do not warn about the version of analyzers being used in this project -->
+    <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
     <!-- TODO: Enable Nullable for test and non-shipping projects -->
     <Nullable Condition="'$(Nullable)' == '' and '$(IsTestProject)' != 'true' and '$(NonShipping)' != 'true'">enable</Nullable>
+
+    <Features>strict</Features>
   </PropertyGroup>
 
   <PropertyGroup>

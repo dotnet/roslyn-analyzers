@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Runtime.Serialization;
@@ -9,7 +9,7 @@ namespace ReleaseNotesUtil
     /// Info that we care about from a DiagnosticDescriptor.
     /// </summary>
     [DataContract]
-    internal class RuleInfo
+    internal sealed class RuleInfo
     {
         public RuleInfo(string id, string title, string category, bool isEnabledByDefault, bool hasCodeFix, string messageFormat, string description, string helpLink)
         {

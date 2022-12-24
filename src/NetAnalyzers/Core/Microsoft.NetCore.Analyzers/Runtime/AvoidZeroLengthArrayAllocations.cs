@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -11,13 +11,15 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
-    /// <summary>Base type for an analyzer that looks for empty array allocations and recommends their replacement.</summary>
+    using static MicrosoftNetCoreAnalyzersResources;
+
+    /// <summary>
+    /// CA1825: <inheritdoc cref="AvoidZeroLengthArrayAllocationsTitle"/>
+    /// Base type for an analyzer that looks for empty array allocations and recommends their replacement.
+    /// </summary>
     public abstract class AvoidZeroLengthArrayAllocationsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1825";
-
-        /// <summary>The name of the array type.</summary>
-        internal const string ArrayTypeName = "System.Array"; // using instead of GetSpecialType to make more testable
 
         /// <summary>The name of the Empty method on System.Array.</summary>
         internal const string ArrayEmptyMethodName = "Empty";
@@ -27,14 +29,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
             miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidZeroLengthArrayAllocationsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidZeroLengthArrayAllocationsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-
         /// <summary>The diagnostic descriptor used when Array.Empty should be used instead of a new array allocation.</summary>
         internal static readonly DiagnosticDescriptor UseArrayEmptyDescriptor = DiagnosticDescriptorHelper.Create(
             RuleId,
-            s_localizableTitle,
-            s_localizableMessage,
+            CreateLocalizableResourceString(nameof(AvoidZeroLengthArrayAllocationsTitle)),
+            CreateLocalizableResourceString(nameof(AvoidZeroLengthArrayAllocationsMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
             description: null,
@@ -42,7 +41,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isDataflowRule: false);
 
         /// <summary>Gets the set of supported diagnostic descriptors from this analyzer.</summary>
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(UseArrayEmptyDescriptor);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(UseArrayEmptyDescriptor);
 
         public sealed override void Initialize(AnalysisContext context)
         {
@@ -51,32 +50,38 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             // When compilation begins, check whether Array.Empty<T> is available.
             // Only if it is, register the syntax node action provided by the derived implementations.
-            context.RegisterCompilationStartAction(ctx =>
+            context.RegisterCompilationStartAction(context =>
             {
-                INamedTypeSymbol? typeSymbol = ctx.Compilation.GetOrCreateTypeByMetadataName(ArrayTypeName);
-                if (typeSymbol != null && typeSymbol.DeclaredAccessibility == Accessibility.Public)
+                INamedTypeSymbol typeSymbol = context.Compilation.GetSpecialType(SpecialType.System_Array);
+                if (typeSymbol.DeclaredAccessibility == Accessibility.Public)
                 {
                     if (typeSymbol.GetMembers(ArrayEmptyMethodName).FirstOrDefault() is IMethodSymbol methodSymbol && methodSymbol.DeclaredAccessibility == Accessibility.Public &&
-    methodSymbol.IsStatic && methodSymbol.Arity == 1 && methodSymbol.Parameters.IsEmpty)
+                        methodSymbol.IsStatic && methodSymbol.Arity == 1 && methodSymbol.Parameters.IsEmpty)
                     {
-                        ctx.RegisterOperationAction(AnalyzeOperation, OperationKind.ArrayCreation);
+                        var linqExpressionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqExpressionsExpression1);
+                        context.RegisterOperationAction(c => AnalyzeOperation(c, methodSymbol, linqExpressionType), OperationKind.ArrayCreation);
                     }
                 }
             });
         }
 
-        private void AnalyzeOperation(OperationAnalysisContext context)
+        private void AnalyzeOperation(OperationAnalysisContext context, IMethodSymbol arrayEmptyMethodSymbol, INamedTypeSymbol? linqExpressionType)
         {
-            AnalyzeOperation(context, IsAttributeSyntax);
+            AnalyzeOperation(context, arrayEmptyMethodSymbol, linqExpressionType, IsAttributeSyntax);
         }
 
-        private static void AnalyzeOperation(OperationAnalysisContext context, Func<SyntaxNode, bool> isAttributeSytnax)
+        private static void AnalyzeOperation(OperationAnalysisContext context, IMethodSymbol arrayEmptyMethodSymbol, INamedTypeSymbol? linqExpressionType, Func<SyntaxNode, bool> isAttributeSyntax)
         {
             IArrayCreationOperation arrayCreationExpression = (IArrayCreationOperation)context.Operation;
 
             // We can't replace array allocations in attributes, as they're persisted to metadata
             // TODO: Once we have operation walkers, we can replace this syntactic check with an operation-based check.
-            if (arrayCreationExpression.Syntax.Ancestors().Any(isAttributeSytnax))
+            if (arrayCreationExpression.Syntax.AncestorsAndSelf().Any(isAttributeSyntax))
+            {
+                return;
+            }
+
+            if (arrayCreationExpression.IsWithinExpressionTree(linqExpressionType))
             {
                 return;
             }
@@ -103,14 +108,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (elementType.TypeKind != TypeKind.Pointer)
                     {
-                        var arrayType = context.Compilation.GetOrCreateTypeByMetadataName(ArrayTypeName);
-                        if (arrayType == null)
-                        {
-                            return;
-                        }
-
-                        IMethodSymbol emptyMethod = (IMethodSymbol)arrayType.GetMembers(ArrayEmptyMethodName).First();
-                        var constructed = emptyMethod.Construct(elementType);
+                        var constructed = arrayEmptyMethodSymbol.Construct(elementType);
 
                         string typeName = constructed.ToDisplayString(ReportFormat);
                         context.ReportDiagnostic(arrayCreationExpression.Syntax.CreateDiagnostic(UseArrayEmptyDescriptor, typeName));
@@ -157,7 +155,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             var parameters = targetSymbol.GetParameters();
-            if (parameters.IsEmpty || !parameters[parameters.Length - 1].IsParams)
+            if (parameters.IsEmpty || !parameters[^1].IsParams)
             {
                 return false;
             }

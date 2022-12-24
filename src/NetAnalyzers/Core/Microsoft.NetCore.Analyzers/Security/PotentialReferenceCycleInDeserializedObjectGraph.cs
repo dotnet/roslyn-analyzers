@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,36 +11,28 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
+    /// <summary>
+    /// CA5362: <inheritdoc cref="PotentialReferenceCycleInDeserializedObjectGraphTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PotentialReferenceCycleInDeserializedObjectGraph : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5362";
-        private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.PotentialReferenceCycleInDeserializedObjectGraphTitle),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.PotentialReferenceCycleInDeserializedObjectGraphMessage),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.PotentialReferenceCycleInDeserializedObjectGraphDescription),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
-                DiagnosticId,
-                s_Title,
-                s_Message,
-                DiagnosticCategory.Security,
-                RuleLevel.Disabled,
-                description: s_Description,
-                isPortedFxCopRule: false,
-                isDataflowRule: false,
-                isEnabledByDefaultInFxCopAnalyzers: false,
-                isReportedAtCompilationEnd: true);
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            DiagnosticId,
+            CreateLocalizableResourceString(nameof(PotentialReferenceCycleInDeserializedObjectGraphTitle)),
+            CreateLocalizableResourceString(nameof(PotentialReferenceCycleInDeserializedObjectGraphMessage)),
+            DiagnosticCategory.Security,
+            RuleLevel.Disabled,
+            description: CreateLocalizableResourceString(nameof(PotentialReferenceCycleInDeserializedObjectGraphDescription)),
+            isPortedFxCopRule: false,
+            isDataflowRule: false,
+            isReportedAtCompilationEnd: true);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public sealed override void Initialize(AnalysisContext context)
         {
@@ -186,7 +178,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                     // graph: The graph
                     void AddLine(ISymbol from, ISymbol to, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
                     {
-                        graph.AddOrUpdate(from, new ConcurrentDictionary<ISymbol, bool> { [to] = true }, (k, v) => { v[to] = true; return v; });
+                        graph.AddOrUpdate(from, new ConcurrentDictionary<ISymbol, bool> { [to] = true }, (k, v) =>
+                        {
+                            v[to] = true;
+                            return v;
+                        });
                         degree.AddOrUpdate(from, 1, (k, v) => v + 1);
                     }
 

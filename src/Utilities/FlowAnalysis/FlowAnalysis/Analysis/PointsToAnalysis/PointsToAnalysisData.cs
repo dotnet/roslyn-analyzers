@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -80,8 +80,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
         internal void AssertNoFlowCaptureEntitiesTracked()
         {
             AssertNoFlowCaptureEntitiesTracked(CoreAnalysisData);
+#pragma warning disable IDE0200 // Remove unnecessary lambda expression - https://github.com/dotnet/roslyn/issues/63464
             AssertValidPredicatedAnalysisData(map => AssertNoFlowCaptureEntitiesTracked(map));
-
+#pragma warning restore IDE0200 // Remove unnecessary lambda expression
         }
 
         [Conditional("DEBUG")]
@@ -89,7 +90,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
         {
             foreach (var key in map.Keys)
             {
-                Debug.Assert(key.CaptureIdOpt == null);
+                Debug.Assert(key.CaptureId == null);
             }
         }
 
@@ -97,7 +98,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
         internal void AssertValidPointsToAnalysisData()
         {
             AssertValidPointsToAnalysisData(CoreAnalysisData);
+#pragma warning disable IDE0200 // Remove unnecessary lambda expression - https://github.com/dotnet/roslyn/issues/63464
             AssertValidPredicatedAnalysisData(map => AssertValidPointsToAnalysisData(map));
+#pragma warning restore IDE0200 // Remove unnecessary lambda expression
         }
 
         [Conditional("DEBUG")]

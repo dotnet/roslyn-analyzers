@@ -1,114 +1,134 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
-using System.Collections.Generic;
-using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1707: Identifiers should not contain underscores
+    /// CA1707: <inheritdoc cref="IdentifiersShouldNotContainUnderscoresTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class IdentifiersShouldNotContainUnderscoresAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1707";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly IImmutableSet<string> s_GlobalAsaxSpecialMethodNames =
+            ImmutableHashSet.Create(
+                "Application_AuthenticateRequest",
+                "Application_BeginRequest",
+                "Application_End",
+                "Application_EndRequest",
+                "Application_Error",
+                "Application_Init",
+                "Application_Start",
+                "Session_End",
+                "Session_Start");
 
-        private static readonly LocalizableString s_localizableMessageAssembly = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageAssembly), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageNamespace = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageNamespace), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageType = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageType), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageMember = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMember), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageTypeTypeParameter = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageTypeTypeParameter), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageMethodTypeParameter = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMethodTypeParameter), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageMemberParameter = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMemberParameter), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageDelegateParameter = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageDelegateParameter), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainUnderscoresTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainUnderscoresDescription));
 
-        internal static DiagnosticDescriptor AssemblyRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageAssembly,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor NamespaceRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageNamespace,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor TypeRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageType,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor MemberRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageMember,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor TypeTypeParameterRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageTypeTypeParameter,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor MethodTypeParameterRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageMethodTypeParameter,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor MemberParameterRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageMemberParameter,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor DelegateParameterRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageDelegateParameter,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor AssemblyRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainUnderscoresMessageAssembly)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AssemblyRule, NamespaceRule, TypeRule, MemberRule, TypeTypeParameterRule, MethodTypeParameterRule, MemberParameterRule, DelegateParameterRule);
+        internal static readonly DiagnosticDescriptor NamespaceRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainUnderscoresMessageNamespace)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        internal static readonly DiagnosticDescriptor TypeRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainUnderscoresMessageType)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor MemberRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainUnderscoresMessageMember)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor TypeTypeParameterRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainUnderscoresMessageTypeTypeParameter)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor MethodTypeParameterRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainUnderscoresMessageMethodTypeParameter)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor MemberParameterRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainUnderscoresMessageMemberParameter)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor DelegateParameterRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotContainUnderscoresMessageDelegateParameter)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(AssemblyRule, NamespaceRule, TypeRule, MemberRule, TypeTypeParameterRule, MethodTypeParameterRule, MemberParameterRule, DelegateParameterRule);
+
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
+            context.RegisterSymbolAction(symbolAnalysisContext =>
             {
                 var symbol = symbolAnalysisContext.Symbol;
 
                 // FxCop compat: only analyze externally visible symbols by default
                 // Note all the descriptors/rules for this analyzer have the same ID and category and hence
                 // will always have identical configured visibility.
-                if (!symbol.MatchesConfiguredVisibility(symbolAnalysisContext.Options, AssemblyRule, symbolAnalysisContext.CancellationToken))
+                if (!symbolAnalysisContext.Options.MatchesConfiguredVisibility(AssemblyRule, symbol, symbolAnalysisContext.Compilation))
                 {
                     return;
                 }
@@ -175,6 +195,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                                 AnalyzeParameters(symbolAnalysisContext, methodSymbol.Parameters);
                                 AnalyzeTypeParameters(symbolAnalysisContext, methodSymbol.TypeParameters);
+
+                                if (s_GlobalAsaxSpecialMethodNames.Contains(methodSymbol.Name) &&
+                                    methodSymbol.ContainingType.Inherits(symbolAnalysisContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebHttpApplication)))
+                                {
+                                    // Do not flag the convention based web methods.
+                                    return;
+                                }
                             }
 
                             if (symbol is IPropertySymbol propertySymbol)
@@ -197,7 +224,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event // Members
             );
 
-            analysisContext.RegisterCompilationAction(compilationAnalysisContext =>
+            context.RegisterCompilationAction(compilationAnalysisContext =>
             {
                 var compilation = compilationAnalysisContext.Compilation;
                 if (ContainsUnderScore(compilation.AssemblyName))
@@ -211,7 +238,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             // Note all the descriptors/rules for this analyzer have the same ID and category and hence
             // will always have identical configured visibility.
-            var matchesConfiguration = symbol.MatchesConfiguredVisibility(context.Options, AssemblyRule, context.CancellationToken);
+            var matchesConfiguration = context.Options.MatchesConfiguredVisibility(AssemblyRule, symbol, context.Compilation);
 
             return (!(matchesConfiguration && !symbol.IsOverride)) ||
                 symbol.IsAccessorMethod() || symbol.IsImplementationOfAnyInterfaceMember();
@@ -221,7 +248,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             foreach (var parameter in parameters)
             {
-                if (ContainsUnderScore(parameter.Name))
+                if (ContainsUnderScore(parameter.Name) && !parameter.IsSymbolWithSpecialDiscardName())
                 {
                     var containingType = parameter.ContainingType;
 

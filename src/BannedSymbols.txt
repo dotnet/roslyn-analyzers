@@ -1,1 +1,6 @@
 M:Microsoft.CodeAnalysis.Compilation.GetTypeByMetadataName(System.String); Use WellKnownTypeProvider instead
+M:Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithLocation(System.Int32,System.Int32); Use overload with markupKey instead
+M:Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithLocation(Microsoft.CodeAnalysis.Text.LinePosition); Use overload with markupKey instead
+M:Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithLocation(System.String,System.Int32,System.Int32); Use overload with markupKey instead
+M:Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithLocation(System.String,Microsoft.CodeAnalysis.Text.LinePosition); Use overload with markupKey instead
+M:Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithLocation(System.String,Microsoft.CodeAnalysis.Text.LinePosition,Microsoft.CodeAnalysis.Testing.DiagnosticLocationOptions); Use overload with markupKey instead

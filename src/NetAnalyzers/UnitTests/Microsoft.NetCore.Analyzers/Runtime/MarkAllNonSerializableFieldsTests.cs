@@ -1,13 +1,13 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
-using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.SerializationRulesDiagnosticAnalyzer,
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpMarkAllNonSerializableFieldsFixer>;
-using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.SerializationRulesDiagnosticAnalyzer,
     Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicMarkAllNonSerializableFieldsFixer>;
 
@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     {
         [Fact]
         [WorkItem(858655, "DevDiv")]
-        public async Task CA2235WithOnlyPrimitiveFields()
+        public async Task CA2235WithOnlyPrimitiveFieldsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -59,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2235WithConstPrimitiveFields()
+        public async Task CA2235WithConstPrimitiveFieldsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -85,7 +85,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2235WithPrimitiveGetOnlyProperties()
+        public async Task CA2235WithPrimitiveGetOnlyPropertiesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -130,7 +130,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2235WithSerializableLibraryTypes()
+        public async Task CA2235WithSerializableLibraryTypesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -160,7 +160,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         [Fact]
         [WorkItem(279, "https://github.com/dotnet/roslyn-analyzers/issues/279")]
-        public async Task CA2235WithNonSerialized()
+        public async Task CA2235WithNonSerializedAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -183,7 +183,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2235WithOnlySerializableFields()
+        public async Task CA2235WithOnlySerializableFieldsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -214,7 +214,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2235WithNonPublicNonSerializableFields()
+        public async Task CA2235WithNonPublicNonSerializableFieldsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -252,7 +252,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2235WithNonPublicNonSerializableFieldsWithScope()
+        public async Task CA2235WithNonPublicNonSerializableFieldsWithScopeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -305,7 +305,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2235InternalWithNonPublicNonSerializableFields()
+        public async Task CA2235InternalWithNonPublicNonSerializableFieldsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -343,7 +343,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2235WithNonSerializableAutoProperties()
+        public async Task CA2235WithNonSerializableAutoPropertiesAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -377,9 +377,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2235WithArrayType()
+        public async Task CA2235WithArrayTypeAsync()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = @"
                 using System;
                 public class NonSerializableType { }
 
@@ -392,10 +395,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     public SerializableType[] s1;
                     internal NonSerializableType[] s2;
                 }",
-                // Test0.cs(12,52): warning CA2235: Field s2 is a member of type CA2235WithNonSerializableArray which is serializable but is of type NonSerializableType[] which is not serializable
-                GetCA2235CSharpResultAt(12, 52, "s2", "CA2235WithNonSerializableArray", "NonSerializableType[]"));
+                ExpectedDiagnostics =
+                {
+                    // Test0.cs(12,52): warning CA2235: Field s2 is a member of type CA2235WithNonSerializableArray which is serializable but is of type NonSerializableType[] which is not serializable
+                    GetCA2235CSharpResultAt(12, 52, "s2", "CA2235WithNonSerializableArray", "NonSerializableType[]"),
+                },
+            }.RunAsync();
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = @"
                 Imports System
                 Public Class NonSerializableType
                 End Class
@@ -408,12 +418,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Public s1 As SerializableType()
                     Friend Property s2 As NonSerializableType()
                 End Class",
-                // Test0.vb(12,37): warning CA2235: Field s2 is a member of type CA2235WithNonSerializableArray which is serializable but is of type NonSerializableType() which is not serializable
-                GetCA2235BasicResultAt(12, 37, "s2", "CA2235WithNonSerializableArray", "NonSerializableType()"));
+                ExpectedDiagnostics =
+                {
+                    // Test0.vb(12,37): warning CA2235: Field s2 is a member of type CA2235WithNonSerializableArray which is serializable but is of type NonSerializableType() which is not serializable
+                    GetCA2235BasicResultAt(12, 37, "s2", "CA2235WithNonSerializableArray", "NonSerializableType()"),
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public async Task CA2235WithEnumType()
+        public async Task CA2235WithEnumTypeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -452,7 +466,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact, WorkItem(1510, "https://github.com/dotnet/roslyn-analyzers/issues/1510")]
-        public async Task CA2235WithDateTimeType()
+        public async Task CA2235WithDateTimeTypeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -473,7 +487,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact, WorkItem(1510, "https://github.com/dotnet/roslyn-analyzers/issues/1510")]
-        public async Task CA2235WithNullableType()
+        public async Task CA2235WithNullableTypeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -494,9 +508,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA2235WithSpecialSerializableTypeFields()
+        public async Task CA2235WithSpecialSerializableTypeFieldsAsync()
         {
-            // Interface, type parameter and delegate fields are always considered serializable. 
+            // Interface, type parameter and delegate fields are always considered serializable.
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 interface I
@@ -525,7 +539,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact, WorkItem(1883, "https://github.com/dotnet/roslyn-analyzers/issues/1883")]
-        public async Task CA2235WithNonInstanceFieldsOfNonSerializableType()
+        public async Task CA2235WithNonInstanceFieldsOfNonSerializableTypeAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -551,7 +565,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact, WorkItem(1970, "https://github.com/dotnet/roslyn-analyzers/issues/1970")]
-        public async Task CA2235WithISerializableImplementation()
+        public async Task CA2235WithISerializableImplementationAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
@@ -585,14 +599,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         internal static readonly string CA2235Message = MicrosoftNetCoreAnalyzersResources.MarkAllNonSerializableFieldsMessage;
 
-        private static DiagnosticResult GetCA2235CSharpResultAt(int line, int column, string fieldName, string containerName, string typeName)
-        {
-            return new DiagnosticResult(SerializationRulesDiagnosticAnalyzer.RuleCA2235).WithLocation(line, column).WithArguments(fieldName, containerName, typeName);
-        }
+        private static DiagnosticResult GetCA2235CSharpResultAt(int line, int column, string fieldName, string containerName, string typeName) =>
+#pragma warning disable RS0030 // Do not use banned APIs
+            VerifyCS.Diagnostic(SerializationRulesDiagnosticAnalyzer.RuleCA2235)
+                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not use banned APIs
+                .WithArguments(fieldName, containerName, typeName);
 
-        private static DiagnosticResult GetCA2235BasicResultAt(int line, int column, string fieldName, string containerName, string typeName)
-        {
-            return new DiagnosticResult(SerializationRulesDiagnosticAnalyzer.RuleCA2235).WithLocation(line, column).WithArguments(fieldName, containerName, typeName);
-        }
+        private static DiagnosticResult GetCA2235BasicResultAt(int line, int column, string fieldName, string containerName, string typeName) =>
+#pragma warning disable RS0030 // Do not use banned APIs
+            VerifyVB.Diagnostic(SerializationRulesDiagnosticAnalyzer.RuleCA2235)
+                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not use banned APIs
+                .WithArguments(fieldName, containerName, typeName);
     }
 }

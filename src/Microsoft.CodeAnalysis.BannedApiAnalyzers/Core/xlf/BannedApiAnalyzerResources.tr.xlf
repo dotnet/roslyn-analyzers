@@ -23,8 +23,8 @@
         <note />
       </trans-unit>
       <trans-unit id="RestrictedInternalsVisibleToMessage">
-        <source>External access to internal symbol '{0}' is prohibited. Assembly '{1}' only allows access to internal symbols defined in the following namespace(s): '{2}'</source>
-        <target state="translated">'{0}' iç simgesine dışarıdan erişime izin verilmez. '{1}' derlemesinde yalnızca şu ad alanlarında tanımlanan iç simgelere erişime izin verilir: '{2}'</target>
+        <source>External access to internal symbol '{0}' is prohibited. Assembly '{1}' only allows access to internal symbols defined in the following namespace(s): '{2}'.</source>
+        <target state="translated">'{0}' iç sembolüne dışarıdan erişime izin verilmez. '{1}' bütünleştirilmiş kodunda yalnızca şu ad alanlarında tanımlanan iç sembollere erişime izin verilir: '{2}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestrictedInternalsVisibleToTitle">
@@ -43,8 +43,8 @@
         <note />
       </trans-unit>
       <trans-unit id="SymbolIsBannedTitle">
-        <source>Do not used banned APIs</source>
-        <target state="translated">Yasaklanan API'leri kullanmayın</target>
+        <source>Do not use banned APIs</source>
+        <target state="translated">Yasaklanmış API'leri kullanmayın</target>
         <note />
       </trans-unit>
     </body>

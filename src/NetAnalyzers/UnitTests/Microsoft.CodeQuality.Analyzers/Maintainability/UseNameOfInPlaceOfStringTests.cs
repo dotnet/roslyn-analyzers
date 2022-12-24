@@ -1,24 +1,40 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.VisualBasic;
-using Microsoft.CodeQuality.CSharp.Analyzers.Maintainability;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.CSharp.Analyzers.Maintainability.CSharpUseNameofInPlaceOfStringAnalyzer,
+    Microsoft.CodeQuality.Analyzers.Maintainability.UseNameOfInPlaceOfStringFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability.BasicUseNameofInPlaceOfStringAnalyzer,
+    Microsoft.CodeQuality.Analyzers.Maintainability.UseNameOfInPlaceOfStringFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
-    public class UseNameofInPlaceOfStringTests : DiagnosticAnalyzerTestBase
+    public class UseNameofInPlaceOfStringTests
     {
         #region Unit tests for no analyzer diagnostic
 
         [Fact]
-        public void NoDiagnostic_NoArguments()
+        [WorkItem(3023, "https://github.com/dotnet/roslyn-analyzers/issues/3023")]
+        public async Task NoDiagnostic_ArgListAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class C
+{
+    public void M(__arglist)
+    {
+        M(__arglist());
+    }
+}");
+        }
+
+        [Fact]
+        public async Task NoDiagnostic_NoArgumentsAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 class C
 {
@@ -30,9 +46,9 @@ class C
         }
 
         [Fact]
-        public void NoDiagnostic_NullLiteral()
+        public async Task NoDiagnostic_NullLiteralAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 class C
 {
@@ -44,9 +60,9 @@ class C
         }
 
         [Fact]
-        public void NoDiagnostic_StringIsAReservedWord()
+        public async Task NoDiagnostic_StringIsAReservedWordAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 class C
 {
@@ -58,9 +74,9 @@ class C
         }
 
         [Fact]
-        public void NoDiagnostic_NoMatchingParametersInScope()
+        public async Task NoDiagnostic_NoMatchingParametersInScopeAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 class C
 {
@@ -72,9 +88,9 @@ class C
         }
 
         [Fact]
-        public void NoDiagnostic_NameColonOtherParameterName()
+        public async Task NoDiagnostic_NameColonOtherParameterNameAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 class C
 {
@@ -86,9 +102,9 @@ class C
         }
 
         [Fact]
-        public void NoDiagnostic_NotStringLiteral()
+        public async Task NoDiagnostic_NotStringLiteralAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 class C
 {
@@ -101,9 +117,9 @@ class C
         }
 
         [Fact]
-        public void NoDiagnostic_NotValidIdentifier()
+        public async Task NoDiagnostic_NotValidIdentifierAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 class C
 {
@@ -115,37 +131,37 @@ class C
         }
 
         [Fact]
-        public void NoDiagnostic_NoArgumentList()
+        public async Task NoDiagnostic_NoArgumentListAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException(
+        throw new ArgumentNullException({|CS1002:|}{|CS1026:|}
     }
-}", TestValidationMode.AllowCompileErrors);
+}");
         }
 
         [Fact]
-        public void NoDiagnostic_NoMatchingParameter()
+        public async Task NoDiagnostic_NoMatchingParameterAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException(""test"", ""test2"", ""test3"");
+        throw new {|CS1729:ArgumentNullException|}(""test"", ""test2"", ""test3"");
     }
-}", TestValidationMode.AllowCompileErrors);
+}");
         }
 
         [Fact]
-        public void NoDiagnostic_MatchesParameterButNotCalledParamName()
+        public async Task NoDiagnostic_MatchesParameterButNotCalledParamNameAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 class C
 {
@@ -157,9 +173,9 @@ class C
         }
 
         [Fact]
-        public void NoDiagnostic_MatchesPropertyButNotCalledPropertyName()
+        public async Task NoDiagnostic_MatchesPropertyButNotCalledPropertyNameAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.ComponentModel;
 
@@ -189,9 +205,9 @@ public class Person : INotifyPropertyChanged
         }
 
         [Fact]
-        public void NoDiagnostic_PositionalArgumentOtherParameterName()
+        public async Task NoDiagnostic_PositionalArgumentOtherParameterNameAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 class C
 {
@@ -204,9 +220,9 @@ class C
 
         [WorkItem(1426, "https://github.com/dotnet/roslyn-analyzers/issues/1426")]
         [Fact]
-        public void NoDiagnostic_1426()
+        public async Task NoDiagnostic_1426Async()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.CompilerServices;
 
 public class C
@@ -228,71 +244,11 @@ public class C
 
         [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
         [Fact]
-        public void NoDiagnostic_CSharp5()
+        public async Task NoDiagnostic_CSharp5Async()
         {
-            VerifyCSharp(@"
-using System;
-class C
-{
-    void M(int x)
-    {
-        throw new ArgumentNullException(""x"");
-    }
-}", parseOptions: CSharpParseOptions.Default.WithLanguageVersion(CodeAnalysis.CSharp.LanguageVersion.CSharp5));
-        }
-
-        [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
-        [Fact]
-        public void Diagnostic_CSharp6()
-        {
-            VerifyCSharp(@"
-using System;
-class C
-{
-    void M(int x)
-    {
-        throw new ArgumentNullException(""x"");
-    }
-}", parseOptions: CSharpParseOptions.Default.WithLanguageVersion(CodeAnalysis.CSharp.LanguageVersion.CSharp6), expected: GetCSharpNameofResultAt(7, 41, "x"));
-        }
-
-        [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
-        [Fact]
-        public void NoDiagnostic_VB12()
-        {
-            VerifyBasic(@"
-Imports System
-
-Module Mod1
-    Sub f(s As String)
-        Throw New ArgumentNullException(""s"")
-    End Sub
-End Module", parseOptions: VisualBasicParseOptions.Default.WithLanguageVersion(CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic12));
-        }
-
-        [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
-        [Fact]
-        public void Diagnostic_VB14()
-        {
-            VerifyBasic(@"
-Imports System
-
-Module Mod1
-    Sub f(s As String)
-        Throw New ArgumentNullException(""s"")
-    End Sub
-End Module", parseOptions: VisualBasicParseOptions.Default.WithLanguageVersion(CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic14), expected: GetBasicNameofResultAt(6, 41, "s"));
-        }
-
-        #endregion
-
-
-        #region Unit tests for analyzer diagnostic(s)
-
-        [Fact]
-        public void Diagnostic_ArgumentMatchesAParameterInScope()
-        {
-            VerifyCSharp(@"
+            await new VerifyCS.Test
+            {
+                TestCode = @"
 using System;
 class C
 {
@@ -301,13 +257,17 @@ class C
         throw new ArgumentNullException(""x"");
     }
 }",
-    GetCSharpNameofResultAt(7, 41, "x"));
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp5
+            }.RunAsync();
         }
 
+        [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
         [Fact]
-        public void Diagnostic_VB_ArgumentMatchesAParameterInScope()
+        public async Task NoDiagnostic_VB12Async()
         {
-            VerifyBasic(@"
+            await new VerifyVB.Test
+            {
+                TestCode = @"
 Imports System
 
 Module Mod1
@@ -315,13 +275,115 @@ Module Mod1
         Throw New ArgumentNullException(""s"")
     End Sub
 End Module",
-    GetBasicNameofResultAt(6, 41, "s"));
+                LanguageVersion = CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic12
+            }.RunAsync();
+        }
+
+        #endregion
+
+        #region Unit tests for analyzer diagnostic(s)
+        [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
+        [Fact]
+        public async Task Diagnostic_CSharp6Async()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException([|""x""|]);
+    }
+}",
+                FixedCode = @"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException(nameof(x));
+    }
+}",
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp6,
+            }.RunAsync();
+        }
+
+        [WorkItem(1524, "https://github.com/dotnet/roslyn-analyzers/issues/1524")]
+        [Fact]
+        public async Task Diagnostic_VB14Async()
+        {
+            await new VerifyVB.Test
+            {
+                TestCode = @"
+Imports System
+
+Module Mod1
+    Sub f(s As String)
+        Throw New ArgumentNullException([|""s""|])
+    End Sub
+End Module",
+                FixedCode = @"
+Imports System
+
+Module Mod1
+    Sub f(s As String)
+        Throw New ArgumentNullException(NameOf(s))
+    End Sub
+End Module",
+                LanguageVersion = CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic14,
+            }.RunAsync();
         }
 
         [Fact]
-        public void Diagnostic_ArgumentMatchesAPropertyInScope()
+        public async Task Fixer_CSharp_ArgumentMatchesAParameterInScopeAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException([|""x""|]);
+    }
+}",
+@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException(nameof(x));
+    }
+}");
+        }
+
+        [Fact]
+        public async Task Fixer_VB_ArgumentMatchesAParameterInScopeAsync()
+        {
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Module Mod1
+    Sub f(s As String)
+        Throw New ArgumentNullException([|""s""|])
+    End Sub
+End Module",
+@"
+Imports System
+
+Module Mod1
+    Sub f(s As String)
+        Throw New ArgumentNullException(NameOf(s))
+    End Sub
+End Module");
+        }
+
+        [Fact]
+        public async Task Fixer_CSharp_ArgumentMatchesAPropertyInScopeAsync()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System.ComponentModel;
 
 public class Person : INotifyPropertyChanged
@@ -334,7 +396,7 @@ public class Person : INotifyPropertyChanged
         set
         {
             name = value;
-            OnPropertyChanged(""PersonName"");
+            OnPropertyChanged([|""PersonName""|]);
         }
     }
 
@@ -346,14 +408,38 @@ public class Person : INotifyPropertyChanged
             handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}",
-    GetCSharpNameofResultAt(14, 31, "PersonName"));
+}", @"
+using System.ComponentModel;
+
+public class Person : INotifyPropertyChanged
+{
+    private string name;
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string PersonName {
+        get { return name; }
+        set
+        {
+            name = value;
+            OnPropertyChanged(nameof(PersonName));
+        }
+    }
+
+    protected void OnPropertyChanged(string propertyName)
+    {
+        PropertyChangedEventHandler handler = PropertyChanged;
+        if (handler != null)
+        {
+            handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}");
         }
 
         [Fact]
-        public void Diagnostic_ArgumentMatchesAPropertyInScope2()
+        public async Task Diagnostic_ArgumentMatchesAPropertyInScope2Async()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System.ComponentModel;
 
 public class Person : INotifyPropertyChanged
@@ -367,7 +453,7 @@ public class Person : INotifyPropertyChanged
         set
         {
             name = value;
-            OnPropertyChanged(""PersonName"");
+            OnPropertyChanged([|""PersonName""|]);
         }
     }
 
@@ -376,7 +462,7 @@ public class Person : INotifyPropertyChanged
         get { return name; }
         set
         {
-            name = value; 
+            name = value;
             OnPropertyChanged(nameof(PersonName2));
         }
     }
@@ -389,29 +475,71 @@ public class Person : INotifyPropertyChanged
             handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}",
-    GetCSharpNameofResultAt(15, 31, "PersonName"));
+}", @"
+using System.ComponentModel;
+
+public class Person : INotifyPropertyChanged
+{
+    private string name;
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string PersonName 
+    {
+        get { return name; }
+        set
+        {
+            name = value;
+            OnPropertyChanged(nameof(PersonName));
+        }
+    }
+
+    public string PersonName2
+    {
+        get { return name; }
+        set
+        {
+            name = value;
+            OnPropertyChanged(nameof(PersonName2));
+        }
+    }
+
+    protected void OnPropertyChanged(string propertyName)
+    {
+        PropertyChangedEventHandler handler = PropertyChanged;
+        if (handler != null)
+        {
+            handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}");
         }
 
         [Fact]
-        public void Diagnostic_ArgumentNameColonParamName()
+        public async Task Diagnostic_ArgumentNameColonParamNameAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException(paramName:""x"");
+        throw new ArgumentNullException(paramName:[|""x""|]);
     }
-}",
-    GetCSharpNameofResultAt(7, 51, "x"));
+}", @"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException(paramName:nameof(x));
+    }
+}");
         }
 
         [Fact]
-        public void Diagnostic_ArgumentNameColonPropertyName()
+        public async Task Diagnostic_ArgumentNameColonPropertyNameAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System.ComponentModel;
 
 public class Person : INotifyPropertyChanged
@@ -424,7 +552,7 @@ public class Person : INotifyPropertyChanged
         set
         {
             name = value;
-            OnPropertyChanged(propertyName:""PersonName"");
+            OnPropertyChanged(propertyName:[|""PersonName""|]);
         }
     }
 
@@ -436,15 +564,38 @@ public class Person : INotifyPropertyChanged
             handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}",
-    GetCSharpNameofResultAt(14, 44, "PersonName"));
+}", @"
+using System.ComponentModel;
+
+public class Person : INotifyPropertyChanged
+{
+    private string name;
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string PersonName {
+        get { return name; }
+        set
+        {
+            name = value;
+            OnPropertyChanged(propertyName:nameof(PersonName));
+        }
+    }
+
+    protected void OnPropertyChanged(string propertyName)
+    {
+        PropertyChangedEventHandler handler = PropertyChanged;
+        if (handler != null)
+        {
+            handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}");
         }
 
-
         [Fact]
-        public void Diagnostic_AnonymousFunctionMultiline1()
+        public async Task Diagnostic_AnonymousFunctionMultiline1Async()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 class Test
@@ -453,17 +604,10 @@ class Test
     {
         Action<int> a = (int y) =>
         {
-            throw new ArgumentException(""somemessage"", ""x"");
+            throw new ArgumentException(""somemessage"", [|""x""|]);
         };
     }
-}",
-    GetCSharpNameofResultAt(10, 56, "x"));
-        }
-
-        [Fact]
-        public void Diagnostic_AnonymousFunctionMultiLine2()
-        {
-            VerifyCSharp(@"
+}", @"
 using System;
 
 class Test
@@ -472,65 +616,118 @@ class Test
     {
         Action<int> a = (int y) =>
         {
-            throw new ArgumentException(""somemessage"", ""y"");
+            throw new ArgumentException(""somemessage"", nameof(x));
         };
     }
-}",
-    GetCSharpNameofResultAt(10, 56, "y"));
+}");
         }
 
         [Fact]
-        public void Diagnostic_AnonymousFunctionSingleLine1()
+        public async Task Diagnostic_AnonymousFunctionMultiLine2Async()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 class Test
 {
     void Method(int x)
     {
-        Action<int> a = (int y) => throw new ArgumentException(""somemessage"", ""y"");
-    }
-}",
-    GetCSharpNameofResultAt(8, 79, "y"));
-        }
-
-        [Fact]
-        public void Diagnostic_AnonymousFunctionSingleLine2()
+        Action<int> a = (int y) =>
         {
-            VerifyCSharp(@"
+            throw new ArgumentException(""somemessage"", [|""y""|]);
+        };
+    }
+}", @"
 using System;
 
 class Test
 {
     void Method(int x)
     {
-        Action<int> a = (int y) => throw new ArgumentException(""somemessage"", ""x"");
+        Action<int> a = (int y) =>
+        {
+            throw new ArgumentException(""somemessage"", nameof(y));
+        };
     }
-}",
-    GetCSharpNameofResultAt(8, 79, "x"));
+}");
         }
 
         [Fact]
-        public void Diagnostic_AnonymousFunctionMultipleParameters()
+        public async Task Diagnostic_AnonymousFunctionSingleLine1Async()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 class Test
 {
     void Method(int x)
     {
-        Action<int, int> a = (j, k) => throw new ArgumentException(""somemessage"", ""x"");
+        Action<int> a = (int y) => throw new ArgumentException(""somemessage"", [|""y""|]);
     }
-}",
-    GetCSharpNameofResultAt(8, 83, "x"));
+}", @"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        Action<int> a = (int y) => throw new ArgumentException(""somemessage"", nameof(y));
+    }
+}");
         }
 
         [Fact]
-        public void Diagnostic_LocalFunction1()
+        public async Task Diagnostic_AnonymousFunctionSingleLine2Async()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        Action<int> a = (int y) => throw new ArgumentException(""somemessage"", [|""x""|]);
+    }
+}", @"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        Action<int> a = (int y) => throw new ArgumentException(""somemessage"", nameof(x));
+    }
+}");
+        }
+
+        [Fact]
+        public async Task Diagnostic_AnonymousFunctionMultipleParametersAsync()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        Action<int, int> a = (j, k) => throw new ArgumentException(""somemessage"", [|""x""|]);
+    }
+}", @"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        Action<int, int> a = (j, k) => throw new ArgumentException(""somemessage"", nameof(x));
+    }
+}");
+        }
+
+        [Fact]
+        public async Task Diagnostic_LocalFunction1Async()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 class Test
@@ -539,17 +736,10 @@ class Test
     {
         void AnotherMethod(int y, int z)
             {
-                throw new ArgumentException(""somemessage"", ""x"");
+                throw new ArgumentException(""somemessage"", [|""x""|]);
             }
     }
-}",
-    GetCSharpNameofResultAt(10, 60, "x"));
-        }
-
-        [Fact]
-        public void Diagnostic_LocalFunction2()
-        {
-            VerifyCSharp(@"
+}", @"
 using System;
 
 class Test
@@ -558,17 +748,46 @@ class Test
     {
         void AnotherMethod(int y, int z)
             {
-                throw new ArgumentException(""somemessage"", ""y"");
+                throw new ArgumentException(""somemessage"", nameof(x));
             }
     }
-}",
-    GetCSharpNameofResultAt(10, 60, "y"));
+}");
         }
 
         [Fact]
-        public void Diagnostic_Delegate()
+        public async Task Diagnostic_LocalFunction2Async()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        void AnotherMethod(int y, int z)
+            {
+                throw new ArgumentException(""somemessage"", [|""y""|]);
+            }
+    }
+}", @"
+using System;
+
+class Test
+{
+    void Method(int x)
+    {
+        void AnotherMethod(int y, int z)
+            {
+                throw new ArgumentException(""somemessage"", nameof(y));
+            }
+    }
+}");
+        }
+
+        [Fact]
+        public async Task Diagnostic_DelegateAsync()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 namespace ConsoleApp14
@@ -579,34 +798,74 @@ namespace ConsoleApp14
         {
             Action<int> x2 = delegate (int xyz)
             {
-                throw new ArgumentNullException(""xyz"");
+                throw new ArgumentNullException([|""xyz""|]);
             };
         }
     }
+}", @"
+using System;
+
+namespace ConsoleApp14
+{
+    class Program
+    {
+         class test
+        {
+            Action<int> x2 = delegate (int xyz)
+            {
+                throw new ArgumentNullException(nameof(xyz));
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public async Task Fixer_CSharp_ArgumentWithCommentsAsync()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException(/*Leading*/[|""x""|]/*Trailing*/);
+    }
 }",
-    GetCSharpNameofResultAt(12, 49, "xyz"));
+@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentNullException(/*Leading*/nameof(x)/*Trailing*/);
+    }
+}");
+        }
+
+        [Fact]
+        public async Task Fixer_CSharp_ArgumentWithComments2Async()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentException(""Somemessage"", /*Leading*/[|""x""|]/*Trailing*/);
+    }
+}",
+@"
+using System;
+class C
+{
+    void M(int x)
+    {
+        throw new ArgumentException(""Somemessage"", /*Leading*/nameof(x)/*Trailing*/);
+    }
+}");
         }
 
         #endregion
-
-        private DiagnosticResult GetBasicNameofResultAt(int line, int column, string name)
-        {
-            return GetBasicResultAt(line, column, UseNameofInPlaceOfStringAnalyzer.RuleWithSuggestion, name);
-        }
-
-        private DiagnosticResult GetCSharpNameofResultAt(int line, int column, string name)
-        {
-            return GetCSharpResultAt(line, column, UseNameofInPlaceOfStringAnalyzer.RuleWithSuggestion, name);
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicUseNameofInPlaceOfStringAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpUseNameofInPlaceOfStringAnalyzer();
-        }
     }
 }

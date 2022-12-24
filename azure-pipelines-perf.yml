@@ -1,0 +1,53 @@
+# Branches that trigger a build on commit
+trigger:
+- main
+- release/*
+- features/*
+- 2.9.x
+
+# Branch(es) that trigger(s) build(s) on PR
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+    - features/*
+    - 2.9.x
+  paths:
+    exclude:
+      - docs/*
+      - .github/*
+      - .devcontainer/*
+      - CODE-OF-CONDUCT.md
+      - README.md
+jobs:
+- job: Performance
+  strategy:
+    maxParallel: 4
+    matrix:
+      Release:
+        _configuration: Release
+        _codeCoverage: False
+  pool:
+    name: NetCore-Public
+    demands: ImageOverride -equals windows.vs2022.amd64.open
+  timeoutInMinutes: 150
+
+  steps:
+    - checkout: self
+      clean: true
+    - task: PowerShell@2
+      displayName: Restore
+      inputs:
+        filePath: $(Build.SourcesDirectory)\eng\common\build.ps1
+        arguments: -configuration Release -prepareMachine -ci -restore -binaryLog
+    - pwsh: $(Build.SourcesDirectory)\eng\perf\PerfCore.ps1 -v diag -ci 
+      displayName: Validate Performance
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Performance Results
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)\artifacts'
+        ArtifactName: 'Windows Performance Results'
+      continueOnError: true
+      condition: always()
+

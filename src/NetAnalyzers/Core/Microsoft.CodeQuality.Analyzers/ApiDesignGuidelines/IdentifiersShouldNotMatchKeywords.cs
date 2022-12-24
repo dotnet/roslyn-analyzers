@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -11,54 +11,58 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1716: Identifiers should not match keywords
+    /// CA1716: <inheritdoc cref="IdentifiersShouldNotMatchKeywordsTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class IdentifiersShouldNotMatchKeywordsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1716";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotMatchKeywordsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(IdentifiersShouldNotMatchKeywordsTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(IdentifiersShouldNotMatchKeywordsDescription));
 
-        private static readonly LocalizableString s_localizableMessageMemberParameter = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotMatchKeywordsMessageMemberParameter), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageMember = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotMatchKeywordsMessageMember), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageType = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotMatchKeywordsMessageType), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageNamespace = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotMatchKeywordsMessageNamespace), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotMatchKeywordsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor MemberParameterRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotMatchKeywordsMessageMemberParameter)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor MemberParameterRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageMemberParameter,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor MemberRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageMember,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor TypeRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageType,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor NamespaceRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageNamespace,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor MemberRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotMatchKeywordsMessageMember)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor TypeRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotMatchKeywordsMessageType)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor NamespaceRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotMatchKeywordsMessageNamespace)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
         // Define the format in which this rule displays namespace names. The format is chosen to be
         // consistent with FxCop's display format for this rule.
@@ -68,30 +72,48 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 // a method named "@for" is displayed as "for"
                 .WithMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.None);
 
+        private static readonly ImmutableHashSet<SymbolKind> s_defaultAnalyzedSymbolKinds =
+            ImmutableHashSet.Create(
+                SymbolKind.Namespace,
+                SymbolKind.NamedType,
+                SymbolKind.Method,
+                SymbolKind.Property,
+                SymbolKind.Event,
+                SymbolKind.Parameter
+            );
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MemberParameterRule, MemberRule, TypeRule, NamespaceRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(MemberParameterRule, MemberRule, TypeRule, NamespaceRule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationStartAnalysisContext =>
+            context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
                 var namespaceRuleAnalyzer = new NamespaceRuleAnalyzer();
-
                 compilationStartAnalysisContext.RegisterSymbolAction(
                     symbolAnalysisContext => namespaceRuleAnalyzer.Analyze(symbolAnalysisContext),
                     SymbolKind.NamedType);
 
                 compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeTypeRule, SymbolKind.NamedType);
-
-                compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeMemberRule,
-                    SymbolKind.Event, SymbolKind.Method, SymbolKind.Property);
-
+                compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeMemberRule, SymbolKind.Event, SymbolKind.Method, SymbolKind.Property);
                 compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeMemberParameterRule, SymbolKind.Method);
             });
         }
+
+        private static bool ShouldAnalyze(SymbolAnalysisContext context, DiagnosticDescriptor rule)
+        {
+            if (!context.Options.MatchesConfiguredVisibility(rule, context.Symbol, context.Compilation))
+            {
+                return false;
+            }
+
+            return GetSymbolKindsToAnalyze(context, rule).Contains(context.Symbol.Kind);
+        }
+
+        private static ImmutableHashSet<SymbolKind> GetSymbolKindsToAnalyze(SymbolAnalysisContext context, DiagnosticDescriptor rule)
+            => context.Options.GetAnalyzedSymbolKindsOption(rule, context.Symbol, context.Compilation, s_defaultAnalyzedSymbolKinds);
 
         private sealed class NamespaceRuleAnalyzer
         {
@@ -102,8 +124,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
 
+                if (!GetSymbolKindsToAnalyze(context, NamespaceRule).Contains(SymbolKind.Namespace))
+                {
+                    return;
+                }
+
                 // Don't complain about a namespace unless it contains at least one public type.
-                if (!type.MatchesConfiguredVisibility(context.Options, NamespaceRule, context.CancellationToken))
+                if (!context.Options.MatchesConfiguredVisibility(NamespaceRule, type, context.Compilation))
                 {
                     return;
                 }
@@ -134,7 +161,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                         if (doReportDiagnostic)
                         {
-                            var diagnostic = Diagnostic.Create(NamespaceRule, containingNamespace.Locations[0], namespaceDisplayString, matchingKeyword);
+                            var diagnostic = containingNamespace.CreateDiagnostic(NamespaceRule, namespaceDisplayString, matchingKeyword);
                             context.ReportDiagnostic(diagnostic);
                         }
                     }
@@ -142,10 +169,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        private void AnalyzeTypeRule(SymbolAnalysisContext context)
+        private static void AnalyzeTypeRule(SymbolAnalysisContext context)
         {
             INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
-            if (!type.MatchesConfiguredVisibility(context.Options, TypeRule, context.CancellationToken))
+            if (!ShouldAnalyze(context, TypeRule))
             {
                 return;
             }
@@ -160,10 +187,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        private void AnalyzeMemberRule(SymbolAnalysisContext context)
+        private static void AnalyzeMemberRule(SymbolAnalysisContext context)
         {
             ISymbol symbol = context.Symbol;
-            if (!symbol.MatchesConfiguredVisibility(context.Options, MemberRule, context.CancellationToken))
+            if (!ShouldAnalyze(context, MemberRule))
             {
                 return;
             }
@@ -184,10 +211,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        private void AnalyzeMemberParameterRule(SymbolAnalysisContext context)
+        private static void AnalyzeMemberParameterRule(SymbolAnalysisContext context)
         {
             var method = (IMethodSymbol)context.Symbol;
-            if (!method.MatchesConfiguredVisibility(context.Options, MemberParameterRule, context.CancellationToken))
+            if (!GetSymbolKindsToAnalyze(context, MemberParameterRule).Contains(SymbolKind.Parameter) ||
+                !context.Options.MatchesConfiguredVisibility(MemberParameterRule, method, context.Compilation))
             {
                 return;
             }

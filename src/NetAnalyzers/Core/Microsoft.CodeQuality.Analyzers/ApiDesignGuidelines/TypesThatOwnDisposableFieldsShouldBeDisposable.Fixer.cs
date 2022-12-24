@@ -1,6 +1,5 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
@@ -20,7 +20,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class TypesThatOwnDisposableFieldsShouldBeDisposableFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<SyntaxNode>.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<SyntaxNode>.RuleId);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -36,13 +36,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             string title = MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableInterface;
-            context.RegisterCodeFix(new MyCodeAction(title,
-                                                     async ct => await ImplementIDisposable(context.Document, declaration, ct).ConfigureAwait(false),
+            context.RegisterCodeFix(CodeAction.Create(title,
+                                                     async ct => await ImplementIDisposableAsync(context.Document, declaration, ct).ConfigureAwait(false),
                                                      equivalenceKey: title),
                                     context.Diagnostics);
         }
 
-        private static async Task<Document> ImplementIDisposable(Document document, SyntaxNode declaration, CancellationToken cancellationToken)
+        private static async Task<Document> ImplementIDisposableAsync(Document document, SyntaxNode declaration, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
@@ -70,15 +70,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             return editor.GetChangedDocument();
-        }
-
-        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
-        private class MyCodeAction : DocumentChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument, equivalenceKey)
-            {
-            }
         }
 
         public override FixAllProvider GetFixAllProvider()

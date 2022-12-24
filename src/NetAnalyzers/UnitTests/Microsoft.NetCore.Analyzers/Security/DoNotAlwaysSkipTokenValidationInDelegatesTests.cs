@@ -1,7 +1,5 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -16,10 +14,12 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class DoNotAlwaysSkipTokenValidationInDelegatesTests
     {
-        [Fact]
-        public async Task TestLambdaDiagnostic()
+        [Theory]
+        [InlineData("AudienceValidator = [|(a, b, c)")]
+        [InlineData("LifetimeValidator = [|(a, b, c, d)")]
+        public async Task TestLambdaDiagnostic(string declaration)
         {
-            const string CodeFormat = @"
+            string code = @$"
 using System;
 using Microsoft.IdentityModel.Tokens;
 
@@ -28,29 +28,19 @@ class TestClass
     public void TestMethod()
     {{
         TokenValidationParameters parameters = new TokenValidationParameters();
-        parameters.{0} => {{ return true; }};
+        parameters.{declaration} => {{ return true; }}|];
     }}
 }}";
-            var delegateDeclarationStrings = new string[]
-            {
-                "AudienceValidator = (a, b, c)",
-                "LifetimeValidator = (a, b, c, d)"
-            };
 
-            foreach (string declaration in delegateDeclarationStrings)
-            {
-                string code = string.Format(CultureInfo.InvariantCulture, CodeFormat, declaration);
-                await VerifyCSharpAnalyzerAsync(
-                    code,
-                    GetCSharpResultAt(10, 20 + declaration.IndexOf('(')).WithArguments(
-                        declaration.Substring(0, declaration.IndexOf(" ", StringComparison.OrdinalIgnoreCase))));
-            }
+            await VerifyCSharpAnalyzerAsync(code);
         }
 
-        [Fact]
-        public async Task TestLambdaWithLiteralValueDiagnostic()
+        [Theory]
+        [InlineData("AudienceValidator = [|(a, b, c)")]
+        [InlineData("LifetimeValidator = [|(a, b, c, d)")]
+        public async Task TestLambdaWithLiteralValueDiagnostic(string declaration)
         {
-            const string CodeFormat = @"
+            string code = @$"
 using System;
 using Microsoft.IdentityModel.Tokens;
 
@@ -59,29 +49,18 @@ class TestClass
     public void TestMethod()
     {{
         TokenValidationParameters parameters = new TokenValidationParameters();
-        parameters.{0} => true;
+        parameters.{declaration} => true|];
     }}
 }}";
-            var delegateDeclarationStrings = new string[]
-            {
-                "AudienceValidator = (a, b, c)",
-                "LifetimeValidator = (a, b, c, d)"
-            };
-
-            foreach (string declaration in delegateDeclarationStrings)
-            {
-                string code = string.Format(CultureInfo.InvariantCulture, CodeFormat, declaration);
-                await VerifyCSharpAnalyzerAsync(
-                    code,
-                    GetCSharpResultAt(10, 20 + declaration.IndexOf('(')).WithArguments(
-                        declaration.Substring(0, declaration.IndexOf(" ", StringComparison.OrdinalIgnoreCase))));
-            }
+            await VerifyCSharpAnalyzerAsync(code);
         }
 
-        [Fact]
-        public async Task TestAnonymousMethodDiagnostic()
+        [Theory]
+        [InlineData("AudienceValidator")]
+        [InlineData("LifetimeValidator")]
+        public async Task TestAnonymousMethodDiagnostic(string declaration)
         {
-            const string CodeFormat = @"
+            string code = @$"
 using System;
 using Microsoft.IdentityModel.Tokens;
 
@@ -90,21 +69,10 @@ class TestClass
     public void TestMethod()
     {{
         TokenValidationParameters parameters = new TokenValidationParameters();
-        parameters.{0} = delegate {{ return true; }};
+        parameters.{declaration} = [|delegate {{ return true; }}|];
     }}
 }}";
-            var delegateDeclarationStrings = new string[]
-            {
-                "AudienceValidator",
-                "LifetimeValidator"
-            };
-
-            foreach (string declaration in delegateDeclarationStrings)
-            {
-                string code = string.Format(CultureInfo.InvariantCulture, CodeFormat, declaration);
-                await VerifyCSharpAnalyzerAsync(code, GetCSharpResultAt(10, 23 + declaration.Length)
-                    .WithArguments(declaration));
-            }
+            await VerifyCSharpAnalyzerAsync(code);
         }
 
         [Fact]
@@ -120,7 +88,7 @@ class TestClass
     public void TestMethod()
     {
         TokenValidationParameters parameters = new TokenValidationParameters();
-        parameters.LifetimeValidator = new LifetimeValidator(AcceptAllLifetimes);
+        parameters.LifetimeValidator = [|new LifetimeValidator(AcceptAllLifetimes)|];
 
         bool AcceptAllLifetimes(
             DateTime? start,
@@ -131,8 +99,7 @@ class TestClass
             return true;
         }
     }
-}",
-            GetCSharpResultAt(11, 40).WithArguments("LifetimeValidator"));
+}");
         }
 
         [Fact]
@@ -148,7 +115,7 @@ class TestClass
     public void TestMethod()
     {
         TokenValidationParameters parameters = new TokenValidationParameters();
-        parameters.AudienceValidator = new AudienceValidator(AcceptAllAudiences);
+        parameters.AudienceValidator = [|new AudienceValidator(AcceptAllAudiences)|];
 
         bool AcceptAllAudiences(
             IEnumerable<string> audiences,
@@ -158,8 +125,7 @@ class TestClass
             return true;
         }
     }
-}",
-            GetCSharpResultAt(11, 40).WithArguments("AudienceValidator"));
+}");
         }
 
         [Fact]
@@ -184,10 +150,9 @@ class TestClass
     public void TestMethod()
     {
         TokenValidationParameters parameters = new TokenValidationParameters();
-        parameters.LifetimeValidator = new LifetimeValidator(AcceptAllLifetimes);
+        parameters.LifetimeValidator = [|new LifetimeValidator(AcceptAllLifetimes)|];
     }
-}",
-            GetCSharpResultAt(20, 40).WithArguments("LifetimeValidator"));
+}");
         }
 
         [Fact]
@@ -211,10 +176,9 @@ class TestClass
     public void TestMethod()
     {
         TokenValidationParameters parameters = new TokenValidationParameters();
-        parameters.AudienceValidator = new AudienceValidator(AcceptAllAudiences);
+        parameters.AudienceValidator = [|new AudienceValidator(AcceptAllAudiences)|];
     }
-}",
-            GetCSharpResultAt(19, 40).WithArguments("AudienceValidator"));
+}");
         }
 
         [Fact]
@@ -235,10 +199,9 @@ class TestClass
     public void TestMethod()
     {
         TokenValidationParameters parameters = new TokenValidationParameters();
-        parameters.AudienceValidator = new AudienceValidator(AcceptAllAudiences);
+        parameters.AudienceValidator = [|new AudienceValidator(AcceptAllAudiences)|];
     }
-}",
-            GetCSharpResultAt(16, 40).WithArguments("AudienceValidator"));
+}");
         }
 
         // Ideally we could detect this but we'll have to rely on CodeQL instead for more robust detection.
@@ -594,9 +557,5 @@ class TestClass
 
             await csharpTest.RunAsync();
         }
-
-        private static DiagnosticResult GetCSharpResultAt(int line, int column)
-            => VerifyCS.Diagnostic()
-                .WithLocation(line, column);
     }
 }

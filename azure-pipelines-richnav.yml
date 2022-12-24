@@ -1,0 +1,28 @@
+# Branches that trigger a build on commit
+trigger:
+  - main
+  - release/*
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+    - template: /eng/common/templates/jobs/jobs.yml
+      parameters:
+        enableRichCodeNavigation: true
+        richCodeNavigationEnvironment: "production"
+        richCodeNavigationLanguage: "csharp"
+        jobs:
+        - job: Debug_Build
+          pool:
+            name: NetCore-Public
+            demands: ImageOverride -equals windows.vs2022preview.amd64.open
+          variables:
+            - name: _BuildConfig
+              value: Debug
+          steps:
+          - checkout: self
+            clean: true
+          - script: eng\common\CIBuild.cmd
+                      -configuration $(_BuildConfig)
+            displayName: Build and Index

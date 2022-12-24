@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -10,34 +10,27 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
+    /// <summary>
+    /// CA5368: <inheritdoc cref="SetViewStateUserKey"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class SetViewStateUserKey : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5368";
-        private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.SetViewStateUserKey),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.SetViewStateUserKeyMessage),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.SetViewStateUserKeyDescription),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
-                DiagnosticId,
-                s_Title,
-                s_Message,
-                DiagnosticCategory.Security,
-                RuleLevel.BuildWarning,
-                description: s_Description,
-                isPortedFxCopRule: false,
-                isDataflowRule: false);
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            DiagnosticId,
+            CreateLocalizableResourceString(nameof(SetViewStateUserKey)),
+            CreateLocalizableResourceString(nameof(SetViewStateUserKeyMessage)),
+            DiagnosticCategory.Security,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: CreateLocalizableResourceString(nameof(SetViewStateUserKeyDescription)),
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -71,10 +64,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                                                                     s.IsProtected() &&
                                                                                                                     !s.IsStatic));
                         var setViewStateUserKeyInPage_Init = SetViewStateUserKeyCorrectly(methods.FirstOrDefault(s => s.Name == "Page_Init" &&
-                                                                                                                        s.Parameters.Length == 2 &&
-                                                                                                                        s.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
-                                                                                                                        s.Parameters[1].Type.Equals(eventArgsTypeSymbol) &&
-                                                                                                                        s.ReturnType.SpecialType == SpecialType.System_Void));
+                                                                                                                        s.HasEventHandlerSignature(eventArgsTypeSymbol)));
 
                         if (setViewStateUserKeyInOnInit || setViewStateUserKeyInPage_Init)
                         {

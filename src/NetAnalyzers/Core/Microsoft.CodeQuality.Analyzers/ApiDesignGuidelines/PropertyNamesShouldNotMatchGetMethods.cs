@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -10,8 +10,10 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1721: Property names should not match get methods
+    /// CA1721: <inheritdoc cref="PropertyNamesShouldNotMatchGetMethodsTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PropertyNamesShouldNotMatchGetMethodsAnalyzer : DiagnosticAnalyzer
@@ -20,38 +22,57 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private const string Get = "Get";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(PropertyNamesShouldNotMatchGetMethodsTitle)),
+            CreateLocalizableResourceString(nameof(PropertyNamesShouldNotMatchGetMethodsMessage)),
+            DiagnosticCategory.Naming,
+            RuleLevel.Disabled,    // Heuristic based naming rule.
+            description: CreateLocalizableResourceString(nameof(PropertyNamesShouldNotMatchGetMethodsDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.Disabled,    // Heuristic based naming rule.
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            // Analyze properties, methods 
-            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property, SymbolKind.Method);
+            context.RegisterCompilationStartAction(context =>
+            {
+                var obsoleteAttributeType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
+
+                // Analyze properties, methods
+                context.RegisterSymbolAction(ctx => AnalyzeSymbol(ctx, obsoleteAttributeType), SymbolKind.Property, SymbolKind.Method);
+            });
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext context)
+        private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol? obsoleteAttributeType)
         {
             string identifier;
             var symbol = context.Symbol;
 
+            // We only want to report an issue when the user is free to update the member.
+            // This method will be called for both the property and the method so we can bail out
+            // when the member (symbol) is an override.
+            // Note that in the case of an override + a local declaration, the issue will be raised from
+            // the local declaration.
+            if (symbol.IsOverride)
+            {
+                return;
+            }
+
             // Bail out if the method/property is not exposed (public, protected, or protected internal) by default
-            var configuredVisibilities = context.Options.GetSymbolVisibilityGroupOption(Rule, SymbolVisibilityGroup.Public, context.CancellationToken);
+            var configuredVisibilities = context.Options.GetSymbolVisibilityGroupOption(Rule, context.Symbol, context.Compilation, SymbolVisibilityGroup.Public);
             if (!configuredVisibilities.Contains(symbol.GetResultantVisibility()))
+            {
+                return;
+            }
+
+            // If either the property or method is marked as obsolete, bail out
+            // see https://github.com/dotnet/roslyn-analyzers/issues/2956
+            if (symbol.HasAttribute(obsoleteAttributeType))
             {
                 return;
             }
@@ -64,7 +85,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             else if (symbol.Kind == SymbolKind.Method && symbol.Name.StartsWith(Get, StringComparison.Ordinal))
             {
                 // Want to look for properties named the same as the method sans 'Get'
-                identifier = symbol.Name.Substring(3);
+                identifier = symbol.Name[3..];
             }
             else
             {
@@ -93,10 +114,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         continue;
                     }
 
+                    // If either the property or method is marked as obsolete, bail out
+                    // see https://github.com/dotnet/roslyn-analyzers/issues/2956
+                    if (member.HasAttribute(obsoleteAttributeType))
+                    {
+                        continue;
+                    }
+
                     // If the declared type is a property, was a matching method found?
                     if (symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method)
                     {
-                        diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name, identifier);
+                        diagnostic = symbol.CreateDiagnostic(Rule, symbol.Name, identifier);
                         break;
                     }
 
@@ -105,7 +133,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         && member.Kind == SymbolKind.Property
                         && !symbol.ContainingType.Equals(type)) // prevent reporting duplicate diagnostics
                     {
-                        diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier, symbol.Name);
+                        diagnostic = symbol.CreateDiagnostic(Rule, identifier, symbol.Name);
                         break;
                     }
                 }

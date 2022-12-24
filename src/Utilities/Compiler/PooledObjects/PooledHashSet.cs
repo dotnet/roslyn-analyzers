@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -73,7 +73,7 @@ namespace Analyzer.Utilities.PooledObjects
         {
             var pool = comparer == null ?
                 s_poolInstance :
-                s_poolInstancesByComparer.GetOrAdd(comparer, c => CreatePool(c));
+                s_poolInstancesByComparer.GetOrAdd(comparer, CreatePool);
             var instance = pool.Allocate();
             Debug.Assert(instance.Count == 0);
             return instance;

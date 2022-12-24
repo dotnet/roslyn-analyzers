@@ -1,0 +1,640 @@
+  <Project>
+      <ItemGroup>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\Microsoft.CSharp.dll">
+          <LogicalName>net60.Microsoft.CSharp</LogicalName>
+          <Link>Resources\net60\Microsoft.CSharp.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\Microsoft.VisualBasic.Core.dll">
+          <LogicalName>net60.Microsoft.VisualBasic.Core</LogicalName>
+          <Link>Resources\net60\Microsoft.VisualBasic.Core.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\Microsoft.VisualBasic.dll">
+          <LogicalName>net60.Microsoft.VisualBasic</LogicalName>
+          <Link>Resources\net60\Microsoft.VisualBasic.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\Microsoft.Win32.Primitives.dll">
+          <LogicalName>net60.Microsoft.Win32.Primitives</LogicalName>
+          <Link>Resources\net60\Microsoft.Win32.Primitives.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\Microsoft.Win32.Registry.dll">
+          <LogicalName>net60.Microsoft.Win32.Registry</LogicalName>
+          <Link>Resources\net60\Microsoft.Win32.Registry.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\mscorlib.dll">
+          <LogicalName>net60.mscorlib</LogicalName>
+          <Link>Resources\net60\mscorlib.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\netstandard.dll">
+          <LogicalName>net60.netstandard</LogicalName>
+          <Link>Resources\net60\netstandard.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.AppContext.dll">
+          <LogicalName>net60.System.AppContext</LogicalName>
+          <Link>Resources\net60\System.AppContext.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Buffers.dll">
+          <LogicalName>net60.System.Buffers</LogicalName>
+          <Link>Resources\net60\System.Buffers.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Collections.Concurrent.dll">
+          <LogicalName>net60.System.Collections.Concurrent</LogicalName>
+          <Link>Resources\net60\System.Collections.Concurrent.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Collections.dll">
+          <LogicalName>net60.System.Collections</LogicalName>
+          <Link>Resources\net60\System.Collections.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Collections.Immutable.dll">
+          <LogicalName>net60.System.Collections.Immutable</LogicalName>
+          <Link>Resources\net60\System.Collections.Immutable.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Collections.NonGeneric.dll">
+          <LogicalName>net60.System.Collections.NonGeneric</LogicalName>
+          <Link>Resources\net60\System.Collections.NonGeneric.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Collections.Specialized.dll">
+          <LogicalName>net60.System.Collections.Specialized</LogicalName>
+          <Link>Resources\net60\System.Collections.Specialized.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.ComponentModel.Annotations.dll">
+          <LogicalName>net60.System.ComponentModel.Annotations</LogicalName>
+          <Link>Resources\net60\System.ComponentModel.Annotations.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.ComponentModel.DataAnnotations.dll">
+          <LogicalName>net60.System.ComponentModel.DataAnnotations</LogicalName>
+          <Link>Resources\net60\System.ComponentModel.DataAnnotations.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.ComponentModel.dll">
+          <LogicalName>net60.System.ComponentModel</LogicalName>
+          <Link>Resources\net60\System.ComponentModel.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.ComponentModel.EventBasedAsync.dll">
+          <LogicalName>net60.System.ComponentModel.EventBasedAsync</LogicalName>
+          <Link>Resources\net60\System.ComponentModel.EventBasedAsync.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.ComponentModel.Primitives.dll">
+          <LogicalName>net60.System.ComponentModel.Primitives</LogicalName>
+          <Link>Resources\net60\System.ComponentModel.Primitives.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.ComponentModel.TypeConverter.dll">
+          <LogicalName>net60.System.ComponentModel.TypeConverter</LogicalName>
+          <Link>Resources\net60\System.ComponentModel.TypeConverter.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Configuration.dll">
+          <LogicalName>net60.System.Configuration</LogicalName>
+          <Link>Resources\net60\System.Configuration.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Console.dll">
+          <LogicalName>net60.System.Console</LogicalName>
+          <Link>Resources\net60\System.Console.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Core.dll">
+          <LogicalName>net60.System.Core</LogicalName>
+          <Link>Resources\net60\System.Core.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Data.Common.dll">
+          <LogicalName>net60.System.Data.Common</LogicalName>
+          <Link>Resources\net60\System.Data.Common.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Data.DataSetExtensions.dll">
+          <LogicalName>net60.System.Data.DataSetExtensions</LogicalName>
+          <Link>Resources\net60\System.Data.DataSetExtensions.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Data.dll">
+          <LogicalName>net60.System.Data</LogicalName>
+          <Link>Resources\net60\System.Data.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Diagnostics.Contracts.dll">
+          <LogicalName>net60.System.Diagnostics.Contracts</LogicalName>
+          <Link>Resources\net60\System.Diagnostics.Contracts.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Diagnostics.Debug.dll">
+          <LogicalName>net60.System.Diagnostics.Debug</LogicalName>
+          <Link>Resources\net60\System.Diagnostics.Debug.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Diagnostics.DiagnosticSource.dll">
+          <LogicalName>net60.System.Diagnostics.DiagnosticSource</LogicalName>
+          <Link>Resources\net60\System.Diagnostics.DiagnosticSource.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Diagnostics.FileVersionInfo.dll">
+          <LogicalName>net60.System.Diagnostics.FileVersionInfo</LogicalName>
+          <Link>Resources\net60\System.Diagnostics.FileVersionInfo.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Diagnostics.Process.dll">
+          <LogicalName>net60.System.Diagnostics.Process</LogicalName>
+          <Link>Resources\net60\System.Diagnostics.Process.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Diagnostics.StackTrace.dll">
+          <LogicalName>net60.System.Diagnostics.StackTrace</LogicalName>
+          <Link>Resources\net60\System.Diagnostics.StackTrace.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Diagnostics.TextWriterTraceListener.dll">
+          <LogicalName>net60.System.Diagnostics.TextWriterTraceListener</LogicalName>
+          <Link>Resources\net60\System.Diagnostics.TextWriterTraceListener.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Diagnostics.Tools.dll">
+          <LogicalName>net60.System.Diagnostics.Tools</LogicalName>
+          <Link>Resources\net60\System.Diagnostics.Tools.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Diagnostics.TraceSource.dll">
+          <LogicalName>net60.System.Diagnostics.TraceSource</LogicalName>
+          <Link>Resources\net60\System.Diagnostics.TraceSource.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Diagnostics.Tracing.dll">
+          <LogicalName>net60.System.Diagnostics.Tracing</LogicalName>
+          <Link>Resources\net60\System.Diagnostics.Tracing.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.dll">
+          <LogicalName>net60.System</LogicalName>
+          <Link>Resources\net60\System.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Drawing.dll">
+          <LogicalName>net60.System.Drawing</LogicalName>
+          <Link>Resources\net60\System.Drawing.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Drawing.Primitives.dll">
+          <LogicalName>net60.System.Drawing.Primitives</LogicalName>
+          <Link>Resources\net60\System.Drawing.Primitives.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Dynamic.Runtime.dll">
+          <LogicalName>net60.System.Dynamic.Runtime</LogicalName>
+          <Link>Resources\net60\System.Dynamic.Runtime.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Formats.Asn1.dll">
+          <LogicalName>net60.System.Formats.Asn1</LogicalName>
+          <Link>Resources\net60\System.Formats.Asn1.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Globalization.Calendars.dll">
+          <LogicalName>net60.System.Globalization.Calendars</LogicalName>
+          <Link>Resources\net60\System.Globalization.Calendars.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Globalization.dll">
+          <LogicalName>net60.System.Globalization</LogicalName>
+          <Link>Resources\net60\System.Globalization.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Globalization.Extensions.dll">
+          <LogicalName>net60.System.Globalization.Extensions</LogicalName>
+          <Link>Resources\net60\System.Globalization.Extensions.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.Compression.Brotli.dll">
+          <LogicalName>net60.System.IO.Compression.Brotli</LogicalName>
+          <Link>Resources\net60\System.IO.Compression.Brotli.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.Compression.dll">
+          <LogicalName>net60.System.IO.Compression</LogicalName>
+          <Link>Resources\net60\System.IO.Compression.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.Compression.FileSystem.dll">
+          <LogicalName>net60.System.IO.Compression.FileSystem</LogicalName>
+          <Link>Resources\net60\System.IO.Compression.FileSystem.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.Compression.ZipFile.dll">
+          <LogicalName>net60.System.IO.Compression.ZipFile</LogicalName>
+          <Link>Resources\net60\System.IO.Compression.ZipFile.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.dll">
+          <LogicalName>net60.System.IO</LogicalName>
+          <Link>Resources\net60\System.IO.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.FileSystem.AccessControl.dll">
+          <LogicalName>net60.System.IO.FileSystem.AccessControl</LogicalName>
+          <Link>Resources\net60\System.IO.FileSystem.AccessControl.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.FileSystem.dll">
+          <LogicalName>net60.System.IO.FileSystem</LogicalName>
+          <Link>Resources\net60\System.IO.FileSystem.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.FileSystem.DriveInfo.dll">
+          <LogicalName>net60.System.IO.FileSystem.DriveInfo</LogicalName>
+          <Link>Resources\net60\System.IO.FileSystem.DriveInfo.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.FileSystem.Primitives.dll">
+          <LogicalName>net60.System.IO.FileSystem.Primitives</LogicalName>
+          <Link>Resources\net60\System.IO.FileSystem.Primitives.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.FileSystem.Watcher.dll">
+          <LogicalName>net60.System.IO.FileSystem.Watcher</LogicalName>
+          <Link>Resources\net60\System.IO.FileSystem.Watcher.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.IsolatedStorage.dll">
+          <LogicalName>net60.System.IO.IsolatedStorage</LogicalName>
+          <Link>Resources\net60\System.IO.IsolatedStorage.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.MemoryMappedFiles.dll">
+          <LogicalName>net60.System.IO.MemoryMappedFiles</LogicalName>
+          <Link>Resources\net60\System.IO.MemoryMappedFiles.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.Pipes.AccessControl.dll">
+          <LogicalName>net60.System.IO.Pipes.AccessControl</LogicalName>
+          <Link>Resources\net60\System.IO.Pipes.AccessControl.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.Pipes.dll">
+          <LogicalName>net60.System.IO.Pipes</LogicalName>
+          <Link>Resources\net60\System.IO.Pipes.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.IO.UnmanagedMemoryStream.dll">
+          <LogicalName>net60.System.IO.UnmanagedMemoryStream</LogicalName>
+          <Link>Resources\net60\System.IO.UnmanagedMemoryStream.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Linq.dll">
+          <LogicalName>net60.System.Linq</LogicalName>
+          <Link>Resources\net60\System.Linq.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Linq.Expressions.dll">
+          <LogicalName>net60.System.Linq.Expressions</LogicalName>
+          <Link>Resources\net60\System.Linq.Expressions.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Linq.Parallel.dll">
+          <LogicalName>net60.System.Linq.Parallel</LogicalName>
+          <Link>Resources\net60\System.Linq.Parallel.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Linq.Queryable.dll">
+          <LogicalName>net60.System.Linq.Queryable</LogicalName>
+          <Link>Resources\net60\System.Linq.Queryable.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Memory.dll">
+          <LogicalName>net60.System.Memory</LogicalName>
+          <Link>Resources\net60\System.Memory.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.dll">
+          <LogicalName>net60.System.Net</LogicalName>
+          <Link>Resources\net60\System.Net.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.Http.dll">
+          <LogicalName>net60.System.Net.Http</LogicalName>
+          <Link>Resources\net60\System.Net.Http.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.Http.Json.dll">
+          <LogicalName>net60.System.Net.Http.Json</LogicalName>
+          <Link>Resources\net60\System.Net.Http.Json.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.HttpListener.dll">
+          <LogicalName>net60.System.Net.HttpListener</LogicalName>
+          <Link>Resources\net60\System.Net.HttpListener.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.Mail.dll">
+          <LogicalName>net60.System.Net.Mail</LogicalName>
+          <Link>Resources\net60\System.Net.Mail.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.NameResolution.dll">
+          <LogicalName>net60.System.Net.NameResolution</LogicalName>
+          <Link>Resources\net60\System.Net.NameResolution.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.NetworkInformation.dll">
+          <LogicalName>net60.System.Net.NetworkInformation</LogicalName>
+          <Link>Resources\net60\System.Net.NetworkInformation.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.Ping.dll">
+          <LogicalName>net60.System.Net.Ping</LogicalName>
+          <Link>Resources\net60\System.Net.Ping.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.Primitives.dll">
+          <LogicalName>net60.System.Net.Primitives</LogicalName>
+          <Link>Resources\net60\System.Net.Primitives.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.Requests.dll">
+          <LogicalName>net60.System.Net.Requests</LogicalName>
+          <Link>Resources\net60\System.Net.Requests.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.Security.dll">
+          <LogicalName>net60.System.Net.Security</LogicalName>
+          <Link>Resources\net60\System.Net.Security.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.ServicePoint.dll">
+          <LogicalName>net60.System.Net.ServicePoint</LogicalName>
+          <Link>Resources\net60\System.Net.ServicePoint.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.Sockets.dll">
+          <LogicalName>net60.System.Net.Sockets</LogicalName>
+          <Link>Resources\net60\System.Net.Sockets.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.WebClient.dll">
+          <LogicalName>net60.System.Net.WebClient</LogicalName>
+          <Link>Resources\net60\System.Net.WebClient.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.WebHeaderCollection.dll">
+          <LogicalName>net60.System.Net.WebHeaderCollection</LogicalName>
+          <Link>Resources\net60\System.Net.WebHeaderCollection.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.WebProxy.dll">
+          <LogicalName>net60.System.Net.WebProxy</LogicalName>
+          <Link>Resources\net60\System.Net.WebProxy.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.WebSockets.Client.dll">
+          <LogicalName>net60.System.Net.WebSockets.Client</LogicalName>
+          <Link>Resources\net60\System.Net.WebSockets.Client.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Net.WebSockets.dll">
+          <LogicalName>net60.System.Net.WebSockets</LogicalName>
+          <Link>Resources\net60\System.Net.WebSockets.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Numerics.dll">
+          <LogicalName>net60.System.Numerics</LogicalName>
+          <Link>Resources\net60\System.Numerics.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Numerics.Vectors.dll">
+          <LogicalName>net60.System.Numerics.Vectors</LogicalName>
+          <Link>Resources\net60\System.Numerics.Vectors.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.ObjectModel.dll">
+          <LogicalName>net60.System.ObjectModel</LogicalName>
+          <Link>Resources\net60\System.ObjectModel.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Reflection.DispatchProxy.dll">
+          <LogicalName>net60.System.Reflection.DispatchProxy</LogicalName>
+          <Link>Resources\net60\System.Reflection.DispatchProxy.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Reflection.dll">
+          <LogicalName>net60.System.Reflection</LogicalName>
+          <Link>Resources\net60\System.Reflection.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Reflection.Emit.dll">
+          <LogicalName>net60.System.Reflection.Emit</LogicalName>
+          <Link>Resources\net60\System.Reflection.Emit.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Reflection.Emit.ILGeneration.dll">
+          <LogicalName>net60.System.Reflection.Emit.ILGeneration</LogicalName>
+          <Link>Resources\net60\System.Reflection.Emit.ILGeneration.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Reflection.Emit.Lightweight.dll">
+          <LogicalName>net60.System.Reflection.Emit.Lightweight</LogicalName>
+          <Link>Resources\net60\System.Reflection.Emit.Lightweight.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Reflection.Extensions.dll">
+          <LogicalName>net60.System.Reflection.Extensions</LogicalName>
+          <Link>Resources\net60\System.Reflection.Extensions.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Reflection.Metadata.dll">
+          <LogicalName>net60.System.Reflection.Metadata</LogicalName>
+          <Link>Resources\net60\System.Reflection.Metadata.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Reflection.Primitives.dll">
+          <LogicalName>net60.System.Reflection.Primitives</LogicalName>
+          <Link>Resources\net60\System.Reflection.Primitives.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Reflection.TypeExtensions.dll">
+          <LogicalName>net60.System.Reflection.TypeExtensions</LogicalName>
+          <Link>Resources\net60\System.Reflection.TypeExtensions.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Resources.Reader.dll">
+          <LogicalName>net60.System.Resources.Reader</LogicalName>
+          <Link>Resources\net60\System.Resources.Reader.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Resources.ResourceManager.dll">
+          <LogicalName>net60.System.Resources.ResourceManager</LogicalName>
+          <Link>Resources\net60\System.Resources.ResourceManager.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Resources.Writer.dll">
+          <LogicalName>net60.System.Resources.Writer</LogicalName>
+          <Link>Resources\net60\System.Resources.Writer.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.CompilerServices.Unsafe.dll">
+          <LogicalName>net60.System.Runtime.CompilerServices.Unsafe</LogicalName>
+          <Link>Resources\net60\System.Runtime.CompilerServices.Unsafe.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.CompilerServices.VisualC.dll">
+          <LogicalName>net60.System.Runtime.CompilerServices.VisualC</LogicalName>
+          <Link>Resources\net60\System.Runtime.CompilerServices.VisualC.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.dll">
+          <LogicalName>net60.System.Runtime</LogicalName>
+          <Link>Resources\net60\System.Runtime.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.Extensions.dll">
+          <LogicalName>net60.System.Runtime.Extensions</LogicalName>
+          <Link>Resources\net60\System.Runtime.Extensions.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.Handles.dll">
+          <LogicalName>net60.System.Runtime.Handles</LogicalName>
+          <Link>Resources\net60\System.Runtime.Handles.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.InteropServices.dll">
+          <LogicalName>net60.System.Runtime.InteropServices</LogicalName>
+          <Link>Resources\net60\System.Runtime.InteropServices.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.InteropServices.RuntimeInformation.dll">
+          <LogicalName>net60.System.Runtime.InteropServices.RuntimeInformation</LogicalName>
+          <Link>Resources\net60\System.Runtime.InteropServices.RuntimeInformation.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.Intrinsics.dll">
+          <LogicalName>net60.System.Runtime.Intrinsics</LogicalName>
+          <Link>Resources\net60\System.Runtime.Intrinsics.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.Loader.dll">
+          <LogicalName>net60.System.Runtime.Loader</LogicalName>
+          <Link>Resources\net60\System.Runtime.Loader.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.Numerics.dll">
+          <LogicalName>net60.System.Runtime.Numerics</LogicalName>
+          <Link>Resources\net60\System.Runtime.Numerics.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.Serialization.dll">
+          <LogicalName>net60.System.Runtime.Serialization</LogicalName>
+          <Link>Resources\net60\System.Runtime.Serialization.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.Serialization.Formatters.dll">
+          <LogicalName>net60.System.Runtime.Serialization.Formatters</LogicalName>
+          <Link>Resources\net60\System.Runtime.Serialization.Formatters.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.Serialization.Json.dll">
+          <LogicalName>net60.System.Runtime.Serialization.Json</LogicalName>
+          <Link>Resources\net60\System.Runtime.Serialization.Json.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.Serialization.Primitives.dll">
+          <LogicalName>net60.System.Runtime.Serialization.Primitives</LogicalName>
+          <Link>Resources\net60\System.Runtime.Serialization.Primitives.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Runtime.Serialization.Xml.dll">
+          <LogicalName>net60.System.Runtime.Serialization.Xml</LogicalName>
+          <Link>Resources\net60\System.Runtime.Serialization.Xml.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.AccessControl.dll">
+          <LogicalName>net60.System.Security.AccessControl</LogicalName>
+          <Link>Resources\net60\System.Security.AccessControl.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.Claims.dll">
+          <LogicalName>net60.System.Security.Claims</LogicalName>
+          <Link>Resources\net60\System.Security.Claims.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.Cryptography.Algorithms.dll">
+          <LogicalName>net60.System.Security.Cryptography.Algorithms</LogicalName>
+          <Link>Resources\net60\System.Security.Cryptography.Algorithms.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.Cryptography.Cng.dll">
+          <LogicalName>net60.System.Security.Cryptography.Cng</LogicalName>
+          <Link>Resources\net60\System.Security.Cryptography.Cng.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.Cryptography.Csp.dll">
+          <LogicalName>net60.System.Security.Cryptography.Csp</LogicalName>
+          <Link>Resources\net60\System.Security.Cryptography.Csp.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.Cryptography.Encoding.dll">
+          <LogicalName>net60.System.Security.Cryptography.Encoding</LogicalName>
+          <Link>Resources\net60\System.Security.Cryptography.Encoding.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.Cryptography.OpenSsl.dll">
+          <LogicalName>net60.System.Security.Cryptography.OpenSsl</LogicalName>
+          <Link>Resources\net60\System.Security.Cryptography.OpenSsl.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.Cryptography.Primitives.dll">
+          <LogicalName>net60.System.Security.Cryptography.Primitives</LogicalName>
+          <Link>Resources\net60\System.Security.Cryptography.Primitives.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.Cryptography.X509Certificates.dll">
+          <LogicalName>net60.System.Security.Cryptography.X509Certificates</LogicalName>
+          <Link>Resources\net60\System.Security.Cryptography.X509Certificates.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.dll">
+          <LogicalName>net60.System.Security</LogicalName>
+          <Link>Resources\net60\System.Security.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.Principal.dll">
+          <LogicalName>net60.System.Security.Principal</LogicalName>
+          <Link>Resources\net60\System.Security.Principal.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.Principal.Windows.dll">
+          <LogicalName>net60.System.Security.Principal.Windows</LogicalName>
+          <Link>Resources\net60\System.Security.Principal.Windows.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Security.SecureString.dll">
+          <LogicalName>net60.System.Security.SecureString</LogicalName>
+          <Link>Resources\net60\System.Security.SecureString.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.ServiceModel.Web.dll">
+          <LogicalName>net60.System.ServiceModel.Web</LogicalName>
+          <Link>Resources\net60\System.ServiceModel.Web.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.ServiceProcess.dll">
+          <LogicalName>net60.System.ServiceProcess</LogicalName>
+          <Link>Resources\net60\System.ServiceProcess.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Text.Encoding.CodePages.dll">
+          <LogicalName>net60.System.Text.Encoding.CodePages</LogicalName>
+          <Link>Resources\net60\System.Text.Encoding.CodePages.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Text.Encoding.dll">
+          <LogicalName>net60.System.Text.Encoding</LogicalName>
+          <Link>Resources\net60\System.Text.Encoding.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Text.Encoding.Extensions.dll">
+          <LogicalName>net60.System.Text.Encoding.Extensions</LogicalName>
+          <Link>Resources\net60\System.Text.Encoding.Extensions.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Text.Encodings.Web.dll">
+          <LogicalName>net60.System.Text.Encodings.Web</LogicalName>
+          <Link>Resources\net60\System.Text.Encodings.Web.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Text.Json.dll">
+          <LogicalName>net60.System.Text.Json</LogicalName>
+          <Link>Resources\net60\System.Text.Json.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Text.RegularExpressions.dll">
+          <LogicalName>net60.System.Text.RegularExpressions</LogicalName>
+          <Link>Resources\net60\System.Text.RegularExpressions.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Threading.Channels.dll">
+          <LogicalName>net60.System.Threading.Channels</LogicalName>
+          <Link>Resources\net60\System.Threading.Channels.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Threading.dll">
+          <LogicalName>net60.System.Threading</LogicalName>
+          <Link>Resources\net60\System.Threading.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Threading.Overlapped.dll">
+          <LogicalName>net60.System.Threading.Overlapped</LogicalName>
+          <Link>Resources\net60\System.Threading.Overlapped.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Threading.Tasks.Dataflow.dll">
+          <LogicalName>net60.System.Threading.Tasks.Dataflow</LogicalName>
+          <Link>Resources\net60\System.Threading.Tasks.Dataflow.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Threading.Tasks.dll">
+          <LogicalName>net60.System.Threading.Tasks</LogicalName>
+          <Link>Resources\net60\System.Threading.Tasks.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Threading.Tasks.Extensions.dll">
+          <LogicalName>net60.System.Threading.Tasks.Extensions</LogicalName>
+          <Link>Resources\net60\System.Threading.Tasks.Extensions.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Threading.Tasks.Parallel.dll">
+          <LogicalName>net60.System.Threading.Tasks.Parallel</LogicalName>
+          <Link>Resources\net60\System.Threading.Tasks.Parallel.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Threading.Thread.dll">
+          <LogicalName>net60.System.Threading.Thread</LogicalName>
+          <Link>Resources\net60\System.Threading.Thread.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Threading.ThreadPool.dll">
+          <LogicalName>net60.System.Threading.ThreadPool</LogicalName>
+          <Link>Resources\net60\System.Threading.ThreadPool.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Threading.Timer.dll">
+          <LogicalName>net60.System.Threading.Timer</LogicalName>
+          <Link>Resources\net60\System.Threading.Timer.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Transactions.dll">
+          <LogicalName>net60.System.Transactions</LogicalName>
+          <Link>Resources\net60\System.Transactions.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Transactions.Local.dll">
+          <LogicalName>net60.System.Transactions.Local</LogicalName>
+          <Link>Resources\net60\System.Transactions.Local.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.ValueTuple.dll">
+          <LogicalName>net60.System.ValueTuple</LogicalName>
+          <Link>Resources\net60\System.ValueTuple.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Web.dll">
+          <LogicalName>net60.System.Web</LogicalName>
+          <Link>Resources\net60\System.Web.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Web.HttpUtility.dll">
+          <LogicalName>net60.System.Web.HttpUtility</LogicalName>
+          <Link>Resources\net60\System.Web.HttpUtility.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Windows.dll">
+          <LogicalName>net60.System.Windows</LogicalName>
+          <Link>Resources\net60\System.Windows.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Xml.dll">
+          <LogicalName>net60.System.Xml</LogicalName>
+          <Link>Resources\net60\System.Xml.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Xml.Linq.dll">
+          <LogicalName>net60.System.Xml.Linq</LogicalName>
+          <Link>Resources\net60\System.Xml.Linq.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Xml.ReaderWriter.dll">
+          <LogicalName>net60.System.Xml.ReaderWriter</LogicalName>
+          <Link>Resources\net60\System.Xml.ReaderWriter.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Xml.Serialization.dll">
+          <LogicalName>net60.System.Xml.Serialization</LogicalName>
+          <Link>Resources\net60\System.Xml.Serialization.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Xml.XDocument.dll">
+          <LogicalName>net60.System.Xml.XDocument</LogicalName>
+          <Link>Resources\net60\System.Xml.XDocument.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Xml.XmlDocument.dll">
+          <LogicalName>net60.System.Xml.XmlDocument</LogicalName>
+          <Link>Resources\net60\System.Xml.XmlDocument.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Xml.XmlSerializer.dll">
+          <LogicalName>net60.System.Xml.XmlSerializer</LogicalName>
+          <Link>Resources\net60\System.Xml.XmlSerializer.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Xml.XPath.dll">
+          <LogicalName>net60.System.Xml.XPath</LogicalName>
+          <Link>Resources\net60\System.Xml.XPath.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\System.Xml.XPath.XDocument.dll">
+          <LogicalName>net60.System.Xml.XPath.XDocument</LogicalName>
+          <Link>Resources\net60\System.Xml.XPath.XDocument.dll</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="$(NuGetPackageRoot)\microsoft.netcore.app.ref\6.0.2\ref\net6.0\WindowsBase.dll">
+          <LogicalName>net60.WindowsBase</LogicalName>
+          <Link>Resources\net60\WindowsBase.dll</Link>
+        </EmbeddedResource>
+    </ItemGroup>
+  </Project>

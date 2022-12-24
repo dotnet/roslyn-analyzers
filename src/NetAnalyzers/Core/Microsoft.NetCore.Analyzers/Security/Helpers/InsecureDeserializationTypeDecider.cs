@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -183,6 +183,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
 
             if (this.InsecureTypeSymbols.Count == 0)
             {
+                results = ImmutableArray<InsecureObjectGraphResult>.Empty;
                 return false;
             }
 
@@ -232,7 +233,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
 
                 bool hasAnyXmlSerializationAttributes =
                     this.XmlSerializationAttributeTypes.HasAnyAttribute(typeSymbol)
-                        || typeSymbol.GetMembers().Any(m => this.XmlSerializationAttributeTypes.HasAnyAttribute(m));
+                        || typeSymbol.GetMembers().Any(this.XmlSerializationAttributeTypes.HasAnyAttribute);
 
                 // Consider handling other Newtonsoft Json.NET member serialization modes other than its default.
 
@@ -285,7 +286,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                                 && ((options.BinarySerialization
                                         && hasSerializableAttribute
                                         && !propertySymbol.HasAttribute(this.NonSerializedAttributeTypeSymbol)
-                                        && propertySymbol.IsPropertyWithBackingField()
+                                        && propertySymbol.IsPropertyWithBackingField(out _)
                                         )
                                     || (options.DataContractSerialization
                                         && ((hasDataContractAttribute && propertySymbol.HasAttribute(this.DataMemberAttributeTypeSymbol))

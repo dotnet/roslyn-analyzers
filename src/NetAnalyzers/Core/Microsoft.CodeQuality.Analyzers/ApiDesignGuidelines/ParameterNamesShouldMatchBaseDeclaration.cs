@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
@@ -9,8 +9,10 @@ using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1725: Parameter names should match base declaration
+    /// CA1725: <inheritdoc cref="ParameterNamesShouldMatchBaseDeclarationTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ParameterNamesShouldMatchBaseDeclarationAnalyzer : DiagnosticAnalyzer
@@ -18,38 +20,33 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal const string RuleId = "CA1725";
         internal const string NewNamePropertyName = "NewName";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ParameterNamesShouldMatchBaseDeclarationTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ParameterNamesShouldMatchBaseDeclarationMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ParameterNamesShouldMatchBaseDeclarationDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false,
-                                                                             isEnabledByDefaultInFxCopAnalyzers: false);
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(ParameterNamesShouldMatchBaseDeclarationTitle)),
+            CreateLocalizableResourceString(nameof(ParameterNamesShouldMatchBaseDeclarationMessage)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: CreateLocalizableResourceString(nameof(ParameterNamesShouldMatchBaseDeclarationDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(AnalyzeMethodSymbol, SymbolKind.Method);
+            context.RegisterSymbolAction(AnalyzeMethodSymbol, SymbolKind.Method);
         }
 
         private static void AnalyzeMethodSymbol(SymbolAnalysisContext analysisContext)
         {
             var methodSymbol = (IMethodSymbol)analysisContext.Symbol;
 
-            if (!methodSymbol.MatchesConfiguredVisibility(analysisContext.Options, Rule, analysisContext.CancellationToken) ||
+            if (!analysisContext.Options.MatchesConfiguredVisibility(Rule, methodSymbol, analysisContext.Compilation) ||
                 !(methodSymbol.CanBeReferencedByName || methodSymbol.IsImplementationOfAnyExplicitInterfaceMember())
                 || !methodSymbol.Locations.Any(x => x.IsInSource)
                 || string.IsNullOrWhiteSpace(methodSymbol.Name))
@@ -120,9 +117,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (currentParameter.Name != bestMatchParameter.Name)
                 {
-                    var properties = ImmutableDictionary<string, string>.Empty.SetItem(NewNamePropertyName, bestMatchParameter.Name);
+                    var properties = ImmutableDictionary<string, string?>.Empty.SetItem(NewNamePropertyName, bestMatchParameter.Name);
 
-                    analysisContext.ReportDiagnostic(Diagnostic.Create(Rule, currentParameter.Locations.First(), properties, methodSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat), currentParameter.Name, bestMatchParameter.Name, bestMatch.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                    analysisContext.ReportDiagnostic(currentParameter.CreateDiagnostic(Rule, properties, methodSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat), currentParameter.Name, bestMatchParameter.Name, bestMatch.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
                 }
             }
         }

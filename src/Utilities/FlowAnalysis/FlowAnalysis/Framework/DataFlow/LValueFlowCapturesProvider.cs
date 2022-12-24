@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
@@ -55,12 +55,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             {
                 foreach (var captureId in lvalueFlowCaptureIdBuilder)
                 {
-                    if (rvalueFlowCaptureIds.ContainsKey(captureId))
+                    if (rvalueFlowCaptureIds.TryGetValue(captureId, out var operations))
                     {
                         // Flow capture reference is used on left side as well as right side for
                         // CFG generated for coalesce assignment operation ('??=')
                         // Do not fire an assert for this known anomaly.
-                        var operations = rvalueFlowCaptureIds[captureId];
                         if (operations.Count == 1 &&
                             operations.Single().Parent?.Kind == OperationKind.FlowCapture)
                         {

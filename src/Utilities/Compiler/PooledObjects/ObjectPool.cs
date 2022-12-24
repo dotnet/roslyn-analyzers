@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 // define TRACE_LEAKS to get additional diagnostics that can lead to the leak sources. note: it will
 // make everything about 2-3x slower
@@ -37,7 +37,7 @@ namespace Analyzer.Utilities.PooledObjects
     /// Rationale: 
     ///    If there is no intent for reusing the object, do not use pool - just use "new". 
     /// </summary>
-    internal class ObjectPool<T> where T : class
+    internal sealed class ObjectPool<T> where T : class
     {
         [DebuggerDisplay("{Value,nq}")]
 #pragma warning disable CA1815 // Override equals and operator equals on value types
@@ -165,12 +165,10 @@ namespace Analyzer.Utilities.PooledObjects
                 // We will interlock only when we have a candidate. in a worst case we may miss some
                 // recently returned objects. Not a big deal.
                 T? inst = items[i].Value;
-                if (inst != null)
+                if (inst != null &&
+                    inst == Interlocked.CompareExchange(ref items[i].Value, null, inst))
                 {
-                    if (inst == Interlocked.CompareExchange(ref items[i].Value, null, inst))
-                    {
-                        return inst;
-                    }
+                    return inst;
                 }
             }
 

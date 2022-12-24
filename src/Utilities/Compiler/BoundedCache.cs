@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 namespace Analyzer.Utilities
 {
@@ -7,7 +7,7 @@ namespace Analyzer.Utilities
     /// Acts as a good alternative to <see cref="System.Runtime.CompilerServices.ConditionalWeakTable{TKey, TValue}"/>
     /// when the cached value has a cyclic reference to the key preventing early garbage collection of entries.
     /// </summary>
-    internal class BoundedCache<TKey, TValue> : BoundedCacheWithFactory<TKey, TValue>
+    internal sealed class BoundedCache<TKey, TValue> : BoundedCacheWithFactory<TKey, TValue>
         where TKey : class
         where TValue : new()
     {

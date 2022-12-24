@@ -1,28 +1,24 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ProvideObsoleteAttributeMessageAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ProvideObsoleteAttributeMessageAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class ProvideObsoleteAttributeMessageTests : DiagnosticAnalyzerTestBase
+    public class ProvideObsoleteAttributeMessageTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new ProvideObsoleteAttributeMessageAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new ProvideObsoleteAttributeMessageAnalyzer();
-        }
-
         [Fact]
-        public void CSharpSimpleCases()
+        public async Task CSharpSimpleCasesAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Obsolete]
@@ -55,9 +51,9 @@ public delegate void del(int x);
         }
 
         [Fact]
-        public void BasicSimpleCases()
+        public async Task BasicSimpleCasesAsync()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 <Obsolete>
@@ -92,9 +88,9 @@ Public Delegate Sub del(x As Integer)
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void CSharpNoDiagnosticsForInternal()
+        public async Task CSharpNoDiagnosticsForInternalAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Obsolete]
@@ -119,9 +115,9 @@ delegate void del(int x);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void BasicNoDiagnosticsForInternal()
+        public async Task BasicNoDiagnosticsForInternalAsync()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 <Obsolete>
@@ -148,9 +144,9 @@ Delegate Sub del(x As Integer)
         }
 
         [Fact]
-        public void CSharpNoDiagnostics()
+        public async Task CSharpNoDiagnosticsAsync()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Obsolete(""message"")]
@@ -169,9 +165,9 @@ class A
         }
 
         [Fact]
-        public void BasicNoDiagnostics()
+        public async Task BasicNoDiagnosticsAsync()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 <Obsolete(""valid"")>
@@ -190,13 +186,18 @@ End Class
 ");
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
-        {
-            return GetCSharpResultAt(line, column, ProvideObsoleteAttributeMessageAnalyzer.Rule, symbolName);
-        }
-        private DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
-        {
-            return GetBasicResultAt(line, column, ProvideObsoleteAttributeMessageAnalyzer.Rule, symbolName);
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
+#pragma warning disable RS0030 // Do not use banned APIs
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not use banned APIs
+                .WithArguments(symbolName);
+
+        private static DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
+#pragma warning disable RS0030 // Do not use banned APIs
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not use banned APIs
+                .WithArguments(symbolName);
     }
 }

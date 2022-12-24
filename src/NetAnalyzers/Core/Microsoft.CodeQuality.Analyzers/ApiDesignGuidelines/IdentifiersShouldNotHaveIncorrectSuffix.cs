@@ -1,69 +1,69 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
-    /// CA1711: Identifiers should not have incorrect suffix
+    /// CA1711: <inheritdoc cref="IdentifiersShouldNotHaveIncorrectSuffixTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class IdentifiersShouldNotHaveIncorrectSuffixAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1711";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotHaveIncorrectSuffixTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(IdentifiersShouldNotHaveIncorrectSuffixTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(IdentifiersShouldNotHaveIncorrectSuffixDescription));
 
-        private static readonly LocalizableString s_localizableMessageTypeNoAlternate = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotHaveIncorrectSuffixMessageTypeNoAlternate), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageMemberNewerVersion = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotHaveIncorrectSuffixMessageMemberNewerVersion), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageTypeNewerVersion = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotHaveIncorrectSuffixMessageTypeNewerVersion), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageMemberWithAlternate = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotHaveIncorrectSuffixMessageMemberWithAlternate), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotHaveIncorrectSuffixDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor TypeNoAlternateRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotHaveIncorrectSuffixMessageTypeNoAlternate)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor TypeNoAlternateRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageTypeNoAlternate,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false,
-                                                                             isEnabledByDefaultInFxCopAnalyzers: false);
-        internal static DiagnosticDescriptor MemberNewerVersionRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageMemberNewerVersion,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false,
-                                                                             isEnabledByDefaultInFxCopAnalyzers: false);
-        internal static DiagnosticDescriptor TypeNewerVersionRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageTypeNewerVersion,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false,
-                                                                             isEnabledByDefaultInFxCopAnalyzers: false);
-        internal static DiagnosticDescriptor MemberWithAlternateRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageMemberWithAlternate,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false,
-                                                                             isEnabledByDefaultInFxCopAnalyzers: false);
+        internal static readonly DiagnosticDescriptor MemberNewerVersionRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotHaveIncorrectSuffixMessageMemberNewerVersion)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+        internal static readonly DiagnosticDescriptor TypeNewerVersionRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotHaveIncorrectSuffixMessageTypeNewerVersion)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor MemberWithAlternateRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            CreateLocalizableResourceString(nameof(IdentifiersShouldNotHaveIncorrectSuffixMessageMemberWithAlternate)),
+            DiagnosticCategory.Naming,
+            RuleLevel.IdeHidden_BulkConfigurable,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             TypeNoAlternateRule,
             MemberNewerVersionRule,
             TypeNewerVersionRule,
@@ -85,6 +85,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal const string CoreSuffix = "Core";
         internal const string QueueSuffix = "Queue";
         internal const string StackSuffix = "Stack";
+        internal const string FlagSuffix = "Flag";
+        internal const string FlagsSuffix = "Flags";
 
         // Dictionary that maps from a type name suffix to the set of base types from which
         // a type with that suffix is permitted to derive.
@@ -112,13 +114,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 [EnumSuffix] = ImmutableArray.CreateRange(new[] { "System.Enum" })
             });
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
             // Analyze type names.
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 compilationStartAnalysisContext =>
                 {
                     var suffixToBaseTypeDictionaryBuilder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<INamedTypeSymbol>>();
@@ -142,17 +144,22 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                             // Note all the descriptors/rules for this analyzer have the same ID and category and hence
                             // will always have identical configured visibility.
-                            if (!namedTypeSymbol.MatchesConfiguredVisibility(symbolAnalysisContext.Options, TypeNoAlternateRule, symbolAnalysisContext.CancellationToken))
+                            if (!symbolAnalysisContext.Options.MatchesConfiguredVisibility(TypeNoAlternateRule, namedTypeSymbol, symbolAnalysisContext.Compilation))
                             {
                                 return;
                             }
+
+                            var allowedSuffixes = symbolAnalysisContext.Options.GetStringOptionValue(EditorConfigOptionNames.AllowedSuffixes, TypeNoAlternateRule,
+                                    namedTypeSymbol.Locations[0].SourceTree, symbolAnalysisContext.Compilation)
+                                .Split('|')
+                                .ToImmutableHashSet();
 
                             string name = namedTypeSymbol.Name;
                             Compilation compilation = symbolAnalysisContext.Compilation;
 
                             foreach (string suffix in s_suffixToBaseTypeNamesDictionary.Keys)
                             {
-                                if (IsNotChildOfAnyButHasSuffix(namedTypeSymbol, suffixToBaseTypeDictionary[suffix], suffix))
+                                if (IsNotChildOfAnyButHasSuffix(namedTypeSymbol, suffixToBaseTypeDictionary[suffix], suffix, allowedSuffixes))
                                 {
                                     symbolAnalysisContext.ReportDiagnostic(
                                         namedTypeSymbol.CreateDiagnostic(TypeNoAlternateRule, name, suffix));
@@ -162,7 +169,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                             foreach (string suffix in s_suffixToAllowedTypesDictionary.Keys)
                             {
-                                if (name.HasSuffix(suffix)
+                                if (IsInvalidSuffix(name, suffix, allowedSuffixes)
                                     && !s_suffixToAllowedTypesDictionary[suffix].Contains(name))
                                 {
                                     symbolAnalysisContext.ReportDiagnostic(
@@ -171,7 +178,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                 }
                             }
 
-                            if (name.HasSuffix(ImplSuffix))
+                            if (IsInvalidSuffix(name, ImplSuffix, allowedSuffixes))
                             {
                                 symbolAnalysisContext.ReportDiagnostic(
                                     namedTypeSymbol.CreateDiagnostic(MemberWithAlternateRule, ImplSuffix, name, CoreSuffix));
@@ -181,31 +188,48 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             // FxCop performed the length check for "Ex", but not for any of the other
                             // suffixes, because alone among the suffixes, "Ex" is the only one that
                             // isn't itself a known type or a language keyword.
-                            if (name.HasSuffix(ExSuffix) && name.Length > ExSuffix.Length)
+                            if (IsInvalidSuffix(name, ExSuffix, allowedSuffixes) && name.Length > ExSuffix.Length)
                             {
                                 symbolAnalysisContext.ReportDiagnostic(
                                     namedTypeSymbol.CreateDiagnostic(TypeNewerVersionRule, ExSuffix, name));
                                 return;
                             }
 
-                            if (name.HasSuffix(NewSuffix))
+                            if (IsInvalidSuffix(name, NewSuffix, allowedSuffixes))
                             {
                                 symbolAnalysisContext.ReportDiagnostic(
                                     namedTypeSymbol.CreateDiagnostic(TypeNewerVersionRule, NewSuffix, name));
                                 return;
                             }
+
+                            if (namedTypeSymbol.TypeKind == TypeKind.Enum)
+                            {
+                                if (IsInvalidSuffix(name, FlagSuffix, allowedSuffixes))
+                                {
+                                    symbolAnalysisContext.ReportDiagnostic(
+                                        namedTypeSymbol.CreateDiagnostic(TypeNoAlternateRule, name, FlagSuffix));
+                                    return;
+                                }
+
+                                if (IsInvalidSuffix(name, FlagsSuffix, allowedSuffixes))
+                                {
+                                    symbolAnalysisContext.ReportDiagnostic(
+                                        namedTypeSymbol.CreateDiagnostic(TypeNoAlternateRule, name, FlagsSuffix));
+                                    return;
+                                }
+                            }
                         }, SymbolKind.NamedType);
                 });
 
             // Analyze method names.
-            analysisContext.RegisterSymbolAction(
+            context.RegisterSymbolAction(
                 (SymbolAnalysisContext context) =>
                 {
                     var memberSymbol = context.Symbol;
 
                     // Note all the descriptors/rules for this analyzer have the same ID and category and hence
                     // will always have identical configured visibility.
-                    if (!memberSymbol.MatchesConfiguredVisibility(context.Options, TypeNoAlternateRule, context.CancellationToken))
+                    if (!context.Options.MatchesConfiguredVisibility(TypeNoAlternateRule, memberSymbol, context.Compilation))
                     {
                         return;
                     }
@@ -224,7 +248,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     string name = memberSymbol.Name;
 
-                    if (name.HasSuffix(ExSuffix))
+                    var allowedSuffixes = context.Options.GetStringOptionValue(EditorConfigOptionNames.AllowedSuffixes, TypeNoAlternateRule,
+                            memberSymbol.Locations[0].SourceTree, context.Compilation)
+                        .Split('|')
+                        .ToImmutableHashSet();
+
+                    if (IsInvalidSuffix(name, ExSuffix, allowedSuffixes))
                     {
                         context.ReportDiagnostic(
                             memberSymbol.CreateDiagnostic(MemberNewerVersionRule, ExSuffix, name));
@@ -235,7 +264,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // another member minus the suffix, e.g., we only fire on "MemberNew" if
                     // "Member" already exists. For some reason FxCop did not apply the
                     // same logic to the "Ex" suffix, and we follow FxCop's implementation.
-                    if (name.HasSuffix(NewSuffix))
+                    if (IsInvalidSuffix(name, NewSuffix, allowedSuffixes))
                     {
                         string nameWithoutSuffix = name.WithoutSuffix(NewSuffix);
                         INamedTypeSymbol containingType = memberSymbol.ContainingType;
@@ -248,7 +277,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         }
                     }
 
-                    if (name.HasSuffix(ImplSuffix))
+                    if (IsInvalidSuffix(name, ImplSuffix, allowedSuffixes))
                     {
                         context.ReportDiagnostic(
                             memberSymbol.CreateDiagnostic(MemberWithAlternateRule, ImplSuffix, name, CoreSuffix));
@@ -269,7 +298,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return false;
         }
 
-        private static bool IsNotChildOfAnyButHasSuffix(INamedTypeSymbol namedTypeSymbol, ImmutableArray<INamedTypeSymbol> parentTypes, string suffix)
+        private static bool IsNotChildOfAnyButHasSuffix(INamedTypeSymbol namedTypeSymbol, ImmutableArray<INamedTypeSymbol> parentTypes, string suffix, ImmutableHashSet<string> allowedSuffixes)
         {
             if (parentTypes.IsEmpty)
             {
@@ -277,8 +306,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return false;
             }
 
-            return namedTypeSymbol.Name.HasSuffix(suffix)
-                && !parentTypes.Any(parentType => namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf(parentType));
+            return IsInvalidSuffix(namedTypeSymbol.Name, suffix, allowedSuffixes)
+                && !parentTypes.Any(namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf);
         }
+
+        private static bool IsInvalidSuffix(string name, string suffix, ImmutableHashSet<string> allowedSuffixes)
+            => !allowedSuffixes.Contains(suffix) && name.HasSuffix(suffix);
     }
 }

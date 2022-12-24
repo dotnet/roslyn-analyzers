@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -11,28 +11,32 @@ using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
+    /// CA2354: <inheritdoc cref="DataSetDataTableInRceDeserializableObjectGraphTitle"/>
     /// For detecting deserialization of <see cref="T:System.Data.DataSet"/> or <see cref="T:System.Data.DataTable"/> in an
     /// IFormatter deserialized object graph.
     /// </summary>
     [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DataSetDataTableInIFormatterSerializableObjectGraphAnalyzer : DiagnosticAnalyzer
+    public abstract class DataSetDataTableInIFormatterSerializableObjectGraphAnalyzer : DiagnosticAnalyzer
     {
         internal static readonly DiagnosticDescriptor ObjectGraphContainsDangerousTypeDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2354",
-                nameof(MicrosoftNetCoreAnalyzersResources.DataSetDataTableInRceDeserializableObjectGraphTitle),
-                nameof(MicrosoftNetCoreAnalyzersResources.DataSetDataTableInRceDeserializableObjectGraphMessage),
+                nameof(DataSetDataTableInRceDeserializableObjectGraphTitle),
+                nameof(DataSetDataTableInRceDeserializableObjectGraphMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
                 isDataflowRule: false,
                 isReportedAtCompilationEnd: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(ObjectGraphContainsDangerousTypeDescriptor);
 
-        public override void Initialize(AnalysisContext context)
+        protected abstract string ToString(TypedConstant typedConstant);
+
+        public sealed override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
 
@@ -123,7 +127,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             ObjectGraphContainsDangerousTypeDescriptor,
                                             invocationOperation.Parent.Syntax.GetLocation(),
                                             result.InsecureType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                                            result.GetDisplayString()));
+                                            result.GetDisplayString(typedConstant => ToString(typedConstant))));
                                 }
                             }
                         },

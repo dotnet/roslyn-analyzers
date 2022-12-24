@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Diagnostics;
 
@@ -9,7 +9,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
         /// <summary>
         /// Abstract value domain for <see cref="PointsToAnalysis"/> to merge and compare <see cref="PointsToAbstractValue"/> values.
         /// </summary>
-        private class PointsToAbstractValueDomain : AbstractValueDomain<PointsToAbstractValue>
+        private sealed class PointsToAbstractValueDomain : AbstractValueDomain<PointsToAbstractValue>
         {
             public static PointsToAbstractValueDomain Default = new();
             private readonly SetAbstractDomain<AbstractLocation> _locationsDomain = SetAbstractDomain<AbstractLocation>.Default;

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -71,17 +71,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                             ISymbol owningSymbol = operationBlockStartContext.OwningSymbol;
                             AnalyzerOptions options = operationBlockStartContext.Options;
                             CancellationToken cancellationToken = operationBlockStartContext.CancellationToken;
-                            if (owningSymbol.IsConfiguredToSkipAnalysis(options, TaintedDataEnteringSinkDescriptor, compilation, cancellationToken))
+                            if (options.IsConfiguredToSkipAnalysis(TaintedDataEnteringSinkDescriptor, owningSymbol, compilation))
                             {
                                 return;
                             }
 
                             WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
-                            InterproceduralAnalysisConfiguration interproceduralAnalysisConfiguration = InterproceduralAnalysisConfiguration.Create(
-                                                                    options,
-                                                                    SupportedDiagnostics,
-                                                                    defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                                                    cancellationToken: cancellationToken);
                             Lazy<ControlFlowGraph?> controlFlowGraphFactory = new Lazy<ControlFlowGraph?>(
                                 () => operationBlockStartContext.OperationBlocks.GetControlFlowGraph());
                             Lazy<PointsToAnalysisResult?> pointsToFactory = new Lazy<PointsToAnalysisResult?>(
@@ -92,6 +87,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         return null;
                                     }
 
+                                    InterproceduralAnalysisConfiguration interproceduralAnalysisConfiguration = InterproceduralAnalysisConfiguration.Create(
+                                                                    options,
+                                                                    SupportedDiagnostics,
+                                                                    controlFlowGraphFactory.Value,
+                                                                    operationBlockStartContext.Compilation,
+                                                                    defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive);
                                     return PointsToAnalysis.TryGetOrComputeResult(
                                                                 controlFlowGraphFactory.Value,
                                                                 owningSymbol,
@@ -99,7 +100,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                 wellKnownTypeProvider,
                                                                 PointsToAnalysisKind.Complete,
                                                                 interproceduralAnalysisConfiguration,
-                                                                interproceduralAnalysisPredicateOpt: null);
+                                                                interproceduralAnalysisPredicate: null);
                                 });
                             Lazy<(PointsToAnalysisResult?, ValueContentAnalysisResult?)> valueContentFactory = new Lazy<(PointsToAnalysisResult?, ValueContentAnalysisResult?)>(
                                 () =>
@@ -109,6 +110,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         return (null, null);
                                     }
 
+                                    InterproceduralAnalysisConfiguration interproceduralAnalysisConfiguration = InterproceduralAnalysisConfiguration.Create(
+                                                                    options,
+                                                                    SupportedDiagnostics,
+                                                                    controlFlowGraphFactory.Value,
+                                                                    operationBlockStartContext.Compilation,
+                                                                    defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive);
                                     ValueContentAnalysisResult? valuecontentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
                                                                     controlFlowGraphFactory.Value,
                                                                     owningSymbol,
@@ -219,8 +226,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                     TaintedDataEnteringSinkDescriptor,
                                                     sourceInfoSymbolMap,
                                                     taintedDataConfig.GetSanitizerSymbolMap(this.SinkKind),
-                                                    sinkInfoSymbolMap,
-                                                    operationBlockAnalysisContext.CancellationToken);
+                                                    sinkInfoSymbolMap);
                                                 if (taintedDataAnalysisResult == null)
                                                 {
                                                     return;

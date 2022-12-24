@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Analyzer.Utilities.Extensions
@@ -17,22 +18,17 @@ namespace Analyzer.Utilities.Extensions
                 throw new ArgumentNullException(nameof(source));
             }
 
-            foreach (T v in source)
+            return ConcatImpl(source, value);
+
+            static IEnumerable<T> ConcatImpl(IEnumerable<T> source, T value)
             {
-                yield return v;
+                foreach (T v in source)
+                {
+                    yield return v;
+                }
+
+                yield return value;
             }
-
-            yield return value;
-        }
-
-        public static ISet<T> ToSet<T>(this IEnumerable<T> source, IEqualityComparer<T> comparer)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            return new HashSet<T>(source, comparer);
         }
 
         public static ISet<T> ToSet<T>(this IEnumerable<T> source)
@@ -204,12 +200,15 @@ namespace Analyzer.Utilities.Extensions
             }
 
             using var enumerator = source.GetEnumerator();
-            while (count > 0 && enumerator.MoveNext()) { count--; }
+            while (count > 0 && enumerator.MoveNext())
+            {
+                count--;
+            }
 
             return count > 0;
         }
 
-        private class ComparisonComparer<T> : Comparer<T>
+        private sealed class ComparisonComparer<T> : Comparer<T>
         {
             private readonly Comparison<T> _compare;
 
@@ -218,8 +217,13 @@ namespace Analyzer.Utilities.Extensions
                 _compare = compare;
             }
 
-            public override int Compare(T x, T y)
+            public override int Compare([AllowNull] T x, [AllowNull] T y)
             {
+                if (x is null)
+                    return y is null ? 0 : -1;
+                else if (y is null)
+                    return 1;
+
                 return _compare(x, y);
             }
         }

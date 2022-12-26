@@ -113,7 +113,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                         If addStatementNode IsNot Nothing Then
                             Dim newValueAssignment As SyntaxNode = generator.ExpressionStatement(
                                 generator.AssignmentStatement(identifierName, changedValueNode)).
-                                    WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed)
+                                    WithTrailingTrivia(SyntaxFactory.EndOfLine(Environment.NewLine))
                             editor.InsertBefore(addStatementNode, newValueAssignment)
                             editor.ReplaceNode(changedValueNode, identifierName)
                         End If

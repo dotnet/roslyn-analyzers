@@ -9,7 +9,7 @@ namespace ReleaseNotesUtil
     /// <summary>
     /// Comparer for sorting rules by category, then by ID.
     /// </summary>
-    internal class CategoryThenIdComparer : IComparer<RuleInfo>
+    internal sealed class CategoryThenIdComparer : IComparer<RuleInfo>
     {
         public static CategoryThenIdComparer Instance = new();
 

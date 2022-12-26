@@ -8,15 +8,6 @@ root = true
 indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
-# RS1024: Compare symbols correctly
-# https://github.com/dotnet/roslyn-analyzers/issues/3389
-dotnet_diagnostic.RS1024.severity = none
-
-# IDE0078: Use pattern matching
-# https://github.com/dotnet/roslyn/issues/51691
-# https://github.com/dotnet/roslyn/issues/51693
-dotnet_diagnostic.IDE0078.severity = silent
-
 # Code files
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
@@ -181,66 +172,8 @@ visual_basic_style_unused_value_assignment_preference = unused_local_variable:wa
 ### Configuration for IDE code style by diagnostic IDs ###
 [*.{cs,vb}]
 
-# Default severity for all IDE code style rules with category 'Style'
-dotnet_analyzer_diagnostic.category-Style.severity = warning
-
-# Default severity for all IDE code quality rules with category 'CodeQuality'
-dotnet_analyzer_diagnostic.category-CodeQuality.severity = warning
-
-# IDE0066: Convert switch statement to expression
-dotnet_diagnostic.IDE0066.severity = suggestion
-
 # IDE0073: File header
 file_header_template = Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
-
-# IDE0001: Name can be simplified
-dotnet_diagnostic.IDE0001.severity = silent
-
-# IDE0002: Name can be simplified
-dotnet_diagnostic.IDE0002.severity = silent
-
-# IDE0003: Name can be simplified
-dotnet_diagnostic.IDE0003.severity = silent
-
-# IDE0007: Use 'var' instead of explicit type
-dotnet_diagnostic.IDE0007.severity = silent
-
-# IDE0010: Add missing cases in switch statement
-dotnet_diagnostic.IDE0010.severity = silent
-
-# IDE0017: Object initialization can be simplified
-dotnet_diagnostic.IDE0017.severity = silent
-
-# IDE0045: 'if' statement can be simplified
-dotnet_diagnostic.IDE0045.severity = silent
-
-# IDE0046: 'if' statement can be simplified
-dotnet_diagnostic.IDE0046.severity = silent
-
-# IDE0048: Parentheses should be added for clarity
-dotnet_diagnostic.IDE0048.severity = silent
-
-# IDE0058: Expression value is never used
-dotnet_diagnostic.IDE0058.severity = silent
-
-# IDE0065: Using directives must be placed outside of a namespace declaration
-# Can remove the below entry and turn it into a warning once https://github.com/dotnet/roslyn/issues/43271 is resolved.
-dotnet_diagnostic.IDE0065.severity = silent
-
-# IDE0072: Populate switch
-dotnet_diagnostic.IDE0072.severity = silent
-
-# IDE0083: Use pattern matching
-dotnet_diagnostic.IDE0083.severity = silent
-
-# IDE0120: Simplify linq expression
-dotnet_diagnostic.IDE0120.severity = silent
-
-# IDE0130: Namespace does not match folder structure
-dotnet_diagnostic.IDE0130.severity = silent
-
-# IDE0150: Null check can be clarified
-dotnet_diagnostic.IDE0150.severity = silent
 
 # IDE2000: Allow multiple blank lines
 dotnet_style_allow_multiple_blank_lines_experimental = false
@@ -257,7 +190,7 @@ dotnet_style_allow_statement_immediately_after_block_experimental = false
 # IDE2004: Blank line not allowed after constructor initializer colon
 csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = false
 
-### Configuration for FxCop analyzers executed on this repo ###
+### Configuration for .Net analyzers executed on this repo ###
 [*.{cs,vb}]
 
 # Default analyzed API surface = 'all' (public APIs + non-public APIs)
@@ -275,35 +208,15 @@ dotnet_code_quality.CA1720.api_surface = public
 # CA1715: Identifiers should have correct prefix
 dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true
 
-# CA1002: Do not expose generic lists
-dotnet_diagnostic.CA1002.severity = suggestion
 
-# CA1024: Use properties where appropriate
-dotnet_diagnostic.CA1024.severity = suggestion
+# CA1305: Pass IFormatProvider - https://github.com/dotnet/roslyn-analyzers/issues/6379
+dotnet_diagnostic.CA1305.severity = suggestion
 
-# CA1033: Interface methods should be callable by child types
-dotnet_diagnostic.CA1033.severity = suggestion
-
-# CA1307: Specify StringComparison for clarity
-dotnet_diagnostic.CA1307.severity = suggestion
-
-# CA1711: Identifiers should not have incorrect suffix
-dotnet_diagnostic.CA1711.severity = suggestion
-
-# CA1309: Use ordinal string comparison
-dotnet_diagnostic.CA1309.severity = suggestion
+# CA1851: Possible multiple enumerations of 'IEnumerable' collection - https://github.com/dotnet/roslyn-analyzers/issues/6379
+dotnet_diagnostic.CA1851.severity = suggestion
 
 ### Configuration for PublicAPI analyzers executed on this repo ###
 [*.{cs,vb}]
 
 # Analyzers bail-out if the PublicAPI.*.txt file is not found
 dotnet_public_api_analyzer.require_api_files = true
-
-### Configuration for vs-threading analyzers executed on this repo ###
-[*.{cs,vb}]
-
-# VSTHRD002: Avoid problematic synchronous waits
-dotnet_diagnostic.VSTHRD002.severity = none
-
-# VSTHRD011: Use AsyncLazy<T>
-dotnet_diagnostic.VSTHRD011.severity = none

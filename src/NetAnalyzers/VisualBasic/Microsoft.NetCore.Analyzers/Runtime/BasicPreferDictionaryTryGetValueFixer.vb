@@ -84,7 +84,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                                                                                  TryGetValue)
                         Dim keyArgument = containsKeyInvocation.ArgumentList.Arguments.FirstOrDefault()
                         Dim valueAssignment = generator.LocalDeclarationStatement(dictionaryValueType, Value).
-                                WithLeadingTrivia(SyntaxFactory.CarriageReturnLineFeed).
+                                WithLeadingTrivia(SyntaxFactory.EndOfLine(Environment.NewLine)).
                                 WithoutTrailingTrivia()
                         Dim identifierName As SyntaxNode = generator.IdentifierName(Value)
                         Dim tryGetValueInvocation = generator.InvocationExpression(tryGetValueAccess,
@@ -104,7 +104,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
                         If ifStatement.HasLeadingTrivia AndAlso
                            Not ifStatement.GetLeadingTrivia().Any(function(t) t.RawKind = SyntaxKind.EndOfLineTrivia) Then
-                            valueAssignment = valueAssignment.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed)
+                            valueAssignment = valueAssignment.WithTrailingTrivia(SyntaxFactory.EndOfLine(Environment.NewLine))
                         End If
 
                         editor.InsertBefore(ifStatement, valueAssignment)

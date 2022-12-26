@@ -43,12 +43,40 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ContainsKeyRule);
 
-        private struct DictionaryUsageContext
+        private struct DictionaryUsageContext : System.IEquatable<DictionaryUsageContext>
         {
             public DictionaryUsageContext(IOperation dictionaryReference, IOperation indexReference)
             {
                 DictionaryReference = dictionaryReference;
                 IndexReference = indexReference;
+            }
+
+            public bool Equals(DictionaryUsageContext other)
+            {
+                return Equals(_usageLocations, other._usageLocations) &&
+                       DictionaryReference.Equals(other.DictionaryReference) &&
+                       IndexReference.Equals(other.IndexReference) &&
+                       Equals(SetterLocation, other.SetterLocation);
+            }
+
+            public override bool Equals(object? obj)
+            {
+                return obj is DictionaryUsageContext other && Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                return RoslynHashCode.Combine(_usageLocations, DictionaryReference, IndexReference, SetterLocation);
+            }
+
+            public static bool operator ==(DictionaryUsageContext left, DictionaryUsageContext right)
+            {
+                return left.Equals(right);
+            }
+
+            public static bool operator !=(DictionaryUsageContext left, DictionaryUsageContext right)
+            {
+                return !left.Equals(right);
             }
 
             public IOperation DictionaryReference { get; }

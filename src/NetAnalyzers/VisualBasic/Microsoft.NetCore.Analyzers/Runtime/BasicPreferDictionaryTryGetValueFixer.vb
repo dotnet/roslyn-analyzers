@@ -84,7 +84,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                                                                                  TryGetValue)
                         Dim keyArgument = containsKeyInvocation.ArgumentList.Arguments.FirstOrDefault()
                         Dim valueAssignment = generator.LocalDeclarationStatement(dictionaryValueType, Value).
-                                WithLeadingTrivia(SyntaxFactory.EndOfLine(Environment.NewLine)).
+                                WithLeadingTrivia(SyntaxFactory.ElasticCarriageReturnLineFeed).
                                 WithoutTrailingTrivia()
                         Dim identifierName As SyntaxNode = generator.IdentifierName(Value)
                         Dim tryGetValueInvocation = generator.InvocationExpression(tryGetValueAccess,
@@ -102,9 +102,9 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                             ifStatement = containsKeyAccess.FirstAncestorOrSelf(Of TernaryConditionalExpressionSyntax)?.Parent
                         End If
 
-                        If ifStatement.HasLeadingTrivia AndAlso
-                           Not ifStatement.GetLeadingTrivia().Any(function(t) t.RawKind = SyntaxKind.EndOfLineTrivia) Then
-                            valueAssignment = valueAssignment.WithTrailingTrivia(SyntaxFactory.EndOfLine(Environment.NewLine))
+                        If Not ifStatement.HasLeadingTrivia OrElse
+                           Not ifStatement.GetLeadingTrivia().Any(Function(t) t.RawKind = SyntaxKind.EndOfLineTrivia) Then
+                            valueAssignment = valueAssignment.WithTrailingTrivia(SyntaxFactory.ElasticCarriageReturnLineFeed)
                         End If
 
                         editor.InsertBefore(ifStatement, valueAssignment)
@@ -113,7 +113,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                         If addStatementNode IsNot Nothing Then
                             Dim newValueAssignment As SyntaxNode = generator.ExpressionStatement(
                                 generator.AssignmentStatement(identifierName, changedValueNode)).
-                                    WithTrailingTrivia(SyntaxFactory.EndOfLine(Environment.NewLine))
+                                    WithTrailingTrivia(SyntaxFactory.ElasticCarriageReturnLineFeed)
                             editor.InsertBefore(addStatementNode, newValueAssignment)
                             editor.ReplaceNode(changedValueNode, identifierName)
                         End If

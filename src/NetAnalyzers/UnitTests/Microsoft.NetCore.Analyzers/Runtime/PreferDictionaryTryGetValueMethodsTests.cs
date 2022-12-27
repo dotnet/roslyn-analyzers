@@ -628,6 +628,7 @@ End Namespace";
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
             Dim value As Integer
+
             If data.TryGetValue(key, value) AndAlso value = 2 Then
                 Console.WriteLine(value)
                 Return 2
@@ -650,6 +651,7 @@ End Namespace";
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
             Dim value As Integer
+
             If Not data.TryGetValue(key, value) OrElse value <> 2 Then
                 Console.WriteLine(2)
                 Return -1
@@ -732,6 +734,7 @@ End Namespace";
             Dim data As ConcurrentDictionary(Of String, Integer) = New ConcurrentDictionary(Of String, Integer)()
 
             Dim value As Integer
+
             If data.TryGetValue(""key"", value)
                 Console.WriteLine(value)
                 Console.WriteLine(data(""key2""))
@@ -1106,6 +1109,7 @@ End Namespace";
             Dim localArray = New Dictionary(Of String, Integer)() {New Dictionary(Of String, Integer)(), New Dictionary(Of String, Integer)()}
 
             Dim value As Integer
+
             If {{containsKeyRef}}.TryGetValue(key, value) Then
                 Return value
             End If

@@ -360,6 +360,86 @@ namespace Test
 
             return value;";
 
+        private const string GuardedIndexerPostIncrement = @"
+            string key = ""key"";
+            Dictionary<string, int> data = new Dictionary<string, int>();
+            if ({|#0:data.ContainsKey(key)|})
+                {|#1:data[key]|}++;
+            else
+                data[key] = 1;
+
+            return 0;";
+
+        private const string GuardedIndexerPostIncrementFixed = @"
+            string key = ""key"";
+            Dictionary<string, int> data = new Dictionary<string, int>();
+            if (data.TryGetValue(key, out int value))
+                data[key] = value++;
+            else
+                data[key] = 1;
+
+            return 0;";
+
+        private const string GuardedIndexerPreIncrement = @"
+            string key = ""key"";
+            Dictionary<string, int> data = new Dictionary<string, int>();
+            if ({|#0:data.ContainsKey(key)|})
+                ++{|#1:data[key]|};
+            else
+                data[key] = 1;
+
+            return 0;";
+
+        private const string GuardedIndexerPreIncrementFixed = @"
+            string key = ""key"";
+            Dictionary<string, int> data = new Dictionary<string, int>();
+            if (data.TryGetValue(key, out int value))
+                data[key] = ++value;
+            else
+                data[key] = 1;
+
+            return 0;";
+
+        private const string GuardedIndexerInSimpleAssignment = @"
+            string key = ""key"";
+            var data = new Dictionary<string, int>();
+            if ({|#0:data.ContainsKey(key)|})
+            {
+                data[key] = {|#1:data[key]|} + 1;
+                return data[key];
+            }
+            return 0;";
+
+        private const string GuardedIndexerInSimpleAssignmentFixed = @"
+            string key = ""key"";
+            var data = new Dictionary<string, int>();
+            if (data.TryGetValue(key, out int value))
+            {
+                data[key] = value + 1;
+                return data[key];
+            }
+            return 0;";
+
+        private const string GuardedIndexerInCompoundAssignment = @"
+            string key = ""key"";
+            Dictionary<string, int> data = new Dictionary<string, int>();
+            if ({|#0:data.ContainsKey(key)|})
+                data[key] += {|#1:data[key]|} + 2;
+            else
+                data[key] = 1;
+
+            return 0;";
+
+        private const string GuardedIndexerInCompoundAssignmentFixed = @"
+            string key = ""key"";
+            Dictionary<string, int> data = new Dictionary<string, int>();
+            if (data.TryGetValue(key, out int value))
+                data[key] += value + 2;
+            else
+                data[key] = 1;
+
+            return 0;";
+
         #region NoDiagnostic
 
         private const string InvalidModifiedBeforeUse = @"
@@ -453,12 +533,34 @@ namespace Test
 
             return 0;";
 
-        private const string InvalidKeyChanged = @"
+        private const string InvalidKeyChangedSimple = @"
             string key = ""key"";
             IDictionary<string, int> data = new Dictionary<string, int>();
             if (data.ContainsKey(key))
             {
                 key = ""key2"";
+                return data[key];
+            }
+
+            return 0;";
+
+        private const string InvalidKeyChangedCompound = @"
+            string key = ""key"";
+            IDictionary<string, int> data = new Dictionary<string, int>();
+            if (data.ContainsKey(key))
+            {
+                key += ""key2"";
+                return data[key];
+            }
+
+            return 0;";
+
+        private const string InvalidKeyChangedIncrement = @"
+            var key = 1;
+            var data = new Dictionary<int, int>();
+            if (data.ContainsKey(key))
+            {
+                key++;
                 return data[key];
             }
 
@@ -478,7 +580,7 @@ namespace Test
             IDictionary<string, int> data = new Dictionary<string, int>();
             if (data.ContainsKey(key))
             {
-                data[key] = data[key] + 1;
+                data[key] = 1;
                 return data[key];
             }
             return 0;";
@@ -799,6 +901,50 @@ End Namespace";
 
             Return value";
 
+        private const string VbGuardedIndexerInSimpleAssignment = @"
+            Dim key = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+            If {|#0:data.ContainsKey(key)|} Then
+                data(key) = {|#1:data(key)|} + 1
+                Return data(key)
+            End If
+            Return 0";
+
+        private const string VbGuardedIndexerInSimpleAssignmentFixed = @"
+            Dim key = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+
+            Dim value As Integer
+
+            If data.TryGetValue(key, value) Then
+                data(key) = value + 1
+                Return data(key)
+            End If
+            Return 0";
+
+        private const string VbGuardedIndexerInCompoundAssignment = @"
+            Dim key = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+            If {|#0:data.ContainsKey(key)|} Then
+                data(key) += {|#1:data(key)|} + 2
+            Else
+                data(key) = 1
+            End If
+            Return 0";
+
+        private const string VbGuardedIndexerInCompoundAssignmentFixed = @"
+            Dim key = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+
+            Dim value As Integer
+
+            If data.TryGetValue(key, value) Then
+                data(key) += value + 2
+            Else
+                data(key) = 1
+            End If
+            Return 0";
+
         #region NoDiagnostic
 
         private const string VbInvalidModifiedBeforeUse = @"
@@ -874,12 +1020,23 @@ End Namespace";
 
             Return 0";
 
-        private const string VbInvalidKeyChanged = @"
+        private const string VbInvalidKeyChangedSimple = @"
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
             If data.ContainsKey(key) Then
                 key = ""key2""
+                Return data(key)
+            End If
+
+            Return 0";
+
+        private const string VbInvalidKeyChangedCompound = @"
+            Dim key As String = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+
+            If data.ContainsKey(key) Then
+                key += ""key2""
                 Return data(key)
             End If
 
@@ -923,6 +1080,10 @@ End Namespace";
         [InlineData(GuardedWithKeyLiteral, GuardedWithKeyLiteralFixed, 2)]
         [InlineData(GuardedAddBeforeUsage, GuardedAddBeforeUsageFixed, 3)]
         [InlineData(GuardedIndexerSetBeforeUsage, GuardedIndexerSetBeforeUsageFixed, 3)]
+        [InlineData(GuardedIndexerPostIncrement, GuardedIndexerPostIncrementFixed)]
+        [InlineData(GuardedIndexerPreIncrement, GuardedIndexerPreIncrementFixed)]
+        [InlineData(GuardedIndexerInSimpleAssignment, GuardedIndexerInSimpleAssignmentFixed)]
+        [InlineData(GuardedIndexerInCompoundAssignment, GuardedIndexerInCompoundAssignmentFixed)]
         public Task ShouldReportDiagnostic(string codeSnippet, string fixedCodeSnippet, int additionalLocations = 1)
         {
             string testCode = CreateCSharpCode(codeSnippet);
@@ -950,7 +1111,9 @@ End Namespace";
         [InlineData(InvalidNotGuardedByContainsKey)]
         [InlineData(InvalidModifyReference)]
         [InlineData(InvalidDifferentKey)]
-        [InlineData(InvalidKeyChanged)]
+        [InlineData(InvalidKeyChangedSimple)]
+        [InlineData(InvalidKeyChangedCompound)]
+        [InlineData(InvalidKeyChangedIncrement)]
         [InlineData(InvalidOtherLiteral)]
         [InlineData(InvalidEntryModified)]
         [InlineData(InvalidNotGuarded)]
@@ -977,6 +1140,8 @@ End Namespace";
         [InlineData(VbGuardedWithKeyLiteral, VbGuardedWithKeyLiteralFixed, 2)]
         [InlineData(VbGuardedAddBeforeUsage, VbGuardedAddBeforeUsageFixed, 3)]
         [InlineData(VbGuardedIndexerSetBeforeUsage, VbGuardedIndexerSetBeforeUsageFixed, 3)]
+        [InlineData(VbGuardedIndexerInSimpleAssignment, VbGuardedIndexerInSimpleAssignmentFixed)]
+        [InlineData(VbGuardedIndexerInCompoundAssignment, VbGuardedIndexerInCompoundAssignmentFixed)]
         public Task VbShouldReportDiagnostic(string codeSnippet, string fixedCodeSnippet, int additionalLocations = 1)
         {
             string testCode = CreateVbCode(codeSnippet);
@@ -1003,7 +1168,8 @@ End Namespace";
         [InlineData(VbInvalidNotGuardedByContainsKey)]
         [InlineData(VbInvalidModifyReference)]
         [InlineData(VbInvalidDifferentKey)]
-        [InlineData(VbInvalidKeyChanged)]
+        [InlineData(VbInvalidKeyChangedSimple)]
+        [InlineData(VbInvalidKeyChangedCompound)]
         [InlineData(VbInvalidOtherLiteral)]
         [InlineData(VbInvalidNotGuarded)]
         public Task VbShouldNotReportDiagnostic(string codeSnippet)

@@ -215,17 +215,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             break;
                         case IPropertyReferenceOperation { Property.IsIndexer: true } indexer
                             when IsLiteralOrSameReference(indexer.Arguments[0].Value, context.IndexReference):
-                            if (indexer.Parent is ISimpleAssignmentOperation sa && sa.Target == indexer)
-                                return false;
+                            switch (indexer.Parent)
+                            {
+                                case ISimpleAssignmentOperation sa when sa.Target == indexer:
+                                    FindUsages(sa.Value, ref context);
+                                    return false;
+                                case ICompoundAssignmentOperation ca when ca.Target == indexer:
+                                    FindUsages(ca.Value, ref context);
+                                    return false;
+                            }
 
                             context.UsageLocations.Add(indexer.Syntax.GetLocation());
                             break;
                     }
                 }
-                else if (descendant.Parent is ISimpleAssignmentOperation assign && assign.Target == descendant &&
-                         IsLiteralOrSameReference(descendant, context.IndexReference))
+                else
                 {
-                    return false;
+                    switch (descendant.Parent)
+                    {
+                        case ISimpleAssignmentOperation sa when sa.Target == descendant:
+                        case ICompoundAssignmentOperation ca when ca.Target == descendant:
+                        case IIncrementOrDecrementOperation inc when inc.Target == descendant:
+                            if (IsLiteralOrSameReference(descendant, context.IndexReference))
+                                return false;
+                            break;
+                    }
                 }
             }
 

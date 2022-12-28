@@ -99,7 +99,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 var tryGetValueInvocation = generator.InvocationExpression(tryGetValueAccess, keyArgument, outArgument);
                 editor.ReplaceNode(containsKeyInvocation, tryGetValueInvocation);
 
-                var identifierName = generator.IdentifierName(Value);
+                var identifierName = (IdentifierNameSyntax)generator.IdentifierName(Value);
                 if (addStatementNode != null)
                 {
                     editor.InsertBefore(addStatementNode,
@@ -109,7 +109,20 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
                 foreach (var dictionaryAccess in dictionaryAccessors)
                 {
-                    editor.ReplaceNode(dictionaryAccess, identifierName);
+                    switch (dictionaryAccess.Parent)
+                    {
+                        case PostfixUnaryExpressionSyntax post:
+                            editor.ReplaceNode(post, generator.AssignmentStatement(dictionaryAccess,
+                                post.WithOperand(identifierName)).WithTriviaFrom(post));
+                            break;
+                        case PrefixUnaryExpressionSyntax pre:
+                            editor.ReplaceNode(pre, generator.AssignmentStatement(dictionaryAccess,
+                                pre.WithOperand(identifierName)).WithTriviaFrom(pre));
+                            break;
+                        default:
+                            editor.ReplaceNode(dictionaryAccess, identifierName);
+                            break;
+                    }
                 }
 
                 return editor.GetChangedDocument();

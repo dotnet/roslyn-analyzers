@@ -291,8 +291,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }, OperationKind.Throw);
 
                 // As a heuristic, we only want to replace throws with ThrowIfNull if either there isn't currently
-                // a specified parameter name, e.g. the parameterless constructor was used, or if it's specified in a
-                // simple fashion, e.g. a nameof or a literal string.  This is primarily to avoid false positives
+                // a specified parameter name, e.g. the parameterless constructor was used, or if it's specified as a
+                // constant, e.g. a nameof or a literal string.  This is primarily to avoid false positives
                 // with complicated expressions for computing the parameter name to use, which with ThrowIfNull would
                 // need to be done prior to the guard check, and thus something we want to avoid.
                 bool HasReplaceableArgumentName(IObjectCreationOperation creationOperation, int argumentIndex)
@@ -300,7 +300,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     ImmutableArray<IArgumentOperation> args = creationOperation.Arguments;
                     return
                         argumentIndex >= args.Length ||
-                        args[argumentIndex].Value.WalkDownConversion() is ILiteralOperation or INameOfOperation;
+                        args.GetArgumentForParameterAtIndex(argumentIndex).Value.ConstantValue.HasValue;
                 }
 
                 // As a heuristic, we avoid issuing diagnostics if there are additional arguments (e.g. message)

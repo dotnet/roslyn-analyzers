@@ -169,6 +169,9 @@ class C
             throw new ArgumentNullException(ComputeName(nameof(arg)));
 
         if (arg is null)
+            throw new ArgumentNullException(innerException: null, paramName: ComputeName(nameof(arg)));
+
+        if (arg is null)
             throw new ArgumentNullException(IntPtr.Size == 8 ? ""arg"" : ""arg"");
 
         throw new ArgumentNullException(nameof(arg)); // no guard
@@ -292,6 +295,9 @@ class C
 
         if (arg is null)
             throw new ArgumentNullException(ComputeName(nameof(arg)));
+
+        if (arg is null)
+            throw new ArgumentNullException(innerException: null, paramName: ComputeName(nameof(arg)));
 
         if (arg is null)
             throw new ArgumentNullException(IntPtr.Size == 8 ? ""arg"" : ""arg"");

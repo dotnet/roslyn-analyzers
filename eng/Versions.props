@@ -39,7 +39,7 @@
     <!-- Use the correct compiler version -->
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <!-- Dependencies from https://github.com/dotnet/roslyn -->
-    <MicrosoftNETCoreCompilersPackageVersion>4.3.0-2.final</MicrosoftNETCoreCompilersPackageVersion>
+    <MicrosoftNETCoreCompilersPackageVersion>4.4.0</MicrosoftNETCoreCompilersPackageVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNETCoreCompilersPackageVersion)</MicrosoftNetCompilersToolsetVersion>
     <CodeStyleAnalyersVersion>$(MicrosoftNETCoreCompilersPackageVersion)</CodeStyleAnalyersVersion>
     <!-- Roslyn -->
@@ -47,7 +47,7 @@
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
     <MicrosoftCodeAnalysisVersionForTests>4.4.0-2.22416.9</MicrosoftCodeAnalysisVersionForTests>
     <DogfoodAnalyzersVersion>3.3.4-beta1.22418.3</DogfoodAnalyzersVersion>
-    <DogfoodNetAnalyzersVersion>5.0.4-preview1.21126.5</DogfoodNetAnalyzersVersion>
+    <DogfoodNetAnalyzersVersion>8.0.0-preview1.22621.6</DogfoodNetAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisPerformanceSensitiveAnalyzersVersion>3.3.3-beta1.21126.3</MicrosoftCodeAnalysisPerformanceSensitiveAnalyzersVersion>

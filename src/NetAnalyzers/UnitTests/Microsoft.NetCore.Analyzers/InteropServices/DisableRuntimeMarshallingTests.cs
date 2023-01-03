@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System.IO;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
@@ -159,7 +158,6 @@ class C
 ";
             await VerifyCSAnalyzerAsync(source);
         }
-
 
         [Fact]
         public async Task VB_PInvokeWithClassReturnValue_Emits_Diagnostic()

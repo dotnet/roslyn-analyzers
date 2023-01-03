@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace ReleaseNotesUtil
 {
     [DataContract]
-    internal class RuleFileContent
+    internal sealed class RuleFileContent
     {
         [DataMember]
         public List<RuleInfo> Rules { get; set; } = new List<RuleInfo>();

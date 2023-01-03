@@ -2,35 +2,13 @@
 
 ## Overview
 
-We've rebuilt the most popular FxCop rules and additional more rules as live analyzers to help you detect problems in your code and make it super easy for you to fix them on the spot with quick fixes. You can get the analyzers via [`Microsoft.CodeAnalysis.NetAnalyzers` NuGet package](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers) or from the .NET SDK. This gives you the same great code analysis as before with FXCop but now the analysis is live as-you-type and has quick-fixes.
-
-## Install instructions
-
-You can get the analyzers from NuGet package, from the .NET SDK, or from Visual Studio extension (deprecated in VS 2022).
-
-### NuGet package
-
-To get the analyzers from the NuGet package, you need to add the package in your `csproj` or `Directory.Build.props` in an `ItemGroup` as follows:
-
-```xml
-<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="PackageVersionGoesHere" PrivateAssets="all" />
-```
-
-### .NET SDK
-
-Starting in .NET 5, these analyzers are included with the .NET SDK. If your project targets .NET 5 or later, code analysis is enabled by default. If your project targets a different .NET implementation, for example, .NET Core, .NET Standard, or .NET Framework, you must manually enable code analysis by setting the [EnableNETAnalyzers](https://learn.microsoft.com/dotnet/core/project-sdk/msbuild-props#enablenetanalyzers) property to `true`.
-
-### Visual Studio extension (VSIX) (deprecated)
-
-You can also get the analyzers as a Visual Studio extension ([VS2017](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2017) or [VS2019](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2019)). This is deprecated in VS 2022.
+We've rebuilt the most popular FxCop rules and additional more rules as live analyzers to help you detect problems in your code and make it super easy for you to fix them on the spot with quick fixes. For more information, see [Overview of .NET source code analysis](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/overview).
 
 ## Apply a code fix for a rule
 
-Place your cursor in the span of the squiggle/dotted line and press `Ctrl+.` to trigger the lightbulb menu. From the lightbulb, you will see all available quick actions.
+For information on applying code fixes, see [Quick Actions](https://learn.microsoft.com/visualstudio/ide/quick-actions).
 
 > Note: not all code analysis rules have fixes associated with them.
-
-![make static codefix image](MakeStatic.PNG)
 
 ## Configure a rule
 

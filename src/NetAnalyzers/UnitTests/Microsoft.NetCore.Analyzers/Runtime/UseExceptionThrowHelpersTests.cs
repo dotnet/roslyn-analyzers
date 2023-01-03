@@ -100,12 +100,12 @@ class C
         {|CA1510:if (arg is null)
             throw new ArgumentNullException(nameof(arg));|}
         {|CA1510:if (arg == null)
-            throw new ArgumentNullException(nameof(arg), (string)null);|}
+            throw new ArgumentNullException(""arg"", (string)null);|}
         {|CA1510:if (null == arg)
             throw new ArgumentNullException(nameof(arg));|}
         {|CA1510:if (arg is null)
         {
-            throw new ArgumentNullException(nameof(arg));
+            throw new ArgumentNullException(""arg"");
         }|}
         {|CA1510:if (arg == null)
         {
@@ -165,8 +165,16 @@ class C
             Console.WriteLine(arg);
         }
 
+        if (arg is null)
+            throw new ArgumentNullException(ComputeName(nameof(arg)));
+
+        if (arg is null)
+            throw new ArgumentNullException(IntPtr.Size == 8 ? ""arg"" : ""arg"");
+
         throw new ArgumentNullException(nameof(arg)); // no guard
     }
+
+    static string ComputeName(string arg) => arg;
 
     string this[string name]
     {
@@ -282,8 +290,16 @@ class C
             Console.WriteLine(arg);
         }
 
+        if (arg is null)
+            throw new ArgumentNullException(ComputeName(nameof(arg)));
+
+        if (arg is null)
+            throw new ArgumentNullException(IntPtr.Size == 8 ? ""arg"" : ""arg"");
+
         throw new ArgumentNullException(nameof(arg)); // no guard
     }
+
+    static string ComputeName(string arg) => arg;
 
     string this[string name]
     {
@@ -980,6 +996,17 @@ class C
         }
     }
 }
+
+struct S
+{
+    private bool IsDisposed { get; set; }
+
+    void M()
+    {
+        if (IsDisposed) throw new ObjectDisposedException(null);
+        if (IsDisposed) throw new ObjectDisposedException(this.GetType().FullName);
+    }
+}
 ",
                 FixedCode =
 @"
@@ -1031,6 +1058,17 @@ class C
                 throw new ObjectDisposedException(null);|}
             return ""test"";
         }
+    }
+}
+
+struct S
+{
+    private bool IsDisposed { get; set; }
+
+    void M()
+    {
+        if (IsDisposed) throw new ObjectDisposedException(null);
+        if (IsDisposed) throw new ObjectDisposedException(this.GetType().FullName);
     }
 }
 "

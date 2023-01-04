@@ -12,6 +12,112 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
     public static partial class UseConcreteTypeTests
     {
         [Fact]
+        public static async Task ShouldNotTrigger1()
+        {
+            const string Source = @"
+                #nullable enable
+
+                using System;
+                using System.Collections.Generic;
+
+                namespace Example
+                {
+                    public class BaseType
+                    {
+                    }
+
+                    public class Derived1 : BaseType
+                    {
+                    }
+                
+                    public class Derived2 : BaseType
+                    {
+                        private BaseType? Foo(int x)
+                        {
+                            if (x == 0) return null;
+                            if (x == 1) return new Derived1();
+
+                            return this;
+                        }
+                    }
+                }";
+
+            await TestCSAsync(Source);
+        }
+
+        [Fact]
+        public static async Task ShouldTrigger1()
+        {
+            const string Source = @"
+                namespace Example
+                {
+                    public interface IFoo<T>
+                    {
+                        void Bar();
+                    }
+
+                    public class Foo<T> : IFoo<T>
+                    {
+                        public void Bar() { }
+                    }
+
+                    public static class Tester
+                    {
+                        private static void Do<T>(IFoo<T> {|#0:foo|})
+                        {
+                            foo.Bar();
+                        }
+
+                        private static void MakeCall()
+                        {
+                            Do<int>(new Foo<int>());
+                        }
+                     }
+                }";
+
+            await TestCSAsync(Source,
+                VerifyCS.Diagnostic(UseConcreteTypeAnalyzer.UseConcreteTypeForParameter)
+                        .WithLocation(0)
+                        .WithArguments("foo", "Example.IFoo<T>", "Example.Foo<int>"));
+        }
+
+        [Fact]
+        public static async Task ShouldTrigger2()
+        {
+            const string Source = @"
+                namespace Example
+                {
+                    public interface IFoo<T>
+                    {
+                        void Bar();
+                    }
+
+                    public class Foo<T> : IFoo<T>
+                    {
+                        public void Bar() { }
+                    }
+
+                    public static class Tester
+                    {
+                        private static void Do<T>(IFoo<T> {|#0:foo|})
+                        {
+                            foo.Bar();
+                        }
+
+                        private static void MakeCall<T>()
+                        {
+                            Do<T>(new Foo<T>());
+                        }
+                     }
+                }";
+
+            await TestCSAsync(Source,
+                VerifyCS.Diagnostic(UseConcreteTypeAnalyzer.UseConcreteTypeForParameter)
+                        .WithLocation(0)
+                        .WithArguments("foo", "Example.IFoo<T>", "Example.Foo<T>"));
+        }
+
+        [Fact]
         public static async Task Params()
         {
             const string Source = @"
@@ -58,7 +164,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         public static async Task Conditional()
         {
             const string Source = @"
-            #nullable enable
+#nullable enable
             namespace Example
             {
                 public interface IFoo
@@ -172,7 +278,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         public static async Task Locals()
         {
             const string Source = @"
-            #nullable enable
+#nullable enable
             using System;
 
             namespace Example
@@ -271,7 +377,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         public static async Task Complex()
         {
             const string Source = @"
-            #pragma warning disable CS0619
+#pragma warning disable CS0619
 
             namespace Example
             {
@@ -403,7 +509,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         public static async Task Fields()
         {
             const string Source = @"
-            #nullable enable
+#nullable enable
             using System;
 
             namespace Example

@@ -136,7 +136,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         if (arg.Parameter != null)
                         {
-                            if (arg.Parameter.RefKind == RefKind.Ref || arg.Parameter.RefKind == RefKind.Out)
+                            if (arg.Parameter.RefKind is RefKind.Ref or RefKind.Out)
                             {
                                 RecordAssignment(arg.Value, arg.Parameter.Type);
                             }
@@ -403,6 +403,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                             return;
                         }
+
+                    case OperationKind.InstanceReference:
+                        {
+                            var instRef = (IInstanceReferenceOperation)op;
+                            values.Add(instRef.Type!);
+                            return;
+                        }
                 }
             }
 
@@ -454,25 +461,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
             }
 
-            private void RecordAssignment(IFieldSymbol field, ITypeSymbol valueType)
-            {
-                FieldAssignments.GetOrAdd(field, _ => PooledConcurrentSet<ITypeSymbol>.GetInstance(SymbolEqualityComparer.Default)).Add(valueType);
-            }
-
-            private void RecordAssignment(ILocalSymbol local, ITypeSymbol valueType)
-            {
-                LocalAssignments.GetOrAdd(local, _ => PooledConcurrentSet<ITypeSymbol>.GetInstance(SymbolEqualityComparer.Default)).Add(valueType);
-            }
-
-            private void RecordAssignment(IParameterSymbol parameter, ITypeSymbol valueType)
-            {
-                ParameterAssignments.GetOrAdd(parameter, _ => PooledConcurrentSet<ITypeSymbol>.GetInstance(SymbolEqualityComparer.Default)).Add(valueType);
-            }
-
-            private void RecordAssignment(IMethodSymbol method, ITypeSymbol valueType)
-            {
-                MethodReturns.GetOrAdd(method, _ => PooledConcurrentSet<ITypeSymbol>.GetInstance(SymbolEqualityComparer.Default)).Add(valueType);
-            }
+            private void RecordAssignment(IFieldSymbol field, ITypeSymbol valueType) => FieldAssignments.GetOrAdd(field, _ => PooledConcurrentSet<ITypeSymbol>.GetInstance(SymbolEqualityComparer.Default)).Add(valueType);
+            private void RecordAssignment(ILocalSymbol local, ITypeSymbol valueType) => LocalAssignments.GetOrAdd(local, _ => PooledConcurrentSet<ITypeSymbol>.GetInstance(SymbolEqualityComparer.Default)).Add(valueType);
+            private void RecordAssignment(IParameterSymbol parameter, ITypeSymbol valueType) => ParameterAssignments.GetOrAdd(parameter.OriginalDefinition, _ => PooledConcurrentSet<ITypeSymbol>.GetInstance(SymbolEqualityComparer.Default)).Add(valueType);
+            private void RecordAssignment(IMethodSymbol method, ITypeSymbol valueType) => MethodReturns.GetOrAdd(method, _ => PooledConcurrentSet<ITypeSymbol>.GetInstance(SymbolEqualityComparer.Default)).Add(valueType);
         }
     }
 }

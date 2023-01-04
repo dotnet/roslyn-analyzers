@@ -190,23 +190,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         toType = toType.WithNullableAnnotation(Analyzer.Utilities.Lightup.NullableAnnotation.Annotated);
                     }
 
-                    if (fromType.TypeKind == TypeKind.Interface)
+                    if (!toType.DerivesFrom(fromType.OriginalDefinition))
                     {
-                        if (!toType.AllInterfaces.Contains(fromType, SymbolEqualityComparer.Default))
-                        {
-                            // If the from type is an interface, the destination type must implement that interface
-                            // This deals with the case of going from T to Task<T> for example.
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        if (!toType.DerivesFrom(fromType))
-                        {
-                            // if the from type is a class, then the to type must be more derived than the
-                            // class
-                            return;
-                        }
+                        return;
                     }
 
                     if (toType.TypeKind == TypeKind.Class

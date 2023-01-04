@@ -89,7 +89,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         if (context.Operation is IInvocationOperation invocationOperation)
                         {
-                            if (InspectAndReportBlockingMemberAccess(context, invocationOperation.TargetMethod, syncBlockingSymbols, SymbolKind.Method))
+                            if (InspectAndReportBlockingMemberAccess(context, syncBlockingSymbols, SymbolKind.Method))
                             {
                                 // Don't return double-diagnostics.
                                 return;
@@ -97,9 +97,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                             // Also consider all method calls to check for Async-suffixed alternatives.
                             var semanticModel = context.Operation.SemanticModel;
-                            var methodSymbol = invocationOperation.TargetMethod;
+                            SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(context.Operation.Syntax, context.CancellationToken);
 
-                            if (!methodSymbol.Name.EndsWith(MandatoryAsyncSuffix, StringComparison.Ordinal) &&
+                            if (symbolInfo.Symbol is IMethodSymbol methodSymbol &&
+                                !methodSymbol.Name.EndsWith(MandatoryAsyncSuffix, StringComparison.Ordinal) &&
                                 !HasAsyncCompatibleReturnType(methodSymbol, syncBlockingTypes))
                             {
                                 IEnumerable<IMethodSymbol> methodSymbols = semanticModel.LookupSymbols(
@@ -136,7 +137,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                         else
                         {
-                            InspectAndReportBlockingMemberAccess(context, ((IPropertyReferenceOperation)context.Operation).Property, syncBlockingSymbols, SymbolKind.Property);
+                            InspectAndReportBlockingMemberAccess(context, syncBlockingSymbols, SymbolKind.Property);
                         }
                     }
                 }, OperationKind.Invocation, OperationKind.PropertyReference);
@@ -254,8 +255,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return HasAsyncCompatibleReturnType(parentMethod, syncBlockingTypes);
         }
 
-        private static bool InspectAndReportBlockingMemberAccess(OperationAnalysisContext context, ISymbol memberSymbol, List<SyncBlockingSymbol> syncBlockingSymbols, SymbolKind kind)
+        private static bool InspectAndReportBlockingMemberAccess(OperationAnalysisContext context, List<SyncBlockingSymbol> syncBlockingSymbols, SymbolKind kind)
         {
+            ISymbol? memberSymbol = context.Operation.SemanticModel.GetSymbolInfo(context.Operation.Syntax, context.CancellationToken).Symbol;
+            if (memberSymbol is null)
+            {
+                return false;
+            }
+
             foreach (SyncBlockingSymbol symbol in syncBlockingSymbols)
             {
                 if (symbol.Kind != kind) continue;

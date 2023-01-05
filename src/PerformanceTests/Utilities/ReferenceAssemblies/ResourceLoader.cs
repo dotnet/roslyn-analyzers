@@ -38,7 +38,7 @@ namespace Reference.Assemblies
         {
             if (resource == null)
             {
-                resource = GetResourceBlob(name);
+                resource ??= GetResourceBlob(name);
             }
 
             return resource;

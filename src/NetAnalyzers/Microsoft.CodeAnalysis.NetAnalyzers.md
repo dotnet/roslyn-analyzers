@@ -470,7 +470,7 @@ A method in a base type is hidden by an identically named method in a derived ty
 
 ## [CA1062](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062): Validate arguments of public methods
 
-An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.
+An externally visible method dereferences one of its reference arguments without verifying whether that argument is 'null' ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against 'null'. If appropriate, throw an 'ArgumentNullException' when the argument is 'null'. If the method is designed to be called only by known assemblies, you should make the method internal.
 
 |Item|Value|
 |-|-|
@@ -862,6 +862,54 @@ Invalid entry in code metrics rule specification file.
 |Enabled|False|
 |Severity|Warning|
 |CodeFix|False|
+---
+
+## [CA1510](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510): Use ArgumentNullException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1511](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1511): Use ArgumentException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1512](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1512): Use ArgumentOutOfRangeException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1513](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1513): Use ObjectDisposedException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
 ---
 
 ## [CA1700](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1700): Do not name enum values 'Reserved'
@@ -1584,9 +1632,39 @@ It is more efficient to use 'Clear', instead of 'Fill' with default value.
 |CodeFix|True|
 ---
 
+<<<<<<< HEAD
 ## [CA1857](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857): Prefer 'IsEmpty' over 'Any()'
 
 Prefer a 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.
+=======
+## [CA1856](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856): Incorrect usage of ConstantExpected attribute
+
+ConstantExpected attribute is not applied correctly on the parameter.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Error|
+|CodeFix|False|
+---
+
+## [CA1857](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857): A constant is expected for the parameter
+
+The parameter expects a constant for optimal performance.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA1858](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858): Use 'StartsWith' instead of 'IndexOf'
+
+It is both clearer and faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.
+>>>>>>> master
 
 |Item|Value|
 |-|-|
@@ -1596,15 +1674,22 @@ Prefer a 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the
 |CodeFix|True|
 ---
 
+<<<<<<< HEAD
 ## [CA1858](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858): Prefer 'Length' over 'Any()'
 
 Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.
+=======
+## [CA1859](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859): Use concrete types when possible for improved performance
+
+Using concrete types avoids virtual or interface call overhead and enables inlining.
+>>>>>>> master
 
 |Item|Value|
 |-|-|
 |Category|Performance|
 |Enabled|True|
 |Severity|Info|
+<<<<<<< HEAD
 |CodeFix|True|
 ---
 
@@ -1618,6 +1703,9 @@ Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the c
 |Enabled|True|
 |Severity|Info|
 |CodeFix|True|
+=======
+|CodeFix|False|
+>>>>>>> master
 ---
 
 ## [CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
@@ -1788,9 +1876,9 @@ Number of parameters supplied in the logging message template do not match the n
 |CodeFix|False|
 ---
 
-## [CA2020](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020): Prevent from behavioral change
+## [CA2020](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020): Prevent behavioral change
 
-Some built in operators added in .NET 7 behave differently than the user defined operatorsi in .NET 6 and below. Some operators that used to throw in unchecked context while overflowing will not throw anymore unless wrapped within checked context, and some operators that not used to throw in checked context now would throw unless wrapped within unchecked context.
+Some built-in operators added in .NET 7 behave differently when overflowing than did the corresponding user-defined operators in .NET 6 and earlier versions. Some operators that previously threw in an unchecked context now don't throw unless wrapped within a checked context. Also, some operators that did not previously throw in a checked context now throw unless wrapped in an unchecked context.
 
 |Item|Value|
 |-|-|
@@ -1822,20 +1910,105 @@ A platform invoke member allows partially trusted callers, has a string paramete
 |Enabled|True|
 |Severity|Info|
 |CodeFix|True|
----
+An externally visible method dereferences one of its reference arguments without verifying whether that argument is 'null' ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against 'null'. If appropriate, throw an 'ArgumentNullException' when the argument is 'null'. If the method is designed to be called only by known assemblies, you should make the method internal.
+## [CA1510](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510): Use ArgumentNullException throw helper
 
-## [CA2109](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2109): Review visible event handlers
-
-A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary.
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
 
 |Item|Value|
 |-|-|
-|Category|Security|
-|Enabled|False|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1511](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1511): Use ArgumentException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1512](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1512): Use ArgumentOutOfRangeException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1513](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1513): Use ObjectDisposedException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1856](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856): Incorrect usage of ConstantExpected attribute
+
+ConstantExpected attribute is not applied correctly on the parameter.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Error|
+|CodeFix|False|
+---
+
+## [CA1857](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857): A constant is expected for the parameter
+
+The parameter expects a constant for optimal performance.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
 |Severity|Warning|
 |CodeFix|False|
 ---
 
+## [CA1858](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858): Use 'StartsWith' instead of 'IndexOf'
+
+It is both clearer and faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1859](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859): Use concrete types when possible for improved performance
+
+Using concrete types avoids virtual or interface call overhead and enables inlining.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
+## [CA2020](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020): Prevent behavioral change
+Some built-in operators added in .NET 7 behave differently when overflowing than did the corresponding user-defined operators in .NET 6 and earlier versions. Some operators that previously threw in an unchecked context now don't throw unless wrapped within a checked context. Also, some operators that did not previously throw in a checked context now throw unless wrapped in an unchecked context.
 ## [CA2119](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119): Seal methods that satisfy private interfaces
 
 An inheritable public type provides an overridable method implementation of an internal (Friend in Visual Basic) interface. To fix a violation of this rule, prevent the method from being overridden outside the assembly.

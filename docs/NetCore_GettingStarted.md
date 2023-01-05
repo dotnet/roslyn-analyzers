@@ -13,9 +13,10 @@
 |Branch| SDK | Description|
 |--------|--------|--------|
 |[2.9.x](https://github.com/dotnet/roslyn-analyzers/tree/2.9.x)| Does not ship in the .NET SDK | A special branch compatible with Visual Studio 2017 where security analyzers are shipped from.
-|[main](https://github.com/dotnet/roslyn-analyzers/tree/main)| .NET SDK 7.0.0xx  | Currently active branch. All work should target this branch unless it is a bugfix for a previous release
+|[main](https://github.com/dotnet/roslyn-analyzers/tree/main)| .NET SDK 8.0.0xx  | Currently active branch. All work should target this branch unless it is a bugfix for a previous release
 |[release/5.0.3xx](https://github.com/dotnet/roslyn-analyzers/tree/release/5.0.3xx)| .NET SDK 5.0.3xx | Servicing branch for the .NET 5 SDK.
-|[release/6.0.1xx](https://github.com/dotnet/roslyn-analyzers/tree/release/6.0.1xx)| .NET SDK 6.0.0xx | Servicing branch for the .NET 6 SDK. Currently accepting targeting fixes until the .NET 6 SDK ships
+|[release/6.0.1xx](https://github.com/dotnet/roslyn-analyzers/tree/release/6.0.1xx)| .NET SDK 6.0.0xx | Servicing branch for the .NET 6 SDK.
+|[release/7.0.1xx](https://github.com/dotnet/roslyn-analyzers/tree/release/7.0.1xx)| .NET SDK 7.0.1xx | Servicing branch for the .NET 7 SDK.
 
 ## Definition of done
 
@@ -42,7 +43,7 @@
   - All warnings and errors in these repos are addressed (to prevent build failures)
     - `Info` level diagnostics do not need to be fully resolved or suppressed as they do not cause build failures
 - Document for review: severity, default, categorization, numbering, titles, messages, and descriptions.
-- Create the appropriate documentation for [docs.microsoft.com](https://github.com/dotnet/docs/tree/main/docs/fundamentals/code-analysis/quality-rules) within **ONE WEEK**, instructions available on [Contribute docs for .NET code analysis rules to the .NET docs repository](https://learn.microsoft.com/contribute/dotnet/dotnet-contribute-code-analysis).
+- Create the appropriate documentation for [learn.microsoft.com](https://github.com/dotnet/docs/tree/main/docs/fundamentals/code-analysis/quality-rules) within **ONE WEEK**, instructions available on [Contribute docs for .NET code analysis rules to the .NET docs repository](https://learn.microsoft.com/contribute/dotnet/dotnet-contribute-code-analysis).
 - PR merged into `dotnet/roslyn-analyzers`.
 - Validate the analyzer's behavior with end-to-end testing using the command-line and Visual Studio:
   - Use `dotnet new console` and `dotnet build` from the command-line, updating the code to introduce diagnostics and ensuring warnings/errors are reported at the command-line

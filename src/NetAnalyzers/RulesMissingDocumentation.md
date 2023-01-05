@@ -10,5 +10,7 @@ CA1512 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1513 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1513> | Use ObjectDisposedException throw helper |
 CA1856 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856> | Incorrect usage of ConstantExpected attribute |
 CA1857 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857> | A constant is expected for the parameter |
-CA1858 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858> | Use 'StartsWith' instead of 'IndexOf' |
 CA1859 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859> | Use concrete types when possible for improved performance |
+CA1860 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860> | Prefer 'IsEmpty' over 'Any()' |
+CA1861 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861> | Prefer 'Length' over 'Any()' |
+CA1862 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862> | Prefer 'Count' over 'Any()' |

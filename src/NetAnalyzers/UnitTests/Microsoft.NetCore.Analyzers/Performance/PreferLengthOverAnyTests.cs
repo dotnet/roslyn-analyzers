@@ -54,13 +54,13 @@ public void M() {
         {
             const string code = @"
 Public Function M()
-    Dim array = new Integer()
+    Dim array = new Integer() {}
     Dim x = {|#0:array.Any()|}
 End Function";
             const string fixedCode = @"
 Public Function M()
-    Dim array = new Integer()
-    Dim x = array.Length = 0
+    Dim array = new Integer() {}
+    Dim x = array.Length <> 0
 End Function";
 
             return VerifyVB.VerifyCodeFixAsync(string.Format(VbTemplate, code), ExpectedDiagnostic, string.Format(VbTemplate, fixedCode));

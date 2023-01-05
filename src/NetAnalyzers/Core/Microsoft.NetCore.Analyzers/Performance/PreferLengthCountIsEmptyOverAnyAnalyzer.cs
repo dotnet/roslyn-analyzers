@@ -24,9 +24,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string LengthText = nameof(Array.Length);
         internal const string CountText = nameof(ICollection.Count);
 
-        internal const string IsEmptyId = "CA1857";
-        internal const string LengthId = "CA1858";
-        internal const string CountId = "CA1859";
+        internal const string IsEmptyId = "CA1860";
+        internal const string LengthId = "CA1861";
+        internal const string CountId = "CA1862";
 
         private const string SourceParameterName = "source";
 

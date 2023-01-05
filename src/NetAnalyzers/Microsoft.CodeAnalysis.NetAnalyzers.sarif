@@ -3115,12 +3115,12 @@
             ]
           }
         },
-        "CA1857": {
-          "id": "CA1857",
+        "CA1860": {
+          "id": "CA1860",
           "shortDescription": "Prefer 'IsEmpty' over 'Any()'",
           "fullDescription": "Prefer a 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.",
           "defaultLevel": "note",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
@@ -3135,12 +3135,12 @@
             ]
           }
         },
-        "CA1858": {
-          "id": "CA1858",
+        "CA1861": {
+          "id": "CA1861",
           "shortDescription": "Prefer 'Length' over 'Any()'",
           "fullDescription": "Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.",
           "defaultLevel": "note",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
@@ -3155,12 +3155,12 @@
             ]
           }
         },
-        "CA1859": {
-          "id": "CA1859",
+        "CA1862": {
+          "id": "CA1862",
           "shortDescription": "Prefer 'Count' over 'Any()'",
           "fullDescription": "Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.",
           "defaultLevel": "note",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,

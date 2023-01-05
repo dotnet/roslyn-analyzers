@@ -27,7 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     PreferLengthCountIsEmptyOverAnyAnalyzer.IsEmptyId => (ReplaceAnyWithIsEmpty(root!, node), MicrosoftNetCoreAnalyzersResources.PreferIsEmptyOverAnyCodeFixTitle),
                     PreferLengthCountIsEmptyOverAnyAnalyzer.LengthId => (ReplaceAnyWithLength(root!, node), MicrosoftNetCoreAnalyzersResources.PreferLengthOverAnyCodeFixTitle),
                     PreferLengthCountIsEmptyOverAnyAnalyzer.CountId => (ReplaceAnyWithCount(root!, node), MicrosoftNetCoreAnalyzersResources.PreferCountOverAnyCodeFixTitle),
-                    _ => throw new ArgumentOutOfRangeException(nameof(diagnostic))
+                    _ => throw new ArgumentOutOfRangeException(nameof(context))
                 };
                 if (newRoot is null)
                 {

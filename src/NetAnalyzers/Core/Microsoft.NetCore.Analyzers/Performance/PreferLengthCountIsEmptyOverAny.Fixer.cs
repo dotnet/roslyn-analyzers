@@ -11,6 +11,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
 {
     public abstract class PreferLengthCountIsEmptyOverAnyFixer : CodeFixProvider
     {
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            PreferLengthCountIsEmptyOverAnyAnalyzer.LengthId,
+            PreferLengthCountIsEmptyOverAnyAnalyzer.CountId,
+            PreferLengthCountIsEmptyOverAnyAnalyzer.IsEmptyId
+        );
+
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
@@ -27,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     PreferLengthCountIsEmptyOverAnyAnalyzer.IsEmptyId => (ReplaceAnyWithIsEmpty(root!, node), MicrosoftNetCoreAnalyzersResources.PreferIsEmptyOverAnyCodeFixTitle),
                     PreferLengthCountIsEmptyOverAnyAnalyzer.LengthId => (ReplaceAnyWithLength(root!, node), MicrosoftNetCoreAnalyzersResources.PreferLengthOverAnyCodeFixTitle),
                     PreferLengthCountIsEmptyOverAnyAnalyzer.CountId => (ReplaceAnyWithCount(root!, node), MicrosoftNetCoreAnalyzersResources.PreferCountOverAnyCodeFixTitle),
-                    _ => throw new ArgumentOutOfRangeException(nameof(context))
+                    _ => throw new NotSupportedException()
                 };
                 if (newRoot is null)
                 {
@@ -44,11 +50,5 @@ namespace Microsoft.NetCore.Analyzers.Performance
         protected abstract SyntaxNode? ReplaceAnyWithCount(SyntaxNode root, SyntaxNode node);
 
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
-
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            PreferLengthCountIsEmptyOverAnyAnalyzer.LengthId,
-            PreferLengthCountIsEmptyOverAnyAnalyzer.CountId,
-            PreferLengthCountIsEmptyOverAnyAnalyzer.IsEmptyId
-        );
     }
 }

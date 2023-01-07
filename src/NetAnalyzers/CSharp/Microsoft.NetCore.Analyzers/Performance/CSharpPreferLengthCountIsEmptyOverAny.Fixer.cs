@@ -31,9 +31,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 expression,
                 IdentifierName(PreferLengthCountIsEmptyOverAnyAnalyzer.IsEmptyText)
             );
-            if (invocation.Parent is PrefixUnaryExpressionSyntax prefixExpression && prefixExpression.IsKind(SyntaxKind.LogicalNotExpression))
+            if (invocation.Parent.IsKind(SyntaxKind.LogicalNotExpression))
             {
-                return root.ReplaceNode(prefixExpression, newMemberAccess.WithTriviaFrom(prefixExpression));
+                return root.ReplaceNode(invocation.Parent, newMemberAccess.WithTriviaFrom(invocation.Parent));
             }
 
             var negatedExpression = PrefixUnaryExpression(
@@ -84,11 +84,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 );
             }
 
-            if (invocation.Parent is PrefixUnaryExpressionSyntax prefixExpression && prefixExpression.IsKind(SyntaxKind.LogicalNotExpression))
+            if (invocation.Parent.IsKind(SyntaxKind.LogicalNotExpression))
             {
                 var binaryExpression = GetBinaryExpression(expression, propertyName, SyntaxKind.EqualsExpression);
 
-                return root.ReplaceNode(prefixExpression, binaryExpression.WithTriviaFrom(prefixExpression));
+                return root.ReplaceNode(invocation.Parent, binaryExpression.WithTriviaFrom(invocation.Parent));
             }
 
             return root.ReplaceNode(invocation, GetBinaryExpression(expression, propertyName, SyntaxKind.NotEqualsExpression).WithTriviaFrom(invocation));

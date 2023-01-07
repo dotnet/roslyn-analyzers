@@ -85,11 +85,9 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                     Return Nothing
                 End If
 
-                Dim unaryParent = TryCast(memberAccess.Parent, UnaryExpressionSyntax)
-                If unaryParent IsNot Nothing And unaryParent.IsKind(SyntaxKind.NotExpression) Then
+                If memberAccess.Parent.IsKind(SyntaxKind.NotExpression) Then
                     Dim binaryExpression = GetBinaryExpression(memberAccess.Expression, propertyName, SyntaxKind.EqualsExpression)
-
-                    Return root.ReplaceNode(unaryParent, binaryExpression.WithTriviaFrom(unaryParent))
+                    Return root.ReplaceNode(memberAccess.Parent, binaryExpression.WithTriviaFrom(memberAccess.Parent))
                 End If
 
                 Return root.ReplaceNode(memberAccess, GetBinaryExpression(memberAccess.Expression, propertyName, SyntaxKind.NotEqualsExpression).WithTriviaFrom(memberAccess))
@@ -100,15 +98,13 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                 End If
 
                 Dim expression = memberAccess.Expression
-                If invocation?.ArgumentList.Arguments.Count > 0 Then
+                If invocation.ArgumentList.Arguments.Count > 0 Then
                     expression = invocation.ArgumentList.Arguments(0).GetExpression()
                 End If
 
-                Dim unaryParent = TryCast(invocation.Parent, UnaryExpressionSyntax)
-                If unaryParent IsNot Nothing And unaryParent.IsKind(SyntaxKind.NotExpression) Then
+                If invocation.Parent.IsKind(SyntaxKind.NotExpression) Then
                     Dim binaryExpression = GetBinaryExpression(expression, propertyName, SyntaxKind.EqualsExpression)
-
-                    Return root.ReplaceNode(unaryParent, binaryExpression.WithTriviaFrom(unaryParent))
+                    Return root.ReplaceNode(invocation.Parent, binaryExpression.WithTriviaFrom(invocation.Parent))
                 End If
 
                 Return root.ReplaceNode(invocation, GetBinaryExpression(expression, propertyName, SyntaxKind.NotEqualsExpression).WithTriviaFrom(invocation))

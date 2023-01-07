@@ -3117,8 +3117,8 @@
         },
         "CA1860": {
           "id": "CA1860",
-          "shortDescription": "Prefer 'IsEmpty' over 'Any()'",
-          "fullDescription": "Prefer a 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.",
+          "shortDescription": "Prefer 'IsEmpty' check over 'Any()'",
+          "fullDescription": "Prefer an 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860",
           "properties": {
@@ -3137,8 +3137,8 @@
         },
         "CA1861": {
           "id": "CA1861",
-          "shortDescription": "Prefer 'Length' over 'Any()'",
-          "fullDescription": "Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.",
+          "shortDescription": "Prefer 'Length' check over 'Any()'",
+          "fullDescription": "Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861",
           "properties": {
@@ -3157,8 +3157,8 @@
         },
         "CA1862": {
           "id": "CA1862",
-          "shortDescription": "Prefer 'Count' over 'Any()'",
-          "fullDescription": "Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.",
+          "shortDescription": "Prefer 'Count' property check over 'Any()'",
+          "fullDescription": "Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862",
           "properties": {

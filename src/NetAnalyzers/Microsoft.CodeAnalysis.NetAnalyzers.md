@@ -1680,21 +1680,9 @@ Using concrete types avoids virtual or interface call overhead and enables inlin
 |CodeFix|False|
 ---
 
-## [CA1860](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Prefer 'IsEmpty' over 'Any()'
+## [CA1860](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Prefer 'IsEmpty' check over 'Any()'
 
-Prefer a 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.
-
-|Item|Value|
-|-|-|
-|Category|Performance|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|True|
----
-
-## [CA1861](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Prefer 'Length' over 'Any()'
-
-Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.
+Prefer an 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.
 
 |Item|Value|
 |-|-|
@@ -1704,9 +1692,21 @@ Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the 
 |CodeFix|True|
 ---
 
-## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer 'Count' over 'Any()'
+## [CA1861](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Prefer 'Length' check over 'Any()'
 
-Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.
+Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer 'Count' property check over 'Any()'
+
+Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.
 
 |Item|Value|
 |-|-|

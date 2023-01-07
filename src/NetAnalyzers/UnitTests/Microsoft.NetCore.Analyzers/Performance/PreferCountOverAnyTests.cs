@@ -14,273 +14,414 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public class PreferCountOverAnyTests
     {
-        private const string CSharpTemplate = @"
-using System.Collections.Generic;
-using System.Linq;
-
-public class Tests {{
-    {0}
-}}";
-
-        private const string VbTemplate = @"
-Imports System.Collections.Generic
-Imports System.Linq
-
-Public Class Tests
-    {0}
-End Class";
-
         private static readonly DiagnosticResult ExpectedDiagnostic = new DiagnosticResult(PreferLengthCountIsEmptyOverAnyAnalyzer.CountDescriptor).WithLocation(0);
 
         [Fact]
         public Task TestLocalDeclarationAsync()
         {
             const string code = @"
-public void M() {
-    var list = new List<int>();
-    _ = {|#0:list.Any()|};
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public void M() {
+        var list = new List<int>();
+        _ = {|#0:list.Any()|};
+    }
 }";
             const string fixedCode = @"
-public void M() {
-    var list = new List<int>();
-    _ = list.Count != 0;
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public void M() {
+        var list = new List<int>();
+        _ = list.Count != 0;
+    }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(string.Format(CSharpTemplate, code), ExpectedDiagnostic, string.Format(CSharpTemplate, fixedCode));
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
         public Task VbTestLocalDeclarationAsync()
         {
             const string code = @"
-Public Function M()
-    Dim list = new List(Of Integer)()
-    Dim x = {|#0:list.Any()|}
-End Function";
-            const string fixedCode = @"
-Public Function M()
-    Dim list = new List(Of Integer)()
-    Dim x = list.Count <> 0
-End Function";
+Imports System.Collections.Generic
+Imports System.Linq
 
-            return VerifyVB.VerifyCodeFixAsync(string.Format(VbTemplate, code), ExpectedDiagnostic, string.Format(VbTemplate, fixedCode));
+Public Class Tests
+    Public Function M()
+        Dim list = new List(Of Integer)()
+        Dim x = {|#0:list.Any()|}
+    End Function
+End Class";
+
+            const string fixedCode = @"
+Imports System.Collections.Generic
+Imports System.Linq
+
+Public Class Tests
+    Public Function M()
+        Dim list = new List(Of Integer)()
+        Dim x = list.Count <> 0
+    End Function
+End Class";
+
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
         public Task TestParameterDeclarationAsync()
         {
             const string code = @"
-public bool HasContents(List<int> list) {
-    return {|#0:list.Any()|};
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool HasContents(List<int> list) {
+        return {|#0:list.Any()|};
+    }
 }";
             const string fixedCode = @"
-public bool HasContents(List<int> list) {
-    return list.Count != 0;
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool HasContents(List<int> list) {
+        return list.Count != 0;
+    }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(string.Format(CSharpTemplate, code), ExpectedDiagnostic, string.Format(CSharpTemplate, fixedCode));
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
         public Task VbTestParameterDeclarationAsync()
         {
             const string code = @"
-Public Function HasContents(list As List(Of Integer)) As Boolean
-    Return {|#0:list.Any()|}
-End Function";
-            const string fixedCode = @"
-Public Function HasContents(list As List(Of Integer)) As Boolean
-    Return list.Count <> 0
-End Function";
+Imports System.Collections.Generic
+Imports System.Linq
 
-            return VerifyVB.VerifyCodeFixAsync(string.Format(VbTemplate, code), ExpectedDiagnostic, string.Format(VbTemplate, fixedCode));
+Public Class Tests
+    Public Function HasContents(list As List(Of Integer)) As Boolean
+        Return {|#0:list.Any()|}
+    End Function
+End Class";
+
+            const string fixedCode = @"
+Imports System.Collections.Generic
+Imports System.Linq
+
+Public Class Tests
+    Public Function HasContents(list As List(Of Integer)) As Boolean
+        Return list.Count <> 0
+    End Function
+End Class";
+
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
         public Task TestNegatedAnyAsync()
         {
             const string code = @"
-public bool IsEmpty(List<int> list) {
-    return !{|#0:list.Any()|};
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool IsEmpty(List<int> list) {
+        return !{|#0:list.Any()|};
+    }
 }";
             const string fixedCode = @"
-public bool IsEmpty(List<int> list) {
-    return list.Count == 0;
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool IsEmpty(List<int> list) {
+        return list.Count == 0;
+    }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(string.Format(CSharpTemplate, code), ExpectedDiagnostic, string.Format(CSharpTemplate, fixedCode));
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
         public Task VbTestNegatedAnyAsync()
         {
             const string code = @"
-Public Function IsEmpty(list As List(Of Integer)) As Boolean
-    Return Not {|#0:list.Any()|}
-End Function";
-            const string fixedCode = @"
-Public Function IsEmpty(list As List(Of Integer)) As Boolean
-    Return list.Count = 0
-End Function";
+Imports System.Collections.Generic
+Imports System.Linq
 
-            return VerifyVB.VerifyCodeFixAsync(string.Format(VbTemplate, code), ExpectedDiagnostic, string.Format(VbTemplate, fixedCode));
+Public Class Tests
+    Public Function IsEmpty(list As List(Of Integer)) As Boolean
+        Return Not {|#0:list.Any()|}
+    End Function
+End Class";
+
+            const string fixedCode = @"
+Imports System.Collections.Generic
+Imports System.Linq
+
+Public Class Tests
+    Public Function IsEmpty(list As List(Of Integer)) As Boolean
+        Return list.Count = 0
+    End Function
+End Class";
+
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
         public Task DontWarnOnChainedLinqWithAnyAsync()
         {
             const string code = @"
-public bool HasContents(List<int> list) {
-    return list.Select(x => x).Any();
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool HasContents(List<int> list) {
+        return list.Select(x => x).Any();
+    }
 }";
 
-            return VerifyCS.VerifyAnalyzerAsync(string.Format(CSharpTemplate, code));
+            return VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
         public Task VbDontWarnOnChainedLinqWithAnyAsync()
         {
             const string code = @"
-Public Function HasContents(list As List(Of Integer)) As Boolean
-    Return list.Select(Function(x) x).Any()
-End Function";
+Imports System.Collections.Generic
+Imports System.Linq
 
-            return VerifyVB.VerifyAnalyzerAsync(string.Format(VbTemplate, code));
+Public Class Tests
+    Public Function HasContents(list As List(Of Integer)) As Boolean
+        Return list.Select(Function(x) x).Any()
+    End Function
+End Class";
+
+            return VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
         public Task DontWarnOnAnyWithPredicateAsync()
         {
             const string code = @"
-public bool HasContents(List<int> list) {
-    return list.Any(x => x > 5);
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool HasContents(List<int> list) {
+        return list.Any(x => x > 5);
+    }
 }";
 
-            return VerifyCS.VerifyAnalyzerAsync(string.Format(CSharpTemplate, code));
+            return VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
         public Task VbDontWarnOnAnyWithPredicateAsync()
         {
             const string code = @"
-Public Function HasContents(list As List(Of Integer)) As Boolean
-    Return list.Any(Function(x) x > 5)
-End Function";
+Imports System.Collections.Generic
+Imports System.Linq
 
-            return VerifyVB.VerifyAnalyzerAsync(string.Format(VbTemplate, code));
+Public Class Tests
+    Public Function HasContents(list As List(Of Integer)) As Boolean
+        Return list.Any(Function(x) x > 5)
+    End Function
+End Class";
+
+            return VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
         public Task DontWarnOnInvalidCallAsync()
         {
             const string code = @"
-public bool HasAny()
-{
-    return System.Linq.Enumerable.{|CS1501:Any|}();
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool HasAny()
+    {
+        return System.Linq.Enumerable.{|CS1501:Any|}();
+    }
 }";
 
-            return VerifyCS.VerifyAnalyzerAsync(string.Format(CSharpTemplate, code));
+            return VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
         public Task VbDontWarnOnInvalidCallAsync()
         {
             const string code = @"
-Public Function M() As Boolean
-    Return System.Linq.Enumerable.{|BC30516:Any|}()
-End Function";
+Imports System.Collections.Generic
+Imports System.Linq
 
-            return VerifyVB.VerifyAnalyzerAsync(string.Format(VbTemplate, code));
+Public Class Tests
+    Public Function M() As Boolean
+        Return System.Linq.Enumerable.{|BC30516:Any|}()
+    End Function
+End Class";
+
+            return VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
         public Task TestQualifiedCallAsync()
         {
             const string code = @"
-public bool HasContents(List<int> list) {
-    return {|#0:Enumerable.Any(list)|};
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool HasContents(List<int> list) {
+        return {|#0:Enumerable.Any(list)|};
+    }
 }";
             const string fixedCode = @"
-public bool HasContents(List<int> list) {
-    return list.Count != 0;
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool HasContents(List<int> list) {
+        return list.Count != 0;
+    }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(string.Format(CSharpTemplate, code), ExpectedDiagnostic, string.Format(CSharpTemplate, fixedCode));
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
         public Task VbTestQualifiedCallAsync()
         {
             const string code = @"
-Public Function HasContents(list As List(Of Integer)) As Boolean
-    Return {|#0:Enumerable.Any(list)|}
-End Function";
-            const string fixedCode = @"
-Public Function HasContents(list As List(Of Integer)) As Boolean
-    Return list.Count <> 0
-End Function";
+Imports System.Collections.Generic
+Imports System.Linq
 
-            return VerifyVB.VerifyCodeFixAsync(string.Format(VbTemplate, code), ExpectedDiagnostic, string.Format(VbTemplate, fixedCode));
+Public Class Tests
+    Public Function HasContents(list As List(Of Integer)) As Boolean
+        Return {|#0:Enumerable.Any(list)|}
+    End Function
+End Class";
+
+            const string fixedCode = @"
+Imports System.Collections.Generic
+Imports System.Linq
+
+Public Class Tests
+    Public Function HasContents(list As List(Of Integer)) As Boolean
+        Return list.Count <> 0
+    End Function
+End Class";
+
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
         public Task TestFullyQualifiedCallAsync()
         {
             const string code = @"
-public bool HasContents(List<int> list) {
-    return {|#0:System.Linq.Enumerable.Any(list)|};
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool HasContents(List<int> list) {
+        return {|#0:System.Linq.Enumerable.Any(list)|};
+    }
 }";
             const string fixedCode = @"
-public bool HasContents(List<int> list) {
-    return list.Count != 0;
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool HasContents(List<int> list) {
+        return list.Count != 0;
+    }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(string.Format(CSharpTemplate, code), ExpectedDiagnostic, string.Format(CSharpTemplate, fixedCode));
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
         public Task VbTestFullyQualifiedCallAsync()
         {
             const string code = @"
-Public Function HasContents(list As List(Of Integer)) As Boolean
-    Return {|#0:System.Linq.Enumerable.Any(list)|}
-End Function";
-            const string fixedCode = @"
-Public Function HasContents(list As List(Of Integer)) As Boolean
-    Return list.Count <> 0
-End Function";
+Imports System.Collections.Generic
+Imports System.Linq
 
-            return VerifyVB.VerifyCodeFixAsync(string.Format(VbTemplate, code), ExpectedDiagnostic, string.Format(VbTemplate, fixedCode));
+Public Class Tests
+    Public Function HasContents(list As List(Of Integer)) As Boolean
+        Return {|#0:System.Linq.Enumerable.Any(list)|}
+    End Function
+End Class";
+
+            const string fixedCode = @"
+Imports System.Collections.Generic
+Imports System.Linq
+
+Public Class Tests
+    Public Function HasContents(list As List(Of Integer)) As Boolean
+        Return list.Count <> 0
+    End Function
+End Class";
+
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
         public Task VbTestWithoutParenthesesAsync()
         {
             const string code = @"
-Public Function HasContents(list As List(Of Integer)) As Boolean
-    Return {|#0:list.Any|}
-End Function";
-            const string fixedCode = @"
-Public Function HasContents(list As List(Of Integer)) As Boolean
-    Return list.Count <> 0
-End Function";
+Imports System.Collections.Generic
+Imports System.Linq
 
-            return VerifyVB.VerifyCodeFixAsync(string.Format(VbTemplate, code), ExpectedDiagnostic, string.Format(VbTemplate, fixedCode));
+Public Class Tests
+    Public Function HasContents(list As List(Of Integer)) As Boolean
+        Return {|#0:list.Any|}
+    End Function
+End Class";
+
+            const string fixedCode = @"
+Imports System.Collections.Generic
+Imports System.Linq
+
+Public Class Tests
+    Public Function HasContents(list As List(Of Integer)) As Boolean
+        Return list.Count <> 0
+    End Function
+End Class";
+
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
         public Task VbTestNegatedWithoutParenthesesAsync()
         {
             const string code = @"
-Public Function HasContents(list As List(Of Integer)) As Boolean
-    Return Not {|#0:list.Any|}
-End Function";
-            const string fixedCode = @"
-Public Function HasContents(list As List(Of Integer)) As Boolean
-    Return list.Count = 0
-End Function";
+Imports System.Collections.Generic
+Imports System.Linq
 
-            return VerifyVB.VerifyCodeFixAsync(string.Format(VbTemplate, code), ExpectedDiagnostic, string.Format(VbTemplate, fixedCode));
+Public Class Tests
+    Public Function HasContents(list As List(Of Integer)) As Boolean
+        Return Not {|#0:list.Any|}
+    End Function
+End Class";
+
+            const string fixedCode = @"
+Imports System.Collections.Generic
+Imports System.Linq
+
+Public Class Tests
+    Public Function HasContents(list As List(Of Integer)) As Boolean
+        Return list.Count = 0
+    End Function
+End Class";
+
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
     }
 }

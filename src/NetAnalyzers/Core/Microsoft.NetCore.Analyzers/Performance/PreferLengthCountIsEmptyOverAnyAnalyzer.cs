@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -13,7 +14,7 @@ using static Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 namespace Microsoft.NetCore.Analyzers.Performance
 {
     /// <summary>
-    /// Prefer .Length/Count/IsEmpty over Any()
+    /// Prefer using 'IsEmpty' or comparing 'Count' / 'Length' property to 0 rather than using 'Any()', both for clarity and for performance.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PreferLengthCountIsEmptyOverAnyAnalyzer : DiagnosticAnalyzer
@@ -27,8 +28,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string IsEmptyId = "CA1860";
         internal const string LengthId = "CA1861";
         internal const string CountId = "CA1862";
-
-        private const string SourceParameterName = "source";
 
         internal static readonly DiagnosticDescriptor IsEmptyDescriptor = DiagnosticDescriptorHelper.Create(
             IsEmptyId,
@@ -63,6 +62,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             isDataflowRule: false
         );
 
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            LengthDescriptor,
+            CountDescriptor,
+            IsEmptyDescriptor
+        );
+
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
@@ -74,28 +79,36 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             var invocation = (IInvocationOperation)context.Operation;
             var originalMethod = invocation.TargetMethod.OriginalDefinition;
+            if (originalMethod.MethodKind == MethodKind.ReducedExtension)
+            {
+                originalMethod = originalMethod.ReducedFrom;
+            }
+
             if (IsEligibleAnyMethod(originalMethod))
             {
-                // The collection will be passed as the instance in VB and as an argument in C#. 
-                var firstArgument = invocation.Instance ?? invocation.Arguments[0].Value;
-                var type = (firstArgument as IConversionOperation)?.Operand.Type ?? firstArgument.Type;
+                var type = invocation.GetReceiverType(context.Compilation, beforeConversion: true, context.CancellationToken);
+                if (type is null)
+                {
+                    return;
+                }
+
                 if (HasEligibleIsEmptyProperty(type))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(IsEmptyDescriptor, invocation.Syntax.GetLocation()));
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(IsEmptyDescriptor));
 
                     return;
                 }
 
                 if (HasEligibleLengthProperty(type))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(LengthDescriptor, invocation.Syntax.GetLocation()));
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(LengthDescriptor));
 
                     return;
                 }
 
                 if (HasEligibleCountProperty(type))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(CountDescriptor, invocation.Syntax.GetLocation()));
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(CountDescriptor));
 
                     return;
                 }
@@ -104,16 +117,20 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static bool IsEligibleAnyMethod(IMethodSymbol method)
         {
-            return method.Name == AnyText
-                   && method.ReturnType.SpecialType == SpecialType.System_Boolean
-                   && method.Language == LanguageNames.CSharp && method.Parameters.Length == 1
-                   || (method.Language == LanguageNames.VisualBasic && (method.Parameters.Length == 0 || method.Parameters.Length == 1 && method.Parameters[0].Name == SourceParameterName));
+            return method is
+            {
+                Name: AnyText,
+                ReturnType.SpecialType: SpecialType.System_Boolean,
+                IsExtensionMethod: true,
+                Parameters: [_]
+            };
         }
 
         private static bool HasEligibleIsEmptyProperty(ITypeSymbol typeSymbol)
         {
             return typeSymbol.GetMembers(IsEmptyText)
-                .Any(symbol => symbol is IPropertySymbol property && property.Type.SpecialType == SpecialType.System_Boolean);
+                .OfType<IPropertySymbol>()
+                .Any(property => property.Type.SpecialType == SpecialType.System_Boolean);
         }
 
         private static bool HasEligibleLengthProperty(ITypeSymbol typeSymbol)
@@ -124,19 +141,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             return typeSymbol.GetMembers(LengthText)
-                .Any(symbol => symbol is IPropertySymbol property && property.Type.SpecialType == SpecialType.System_Int32);
+                .OfType<IPropertySymbol>()
+                .Any(property => property.Type.SpecialType == SpecialType.System_Int32);
         }
 
         private static bool HasEligibleCountProperty(ITypeSymbol typeSymbol)
         {
             return typeSymbol.GetMembers(CountText)
-                .Any(symbol => symbol is IPropertySymbol property && property.Type.SpecialType == SpecialType.System_Int32);
+                .OfType<IPropertySymbol>()
+                .Any(property => property.Type.SpecialType is SpecialType.System_Int32 or SpecialType.System_UInt32);
         }
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            LengthDescriptor,
-            CountDescriptor,
-            IsEmptyDescriptor
-        );
     }
 }

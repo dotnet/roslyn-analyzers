@@ -1933,23 +1933,23 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferCountOverAnyCodeFixTitle">
-        <source>Prefer 'Count' over 'Any()'</source>
-        <target state="new">Prefer 'Count' over 'Any()'</target>
+        <source>Use 'Count' check instead of 'Any()'</source>
+        <target state="new">Use 'Count' check instead of 'Any()'</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferCountOverAnyDescription">
-        <source>Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</source>
-        <target state="new">Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</target>
+        <source>Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.</source>
+        <target state="new">Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferCountOverAnyMessage">
-        <source>Prefer a 'Count' check over 'Any()' to avoid the need for devirtualization</source>
-        <target state="new">Prefer a 'Count' check over 'Any()' to avoid the need for devirtualization</target>
+        <source>Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance</source>
+        <target state="new">Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferCountOverAnyTitle">
-        <source>Prefer 'Count' over 'Any()'</source>
-        <target state="new">Prefer 'Count' over 'Any()'</target>
+        <source>Prefer 'Count' property check over 'Any()'</source>
+        <target state="new">Prefer 'Count' property check over 'Any()'</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferDictionaryContainsKeyCodeFixTitle">
@@ -2008,43 +2008,43 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferIsEmptyOverAnyCodeFixTitle">
-        <source>Prefer 'IsEmpty' over 'Any()'</source>
-        <target state="new">Prefer 'IsEmpty' over 'Any()'</target>
+        <source>Use 'IsEmpty' check instead of 'Any()'</source>
+        <target state="new">Use 'IsEmpty' check instead of 'Any()'</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsEmptyOverAnyDescription">
-        <source>Prefer a 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</source>
-        <target state="new">Prefer a 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</target>
+        <source>Prefer an 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.</source>
+        <target state="new">Prefer an 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsEmptyOverAnyMessage">
-        <source>Prefer a 'IsEmpty' check over 'Any()' to avoid the need for devirtualization</source>
-        <target state="new">Prefer a 'IsEmpty' check over 'Any()' to avoid the need for devirtualization</target>
+        <source>Prefer an 'IsEmpty' check rather than using 'Any()', both for clarity and for performance</source>
+        <target state="new">Prefer an 'IsEmpty' check rather than using 'Any()', both for clarity and for performance</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsEmptyOverAnyTitle">
-        <source>Prefer 'IsEmpty' over 'Any()'</source>
-        <target state="new">Prefer 'IsEmpty' over 'Any()'</target>
+        <source>Prefer 'IsEmpty' check over 'Any()'</source>
+        <target state="new">Prefer 'IsEmpty' check over 'Any()'</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferLengthOverAnyCodeFixTitle">
-        <source>Prefer 'Length' over 'Any()'</source>
-        <target state="new">Prefer 'Length' over 'Any()'</target>
+        <source>Use 'Length' check instead of 'Any()'</source>
+        <target state="new">Use 'Length' check instead of 'Any()'</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferLengthOverAnyDescription">
-        <source>Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</source>
-        <target state="new">Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an IEnumerable which creates the need for devirtualization at runtime.</target>
+        <source>Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.</source>
+        <target state="new">Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferLengthOverAnyMessage">
-        <source>Prefer a 'Length' check over 'Any()' to avoid the need for devirtualization</source>
-        <target state="new">Prefer a 'Length' check over 'Any()' to avoid the need for devirtualization</target>
+        <source>Prefer comparing 'Length' to 0 rather than using 'Any()', both for clarity and for performance</source>
+        <target state="new">Prefer comparing 'Length' to 0 rather than using 'Any()', both for clarity and for performance</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferLengthOverAnyTitle">
-        <source>Prefer 'Length' over 'Any()'</source>
-        <target state="new">Prefer 'Length' over 'Any()'</target>
+        <source>Prefer 'Length' check over 'Any()'</source>
+        <target state="new">Prefer 'Length' check over 'Any()'</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">

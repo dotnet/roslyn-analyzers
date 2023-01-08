@@ -58,10 +58,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
             }
 
-            public static Collector GetInstance(Compilation compilation)
+            public static Collector GetInstance(INamedTypeSymbol voidType)
             {
                 var c = _pool.Allocate();
-                c.Void = compilation.GetSpecialType(SpecialType.System_Void);
+                c.Void = voidType;
                 return c;
             }
 
@@ -442,13 +442,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         {
                             var localRef = (ILocalReferenceOperation)op;
                             RecordAssignment(localRef.Local, valueType);
-                            break;
-                        }
-
-                    case OperationKind.ParameterReference:
-                        {
-                            var paramRef = (IParameterReferenceOperation)op;
-                            RecordAssignment(paramRef.Parameter, valueType);
                             break;
                         }
 

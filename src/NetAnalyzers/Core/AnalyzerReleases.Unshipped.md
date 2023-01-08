@@ -12,6 +12,7 @@ CA1856 | Performance | Error | ConstantExpectedAnalyzer, [Documentation](https:/
 CA1857 | Performance | Warning | ConstantExpectedAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857)
 CA1858 | Performance | Info | UseStartsWithInsteadOfIndexOfComparisonWithZero, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858)
 CA1859 | Performance | Info | UseConcreteTypeAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859)
+CA1863 | Performance | Info | PreferDictionaryTryAddValueOverGuardedAddAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1863)
 
 ### Removed Rules
 

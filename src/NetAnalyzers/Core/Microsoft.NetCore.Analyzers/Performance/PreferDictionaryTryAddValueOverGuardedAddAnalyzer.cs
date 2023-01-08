@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PreferDictionaryTryAddValueOverGuardedAddAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1856";
+        internal const string RuleId = "CA1863";
 
         private const string ContainsKey = nameof(IDictionary<dynamic, dynamic>.ContainsKey);
         private const string Add = nameof(IDictionary<dynamic, dynamic>.Add);
@@ -34,6 +34,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             s_localizableTryGetValueDescription,
             false,
             false);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptor);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -143,7 +145,5 @@ namespace Microsoft.NetCore.Analyzers.Performance
                    && suspected.Parameters.Length == comparator.Parameters.Length
                    && suspected.Parameters.Zip(comparator.Parameters, (p1, p2) => p1.OriginalDefinition.Type.Name == p2.Type.Name).All(isParameterEqual => isParameterEqual);
         }
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptor);
     }
 }

@@ -18,7 +18,7 @@ namespace PerformanceTests.Utilities
             return new CompositionContextShim(exportProvider);
         }
 
-        private class CompositionContextShim : CompositionContext
+        private sealed class CompositionContextShim : CompositionContext
         {
             private readonly ExportProvider _exportProvider;
 

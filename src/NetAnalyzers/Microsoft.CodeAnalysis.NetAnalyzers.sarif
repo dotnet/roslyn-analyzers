@@ -3118,7 +3118,7 @@
         "CA1860": {
           "id": "CA1860",
           "shortDescription": "Prefer 'IsEmpty' check over 'Any()'",
-          "fullDescription": "Prefer an 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.",
+          "fullDescription": "Prefer using 'IsEmpty' rather than 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860",
           "properties": {
@@ -3138,7 +3138,7 @@
         "CA1861": {
           "id": "CA1861",
           "shortDescription": "Prefer 'Length' check over 'Any()'",
-          "fullDescription": "Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.",
+          "fullDescription": "Prefer comparing 'Length' to 0 rather than using 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861",
           "properties": {
@@ -3158,7 +3158,7 @@
         "CA1862": {
           "id": "CA1862",
           "shortDescription": "Prefer 'Count' property check over 'Any()'",
-          "fullDescription": "Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.",
+          "fullDescription": "Prefer comparing 'Count' to 0 rather than using 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862",
           "properties": {

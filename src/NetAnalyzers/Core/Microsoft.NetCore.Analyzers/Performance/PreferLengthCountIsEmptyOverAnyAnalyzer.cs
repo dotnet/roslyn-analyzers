@@ -142,7 +142,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             return typeSymbol.GetMembers(LengthText)
                 .OfType<IPropertySymbol>()
-                .Any(property => property.Type.SpecialType == SpecialType.System_Int32);
+                .Any(property => property.Type.SpecialType is SpecialType.System_Int32 or SpecialType.System_UInt32);
         }
 
         private static bool HasEligibleCountProperty(ITypeSymbol typeSymbol)

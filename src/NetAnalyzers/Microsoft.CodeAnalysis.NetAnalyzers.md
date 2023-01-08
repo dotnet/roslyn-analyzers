@@ -1682,7 +1682,7 @@ Using concrete types avoids virtual or interface call overhead and enables inlin
 
 ## [CA1860](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Prefer 'IsEmpty' check over 'Any()'
 
-Prefer an 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.
+Prefer using 'IsEmpty' rather than 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.
 
 |Item|Value|
 |-|-|
@@ -1694,7 +1694,7 @@ Prefer an 'IsEmpty' check over an 'Any()' call. The 'Any()' call will convert th
 
 ## [CA1861](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Prefer 'Length' check over 'Any()'
 
-Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.
+Prefer comparing 'Length' to 0 rather than using 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.
 
 |Item|Value|
 |-|-|
@@ -1706,7 +1706,7 @@ Prefer a 'Length' check over an 'Any()' call. The 'Any()' call will convert the 
 
 ## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer 'Count' property check over 'Any()'
 
-Prefer a 'Count' check over an 'Any()' call. The 'Any()' call will convert the collection into an 'IEnumerable' which creates the need for devirtualization at runtime.
+Prefer comparing 'Count' to 0 rather than using 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.
 
 |Item|Value|
 |-|-|

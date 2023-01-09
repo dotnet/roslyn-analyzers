@@ -10,6 +10,8 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
     /// <summary>
     /// CA2021: Do not call Enumerable.Cast or Enumerable.OfType with incompatible types.
     /// </summary>
@@ -18,11 +20,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA2021";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesTitle));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesDescription));
 
-        private static readonly LocalizableString s_localizableCastMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesMessageCast), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableOfTypeMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesMessageOfType), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableCastMessage = CreateLocalizableResourceString(nameof(DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesMessageCast));
+        private static readonly LocalizableString s_localizableOfTypeMessage = CreateLocalizableResourceString(nameof(DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesMessageOfType));
 
         internal static DiagnosticDescriptor CastRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
@@ -47,8 +49,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             (nameof(Enumerable.OfType), OfTypeRule)
         );
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-            => ImmutableArray.Create(OfTypeRule, CastRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
+            = ImmutableArray.Create(OfTypeRule, CastRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -195,6 +197,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         return nullableTypeArgument;
                     }
+
                     return typeSymbol;
                 }
 
@@ -231,6 +234,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         {
                             return true;
                         }
+
                         return false;
                     case (_, TypeKind.TypeParameter):
                         var castToTypeParam = (ITypeParameterSymbol)castTo.OriginalDefinition;
@@ -249,6 +253,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         {
                             return true;
                         }
+
                         return false;
 
                     case (TypeKind.Class, TypeKind.Class):
@@ -261,11 +266,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return castFrom.IsSealed && !castFrom.AllInterfaces.Contains(castTo);
 
                     case (TypeKind.Class, TypeKind.Enum):
-                        return castFrom.OriginalDefinition.SpecialType != SpecialType.System_Enum
-                            && castFrom.OriginalDefinition.SpecialType != SpecialType.System_ValueType;
+                        return castFrom.OriginalDefinition.SpecialType is not SpecialType.System_Enum
+                                                                      and not SpecialType.System_ValueType;
                     case (TypeKind.Enum, TypeKind.Class):
-                        return castTo.OriginalDefinition.SpecialType != SpecialType.System_Enum
-                            && castTo.OriginalDefinition.SpecialType != SpecialType.System_ValueType;
+                        return castTo.OriginalDefinition.SpecialType is not SpecialType.System_Enum
+                                                                    and not SpecialType.System_ValueType;
 
                     case (TypeKind.Struct, TypeKind.Enum)
                     when castTo.OriginalDefinition is INamedTypeSymbol toEnum:

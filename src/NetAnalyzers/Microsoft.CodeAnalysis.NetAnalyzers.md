@@ -1860,7 +1860,7 @@ Some built-in operators added in .NET 7 behave differently when overflowing than
 |CodeFix|False|
 ---
 
-## [CA2021](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019): Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types
+## [CA2021](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021): Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types
 
 Enumerable.Cast\<T> and Enumerable.OfType\<T> require compatible types to function expectedly.  
 

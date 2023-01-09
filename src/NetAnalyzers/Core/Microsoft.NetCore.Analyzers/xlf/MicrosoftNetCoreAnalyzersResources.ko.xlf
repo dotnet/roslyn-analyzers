@@ -578,21 +578,6 @@ Widening and user defined conversions are not supported with generic types.</tar
         <target state="new">Do not call Enumerable.Cast&lt;T&gt; or Enumerable.OfType&lt;T&gt; with incompatible types</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">
-        <source>When a constructor calls a virtual method, the constructor for the instance that invokes the method may not have executed.</source>
-        <target state="translated">생성자에서 가상 메서드를 호출하면 메서드를 호출하는 인스턴스에 대한 생성자가 실행되지 않을 수 있습니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotCallOverridableMethodsInConstructorsMessage">
-        <source>Do not call overridable methods in constructors</source>
-        <target state="translated">생성자에서 재정의 가능한 메서드를 호출하지 마세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotCallOverridableMethodsInConstructorsTitle">
-        <source>Do not call overridable methods in constructors</source>
-        <target state="translated">생성자에서 재정의 가능한 메서드를 호출하지 마세요.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotCallToImmutableCollectionOnAnImmutableCollectionValueMessage">
         <source>Do not call {0} on an {1} value</source>
         <target state="translated">{1} 값의 {0}을(를) 호출하지 마세요.</target>

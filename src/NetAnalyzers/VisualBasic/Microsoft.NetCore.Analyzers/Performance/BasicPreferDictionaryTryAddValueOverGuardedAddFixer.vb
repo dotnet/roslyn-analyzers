@@ -17,11 +17,8 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
         Inherits PreferDictionaryTryAddValueOverGuardedAddFixer
 
         Public Overrides Async Function RegisterCodeFixesAsync(context As CodeFixContext) As Task
-            Dim diagnostic = context.Diagnostics.FirstOrDefault()
-            Dim dictionaryAddLocation = diagnostic?.AdditionalLocations(0)
-            If dictionaryAddLocation Is Nothing
-                Return
-            End If
+            Dim diagnostic = context.Diagnostics(0)
+            Dim dictionaryAddLocation = diagnostic.AdditionalLocations(0)
 
             Dim document = context.Document
             Dim root = Await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(False)
@@ -30,8 +27,8 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
             Dim containsKeyInvocation = TryCast(root.FindNode(context.Span), InvocationExpressionSyntax)
             Dim containsKeyAccess = TryCast(containsKeyInvocation?.Expression, MemberAccessExpressionSyntax)
             If _
-                dictionaryAddInvocation Is Nothing Or
-                containsKeyInvocation Is Nothing Or
+                dictionaryAddInvocation Is Nothing OrElse
+                containsKeyInvocation Is Nothing OrElse
                 containsKeyAccess Is Nothing Then
                 Return
             End If

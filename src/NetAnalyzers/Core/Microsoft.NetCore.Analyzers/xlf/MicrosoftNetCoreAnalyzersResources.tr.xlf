@@ -1967,24 +1967,24 @@
         <target state="translated">Sözlük türü '{0}' için 'Values.Contains' yerine 'ContainsValue' tercih edin</target>
         <note />
       </trans-unit>
-      <trans-unit id="PreferDictionaryTryAddValueCodeFixTitle">
-        <source>Use 'TryAdd(TKey, TValue)'</source>
-        <target state="new">Use 'TryAdd(TKey, TValue)'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryAddValueDescription">
+      <trans-unit id="PreferDictionaryTryAddDescription">
         <source>Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add' except that it doesn't throw an exception when a value for a given key already exists, but rather returns 'false'.</source>
         <target state="new">Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add' except that it doesn't throw an exception when a value for a given key already exists, but rather returns 'false'.</target>
         <note />
       </trans-unit>
-      <trans-unit id="PreferDictionaryTryAddValueMessage">
+      <trans-unit id="PreferDictionaryTryAddMessage">
         <source>Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check to avoid double lookup</source>
         <target state="new">Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check to avoid double lookup</target>
         <note />
       </trans-unit>
-      <trans-unit id="PreferDictionaryTryAddValueTitle">
+      <trans-unit id="PreferDictionaryTryAddTitle">
         <source>Prefer the 'IDictionary.TryAdd(TKey, TValue)' method</source>
         <target state="new">Prefer the 'IDictionary.TryAdd(TKey, TValue)' method</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryAddValueCodeFixTitle">
+        <source>Use 'TryAdd(TKey, TValue)'</source>
+        <target state="new">Use 'TryAdd(TKey, TValue)'</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferHashDataCodefixTitle">

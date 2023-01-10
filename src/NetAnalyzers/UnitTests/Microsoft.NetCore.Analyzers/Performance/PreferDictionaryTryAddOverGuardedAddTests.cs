@@ -4,15 +4,15 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Performance.PreferDictionaryTryAddValueOverGuardedAddAnalyzer,
+    Microsoft.NetCore.Analyzers.Performance.PreferDictionaryTryAddOverGuardedAddAnalyzer,
     Microsoft.NetCore.CSharp.Analyzers.Performance.CSharpPreferDictionaryTryAddValueOverGuardedAddFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Performance.PreferDictionaryTryAddValueOverGuardedAddAnalyzer,
+    Microsoft.NetCore.Analyzers.Performance.PreferDictionaryTryAddOverGuardedAddAnalyzer,
     Microsoft.NetCore.VisualBasic.Analyzers.Performance.BasicPreferDictionaryTryAddValueOverGuardedAddFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
-    public class PreferDictionaryTryAddValueOverGuardedAddTests
+    public class PreferDictionaryTryAddOverGuardedAddTests
     {
 
         #region C# Tests
@@ -168,6 +168,17 @@ if(!d.ContainsValue(5))
     d.Add(5, 5);
 }";
 
+        private const string AddOnDifferentDictionary = @"
+var d2 = new Dictionary<int, int>();
+if (d2.ContainsKey(5))
+{
+    Console.WriteLine($""Value existed: {d2[5]}"");
+}
+else
+{
+    d.Add(5, 6);
+}";
+
         #endregion
 
         #region VB Tests
@@ -291,6 +302,14 @@ If Not d.ContainsValue(5) Then
     d.Add(5, 5)
 End If";
 
+        private const string AddOnDifferentDictionaryVb = @"
+Dim d2 = New Dictionary(Of Integer, Integer)
+If d2.ContainsKey(5) Then
+    Console.WriteLine($""Value existed: {d2(5)}"")
+Else
+    d.Add(5, 6)
+End If";
+
         #endregion
 
         [Theory]
@@ -305,7 +324,7 @@ End If";
         {
             string testCode = CreateCSharpTestClass(codeSnippet);
             string fixedCode = CreateCSharpTestClass(fixedCodeSnippet);
-            var diagnostic = VerifyCS.Diagnostic(PreferDictionaryTryAddValueOverGuardedAddAnalyzer.RuleId).WithLocation(0).WithLocation(1);
+            var diagnostic = VerifyCS.Diagnostic(PreferDictionaryTryAddOverGuardedAddAnalyzer.RuleId).WithLocation(0).WithLocation(1);
 
             return VerifyCS.VerifyCodeFixAsync(testCode, diagnostic, fixedCode);
         }
@@ -315,6 +334,7 @@ End If";
         [InlineData(LongRunningOperation)]
         [InlineData(WithObjectInstantiation)]
         [InlineData(NotGuardedByContainsKey)]
+        [InlineData(AddOnDifferentDictionary)]
         public Task ShouldNotReportDiagnosticAsync(string codeSnippet)
         {
             string testCode = CreateCSharpTestClass(codeSnippet);
@@ -333,7 +353,7 @@ End If";
         {
             string testCode = CreateVbTestClass(codeSnippet);
             string fixedCode = CreateVbTestClass(fixedCodeSnippet);
-            var diagnostic = VerifyVB.Diagnostic(PreferDictionaryTryAddValueOverGuardedAddAnalyzer.RuleId).WithLocation(0).WithLocation(1);
+            var diagnostic = VerifyVB.Diagnostic(PreferDictionaryTryAddOverGuardedAddAnalyzer.RuleId).WithLocation(0).WithLocation(1);
 
             return VerifyVB.VerifyCodeFixAsync(testCode, diagnostic, fixedCode);
         }
@@ -342,6 +362,7 @@ End If";
         [InlineData(FakeDictionaryVb)]
         [InlineData(LongRunningOperationVb)]
         [InlineData(NotGuardedByContainsKeyVb)]
+        [InlineData(AddOnDifferentDictionaryVb)]
         public Task ShouldNotReportDiagnosticVbAsync(string codeSnippet)
         {
             string testCode = CreateVbTestClass(codeSnippet);

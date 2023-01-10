@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -16,12 +15,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     {
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var diagnostic = context.Diagnostics.FirstOrDefault();
-            var dictionaryAddLocation = diagnostic?.AdditionalLocations[0];
-            if (dictionaryAddLocation is null)
-            {
-                return;
-            }
+            var diagnostic = context.Diagnostics[0];
+            var dictionaryAddLocation = diagnostic.AdditionalLocations[0];
 
             Document document = context.Document;
             SyntaxNode root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);

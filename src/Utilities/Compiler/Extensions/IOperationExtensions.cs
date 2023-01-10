@@ -1136,6 +1136,20 @@ namespace Analyzer.Utilities.Extensions
                 _ => false,
             };
 #endif
+
+        public static ISymbol? GetSymbolFromReference(this IOperation reference)
+        {
+            return reference switch
+            {
+                ILocalReferenceOperation l => l.Local,
+                IFieldReferenceOperation f => f.Field,
+                IParameterReferenceOperation pa => pa.Parameter,
+                IPropertyReferenceOperation p => p.Property,
+                IMemberReferenceOperation m => m.Member,
+                IArrayElementReferenceOperation a => GetSymbolFromReference(a.ArrayReference),
+                _ => null
+            };
+        }
     }
 }
 

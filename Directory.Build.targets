@@ -14,6 +14,14 @@
     </Content>
   </ItemGroup>
 
+   <ItemGroup Condition="'$(IsUnitTestProject)' == 'true'">
+    <!-- 
+      This package is a transitive dependency of Microsoft.NET.Test.Sdk but we explicitely define it here so we can use the
+      GeneratePathProperty and use PkgMicrosoft_CodeCoverage below on TestRunnerAdditionalArguments.
+     -->
+    <PackageReference Include="Microsoft.CodeCoverage" Version="$(MicrosoftNETTestSdkVersion)" GeneratePathProperty="true" />
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(NonShipping)' == 'true' or '$(IsVsixProject)' == 'true'">
     <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
   </PropertyGroup>
@@ -29,10 +37,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Coverage)' == 'true'">
-    <TestRunnerAdditionalArguments>--collect:"Code Coverage;Format=Cobertura"</TestRunnerAdditionalArguments>
+    <!-- AzDO only supports coverage format but here we use codecov.io so we go with Cobertura format -->
+    <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --collect:"Code Coverage;Format=Cobertura"</TestRunnerAdditionalArguments>
     <!-- TODO: On next arcade bump of Microsoft.CodeCoverage/Microsoft.NET.Test.Sdk we will have to update this line to be netstandard2.0 -->
     <!-- Because arcade is passing dlls directly to 'dotnet test' command, we need to manually provide path to coverage datacollector -->
-    <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --test-adapter-path $(NUGET_PACKAGES)/microsoft.codecoverage/$(MicrosoftNETTestSdkVersion)/build/netstandard1.0</TestRunnerAdditionalArguments>
+    <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --test-adapter-path $(PkgMicrosoft_CodeCoverage)/build/netstandard1.0</TestRunnerAdditionalArguments>
   </PropertyGroup>
 
   <Target Name="OuterInstrumentModulesNoBuild" BeforeTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' == ''">

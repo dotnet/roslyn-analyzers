@@ -49,6 +49,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 DictionaryReference = dictionaryReference;
                 IndexReference = indexReference;
+
+                while (dictionaryReference is IArrayElementReferenceOperation a)
+                {
+                    AdditionalArrayIndexReferences = AdditionalArrayIndexReferences.AddRange(a.Indices);
+                    dictionaryReference = a.ArrayReference;
+                }
             }
 
             public bool Equals(DictionaryUsageContext other)
@@ -56,7 +62,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return Equals(_usageLocations, other._usageLocations) &&
                        DictionaryReference.Equals(other.DictionaryReference) &&
                        IndexReference.Equals(other.IndexReference) &&
-                       Equals(SetterLocation, other.SetterLocation);
+                       Equals(SetterLocation, other.SetterLocation) &&
+                       Equals(AdditionalArrayIndexReferences, other.AdditionalArrayIndexReferences);
             }
 
             public override bool Equals(object? obj)
@@ -66,7 +73,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             public override int GetHashCode()
             {
-                return RoslynHashCode.Combine(_usageLocations, DictionaryReference, IndexReference, SetterLocation);
+                return RoslynHashCode.Combine(_usageLocations, DictionaryReference, IndexReference, SetterLocation, AdditionalArrayIndexReferences);
             }
 
             public static bool operator ==(DictionaryUsageContext left, DictionaryUsageContext right)
@@ -81,6 +88,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             public IOperation DictionaryReference { get; }
             public IOperation IndexReference { get; }
+
+            public ImmutableArray<IOperation> AdditionalArrayIndexReferences { get; } = ImmutableArray<IOperation>.Empty;
 
             public ImmutableArray<Location>.Builder UsageLocations
             {
@@ -171,14 +180,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return true;
                     case IBinaryOperation { OperatorKind: BinaryOperatorKind.ConditionalAnd } bAnd when guardsTruePath:
                         nextOperation = bAnd;
-                        if (bAnd.LeftOperand == operation)
-                            FindUsages(bAnd.RightOperand, ref context);
+                        if (bAnd.LeftOperand == operation && !FindUsages(bAnd.RightOperand, ref context))
+                        {
+                            conditionalOperation = null;
+                            return false;
+                        }
+
                         break;
                     case IBinaryOperation { OperatorKind: BinaryOperatorKind.ConditionalOr } bOr when !guardsTruePath:
                         nextOperation = bOr;
-                        if (bOr.LeftOperand == operation)
-                            FindUsages(bOr.RightOperand, ref context);
+                        if (bOr.LeftOperand == operation && !FindUsages(bOr.RightOperand, ref context))
+                        {
+                            conditionalOperation = null;
+                            return false;
+                        }
+
                         break;
+
                     default:
                         conditionalOperation = null;
                         return false;
@@ -192,11 +210,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             foreach (var descendant in operation.DescendantsAndSelf())
             {
-                var symbol = GetSymbolFromReference(descendant);
-                if (symbol == null)
-                    continue;
-
-                if (IsSameReference(symbol, descendant, context.DictionaryReference))
+                if (IsSameReferenceOperation(descendant, context.DictionaryReference))
                 {
                     switch (descendant.Parent)
                     {
@@ -208,20 +222,22 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             {
                                 case ClearMethodName:
                                 case AddMethodeName or RemoveMethodeName when invocation.Arguments.Length >= 1 &&
-                                                          IsLiteralOrSameReference(invocation.Arguments[0].Value, context.IndexReference):
+                                      IsSameConstantOrReferenceOperation(invocation.Arguments[0].Value, context.IndexReference):
                                     return false;
                             }
 
                             break;
                         case IPropertyReferenceOperation { Property.IsIndexer: true } indexer
-                            when IsLiteralOrSameReference(indexer.Arguments[0].Value, context.IndexReference):
+                            when IsSameConstantOrReferenceOperation(indexer.Arguments[0].Value, context.IndexReference):
                             switch (indexer.Parent)
                             {
-                                case ISimpleAssignmentOperation sa when sa.Target == indexer:
-                                    FindUsages(sa.Value, ref context);
+                                case ISimpleAssignmentOperation simple when simple.Target == indexer:
+                                    FindUsages(simple.Value, ref context);
                                     return false;
-                                case ICompoundAssignmentOperation ca when ca.Target == indexer:
-                                    FindUsages(ca.Value, ref context);
+                                case ICompoundAssignmentOperation compound when compound.Target == indexer:
+                                    FindUsages(compound.Value, ref context);
+                                    return false;
+                                case ICoalesceAssignmentOperation coalesce when coalesce.Target == indexer:
                                     return false;
                             }
 
@@ -233,11 +249,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     switch (descendant.Parent)
                     {
-                        case ISimpleAssignmentOperation sa when sa.Target == descendant:
-                        case ICompoundAssignmentOperation ca when ca.Target == descendant:
-                        case IIncrementOrDecrementOperation inc when inc.Target == descendant:
-                            if (IsLiteralOrSameReference(descendant, context.IndexReference))
+                        case ISimpleAssignmentOperation simple when simple.Target == descendant:
+                        case ICompoundAssignmentOperation compound when compound.Target == descendant:
+                        case IIncrementOrDecrementOperation increment when increment.Target == descendant:
+                            if (IsSameReferenceOperation(descendant, context.IndexReference) ||
+                                IsAnySameReferenceOperation(descendant, context.AdditionalArrayIndexReferences))
+                            {
                                 return false;
+                            }
+
                             break;
                     }
                 }
@@ -264,21 +284,49 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 case IThrowOperation:
                                     return true;
                                 case IExpressionStatementOperation expression:
+                                    foreach (var childOp in expression.Operation.DescendantsAndSelf())
+                                    {
+                                        IOperation target;
+                                        switch (childOp)
+                                        {
+                                            case ISimpleAssignmentOperation simple:
+                                                target = simple.Target;
+                                                break;
+                                            case ICompoundAssignmentOperation compound:
+                                                target = compound.Target;
+                                                break;
+                                            case ICoalesceAssignmentOperation coalesce:
+                                                target = coalesce.Target;
+                                                break;
+                                            case IIncrementOrDecrementOperation increment:
+                                                target = increment.Target;
+                                                break;
+                                            default:
+                                                continue;
+                                        }
+
+                                        if (IsSameReferenceOperation(target, usageContext.IndexReference) ||
+                                            IsAnySameReferenceOperation(target, usageContext.AdditionalArrayIndexReferences))
+                                        {
+                                            return false;
+                                        }
+                                    }
+
                                     switch (expression.Operation)
                                     {
                                         case IReturnOperation:
                                         case IThrowOperation:
                                             return true;
                                         case ISimpleAssignmentOperation { Target: IPropertyReferenceOperation { Property.IsIndexer: true } reference } when
-                                            IsSameReference(reference.Instance, usageContext.DictionaryReference) &&
-                                            IsLiteralOrSameReference(reference.Arguments[0].Value, usageContext.IndexReference):
+                                            IsSameReferenceOperation(reference.Instance, usageContext.DictionaryReference) &&
+                                            IsSameConstantOrReferenceOperation(reference.Arguments[0].Value, usageContext.IndexReference):
                                             {
                                                 usageContext.SetterLocation = expression.Syntax.GetLocation();
                                                 continue;
                                             }
                                         case IInvocationOperation { TargetMethod.Name: AddMethodeName } invocation when
-                                            IsSameReference(invocation.Instance, usageContext.DictionaryReference) &&
-                                            IsLiteralOrSameReference(invocation.Arguments[0].Value, usageContext.IndexReference):
+                                            IsSameReferenceOperation(invocation.Instance, usageContext.DictionaryReference) &&
+                                            IsSameConstantOrReferenceOperation(invocation.Arguments[0].Value, usageContext.IndexReference):
                                             {
                                                 usageContext.SetterLocation = expression.Syntax.GetLocation();
                                                 continue;
@@ -312,40 +360,52 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        private static bool IsLiteralOrSameReference(IOperation sourceReference, IOperation targetReference)
+        private static bool IsSameConstantOrReferenceOperation(IOperation sourceReference, IOperation targetReference)
         {
             if (targetReference.ConstantValue.HasValue && sourceReference.ConstantValue.HasValue)
                 return sourceReference.ConstantValue.Equals(targetReference.ConstantValue);
-            return IsSameReference(sourceReference, targetReference);
+            return IsSameReferenceOperation(sourceReference, targetReference);
         }
 
-        private static bool IsSameReference(IOperation sourceReference, IOperation targetReference)
+        private static bool IsSameReferenceOperation(IOperation sourceReference, IOperation targetReference)
         {
-            var sourceSymbol = GetSymbolFromReference(sourceReference);
-            return sourceSymbol != null && IsSameReference(sourceSymbol, sourceReference, targetReference);
-        }
-
-        private static bool IsSameReference(ISymbol sourceSymbol, IOperation sourceReference, IOperation targetReference)
-        {
-            return sourceSymbol.Equals(GetSymbolFromReference(targetReference), SymbolEqualityComparer.Default) &&
-                   (sourceReference is not IArrayElementReferenceOperation arraySource ||
-                    targetReference is not IArrayElementReferenceOperation arrayTarget ||
-                    arraySource.Indices.Length == arrayTarget.Indices.Length &&
-                    !arrayTarget.Indices.Where((t, i) => !IsLiteralOrSameReference(arraySource.Indices[i], t)).Any());
-        }
-
-        private static ISymbol? GetSymbolFromReference(IOperation reference)
-        {
-            return reference switch
+            switch (targetReference)
             {
-                ILocalReferenceOperation l => l.Local,
-                IFieldReferenceOperation f => f.Field,
-                IParameterReferenceOperation pa => pa.Parameter,
-                IPropertyReferenceOperation p => p.Property,
-                IMemberReferenceOperation m => m.Member,
-                IArrayElementReferenceOperation a => GetSymbolFromReference(a.ArrayReference),
-                _ => null
-            };
+                case ILocalReferenceOperation target when sourceReference is ILocalReferenceOperation source:
+                    return target.Local.Equals(source.Local, SymbolEqualityComparer.Default);
+                case IParameterReferenceOperation target when sourceReference is IParameterReferenceOperation source:
+                    return target.Parameter.Equals(source.Parameter, SymbolEqualityComparer.Default);
+                case IFieldReferenceOperation target when sourceReference is IFieldReferenceOperation source:
+                    return target.Field.Equals(source.Field, SymbolEqualityComparer.Default);
+                case IPropertyReferenceOperation target when sourceReference is IPropertyReferenceOperation source:
+                    return target.Property.Equals(source.Property, SymbolEqualityComparer.Default);
+                case IMemberReferenceOperation target when sourceReference is IMemberReferenceOperation source:
+                    return target.Member.Equals(source.Member, SymbolEqualityComparer.Default);
+                case IArrayElementReferenceOperation target when sourceReference is IArrayElementReferenceOperation source:
+                    if (source.Indices.Length != target.Indices.Length || !IsSameReferenceOperation(source.ArrayReference, target.ArrayReference))
+                        return false;
+
+                    for (int i = 0; i < target.Indices.Length; i++)
+                    {
+                        if (!IsSameConstantOrReferenceOperation(source.Indices[i], target.Indices[i]))
+                            return false;
+                    }
+
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsAnySameReferenceOperation(IOperation source, ImmutableArray<IOperation> targets)
+        {
+            foreach (var target in targets)
+            {
+                if (IsSameReferenceOperation(source, target))
+                    return true;
+            }
+
+            return false;
         }
 
         private static bool TryGetDictionaryTypeAndMembers(Compilation compilation,

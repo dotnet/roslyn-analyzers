@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -585,6 +586,16 @@ namespace Test
             }
             return 0;";
 
+        private const string InvalidEntryModifiedCoalesceAssignment = @"
+            string key = ""key"";
+            var data = new Dictionary<string, object>();
+            if (data.ContainsKey(key))
+            {
+                data[key] ??= (object)1;
+                return (int)data[key];
+            }
+            return 0;";
+
         private const string InvalidNotGuarded = @"
             string key = ""key"";
             Dictionary<string, int> data = new Dictionary<string, int>();
@@ -596,6 +607,44 @@ namespace Test
             Console.WriteLine(2);
             var x = 2;
             Console.WriteLine(data[key]);
+
+            return data[key];";
+
+        private const string InvalidArrayIndexerChanged = @"
+            string key = ""key"";
+           var data = new Dictionary<string, int>[][]
+            {
+                new Dictionary<string, int>[] {new Dictionary<string, int>(),new Dictionary<string, int>()},
+                new Dictionary<string, int>[] {new Dictionary<string, int>(),new Dictionary<string, int>()}
+            };
+            var i1 = 0;
+            var i2 = 0;
+            if (data[i1][i2].ContainsKey(key))
+            {
+                i1 = 1;
+                return data[i1][i2][key];
+            }
+
+            return 0;";
+
+        private const string InvalidKeyChangedInCondition = @"
+            var key = 1;
+            var data = new Dictionary<int, int>();
+            if (data.ContainsKey(key) && data[key++] == 2)
+            {
+                return data[key];
+            }
+
+            return 0;";
+
+        private const string InvalidKeyChangedAfterAdd = @"
+            var key = 1;
+            var data = new Dictionary<int, int>();
+            if (!data.ContainsKey(key))
+            {
+                data.Add(key, 2);
+                key = 2;
+            }
 
             return data[key];";
 
@@ -1062,6 +1111,27 @@ End Namespace";
 
             Return data(key)";
 
+        private const string VbInvalidArrayIndexerChanged = @"
+            Dim key = ""key""
+            Dim data = New Dictionary(Of String, Integer)() {New Dictionary(Of String, Integer)(), New Dictionary(Of String, Integer)()}
+            Dim i = 0
+            If data(i).ContainsKey(key) Then
+                i = 1
+                Return data(i)(key)
+            End If
+
+            Return 0";
+
+        private const string VbInvalidKeyChangedAfterAdd = @"
+            Dim key = ""key""
+            Dim data = New Dictionary(Of String, Integer)()
+            If Not data.ContainsKey(key) Then
+                data.Add(key, 2)
+                key = ""key2""
+            End If
+
+            Return data(key)";
+
         #endregion
 
         #endregion
@@ -1116,16 +1186,24 @@ End Namespace";
         [InlineData(InvalidKeyChangedIncrement)]
         [InlineData(InvalidOtherLiteral)]
         [InlineData(InvalidEntryModified)]
+        [InlineData(InvalidEntryModifiedCoalesceAssignment, LanguageVersion.CSharp8)]
         [InlineData(InvalidNotGuarded)]
-        public Task ShouldNotReportDiagnostic(string codeSnippet)
+        [InlineData(InvalidArrayIndexerChanged)]
+        [InlineData(InvalidKeyChangedInCondition)]
+        [InlineData(InvalidKeyChangedAfterAdd)]
+        public Task ShouldNotReportDiagnostic(string codeSnippet, LanguageVersion version = LanguageVersion.Default)
         {
             string testCode = CreateCSharpCode(codeSnippet);
 
-            return new VerifyCS.Test
+            var test = new VerifyCS.Test
             {
                 TestCode = testCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net60
-            }.RunAsync();
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
+            };
+            if (version != default)
+                test.LanguageVersion = version;
+
+            return test.RunAsync();
         }
 
         [Theory]
@@ -1172,6 +1250,8 @@ End Namespace";
         [InlineData(VbInvalidKeyChangedCompound)]
         [InlineData(VbInvalidOtherLiteral)]
         [InlineData(VbInvalidNotGuarded)]
+        [InlineData(VbInvalidArrayIndexerChanged)]
+        [InlineData(VbInvalidKeyChangedAfterAdd)]
         public Task VbShouldNotReportDiagnostic(string codeSnippet)
         {
             string testCode = CreateVbCode(codeSnippet);

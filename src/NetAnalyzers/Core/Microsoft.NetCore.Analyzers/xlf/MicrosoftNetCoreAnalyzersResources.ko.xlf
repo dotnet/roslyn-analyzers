@@ -2662,6 +2662,36 @@
         <target state="translated">'ThrowIfCancellationRequested' 사용</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseConcreteTypeDescription">
+        <source>Using concrete types avoids virtual or interface call overhead and enables inlining.</source>
+        <target state="translated">구체적인 형식을 사용하면 가상 또는 인터페이스 호출 오버헤드를 방지하고 인라인을 사용할 수 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForFieldMessage">
+        <source>Change type of field '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">성능 향상을 위해 '{0}' 필드 형식을 '{1}'에서 '{2}'(으)로 변경하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForLocalMessage">
+        <source>Change type of variable '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">성능 향상을 위해 '{0}' 변수 형식을 '{1}'에서 '{2}'(으)로 변경하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForMethodReturnMessage">
+        <source>Change return type of method '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">성능 향상을 위해 '{0}' 메서드 반환 형식을 '{1}'에서 '{2}'(으)로 변경하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForParameterMessage">
+        <source>Change type of parameter '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">성능 향상을 위해 '{0}' 매개 변수 형식을 '{1}'에서 '{2}'(으)로 변경하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeTitle">
+        <source>Use concrete types when possible for improved performance</source>
+        <target state="translated">성능 향상을 위해 가능한 경우 구체적인 형식 사용하세요.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">
         <source>Use Container Level Access Policy</source>
         <target state="translated">컨테이너 수준 액세스 정책 사용</target>
@@ -2869,22 +2899,22 @@
       </trans-unit>
       <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFixTitle">
         <source>Use 'StartsWith'</source>
-        <target state="new">Use 'StartsWith'</target>
+        <target state="translated">'StartsWith' 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroDescription">
         <source>It is both clearer and faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.</source>
-        <target state="new">It is both clearer and faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.</target>
+        <target state="translated">'IndexOf'의 결과를 0과 비교하는 대신 'StartsWith'를 사용하는 것이 더 명확하고 빠릅니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroMessage">
         <source>Use 'StartsWith' instead of comparing the result of 'IndexOf' to 0</source>
-        <target state="new">Use 'StartsWith' instead of comparing the result of 'IndexOf' to 0</target>
+        <target state="translated">'IndexOf'의 결과를 0과 비교하는 대신 'StartsWith' 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroTitle">
         <source>Use 'StartsWith' instead of 'IndexOf'</source>
-        <target state="new">Use 'StartsWith' instead of 'IndexOf'</target>
+        <target state="translated">'IndexOf' 대신 'StartsWith' 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">

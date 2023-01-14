@@ -2662,6 +2662,36 @@
         <target state="translated">Použijte ThrowIfCancellationRequested</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseConcreteTypeDescription">
+        <source>Using concrete types avoids virtual or interface call overhead and enables inlining.</source>
+        <target state="translated">Použití konkrétních typů zabraňuje režii virtuálního volání nebo volání rozhraní a umožňuje vkládání.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForFieldMessage">
+        <source>Change type of field '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Pokud chcete zlepšit výkon, změňte typ pole {0} z {1} na {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForLocalMessage">
+        <source>Change type of variable '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Pokud chcete zlepšit výkon, změňte typ proměnné {0} z {1} na {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForMethodReturnMessage">
+        <source>Change return type of method '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Pokud chcete zlepšit výkon, změňte návratový typ metody {0} z {1} na {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForParameterMessage">
+        <source>Change type of parameter '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Pokud chcete zlepšit výkon, změňte typ parametru {0} z {1} na {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeTitle">
+        <source>Use concrete types when possible for improved performance</source>
+        <target state="translated">Pokud je to možné, používejte konkrétní typy pro zvýšení výkonu.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">
         <source>Use Container Level Access Policy</source>
         <target state="translated">Použít zásady přístupu na úrovni kontejneru</target>
@@ -2869,22 +2899,22 @@
       </trans-unit>
       <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFixTitle">
         <source>Use 'StartsWith'</source>
-        <target state="new">Use 'StartsWith'</target>
+        <target state="translated">Použít StartsWith</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroDescription">
         <source>It is both clearer and faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.</source>
-        <target state="new">It is both clearer and faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.</target>
+        <target state="translated">Oproti porovnání výsledku IndexOf s hodnotou nula je použití startsWith srozumitelnější a rychlejší.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroMessage">
         <source>Use 'StartsWith' instead of comparing the result of 'IndexOf' to 0</source>
-        <target state="new">Use 'StartsWith' instead of comparing the result of 'IndexOf' to 0</target>
+        <target state="translated">Místo porovnání výsledku IndexOf s hodnotou 0 použijte StartsWith.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroTitle">
         <source>Use 'StartsWith' instead of 'IndexOf'</source>
-        <target state="new">Use 'StartsWith' instead of 'IndexOf'</target>
+        <target state="translated">Namísto IndexOf použijte StartsWith</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">

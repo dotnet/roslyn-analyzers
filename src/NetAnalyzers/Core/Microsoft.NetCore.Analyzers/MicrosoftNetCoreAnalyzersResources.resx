@@ -2008,7 +2008,7 @@
     <value>Prefer comparing 'Length' to 0 rather than using 'Any()', both for clarity and for performance</value>
   </data>
   <data name="PreferLengthOverAnyDescription" xml:space="preserve">
-    <value>Prefer comparing 'Length' to 0 rather than using 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.</value>
+    <value>Prefer comparing 'Length' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.</value>
   </data>
   <data name="PreferCountOverAnyCodeFixTitle" xml:space="preserve">
     <value>Use 'Count' check instead of 'Any()'</value>
@@ -2020,7 +2020,7 @@
     <value>Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance</value>
   </data>
   <data name="PreferCountOverAnyDescription" xml:space="preserve">
-    <value>Prefer comparing 'Count' to 0 rather than using 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.</value>
+    <value>Prefer comparing 'Count' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.</value>
   </data>
   <data name="PreferIsEmptyOverAnyCodeFixTitle" xml:space="preserve">
     <value>Use 'IsEmpty' check instead of 'Any()'</value>
@@ -2032,6 +2032,6 @@
     <value>Prefer an 'IsEmpty' check rather than using 'Any()', both for clarity and for performance</value>
   </data>
   <data name="PreferIsEmptyOverAnyDescription" xml:space="preserve">
-    <value>Prefer using 'IsEmpty' rather than 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.</value>
+    <value>Prefer checking 'IsEmpty' rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.</value>
   </data>
 </root>

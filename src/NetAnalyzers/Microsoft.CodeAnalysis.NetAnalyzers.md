@@ -1682,7 +1682,7 @@ Using concrete types avoids virtual or interface call overhead and enables inlin
 
 ## [CA1860](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Prefer 'IsEmpty' check over 'Any()'
 
-Prefer using 'IsEmpty' rather than 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.
+Prefer checking 'IsEmpty' rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.
 
 |Item|Value|
 |-|-|
@@ -1694,7 +1694,7 @@ Prefer using 'IsEmpty' rather than 'Any()'. It is clearer and the 'Any()' call c
 
 ## [CA1861](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Prefer 'Length' check over 'Any()'
 
-Prefer comparing 'Length' to 0 rather than using 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.
+Prefer comparing 'Length' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.
 
 |Item|Value|
 |-|-|
@@ -1706,7 +1706,7 @@ Prefer comparing 'Length' to 0 rather than using 'Any()'. It is clearer and the 
 
 ## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer 'Count' property check over 'Any()'
 
-Prefer comparing 'Count' to 0 rather than using 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.
+Prefer comparing 'Count' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.
 
 |Item|Value|
 |-|-|

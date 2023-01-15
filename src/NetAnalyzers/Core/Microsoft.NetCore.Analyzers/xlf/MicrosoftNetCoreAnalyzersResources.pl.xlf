@@ -1938,8 +1938,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferCountOverAnyDescription">
-        <source>Prefer comparing 'Count' to 0 rather than using 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.</source>
-        <target state="new">Prefer comparing 'Count' to 0 rather than using 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.</target>
+        <source>Prefer comparing 'Count' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.</source>
+        <target state="new">Prefer comparing 'Count' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferCountOverAnyMessage">
@@ -2013,8 +2013,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferIsEmptyOverAnyDescription">
-        <source>Prefer using 'IsEmpty' rather than 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.</source>
-        <target state="new">Prefer using 'IsEmpty' rather than 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.</target>
+        <source>Prefer checking 'IsEmpty' rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.</source>
+        <target state="new">Prefer checking 'IsEmpty' rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsEmptyOverAnyMessage">
@@ -2033,8 +2033,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferLengthOverAnyDescription">
-        <source>Prefer comparing 'Length' to 0 rather than using 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.</source>
-        <target state="new">Prefer comparing 'Length' to 0 rather than using 'Any()'. It is clearer and the 'Any()' call could be slower especially if it uses the 'IEnumerable.Any()' extension method.</target>
+        <source>Prefer comparing 'Length' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.</source>
+        <target state="new">Prefer comparing 'Length' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferLengthOverAnyMessage">

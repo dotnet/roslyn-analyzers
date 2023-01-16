@@ -135,7 +135,6 @@ class C
         _ = {|#41:(new Apple[0]).Cast<Shoe>()|}; // error
         _ = {|#42:(new Shoe[0]).Cast<Fruit>()|}; // error
         _ = {|#43:(new Shoe[0]).Cast<Apple>()|}; // error
-        _ = {|#44:(new Shoe[0]).Cast<Shoe>()|}; // error
 
         // interface to class
         _ = (new ICar[0]).Cast<Plant>(); // subclass of Plant could implement ICar

@@ -179,6 +179,22 @@ else
     d.Add(5, 6);
 }";
 
+        private const string KeyIsModified = @"
+var key = 1;
+if (!d.ContainsKey(key))
+{
+    key++;
+    d.Add(key, 2);
+}";
+
+        private const string DictionaryIsReplaced = @"
+var key = 1;
+if (!d.ContainsKey(key))
+{
+    d = new();
+    d.Add(key, 2)
+}";
+
         #endregion
 
         #region VB Tests
@@ -335,6 +351,8 @@ End If";
         [InlineData(WithObjectInstantiation)]
         [InlineData(NotGuardedByContainsKey)]
         [InlineData(AddOnDifferentDictionary)]
+        [InlineData(KeyIsModified)]
+        [InlineData(DictionaryIsReplaced)]
         public Task ShouldNotReportDiagnosticAsync(string codeSnippet)
         {
             string testCode = CreateCSharpTestClass(codeSnippet);

@@ -20,19 +20,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root?.FindNode(context.Span);
-            if (node is null)
-            {
-                return;
-            }
+            var node = root.FindNode(context.Span, getInnermostNodeForTie: true);
 
             foreach (var diagnostic in context.Diagnostics)
             {
                 var (newRoot, codeFixTitle) = diagnostic.Id switch
                 {
-                    PreferLengthCountIsEmptyOverAnyAnalyzer.IsEmptyId => (ReplaceAnyWithIsEmpty(root!, node), MicrosoftNetCoreAnalyzersResources.PreferIsEmptyOverAnyCodeFixTitle),
-                    PreferLengthCountIsEmptyOverAnyAnalyzer.LengthId => (ReplaceAnyWithLength(root!, node), MicrosoftNetCoreAnalyzersResources.PreferLengthOverAnyCodeFixTitle),
-                    PreferLengthCountIsEmptyOverAnyAnalyzer.CountId => (ReplaceAnyWithCount(root!, node), MicrosoftNetCoreAnalyzersResources.PreferCountOverAnyCodeFixTitle),
+                    PreferLengthCountIsEmptyOverAnyAnalyzer.IsEmptyId => (ReplaceAnyWithIsEmpty(root, node), MicrosoftNetCoreAnalyzersResources.PreferIsEmptyOverAnyCodeFixTitle),
+                    PreferLengthCountIsEmptyOverAnyAnalyzer.LengthId => (ReplaceAnyWithLength(root, node), MicrosoftNetCoreAnalyzersResources.PreferLengthOverAnyCodeFixTitle),
+                    PreferLengthCountIsEmptyOverAnyAnalyzer.CountId => (ReplaceAnyWithCount(root, node), MicrosoftNetCoreAnalyzersResources.PreferCountOverAnyCodeFixTitle),
                     _ => throw new NotSupportedException()
                 };
                 if (newRoot is null)

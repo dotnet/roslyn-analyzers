@@ -382,5 +382,67 @@ End Class";
 
             return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
+
+        [Fact]
+        public Task TestPassedAsArgumentAsync()
+        {
+            const string code = @"
+using System.Collections.Immutable;
+using System.Linq;
+
+public class Tests {
+    public void Run(ImmutableArray<int> array) {
+        X({|#0:array.Any()|});
+    }
+
+    public void X(bool b) => throw null;
+}";
+            const string fixedCode = @"
+using System.Collections.Immutable;
+using System.Linq;
+
+public class Tests {
+    public void Run(ImmutableArray<int> array) {
+        X(!array.IsEmpty);
+    }
+
+    public void X(bool b) => throw null;
+}";
+
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+        }
+
+        [Fact]
+        public Task VbTestPassedAsArgumentAsync()
+        {
+            const string code = @"
+Imports System.Collections.Immutable
+Imports System.Linq
+
+Public Class Tests
+    Public Function Run(array As ImmutableArray(Of Integer))
+        X({|#0:array.Any|})
+    End Function
+
+    Public Function X(b As Boolean)
+        Throw New System.Exception()
+    End Function
+End Class";
+            const string fixedCode = @"
+Imports System.Collections.Immutable
+Imports System.Linq
+
+Public Class Tests
+    Public Function Run(array As ImmutableArray(Of Integer))
+        X(Not array.IsEmpty)
+    End Function
+
+    Public Function X(b As Boolean)
+        Throw New System.Exception()
+    End Function
+End Class";
+
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+        }
     }
 }

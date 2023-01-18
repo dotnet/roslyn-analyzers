@@ -21,6 +21,8 @@ Sr. No. | Release         |
 1       | [5.0.0](https://github.com/dotnet/roslyn-analyzers/releases/tag/5.0.0)           |
 2       | [5.0.1](https://github.com/dotnet/roslyn-analyzers/releases/tag/5.0.1)           |
 3       | [5.0.3](https://github.com/dotnet/roslyn-analyzers/releases/tag/5.0.3)           |
+4       | [6.0.0](https://github.com/dotnet/roslyn-analyzers/releases/tag/6.0.0)           |
+5       | [7.0.0](https://github.com/dotnet/roslyn-analyzers/releases/tag/7.0.0)           |
 
 ### Other analyzers
 
@@ -66,3 +68,4 @@ Sr. No. |  Release Version | Commit Tag       | Commit SHA                      
 38       | 3.3.1             | v3.3.1          | [49efc9e](https://github.com/dotnet/roslyn-analyzers/commit/49efc9eea7aaa303190beb5b3ea554604fb5ce9d)   | Microsoft.CodeAnalysis.Analyzers, Microsoft.CodeAnalysis.AnalyzerUtilities, Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeAnalysis.VersionCheckAnalyzer, Microsoft.CodeQuality.Analyzers, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers, Roslyn.Diagnostics.Analyzers, Microsoft.CodeAnalysis.PublicApiAnalyzers, Microsoft.CodeAnalysis.BannedApiAnalyzers
 39       | 3.3.2             | v3.3.2          | [4e0e1e8](https://github.com/dotnet/roslyn-analyzers/commit/4e0e1e855864587991a39e1e974dc53af094f4db)   | Microsoft.CodeAnalysis.Analyzers, Microsoft.CodeAnalysis.AnalyzerUtilities, Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeAnalysis.VersionCheckAnalyzer, Microsoft.CodeQuality.Analyzers, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers, Roslyn.Diagnostics.Analyzers, Microsoft.CodeAnalysis.PublicApiAnalyzers, Microsoft.CodeAnalysis.BannedApiAnalyzers
 40       | 3.3.3             | v3.3.3          | [2771ee3](https://github.com/dotnet/roslyn-analyzers/commit/2771ee33883320861d72cdd23bf09a8da7fa8e5e)   | Microsoft.CodeAnalysis.Analyzers, Microsoft.CodeAnalysis.AnalyzerUtilities, Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeAnalysis.VersionCheckAnalyzer, Microsoft.CodeQuality.Analyzers, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers, Roslyn.Diagnostics.Analyzers, Microsoft.CodeAnalysis.PublicApiAnalyzers, Microsoft.CodeAnalysis.BannedApiAnalyzers
+41       | 3.3.4             | v3.3.4          | [22ea642](https://github.com/dotnet/roslyn-analyzers/commit/22ea6422f85b05ca0793cc3b76375487be407f5d)   | Microsoft.CodeAnalysis.Analyzers, Microsoft.CodeAnalysis.AnalyzerUtilities, Roslyn.Diagnostics.Analyzers, Microsoft.CodeAnalysis.PublicApiAnalyzers, Microsoft.CodeAnalysis.BannedApiAnalyzers, Microsoft.CodeAnalysis.Metrics, Text.Analyzers

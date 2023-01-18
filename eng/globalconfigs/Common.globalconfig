@@ -114,3 +114,7 @@ dotnet_diagnostic.VSTHRD002.severity = none
 
 # VSTHRD011: Use AsyncLazy<T>
 dotnet_diagnostic.VSTHRD011.severity = none
+
+# RS1036: A project containing analyzers or source generators should specify the property '<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>'.
+# https://github.com/dotnet/roslyn-analyzers/issues/6443 tracks enabling RS1036 and fixing RS1035 violations
+dotnet_diagnostic.RS1036.severity = none

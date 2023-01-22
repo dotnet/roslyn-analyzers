@@ -91,7 +91,10 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                         Dim tryGetValueAccess = generator.MemberAccessExpression(containsKeyAccess.Expression,
                                                                                  TryGetValue)
                         Dim keyArgument = containsKeyInvocation.ArgumentList.Arguments.FirstOrDefault()
-                        Dim valueAssignment = generator.LocalDeclarationStatement(dictionaryValueType, Value).
+                        Dim valueAssignment =
+                                generator.LocalDeclarationStatement(dictionaryValueType,
+                                                                    Value,
+                                                                    generator.DefaultExpression(dictionaryValueType)).
                                 WithLeadingTrivia(SyntaxFactory.ElasticCarriageReturnLineFeed).
                                 WithoutTrailingTrivia()
                         Dim identifierName As SyntaxNode = generator.IdentifierName(Value)

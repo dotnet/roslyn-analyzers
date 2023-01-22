@@ -728,7 +728,7 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
             If data.TryGetValue(key, value) Then
                 Console.WriteLine(value)
                 Console.WriteLine(value)
@@ -750,7 +750,7 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As ConcurrentDictionary(Of String, Integer) = New ConcurrentDictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
             If data.TryGetValue(key, value) Then
                 Return value
             End If
@@ -775,7 +775,7 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
             If data.TryGetValue(key, value) Then
                 Console.WriteLine(2)
                 Dim x = 2
@@ -800,7 +800,7 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
 
             If data.TryGetValue(key, value) AndAlso value = 2 Then
                 Console.WriteLine(value)
@@ -823,7 +823,7 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
 
             If Not data.TryGetValue(key, value) OrElse value <> 2 Then
                 Console.WriteLine(2)
@@ -853,7 +853,7 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
             If key = ""key"" AndAlso data.TryGetValue(key, value) Then
                 Console.WriteLine(2)
                 Dim x = 2
@@ -877,7 +877,7 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
             Return If(data.TryGetValue(key, value), value, 2)";
 
         private const string VbGuardedTernarySquared = @"
@@ -890,7 +890,7 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
             Return If(data.TryGetValue(key, value), value * value, 2)";
 
         private const string VbGuardedWithKeyLiteral = @"
@@ -906,7 +906,7 @@ End Namespace";
         private const string VbGuardedWithKeyLiteralFixed = @"
             Dim data As ConcurrentDictionary(Of String, Integer) = New ConcurrentDictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
 
             If data.TryGetValue(""key"", value)
                 Console.WriteLine(value)
@@ -927,7 +927,7 @@ End Namespace";
         private const string VbGuardedWithKeyLiteralAndAccessWithExclamationFixed = @"
             Dim data As ConcurrentDictionary(Of String, Integer) = New ConcurrentDictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
 
             If data.TryGetValue(""key"", value)
                 Console.WriteLine(value)
@@ -952,7 +952,7 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
             If Not data.TryGetValue(key, value) Then
                 value = 2
                 data.Add(key, value)
@@ -980,7 +980,7 @@ End Namespace";
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
             If Not data.TryGetValue(key, value) Then
                 value = 2
                 data(key) = value
@@ -1004,7 +1004,7 @@ End Namespace";
             Dim key = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
 
             If data.TryGetValue(key, value) Then
                 data(key) = value + 1
@@ -1026,7 +1026,7 @@ End Namespace";
             Dim key = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
 
             If data.TryGetValue(key, value) Then
                 data(key) += value + 2
@@ -1048,7 +1048,7 @@ End Namespace";
             Dim key = ""key""
             Dim data = New Dictionary(Of String, String)()
 
-            Dim value As String
+            Dim value As String = Nothing
 
             If data.TryGetValue(key, value) Then
                 key = value
@@ -1419,7 +1419,7 @@ End Namespace";
             Dim local = New Dictionary(Of String, Integer)
             Dim localArray = New Dictionary(Of String, Integer)() {New Dictionary(Of String, Integer)(), New Dictionary(Of String, Integer)()}
 
-            Dim value As Integer
+            Dim value As Integer = Nothing
 
             If {{containsKeyRef}}.TryGetValue(key, value) Then
                 Return value

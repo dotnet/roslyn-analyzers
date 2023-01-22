@@ -894,6 +894,25 @@ End Namespace";
 
             Return 0";
 
+        private const string VbGuardedWithKeyLiteralAndAccessWithExclamation = @"
+            Dim data As ConcurrentDictionary(Of String, Integer) = New ConcurrentDictionary(Of String, Integer)()
+            If {|#0:data.ContainsKey(""key"")|}
+                Console.WriteLine({|#1:data!key|})
+            End If
+
+            Return 0";
+
+        private const string VbGuardedWithKeyLiteralAndAccessWithExclamationFixed = @"
+            Dim data As ConcurrentDictionary(Of String, Integer) = New ConcurrentDictionary(Of String, Integer)()
+
+            Dim value As Integer
+
+            If data.TryGetValue(""key"", value)
+                Console.WriteLine(value)
+            End If
+
+            Return 0";
+
         private const string VbGuardedAddBeforeUsage = @"
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
@@ -1216,6 +1235,7 @@ End Namespace";
         [InlineData(VbGuardedTernary, VbGuardedTernaryFixed)]
         [InlineData(VbGuardedTernarySquared, VbGuardedTernarySquaredFixed, 2)]
         [InlineData(VbGuardedWithKeyLiteral, VbGuardedWithKeyLiteralFixed, 2)]
+        [InlineData(VbGuardedWithKeyLiteralAndAccessWithExclamation, VbGuardedWithKeyLiteralAndAccessWithExclamationFixed)]
         [InlineData(VbGuardedAddBeforeUsage, VbGuardedAddBeforeUsageFixed, 3)]
         [InlineData(VbGuardedIndexerSetBeforeUsage, VbGuardedIndexerSetBeforeUsageFixed, 3)]
         [InlineData(VbGuardedIndexerInSimpleAssignment, VbGuardedIndexerInSimpleAssignmentFixed)]

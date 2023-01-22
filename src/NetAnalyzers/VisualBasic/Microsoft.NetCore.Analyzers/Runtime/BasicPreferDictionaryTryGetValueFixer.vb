@@ -29,7 +29,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                 Return
             End If
 
-            Dim dictionaryAccessors As New List(Of InvocationExpressionSyntax)
+            Dim dictionaryAccessors As New List(Of SyntaxNode)
             Dim addStatementNode As ExecutableStatementSyntax = Nothing
             Dim changedValueNode As SyntaxNode = Nothing
             For Each location As Location In diagnostic.AdditionalLocations
@@ -48,8 +48,15 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                             changedValueNode = invocation.ArgumentList.Arguments(1).GetExpression()
                             addStatementNode = invocation.FirstAncestorOrSelf(Of ExpressionStatementSyntax)
                         Else
-                            dictionaryAccessors.Add(DirectCast(node, InvocationExpressionSyntax))
+                            dictionaryAccessors.Add(node)
                         End If
+                    Case GetType(MemberAccessExpressionSyntax)
+                        Dim memberAccess = DirectCast(node, MemberAccessExpressionSyntax)
+                        If memberAccess.Kind() <> SyntaxKind.DictionaryAccessExpression Then
+                            Return
+                        End If
+
+                        dictionaryAccessors.Add(node)
                     Case GetType(AssignmentStatementSyntax)
                         If addStatementNode IsNot Nothing Then
                             Return
@@ -74,7 +81,8 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
             Dim semanticModel = Await context.Document.GetSemanticModelAsync(context.CancellationToken).
                     ConfigureAwait(False)
-            Dim dictionaryValueType = GetDictionaryValueType(semanticModel, dictionaryAccessors(0).Expression)
+            Dim dictionaryValueType = GetDictionaryValueType(semanticModel, containsKeyAccess.Expression)
+
             Dim replaceFunction =
                     Async Function(ct As CancellationToken) As Task(Of Document)
                         Dim editor = Await DocumentEditor.CreateAsync(document, ct).ConfigureAwait(False)

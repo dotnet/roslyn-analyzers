@@ -441,6 +441,28 @@ namespace Test
 
             return 0;";
 
+        private const string GuardedKeyInSimpleAssignment = @"
+            string key = ""key"";
+            var data = new Dictionary<string, string>();
+            if ({|#0:data.ContainsKey(key)|})
+            {
+                key = {|#1:data[key]|};
+                key = data[key];
+            }
+
+            return 0;";
+
+        private const string GuardedKeyInSimpleAssignmentFixed = @"
+            string key = ""key"";
+            var data = new Dictionary<string, string>();
+            if (data.TryGetValue(key, out string value))
+            {
+                key = value;
+                key = data[key];
+            }
+
+            return 0;";
+
         #region NoDiagnostic
 
         private const string InvalidModifiedBeforeUse = @"
@@ -1013,6 +1035,27 @@ End Namespace";
             End If
             Return 0";
 
+        private const string VbGuardedKeyInSimpleAssignment = @"
+            Dim key = ""key""
+            Dim data = New Dictionary(Of String, String)()
+            If {|#0:data.ContainsKey(key)|} Then
+                key = {|#1:data(key)|}
+                key = data(key)
+            End If
+            Return 0";
+
+        private const string VbGuardedKeyInSimpleAssignmentFixed = @"
+            Dim key = ""key""
+            Dim data = New Dictionary(Of String, String)()
+
+            Dim value As String
+
+            If data.TryGetValue(key, value) Then
+                key = value
+                key = data(key)
+            End If
+            Return 0";
+
         #region NoDiagnostic
 
         private const string VbInvalidModifiedBeforeUse = @"
@@ -1173,6 +1216,7 @@ End Namespace";
         [InlineData(GuardedIndexerPreIncrement, GuardedIndexerPreIncrementFixed)]
         [InlineData(GuardedIndexerInSimpleAssignment, GuardedIndexerInSimpleAssignmentFixed)]
         [InlineData(GuardedIndexerInCompoundAssignment, GuardedIndexerInCompoundAssignmentFixed)]
+        [InlineData(GuardedKeyInSimpleAssignment, GuardedKeyInSimpleAssignmentFixed)]
         public Task ShouldReportDiagnostic(string codeSnippet, string fixedCodeSnippet, int additionalLocations = 1)
         {
             string testCode = CreateCSharpCode(codeSnippet);
@@ -1240,6 +1284,7 @@ End Namespace";
         [InlineData(VbGuardedIndexerSetBeforeUsage, VbGuardedIndexerSetBeforeUsageFixed, 3)]
         [InlineData(VbGuardedIndexerInSimpleAssignment, VbGuardedIndexerInSimpleAssignmentFixed)]
         [InlineData(VbGuardedIndexerInCompoundAssignment, VbGuardedIndexerInCompoundAssignmentFixed)]
+        [InlineData(VbGuardedKeyInSimpleAssignment, VbGuardedKeyInSimpleAssignmentFixed)]
         public Task VbShouldReportDiagnostic(string codeSnippet, string fixedCodeSnippet, int additionalLocations = 1)
         {
             string testCode = CreateVbCode(codeSnippet);

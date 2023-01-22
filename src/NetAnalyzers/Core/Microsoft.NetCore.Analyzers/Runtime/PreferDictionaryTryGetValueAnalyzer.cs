@@ -250,7 +250,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     switch (descendant.Parent)
                     {
                         case ISimpleAssignmentOperation simple when simple.Target == descendant:
+                            if (IsSameReferenceOperation(descendant, context.IndexReference) ||
+                                IsAnySameReferenceOperation(descendant, context.AdditionalArrayIndexReferences))
+                            {
+                                FindUsages(simple.Value, ref context);
+                                return false;
+                            }
+
+                            break;
                         case ICompoundAssignmentOperation compound when compound.Target == descendant:
+                            if (IsSameReferenceOperation(descendant, context.IndexReference) ||
+                                IsAnySameReferenceOperation(descendant, context.AdditionalArrayIndexReferences))
+                            {
+                                FindUsages(compound.Value, ref context);
+                                return false;
+                            }
+
+                            break;
                         case IIncrementOrDecrementOperation increment when increment.Target == descendant:
                             if (IsSameReferenceOperation(descendant, context.IndexReference) ||
                                 IsAnySameReferenceOperation(descendant, context.AdditionalArrayIndexReferences))

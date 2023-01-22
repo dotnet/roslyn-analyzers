@@ -369,19 +369,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static bool IsSameReferenceOperation(IOperation sourceReference, IOperation targetReference)
         {
-            switch (targetReference)
+            switch (sourceReference)
             {
-                case ILocalReferenceOperation target when sourceReference is ILocalReferenceOperation source:
+                case ILocalReferenceOperation source when targetReference is ILocalReferenceOperation target:
                     return target.Local.Equals(source.Local, SymbolEqualityComparer.Default);
-                case IParameterReferenceOperation target when sourceReference is IParameterReferenceOperation source:
+                case IParameterReferenceOperation source when targetReference is IParameterReferenceOperation target:
                     return target.Parameter.Equals(source.Parameter, SymbolEqualityComparer.Default);
-                case IFieldReferenceOperation target when sourceReference is IFieldReferenceOperation source:
+                case IFieldReferenceOperation source when targetReference is IFieldReferenceOperation target:
                     return target.Field.Equals(source.Field, SymbolEqualityComparer.Default);
-                case IPropertyReferenceOperation target when sourceReference is IPropertyReferenceOperation source:
+                case IPropertyReferenceOperation source when targetReference is IPropertyReferenceOperation target:
                     return target.Property.Equals(source.Property, SymbolEqualityComparer.Default);
-                case IMemberReferenceOperation target when sourceReference is IMemberReferenceOperation source:
+                case IMemberReferenceOperation source when targetReference is IMemberReferenceOperation target:
                     return target.Member.Equals(source.Member, SymbolEqualityComparer.Default);
-                case IArrayElementReferenceOperation target when sourceReference is IArrayElementReferenceOperation source:
+                case IArrayElementReferenceOperation source when targetReference is IArrayElementReferenceOperation target:
                     if (source.Indices.Length != target.Indices.Length || !IsSameReferenceOperation(source.ArrayReference, target.ArrayReference))
                         return false;
 

@@ -1445,6 +1445,68 @@ class C
             }.RunAsync();
         }
 
+        [Theory]
+        [InlineData("disable")]
+        [InlineData("enable")]
+        [InlineData("enable warnings")]
+        [InlineData("enable annotations")]
+        public async Task TestReferenceNullableHandling(string nullableMode)
+        {
+            var useNullable = nullableMode is "enable" or "enable annotations";
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
+#nullable {nullableMode}
+using System;
+using System.Collections.Generic;
+
+class C
+{{
+    void Reference(string key)
+    {{
+        var objects = new Dictionary<string, object>();
+        if ([|objects.ContainsKey(key)|])
+            Console.WriteLine(objects[key]);
+    }}
+
+    void Value(string key)
+    {{
+        var ints = new Dictionary<string, int>();
+        if ([|ints.ContainsKey(key)|])
+            Console.WriteLine(ints[key]);
+    }}
+}}"
+                    }
+                },
+                FixedCode = $@"
+#nullable {nullableMode}
+using System;
+using System.Collections.Generic;
+
+class C
+{{
+    void Reference(string key)
+    {{
+        var objects = new Dictionary<string, object>();
+        if (objects.TryGetValue(key, out object{(useNullable ? "?" : "")} value))
+            Console.WriteLine(value);
+    }}
+
+    void Value(string key)
+    {{
+        var ints = new Dictionary<string, int>();
+        if (ints.TryGetValue(key, out int value))
+            Console.WriteLine(value);
+    }}
+}}",
+                LanguageVersion = LanguageVersion.CSharp8,
+            }.RunAsync();
+        }
+
         private static string CreateCSharpCode(string content)
         {
             return string.Format(CultureInfo.InvariantCulture, CSharpTemplate, content);

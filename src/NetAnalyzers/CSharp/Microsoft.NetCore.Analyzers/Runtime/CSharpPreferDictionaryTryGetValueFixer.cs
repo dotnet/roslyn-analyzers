@@ -87,8 +87,19 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 // simplify a TypeSyntax to `var` if the user prefers that. So we generate TypeSyntax, add
                 // simplifier annotation, and then let Roslyn decide whether to keep TypeSyntax or convert it to var.
                 // If the type is unknown (null) (likely in error scenario), then fallback to using var.
-                var typeSyntax = type is null ? IdentifierName(Var) : (TypeSyntax)generator.TypeExpression(type).
-                    WithAdditionalAnnotations(Simplifier.Annotation);
+                TypeSyntax typeSyntax;
+                if (type is not null)
+                {
+                    typeSyntax = (TypeSyntax)generator.TypeExpression(type);
+                    if (type.IsReferenceType)
+                        typeSyntax = (TypeSyntax)generator.NullableTypeExpression(typeSyntax);
+
+                    typeSyntax = typeSyntax.WithAdditionalAnnotations(Simplifier.Annotation);
+                }
+                else
+                {
+                    typeSyntax = IdentifierName(Var);
+                }
 
                 var outArgument = generator.Argument(RefKind.Out,
                     DeclarationExpression(

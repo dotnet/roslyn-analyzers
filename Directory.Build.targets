@@ -42,7 +42,7 @@
     <!-- TODO: On next arcade bump of Microsoft.CodeCoverage/Microsoft.NET.Test.Sdk we will have to update this line to be netstandard2.0 -->
     <!-- Because arcade is passing dlls directly to 'dotnet test' command, we need to manually provide path to coverage datacollector -->
     <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --test-adapter-path $(PkgMicrosoft_CodeCoverage)/build/netstandard1.0</TestRunnerAdditionalArguments>
-    <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --settings ($RepoRoot)roslyn-analyzers.runsettings</TestRunnerAdditionalArguments>
+    <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --settings $(RepoRoot)roslyn-analyzers.runsettings</TestRunnerAdditionalArguments>
   </PropertyGroup>
 
   <!-- Global Analyzer Config -->

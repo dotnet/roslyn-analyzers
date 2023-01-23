@@ -16,7 +16,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
-    /// CA1831, CA1832, CA1833: Use AsSpan or AsMemory instead of Range-based indexers when appropriate.
+    /// CA1831: <inheritdoc cref="UseAsSpanInsteadOfRangeIndexerTitle"/>
+    /// CA1832: <inheritdoc cref="UseAsSpanInsteadOfRangeIndexerTitle"/>
+    /// CA1833: <inheritdoc cref="UseAsSpanInsteadOfRangeIndexerTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseAsSpanInsteadOfRangeIndexerAnalyzer : DiagnosticAnalyzer
@@ -114,8 +116,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         indexerArgument = elementReference.Indices[0];
                         containingType = elementReference.ArrayReference.Type;
                     }
-                    else if (operationContext.Operation.Kind == OperationKind.None
-                        || operationContext.Operation.Kind == OperationKindEx.ImplicitIndexerReference)
+                    else if (operationContext.Operation.Kind is OperationKind.None or OperationKindEx.ImplicitIndexerReference)
                     {
                         // The forward support via the "None" operation kind is only available for C#.
                         if (operationContext.Compilation.Language != LanguageNames.CSharp)

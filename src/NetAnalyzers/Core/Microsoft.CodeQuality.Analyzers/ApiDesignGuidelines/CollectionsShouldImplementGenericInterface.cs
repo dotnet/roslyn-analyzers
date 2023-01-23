@@ -16,7 +16,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1010: Collections should implement generic interface
+    /// CA1010: <inheritdoc cref="CollectionsShouldImplementGenericInterfaceTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class CollectionsShouldImplementGenericInterfaceAnalyzer : DiagnosticAnalyzer
@@ -147,6 +147,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     {
                         ReportDiagnostic(kvp.Key, kvp.Value[0]);
                     }
+
                     return;
                 }
             }

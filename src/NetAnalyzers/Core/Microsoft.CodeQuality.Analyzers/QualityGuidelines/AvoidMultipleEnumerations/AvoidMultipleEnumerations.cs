@@ -14,6 +14,9 @@ using static Microsoft.CodeQuality.Analyzers.QualityGuidelines.AvoidMultipleEnum
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.AvoidMultipleEnumerations
 {
+    /// <summary>
+    /// CA1851: <inheritdoc cref="AvoidMultipleEnumerationsTitle"/>
+    /// </summary>
     internal abstract partial class AvoidMultipleEnumerations : DiagnosticAnalyzer
     {
         private const string RuleId = "CA1851";
@@ -147,9 +150,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.AvoidMultipleEnumera
             // Only available on .net6 or later
             "TryGetNonEnumeratedCount");
 
-        protected abstract GlobalFlowStateDictionaryFlowOperationVisitor CreateOperationVisitor(
-            GlobalFlowStateDictionaryAnalysisContext context,
-            WellKnownSymbolsInfo wellKnownSymbolsInfo);
+        protected abstract bool IsExpressionOfForEachStatement(SyntaxNode syntax);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -297,7 +298,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.AvoidMultipleEnumera
                 var analysisResult = GlobalFlowStateDictionaryAnalysis.TryGetOrComputeResult(
                     cfg,
                     context.OwningSymbol,
-                    analysisContext => CreateOperationVisitor(
+                    analysisContext => new AvoidMultipleEnumerationsFlowStateDictionaryFlowOperationVisitor(
+                        this,
                         analysisContext,
                         wellKnownSymbolsInfo),
                     wellKnownTypeProvider,

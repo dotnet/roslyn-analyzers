@@ -14,7 +14,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1724: Type names should not match namespaces
+    /// CA1724: <inheritdoc cref="TypeNamesShouldNotMatchNamespacesTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class TypeNamesShouldNotMatchNamespacesAnalyzer : DiagnosticAnalyzer
@@ -106,13 +106,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             foreach (INamedTypeSymbol symbol in externallyVisibleNamedTypes)
                             {
                                 string symbolName = symbol.Name;
-                                if (WellKnownSystemNamespaceTable.ContainsKey(symbolName))
+                                if (WellKnownSystemNamespaceTable.TryGetValue(symbolName, out var wellKnownSystemNamespaceValue))
                                 {
-                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(SystemRule, symbolName, WellKnownSystemNamespaceTable[symbolName]));
+                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(SystemRule, symbolName, wellKnownSystemNamespaceValue));
                                 }
-                                else if (namespaceComponentToNamespaceNameDictionary.ContainsKey(symbolName))
+                                else if (namespaceComponentToNamespaceNameDictionary.TryGetValue(symbolName, out var namespaceNameValue))
                                 {
-                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(DefaultRule, symbolName, namespaceComponentToNamespaceNameDictionary[symbolName]));
+                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(DefaultRule, symbolName, namespaceNameValue));
                                 }
                             }
                         });

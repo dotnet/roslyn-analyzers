@@ -13,6 +13,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
     using static CodeAnalysisDiagnosticsResources;
 
+    /// <summary>
+    /// RS1024: <inheritdoc cref="CompareSymbolsCorrectlyTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class CompareSymbolsCorrectlyAnalyzer : DiagnosticAnalyzer
     {
@@ -162,6 +165,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     {
                         context.ReportDiagnostic(invocationOperation.CreateDiagnostic(GetHashCodeRule));
                     }
+
                     break;
 
                 case s_symbolEqualsName:
@@ -173,6 +177,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                             context.ReportDiagnostic(invocationOperation.Syntax.GetLocation().CreateDiagnostic(EqualityRule));
                         }
                     }
+
                     break;
 
                 case s_HashCodeCombineName:
@@ -184,6 +189,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     {
                         context.ReportDiagnostic(invocationOperation.CreateDiagnostic(GetHashCodeRule));
                     }
+
                     break;
 
                 default:
@@ -195,6 +201,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     {
                         context.ReportDiagnostic(invocationOperation.CreateDiagnostic(CollectionRule));
                     }
+
                     break;
             }
 

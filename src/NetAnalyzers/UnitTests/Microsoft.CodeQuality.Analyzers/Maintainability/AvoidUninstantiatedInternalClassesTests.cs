@@ -17,6 +17,18 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     public class AvoidUninstantiatedInternalClassesTests
     {
+        [Fact, WorkItem(6049, "https://github.com/dotnet/roslyn-analyzers/issues/6049")]
+        public async Task CA1812_CSharp_Diagnostic_FileUninstantiatedInternalClassAsync()
+        {
+            const string source = "file class [|C|] { }";
+            await new VerifyCS.Test
+            {
+                TestCode = source,
+                FixedCode = source,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp11,
+            }.RunAsync();
+        }
+
         [Fact]
         public async Task CA1812_CSharp_Diagnostic_UninstantiatedInternalClassAsync()
         {
@@ -366,7 +378,7 @@ End Class",
         }
 
         [Fact]
-        public async Task CA1812_Basic_NoDiagnostic_MainMethodIsDifferentlyCasedAsync()
+        public async Task CA1812_Basic_Diagnostic_MainMethodIsDifferentlyCasedAsync()
         {
             await new VerifyVB.Test
             {
@@ -375,7 +387,7 @@ End Class",
                     OutputKind = OutputKind.ConsoleApplication,
                     Sources =
                     {
-@"Friend Class C
+@"Friend Class [|C|]
     Private Shared Sub mAiN()
     End Sub
 End Class",
@@ -1614,17 +1626,17 @@ End Class");
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, string className)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(className);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, string className)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(className);
     }
 }

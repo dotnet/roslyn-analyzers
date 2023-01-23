@@ -14,6 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
+    /// CA2018: <inheritdoc cref="BufferBlockCopyLengthTitle"/>
     /// Check for the intended use of .Length on arrays passed into Buffer.BlockCopy
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
@@ -90,14 +91,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             if (lengthPropertyArgument.Instance.GetReferencedMemberOrLocalOrParameter() == targetArgumentValue.Operand.GetReferencedMemberOrLocalOrParameter())
                             {
                                 IArrayTypeSymbol countArgumentArrayTypeSymbol = (IArrayTypeSymbol)lengthPropertyArgument.Instance.Type;
-                                if (countArgumentArrayTypeSymbol.ElementType.SpecialType != SpecialType.System_Byte &&
-                                countArgumentArrayTypeSymbol.ElementType.SpecialType != SpecialType.System_SByte &&
-                                countArgumentArrayTypeSymbol.ElementType.SpecialType != SpecialType.System_Boolean)
+                                if (countArgumentArrayTypeSymbol.ElementType.SpecialType is not SpecialType.System_Byte and
+                                not SpecialType.System_SByte and
+                                not SpecialType.System_Boolean)
                                 {
                                     return true;
                                 }
                             }
                         }
+
                         return false;
                     }
 

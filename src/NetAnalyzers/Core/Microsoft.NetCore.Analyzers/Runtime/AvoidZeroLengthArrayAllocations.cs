@@ -13,7 +13,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
-    /// <summary>Base type for an analyzer that looks for empty array allocations and recommends their replacement.</summary>
+    /// <summary>
+    /// CA1825: <inheritdoc cref="AvoidZeroLengthArrayAllocationsTitle"/>
+    /// Base type for an analyzer that looks for empty array allocations and recommends their replacement.
+    /// </summary>
     public abstract class AvoidZeroLengthArrayAllocationsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1825";
@@ -47,26 +50,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             // When compilation begins, check whether Array.Empty<T> is available.
             // Only if it is, register the syntax node action provided by the derived implementations.
-            context.RegisterCompilationStartAction(ctx =>
+            context.RegisterCompilationStartAction(context =>
             {
-                INamedTypeSymbol typeSymbol = ctx.Compilation.GetSpecialType(SpecialType.System_Array);
+                INamedTypeSymbol typeSymbol = context.Compilation.GetSpecialType(SpecialType.System_Array);
                 if (typeSymbol.DeclaredAccessibility == Accessibility.Public)
                 {
                     if (typeSymbol.GetMembers(ArrayEmptyMethodName).FirstOrDefault() is IMethodSymbol methodSymbol && methodSymbol.DeclaredAccessibility == Accessibility.Public &&
                         methodSymbol.IsStatic && methodSymbol.Arity == 1 && methodSymbol.Parameters.IsEmpty)
                     {
-                        ctx.RegisterOperationAction(c => AnalyzeOperation(c, methodSymbol), OperationKind.ArrayCreation);
+                        var linqExpressionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqExpressionsExpression1);
+                        context.RegisterOperationAction(c => AnalyzeOperation(c, methodSymbol, linqExpressionType), OperationKind.ArrayCreation);
                     }
                 }
             });
         }
 
-        private void AnalyzeOperation(OperationAnalysisContext context, IMethodSymbol arrayEmptyMethodSymbol)
+        private void AnalyzeOperation(OperationAnalysisContext context, IMethodSymbol arrayEmptyMethodSymbol, INamedTypeSymbol? linqExpressionType)
         {
-            AnalyzeOperation(context, arrayEmptyMethodSymbol, IsAttributeSyntax);
+            AnalyzeOperation(context, arrayEmptyMethodSymbol, linqExpressionType, IsAttributeSyntax);
         }
 
-        private static void AnalyzeOperation(OperationAnalysisContext context, IMethodSymbol arrayEmptyMethodSymbol, Func<SyntaxNode, bool> isAttributeSyntax)
+        private static void AnalyzeOperation(OperationAnalysisContext context, IMethodSymbol arrayEmptyMethodSymbol, INamedTypeSymbol? linqExpressionType, Func<SyntaxNode, bool> isAttributeSyntax)
         {
             IArrayCreationOperation arrayCreationExpression = (IArrayCreationOperation)context.Operation;
 
@@ -77,7 +81,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            var linqExpressionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqExpressionsExpression1);
             if (arrayCreationExpression.IsWithinExpressionTree(linqExpressionType))
             {
                 return;

@@ -11,6 +11,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     using static MicrosoftCodeQualityAnalyzersResources;
 
+    /// <summary>
+    /// CA2200: <inheritdoc cref="RethrowToPreserveStackDetailsTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class RethrowToPreserveStackDetailsAnalyzer : DiagnosticAnalyzer
     {
@@ -37,7 +40,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             {
                 var throwOperation = (IThrowOperation)context.Operation;
 
-                if (throwOperation.Exception is not ILocalReferenceOperation localReference)
+                if (throwOperation.GetThrownException() is not ILocalReferenceOperation localReference)
                 {
                     return;
                 }

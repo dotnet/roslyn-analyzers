@@ -12,6 +12,9 @@ using static Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    /// <summary>
+    /// CA1841: <inheritdoc cref="PreferDictionaryContainsMethodsTitle"/>
+    /// </summary>
     public abstract class PreferDictionaryContainsMethods : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1841";
@@ -177,11 +180,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 constructedDictionaryType = derived.GetBaseTypesAndThis()
                     .FirstOrDefault(x => x.OriginalDefinition.Equals(idictionaryType, SymbolEqualityComparer.Default));
 
-                if (constructedDictionaryType is null)
-                {
-                    constructedDictionaryType = derived.AllInterfaces
+                constructedDictionaryType ??= derived.AllInterfaces
                         .FirstOrDefault(x => x.OriginalDefinition.Equals(idictionaryType, SymbolEqualityComparer.Default));
-                }
 
                 return constructedDictionaryType is not null;
             }

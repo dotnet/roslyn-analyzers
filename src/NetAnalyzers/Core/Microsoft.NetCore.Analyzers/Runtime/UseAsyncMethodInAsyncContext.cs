@@ -16,6 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
+    /// CA1849: <inheritdoc cref="UseAsyncMethodInAsyncContextTitle"/>
     /// This analyzer suggests using the async version of a method when inside a Task-returning method
     /// In addition, calling Task.Wait(), Task.Result or Task.GetAwaiter().GetResult() will produce a diagnostic
     /// </summary>
@@ -70,6 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 GetSymbolAndAddToList("Result", WellKnownTypeNames.SystemThreadingTasksValueTask, SymbolKind.Property, syncBlockingSymbols, context.Compilation);
                 GetSymbolAndAddToList("GetResult", WellKnownTypeNames.SystemRuntimeCompilerServicesTaskAwaiter, SymbolKind.Method, syncBlockingSymbols, context.Compilation);
                 GetSymbolAndAddToList("GetResult", WellKnownTypeNames.SystemRuntimeCompilerServicesValueTaskAwaiter, SymbolKind.Method, syncBlockingSymbols, context.Compilation);
+                GetSymbolAndAddToList("Sleep", WellKnownTypeNames.SystemThreadingThread, SymbolKind.Method, syncBlockingSymbols, context.Compilation);
 
                 if (!syncBlockingTypes.Any())
                 {
@@ -233,6 +235,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     return method;
                 }
+
                 containingSymbol = containingSymbol.ContainingSymbol;
             }
 
@@ -263,7 +266,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             foreach (SyncBlockingSymbol symbol in syncBlockingSymbols)
             {
-                if (symbol.Kind != kind) continue;
+                if (symbol.Kind != kind)
+                    continue;
                 if (symbol.Value.Equals(memberSymbol.OriginalDefinition))
                 {
                     Diagnostic diagnostic = context.Operation.Syntax.CreateDiagnostic(
@@ -275,6 +279,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return true;
                 }
             }
+
             return false;
         }
     }

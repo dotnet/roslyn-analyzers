@@ -45,6 +45,16 @@
     <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --settings roslyn-analyzers.runsettings</TestRunnerAdditionalArguments>
   </PropertyGroup>
 
+  <!-- Global Analyzer Config -->
+  <ItemGroup>
+    <!-- Always include Common.globalconfig -->
+    <EditorConfigFiles Include="$(RepositoryEngineeringDir)globalconfigs\Common.globalconfig" />
+    <!-- Include Shipping.globalconfig for shipping projects -->
+    <EditorConfigFiles Condition="'$(IsShipping)' == 'true'" Include="$(RepositoryEngineeringDir)globalconfigs\Shipping.globalconfig" />
+    <!-- Include NonShipping.globalconfig for non-shipping projects -->
+    <EditorConfigFiles Condition="'$(IsShipping)' != 'true'" Include="$(RepositoryEngineeringDir)globalconfigs\NonShipping.globalconfig" />
+  </ItemGroup>
+
   <Target Name="OuterInstrumentModulesNoBuild" BeforeTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' == ''">
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"

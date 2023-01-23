@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
-    /// CA2016: Forward CancellationToken to invocations.
+    /// CA2016: <inheritdoc cref="ForwardCancellationTokenToInvocationsTitle"/>
     /// 
     /// Conditions for positive cases:
     ///     - The containing method signature receives a ct parameter. It can be a method, a nested method, an action or a func.
@@ -300,6 +300,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     arguments,
                     a => a.Parameter.Type.Equals(cancellationTokenType) && a.ArgumentKind == ArgumentKind.DefaultValue);
             }
+
             return false;
         }
 

@@ -12,7 +12,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     using static MicrosoftNetCoreAnalyzersResources;
     /// <summary>
-    /// CA2020: Detects Behavioral Changes introduced by new Numeric IntPtr UIntPtr feature
+    /// CA2020: <inheritdoc cref="PreventNumericIntPtrUIntPtrBehavioralChangesTitle"/>
+    /// Detects Behavioral Changes introduced by new Numeric IntPtr UIntPtr feature
     /// </summary>
     public abstract class PreventNumericIntPtrUIntPtrBehavioralChanges : DiagnosticAnalyzer
     {
@@ -54,7 +55,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         protected abstract bool IsWithinCheckedContext(IOperation operation);
 
-        protected abstract bool IsAliasUsed(ISymbol? syntaxReferences);
+        protected abstract bool IsAliasUsed(ISymbol? symbol);
 
         protected abstract bool IsAliasUsed(SyntaxNode syntax);
 

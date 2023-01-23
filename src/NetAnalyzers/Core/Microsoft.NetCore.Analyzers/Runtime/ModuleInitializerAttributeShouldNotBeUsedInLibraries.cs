@@ -11,7 +11,7 @@ using static Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA2255: ModuleInitializer attributes should not be used in libraries.
+    /// CA2255: <inheritdoc cref="ModuleInitializerAttributeShouldNotBeUsedInLibrariesTitle"/>
     /// </summary>
     /// <remarks>
     /// ModuleInitializer methods must:
@@ -51,7 +51,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // Only validate libraries (which will still produce some false positives, but that is acceptable)
-                if (context.Compilation.Options.OutputKind != OutputKind.DynamicallyLinkedLibrary) return;
+                if (context.Compilation.Options.OutputKind != OutputKind.DynamicallyLinkedLibrary)
+                    return;
 
                 context.RegisterSymbolAction(context =>
                 {

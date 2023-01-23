@@ -17,7 +17,9 @@ namespace Microsoft.NetCore.Analyzers.Tasks
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
-    /// <summary>CA2012: Use ValueTasks correctly.</summary>
+    /// <summary>
+    /// CA2012: <inheritdoc cref="UseValueTasksCorrectlyTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseValueTasksCorrectlyAnalyzer : DiagnosticAnalyzer
     {
@@ -166,6 +168,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                                         return;
                                     }
                                 }
+
                                 goto default;
 
                             case OperationKind.ExpressionStatement:
@@ -184,6 +187,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                                     operation = operation.Parent;
                                     continue;
                                 }
+
                                 goto default;
 
                             // At this point, we're "in the weeds", but there are still some rare-but-used valid patterns to check for.
@@ -386,6 +390,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                         startingBlock = cfg.GetEntry();
                         return true;
                     }
+
                     break;
 
                 case OperationKind.SimpleAssignment:
@@ -405,6 +410,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                                 return true;
                         }
                     }
+
                     break;
             }
 

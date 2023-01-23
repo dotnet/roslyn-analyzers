@@ -13,7 +13,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1060 - Move P/Invokes to native methods class
+    /// CA1060: <inheritdoc cref="MovePInvokesToNativeMethodsClassTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class MovePInvokesToNativeMethodsClassAnalyzer : DiagnosticAnalyzer
@@ -62,9 +62,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static bool IsTypeNamedCorrectly(string name)
         {
-            return string.Compare(name, NativeMethodsText, StringComparison.Ordinal) == 0 ||
-                string.Compare(name, SafeNativeMethodsText, StringComparison.Ordinal) == 0 ||
-                string.Compare(name, UnsafeNativeMethodsText, StringComparison.Ordinal) == 0;
+            return string.Equals(name, NativeMethodsText, StringComparison.Ordinal) ||
+                string.Equals(name, SafeNativeMethodsText, StringComparison.Ordinal) ||
+                string.Equals(name, UnsafeNativeMethodsText, StringComparison.Ordinal);
         }
     }
 }

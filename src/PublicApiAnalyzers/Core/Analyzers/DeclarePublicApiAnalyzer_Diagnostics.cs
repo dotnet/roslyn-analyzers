@@ -7,6 +7,31 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 {
     using static PublicApiAnalyzerResources;
 
+    /// <summary>
+    /// RS0016: <inheritdoc cref="DeclarePublicApiTitle"/>
+    /// RS0017: <inheritdoc cref="RemoveDeletedPublicApiTitle"/>
+    /// RS0022: <inheritdoc cref="ExposedNoninstantiableTypeTitle" />
+    /// RS0024: <inheritdoc cref="PublicApiFilesInvalidTitle" />
+    /// RS0025: <inheritdoc cref="DuplicateSymbolsInPublicApiFilesTitle" />
+    /// RS0026: <inheritdoc cref="AvoidMultipleOverloadsWithOptionalParametersTitle" />
+    /// RS0027: <inheritdoc cref="OverloadWithOptionalParametersShouldHaveMostParametersTitle" />
+    /// RS0036: <inheritdoc cref="AnnotatePublicApiTitle"/>
+    /// RS0037: <inheritdoc cref="ShouldAnnotatePublicApiFilesTitle" />
+    /// RS0041: <inheritdoc cref="ObliviousPublicApiTitle"/>
+    /// RS0048: <inheritdoc cref="PublicApiFileMissingTitle" />
+    /// RS0050: <inheritdoc cref="RemovedApiIsNotActuallyRemovedTitle" />
+    /// RS0051: <inheritdoc cref="DeclareInternalApiTitle"/>
+    /// RS0052: <inheritdoc cref="RemoveDeletedInternalApiTitle" />
+    /// RS0053: <inheritdoc cref="InternalApiFilesInvalidTitle" />
+    /// RS0054: <inheritdoc cref="DuplicateSymbolsInInternalApiFilesTitle" />
+    /// RS0055: <inheritdoc cref="AnnotateInternalApiTitle"/>
+    /// RS0056: <inheritdoc cref="ShouldAnnotateInternalApiFilesTitle" />
+    /// RS0057: <inheritdoc cref="ObliviousInternalApiTitle"/>
+    /// RS0058: <inheritdoc cref="InternalApiFileMissingTitle" />
+    /// RS0059: <inheritdoc cref="AvoidMultipleOverloadsWithOptionalParametersTitle" />
+    /// RS0060: <inheritdoc cref="OverloadWithOptionalParametersShouldHaveMostParametersTitle" />
+    /// RS0061: <inheritdoc cref="ExposedNoninstantiableTypeTitle" />
+    /// </summary>
     public partial class DeclarePublicApiAnalyzer
     {
         internal static readonly DiagnosticDescriptor DeclareNewPublicApiRule = new(
@@ -27,7 +52,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: false,
-            description: CreateLocalizableResourceString(nameof(DeclarePublicApiDescription)),
+            description: CreateLocalizableResourceString(nameof(DeclareInternalApiDescription)),
             helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
             customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
@@ -245,7 +270,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: false,
-            description: CreateLocalizableResourceString(nameof(ShouldAnnotatePublicApiFilesDescription)),
+            description: CreateLocalizableResourceString(nameof(ShouldAnnotateInternalApiFilesDescription)),
             helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/InternalApiAnalyzers/InternalApiAnalyzers.Help.md",
             customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 

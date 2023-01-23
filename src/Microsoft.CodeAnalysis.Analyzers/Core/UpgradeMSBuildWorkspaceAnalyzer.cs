@@ -9,6 +9,9 @@ namespace Microsoft.CodeAnalysis.Analyzers
 {
     using static CodeAnalysisDiagnosticsResources;
 
+    /// <summary>
+    /// RS1023: <inheritdoc cref="UpgradeMSBuildWorkspaceTitle"/>
+    /// </summary>
     public abstract class UpgradeMSBuildWorkspaceAnalyzer : DiagnosticAnalyzer
     {
         private const string WorkspacesDesktop = "Microsoft.CodeAnalysis.Workspaces.Desktop";
@@ -29,30 +32,15 @@ namespace Microsoft.CodeAnalysis.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(UpgradeMSBuildWorkspaceDiagnosticRule);
 
-        private readonly bool _performAssemblyChecks;
-
-        protected UpgradeMSBuildWorkspaceAnalyzer(bool performAssemblyChecks)
-        {
-            _performAssemblyChecks = performAssemblyChecks;
-        }
-
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
-            if (_performAssemblyChecks)
-            {
-                context.RegisterCompilationStartAction(AnalyzeAssemblyReferences);
-            }
-            else
-            {
-                RegisterIdentifierAnalysis(context);
-            }
+            context.RegisterCompilationStartAction(AnalyzeAssemblyReferences);
         }
 
         protected abstract void RegisterIdentifierAnalysis(CompilationStartAnalysisContext context);
-        protected abstract void RegisterIdentifierAnalysis(AnalysisContext context);
 
         private void AnalyzeAssemblyReferences(CompilationStartAnalysisContext context)
         {

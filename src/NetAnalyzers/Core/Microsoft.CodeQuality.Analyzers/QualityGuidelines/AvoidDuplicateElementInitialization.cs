@@ -13,7 +13,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA2244: Do not duplicate indexed element initializations
+    /// CA2244: <inheritdoc cref="AvoidDuplicateElementInitializationTitle"/>
     /// </summary>
 #pragma warning disable RS1004 // Recommend adding language support to diagnostic analyzer - Construct impossible in VB.NET
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -91,6 +91,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                 result[parameter.Ordinal] = argument.Value.ConstantValue.Value;
             }
+
             return result.ToImmutableArray();
         }
 
@@ -122,6 +123,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         hash = unchecked((hash * (int)0xA5555529) + _objectComparer.GetHashCode(item));
                     }
                 }
+
                 return hash;
             }
         }

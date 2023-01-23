@@ -46,10 +46,10 @@
 
       <!-- Code Style analyzers -->
       <ItemGroup Condition="'$(Language)' == 'C#'">
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="$(CodeStyleAnalyersVersion)" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="$(MicrosoftCodeAnalysisCSharpCodeStyleVersion)" />
       </ItemGroup>
       <ItemGroup Condition="'$(Language)' == 'VB'">
-        <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="$(CodeStyleAnalyersVersion)" />
+        <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="$(MicrosoftCodeAnalysisVisualBasicCodeStyleVersion)" />
       </ItemGroup>
     </Otherwise>
   </Choose>

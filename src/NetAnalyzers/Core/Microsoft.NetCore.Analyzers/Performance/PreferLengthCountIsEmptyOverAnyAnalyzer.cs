@@ -72,10 +72,24 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterOperationAction(OnInvocationAnalysis, OperationKind.Invocation);
+            context.RegisterCompilationStartAction(ctx =>
+            {
+                var typeProvider = WellKnownTypeProvider.GetOrCreate(ctx.Compilation);
+                var iEnumerable = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIEnumerable);
+                var iEnumerableOfT = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1);
+                var anyMethod = typeProvider
+                    .GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable)
+                    ?.GetMembers(AnyText)
+                    .OfType<IMethodSymbol>()
+                    .FirstOrDefault(m => m.IsExtensionMethod && m.Parameters.Length == 1);
+                if (iEnumerable is not null && iEnumerableOfT is not null && anyMethod is not null)
+                {
+                    ctx.RegisterOperationAction(c => OnInvocationAnalysis(c, iEnumerable, iEnumerableOfT, anyMethod), OperationKind.Invocation);
+                }
+            });
         }
 
-        private static void OnInvocationAnalysis(OperationAnalysisContext context)
+        private static void OnInvocationAnalysis(OperationAnalysisContext context, INamedTypeSymbol iEnumerable, INamedTypeSymbol iEnumerableOfT, IMethodSymbol anyMethod)
         {
             var invocation = (IInvocationOperation)context.Operation;
             var originalMethod = invocation.TargetMethod.OriginalDefinition;
@@ -84,10 +98,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 originalMethod = originalMethod.ReducedFrom;
             }
 
-            if (IsEligibleAnyMethod(originalMethod))
+            if (originalMethod.Equals(anyMethod, SymbolEqualityComparer.Default))
             {
                 var type = invocation.GetReceiverType(context.Compilation, beforeConversion: true, context.CancellationToken);
-                if (type is null)
+                if (type is null || (!type.AllInterfaces.Contains(iEnumerable, SymbolEqualityComparer.Default) && !type.AllInterfaces.Contains(iEnumerableOfT)))
                 {
                     return;
                 }
@@ -113,17 +127,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return;
                 }
             }
-        }
-
-        private static bool IsEligibleAnyMethod(IMethodSymbol method)
-        {
-            return method is
-            {
-                Name: AnyText,
-                ReturnType.SpecialType: SpecialType.System_Boolean,
-                IsExtensionMethod: true,
-                Parameters: [_]
-            };
         }
 
         private static bool HasEligibleIsEmptyProperty(ITypeSymbol typeSymbol)

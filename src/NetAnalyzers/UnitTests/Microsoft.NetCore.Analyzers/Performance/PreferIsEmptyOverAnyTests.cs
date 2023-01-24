@@ -25,7 +25,7 @@ using System.Linq;
 
 public class Tests {
     public void M() {
-        var array = ImmutableArray<int>.Empty;
+        var array = ImmutableList<int>.Empty;
         _ = {|#0:array.Any()|};
     }
 }";
@@ -35,7 +35,7 @@ using System.Linq;
 
 public class Tests {
     public void M() {
-        var array = ImmutableArray<int>.Empty;
+        var array = ImmutableList<int>.Empty;
         _ = !array.IsEmpty;
     }
 }";
@@ -51,7 +51,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function M()
-        Dim array = ImmutableArray(Of Integer).Empty
+        Dim array = ImmutableList(Of Integer).Empty
         Dim x = {|#0:array.Any()|}
     End Function
 End Class";
@@ -61,7 +61,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function M()
-        Dim array = ImmutableArray(Of Integer).Empty
+        Dim array = ImmutableList(Of Integer).Empty
         Dim x = Not array.IsEmpty
     End Function
 End Class";
@@ -77,7 +77,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 public class Tests {
-    public bool HasContents(ImmutableArray<int> array) {
+    public bool HasContents(ImmutableList<int> array) {
         return {|#0:array.Any()|};
     }
 }";
@@ -86,7 +86,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 public class Tests {
-    public bool HasContents(ImmutableArray<int> array) {
+    public bool HasContents(ImmutableList<int> array) {
         return !array.IsEmpty;
     }
 }";
@@ -102,7 +102,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
         Return {|#0:array.Any()|}
     End Function
 End Class";
@@ -111,7 +111,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
         Return Not array.IsEmpty
     End Function
 End Class";
@@ -127,7 +127,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 public class Tests {
-    public bool IsEmpty(ImmutableArray<int> array) {
+    public bool IsEmpty(ImmutableList<int> array) {
         return !{|#0:array.Any()|};
     }
 }";
@@ -136,7 +136,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 public class Tests {
-    public bool IsEmpty(ImmutableArray<int> array) {
+    public bool IsEmpty(ImmutableList<int> array) {
         return array.IsEmpty;
     }
 }";
@@ -152,7 +152,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function IsEmpty(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function IsEmpty(array As ImmutableList(Of Integer)) As Boolean
         Return Not {|#0:array.Any()|}
     End Function
 End Class";
@@ -161,7 +161,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function IsEmpty(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function IsEmpty(array As ImmutableList(Of Integer)) As Boolean
         Return array.IsEmpty
     End Function
 End Class";
@@ -177,7 +177,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 public class Tests {
-    public bool HasContents(ImmutableArray<int> array) {
+    public bool HasContents(ImmutableList<int> array) {
         return array.Select(x => x).Any();
     }
 }";
@@ -193,7 +193,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
         Return array.Select(Function(x) x).Any()
     End Function
 End Class";
@@ -209,7 +209,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 public class Tests {
-    public bool HasContents(ImmutableArray<int> array) {
+    public bool HasContents(ImmutableList<int> array) {
         return array.Any(x => x > 5);
     }
 }";
@@ -225,7 +225,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
         Return array.Any(Function(x) x > 5)
     End Function
 End Class";
@@ -241,7 +241,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 public class Tests {
-    public bool HasContents(ImmutableArray<int> array) {
+    public bool HasContents(ImmutableList<int> array) {
         return {|#0:Enumerable.Any(array)|};
     }
 }";
@@ -250,7 +250,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 public class Tests {
-    public bool HasContents(ImmutableArray<int> array) {
+    public bool HasContents(ImmutableList<int> array) {
         return !array.IsEmpty;
     }
 }";
@@ -266,7 +266,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
         Return {|#0:Enumerable.Any(array)|}
     End Function
 End Class";
@@ -275,7 +275,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
         Return Not array.IsEmpty
     End Function
 End Class";
@@ -291,7 +291,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 public class Tests {
-    public bool HasContents(ImmutableArray<int> array) {
+    public bool HasContents(ImmutableList<int> array) {
         return {|#0:System.Linq.Enumerable.Any(array)|};
     }
 }";
@@ -300,7 +300,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 public class Tests {
-    public bool HasContents(ImmutableArray<int> array) {
+    public bool HasContents(ImmutableList<int> array) {
         return !array.IsEmpty;
     }
 }";
@@ -316,7 +316,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
         Return {|#0:System.Linq.Enumerable.Any(array)|}
     End Function
 End Class";
@@ -325,7 +325,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
         Return Not array.IsEmpty
     End Function
 End Class";
@@ -341,7 +341,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
         Return {|#0:array.Any|}
     End Function
 End Class";
@@ -350,7 +350,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
         Return Not array.IsEmpty
     End Function
 End Class";
@@ -366,7 +366,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
         Return Not {|#0:array.Any|}
     End Function
 End Class";
@@ -375,7 +375,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function HasContents(array As ImmutableArray(Of Integer)) As Boolean
+    Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
         Return array.IsEmpty
     End Function
 End Class";
@@ -391,7 +391,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 public class Tests {
-    public void Run(ImmutableArray<int> array) {
+    public void Run(ImmutableList<int> array) {
         X({|#0:array.Any()|});
     }
 
@@ -402,7 +402,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 public class Tests {
-    public void Run(ImmutableArray<int> array) {
+    public void Run(ImmutableList<int> array) {
         X(!array.IsEmpty);
     }
 
@@ -420,7 +420,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function Run(array As ImmutableArray(Of Integer))
+    Public Function Run(array As ImmutableList(Of Integer))
         X({|#0:array.Any|})
     End Function
 
@@ -433,7 +433,7 @@ Imports System.Collections.Immutable
 Imports System.Linq
 
 Public Class Tests
-    Public Function Run(array As ImmutableArray(Of Integer))
+    Public Function Run(array As ImmutableList(Of Integer))
         X(Not array.IsEmpty)
     End Function
 
@@ -443,6 +443,27 @@ Public Class Tests
 End Class";
 
             return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+        }
+
+        [Fact]
+        public Task DontWarnOnCustomType()
+        {
+            const string code = @"
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool HasContents(MyCollection collection) {
+        return collection.Any();
+    }
+}
+
+public class MyCollection {
+    public bool Any() => throw null;
+    public bool IsEmpty => throw null;
+}";
+
+            return VerifyCS.VerifyAnalyzerAsync(code);
         }
     }
 }

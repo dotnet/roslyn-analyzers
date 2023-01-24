@@ -233,5 +233,26 @@ End Class";
 
             return VerifyVB.VerifyAnalyzerAsync(code);
         }
+
+        [Fact]
+        public Task DontWarnOnCustomType()
+        {
+            const string code = @"
+using System.Collections.Generic;
+using System.Linq;
+
+public class Tests {
+    public bool HasContents(MyCollection collection) {
+        return collection.Any();
+    }
+}
+
+public class MyCollection {
+    public bool Any() => throw null;
+    public int Length => throw null;
+}";
+
+            return VerifyCS.VerifyAnalyzerAsync(code);
+        }
     }
 }

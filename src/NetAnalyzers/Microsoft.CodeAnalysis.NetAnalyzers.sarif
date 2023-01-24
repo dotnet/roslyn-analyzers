@@ -3124,7 +3124,7 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "PreferDictionaryTryAddValueOverGuardedAddAnalyzer",
+            "typeName": "PreferDictionaryTryAddOverGuardedAddAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"

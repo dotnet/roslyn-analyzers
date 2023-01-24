@@ -191,8 +191,8 @@ if (!d.ContainsKey(key))
 var key = 1;
 if (!d.ContainsKey(key))
 {
-    d = new();
-    d.Add(key, 2)
+    d = new Dictionary<int, int>();
+    d.Add(key, 2);
 }";
 
         #endregion

@@ -1692,30 +1692,6 @@ Prefer checking 'IsEmpty' rather than calling 'Any()'. The intent is clearer and
 |CodeFix|True|
 ---
 
-## [CA1861](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Prefer 'Length' check over 'Any()'
-
-Prefer comparing 'Length' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.
-
-|Item|Value|
-|-|-|
-|Category|Performance|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|True|
----
-
-## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer 'Count' property check over 'Any()'
-
-Prefer comparing 'Count' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.
-
-|Item|Value|
-|-|-|
-|Category|Performance|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|True|
----
-
 ## [CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
 
 If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.

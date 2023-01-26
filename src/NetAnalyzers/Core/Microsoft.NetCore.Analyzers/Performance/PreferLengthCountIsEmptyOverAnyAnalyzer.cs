@@ -25,12 +25,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string LengthText = nameof(Array.Length);
         internal const string CountText = nameof(ICollection.Count);
 
-        internal const string IsEmptyId = "CA1860";
-        internal const string LengthId = "CA1861";
-        internal const string CountId = "CA1862";
+        internal const string RuleId = "CA1860";
+        internal const string DiagnosticPropertyKey = nameof(DiagnosticPropertyKey);
 
         internal static readonly DiagnosticDescriptor IsEmptyDescriptor = DiagnosticDescriptorHelper.Create(
-            IsEmptyId,
+            RuleId,
             CreateLocalizableResourceString(nameof(PreferIsEmptyOverAnyTitle)),
             CreateLocalizableResourceString(nameof(PreferIsEmptyOverAnyMessage)),
             DiagnosticCategory.Performance,
@@ -41,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         );
 
         internal static readonly DiagnosticDescriptor LengthDescriptor = DiagnosticDescriptorHelper.Create(
-            LengthId,
+            RuleId,
             CreateLocalizableResourceString(nameof(PreferLengthOverAnyTitle)),
             CreateLocalizableResourceString(nameof(PreferLengthOverAnyMessage)),
             DiagnosticCategory.Performance,
@@ -52,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         );
 
         internal static readonly DiagnosticDescriptor CountDescriptor = DiagnosticDescriptorHelper.Create(
-            CountId,
+            RuleId,
             CreateLocalizableResourceString(nameof(PreferCountOverAnyTitle)),
             CreateLocalizableResourceString(nameof(PreferCountOverAnyMessage)),
             DiagnosticCategory.Performance,
@@ -108,21 +107,27 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 if (HasEligibleIsEmptyProperty(type))
                 {
-                    context.ReportDiagnostic(invocation.CreateDiagnostic(IsEmptyDescriptor));
+                    var properties = ImmutableDictionary.CreateBuilder<string, string?>();
+                    properties.Add(DiagnosticPropertyKey, IsEmptyText);
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(IsEmptyDescriptor, properties: properties.ToImmutable()));
 
                     return;
                 }
 
                 if (HasEligibleLengthProperty(type))
                 {
-                    context.ReportDiagnostic(invocation.CreateDiagnostic(LengthDescriptor));
+                    var properties = ImmutableDictionary.CreateBuilder<string, string?>();
+                    properties.Add(DiagnosticPropertyKey, LengthText);
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(LengthDescriptor, properties: properties.ToImmutable()));
 
                     return;
                 }
 
                 if (HasEligibleCountProperty(type))
                 {
-                    context.ReportDiagnostic(invocation.CreateDiagnostic(CountDescriptor));
+                    var properties = ImmutableDictionary.CreateBuilder<string, string?>();
+                    properties.Add(DiagnosticPropertyKey, CountText);
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(CountDescriptor, properties: properties.ToImmutable()));
 
                     return;
                 }

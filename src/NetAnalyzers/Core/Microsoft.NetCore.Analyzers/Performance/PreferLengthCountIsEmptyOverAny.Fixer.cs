@@ -11,11 +11,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 {
     public abstract class PreferLengthCountIsEmptyOverAnyFixer : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            PreferLengthCountIsEmptyOverAnyAnalyzer.LengthId,
-            PreferLengthCountIsEmptyOverAnyAnalyzer.CountId,
-            PreferLengthCountIsEmptyOverAnyAnalyzer.IsEmptyId
-        );
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(PreferLengthCountIsEmptyOverAnyAnalyzer.RuleId);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -24,11 +20,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var (newRoot, codeFixTitle) = diagnostic.Id switch
+                var (newRoot, codeFixTitle) = diagnostic.Properties[PreferLengthCountIsEmptyOverAnyAnalyzer.DiagnosticPropertyKey] switch
                 {
-                    PreferLengthCountIsEmptyOverAnyAnalyzer.IsEmptyId => (ReplaceAnyWithIsEmpty(root, node), MicrosoftNetCoreAnalyzersResources.PreferIsEmptyOverAnyCodeFixTitle),
-                    PreferLengthCountIsEmptyOverAnyAnalyzer.LengthId => (ReplaceAnyWithLength(root, node), MicrosoftNetCoreAnalyzersResources.PreferLengthOverAnyCodeFixTitle),
-                    PreferLengthCountIsEmptyOverAnyAnalyzer.CountId => (ReplaceAnyWithCount(root, node), MicrosoftNetCoreAnalyzersResources.PreferCountOverAnyCodeFixTitle),
+                    PreferLengthCountIsEmptyOverAnyAnalyzer.IsEmptyText => (ReplaceAnyWithIsEmpty(root, node), MicrosoftNetCoreAnalyzersResources.PreferIsEmptyOverAnyCodeFixTitle),
+                    PreferLengthCountIsEmptyOverAnyAnalyzer.LengthText => (ReplaceAnyWithLength(root, node), MicrosoftNetCoreAnalyzersResources.PreferLengthOverAnyCodeFixTitle),
+                    PreferLengthCountIsEmptyOverAnyAnalyzer.CountText => (ReplaceAnyWithCount(root, node), MicrosoftNetCoreAnalyzersResources.PreferCountOverAnyCodeFixTitle),
                     _ => throw new NotSupportedException()
                 };
                 if (newRoot is null)

@@ -3135,46 +3135,6 @@
             ]
           }
         },
-        "CA1861": {
-          "id": "CA1861",
-          "shortDescription": "Prefer 'Length' check over 'Any()'",
-          "fullDescription": "Prefer comparing 'Length' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.",
-          "defaultLevel": "note",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "PreferLengthCountIsEmptyOverAnyAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
-        "CA1862": {
-          "id": "CA1862",
-          "shortDescription": "Prefer 'Count' property check over 'Any()'",
-          "fullDescription": "Prefer comparing 'Count' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.",
-          "defaultLevel": "note",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "PreferLengthCountIsEmptyOverAnyAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
         "CA2000": {
           "id": "CA2000",
           "shortDescription": "Dispose objects before losing scope",

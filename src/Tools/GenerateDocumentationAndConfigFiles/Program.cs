@@ -252,7 +252,7 @@ namespace GenerateDocumentationAndConfigFiles
 
                 var fileContents =
 $@"<Project>
-  {disableNetAnalyzersImport}{getCompilerVisibleProperties()}
+  {disableNetAnalyzersImport}{getCodeAnalysisTreatWarningsAsErrors()}{getCompilerVisibleProperties()}
 </Project>";
                 var directory = Directory.CreateDirectory(propsFileDir);
                 var fileWithPath = Path.Combine(directory.FullName, propsFileName);
@@ -308,6 +308,20 @@ $@"<Project>
                     Debug.Assert(!containsPortedFxCopRules);
                     return string.Empty;
                 }
+            }
+
+            string getCodeAnalysisTreatWarningsAsErrors()
+            {
+                var allRuleIds = string.Join(';', allRulesById.Keys);
+                return $@"
+  <!-- 
+    This property group handles 'CodeAnalysisTreatWarningsAsErrors = false' for the CA rule ids implemented in this package.
+  -->
+  <PropertyGroup>
+    <CodeAnalysisRuleIds>{allRuleIds}</CodeAnalysisRuleIds>
+    <EffectiveCodeAnalysisTreatWarningsAsErrors Condition=""'$(EffectiveCodeAnalysisTreatWarningsAsErrors)' == ''"">$(CodeAnalysisTreatWarningsAsErrors)</EffectiveCodeAnalysisTreatWarningsAsErrors>
+    <WarningsNotAsErrors Condition=""'$(EffectiveCodeAnalysisTreatWarningsAsErrors)' == 'false' and '$(TreatWarningsAsErrors)' == 'true'"">$(WarningsNotAsErrors);$(CodeAnalysisRuleIds)</WarningsNotAsErrors>
+  </PropertyGroup>";
             }
 
             string getCompilerVisibleProperties()
@@ -1404,6 +1418,7 @@ $@"<Project>{GetCommonContents(packageName, categories)}{GetPackageSpecificConte
                 }
 
                 stringBuilder.Append(GetMSBuildContentForPropertyAndItemOptions());
+                stringBuilder.Append(GetCodeAnalysisTreatWarningsAsErrorsTargetContents());
                 return stringBuilder.ToString();
             }
 
@@ -1507,10 +1522,9 @@ $@"<Project>{GetCommonContents(packageName, categories)}{GetPackageSpecificConte
 
       <!-- {effectiveAnalysisLevelPropName} is used to differentiate from user specified strings (such as 'none')
            and an implied numerical option (such as '4') -->
-      <!-- TODO: Remove hard-coded constants such as 4.0, 5.0 and 6.0 used below once these are exposed as properties from the SDK -->
-      <{effectiveAnalysisLevelPropName} Condition=""'$({analysisLevelPropName})' == 'none' or '$({analysisLevelPrefixPropName})' == 'none'"">4.0</{effectiveAnalysisLevelPropName}>
-      <{effectiveAnalysisLevelPropName} Condition=""'$({analysisLevelPropName})' == 'latest' or '$({analysisLevelPrefixPropName})' == 'latest'"">6.0</{effectiveAnalysisLevelPropName}>
-      <{effectiveAnalysisLevelPropName} Condition=""'$({analysisLevelPropName})' == 'preview' or '$({analysisLevelPrefixPropName})' == 'preview'"">7.0</{effectiveAnalysisLevelPropName}>
+      <{effectiveAnalysisLevelPropName} Condition=""'$({analysisLevelPropName})' == 'none' or '$({analysisLevelPrefixPropName})' == 'none'"">$(_NoneAnalysisLevel)</{effectiveAnalysisLevelPropName}>
+      <{effectiveAnalysisLevelPropName} Condition=""'$({analysisLevelPropName})' == 'latest' or '$({analysisLevelPrefixPropName})' == 'latest'"">$(_LatestAnalysisLevel)</{effectiveAnalysisLevelPropName}>
+      <{effectiveAnalysisLevelPropName} Condition=""'$({analysisLevelPropName})' == 'preview' or '$({analysisLevelPrefixPropName})' == 'preview'"">$(_PreviewAnalysisLevel)</{effectiveAnalysisLevelPropName}>
 
       <!-- Set {effectiveAnalysisLevelPropName} to the value of {analysisLevelPropName} if it is a version number -->
       <{effectiveAnalysisLevelPropName} Condition=""'$({effectiveAnalysisLevelPropName})' == '' And
@@ -1592,6 +1606,22 @@ $@"<Project>{GetCommonContents(packageName, categories)}{GetPackageSpecificConte
 
                     AddItemGroupForCompilerVisibleProperties(compilerVisibleProperties, builder);
                 }
+            }
+
+            static string GetCodeAnalysisTreatWarningsAsErrorsTargetContents()
+            {
+                return $@"
+  <!--
+    Design-time target to handle 'CodeAnalysisTreatWarningsAsErrors = false' for the CA rule ids implemented in this package.
+    Note that a similar 'WarningsNotAsErrors' property group is present in the generated props file to ensure this functionality on command line builds.
+  -->
+  <Target Name=""_CodeAnalysisTreatWarningsAsErrors"" BeforeTargets=""CoreCompile"" Condition=""'$(DesignTimeBuild)' == 'true' OR '$(BuildingProject)' != 'true'"">
+    <PropertyGroup>
+      <EffectiveCodeAnalysisTreatWarningsAsErrors Condition=""'$(EffectiveCodeAnalysisTreatWarningsAsErrors)' == ''"">$(CodeAnalysisTreatWarningsAsErrors)</EffectiveCodeAnalysisTreatWarningsAsErrors>
+      <WarningsNotAsErrors Condition=""'$(EffectiveCodeAnalysisTreatWarningsAsErrors)' == 'false' and '$(TreatWarningsAsErrors)' == 'true'"">$(WarningsNotAsErrors);$(CodeAnalysisRuleIds)</WarningsNotAsErrors>
+    </PropertyGroup>
+  </Target>
+";
             }
 
             static string GetPackageSpecificContents(string packageName)

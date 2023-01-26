@@ -15,6 +15,7 @@ CA1859 | Performance | Info | UseConcreteTypeAnalyzer, [Documentation](https://l
 CA1860 | Performance | Info | PreferLengthCountIsEmptyOverAnyAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860)
 CA1861 | Performance | Info | PreferLengthCountIsEmptyOverAnyAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861)
 CA1862 | Performance | Info | PreferLengthCountIsEmptyOverAnyAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862)
+CA2021 | Reliability | Info | DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021)
 
 ### Removed Rules
 

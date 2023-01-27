@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.PreferLengthCountIsEmptyOverAnyAnalyzer,
@@ -14,8 +13,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public class PreferCountOverAnyTests
     {
-        private static readonly DiagnosticResult ExpectedDiagnostic = new DiagnosticResult(PreferLengthCountIsEmptyOverAnyAnalyzer.DiagnosticDescriptor).WithLocation(0);
-
         [Fact]
         public Task TestLocalDeclarationAsync()
         {
@@ -26,7 +23,7 @@ using System.Linq;
 public class Tests {
     public void M() {
         var list = new List<int>();
-        _ = {|#0:list.Any()|};
+        _ = [|list.Any()|];
     }
 }";
             const string fixedCode = @"
@@ -40,7 +37,7 @@ public class Tests {
     }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -53,7 +50,7 @@ Imports System.Linq
 Public Class Tests
     Public Function M()
         Dim list = new List(Of Integer)()
-        Dim x = {|#0:list.Any()|}
+        Dim x = [|list.Any()|]
     End Function
 End Class";
 
@@ -68,7 +65,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -80,7 +77,7 @@ using System.Linq;
 
 public class Tests {
     public bool HasContents(List<int> list) {
-        return {|#0:list.Any()|};
+        return [|list.Any()|];
     }
 }";
             const string fixedCode = @"
@@ -93,7 +90,7 @@ public class Tests {
     }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -105,7 +102,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function HasContents(list As List(Of Integer)) As Boolean
-        Return {|#0:list.Any()|}
+        Return [|list.Any()|]
     End Function
 End Class";
 
@@ -119,7 +116,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -131,7 +128,7 @@ using System.Linq;
 
 public class Tests {
     public bool IsEmpty(List<int> list) {
-        return !{|#0:list.Any()|};
+        return ![|list.Any()|];
     }
 }";
             const string fixedCode = @"
@@ -144,7 +141,7 @@ public class Tests {
     }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -156,7 +153,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function IsEmpty(list As List(Of Integer)) As Boolean
-        Return Not {|#0:list.Any()|}
+        Return Not [|list.Any()|]
     End Function
 End Class";
 
@@ -170,7 +167,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -247,7 +244,7 @@ using System.Linq;
 public class Tests {
     public bool HasAny()
     {
-        return System.Linq.Enumerable.{|CS1501:Any|}();
+        return System.Linq.Enumerable.{|CS1501:Any|]();
     }
 }";
 
@@ -263,7 +260,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function M() As Boolean
-        Return System.Linq.Enumerable.{|BC30516:Any|}()
+        Return System.Linq.Enumerable.{|BC30516:Any|]()
     End Function
 End Class";
 
@@ -279,7 +276,7 @@ using System.Linq;
 
 public class Tests {
     public bool HasContents(List<int> list) {
-        return {|#0:Enumerable.Any(list)|};
+        return [|Enumerable.Any(list)|];
     }
 }";
             const string fixedCode = @"
@@ -292,7 +289,7 @@ public class Tests {
     }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -304,7 +301,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function HasContents(list As List(Of Integer)) As Boolean
-        Return {|#0:Enumerable.Any(list)|}
+        Return [|Enumerable.Any(list)|]
     End Function
 End Class";
 
@@ -318,7 +315,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -330,7 +327,7 @@ using System.Linq;
 
 public class Tests {
     public bool HasContents(List<int> list) {
-        return {|#0:System.Linq.Enumerable.Any(list)|};
+        return [|System.Linq.Enumerable.Any(list)|];
     }
 }";
             const string fixedCode = @"
@@ -343,7 +340,7 @@ public class Tests {
     }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -355,7 +352,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function HasContents(list As List(Of Integer)) As Boolean
-        Return {|#0:System.Linq.Enumerable.Any(list)|}
+        Return [|System.Linq.Enumerable.Any(list)|]
     End Function
 End Class";
 
@@ -369,7 +366,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -381,7 +378,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function HasContents(list As List(Of Integer)) As Boolean
-        Return {|#0:list.Any|}
+        Return [|list.Any|]
     End Function
 End Class";
 
@@ -395,7 +392,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -407,7 +404,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function HasContents(list As List(Of Integer)) As Boolean
-        Return Not {|#0:list.Any|}
+        Return Not [|list.Any|]
     End Function
 End Class";
 
@@ -421,7 +418,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]

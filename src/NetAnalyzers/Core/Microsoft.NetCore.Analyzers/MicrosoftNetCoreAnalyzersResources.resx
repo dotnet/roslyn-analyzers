@@ -2013,40 +2013,16 @@ Widening and user defined conversions are not supported with generic types.</val
   <data name="UseConcreteTypeForParameterMessage" xml:space="preserve">
     <value>Change type of parameter '{0}' from '{1}' to '{2}' for improved performance</value>
   </data>
-  <data name="PreferLengthOverAnyCodeFixTitle" xml:space="preserve">
-    <value>Use 'Length' check instead of 'Any()'</value>
+  <data name="PreferLengthCountIsEmptyOverAnyCodeFixTitle" xml:space="preserve">
+    <value>Use '{0}' check instead of 'Any()'</value>
   </data>
-  <data name="PreferLengthOverAnyTitle" xml:space="preserve">
-    <value>Prefer 'Length' check over 'Any()'</value>
+  <data name="PreferLengthCountIsEmptyOverAnyTitle" xml:space="preserve">
+    <value>Avoid using the 'Enumerable.Any()' extension method when possible</value>
   </data>
-  <data name="PreferLengthOverAnyMessage" xml:space="preserve">
-    <value>Prefer comparing 'Length' to 0 rather than using 'Any()', both for clarity and for performance</value>
+  <data name="PreferLengthCountIsEmptyOverAnyMessage" xml:space="preserve">
+    <value>Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rather than calling 'Any()'</value>
   </data>
-  <data name="PreferLengthOverAnyDescription" xml:space="preserve">
-    <value>Prefer comparing 'Length' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.</value>
-  </data>
-  <data name="PreferCountOverAnyCodeFixTitle" xml:space="preserve">
-    <value>Use 'Count' check instead of 'Any()'</value>
-  </data>
-  <data name="PreferCountOverAnyTitle" xml:space="preserve">
-    <value>Prefer 'Count' property check over 'Any()'</value>
-  </data>
-  <data name="PreferCountOverAnyMessage" xml:space="preserve">
-    <value>Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance</value>
-  </data>
-  <data name="PreferCountOverAnyDescription" xml:space="preserve">
-    <value>Prefer comparing 'Count' to 0 rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.</value>
-  </data>
-  <data name="PreferIsEmptyOverAnyCodeFixTitle" xml:space="preserve">
-    <value>Use 'IsEmpty' check instead of 'Any()'</value>
-  </data>
-  <data name="PreferIsEmptyOverAnyTitle" xml:space="preserve">
-    <value>Prefer 'IsEmpty' check over 'Any()'</value>
-  </data>
-  <data name="PreferIsEmptyOverAnyMessage" xml:space="preserve">
-    <value>Prefer an 'IsEmpty' check rather than using 'Any()', both for clarity and for performance</value>
-  </data>
-  <data name="PreferIsEmptyOverAnyDescription" xml:space="preserve">
-    <value>Prefer checking 'IsEmpty' rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.</value>
+  <data name="PreferLengthCountIsEmptyOverAnyDescription" xml:space="preserve">
+    <value>Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rather than calling 'Any()'. The intent is clearer and it is more performant than the 'Enumerable.Any()' extension method.</value>
   </data>
 </root>

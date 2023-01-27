@@ -14,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public class PreferCountOverAnyTests
     {
-        private static readonly DiagnosticResult ExpectedDiagnostic = new DiagnosticResult(PreferLengthCountIsEmptyOverAnyAnalyzer.CountDescriptor).WithLocation(0);
+        private static readonly DiagnosticResult ExpectedDiagnostic = new DiagnosticResult(PreferLengthCountIsEmptyOverAnyAnalyzer.DiagnosticDescriptor).WithLocation(0);
 
         [Fact]
         public Task TestLocalDeclarationAsync()

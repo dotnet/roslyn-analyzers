@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -20,11 +21,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var (newRoot, codeFixTitle) = diagnostic.Properties[PreferLengthCountIsEmptyOverAnyAnalyzer.DiagnosticPropertyKey] switch
+                var propertyName = diagnostic.Properties[PreferLengthCountIsEmptyOverAnyAnalyzer.DiagnosticPropertyKey];
+                var (newRoot, codeFixTitle) = propertyName switch
                 {
-                    PreferLengthCountIsEmptyOverAnyAnalyzer.IsEmptyText => (ReplaceAnyWithIsEmpty(root, node), MicrosoftNetCoreAnalyzersResources.PreferIsEmptyOverAnyCodeFixTitle),
-                    PreferLengthCountIsEmptyOverAnyAnalyzer.LengthText => (ReplaceAnyWithLength(root, node), MicrosoftNetCoreAnalyzersResources.PreferLengthOverAnyCodeFixTitle),
-                    PreferLengthCountIsEmptyOverAnyAnalyzer.CountText => (ReplaceAnyWithCount(root, node), MicrosoftNetCoreAnalyzersResources.PreferCountOverAnyCodeFixTitle),
+                    PreferLengthCountIsEmptyOverAnyAnalyzer.IsEmptyText => (ReplaceAnyWithIsEmpty(root, node), MicrosoftNetCoreAnalyzersResources.PreferLengthCountIsEmptyOverAnyCodeFixTitle),
+                    PreferLengthCountIsEmptyOverAnyAnalyzer.LengthText => (ReplaceAnyWithLength(root, node), MicrosoftNetCoreAnalyzersResources.PreferLengthCountIsEmptyOverAnyCodeFixTitle),
+                    PreferLengthCountIsEmptyOverAnyAnalyzer.CountText => (ReplaceAnyWithCount(root, node), MicrosoftNetCoreAnalyzersResources.PreferLengthCountIsEmptyOverAnyCodeFixTitle),
                     _ => throw new NotSupportedException()
                 };
                 if (newRoot is null)
@@ -32,7 +34,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     continue;
                 }
 
-                var codeAction = CodeAction.Create(codeFixTitle, _ => Task.FromResult(context.Document.WithSyntaxRoot(newRoot)), codeFixTitle);
+                var formattedCodeFixTitle = string.Format(CultureInfo.InvariantCulture, codeFixTitle, propertyName);
+                var codeAction = CodeAction.Create(formattedCodeFixTitle, _ => Task.FromResult(context.Document.WithSyntaxRoot(newRoot)), codeFixTitle);
                 context.RegisterCodeFix(codeAction, diagnostic);
             }
         }

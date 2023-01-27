@@ -3117,8 +3117,8 @@
         },
         "CA1860": {
           "id": "CA1860",
-          "shortDescription": "Prefer 'IsEmpty' check over 'Any()'",
-          "fullDescription": "Prefer checking 'IsEmpty' rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.",
+          "shortDescription": "Avoid using the 'Enumerable.Any()' extension method when possible",
+          "fullDescription": "Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rather than calling 'Any()'. The intent is clearer and it is more performant than the 'Enumerable.Any()' extension method.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860",
           "properties": {

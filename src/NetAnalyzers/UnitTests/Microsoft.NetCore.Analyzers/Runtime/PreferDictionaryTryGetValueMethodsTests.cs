@@ -375,7 +375,7 @@ namespace Test
             string key = ""key"";
             Dictionary<string, int> data = new Dictionary<string, int>();
             if (data.TryGetValue(key, out int value))
-                data[key] = value++;
+                data[key] = ++value;
             else
                 data[key] = 1;
 
@@ -669,6 +669,14 @@ namespace Test
             }
 
             return data[key];";
+
+        private const string InvalidComplexPostIncrement = @"
+            string key = ""key"";
+            Dictionary<string, int> data = new Dictionary<string, int>();
+            if (data.ContainsKey(key))
+                return data[key]++;
+
+            return 0;";
 
         #endregion
 
@@ -1254,6 +1262,7 @@ End Namespace";
         [InlineData(InvalidArrayIndexerChanged)]
         [InlineData(InvalidKeyChangedInCondition)]
         [InlineData(InvalidKeyChangedAfterAdd)]
+        [InlineData(InvalidComplexPostIncrement)]
         public Task ShouldNotReportDiagnostic(string codeSnippet, LanguageVersion version = LanguageVersion.Default)
         {
             string testCode = CreateCSharpCode(codeSnippet);
@@ -1515,7 +1524,7 @@ class C
     {{
         var objects = new Dictionary<string, object>();
         if ([|objects.ContainsKey(key)|])
-            Console.WriteLine(objects[key]);
+            Console.WriteLine(objects[key]{(nullableMode == "enable" ? "!" : "")});
     }}
 
     void Value(string key)
@@ -1538,7 +1547,7 @@ class C
     {{
         var objects = new Dictionary<string, object>();
         if (objects.TryGetValue(key, out object{(useNullable ? "?" : "")} value))
-            Console.WriteLine(value);
+            Console.WriteLine(value{(nullableMode == "enable" ? "!" : "")});
     }}
 
     void Value(string key)

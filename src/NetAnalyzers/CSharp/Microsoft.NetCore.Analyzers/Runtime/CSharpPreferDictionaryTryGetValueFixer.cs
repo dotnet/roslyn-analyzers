@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Simplification;
@@ -122,9 +123,15 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 {
                     switch (dictionaryAccess.Parent)
                     {
-                        case PostfixUnaryExpressionSyntax post:
+                        case PostfixUnaryExpressionSyntax { RawKind: (int)SyntaxKind.PostDecrementExpression } post:
                             editor.ReplaceNode(post, generator.AssignmentStatement(dictionaryAccess,
-                                post.WithOperand(identifierName)).WithTriviaFrom(post));
+                                PrefixUnaryExpression(SyntaxKind.PreDecrementExpression, identifierName)).
+                                WithTriviaFrom(post));
+                            break;
+                        case PostfixUnaryExpressionSyntax { RawKind: (int)SyntaxKind.PostIncrementExpression } post:
+                            editor.ReplaceNode(post, generator.AssignmentStatement(dictionaryAccess,
+                                PrefixUnaryExpression(SyntaxKind.PreIncrementExpression, identifierName)).
+                                WithTriviaFrom(post));
                             break;
                         case PrefixUnaryExpressionSyntax pre:
                             editor.ReplaceNode(pre, generator.AssignmentStatement(dictionaryAccess,

@@ -239,6 +239,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     return false;
                                 case ICoalesceAssignmentOperation coalesce when coalesce.Target == indexer:
                                     return false;
+                                case IIncrementOrDecrementOperation inc when inc.Target == indexer &&
+                                    inc.Parent is not IExpressionStatementOperation:
+                                    return false;
                             }
 
                             context.UsageLocations.Add(indexer.Syntax.GetLocation());

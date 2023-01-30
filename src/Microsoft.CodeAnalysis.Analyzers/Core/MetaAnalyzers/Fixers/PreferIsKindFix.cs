@@ -3,7 +3,6 @@
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
@@ -48,7 +47,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
 
         protected abstract void FixDiagnostic(DocumentEditor editor, SyntaxNode nodeToFix);
 
-        private sealed class CustomFixAllProvider : DocumentBasedFixAllProvider
+        private sealed class CustomFixAllProvider : Analyzer.Utilities.DocumentBasedFixAllProvider
         {
             private readonly PreferIsKindFix _fixer;
 

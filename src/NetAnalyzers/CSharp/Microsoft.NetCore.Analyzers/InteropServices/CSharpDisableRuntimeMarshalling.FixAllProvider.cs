@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
-using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -15,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 {
     public sealed partial class CSharpDisableRuntimeMarshallingFixer
     {
-        private class CustomFixAllProvider : DocumentBasedFixAllProvider
+        private class CustomFixAllProvider : Analyzer.Utilities.DocumentBasedFixAllProvider
         {
             public static readonly CustomFixAllProvider Instance = new();
 

@@ -1,18 +1,4 @@
 <Project>
-  <Import Project="$(SourceBuildPackageVersionPropsPath)" Condition="'$(SourceBuildPackageVersionPropsPath)' != ''" />
-  <PropertyGroup>
-    <!--
-      Binaries that need to be executable during source build are restricted to versions available within source build.
-      This section defines executable versions of packages which are referenced via lower-version reference assemblies
-      during the build.
-    -->
-    <SystemCollectionsImmutableExecutableVersion>$(SystemCollectionsImmutableVersion)</SystemCollectionsImmutableExecutableVersion>
-    <SystemCollectionsImmutableExecutableVersion Condition="'$(SystemCollectionsImmutableExecutableVersion)' == ''">5.0.0</SystemCollectionsImmutableExecutableVersion>
-    <SystemReflectionMetadataExecutableVersion>$(SystemReflectionMetadataVersion)</SystemReflectionMetadataExecutableVersion>
-    <SystemReflectionMetadataExecutableVersion Condition="'$(SystemReflectionMetadataExecutableVersion)' == ''">5.0.0</SystemReflectionMetadataExecutableVersion>
-    <MicrosoftCodeAnalysisExecutableVersion>$(MicrosoftCodeAnalysisVersion)</MicrosoftCodeAnalysisExecutableVersion>
-    <MicrosoftCodeAnalysisExecutableVersion Condition="'$(MicrosoftCodeAnalysisExecutableVersion)' == ''">3.8.0</MicrosoftCodeAnalysisExecutableVersion>
-  </PropertyGroup>
   <PropertyGroup>
     <VersionPrefix>3.3.5</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
@@ -44,7 +30,10 @@
     <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>4.4.0</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
+    <!-- There are different versions in use for different components -->
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
+    <MicrosoftCodeAnalysisForResxSourceGeneratorsVersion>3.9.0</MicrosoftCodeAnalysisForResxSourceGeneratorsVersion>
+    <MicrosoftCodeAnalysisForConfigFileGenerationVersion>3.8.0</MicrosoftCodeAnalysisForConfigFileGenerationVersion>
     <MicrosoftCodeAnalysisVersionForTests>4.4.0-2.22416.9</MicrosoftCodeAnalysisVersionForTests>
     <DogfoodAnalyzersVersion>3.3.4</DogfoodAnalyzersVersion>
     <DogfoodNetAnalyzersVersion>8.0.0-preview1.22621.6</DogfoodNetAnalyzersVersion>

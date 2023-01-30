@@ -5,7 +5,9 @@
 
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <MicrosoftCodeAnalysisVersion>3.9.0</MicrosoftCodeAnalysisVersion>
+    <!-- When not building from source, use MicrosoftCodeAnalysisForResxSourceGeneratorsVersion instead of the default version. When building from source,
+         avoid overriding so the source built version is used. -->
+    <MicrosoftCodeAnalysisVersion Condition="'$(DotNetBuildFromSource)' != 'true'">$(MicrosoftCodeAnalysisForResxSourceGeneratorsVersion)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
 
   <ItemGroup>

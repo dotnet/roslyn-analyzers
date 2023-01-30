@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -74,7 +73,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return CustomFixAllProvider.Instance;
         }
 
-        private sealed class CustomFixAllProvider : DocumentBasedFixAllProvider
+        private sealed class CustomFixAllProvider : Analyzer.Utilities.DocumentBasedFixAllProvider
         {
             public static readonly CustomFixAllProvider Instance = new();
 

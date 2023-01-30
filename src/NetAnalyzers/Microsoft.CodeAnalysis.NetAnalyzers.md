@@ -1680,9 +1680,9 @@ Using concrete types avoids virtual or interface call overhead and enables inlin
 |CodeFix|False|
 ---
 
-## [CA1860](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Avoid using the 'Enumerable.Any()' extension method when possible
+## [CA1860](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Prefer 'IsEmpty' check over 'Any()'
 
-Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rather than calling 'Any()'. The intent is clearer and it is more performant than the 'Enumerable.Any()' extension method.
+Prefer checking 'IsEmpty' rather than calling 'Any()'. The intent is clearer and the 'Any()' call could be slower, especially if it uses the 'IEnumerable.Any()' extension method.
 
 |Item|Value|
 |-|-|

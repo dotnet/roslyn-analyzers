@@ -28,18 +28,44 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string RuleId = "CA1860";
         internal const string DiagnosticPropertyKey = nameof(DiagnosticPropertyKey);
 
-        internal static readonly DiagnosticDescriptor DiagnosticDescriptor = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor IsEmptyDescriptor = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(PreferLengthCountIsEmptyOverAnyTitle)),
-            CreateLocalizableResourceString(nameof(PreferLengthCountIsEmptyOverAnyMessage)),
+            CreateLocalizableResourceString(nameof(PreferIsEmptyOverAnyTitle)),
+            CreateLocalizableResourceString(nameof(PreferIsEmptyOverAnyMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
-            CreateLocalizableResourceString(nameof(PreferLengthCountIsEmptyOverAnyDescription)),
+            CreateLocalizableResourceString(nameof(PreferIsEmptyOverAnyDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false
         );
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptor);
+        internal static readonly DiagnosticDescriptor LengthDescriptor = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(PreferLengthOverAnyTitle)),
+            CreateLocalizableResourceString(nameof(PreferLengthOverAnyMessage)),
+            DiagnosticCategory.Performance,
+            RuleLevel.IdeSuggestion,
+            CreateLocalizableResourceString(nameof(PreferLengthOverAnyDescription)),
+            isPortedFxCopRule: false,
+            isDataflowRule: false
+        );
+
+        internal static readonly DiagnosticDescriptor CountDescriptor = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(PreferCountOverAnyTitle)),
+            CreateLocalizableResourceString(nameof(PreferCountOverAnyMessage)),
+            DiagnosticCategory.Performance,
+            RuleLevel.IdeSuggestion,
+            CreateLocalizableResourceString(nameof(PreferCountOverAnyDescription)),
+            isPortedFxCopRule: false,
+            isDataflowRule: false
+        );
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            LengthDescriptor,
+            CountDescriptor,
+            IsEmptyDescriptor
+        );
 
         public override void Initialize(AnalysisContext context)
         {
@@ -83,7 +109,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     var properties = ImmutableDictionary.CreateBuilder<string, string?>();
                     properties.Add(DiagnosticPropertyKey, IsEmptyText);
-                    context.ReportDiagnostic(invocation.CreateDiagnostic(DiagnosticDescriptor, properties: properties.ToImmutable()));
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(IsEmptyDescriptor, properties: properties.ToImmutable()));
 
                     return;
                 }
@@ -92,7 +118,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     var properties = ImmutableDictionary.CreateBuilder<string, string?>();
                     properties.Add(DiagnosticPropertyKey, LengthText);
-                    context.ReportDiagnostic(invocation.CreateDiagnostic(DiagnosticDescriptor, properties: properties.ToImmutable()));
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(LengthDescriptor, properties: properties.ToImmutable()));
 
                     return;
                 }
@@ -101,7 +127,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     var properties = ImmutableDictionary.CreateBuilder<string, string?>();
                     properties.Add(DiagnosticPropertyKey, CountText);
-                    context.ReportDiagnostic(invocation.CreateDiagnostic(DiagnosticDescriptor, properties: properties.ToImmutable()));
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(CountDescriptor, properties: properties.ToImmutable()));
 
                     return;
                 }

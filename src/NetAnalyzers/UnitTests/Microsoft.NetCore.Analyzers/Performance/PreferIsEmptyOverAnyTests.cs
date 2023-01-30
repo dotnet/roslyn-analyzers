@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.PreferLengthCountIsEmptyOverAnyAnalyzer,
@@ -13,6 +14,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public class PreferIsEmptyOverAnyTests
     {
+        private static readonly DiagnosticResult ExpectedDiagnostic = new DiagnosticResult(PreferLengthCountIsEmptyOverAnyAnalyzer.DiagnosticDescriptor).WithLocation(0);
+
         [Fact]
         public Task TestLocalDeclarationAsync()
         {
@@ -23,7 +26,7 @@ using System.Linq;
 public class Tests {
     public void M() {
         var array = ImmutableList<int>.Empty;
-        _ = [|array.Any()|];
+        _ = {|#0:array.Any()|};
     }
 }";
             const string fixedCode = @"
@@ -36,7 +39,7 @@ public class Tests {
         _ = !array.IsEmpty;
     }
 }";
-            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -49,7 +52,7 @@ Imports System.Linq
 Public Class Tests
     Public Function M()
         Dim array = ImmutableList(Of Integer).Empty
-        Dim x = [|array.Any()|]
+        Dim x = {|#0:array.Any()|}
     End Function
 End Class";
             const string fixedCode = @"
@@ -63,7 +66,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -75,7 +78,7 @@ using System.Linq;
 
 public class Tests {
     public bool HasContents(ImmutableList<int> array) {
-        return [|array.Any()|];
+        return {|#0:array.Any()|};
     }
 }";
             const string fixedCode = @"
@@ -88,7 +91,7 @@ public class Tests {
     }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -100,7 +103,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
-        Return [|array.Any()|]
+        Return {|#0:array.Any()|}
     End Function
 End Class";
             const string fixedCode = @"
@@ -113,7 +116,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -125,7 +128,7 @@ using System.Linq;
 
 public class Tests {
     public bool IsEmpty(ImmutableList<int> array) {
-        return ![|array.Any()|];
+        return !{|#0:array.Any()|};
     }
 }";
             const string fixedCode = @"
@@ -138,7 +141,7 @@ public class Tests {
     }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -150,7 +153,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function IsEmpty(array As ImmutableList(Of Integer)) As Boolean
-        Return Not [|array.Any()|]
+        Return Not {|#0:array.Any()|}
     End Function
 End Class";
             const string fixedCode = @"
@@ -163,7 +166,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -239,7 +242,7 @@ using System.Linq;
 
 public class Tests {
     public bool HasContents(ImmutableList<int> array) {
-        return [|Enumerable.Any(array)|];
+        return {|#0:Enumerable.Any(array)|};
     }
 }";
             const string fixedCode = @"
@@ -252,7 +255,7 @@ public class Tests {
     }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -264,7 +267,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
-        Return [|Enumerable.Any(array)|]
+        Return {|#0:Enumerable.Any(array)|}
     End Function
 End Class";
             const string fixedCode = @"
@@ -277,7 +280,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -289,7 +292,7 @@ using System.Linq;
 
 public class Tests {
     public bool HasContents(ImmutableList<int> array) {
-        return [|System.Linq.Enumerable.Any(array)|];
+        return {|#0:System.Linq.Enumerable.Any(array)|};
     }
 }";
             const string fixedCode = @"
@@ -302,7 +305,7 @@ public class Tests {
     }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -314,7 +317,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
-        Return [|System.Linq.Enumerable.Any(array)|]
+        Return {|#0:System.Linq.Enumerable.Any(array)|}
     End Function
 End Class";
             const string fixedCode = @"
@@ -327,7 +330,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -339,7 +342,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
-        Return [|array.Any|]
+        Return {|#0:array.Any|}
     End Function
 End Class";
             const string fixedCode = @"
@@ -352,7 +355,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -364,7 +367,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function HasContents(array As ImmutableList(Of Integer)) As Boolean
-        Return Not [|array.Any|]
+        Return Not {|#0:array.Any|}
     End Function
 End Class";
             const string fixedCode = @"
@@ -377,7 +380,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -389,7 +392,7 @@ using System.Linq;
 
 public class Tests {
     public void Run(ImmutableList<int> array) {
-        X([|array.Any()|]);
+        X({|#0:array.Any()|});
     }
 
     public void X(bool b) => throw null;
@@ -406,7 +409,7 @@ public class Tests {
     public void X(bool b) => throw null;
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -418,7 +421,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function Run(array As ImmutableList(Of Integer))
-        X([|array.Any|])
+        X({|#0:array.Any|})
     End Function
 
     Public Function X(b As Boolean)
@@ -439,7 +442,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]

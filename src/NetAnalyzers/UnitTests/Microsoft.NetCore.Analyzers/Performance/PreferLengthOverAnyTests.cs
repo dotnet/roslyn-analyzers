@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.PreferLengthCountIsEmptyOverAnyAnalyzer,
@@ -13,6 +14,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public class PreferLengthOverAnyTests
     {
+        private static readonly DiagnosticResult ExpectedDiagnostic = new DiagnosticResult(PreferLengthCountIsEmptyOverAnyAnalyzer.DiagnosticDescriptor).WithLocation(0);
+
         [Fact]
         public Task TestLocalDeclarationAsync()
         {
@@ -23,7 +26,7 @@ using System.Linq;
 public class Tests {
     public void M() {
         var array = new int[0];
-        _ = [|array.Any()|];
+        _ = {|#0:array.Any()|};
     }
 }";
             const string fixedCode = @"
@@ -37,7 +40,7 @@ public class Tests {
     }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -50,7 +53,7 @@ Imports System.Linq
 Public Class Tests
     Public Function M()
         Dim array = new Integer() {}
-        Dim x = [|array.Any()|]
+        Dim x = {|#0:array.Any()|}
     End Function
 End Class";
             const string fixedCode = @"
@@ -64,7 +67,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -76,7 +79,7 @@ using System.Linq;
 
 public class Tests {
     public bool HasContent(int[] array) {
-        return [|array.Any()|];
+        return {|#0:array.Any()|};
     }
 }";
             const string fixedCode = @"
@@ -89,7 +92,7 @@ public class Tests {
     }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -101,7 +104,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function HasContents(array As Integer()) As Boolean
-        Return [|array.Any()|]
+        Return {|#0:array.Any()|}
     End Function
 End Class";
             const string fixedCode = @"
@@ -114,7 +117,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -126,7 +129,7 @@ using System.Linq;
 
 public class Tests {
     public bool IsEmpty(int[] array) {
-        return ![|array.Any()|];
+        return !{|#0:array.Any()|};
     }
 }";
             const string fixedCode = @"
@@ -139,7 +142,7 @@ public class Tests {
     }
 }";
 
-            return VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyCS.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]
@@ -151,7 +154,7 @@ Imports System.Linq
 
 Public Class Tests
     Public Function IsEmpty(array As Integer()) As Boolean
-        Return Not [|array.Any()|]
+        Return Not {|#0:array.Any()|}
     End Function
 End Class";
             const string fixedCode = @"
@@ -164,7 +167,7 @@ Public Class Tests
     End Function
 End Class";
 
-            return VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+            return VerifyVB.VerifyCodeFixAsync(code, ExpectedDiagnostic, fixedCode);
         }
 
         [Fact]

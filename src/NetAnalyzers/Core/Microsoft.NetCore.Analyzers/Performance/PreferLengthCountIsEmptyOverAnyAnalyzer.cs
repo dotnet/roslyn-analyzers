@@ -30,33 +30,33 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         internal static readonly DiagnosticDescriptor IsEmptyDescriptor = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(PreferIsEmptyOverAnyTitle)),
+            CreateLocalizableResourceString(nameof(PreferLengthCountIsEmptyOverAnyTitle)),
             CreateLocalizableResourceString(nameof(PreferIsEmptyOverAnyMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
-            CreateLocalizableResourceString(nameof(PreferIsEmptyOverAnyDescription)),
+            CreateLocalizableResourceString(nameof(PreferLengthCountIsEmptyOverAnyDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false
         );
 
         internal static readonly DiagnosticDescriptor LengthDescriptor = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(PreferLengthOverAnyTitle)),
+            CreateLocalizableResourceString(nameof(PreferLengthCountIsEmptyOverAnyTitle)),
             CreateLocalizableResourceString(nameof(PreferLengthOverAnyMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
-            CreateLocalizableResourceString(nameof(PreferLengthOverAnyDescription)),
+            CreateLocalizableResourceString(nameof(PreferLengthCountIsEmptyOverAnyDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false
         );
 
         internal static readonly DiagnosticDescriptor CountDescriptor = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(PreferCountOverAnyTitle)),
+            CreateLocalizableResourceString(nameof(PreferLengthCountIsEmptyOverAnyTitle)),
             CreateLocalizableResourceString(nameof(PreferCountOverAnyMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
-            CreateLocalizableResourceString(nameof(PreferCountOverAnyDescription)),
+            CreateLocalizableResourceString(nameof(PreferLengthCountIsEmptyOverAnyDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false
         );
@@ -110,26 +110,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     var properties = ImmutableDictionary.CreateBuilder<string, string?>();
                     properties.Add(DiagnosticPropertyKey, IsEmptyText);
                     context.ReportDiagnostic(invocation.CreateDiagnostic(IsEmptyDescriptor, properties: properties.ToImmutable()));
-
-                    return;
                 }
-
-                if (HasEligibleLengthProperty(type))
+                else if (HasEligibleLengthProperty(type))
                 {
                     var properties = ImmutableDictionary.CreateBuilder<string, string?>();
                     properties.Add(DiagnosticPropertyKey, LengthText);
                     context.ReportDiagnostic(invocation.CreateDiagnostic(LengthDescriptor, properties: properties.ToImmutable()));
-
-                    return;
                 }
 
-                if (HasEligibleCountProperty(type))
+                else if (HasEligibleCountProperty(type))
                 {
                     var properties = ImmutableDictionary.CreateBuilder<string, string?>();
                     properties.Add(DiagnosticPropertyKey, CountText);
                     context.ReportDiagnostic(invocation.CreateDiagnostic(CountDescriptor, properties: properties.ToImmutable()));
-
-                    return;
                 }
             }
         }

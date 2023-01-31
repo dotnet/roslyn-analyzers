@@ -4,6 +4,10 @@
     <Dependency Name="Microsoft.CodeAnalysis" Version="3.3.1">
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>66a912c9463eebe832cf742d2fe8bb2e1a4600ec</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn" Version="4.5.0-6.23080.17">
+      <Uri>https://github.com/dotnet/roslyn</Uri>
+      <Sha>1daa862268882f13e8396e0dfc87d43e3417a5a1</Sha>
       <SourceBuild RepoName="roslyn" ManagedOnly="true" />s
     </Dependency>
   </ProductDependencies>

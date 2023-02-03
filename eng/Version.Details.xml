@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
+    <Dependency Name="Microsoft.CodeAnalysis" Version="3.3.1">
+      <Uri>https://github.com/dotnet/roslyn</Uri>
+      <Sha>66a912c9463eebe832cf742d2fe8bb2e1a4600ec</Sha>
+    </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.22630.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23101.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>e82404fca08383513e0b0b3c5308d4a9b18b7c7a</Sha>
+      <Sha>c4d6ac086bdb9764f72c5ede705d3ef12e1b4c74</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
+    </Dependency>
+    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.4.0">
+      <Uri>https://github.com/dotnet/roslyn</Uri>
+      <Sha>1ce8866c9de4c2d67351ef6863699dee03b0804a</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="4.4.0">
+      <Uri>https://github.com/dotnet/roslyn</Uri>
+      <Sha>1ce8866c9de4c2d67351ef6863699dee03b0804a</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="4.4.0">
+      <Uri>https://github.com/dotnet/roslyn</Uri>
+      <Sha>1ce8866c9de4c2d67351ef6863699dee03b0804a</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

@@ -740,12 +740,12 @@ class C : IInterface
     {
         (new TStruct[0]).Cast<int>(); // int is a struct
         (new TStruct[0]).Cast<object>(); // can always cast to object
-        {|#50:(new TStruct[0]).Cast<string>()|}; // string is not is a struct
+        {|#50:(new TStruct[0]).Cast<string>()|}; // string is not struct
         {|#51:(new TStruct[0]).Cast<string?>()|};
 
         (new int[0]).Cast<TStruct>(); // int is a struct
-        (new object[0]).Cast<TStruct>(); // can always cast to object
-        {|#52:(new string[0]).Cast<TStruct>()|}; // string is not is a struct
+        (new object[0]).Cast<TStruct>(); // can always cast from object
+        {|#52:(new string[0]).Cast<TStruct>()|}; // string is not struct
         {|#53:(new string?[0]).Cast<TStruct>()|};
 
         (new Nullable<TStruct>[0]).Cast<TStruct>();
@@ -754,12 +754,12 @@ class C : IInterface
         (new Nullable<TStruct>[0]).Cast<int?>();
         (new Nullable<TStruct>[0]).Cast<object>(); // can always cast to object
         (new Nullable<TStruct>[0]).Cast<object?>();
-        {|#54:(new Nullable<TStruct>[0]).Cast<string>()|}; // string is not is a struct
+        {|#54:(new Nullable<TStruct>[0]).Cast<string>()|}; // string is not struct
         {|#55:(new Nullable<TStruct>[0]).Cast<string?>()|};
 
         (new int[0]).Cast<TStruct?>(); // int is a struct
-        (new object[0]).Cast<TStruct?>(); // can always cast to object
-        {|#56:(new string[0]).Cast<TStruct?>()|}; // string is not is a struct
+        (new object[0]).Cast<TStruct?>(); // can always cast from object
+        {|#56:(new string[0]).Cast<TStruct?>()|}; // string is not struct
     }
 }",
                 ExpectedDiagnostics = {

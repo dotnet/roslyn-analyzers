@@ -30,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableTitle,
                                                                              s_localizableCastMessage,
                                                                              DiagnosticCategory.Reliability,
-                                                                             RuleLevel.IdeSuggestion,
+                                                                             RuleLevel.BuildWarning,
                                                                              s_localizableDescription,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
@@ -39,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableTitle,
                                                                              s_localizableOfTypeMessage,
                                                                              DiagnosticCategory.Reliability,
-                                                                             RuleLevel.IdeSuggestion,
+                                                                             RuleLevel.BuildWarning,
                                                                              s_localizableDescription,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);

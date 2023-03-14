@@ -3,6 +3,7 @@
   <PropertyGroup>
     <GitHubRepositoryName>roslyn-analyzers</GitHubRepositoryName>
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+    <SourceBuildTrimNetFrameworkTargets>true</SourceBuildTrimNetFrameworkTargets>
   </PropertyGroup>
 
 </Project>

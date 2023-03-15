@@ -15,8 +15,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
     using static MicrosoftNetCoreAnalyzersResources;
     public abstract partial class ConstantExpectedAnalyzer : DiagnosticAnalyzer
     {
-        protected static readonly string ConstantExpectedAttribute = nameof(ConstantExpectedAttribute);
-        protected static readonly string ConstantExpected = nameof(ConstantExpected);
+        protected const string ConstantExpectedAttribute = nameof(ConstantExpectedAttribute);
+        protected const string ConstantExpected = nameof(ConstantExpected);
         protected const string ConstantExpectedMin = "Min";
         protected const string ConstantExpectedMax = "Max";
         private static readonly LocalizableString s_localizableApplicationTitle = CreateLocalizableResourceString(nameof(ConstantExpectedApplicationTitle));
@@ -135,6 +135,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 return;
             }
+
             context.RegisterOperationAction(context => OnInvocation(context, constantExpectedContext), OperationKind.Invocation);
             context.RegisterSymbolAction(context => OnMethodSymbol(context, constantExpectedContext), SymbolKind.Method);
             RegisterAttributeSyntax(context, constantExpectedContext);
@@ -156,7 +157,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 CheckParameters(methodSymbol.Parameters, interfaceMethodSymbol.Parameters);
             }
-
 
             void CheckParameters(ImmutableArray<IParameterSymbol> parameters, ImmutableArray<IParameterSymbol> baseParameters)
             {
@@ -182,6 +182,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     continue;
                 }
+
                 var v = argument.Value.WalkDownConversion();
                 if (v is IParameterReferenceOperation parameterReference &&
                     constantExpectedContext.TryCreateConstantExpectedParameter(parameterReference.Parameter, out var currConstantParameter))
@@ -190,8 +191,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         context.ReportDiagnostic(parameterCheckDiagnostic);
                     }
+
                     continue;
                 }
+
                 var constantValue = v.ConstantValue;
                 if (!argConstantParameter.ValidateValue(argument, constantValue, out var valueDiagnostic))
                 {
@@ -238,6 +241,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         continue;
                     }
+
                     var baseParameter = baseParameters[i];
                     if (HasConstantExpectedAttributeData(baseParameter) && !HasConstantExpectedAttributeData(parameter))
                     {
@@ -246,6 +250,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         arraybuilder.Add(diagnostic);
                     }
                 }
+
                 diagnostics = arraybuilder.ToImmutable();
                 return diagnostics.Length is 0;
             }
@@ -370,7 +375,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     case SpecialType.None when parameterSymbol.Type.TypeKind == TypeKind.TypeParameter:
                         return ValidateMinMaxIsNull(parameterSymbol, attributeData, helper, out diagnostics);
                     default:
-                        diagnostics = helper.ParameterIsInvalid(parameterSymbol.Type.ToDisplayString(), attributeData.ApplicationSyntaxReference.GetSyntax());
+                        diagnostics = DiagnosticHelper.ParameterIsInvalid(parameterSymbol.Type.ToDisplayString(), attributeData.ApplicationSyntaxReference.GetSyntax());
                         return false;
                 }
 
@@ -391,11 +396,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             errorFlags |= ErrorKind.MaxIsIncompatible;
                         }
                     }
+
                     if (errorFlags is not 0)
                     {
                         diagnostics = helper.GetError(errorFlags, parameterSymbol, attributeData.ApplicationSyntaxReference.GetSyntax(), "null", "null");
                         return false;
                     }
+
                     diagnostics = ImmutableArray<Diagnostic>.Empty;
                     return true;
                 }
@@ -471,20 +478,21 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// <returns></returns>
             public abstract bool ValidateValue(IArgumentOperation argument, Optional<object> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics);
 
-            public bool ValidateConstant(IArgumentOperation argument, Optional<object> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
+            public static bool ValidateConstant(IArgumentOperation argument, Optional<object> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
             {
                 if (!constant.HasValue)
                 {
                     validationDiagnostics = argument.CreateDiagnostic(CA1857.ConstantNotConstantRule);
                     return false;
                 }
+
                 validationDiagnostics = null;
                 return true;
             }
 
             public abstract bool ValidateParameterIsWithinRange(ConstantExpectedParameter subsetCandidate, IArgumentOperation argument, [NotNullWhen(false)] out Diagnostic? validationDiagnostics);
             protected Diagnostic CreateConstantInvalidConstantRuleDiagnostic(IArgumentOperation argument) => argument.CreateDiagnostic(CA1857.ConstantInvalidConstantRule, Parameter.Type.ToDisplayString());
-            protected Diagnostic CreateConstantOutOfBoundsRuleDiagnostic(IArgumentOperation argument, string minText, string maxText) => argument.CreateDiagnostic(CA1857.ConstantOutOfBoundsRule, minText, maxText);
+            protected static Diagnostic CreateConstantOutOfBoundsRuleDiagnostic(IArgumentOperation argument, string minText, string maxText) => argument.CreateDiagnostic(CA1857.ConstantOutOfBoundsRule, minText, maxText);
         }
 
         private sealed class StringConstantExpectedParameter : ConstantExpectedParameter
@@ -498,6 +506,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     validationDiagnostics = CreateConstantInvalidConstantRuleDiagnostic(argument);
                     return false;
                 }
+
                 validationDiagnostics = null;
                 return true;
             }
@@ -508,11 +517,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     return false;
                 }
+
                 if (constant.Value is not string and not null)
                 {
                     validationDiagnostics = CreateConstantInvalidConstantRuleDiagnostic(argument);
                     return false;
                 }
+
                 validationDiagnostics = null;
                 return true;
             }
@@ -525,21 +536,25 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     parameter = null;
                     return false;
                 }
+
                 parameter = new StringConstantExpectedParameter(parameterSymbol);
                 return true;
             }
         }
 
+#pragma warning disable CA1815 // Override equals and operator equals on value types
         private readonly struct AttributeConstant
+#pragma warning restore CA1815 // Override equals and operator equals on value types
         {
-            public readonly object? Min;
-            public readonly object? Max;
+            public object? Min { get; }
+            public object? Max { get; }
 
             public AttributeConstant(object? min, object? max)
             {
                 Min = min;
                 Max = max;
             }
+
             public static AttributeConstant Get(AttributeData attributeData)
             {
                 object? minConstant = null;
@@ -565,18 +580,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         return null;
                     }
+
                     return typedConstant.Kind == TypedConstantKind.Array ? typedConstant.Values : typedConstant.Value;
                 }
             }
         }
-
 
         protected abstract class DiagnosticHelper
         {
             public abstract Location? GetMinLocation(SyntaxNode attributeSyntax);
             public abstract Location? GetMaxLocation(SyntaxNode attributeSyntax);
 
-            public ImmutableArray<Diagnostic> ParameterIsInvalid(string expectedTypeName, SyntaxNode attributeSyntax) => ImmutableArray.Create(Diagnostic.Create(CA1856.UnsupportedTypeRule, attributeSyntax.GetLocation(), expectedTypeName));
+            public static ImmutableArray<Diagnostic> ParameterIsInvalid(string expectedTypeName, SyntaxNode attributeSyntax) => ImmutableArray.Create(Diagnostic.Create(CA1856.UnsupportedTypeRule, attributeSyntax.GetLocation(), expectedTypeName));
 
             public Diagnostic MinIsIncompatible(string expectedTypeName, SyntaxNode attributeSyntax) => Diagnostic.Create(CA1856.IncompatibleConstantTypeRule, GetMinLocation(attributeSyntax)!, ConstantExpectedMin, expectedTypeName);
 

@@ -1,0 +1,24 @@
+is_global = true
+
+# Do not declare static members on generic types (we use generic static classes in test helpers)
+dotnet_diagnostic.CA1000.severity = none
+
+# Nested types should not be visible (we use nested types as test helpers)
+dotnet_diagnostic.CA1034.severity = none
+
+# IdentifiersShouldNotContainUnderscores - test names contain underscores and this is fine
+dotnet_diagnostic.CA1707.severity = none
+
+# Type names should not match namespaces (not needed for test code)
+dotnet_diagnostic.CA1724.severity = none
+
+# Mark member as static rule has many violations in non-shipping projects
+dotnet_diagnostic.CA1822.severity = none
+
+# Do not directly await a Task (makes tests unnecessarily noisy)
+dotnet_diagnostic.CA2007.severity = none
+
+### Configuration for RSxxxx rules ###
+
+# Do not call 'GetTestAccessor()'
+dotnet_diagnostic.RS0043.severity = none

@@ -13,47 +13,51 @@ namespace Microsoft.NetCore.Analyzers.Performance
     {
         private sealed class UnmanagedHelper<T> where T : unmanaged
         {
-            private static readonly ConstantExpectedParameterFactory? _instance;
+            private static readonly ConstantExpectedParameterFactory? _instance = CreateFactory();
             private static ConstantExpectedParameterFactory Instance => _instance ?? throw new InvalidOperationException("unsupported type");
 
-            static UnmanagedHelper()
+            private static ConstantExpectedParameterFactory? CreateFactory()
             {
                 if (typeof(T) == typeof(long))
                 {
                     var helper = new UnmanagedHelper<long>.TransformHelper(TryTransformInt64);
-                    _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
+                    return new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(ulong))
                 {
                     var helper = new UnmanagedHelper<ulong>.TransformHelper(TryTransformUInt64);
-                    _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
+                    return new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(float))
                 {
                     var helper = new UnmanagedHelper<float>.TransformHelper(TryTransformSingle);
-                    _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
+                    return new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(double))
                 {
                     var helper = new UnmanagedHelper<double>.TransformHelper(TryTransformDouble);
-                    _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
+                    return new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(char))
                 {
                     var helper = new UnmanagedHelper<char>.TransformHelper(TryTransformChar);
-                    _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
+                    return new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
                 else if (typeof(T) == typeof(bool))
                 {
                     var helper = new UnmanagedHelper<bool>.TransformHelper(TryTransformBoolean);
-                    _instance = new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
+                    return new ConstantExpectedParameterFactory((TransformHelper)(object)helper);
                 }
+
+                return null;
             }
 
+#pragma warning disable CA1000 // Do not declare static members on generic types - https://github.com/dotnet/roslyn-analyzers/issues/6379
             public static bool TryCreate(IParameterSymbol parameterSymbol, AttributeData attributeData, T typeMin, T typeMax, [NotNullWhen(true)] out ConstantExpectedParameter? parameter)
                 => Instance.TryCreate(parameterSymbol, attributeData, typeMin, typeMax, out parameter);
             public static bool Validate(IParameterSymbol parameterSymbol, AttributeData attributeData, T typeMin, T typeMax, DiagnosticHelper diagnosticHelper, out ImmutableArray<Diagnostic> diagnostics)
                 => Instance.Validate(parameterSymbol, attributeData, typeMin, typeMax, diagnosticHelper, out diagnostics);
+#pragma warning restore CA1000 // Do not declare static members on generic types
 
             public delegate bool TryTransform(object constant, out T value, out bool isInvalid);
             public sealed class TransformHelper
@@ -65,7 +69,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     _tryTransform = tryTransform;
                 }
 
+#pragma warning disable CA1822 // Mark members as static - Suppressed for improved readability at callsites
                 public bool IsLessThan(T operand1, T operand2) => Comparer<T>.Default.Compare(operand1, operand2) < 0;
+#pragma warning restore CA1822 // Mark members as static
+
                 public bool TryTransformMin(object constant, out T value, ref ErrorKind errorFlags)
                 {
                     if (_tryTransform(constant, out value, out bool isInvalid))
@@ -154,6 +161,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         errorFlags = ErrorKind.MinMaxInverted;
                         return false;
                     }
+
                     return true;
                 }
             }
@@ -186,6 +194,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         validationDiagnostics = null;
                         return true;
                     }
+
                     validationDiagnostics = CreateConstantOutOfBoundsRuleDiagnostic(argument, Min.ToString(), Max.ToString());
                     return false;
                 }
@@ -204,9 +213,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             validationDiagnostics = null;
                             return true;
                         }
+
                         validationDiagnostics = CreateConstantOutOfBoundsRuleDiagnostic(argument, Min.ToString(), Max.ToString());
                         return false;
                     }
+
                     validationDiagnostics = CreateConstantInvalidConstantRuleDiagnostic(argument);
                     return false;
                 }
@@ -222,15 +233,21 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     integer = default;
                     return false;
                 }
+
                 integer = Convert.ToInt64(constant);
             }
-            catch
+            catch (Exception ex) when (CatchExceptionDuringConvert(ex))
             {
                 integer = default;
                 return false;
             }
+
             return true;
         }
+
+        private static bool CatchExceptionDuringConvert(Exception ex)
+            => ex is FormatException or InvalidCastException or OverflowException or ArgumentNullException;
+
         private static bool TryConvertUnsignedInteger(object constant, out ulong integer)
         {
             try
@@ -240,13 +257,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     integer = default;
                     return false;
                 }
+
                 integer = Convert.ToUInt64(constant);
             }
-            catch
+            catch (Exception ex) when (CatchExceptionDuringConvert(ex))
             {
                 integer = default;
                 return false;
             }
+
             return true;
         }
 
@@ -258,10 +277,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 return isValidSigned;
             }
+
             if (!TryConvertUnsignedInteger(constant, out _))
             {
                 isInvalid = true;
             }
+
             return isValidSigned;
         }
         private static bool TryTransformUInt64(object constant, out ulong value, out bool isInvalid)
@@ -272,10 +293,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 return isValidUnsigned;
             }
+
             if (!TryConvertSignedInteger(constant, out _))
             {
                 isInvalid = true;
             }
+
             return isValidUnsigned;
         }
 
@@ -287,12 +310,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     return Invalid(out value, out isInvalid);
                 }
+
                 value = Convert.ToChar(constant);
             }
-            catch
+            catch (Exception ex) when (CatchExceptionDuringConvert(ex))
             {
                 return Invalid(out value, out isInvalid);
             }
+
             isInvalid = false;
             return true;
         }
@@ -305,6 +330,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 isInvalid = false;
                 return true;
             }
+
             return Invalid(out value, out isInvalid);
         }
 
@@ -314,6 +340,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 return Invalid(out value, out isInvalid);
             }
+
             value = Convert.ToSingle(constant);
             isInvalid = false;
             return true;
@@ -325,6 +352,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 return Invalid(out value, out isInvalid);
             }
+
             value = Convert.ToDouble(constant);
             isInvalid = false;
             return true;

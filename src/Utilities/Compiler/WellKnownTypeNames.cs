@@ -103,6 +103,8 @@ namespace Analyzer.Utilities
         public const string SystemAppContext = "System.AppContext";
         public const string SystemAppDomain = "System.AppDomain";
         public const string SystemArgumentException = "System.ArgumentException";
+        public const string SystemArgumentNullException = "System.ArgumentNullException";
+        public const string SystemArgumentOutOfRangeException = "System.ArgumentOutOfRangeException";
         public const string SystemAttribute = "System.Attribute";
         public const string SystemAttributeTargets = "System.AttributeTargets";
         public const string SystemAttributeUsageAttribute = "System.AttributeUsageAttribute";
@@ -271,6 +273,7 @@ namespace Analyzer.Utilities
         public const string SystemNumber = "System.Number";
         public const string SystemNumericsINumber1 = "System.Numerics.INumber`1";
         public const string SystemObject = "System.Object";
+        public const string SystemObjectDisposedException = "System.ObjectDisposedException";
         public const string SystemObsoleteAttribute = "System.ObsoleteAttribute";
         public const string SystemOperatingSystem = "System.OperatingSystem";
         public const string SystemOperationCanceledException = "System.OperationCanceledException";
@@ -317,6 +320,7 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeInteropServicesGCHandle = "System.Runtime.InteropServices.GCHandle";
         public const string SystemRuntimeInteropServicesHandleRef = "System.Runtime.InteropServices.HandleRef";
         public const string SystemRuntimeInteropServicesLCIDConversionAttribute = "System.Runtime.InteropServices.LCIDConversionAttribute";
+        public const string SystemRuntimeInteropServicesLibraryImportAttribute = "System.Runtime.InteropServices.LibraryImportAttribute";
         public const string SystemRuntimeInteropServicesMarshal = "System.Runtime.InteropServices.Marshal";
         public const string SystemRuntimeInteropServicesMarshalAsAttribute = "System.Runtime.InteropServices.MarshalAsAttribute";
         public const string SystemRuntimeInteropServicesOSPlatform = "System.Runtime.InteropServices.OSPlatform";

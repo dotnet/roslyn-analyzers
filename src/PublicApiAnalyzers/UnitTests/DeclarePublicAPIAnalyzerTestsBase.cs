@@ -48,28 +48,28 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
         #region Helpers
         private static DiagnosticResult GetAdditionalFileResultAt(int line, int column, string path, DiagnosticDescriptor descriptor, params object[] arguments)
         {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             return new DiagnosticResult(descriptor)
                 .WithLocation(path, line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arguments);
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor descriptor, params object[] arguments)
         {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             return new DiagnosticResult(descriptor)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arguments);
         }
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor descriptor, params object[] arguments)
         {
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             return new DiagnosticResult(descriptor)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arguments);
         }
 
@@ -308,6 +308,25 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
             }
 
             await VerifyCSharpAsync(source, shippedText, unshippedText, $"[*]\r\n{editorconfigText}", expectedDiagnostics);
+        }
+
+        [Fact]
+        public async Task AnalyzerFilePresent_MissingNonEnabledText()
+        {
+            var source = $$"""
+
+                {{EnabledModifierCSharp}} class C
+                {
+                    private C() { }
+                }
+                """;
+
+            string? shippedText = "";
+            string? unshippedText = "";
+
+            var expectedDiagnostics = new[] { GetCSharpResultAt(2, 8 + EnabledModifierCSharp.Length, DeclareNewApiRule, "C") };
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText, $"[*]\r\ndotnet_public_api_analyzer.require_api_files = true", expectedDiagnostics);
         }
 
         [Fact]
@@ -801,13 +820,13 @@ C.Property.get -> int
 
             var unshippedText = @"";
 
-#pragma warning disable RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             var expected = new DiagnosticResult(DuplicateSymbolInApiFiles)
                 .WithLocation(ShippedFileName, 6, 1)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithLocation(ShippedFileName, 4, 1)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments("C.Property.get -> int");
             await VerifyCSharpAsync(source, shippedText, unshippedText, expected);
         }
@@ -837,13 +856,13 @@ C.Property.set -> void
             var unshippedText = @"
 C.Property.get -> int";
 
-#pragma warning disable RS0030 // Do not used banned APIs
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             var expected = new DiagnosticResult(DuplicateSymbolInApiFiles)
                 .WithLocation(UnshippedFileName, 2, 1)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithLocation(ShippedFileName, 5, 1)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments("C.Property.get -> int");
             await VerifyCSharpAsync(source, shippedText, unshippedText, expected);
         }
@@ -1338,7 +1357,7 @@ static System.StringComparer.FromComparison(System.StringComparison comparisonTy
             var diagnostics = IsInternalTest ? new DiagnosticResult[] {
                 // /0/Test0.cs(11,19): warning RS0059: Symbol 'Method2' violates the backcompat requirement: 'Do not add multiple overloads with optional parameters'. See 'https://github.com/dotnet/roslyn/blob/main/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md' for details.
                 GetCSharpResultAt(11, 19, AvoidMultipleOverloadsWithOptionalParameters, "Method2", AvoidMultipleOverloadsWithOptionalParameters.HelpLinkUri),
-             } : new DiagnosticResult[0];
+             } : Array.Empty<DiagnosticResult>();
 
             diagnostics = diagnostics.Concat(new[] {
                 // Test0.cs(21,17): warning RS0027: Symbol 'Method4' violates the backcompat requirement: 'Public API with optional parameter(s) should have the most parameters amongst its public overloads'. See 'https://github.com/dotnet/roslyn/blob/main/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md' for details.

@@ -3140,7 +3140,7 @@
           "shortDescription": "Avoid constant arrays as arguments",
           "fullDescription": "Constant arrays passed as arguments are not reused which implies a performance overhead. Consider extracting them to 'static readonly' fields to improve performance.",
           "defaultLevel": "note",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,

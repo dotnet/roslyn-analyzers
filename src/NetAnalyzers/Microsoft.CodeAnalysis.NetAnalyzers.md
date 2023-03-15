@@ -1692,7 +1692,7 @@ Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rath
 |CodeFix|True|
 ---
 
-## [CA1861](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Avoid constant arrays as arguments
+## [CA1861](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Avoid constant arrays as arguments
 
 Constant arrays passed as arguments are not reused which implies a performance overhead. Consider extracting them to 'static readonly' fields to improve performance.
 
@@ -1702,6 +1702,7 @@ Constant arrays passed as arguments are not reused which implies a performance o
 |Enabled|True|
 |Severity|Info|
 |CodeFix|True|
+---
 
 ## [CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
 

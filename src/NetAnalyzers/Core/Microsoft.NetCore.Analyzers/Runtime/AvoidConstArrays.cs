@@ -77,6 +77,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             {
                                 return;
                             }
+
                             arrayCreationOperation = arrayCreation;
                         }
                         else // An invocation, extension or regular, has an argument, unless it's a VB extension method call

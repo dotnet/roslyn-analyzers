@@ -76,7 +76,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 newMember = newMember.FormatForExtraction(methodContext.Syntax);
             }
 
-            ISymbol lastFieldOrPropertSymbol = containingType.GetMembers().LastOrDefault(x => x is IFieldSymbol || x is IPropertySymbol);
+            ISymbol lastFieldOrPropertSymbol = containingType.GetMembers().LastOrDefault(x => x is IFieldSymbol or IPropertySymbol);
             if (lastFieldOrPropertSymbol is not null)
             {
                 // Insert after fields or properties

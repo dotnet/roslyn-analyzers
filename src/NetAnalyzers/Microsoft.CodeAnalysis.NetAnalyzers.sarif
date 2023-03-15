@@ -342,26 +342,6 @@
             ]
           }
         },
-        "CA1858": {
-          "id": "CA1858",
-          "shortDescription": "Avoid constant arrays as arguments",
-          "fullDescription": "Constant arrays passed as arguments are not reused which implies a performance overhead. Consider extracting them to 'static readonly' fields to improve performance.",
-          "defaultLevel": "note",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "AvoidConstArraysAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
         "CA2014": {
           "id": "CA2014",
           "shortDescription": "Do not use stackalloc in loops",
@@ -3145,6 +3125,26 @@
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "PreferLengthCountIsEmptyOverAnyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1861": {
+          "id": "CA1861",
+          "shortDescription": "Avoid constant arrays as arguments",
+          "fullDescription": "Constant arrays passed as arguments are not reused which implies a performance overhead. Consider extracting them to 'static readonly' fields to improve performance.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidConstArraysAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"

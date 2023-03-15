@@ -14,12 +14,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
-    /// CA1858: Avoid constant arrays as arguments. Replace with static readonly arrays.
+    /// CA1861: Avoid constant arrays as arguments. Replace with static readonly arrays.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AvoidConstArraysAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1858";
+        internal const string RuleId = "CA1861";
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
             CreateLocalizableResourceString(nameof(AvoidConstArraysTitle)),

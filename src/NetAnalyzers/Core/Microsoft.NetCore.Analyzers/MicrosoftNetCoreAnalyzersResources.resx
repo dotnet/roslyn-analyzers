@@ -1976,9 +1976,6 @@ Widening and user defined conversions are not supported with generic types.</val
   <data name="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage" xml:space="preserve">
     <value>Starting with .NET 7 the explicit conversion '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</value>
   </data>
-<<<<<<< HEAD
-</root>
-=======
   <data name="UseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFixTitle" xml:space="preserve">
     <value>Use 'StartsWith'</value>
   </data>
@@ -2058,4 +2055,3 @@ Widening and user defined conversions are not supported with generic types.</val
     <value>Prefer an 'IsEmpty' check rather than using 'Any()', both for clarity and for performance</value>
   </data>
 </root>
->>>>>>> cc75004c017e7bd929ab2bb3dee21d1ed45b7753

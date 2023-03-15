@@ -83,7 +83,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         else // An invocation, extension or regular, has an argument, unless it's a VB extension method call
                         {
                             // For VB extension method invocations, find a matching child
-                            arrayCreationOperation = (IArrayCreationOperation)invocationOperation.Descendants()
+                            arrayCreationOperation = (IArrayCreationOperation)invocationDescendants
                                 .FirstOrDefault(x => x is IArrayCreationOperation);
                             if (arrayCreationOperation is null)
                             {

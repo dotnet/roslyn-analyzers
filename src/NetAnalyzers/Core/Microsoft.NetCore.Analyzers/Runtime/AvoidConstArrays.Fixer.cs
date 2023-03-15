@@ -141,6 +141,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     suffix++;
                 }
+
                 return parameterName + suffix;
             }
 

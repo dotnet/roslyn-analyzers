@@ -226,7 +226,11 @@ namespace Z
     {
         public void B()
         {
-            Console.WriteLine(string.Join("" "", {|CA1861:new[] { ""a"", ""b"" }|} /* test comment */));
+            Console.WriteLine(string.Join(
+                ""a"",
+                {|CA1861:new[] { ""b"", ""c"" }|}, /* test comment */
+                ""d""
+            ));
         }
     }
 }
@@ -237,11 +241,15 @@ namespace Z
 {
     public class A
     {
-        private static readonly string[] value = new[] { ""a"", ""b"" };
+        private static readonly string[] values = new[] { ""b"", ""c"" };
 
         public void B()
         {
-            Console.WriteLine(string.Join("" "", value /* test comment */));
+            Console.WriteLine(string.Join(
+                ""a"",
+                values, /* test comment */
+                ""d""
+            ));
         }
     }
 }
@@ -682,6 +690,28 @@ namespace Z
         }
 
         private void C(params bool[] booleans)
+        {
+        }
+    }
+}
+");
+        }
+
+        [Fact]
+        public async Task IgnoreReadonlyFieldAssignment_NoDiagnostic()
+        {
+            // Ignore when we're an argument used in a method/constructor that is assigned to a readonly field
+            await VerifyCS.VerifyAnalyzerAsync(@"
+namespace Z
+{
+    public class A
+    {
+        private static readonly B s = new B(new string[] { ""a"" });
+    }
+
+    public class B
+    {
+        public B(string[] s)
         {
         }
     }

@@ -105,6 +105,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     string? paramName = null;
                     if (argumentOperation is not null)
                     {
+                        IFieldInitializerOperation? fieldInitializer = argumentOperation.GetAncestor<IFieldInitializerOperation>(OperationKind.FieldInitializer);
+                        if (fieldInitializer is not null && fieldInitializer.InitializedFields.Any(x => x.IsReadOnly))
+                        {
+                            return;
+                        }
+
                         ITypeSymbol originalDefinition = argumentOperation.Parameter.Type.OriginalDefinition;
 
                         // Can't be a ReadOnlySpan, as those are already optimized

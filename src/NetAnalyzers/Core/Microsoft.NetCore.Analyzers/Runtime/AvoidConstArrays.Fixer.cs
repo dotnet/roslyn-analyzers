@@ -38,12 +38,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode node = root.FindNode(context.Span);
             SemanticModel model = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, context.CancellationToken).ConfigureAwait(false);
-            SyntaxGenerator generator = editor.Generator;
 
             string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysCodeFixTitle;
             context.RegisterCodeFix(CodeAction.Create(
                     title,
-                    async c => await ExtractConstArrayAsync(root, node, model, editor, generator, context.Diagnostics.First().Properties, c).ConfigureAwait(false),
+                    async ct => await ExtractConstArrayAsync(root, node, model, editor, editor.Generator,
+                        context.Diagnostics.First().Properties, ct).ConfigureAwait(false),
                     equivalenceKey: title),
                 context.Diagnostics);
         }
@@ -98,15 +98,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             else
             {
                 // add any extra trivia that was after the original argument
-                editor.ReplaceNode(node, generator.Argument(identifier).WithTrailingTrivia(arrayArgument.Syntax.GetTrailingTrivia()));
+                editor.ReplaceNode(node, generator.Argument(identifier).WithTriviaFrom(arrayArgument.Syntax));
             }
 
             // Return changed document
             return Task.FromResult(editor.GetChangedDocument());
         }
 
-        private static IArrayCreationOperation GetArrayCreationOperation(SyntaxNode node, SemanticModel model, CancellationToken cancellationToken,
-                out bool isInvoked)
+        private static IArrayCreationOperation GetArrayCreationOperation(SyntaxNode node, SemanticModel model, CancellationToken cancellationToken, out bool isInvoked)
         {
             // The analyzer only passes a diagnostic for two scenarios, each having an IArrayCreationOperation:
             //      1. The node is an IArgumentOperation that is a direct parent of an IArrayCreationOperation

@@ -35,7 +35,7 @@
   - Do not separate analyzer tests from code fix tests. If the analyzer has a code fix, then write all your tests as code fix tests.
     - Calling `VerifyCodeFixAsync(source, source)` verifies that the analyzer either does not produce diagnostics, or produces diagnostics where no code fix is offered.
     - Calling `VerifyCodeFixAsync(source, fixedSource)` verifies the diagnostics (analyzer testing) and verifies that the code fix on source produces the expected output.
-- Run the analyzer locally against `dotnet/runtime` and `dotnet/roslyn-analyzers` [(instructions)](testing-against-the-runtime-and-roslyn-analyzers-repo).
+- Run the analyzer locally against `dotnet/runtime` and `dotnet/roslyn-analyzers` [(instructions)](#testing-against-the-runtime-and-roslyn-analyzers-repo).
   - Review each of the failures in those repositories and determine the course of action for each.
   - Use the failures to discover nuance and guide the implementation details.
   - Run the analyzer against `dotnet/roslyn` [(instructions)](#testing-against-the-roslyn-repo), and if feasable with `dotnet/aspnetcore` repos.
@@ -53,7 +53,7 @@
 
 1. Navigate to the root of the Roslyn-analyzers repo and run these commands:
     - `cd roslyn-analyzers`
-    - Set RUNTIMEPACKAGEVERSION variable with a version value whose major part is equal to the major part of the version the [runtime](https://github.com/dotnet/runtime/blob/main/eng/Versions.props#L53)/[roslyn-analyzers](https://github.com/dotnet/roslyn-analyzers/blob/main/eng/Versions.props#L50) repo is using. Example: `set RUNTIMEPACKAGEVERSION=7.0.0`
+    - Set `RUNTIMEPACKAGEVERSION` variable with a version value whose major part is equal to the major part of the version the [runtime](https://github.com/dotnet/runtime/blob/main/eng/Versions.props#L53)/[roslyn-analyzers](https://github.com/dotnet/roslyn-analyzers/blob/main/eng/Versions.props#L50) repo is using. Example: `set RUNTIMEPACKAGEVERSION=8.0.0`
     - `build.cmd -ci /p:AssemblyVersion=%RUNTIMEPACKAGEVERSION% /p:AutoGenerateAssemblyVersion=false /p:OfficialBuild=true -c Release`
     - `cd artifacts\bin\Microsoft.CodeAnalysis.CSharp.NetAnalyzers\Release\netstandard2.0`
 2. Copy the two DLLs and replace the NuGet cache entries used by `dotnet/runtime` and `dotnet/roslyn-analyzers`. They might be in `"roslyn-analyzers/.packages/..."` (roslyn-analyzers) or `"%USERPROFILE%/.nuget/packages/... "` (runtime). You can check the exact path by building something in runtime with `/bl` and checking the binlog file (instructions for reading MSBuild binary logs are [here](https://github.com/dotnet/msbuild/blob/main/documentation/wiki/Binary-Log.md#replaying-a-binary-log)).
@@ -61,7 +61,7 @@
     - Note that the `RUNTIMEPACKAGEVERSION` value is different for the runtime and roslyn-analyzers repos
 3. Build the roslyn-analyzers with `build.cmd`. Now new analyzers will be used from updated NuGet packages and you would see the warnings if diagnostics found.
 4. If failures found, review each of the failures and determine the course of action for each.
-    - Improve analyzer to reduce false positives, fix valid warnings, and in very rare edge cases, suppress them.
+    - Improve analyzer to reduce false positives. Fix valid warnings, and in very rare edge cases, suppress them, when you finish handling all diagnostics found, could raise a PR with those fixes.
 5. Make sure all failures addressed and corresponding PR(s) merged.
 6. Switch to the runtime repo.
 7. Add a row for your new analyzer ID with a value of `warning` to make sure it would warn for findings in the [CodeAnalysis.src.globalconfig](https://github.com/dotnet/runtime/blob/main/eng/CodeAnalysis.src.globalconfig) file. For example if you are authored a new analyzer with id `CA1234`, add a row: `dotnet_diagnostic.CA1234.severity = warning`

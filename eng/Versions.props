@@ -17,7 +17,7 @@
     <VersionPrefix>3.3.5</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
     <NetAnalyzersVersionPrefix>8.0.0</NetAnalyzersVersionPrefix>
-    <NetAnalyzersPreReleaseVersionLabel>preview1</NetAnalyzersPreReleaseVersionLabel>
+    <NetAnalyzersPreReleaseVersionLabel>preview</NetAnalyzersPreReleaseVersionLabel>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <!--
         When StabilizePackageVersion is set to 'true', this branch will produce stable outputs for 'Shipping' packages

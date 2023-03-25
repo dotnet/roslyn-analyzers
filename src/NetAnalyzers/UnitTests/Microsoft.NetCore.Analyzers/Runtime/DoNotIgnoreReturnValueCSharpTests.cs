@@ -6,13 +6,10 @@ using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DoNotIgnoreReturnValueAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
-//using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-//    Microsoft.NetCore.Analyzers.Runtime.DoNotIgnoreReturnValueAnalyzer,
-//    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyzers.Runtime
 {
-    public class DoNotIgnoreReturnValueTests
+    public class DoNotIgnoreReturnValueCSharpTests
     {
         private readonly DiagnosticDescriptor doNotIgnoreRule = DoNotIgnoreReturnValueAnalyzer.DoNotIgnoreReturnValueRule;
 

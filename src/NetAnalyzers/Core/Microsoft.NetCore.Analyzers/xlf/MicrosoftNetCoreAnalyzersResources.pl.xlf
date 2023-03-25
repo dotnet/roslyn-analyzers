@@ -783,6 +783,11 @@ Widening and user defined conversions are not supported with generic types.</tar
         <target state="new">Do not ignore the return value of '{0}'</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotIgnoreReturnValueMessageCustom">
+        <source>Do not ignore the return value of '{0}': {1}</source>
+        <target state="new">Do not ignore the return value of '{0}': {1}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotIgnoreReturnValueTitle">
         <source>Do not ignore return value</source>
         <target state="new">Do not ignore return value</target>

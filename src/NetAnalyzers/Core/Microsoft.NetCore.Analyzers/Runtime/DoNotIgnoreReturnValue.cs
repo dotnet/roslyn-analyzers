@@ -16,12 +16,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string CA2022RuleId = "CA2022";
 
-        private static readonly LocalizableString s_localizableMessage = CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueMessage));
-
         internal static readonly DiagnosticDescriptor DoNotIgnoreReturnValueRule = DiagnosticDescriptorHelper.Create(
             CA2022RuleId,
             CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueTitle)),
-            s_localizableMessage,
+            CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueMessage)),
+            DiagnosticCategory.Reliability,
+            RuleLevel.IdeSuggestion,
+            CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueDescription)),
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor DoNotIgnoreReturnValueRuleWithMessage = DiagnosticDescriptorHelper.Create(
+            CA2022RuleId,
+            CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueTitle)),
+            CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueMessageCustom)),
             DiagnosticCategory.Reliability,
             RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueDescription)),
@@ -46,11 +54,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     var invocation = (IInvocationOperation)context.Operation;
 
-                    if (!invocation.TargetMethod.ReturnsVoid &&
-                        invocation.Parent.Kind == OperationKind.ExpressionStatement &&
-                        invocation.TargetMethod.GetReturnTypeAttributes().Any(static (a, arg) => a.AttributeClass == arg, doNotIgnoreAttribute))
+                    if (!invocation.TargetMethod.ReturnsVoid && invocation.Parent.Kind == OperationKind.ExpressionStatement)
                     {
-                        context.ReportDiagnostic(invocation.CreateDiagnostic(DoNotIgnoreReturnValueRule, invocation.TargetMethod.FormatMemberName()));
+                        var attributeApplied = invocation.TargetMethod.GetReturnTypeAttributes().WhereAsArray(a => a.AttributeClass == doNotIgnoreAttribute);
+
+                        if (!attributeApplied.IsEmpty)
+                        {
+                            var message = attributeApplied[0].NamedArguments.WhereAsArray(arg => arg.Key == "Message");
+                            var messageStr = message.IsEmpty ? null : (string)message[0].Value.Value;
+
+                            if (!string.IsNullOrEmpty(messageStr))
+                            {
+                                context.ReportDiagnostic(invocation.CreateDiagnostic(DoNotIgnoreReturnValueRuleWithMessage, invocation.TargetMethod.FormatMemberName(), messageStr!));
+                            }
+                            else
+                            {
+                                context.ReportDiagnostic(invocation.CreateDiagnostic(DoNotIgnoreReturnValueRule, invocation.TargetMethod.FormatMemberName()));
+                            }
+                        }
                     }
                 }, OperationKind.Invocation);
             });

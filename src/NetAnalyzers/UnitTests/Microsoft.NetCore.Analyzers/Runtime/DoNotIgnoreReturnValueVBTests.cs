@@ -12,6 +12,7 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
     public class DoNotIgnoreReturnValueVBTests
     {
         private readonly DiagnosticDescriptor doNotIgnoreRule = DoNotIgnoreReturnValueAnalyzer.DoNotIgnoreReturnValueRule;
+        private readonly DiagnosticDescriptor doNotIgnoreRuleWithMessage = DoNotIgnoreReturnValueAnalyzer.DoNotIgnoreReturnValueRuleWithMessage;
 
         private const string attributeImplementationVB = $"""
             Namespace System.Diagnostics.CodeAnalysis
@@ -22,7 +23,6 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
                 End Class
             End Namespace
             """;
-
 
         [Fact]
         public async Task UnannotatedMethod_IgnoringReturnValue_NoDiagnostic()
@@ -77,6 +77,26 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
                 End Class
                 """,
                 VerifyVB.Diagnostic(doNotIgnoreRule).WithLocation(1).WithArguments("C.AnnotatedMethod()")
+            );
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_IgnoringReturnValue_ProducesDiagnostic_WithMessage()
+        {
+            await VerifyVB.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationVB}}
+
+                Public Class C
+                    Function AnnotatedMethod() As <System.Diagnostics.CodeAnalysis.DoNotIgnore(Message:= "You need this 1")> Integer
+                        Return 1
+                    End Function
+                
+                    Sub M()
+                        {|#1:AnnotatedMethod()|}
+                    End Sub
+                End Class
+                """,
+                VerifyVB.Diagnostic(doNotIgnoreRuleWithMessage).WithLocation(1).WithArguments("C.AnnotatedMethod()", "You need this 1")
             );
         }
 

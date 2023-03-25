@@ -2049,4 +2049,7 @@ Widening and user defined conversions are not supported with generic types.</val
   <data name="DoNotIgnoreReturnValueTitle" xml:space="preserve">
     <value>Do not ignore return value</value>
   </data>
+  <data name="DoNotIgnoreReturnValueMessageCustom" xml:space="preserve">
+    <value>Do not ignore the return value of '{0}': {1}</value>
+  </data>
 </root>

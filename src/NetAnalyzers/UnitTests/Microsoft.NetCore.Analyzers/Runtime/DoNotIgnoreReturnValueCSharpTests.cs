@@ -12,6 +12,7 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
     public class DoNotIgnoreReturnValueCSharpTests
     {
         private readonly DiagnosticDescriptor doNotIgnoreRule = DoNotIgnoreReturnValueAnalyzer.DoNotIgnoreReturnValueRule;
+        private readonly DiagnosticDescriptor doNotIgnoreRuleWithMessage = DoNotIgnoreReturnValueAnalyzer.DoNotIgnoreReturnValueRuleWithMessage;
 
         private const string attributeImplementationCSharp = $$"""
             namespace System.Diagnostics.CodeAnalysis
@@ -97,6 +98,27 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
                 }
                 """,
                 VerifyCS.Diagnostic(doNotIgnoreRule).WithLocation(1).WithArguments("C.AnnotatedMethod()")
+            );
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_IgnoringReturnValue_ProducesDiagnostic_WithMessage()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore(Message = "You need this 1")]
+                    int AnnotatedMethod() => 1;
+
+                    void M()
+                    {
+                        {|#1:AnnotatedMethod()|};
+                    }
+                }
+                """,
+                VerifyCS.Diagnostic(doNotIgnoreRuleWithMessage).WithLocation(1).WithArguments("C.AnnotatedMethod()", "You need this 1")
             );
         }
 

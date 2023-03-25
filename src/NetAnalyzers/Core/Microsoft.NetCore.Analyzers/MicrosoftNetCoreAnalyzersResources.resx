@@ -2040,4 +2040,13 @@ Widening and user defined conversions are not supported with generic types.</val
   <data name="PreferIsEmptyOverAnyMessage" xml:space="preserve">
     <value>Prefer an 'IsEmpty' check rather than using 'Any()', both for clarity and for performance</value>
   </data>
+  <data name="DoNotIgnoreReturnValueMessage" xml:space="preserve">
+    <value>Do not ignore the return value of '{0}'</value>
+  </data>
+  <data name="DoNotIgnoreReturnValueDescription" xml:space="preserve">
+    <value>The return value from '{0}' is being ignored, but the method is annotated to indicate its return value should not be ignored.</value>
+  </data>
+  <data name="DoNotIgnoreReturnValueTitle" xml:space="preserve">
+    <value>Do not ignore return value</value>
+  </data>
 </root>

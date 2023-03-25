@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
             namespace System.Diagnostics.CodeAnalysis
             {
                 [System.AttributeUsage(System.AttributeTargets.ReturnValue | System.AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
-                public class DoNotIgnoreAttribute : System.Attribute
+                internal class DoNotIgnoreAttribute : System.Attribute
                 {
                     public DoNotIgnoreAttribute() { }
                     public string Message { get; set; }

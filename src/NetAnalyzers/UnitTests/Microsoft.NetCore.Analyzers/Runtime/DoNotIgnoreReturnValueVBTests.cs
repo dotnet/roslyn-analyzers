@@ -16,7 +16,7 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
 
         private const string attributeImplementationVB = $"""
             Namespace System.Diagnostics.CodeAnalysis
-                <System.AttributeUsage(System.AttributeTargets.ReturnValue Or System.AttributeTargets.Parameter)>
+                <System.AttributeUsage(System.AttributeTargets.ReturnValue)>
                 Friend Class DoNotIgnoreAttribute
                     Inherits System.Attribute
                     Public Property Message As String

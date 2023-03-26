@@ -17,7 +17,7 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
         private const string attributeImplementationCSharp = $$"""
             namespace System.Diagnostics.CodeAnalysis
             {
-                [System.AttributeUsage(System.AttributeTargets.ReturnValue | System.AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
+                [System.AttributeUsage(System.AttributeTargets.ReturnValue, AllowMultiple = false, Inherited = false)]
                 internal class DoNotIgnoreAttribute : System.Attribute
                 {
                     public DoNotIgnoreAttribute() { }

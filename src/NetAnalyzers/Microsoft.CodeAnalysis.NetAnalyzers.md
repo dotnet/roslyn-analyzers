@@ -1890,6 +1890,18 @@ Widening and user defined conversions are not supported with generic types.
 |CodeFix|False|
 ---
 
+## [CA2022](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022): Do not ignore return value
+
+The return value from '{0}' is being ignored, but the method is annotated to indicate its return value should not be ignored.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
 ## [CA2100](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100): Review SQL queries for security vulnerabilities
 
 SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.

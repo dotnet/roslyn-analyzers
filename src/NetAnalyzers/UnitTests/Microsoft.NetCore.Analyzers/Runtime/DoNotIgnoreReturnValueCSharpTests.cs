@@ -27,6 +27,48 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
             """;
 
         [Fact]
+        public async Task AnnotatedMethod_IgnoringReturnValue_ProducesDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    int AnnotatedMethod() => 1;
+
+                    void M()
+                    {
+                        {|#1:AnnotatedMethod()|};
+                    }
+                }
+                """,
+                VerifyCS.Diagnostic(doNotIgnoreRule).WithLocation(1).WithArguments("C.AnnotatedMethod()")
+            );
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_IgnoringReturnValue_ProducesDiagnostic_WithMessage()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore(Message = "You need this 1")]
+                    int AnnotatedMethod() => 1;
+
+                    void M()
+                    {
+                        {|#1:AnnotatedMethod()|};
+                    }
+                }
+                """,
+                VerifyCS.Diagnostic(doNotIgnoreRuleWithMessage).WithLocation(1).WithArguments("C.AnnotatedMethod()", "You need this 1")
+            );
+        }
+
+        [Fact]
         public async Task UnannotatedMethod_IgnoringReturnValue_NoDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync($$"""
@@ -81,7 +123,7 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
         }
 
         [Fact]
-        public async Task AnnotatedMethod_IgnoringReturnValue_ProducesDiagnostic()
+        public async Task AnnotatedMethod_DiscardingReturnValue_NoDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync($$"""
                 {{attributeImplementationCSharp}}
@@ -93,37 +135,14 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
 
                     void M()
                     {
-                        {|#1:AnnotatedMethod()|};
+                        _ = AnnotatedMethod();
                     }
                 }
-                """,
-                VerifyCS.Diagnostic(doNotIgnoreRule).WithLocation(1).WithArguments("C.AnnotatedMethod()")
-            );
+                """);
         }
 
         [Fact]
-        public async Task AnnotatedMethod_IgnoringReturnValue_ProducesDiagnostic_WithMessage()
-        {
-            await VerifyCS.VerifyAnalyzerAsync($$"""
-                {{attributeImplementationCSharp}}
-
-                class C
-                {
-                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore(Message = "You need this 1")]
-                    int AnnotatedMethod() => 1;
-
-                    void M()
-                    {
-                        {|#1:AnnotatedMethod()|};
-                    }
-                }
-                """,
-                VerifyCS.Diagnostic(doNotIgnoreRuleWithMessage).WithLocation(1).WithArguments("C.AnnotatedMethod()", "You need this 1")
-            );
-        }
-
-        [Fact]
-        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic()
+        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic_Assignment()
         {
             await VerifyCS.VerifyAnalyzerAsync($$"""
                 {{attributeImplementationCSharp}}
@@ -142,7 +161,26 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
         }
 
         [Fact]
-        public async Task AnnotatedMethod_DiscardingReturnValue_NoDiagnostic()
+        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic_Return()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    int AnnotatedMethod() => 1;
+
+                    int M()
+                    {
+                        return AnnotatedMethod();
+                    }
+                }
+                """);
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic_Invocation()
         {
             await VerifyCS.VerifyAnalyzerAsync($$"""
                 {{attributeImplementationCSharp}}
@@ -154,7 +192,196 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
 
                     void M()
                     {
-                        _ = AnnotatedMethod();
+                        Wrap(AnnotatedMethod());
+                    }
+
+                    void Wrap(int wrappedParam) { }
+                }
+                """);
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic_IfCondition()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    int AnnotatedMethod() => 1;
+
+                    void M()
+                    {
+                        if (AnnotatedMethod() == 1) { }
+                    }
+                }
+                """);
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic_TernaryCondition()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    int AnnotatedMethod() => 1;
+
+                    void M()
+                    {
+                        bool one = AnnotatedMethod() == 1 ? true : false;
+                    }
+                }
+                """);
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic_SwitchStatement()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    int AnnotatedMethod() => 1;
+
+                    void M()
+                    {
+                        switch (AnnotatedMethod())
+                        {
+                            default: break;
+                        }
+                    }
+                }
+                """);
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic_SwitchExpression()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = CSharp.LanguageVersion.CSharp8,
+                TestState =
+                {
+                    Sources =
+                    {
+                        $$"""
+                        {{attributeImplementationCSharp}}
+
+                        class C
+                        {
+                            [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                            int AnnotatedMethod() => 1;
+
+                            void M()
+                            {
+                                bool one = AnnotatedMethod() switch
+                                {
+                                    _ => false,
+                                };
+                            }
+                        }
+                        """
+                    }
+                }
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic_Func()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    int AnnotatedMethod() => 1;
+
+                    void M()
+                    {
+                        System.Func<int> GetValue = () => AnnotatedMethod();
+                    }
+                }
+                """);
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic_CastExplicit()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    int AnnotatedMethod() => 1;
+
+                    void M()
+                    {
+                        long r = (long)AnnotatedMethod();
+                    }
+                }
+                """);
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic_CastImplicit()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    int AnnotatedMethod() => 1;
+
+                    void M()
+                    {
+                        long r = AnnotatedMethod();
+                    }
+                }
+                """);
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic_AsOperator()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    string AnnotatedMethod() => null;
+
+                    void M()
+                    {
+                        string r = AnnotatedMethod() as string;
+                    }
+                }
+                """);
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_ConsumingReturnValue_NoDiagnostic_IsOperator()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    string AnnotatedMethod() => null;
+
+                    void M()
+                    {
+                        bool isString = AnnotatedMethod() is string;
                     }
                 }
                 """);

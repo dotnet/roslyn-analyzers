@@ -21,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueTitle)),
             CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueMessage)),
             DiagnosticCategory.Reliability,
-            RuleLevel.IdeSuggestion,
+            RuleLevel.BuildWarning,
             CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
@@ -31,7 +31,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueTitle)),
             CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueMessageCustom)),
             DiagnosticCategory.Reliability,
-            RuleLevel.IdeSuggestion,
+            RuleLevel.BuildWarning,
             CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);

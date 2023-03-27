@@ -214,6 +214,9 @@ dotnet_diagnostic.IDE0017.severity = silent
 # IDE0045: 'if' statement can be simplified
 dotnet_diagnostic.IDE0045.severity = silent
 
+# IDE0045: Null check can be simplified
+dotnet_diagnostic.IDE0031.severity = silent
+
 # IDE0046: 'if' statement can be simplified
 dotnet_diagnostic.IDE0046.severity = silent
 
@@ -229,6 +232,9 @@ dotnet_diagnostic.IDE0065.severity = silent
 
 # IDE0072: Populate switch
 dotnet_diagnostic.IDE0072.severity = silent
+
+# IDE0072: Use compound assignment
+dotnet_diagnostic.IDE0074.severity = silent
 
 # IDE0083: Use pattern matching
 dotnet_diagnostic.IDE0083.severity = silent

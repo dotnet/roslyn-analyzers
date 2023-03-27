@@ -214,7 +214,7 @@ dotnet_diagnostic.IDE0017.severity = silent
 # IDE0045: 'if' statement can be simplified
 dotnet_diagnostic.IDE0045.severity = silent
 
-# IDE0045: Null check can be simplified
+# IDE0031: Null check can be simplified
 dotnet_diagnostic.IDE0031.severity = silent
 
 # IDE0046: 'if' statement can be simplified

@@ -233,7 +233,7 @@ dotnet_diagnostic.IDE0065.severity = silent
 # IDE0072: Populate switch
 dotnet_diagnostic.IDE0072.severity = silent
 
-# IDE0072: Use compound assignment
+# IDE0074: Use compound assignment
 dotnet_diagnostic.IDE0074.severity = silent
 
 # IDE0083: Use pattern matching

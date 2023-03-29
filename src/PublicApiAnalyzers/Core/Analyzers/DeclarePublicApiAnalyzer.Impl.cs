@@ -407,7 +407,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         .Add(MinimalNamePropertyBagKey, errorMessageName)
                         .Add(ApiNamesOfSiblingsToRemovePropertyBagKey, siblingPublicApiNamesToRemove);
 
-                    reportDiagnosticAtLocations(GetDiagnostic(DeclareNewPublicApiRule, DeclareNewInternalApiRule), propertyBag, errorMessageName);
+                    reportDiagnosticAtLocations(GetDiagnostic(DeclareNewPublicApiRule, DeclareNewInternalApiRule), propertyBag, publicApiName);
                 }
 
                 void reportAnnotateApi(ISymbol symbol, bool isImplicitlyDeclaredConstructor, ApiName publicApiName, bool isShipped, string filename)
@@ -421,7 +421,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         .Add(ApiIsShippedPropertyBagKey, isShipped ? "true" : "false")
                         .Add(FileName, filename);
 
-                    reportDiagnosticAtLocations(GetDiagnostic(AnnotatePublicApiRule, AnnotateInternalApiRule), propertyBag, errorMessageName);
+                    reportDiagnosticAtLocations(GetDiagnostic(AnnotatePublicApiRule, AnnotateInternalApiRule), propertyBag, publicApiName.NameWithNullability);
                 }
 
                 string withObliviousIfNeeded(string name)

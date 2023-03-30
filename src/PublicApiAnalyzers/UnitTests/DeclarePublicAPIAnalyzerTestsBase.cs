@@ -1141,11 +1141,17 @@ static System.StringComparer.FromComparison(System.StringComparison comparisonTy
             string shippedText = "";
             string unshippedText = "";
 
+#if NETCOREAPP
+            var containingAssembly = "System.Runtime";
+#else
+            var containingAssembly = "mscorlib";
+#endif
+
             await VerifyCSharpAsync(source, shippedText, unshippedText,
                 // /0/Test0.cs(2,12): warning RS0016: Symbol 'System.Collections.Generic.IEnumerable<T> (forwarded, contained in System.Runtime)' is not part of the declared API
-                GetCSharpResultAt(2, 12, DeclareNewApiRule, "System.Collections.Generic.IEnumerable<T> (forwarded, contained in System.Runtime)"),
+                GetCSharpResultAt(2, 12, DeclareNewApiRule, $"System.Collections.Generic.IEnumerable<T> (forwarded, contained in {containingAssembly})"),
                 // /0/Test0.cs(2,12): warning RS0016: Symbol 'System.Collections.Generic.IEnumerable<T>.GetEnumerator() -> System.Collections.Generic.IEnumerator<T> (forwarded, contained in System.Runtime)' is not part of the declared API
-                GetCSharpResultAt(2, 12, DeclareNewApiRule, "System.Collections.Generic.IEnumerable<T>.GetEnumerator() -> System.Collections.Generic.IEnumerator<T> (forwarded, contained in System.Runtime)")
+                GetCSharpResultAt(2, 12, DeclareNewApiRule, $"System.Collections.Generic.IEnumerable<T>.GetEnumerator() -> System.Collections.Generic.IEnumerator<T> (forwarded, contained in {containingAssembly})")
 #if NETCOREAPP
                 // /0/Test0.cs(2,12): warning RS0037: PublicAPI.txt is missing '#nullable enable', so the nullability annotations of API isn't recorded. It is recommended to enable this tracking.
                 , GetCSharpResultAt(2, 12, DeclarePublicApiAnalyzer.ShouldAnnotatePublicApiFilesRule)
@@ -1168,11 +1174,17 @@ static System.StringComparer.FromComparison(System.StringComparison comparisonTy
             string shippedText = "";
             string unshippedText = "";
 
+#if NETCOREAPP
+            var containingAssembly = "System.Runtime";
+#else
+            var containingAssembly = "mscorlib";
+#endif
+
             await VerifyCSharpAsync(source, shippedText, unshippedText,
                 // /0/Test0.cs(2,12): warning RS0016: Symbol 'System.Collections.Generic.IEnumerable<string> (forwarded, contained in System.Runtime)' is not part of the declared API
-                GetCSharpResultAt(2, 12, DeclareNewApiRule, "System.Collections.Generic.IEnumerable<string> (forwarded, contained in System.Runtime)"),
+                GetCSharpResultAt(2, 12, DeclareNewApiRule, $"System.Collections.Generic.IEnumerable<string> (forwarded, contained in {containingAssembly})"),
                 // /0/Test0.cs(2,12): warning RS0016: Symbol 'System.Collections.Generic.IEnumerable<string>.GetEnumerator() -> System.Collections.Generic.IEnumerator<string> (forwarded, contained in System.Runtime)' is not part of the declared API
-                GetCSharpResultAt(2, 12, DeclareNewApiRule, "System.Collections.Generic.IEnumerable<string>.GetEnumerator() -> System.Collections.Generic.IEnumerator<string> (forwarded, contained in System.Runtime)")
+                GetCSharpResultAt(2, 12, DeclareNewApiRule, $"System.Collections.Generic.IEnumerable<string>.GetEnumerator() -> System.Collections.Generic.IEnumerator<string> (forwarded, contained in {containingAssembly})")
 #if NETCOREAPP
                 // /0/Test0.cs(2,12): warning RS0037: PublicAPI.txt is missing '#nullable enable', so the nullability annotations of API isn't recorded. It is recommended to enable this tracking.
                 , GetCSharpResultAt(2, 12, DeclarePublicApiAnalyzer.ShouldAnnotatePublicApiFilesRule)

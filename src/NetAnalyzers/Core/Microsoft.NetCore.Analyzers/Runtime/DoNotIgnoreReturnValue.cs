@@ -53,7 +53,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask1, out var taskOfT);
+                context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask, out var taskType);
 
                 context.RegisterOperationAction(context =>
                 {
@@ -66,9 +66,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    // If the call is awaited, and the method returns a Task<T>, then we'll check the await result for consumption
-                    if (taskOfT is not null && callSite.Parent?.Kind is OperationKind.Await && (method.ReturnType as INamedTypeSymbol)?.ConstructedFrom == taskOfT)
+                    // If the method is async and awaited, then we'll check the await result for consumption
+                    if (method.IsAsync && callSite.Parent?.Kind is OperationKind.Await)
                     {
+                        // It would be an authoring error, but ensure the async method returns a value (and not simply a Task)
+                        if (taskType?.Equals(method.ReturnType, SymbolEqualityComparer.Default) ?? false)
+                        {
+                            return;
+                        }
+
                         callSite = callSite.Parent;
                     }
 

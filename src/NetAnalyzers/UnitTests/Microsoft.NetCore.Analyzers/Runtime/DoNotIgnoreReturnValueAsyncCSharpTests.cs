@@ -87,6 +87,89 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
         }
 
         [Fact]
+        public async Task AnnotatedAsyncMethod_ValueTask_IgnoringReturnValue_WithAwait_ProducesDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    async System.Threading.Tasks.ValueTask<int> AnnotatedAsyncMethod() => 1;
+
+                    async void M()
+                    {
+                        {|#1:await AnnotatedAsyncMethod()|};
+                    }
+                }
+                """,
+                VerifyCS.Diagnostic(doNotIgnoreRule).WithLocation(1).WithArguments("C.AnnotatedAsyncMethod()")
+            );
+        }
+
+#if NETCOREAPP
+        [Fact]
+        public async Task AnnotatedAsyncMethod_TaskLikeType_IgnoringReturnValue_WithAwait_ProducesDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                [System.Runtime.CompilerServices.AsyncMethodBuilder(typeof(MyTaskMethodBuilder<>))]
+                class MyTask<T>
+                {
+                    public Awaiter<T> GetAwaiter() => throw new System.NotImplementedException();
+                }
+
+                class Awaiter<T> : System.Runtime.CompilerServices.INotifyCompletion
+                {
+                    public bool IsCompleted { get; }
+                    public T GetResult() => throw new System.NotImplementedException();
+                    public void OnCompleted(System.Action completion) { }
+                }
+
+                class MyTaskMethodBuilder<T>
+                {
+                    public static MyTaskMethodBuilder<T> Create() => throw new System.NotImplementedException();
+
+                    public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : System.Runtime.CompilerServices.IAsyncStateMachine { }
+                    public void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine stateMachine) { }
+                    public void SetException(System.Exception exception) { }
+                    public void SetResult(T result) { }
+
+                    public void AwaitOnCompleted<TAwaiter, TStateMachine>(
+                        ref TAwaiter awaiter, ref TStateMachine stateMachine)
+                        where TAwaiter : System.Runtime.CompilerServices.INotifyCompletion
+                        where TStateMachine : System.Runtime.CompilerServices.IAsyncStateMachine
+                    {
+                    }
+
+                    public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(
+                        ref TAwaiter awaiter, ref TStateMachine stateMachine)
+                        where TAwaiter : System.Runtime.CompilerServices.ICriticalNotifyCompletion
+                        where TStateMachine : System.Runtime.CompilerServices.IAsyncStateMachine
+                    {
+                    }
+
+                    public MyTask<T> Task { get; }
+                }
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    async MyTask<int> AnnotatedAsyncMethod() => 1;
+
+                    async void M()
+                    {
+                        {|#1:await AnnotatedAsyncMethod()|};
+                    }
+                }
+                """,
+                VerifyCS.Diagnostic(doNotIgnoreRule).WithLocation(1).WithArguments("C.AnnotatedAsyncMethod()")
+            );
+        }
+#endif
+
+        [Fact]
         public async Task UnannotatedMethod_IgnoringReturnValue_NoDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync($$"""

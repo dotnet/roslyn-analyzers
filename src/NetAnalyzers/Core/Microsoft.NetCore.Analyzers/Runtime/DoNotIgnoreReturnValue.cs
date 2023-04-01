@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -15,35 +16,37 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     public sealed class DoNotIgnoreReturnValueAnalyzer : DiagnosticAnalyzer
     {
         internal const string CA2022RuleId = "CA2022";
+        private static readonly LocalizableString s_title = CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueTitle));
+        private static readonly LocalizableString s_description = CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueDescription));
 
         internal static readonly DiagnosticDescriptor DoNotIgnoreReturnValueRule = DiagnosticDescriptorHelper.Create(
             CA2022RuleId,
-            CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueTitle)),
+            s_title,
             CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueMessage)),
             DiagnosticCategory.Reliability,
             RuleLevel.BuildWarning,
-            CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueDescription)),
+            s_description,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
         internal static readonly DiagnosticDescriptor DoNotIgnoreReturnValueRuleWithMessage = DiagnosticDescriptorHelper.Create(
             CA2022RuleId,
-            CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueTitle)),
+            s_title,
             CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueMessageCustom)),
             DiagnosticCategory.Reliability,
             RuleLevel.BuildWarning,
-            CreateLocalizableResourceString(nameof(DoNotIgnoreReturnValueDescription)),
+            s_description,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DoNotIgnoreReturnValueRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DoNotIgnoreReturnValueRule, DoNotIgnoreReturnValueRuleWithMessage);
 
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterOperationBlockStartAction(context =>
+            context.RegisterCompilationStartAction(context =>
             {
                 if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsCodeAnalysisDoNotIgnoreAttribute, out var doNotIgnoreAttribute))
                 {
@@ -54,18 +57,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     var invocation = (IInvocationOperation)context.Operation;
 
-                    if (!invocation.TargetMethod.ReturnsVoid && invocation.Parent.Kind == OperationKind.ExpressionStatement)
+                    if (
+                        // It would be an authoring error, but ensure the method returns a value
+                        !invocation.TargetMethod.ReturnsVoid &&
+
+                        // The method is simply invoked as an expression statement,
+                        // without consuming the return value in any way.
+                        invocation.Parent.Kind == OperationKind.ExpressionStatement)
                     {
-                        var attributeApplied = invocation.TargetMethod.GetReturnTypeAttributes().WhereAsArray(a => a.AttributeClass == doNotIgnoreAttribute);
+                        var attributeApplied = invocation.TargetMethod.GetReturnTypeAttributes()
+                            .FirstOrDefault(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, doNotIgnoreAttribute));
 
-                        if (!attributeApplied.IsEmpty)
+                        if (attributeApplied is not null)
                         {
-                            var message = attributeApplied[0].NamedArguments.WhereAsArray(arg => arg.Key == "Message");
-                            var messageStr = message.IsEmpty ? null : (string)message[0].Value.Value;
+                            var message = attributeApplied.NamedArguments
+                                .Where(arg => arg.Key == "Message")
+                                .Select(arg => arg.Value.Value as string)
+                                .FirstOrDefault();
 
-                            if (!string.IsNullOrEmpty(messageStr))
+                            if (!RoslynString.IsNullOrEmpty(message))
                             {
-                                context.ReportDiagnostic(invocation.CreateDiagnostic(DoNotIgnoreReturnValueRuleWithMessage, invocation.TargetMethod.FormatMemberName(), messageStr!));
+                                context.ReportDiagnostic(invocation.CreateDiagnostic(DoNotIgnoreReturnValueRuleWithMessage, invocation.TargetMethod.FormatMemberName(), message));
                             }
                             else
                             {

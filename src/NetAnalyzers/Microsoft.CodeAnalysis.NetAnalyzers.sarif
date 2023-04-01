@@ -3401,8 +3401,8 @@
         "CA2022": {
           "id": "CA2022",
           "shortDescription": "Do not ignore return value",
-          "fullDescription": "The return value from '{0}' is being ignored, but the method is annotated to indicate its return value should not be ignored.",
-          "defaultLevel": "note",
+          "fullDescription": "Return values should not be ignored from methods annotated with System.Diagnostics.CodeAnalysis.DoNotIgnoreAttribute.",
+          "defaultLevel": "warning",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022",
           "properties": {
             "category": "Reliability",

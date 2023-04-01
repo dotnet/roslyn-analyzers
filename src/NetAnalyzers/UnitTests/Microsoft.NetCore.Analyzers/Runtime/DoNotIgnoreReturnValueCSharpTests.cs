@@ -27,6 +27,25 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
             """;
 
         [Fact]
+        public async Task AnnotatedMethod_WithoutReturnValue_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    void AnnotatedVoid() { }
+
+                    void M()
+                    {
+                        AnnotatedVoid();
+                    }
+                }
+                """);
+        }
+
+        [Fact]
         public async Task AnnotatedMethod_IgnoringReturnValue_ProducesDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync($$"""
@@ -65,6 +84,63 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
                 }
                 """,
                 VerifyCS.Diagnostic(doNotIgnoreRuleWithMessage).WithLocation(1).WithArguments("C.AnnotatedMethod()", "You need this 1")
+            );
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_IgnoringReturnValue_WithCustomAttribute_NoMessageProperty()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                namespace System.Diagnostics.CodeAnalysis
+                {
+                    [System.AttributeUsage(System.AttributeTargets.ReturnValue, AllowMultiple = false, Inherited = false)]
+                    internal class DoNotIgnoreAttribute : System.Attribute
+                    {
+                        public DoNotIgnoreAttribute() { }
+                    }
+                }
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    int AnnotatedMethod() => 1;
+
+                    void M()
+                    {
+                        {|#1:AnnotatedMethod()|};
+                    }
+                }
+                """,
+                VerifyCS.Diagnostic(doNotIgnoreRule).WithLocation(1).WithArguments("C.AnnotatedMethod()")
+            );
+        }
+
+        [Fact]
+        public async Task AnnotatedMethod_IgnoringReturnValue_WithCustomAttribute_NonStringMessageProperty()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                namespace System.Diagnostics.CodeAnalysis
+                {
+                    [System.AttributeUsage(System.AttributeTargets.ReturnValue, AllowMultiple = false, Inherited = false)]
+                    internal class DoNotIgnoreAttribute : System.Attribute
+                    {
+                        public DoNotIgnoreAttribute() { }
+                        public int Message { get; set; }
+                    }
+                }
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    int AnnotatedMethod() => 1;
+
+                    void M()
+                    {
+                        {|#1:AnnotatedMethod()|};
+                    }
+                }
+                """,
+                VerifyCS.Diagnostic(doNotIgnoreRule).WithLocation(1).WithArguments("C.AnnotatedMethod()")
             );
         }
 

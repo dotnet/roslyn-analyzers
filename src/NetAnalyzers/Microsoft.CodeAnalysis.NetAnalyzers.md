@@ -1892,13 +1892,13 @@ Widening and user defined conversions are not supported with generic types.
 
 ## [CA2022](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022): Do not ignore return value
 
-The return value from '{0}' is being ignored, but the method is annotated to indicate its return value should not be ignored.
+Return values should not be ignored from methods annotated with System.Diagnostics.CodeAnalysis.DoNotIgnoreAttribute.
 
 |Item|Value|
 |-|-|
 |Category|Reliability|
 |Enabled|True|
-|Severity|Info|
+|Severity|Warning|
 |CodeFix|False|
 ---
 

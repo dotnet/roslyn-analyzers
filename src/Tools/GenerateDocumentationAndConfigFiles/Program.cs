@@ -1629,10 +1629,10 @@ $@"<Project>{GetCommonContents(packageName, categories)}{GetPackageSpecificConte
                 {
                     CodeAnalysisAnalyzersPackageName => @"
   <!-- Target to add all 'EmbeddedResource' files with '.resx' extension as analyzer additional files -->
-  <Target Name=""AddAllResxFilesAsAdditionalFiles"" BeforeTargets=""CoreCompile"" Condition=""'@(EmbeddedResource)' != '' AND '$(SkipAddAllResxFilesAsAdditionalFiles)' != 'true'"">
+  <Target Name=""AddAllResxFilesAsAdditionalFiles"" BeforeTargets=""GenerateMSBuildEditorConfigFileCore;CoreCompile"" Condition=""'@(EmbeddedResource)' != '' AND '$(SkipAddAllResxFilesAsAdditionalFiles)' != 'true'"">
     <ItemGroup>
       <EmbeddedResourceWithResxExtension Include=""@(EmbeddedResource)"" Condition=""'%(Extension)' == '.resx'"" />
-      <AdditionalFiles Include=""%(EmbeddedResourceWithResxExtension.Identity)"" />
+      <AdditionalFiles Include=""@(EmbeddedResourceWithResxExtension)"" />
     </ItemGroup>
   </Target>
 
@@ -1667,7 +1667,7 @@ $@"<Project>{GetCommonContents(packageName, categories)}{GetPackageSpecificConte
                     NetAnalyzersPackageName => $@"
   <!-- Target to report a warning when SDK NetAnalyzers version is higher than the referenced NuGet NetAnalyzers version -->
   <Target Name=""_ReportUpgradeNetAnalyzersNuGetWarning"" BeforeTargets=""CoreCompile"" Condition=""'$(_SkipUpgradeNetAnalyzersNuGetWarning)' != 'true' "">
-    <Warning Text =""The .NET SDK has newer analyzers with version '$({NetAnalyzersSDKAssemblyVersionPropertyName})' than what version '$({NetAnalyzersNugetAssemblyVersionPropertyName})' of '{NetAnalyzersPackageName}' package provides. Update or remove this package reference.""
+    <Warning Text =""The .NET SDK has newer analyzers with version '$({NetAnalyzersSDKAssemblyVersionPropertyName})' than what version '$({NetAnalyzersNugetAssemblyVersionPropertyName})' of '{NetAnalyzersPackageName}' package provides. Update or remove this package reference. You can suppress this warning by setting the MSBuild property '_SkipUpgradeNetAnalyzersNuGetWarning' to 'true'.""
              Condition=""'$({NetAnalyzersNugetAssemblyVersionPropertyName})' != '' AND
                          '$({NetAnalyzersSDKAssemblyVersionPropertyName})' != '' AND
                           $({NetAnalyzersNugetAssemblyVersionPropertyName}) &lt; $({NetAnalyzersSDKAssemblyVersionPropertyName})""/>

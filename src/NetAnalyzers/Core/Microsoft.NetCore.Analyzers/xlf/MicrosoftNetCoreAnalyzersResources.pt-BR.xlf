@@ -774,8 +774,8 @@ Widening and user defined conversions are not supported with generic types.</tar
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreReturnValueDescription">
-        <source>Return values should not be ignored from methods annotated with System.Diagnostics.CodeAnalysis.DoNotIgnoreAttribute.</source>
-        <target state="new">Return values should not be ignored from methods annotated with System.Diagnostics.CodeAnalysis.DoNotIgnoreAttribute.</target>
+        <source>Return values should not be ignored from methods annotated with 'System.Diagnostics.CodeAnalysis.DoNotIgnoreAttribute'.</source>
+        <target state="new">Return values should not be ignored from methods annotated with 'System.Diagnostics.CodeAnalysis.DoNotIgnoreAttribute'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreReturnValueMessage">

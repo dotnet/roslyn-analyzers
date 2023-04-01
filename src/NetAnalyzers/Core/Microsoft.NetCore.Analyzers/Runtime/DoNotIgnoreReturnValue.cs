@@ -53,19 +53,29 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
+                context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask1, out var taskOfT);
+
                 context.RegisterOperationAction(context =>
                 {
-                    var invocation = (IInvocationOperation)context.Operation;
+                    var callSite = context.Operation;
+                    var method = ((IInvocationOperation)callSite).TargetMethod;
 
-                    if (
-                        // It would be an authoring error, but ensure the method returns a value
-                        !invocation.TargetMethod.ReturnsVoid &&
-
-                        // The method is simply invoked as an expression statement,
-                        // without consuming the return value in any way.
-                        invocation.Parent.Kind == OperationKind.ExpressionStatement)
+                    // It would be an authoring error, but ensure the method returns a value
+                    if (method.ReturnsVoid)
                     {
-                        var attributeApplied = invocation.TargetMethod.GetReturnTypeAttributes()
+                        return;
+                    }
+
+                    // If the call is awaited, and the method returns a Task<T>, then we'll check the await result for consumption
+                    if (taskOfT is not null && callSite.Parent?.Kind is OperationKind.Await && (method.ReturnType as INamedTypeSymbol)?.ConstructedFrom == taskOfT)
+                    {
+                        callSite = callSite.Parent;
+                    }
+
+                    // If the call site is simply an expression statement, then the return value is not being consumed in any way
+                    if (callSite.Parent?.Kind is OperationKind.ExpressionStatement)
+                    {
+                        var attributeApplied = method.GetReturnTypeAttributes()
                             .FirstOrDefault(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, doNotIgnoreAttribute));
 
                         if (attributeApplied is not null)
@@ -77,11 +87,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                             if (!RoslynString.IsNullOrEmpty(message))
                             {
-                                context.ReportDiagnostic(invocation.CreateDiagnostic(DoNotIgnoreReturnValueRuleWithMessage, invocation.TargetMethod.FormatMemberName(), message));
+                                context.ReportDiagnostic(callSite.CreateDiagnostic(DoNotIgnoreReturnValueRuleWithMessage, method.FormatMemberName(), message));
                             }
                             else
                             {
-                                context.ReportDiagnostic(invocation.CreateDiagnostic(DoNotIgnoreReturnValueRule, invocation.TargetMethod.FormatMemberName()));
+                                context.ReportDiagnostic(callSite.CreateDiagnostic(DoNotIgnoreReturnValueRule, method.FormatMemberName()));
                             }
                         }
                     }

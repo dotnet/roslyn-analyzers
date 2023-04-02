@@ -53,8 +53,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask, out var taskType);
-
                 context.RegisterOperationAction(context =>
                 {
                     var callSite = context.Operation;
@@ -69,8 +67,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     // If the method is async and awaited, then we'll check the await result for consumption
                     if (method.IsAsync && callSite.Parent?.Kind is OperationKind.Await)
                     {
-                        // It would be an authoring error, but ensure the async method returns a value (and not simply a Task)
-                        if (taskType?.Equals(method.ReturnType, SymbolEqualityComparer.Default) ?? false)
+                        // It would be an authoring error, but ensure the async method returns a value
+                        if (((IAwaitOperation)callSite.Parent).Type.SpecialType is SpecialType.System_Void)
                         {
                             return;
                         }

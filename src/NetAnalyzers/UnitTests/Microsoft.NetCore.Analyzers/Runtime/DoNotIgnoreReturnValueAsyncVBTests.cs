@@ -60,6 +60,23 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
         }
 
         [Fact]
+        public async Task AnnotatedAsyncMethod_WithoutReturnValue_NoDiagnostic()
+        {
+            await VerifyVB.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationVB}}
+
+                Public Class C
+                    Async Function AnnotatedAsyncVoid() As <System.Diagnostics.CodeAnalysis.DoNotIgnore> System.Threading.Tasks.Task
+                    End Function
+                
+                    Async Sub M()
+                        Await AnnotatedAsyncVoid()
+                    End Sub
+                End Class
+                """);
+        }
+
+        [Fact]
         public async Task AnnotatedAsyncMethod_IgnoringReturnValue_WithoutAwait_ProducesDiagnostic()
         {
             await VerifyVB.VerifyAnalyzerAsync($$"""
@@ -89,7 +106,7 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
                     Async Function AnnotatedAsyncMethod() As <System.Diagnostics.CodeAnalysis.DoNotIgnore> System.Threading.Tasks.Task(Of Integer)
                         Return 1
                     End Function
-                
+                                
                     Async Sub M()
                         {|#1:Await AnnotatedAsyncMethod()|}
                     End Sub

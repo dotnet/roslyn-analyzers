@@ -266,12 +266,13 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
                     [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
                     int AnnotatedMethod() => 1;
 
+                    void Wrap(int wrappedParam) { }
+
                     void M()
                     {
                         Wrap(AnnotatedMethod());
                     }
 
-                    void Wrap(int wrappedParam) { }
                 }
                 """);
         }

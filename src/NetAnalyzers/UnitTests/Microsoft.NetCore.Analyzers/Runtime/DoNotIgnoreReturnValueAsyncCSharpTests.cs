@@ -107,6 +107,48 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
             );
         }
 
+        [Fact]
+        public async Task AnnotatedNonAsyncTask_IgnoringReturnValueWithAwait_ProducesDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    System.Threading.Tasks.Task<int> AnnotatedNonAsyncTask() => System.Threading.Tasks.Task.FromResult(1);
+
+                    async void M()
+                    {
+                        {|#1:await AnnotatedNonAsyncTask()|};
+                    }
+                }
+                """,
+                VerifyCS.Diagnostic(doNotIgnoreRule).WithLocation(1).WithArguments("C.AnnotatedNonAsyncTask()")
+            );
+        }
+
+        [Fact]
+        public async Task AnnotatedNonAsyncValueTask_IgnoringReturnValueWithAwait_ProducesDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync($$"""
+                {{attributeImplementationCSharp}}
+
+                class C
+                {
+                    [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
+                    System.Threading.Tasks.ValueTask<int> AnnotatedNonAsyncValueTask() => new System.Threading.Tasks.ValueTask<int>(1);
+
+                    async void M()
+                    {
+                        {|#1:await AnnotatedNonAsyncValueTask()|};
+                    }
+                }
+                """,
+                VerifyCS.Diagnostic(doNotIgnoreRule).WithLocation(1).WithArguments("C.AnnotatedNonAsyncValueTask()")
+            );
+        }
+
 #if NETCOREAPP
         [Fact]
         public async Task AnnotatedAsyncMethod_TaskLikeType_IgnoringReturnValue_WithAwait_ProducesDiagnostic()
@@ -310,12 +352,12 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
                     [return: System.Diagnostics.CodeAnalysis.DoNotIgnore]
                     async System.Threading.Tasks.Task<int> AnnotatedAsyncMethod() => 1;
 
+                    void Wrap(int wrappedParam) { }
+
                     async void M()
                     {
                         Wrap(await AnnotatedAsyncMethod());
                     }
-
-                    void Wrap(int wrappedParam) { }
                 }
                 """);
         }

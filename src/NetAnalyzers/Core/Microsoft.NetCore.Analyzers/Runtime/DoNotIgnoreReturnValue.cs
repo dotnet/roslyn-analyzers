@@ -58,19 +58,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var callSite = context.Operation;
                     var method = ((IInvocationOperation)callSite).TargetMethod;
 
-                    // It would be an authoring error, but ensure the method returns a value
+                    // It would be an authoring mistake, but ensure the method returns a value
                     if (method.ReturnsVoid)
                     {
                         return;
                     }
 
-                    // If the method is async and awaited, then we'll check the await result for consumption
-                    if (method.IsAsync && callSite.Parent?.Kind is OperationKind.Await)
+                    // If the method is awaited, then we'll check the await result for consumption
+                    if (callSite.Parent?.Kind is OperationKind.Await)
                     {
-                        // It would be an authoring error, but ensure the async method returns a value
+                        // It would be an authoring mistake, but ensure the async method returns a value
                         if (((IAwaitOperation)callSite.Parent).Type.SpecialType is SpecialType.System_Void)
                         {
-                            return;
+                            /*
+                             * See https://github.com/dotnet/roslyn/issues/67616
+                             * 
+                             * In VB, we cannot distinguish an Await that discards the value from an Await
+                             * where the invocation would not produce a value. So we have to produce the
+                             * diagnostic even in the case where it's an authoring mistake.
+                             * 
+                             * Test DoNotIgnoreReturnValueAsyncVBTests.AnnotatedAsyncMethod_WithoutReturnValue_NoDiagnostic
+                             * is skipped until this is fixed.
+                             */
+                            if (context.Compilation.Language != LanguageNames.VisualBasic)
+                            {
+                                return;
+                            }
                         }
 
                         callSite = callSite.Parent;

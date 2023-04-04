@@ -2,7 +2,6 @@
 
 using System.Threading.Tasks;
 using Microsoft.NetCore.Analyzers.Runtime;
-using Test.Utilities;
 using Xunit;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DoNotIgnoreReturnValueAnalyzer,

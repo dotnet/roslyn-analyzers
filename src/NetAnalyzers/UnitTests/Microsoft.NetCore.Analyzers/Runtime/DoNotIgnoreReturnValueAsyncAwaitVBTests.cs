@@ -10,7 +10,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyzers.Runtime
 {
-    public class DoNotIgnoreReturnValueAsyncVBTests
+    public class DoNotIgnoreReturnValueAsyncAwaitVBTests
     {
         private readonly DiagnosticDescriptor doNotIgnoreRule = DoNotIgnoreReturnValueAnalyzer.DoNotIgnoreReturnValueRule;
 

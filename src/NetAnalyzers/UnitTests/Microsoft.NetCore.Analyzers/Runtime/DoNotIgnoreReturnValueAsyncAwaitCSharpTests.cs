@@ -9,7 +9,7 @@ using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
 
 namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyzers.Runtime
 {
-    public class DoNotIgnoreReturnValueAsyncCSharpTests
+    public class DoNotIgnoreReturnValueAsyncAwaitCSharpTests
     {
         private readonly DiagnosticDescriptor doNotIgnoreRule = DoNotIgnoreReturnValueAnalyzer.DoNotIgnoreReturnValueRule;
 

@@ -407,6 +407,44 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
                 GetCSharpResultAt(7, 37 + EnabledModifierCSharp.Length, DeclareNewApiRule, "C.ArrowExpressionProperty.get -> int"));
         }
 
+        [Theory]
+        [InlineData("string ", "string!")]
+        [InlineData("string?", "string?")]
+        [InlineData("int    ", "int")]
+        [InlineData("int?   ", "int?")]
+        public async Task SimpleMissingMember_CSharp_NullableTypes(string csharp, string message)
+        {
+            var source = $$"""
+                #nullable enable
+                {{EnabledModifierCSharp}} class C
+                {
+                    {{EnabledModifierCSharp}} {{csharp}} Field;
+                    {{EnabledModifierCSharp}} {{csharp}} Property { get; set; }
+                    {{EnabledModifierCSharp}} void Method({{csharp}} p) { } 
+                    {{EnabledModifierCSharp}} {{csharp}} ArrowExpressionProperty => default;
+                }
+                """;
+
+            var shippedText = "#nullable enable";
+            var unshippedText = "#nullable enable";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText,
+                // Test0.cs(2,14): error RS0016: Symbol 'C' is not part of the declared API.
+                GetCSharpResultAt(2, 8 + EnabledModifierCSharp.Length, DeclareNewApiRule, "C"),
+                // Test0.cs(2,14): warning RS0016: Symbol 'C.C() -> void' is not part of the declared API.
+                GetCSharpResultAt(2, 8 + EnabledModifierCSharp.Length, DeclareNewApiRule, "C.C() -> void"),
+                // Test0.cs(4,16): error RS0016: Symbol 'C.Field -> int' is not part of the declared API.
+                GetCSharpResultAt(4, 14 + EnabledModifierCSharp.Length, DeclareNewApiRule, $"C.Field -> {message}"),
+                // Test0.cs(5,27): error RS0016: Symbol 'C.Property.get -> int' is not part of the declared API.
+                GetCSharpResultAt(5, 25 + EnabledModifierCSharp.Length, DeclareNewApiRule, $"C.Property.get -> {message}"),
+                // Test0.cs(5,32): error RS0016: Symbol 'C.Property.set -> void' is not part of the declared API.
+                GetCSharpResultAt(5, 30 + EnabledModifierCSharp.Length, DeclareNewApiRule, "C.Property.set -> void"),
+                // Test0.cs(6,17): error RS0016: Symbol 'C.Method() -> void' is not part of the declared API.
+                GetCSharpResultAt(6, 11 + EnabledModifierCSharp.Length, DeclareNewApiRule, $"C.Method({message} p) -> void"),
+                // Test0.cs(7,43): error RS0016: Symbol 'C.ArrowExpressionProperty.get -> int' is not part of the declared API.
+                GetCSharpResultAt(7, 41 + EnabledModifierCSharp.Length, DeclareNewApiRule, $"C.ArrowExpressionProperty.get -> {message}"));
+        }
+
         [Fact, WorkItem(821, "https://github.com/dotnet/roslyn-analyzers/issues/821")]
         public async Task SimpleMissingMember_BasicAsync()
         {
@@ -1470,6 +1508,42 @@ C.Property.set -> void";
                 GetCSharpResultAt(7, 40 + EnabledModifierCSharp.Length, AnnotateApiRule, "C.ArrowExpressionProperty.get -> string"),
                 GetCSharpResultAt(7, 40 + EnabledModifierCSharp.Length, ObliviousApiRule, "ArrowExpressionProperty.get")
                 );
+        }
+
+        [Theory]
+        [InlineData("string ", "string", "string!")]
+        [InlineData("string?", "string", "string?")]
+        public async Task ObliviousMember_Simple_NullableTypes(string csharp, string unannotated, string annotated)
+        {
+            var source = $$"""
+                #nullable enable
+                {{EnabledModifierCSharp}} class C
+                {
+                    {{EnabledModifierCSharp}} {{csharp}} Field;
+                    {{EnabledModifierCSharp}} {{csharp}} Property { get; set; }
+                    {{EnabledModifierCSharp}} {{csharp}} Method({{csharp}} x) => throw null!;
+                    {{EnabledModifierCSharp}} {{csharp}} ArrowExpressionProperty => throw null!;
+                }
+                """;
+
+            var shippedText = $"""
+                #nullable enable
+                C
+                C.ArrowExpressionProperty.get -> {unannotated}
+                C.C() -> void
+                C.Field -> {unannotated}
+                C.Method({unannotated} x) -> {unannotated}
+                C.Property.get -> {unannotated}
+                C.Property.set -> void
+                """;
+
+            var unshippedText = "";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText,
+                GetCSharpResultAt(4, 14 + EnabledModifierCSharp.Length, AnnotateApiRule, $"C.Field -> {annotated}"),
+                GetCSharpResultAt(5, 25 + EnabledModifierCSharp.Length, AnnotateApiRule, $"C.Property.get -> {annotated}"),
+                GetCSharpResultAt(6, 14 + EnabledModifierCSharp.Length, AnnotateApiRule, $"C.Method({annotated} x) -> {annotated}"),
+                GetCSharpResultAt(7, 41 + EnabledModifierCSharp.Length, AnnotateApiRule, $"C.ArrowExpressionProperty.get -> {annotated}"));
         }
 
         [Fact]

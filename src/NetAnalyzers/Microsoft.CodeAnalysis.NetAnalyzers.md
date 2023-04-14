@@ -1680,6 +1680,18 @@ Using concrete types avoids virtual or interface call overhead and enables inlin
 |CodeFix|False|
 ---
 
+## [CA1860](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Avoid using 'Enumerable.Any()' extension method
+
+Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rather than calling 'Enumerable.Any()'. The intent is clearer and it is more performant than using 'Enumerable.Any()' extension method.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
 
 If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.
@@ -1766,7 +1778,7 @@ ValueTasks returned from member invocations are intended to be directly awaited.
 
 ## [CA2013](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2013): Do not use ReferenceEquals with value types
 
-Value type typed arguments are uniquely boxed for each call to this method, therefore the result is always false.
+Value type typed arguments are uniquely boxed for each call to this method, therefore the result can be unexpected.
 
 |Item|Value|
 |-|-|
@@ -1857,6 +1869,24 @@ Some built-in operators added in .NET 7 behave differently when overflowing than
 |Category|Reliability|
 |Enabled|True|
 |Severity|Info|
+|CodeFix|False|
+---
+
+## [CA2021](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021): Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types
+
+Enumerable.Cast\<T> and Enumerable.OfType\<T> require compatible types to function expectedly.  
+
+The generic cast (IL 'unbox.any') used by the sequence returned by Enumerable.Cast\<T> will throw InvalidCastException at runtime on elements of the types specified.  
+
+The generic type check (C# 'is' operator/IL 'isinst') used by Enumerable.OfType\<T> will never succeed with elements of types specified, resulting in an empty sequence.  
+
+Widening and user defined conversions are not supported with generic types.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Warning|
 |CodeFix|False|
 ---
 

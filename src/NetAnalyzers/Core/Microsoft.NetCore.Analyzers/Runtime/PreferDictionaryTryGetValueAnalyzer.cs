@@ -448,7 +448,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                    || DoesSignatureMatch(suspectedContainsKeyMethod, containsKeyMethod);
         }
 
-        private static bool IsDictionaryType(INamedTypeSymbol? suspectedDictionaryType, ISymbol iDictionaryType)
+        private static bool IsDictionaryType(ITypeSymbol? suspectedDictionaryType, ISymbol iDictionaryType)
         {
             // Either the type is the IDictionary or it is a type which (indirectly) implements it.
             return suspectedDictionaryType != null && (suspectedDictionaryType.OriginalDefinition.Equals(iDictionaryType, SymbolEqualityComparer.Default)

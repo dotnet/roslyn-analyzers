@@ -4,6 +4,16 @@
     <GitHubRepositoryName>roslyn-analyzers</GitHubRepositoryName>
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
     <SourceBuildTrimNetFrameworkTargets>true</SourceBuildTrimNetFrameworkTargets>
+    <!-- roslyn-analyzers produces stable release branded and stable pre-release branded artifacts in addition to the normal non-stable artifacts.
+         Only the non-stable artifacts should flow downstream in source build -->
+    <EnableDefaultSourceBuildIntermediateItems>false</EnableDefaultSourceBuildIntermediateItems>
   </PropertyGroup>
+
+  <Target Name="GetCustomIntermediateNupkgContents" BeforeTargets="GetCategorizedIntermediateNupkgContents">
+    <ItemGroup>
+      <IntermediateNupkgArtifactFile Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)Shipping\**\*.nupkg" />
+      <IntermediateNupkgArtifactFile Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)NonShipping\**\*.nupkg" />
+    </ItemGroup>
+  </Target>
 
 </Project>

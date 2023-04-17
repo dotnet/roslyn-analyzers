@@ -12,17 +12,17 @@
       <Sha>fb14cae30eacbe844468ac297b3d4c61e0bb9dc0</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.4.0">
+    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.5.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>1ce8866c9de4c2d67351ef6863699dee03b0804a</Sha>
+      <Sha>6a5a63bbc9f4449d9bd1e95a8f9624939c3ccdc3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="4.4.0">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="4.5.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>1ce8866c9de4c2d67351ef6863699dee03b0804a</Sha>
+      <Sha>6a5a63bbc9f4449d9bd1e95a8f9624939c3ccdc3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="4.4.0">
+    <Dependency Name="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="4.5.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>1ce8866c9de4c2d67351ef6863699dee03b0804a</Sha>
+      <Sha>6a5a63bbc9f4449d9bd1e95a8f9624939c3ccdc3</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

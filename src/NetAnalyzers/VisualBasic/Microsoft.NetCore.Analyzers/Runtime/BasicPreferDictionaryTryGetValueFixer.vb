@@ -101,7 +101,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                         Dim tryGetValueInvocation = generator.InvocationExpression(tryGetValueAccess,
                                                                                    keyArgument,
                                                                                    generator.Argument(identifierName))
-                                                                                   
+
 #Disable Warning IDE0270 ' Use coalesce expression - suppressed for readability
                         Dim ifStatement As SyntaxNode = containsKeyAccess.FirstAncestorOrSelf(Of MultiLineIfBlockSyntax)
                         If ifStatement Is Nothing Then

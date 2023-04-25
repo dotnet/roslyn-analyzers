@@ -1,5 +1,18 @@
+<!-- See aka.ms/dotnet/prebuilts for guidance on what pre-builts are and how to eliminate them. -->
 <UsageData>
   <IgnorePatterns>
-    <UsagePattern IdentityGlob="*/*" />
+    <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*" />
+
+    <!-- This packages contain functionality that is executed in the build -->
+    <UsagePattern IdentityGlob="Microsoft.Net.Compilers.Toolset/*" />
+    <UsagePattern IdentityGlob="System.Composition*/*" />
+    <!-- In SB mode, Microsoft.CodeAnalysis.Common has a dependency on CodeAnalysis.Analyzers and 
+         its dependencies. This is not an issue in full SB mode. -->
+    <UsagePattern IdentityGlob="Microsoft.CodeAnalysis.Analyzers*/*" />
+
+    <!-- This is the version of Microsoft.CodeAnalysis executed and built against in source build.
+         When updating that verison, update the version here. -->
+    <UsagePattern IdentityGlob="Microsoft.CodeAnalysis*/*4.6.0-1.final*" />
+    <UsagePattern IdentityGlob="System.Threading.Channels/*6.0.0*" />
   </IgnorePatterns>
 </UsageData>

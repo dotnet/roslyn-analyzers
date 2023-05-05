@@ -718,5 +718,28 @@ namespace Z
 }
 ");
         }
+
+        [Fact]
+        public async Task IgnoreReadOnlyProperties_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Collections.Generic;
+
+public class A
+{
+    public static readonly A Field; 
+    public static List<string> Property { get; } = GetValues(new string[] { ""close"" });
+    public static string[] Property2 { get; } = new string[] { ""close"" };
+
+    static A() // Exclude initialization in static constructors
+    {
+        Property = GetValues(new string[] { ""close"" });
+        Field = new A(new string[] { ""close"" });
+    }
+    public A(string[] arr) { }
+    private static List<string> GetValues(string[] arr) => null;
+}");
+        }
     }
 }

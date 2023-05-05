@@ -47,6 +47,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     IArgumentOperation? argumentOperation;
 
+                    if (context.ContainingSymbol is IMethodSymbol method && method.MethodKind == MethodKind.StaticConstructor)
+                    {
+                        return;
+                    }
+
                     if (context.Operation is IArrayCreationOperation arrayCreationOperation) // For arrays passed as arguments
                     {
                         argumentOperation = arrayCreationOperation.GetAncestor<IArgumentOperation>(OperationKind.Argument);
@@ -105,8 +110,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     string? paramName = null;
                     if (argumentOperation is not null)
                     {
-                        IFieldInitializerOperation? fieldInitializer = argumentOperation.GetAncestor<IFieldInitializerOperation>(OperationKind.FieldInitializer);
-                        if (fieldInitializer is not null && fieldInitializer.InitializedFields.Any(x => x.IsReadOnly))
+                        IFieldInitializerOperation? fieldInitializer = argumentOperation.GetAncestor<IFieldInitializerOperation>(
+                            OperationKind.FieldInitializer, f => f.InitializedFields.Any(x => x.IsReadOnly));
+                        IPropertyInitializerOperation? propertyInitializer = argumentOperation.GetAncestor<IPropertyInitializerOperation>(
+                            OperationKind.PropertyInitializer, p => p.InitializedProperties.Any(x => x.IsReadOnly));
+
+                        if (fieldInitializer is not null || propertyInitializer is not null)
                         {
                             return;
                         }
@@ -131,12 +140,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                     }
 
-                    Dictionary<string, string?> properties = new()
-                    {
-                        { "paramName", paramName }
-                    };
+                    ImmutableDictionary<string, string?>.Builder properties = ImmutableDictionary.CreateBuilder<string, string?>();
+                    properties.Add("paramName", paramName);
 
-                    context.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties.ToImmutableDictionary()));
+                    context.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties.ToImmutable()));
                 },
                 OperationKind.ArrayCreation,
                 OperationKind.Invocation);

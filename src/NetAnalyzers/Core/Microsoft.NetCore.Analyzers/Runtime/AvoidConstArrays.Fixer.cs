@@ -37,20 +37,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(context.Span);
             SemanticModel model = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            DocumentEditor editor = await DocumentEditor.CreateAsync(document, context.CancellationToken).ConfigureAwait(false);
 
             string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysCodeFixTitle;
             context.RegisterCodeFix(CodeAction.Create(
                     title,
-                    async ct => await ExtractConstArrayAsync(root, node, model, editor, editor.Generator,
-                        context.Diagnostics.First().Properties, ct).ConfigureAwait(false),
+                    async ct => await ExtractConstArrayAsync(document, root, node, model, context.Diagnostics.First().Properties, ct).ConfigureAwait(false),
                     equivalenceKey: title),
                 context.Diagnostics);
         }
 
-        private static Task<Document> ExtractConstArrayAsync(SyntaxNode root, SyntaxNode node, SemanticModel model, DocumentEditor editor,
-            SyntaxGenerator generator, ImmutableDictionary<string, string?> properties, CancellationToken cancellationToken)
+        private static async Task<Document> ExtractConstArrayAsync(Document document, SyntaxNode root, SyntaxNode node,
+            SemanticModel model, ImmutableDictionary<string, string?> properties, CancellationToken cancellationToken)
         {
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            SyntaxGenerator generator = editor.Generator;
             IArrayCreationOperation arrayArgument = GetArrayCreationOperation(node, model, cancellationToken, out bool isInvoked);
             INamedTypeSymbol containingType = model.GetEnclosingSymbol(node.SpanStart, cancellationToken).ContainingType;
 
@@ -76,12 +76,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 newMember = newMember.FormatForExtraction(methodContext.Syntax);
             }
 
-            ISymbol lastFieldOrPropertSymbol = containingType.GetMembers().LastOrDefault(x => x is IFieldSymbol or IPropertySymbol);
-            if (lastFieldOrPropertSymbol is not null)
+            ISymbol lastFieldOrPropertySymbol = containingType.GetMembers().LastOrDefault(x => x is IFieldSymbol or IPropertySymbol);
+            if (lastFieldOrPropertySymbol is not null)
             {
-                // Insert after fields or properties
-                SyntaxNode lastFieldOrPropertyNode = root.FindNode(lastFieldOrPropertSymbol.Locations.First().SourceSpan);
-                editor.InsertAfter(generator.GetDeclaration(lastFieldOrPropertyNode), newMember);
+                var span = lastFieldOrPropertySymbol.Locations.First().SourceSpan;
+                if (root.FullSpan.Contains(span))
+                {
+                    // Insert after fields or properties
+                    SyntaxNode lastFieldOrPropertyNode = root.FindNode(span);
+                    editor.InsertAfter(generator.GetDeclaration(lastFieldOrPropertyNode), newMember);
+                }
+                else
+                {
+                    // Span not found
+                    editor.InsertBefore(methodContext?.Syntax, newMember);
+                }
             }
             else
             {
@@ -102,7 +111,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             // Return changed document
-            return Task.FromResult(editor.GetChangedDocument());
+            return editor.GetChangedDocument();
         }
 
         private static IArrayCreationOperation GetArrayCreationOperation(SyntaxNode node, SemanticModel model, CancellationToken cancellationToken, out bool isInvoked)

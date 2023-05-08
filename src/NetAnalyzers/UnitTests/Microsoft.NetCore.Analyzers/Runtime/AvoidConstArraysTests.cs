@@ -295,6 +295,44 @@ namespace Z
         }
 
         [Fact]
+        public async Task IdentifyConstArrays_LambdaArrayCreationTwoParams()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+using System.Linq;
+
+namespace Z
+{
+    public class A
+    {
+        public void B()
+        {
+            var x = new string[] { ""a"", ""b"" };
+            var y = x.Select((z1, z2) => {|CA1861:new[] { ""c"" }|});
+        }
+    }
+}
+", @"
+using System;
+using System.Linq;
+
+namespace Z
+{
+    public class A
+    {
+        private static readonly string[] selector = new[] { ""c"" };
+
+        public void B()
+        {
+            var x = new string[] { ""a"", ""b"" };
+            var y = x.Select((z1, z2) => selector);
+        }
+    }
+}
+");
+        }
+
+        [Fact]
         public async Task IdentifyConstArrays_LambdaInvokedArrayCreation()
         {
             await VerifyCS.VerifyCodeFixAsync(@"

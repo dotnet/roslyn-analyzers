@@ -36,19 +36,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             Document document = context.Document;
             SyntaxNode root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(context.Span);
-            SemanticModel model = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysCodeFixTitle;
             context.RegisterCodeFix(CodeAction.Create(
-                    title,
-                    async ct => await ExtractConstArrayAsync(document, root, node, model, context.Diagnostics.First().Properties, ct).ConfigureAwait(false),
-                    equivalenceKey: title),
+                    MicrosoftNetCoreAnalyzersResources.AvoidConstArraysCodeFixTitle,
+                    async ct => await ExtractConstArrayAsync(document, root, node, context.Diagnostics[0].Properties, ct).ConfigureAwait(false),
+                    equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysCodeFixTitle)),
                 context.Diagnostics);
         }
 
         private static async Task<Document> ExtractConstArrayAsync(Document document, SyntaxNode root, SyntaxNode node,
-            SemanticModel model, ImmutableDictionary<string, string?> properties, CancellationToken cancellationToken)
+            ImmutableDictionary<string, string?> properties, CancellationToken cancellationToken)
         {
+            SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
             IArrayCreationOperation arrayArgument = GetArrayCreationOperation(node, model, cancellationToken, out bool isInvoked);

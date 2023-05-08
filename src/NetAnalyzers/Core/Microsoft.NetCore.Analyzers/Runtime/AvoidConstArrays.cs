@@ -77,7 +77,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         argumentOperation = invocationOperation.Arguments.FirstOrDefault();
                         if (argumentOperation is not null)
                         {
-                            if (argumentOperation.Children.First() is not IConversionOperation conversionOperation
+                            if (argumentOperation.Value is not IConversionOperation conversionOperation
                                 || conversionOperation.Operand is not IArrayCreationOperation arrayCreation)
                             {
                                 return;

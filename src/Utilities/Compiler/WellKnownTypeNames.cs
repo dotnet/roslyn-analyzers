@@ -201,6 +201,7 @@ namespace Analyzer.Utilities
         public const string SystemDiagnosticContractsContract = "System.Diagnostics.Contracts.Contract";
         public const string SystemDiagnosticsCodeAnalysisConstantExpectedAttribute = "System.Diagnostics.CodeAnalysis.ConstantExpectedAttribute";
         public const string SystemDiagnosticsCodeAnalysisNotNullAttribute = "System.Diagnostics.CodeAnalysis.NotNullAttribute";
+        public const string SystemDiagnosticsCodeAnalysisNotNullIfNotNullAttribute = "System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute";
         public const string SystemDiagnosticsConditionalAttribute = "System.Diagnostics.ConditionalAttribute";
         public const string SystemDiagnosticsContractsPureAttribute = "System.Diagnostics.Contracts.PureAttribute";
         public const string SystemDiagnosticsDebug = "System.Diagnostics.Debug";
@@ -293,6 +294,7 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeCompilerServicesCallerFilePathAttribute = "System.Runtime.CompilerServices.CallerFilePathAttribute";
         public const string SystemRuntimeCompilerServicesCallerLineNumberAttribute = "System.Runtime.CompilerServices.CallerLineNumberAttribute";
         public const string SystemRuntimeCompilerServicesCallerMemberNameAttribute = "System.Runtime.CompilerServices.CallerMemberNameAttribute";
+        public const string SystemRuntimeCompilerServicesCallerArgumentExpressionAttribute = "System.Runtime.CompilerServices.CallerArgumentExpressionAttribute";
         public const string SystemRuntimeCompilerServicesCompilerGeneratedAttribute = "System.Runtime.CompilerServices.CompilerGeneratedAttribute";
         public const string SystemRuntimeCompilerServicesConfiguredAsyncDisposable = "System.Runtime.CompilerServices.ConfiguredAsyncDisposable";
         public const string SystemRuntimeCompilerServicesConfiguredValueTaskAwaitable1 = "System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable`1";
@@ -300,6 +302,7 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeCompilerServicesICriticalNotifyCompletion = "System.Runtime.CompilerServices.ICriticalNotifyCompletion";
         public const string SystemRuntimeCompilerServicesINotifyCompletion = "System.Runtime.CompilerServices.INotifyCompletion";
         public const string SystemRuntimeCompilerServicesInternalsVisibleToAttribute = "System.Runtime.CompilerServices.InternalsVisibleToAttribute";
+        public const string SystemRuntimeCompilerServicesMethodImplOptions = "System.Runtime.CompilerServices.MethodImplOptions";
         public const string SystemRuntimeCompilerServicesModuleInitializerAttribute = "System.Runtime.CompilerServices.ModuleInitializerAttribute";
         public const string SystemRuntimeCompilerServicesRestrictedInternalsVisibleToAttribute = "System.Runtime.CompilerServices.RestrictedInternalsVisibleToAttribute";
         public const string SystemRuntimeCompilerServicesRuntimeFeature = "System.Runtime.CompilerServices.RuntimeFeature";
@@ -319,6 +322,7 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeInteropServicesGCHandle = "System.Runtime.InteropServices.GCHandle";
         public const string SystemRuntimeInteropServicesHandleRef = "System.Runtime.InteropServices.HandleRef";
         public const string SystemRuntimeInteropServicesLCIDConversionAttribute = "System.Runtime.InteropServices.LCIDConversionAttribute";
+        public const string SystemRuntimeInteropServicesLibraryImportAttribute = "System.Runtime.InteropServices.LibraryImportAttribute";
         public const string SystemRuntimeInteropServicesMarshal = "System.Runtime.InteropServices.Marshal";
         public const string SystemRuntimeInteropServicesMarshalAsAttribute = "System.Runtime.InteropServices.MarshalAsAttribute";
         public const string SystemRuntimeInteropServicesOSPlatform = "System.Runtime.InteropServices.OSPlatform";

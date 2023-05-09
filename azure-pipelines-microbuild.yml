@@ -15,12 +15,7 @@ trigger:
 variables:
   - name: _TeamName
     value: Roslyn
-  - name: _DotNetArtifactsCategory
-    value: .NETCore
-  - name: _DotNetValidationArtifactsCategory
-    value: .NETCoreValidation
   - group: DotNet-Roslyn-SDLValidation-Params
-  - group: DotNet-Blob-Feed
   - group: DotNet-Symbol-Server-Pats
   - group: DotNet-Versions-Publish
   - group: ManagedLanguageSecrets
@@ -50,7 +45,6 @@ stages:
           name: NetCore1ESPool-Internal
           demands: ImageOverride -equals windows.vs2022preview.amd64
         variables:
-          - group: DotNet-Blob-Feed
           - group: Publish-Build-Assets
           - name: _BuildConfig
             value: Release
@@ -63,13 +57,6 @@ stages:
                     -configuration $(_BuildConfig)
                     /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
                     /p:DotNetSignType=$(_SignType)
-                    /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-                    /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
-                    /p:PublishToSymbolServer=true
-                    /p:DotNetPublishToBlobFeed=true
-                    /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1)
-                    /p:DotNetPublishBlobFeedUrl=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
-                    /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory)
                     /p:DotnetPublishUsingPipelines=true
           displayName: Build and Test
 

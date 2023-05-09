@@ -47,6 +47,9 @@ dotnet_diagnostic.IDE0010.severity = silent
 # IDE0017: Object initialization can be simplified
 dotnet_diagnostic.IDE0017.severity = silent
 
+# IDE0031: Null check can be simplified
+dotnet_diagnostic.IDE0031.severity = silent
+
 # IDE0045: 'if' statement can be simplified
 dotnet_diagnostic.IDE0045.severity = silent
 
@@ -65,6 +68,9 @@ dotnet_diagnostic.IDE0065.severity = silent
 
 # IDE0072: Populate switch
 dotnet_diagnostic.IDE0072.severity = silent
+
+# IDE0074: Use compound assignment
+dotnet_diagnostic.IDE0074.severity = silent
 
 # IDE0083: Use pattern matching
 dotnet_diagnostic.IDE0083.severity = silent
@@ -114,3 +120,7 @@ dotnet_diagnostic.VSTHRD002.severity = none
 
 # VSTHRD011: Use AsyncLazy<T>
 dotnet_diagnostic.VSTHRD011.severity = none
+
+# RS1036: A project containing analyzers or source generators should specify the property '<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>'.
+# https://github.com/dotnet/roslyn-analyzers/issues/6443 tracks enabling RS1036 and fixing RS1035 violations
+dotnet_diagnostic.RS1036.severity = none

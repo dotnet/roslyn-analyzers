@@ -1692,6 +1692,18 @@ Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rath
 |CodeFix|True|
 ---
 
+## [CA1861](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Avoid constant arrays as arguments
+
+Constant arrays passed as arguments are not reused which implies a performance overhead. Consider extracting them to 'static readonly' fields to improve performance.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA1861](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Prefer the 'IDictionary.TryAdd(TKey, TValue)' method
 
 Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add' except that it doesn't throw an exception when a value for a given key already exists, but rather returns 'false'.

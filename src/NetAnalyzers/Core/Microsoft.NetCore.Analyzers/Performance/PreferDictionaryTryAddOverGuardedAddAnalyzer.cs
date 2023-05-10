@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PreferDictionaryTryAddOverGuardedAddAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1863";
+        internal const string RuleId = "CA1861";
 
         private const string ContainsKey = nameof(IDictionary<dynamic, dynamic>.ContainsKey);
         private const string Add = nameof(IDictionary<dynamic, dynamic>.Add);
@@ -80,7 +80,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return false;
             }
 
-            if (conditionalBody is IBlockOperation block)
+            if (conditionalBody is IBlockOperation block && !IsDictionaryInitializedInBlock(block, dictionaryInstance) && !IsKeyModifiedInBlock(block, containsKeyArgument))
             {
                 dictionaryAddLocation = block.Operations.OfType<IExpressionStatementOperation>().FirstOrDefault(e => e.Operation is IInvocationOperation i && IsEligibleDictionaryAddInvocation(i))
                     ?.Operation.Syntax.GetLocation();
@@ -92,13 +92,42 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             bool IsEligibleDictionaryAddInvocation(IInvocationOperation invocation)
             {
-                return SymbolEqualityComparer.Default.Equals(invocation.Instance.GetSymbolFromReference(), dictionaryInstance.GetSymbolFromReference())
+                return invocation.Instance.IsSameReferenceOperation(dictionaryInstance)
                        && DoesSignatureMatch(invocation.TargetMethod, addSymbol)
                        && invocation.Arguments[0].Value.Syntax.IsEquivalentTo(containsKeyArgument.Syntax)
-                       && invocation.Arguments[1].Value.Kind == OperationKind.Literal;
+                       && invocation.Arguments[1].Value.Kind is not (OperationKind.Invocation or OperationKind.ObjectCreation or OperationKind.ObjectOrCollectionInitializer)
+                       && !AddArgumentIsDeclaredInBlock(invocation);
             }
 
             return dictionaryAddLocation is not null;
+        }
+
+        private static bool IsDictionaryInitializedInBlock(IBlockOperation block, IOperation dictionaryInstance)
+        {
+            return block.Operations
+                .OfType<IExpressionStatementOperation>()
+                .Any(e => e.Operation is IAssignmentOperation assignment && assignment.Target.IsSameReferenceOperation(dictionaryInstance));
+        }
+
+        private static bool IsKeyModifiedInBlock(IBlockOperation block, IOperation containsKeyArgument)
+        {
+            return block.Operations
+                .OfType<IExpressionStatementOperation>()
+                .Any(e => (e.Operation is IAssignmentOperation assignment && assignment.Target.IsSameReferenceOperation(containsKeyArgument))
+                          || (e.Operation is IIncrementOrDecrementOperation incrementOrDecrement && incrementOrDecrement.Target.IsSameReferenceOperation(containsKeyArgument)));
+        }
+
+        private static bool AddArgumentIsDeclaredInBlock(IInvocationOperation invocation)
+        {
+            if (invocation.Arguments[1].Value is ILocalReferenceOperation local && invocation.Parent?.Parent is IBlockOperation block)
+            {
+                return block.Operations
+                    .OfType<IVariableDeclarationGroupOperation>()
+                    .SelectMany(static g => g.GetDeclaredVariables())
+                    .Any(symbol => SymbolEqualityComparer.Default.Equals(local.Local, symbol));
+            }
+
+            return false;
         }
 
         private static bool TryGetDictionaryTypeAndMembers(

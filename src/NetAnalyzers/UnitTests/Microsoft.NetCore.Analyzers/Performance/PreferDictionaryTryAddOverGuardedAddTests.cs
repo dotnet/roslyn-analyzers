@@ -44,6 +44,17 @@ if (!{|#0:d.ContainsKey(5)|})
         private const string CheckNegativeReturnedValueFixed = @"
 d.TryAdd(5, 6);";
 
+        private const string CheckNegativeReturnedValueInVariable = @"
+var value = 6;
+if (!{|#0:d.ContainsKey(5)|})
+{
+	{|#1:d.Add(5, value)|};
+}";
+
+        private const string CheckNegativeReturnedValueInVariableFixed = @"
+var value = 6;
+d.TryAdd(5, value);";
+
         private const string CheckNegativeReturnedValueWithoutBraces = @"
 if (!{|#0:d.ContainsKey(5)|})
 	{|#1:d.Add(5, 6)|};";
@@ -154,13 +165,20 @@ if(!d.ContainsKey(5))
 
 int LongRunningOperation() => throw null;";
 
+        private const string LongRunningOperationCapturedInVariable = @"
+if(!d.ContainsKey(5))
+{
+    var result = LongRunningOperation();
+    d.Add(5, result);
+}
+
+int LongRunningOperation() => throw null;";
+
         private const string WithObjectInstantiation = @"
 if(!d.ContainsKey(5))
 {
     d.Add(5, new int());
-}
-
-int LongRunningOperation() => throw null;";
+}";
 
         private const string NotGuardedByContainsKey = @"
 if(!d.ContainsValue(5))
@@ -330,6 +348,7 @@ End If";
 
         [Theory]
         [InlineData(CheckNegativeReturnedValue, CheckNegativeReturnedValueFixed)]
+        [InlineData(CheckNegativeReturnedValueInVariable, CheckNegativeReturnedValueInVariableFixed)]
         [InlineData(CheckNegativeReturnedValueWithoutBraces, CheckNegativeReturnedValueFixed)]
         [InlineData(CheckNegativeReturnedValueWithElseRemoval, CheckNegativeReturnedValueWithElseRemovalFixed)]
         [InlineData(CheckNegativeReturnedValueWithElse, CheckNegativeReturnedValueWithElseFixed)]
@@ -348,6 +367,7 @@ End If";
         [Theory]
         [InlineData(FakeDictionary)]
         [InlineData(LongRunningOperation)]
+        [InlineData(LongRunningOperationCapturedInVariable)]
         [InlineData(WithObjectInstantiation)]
         [InlineData(NotGuardedByContainsKey)]
         [InlineData(AddOnDifferentDictionary)]

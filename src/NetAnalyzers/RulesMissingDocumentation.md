@@ -8,13 +8,5 @@ CA1512 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1513 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1513> | Use ObjectDisposedException throw helper |
 CA1856 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856> | Incorrect usage of ConstantExpected attribute |
 CA1857 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857> | A constant is expected for the parameter |
-CA1859 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859> | Use concrete types when possible for improved performance |
-<<<<<<< HEAD
-CA1863 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1863> | Prefer the 'IDictionary.TryAdd(TKey, TValue)' method |
-=======
-CA1860 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860> | Avoid using 'Enumerable.Any()' extension method |
-CA2021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |
->>>>>>> master
-CA1860 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860> | Avoid using 'Enumerable.Any()' extension method |
-CA1863 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1863> | Prefer the 'IDictionary.TryAdd(TKey, TValue)' method |
+CA1861 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861> | Prefer the 'IDictionary.TryAdd(TKey, TValue)' method |
 CA2021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |

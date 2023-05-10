@@ -25,7 +25,7 @@
     <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.NetAnalyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers.dll" />
-    <PackageReadmeFileSource Include="..\..\src\NetAnalyzers\readme.md"/>
+    <PackageReadmeFileSource Include="..\..\src\NetAnalyzers\readme.md" />
 	</ItemGroup>
 
   <ItemGroup>

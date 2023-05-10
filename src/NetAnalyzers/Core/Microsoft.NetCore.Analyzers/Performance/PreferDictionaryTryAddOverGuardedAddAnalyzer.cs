@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PreferDictionaryTryAddOverGuardedAddAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1861";
+        internal const string RuleId = "CA1862";
 
         private const string ContainsKey = nameof(IDictionary<dynamic, dynamic>.ContainsKey);
         private const string Add = nameof(IDictionary<dynamic, dynamic>.Add);

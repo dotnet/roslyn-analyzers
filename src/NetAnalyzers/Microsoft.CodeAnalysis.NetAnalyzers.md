@@ -1704,7 +1704,7 @@ Constant arrays passed as arguments are not reused which implies a performance o
 |CodeFix|True|
 ---
 
-## [CA1861](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Prefer the 'IDictionary.TryAdd(TKey, TValue)' method
+## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer the 'IDictionary.TryAdd(TKey, TValue)' method
 
 Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add' except that it doesn't throw an exception when a value for a given key already exists, but rather returns 'false'.
 

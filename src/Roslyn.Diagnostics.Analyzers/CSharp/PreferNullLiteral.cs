@@ -11,10 +11,13 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
 {
     using static RoslynDiagnosticsAnalyzersResources;
 
+    /// <summary>
+    /// RS0038: <inheritdoc cref="PreferNullLiteralTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class PreferNullLiteral : DiagnosticAnalyzer
     {
-        internal static DiagnosticDescriptor Rule = new(
+        internal static readonly DiagnosticDescriptor Rule = new(
             RoslynDiagnosticIds.PreferNullLiteralRuleId,
             CreateLocalizableResourceString(nameof(PreferNullLiteralTitle)),
             CreateLocalizableResourceString(nameof(PreferNullLiteralMessage)),

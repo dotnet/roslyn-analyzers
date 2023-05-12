@@ -12,6 +12,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
+    /// <summary>
+    /// CA1401: <inheritdoc cref="PInvokesShouldNotBeVisibleTitle"/>
+    /// CA2101: <inheritdoc cref="SpecifyMarshalingForPInvokeStringArgumentsTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PInvokeDiagnosticAnalyzer : DiagnosticAnalyzer
     {
@@ -121,7 +125,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
 
                 // CA2101 - Specify marshalling for PInvoke string arguments
-                if (dllImportData.BestFitMapping != false ||
+                if (dllImportData.BestFitMapping != false &&
                     context.Options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.InvariantGlobalization, context.Compilation) is not "true")
                 {
                     bool appliedCA2101ToMethod = false;

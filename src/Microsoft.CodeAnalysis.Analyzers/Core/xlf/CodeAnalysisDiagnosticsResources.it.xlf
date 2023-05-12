@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="it" original="../CodeAnalysisDiagnosticsResources.resx">
     <body>
+      <trans-unit id="AddCompilationEndCustomTagDescription">
+        <source>'DiagnosticDescriptor' assigned to field is used to report a compilation end diagnostic, but the 'DiagnosticDescriptor' constructor used to initialize it does not pass in the required custom tag "CompilationEnd". See documentation for 'WellKnownDiagnosticTags.CompilationEnd' for details.</source>
+        <target state="translated">'DiagnosticDescriptor' assegnato al campo viene usato per segnalare una diagnostica di fine compilazione, ma il costruttore 'DiagnosticDescriptor' utilizzato per inizializzarlo non passa il tag personalizzato richiesto "CompilationEnd". Per informazioni dettagliate, vedere la documentazione di 'WellKnownDiagnosticTags.CompilationEnd'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCompilationEndCustomTagMessage">
+        <source>Add "CompilationEnd" custom tag to the diagnostic descriptor used to initialize field '{0}' as it is used to report a compilation end diagnostic</source>
+        <target state="translated">Aggiungere il tag personalizzato "CompilationEnd" al descrittore di diagnostica usato per inizializzare il campo '{0}' in quanto viene usato per segnalare una diagnostica di fine compilazione</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCompilationEndCustomTagTitle">
+        <source>Add "CompilationEnd" custom tag to compilation end diagnostic descriptor</source>
+        <target state="translated">Aggiungere il tag personalizzato "CompilationEnd" al descrittore di diagnostica di fine della compilazione</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AddEntryForDiagnosticIdInAnalyzerReleaseCodeFixTitle">
         <source>Add rule entry to unshipped release file</source>
         <target state="translated">Aggiungere la voce della regola per il file di versione non distribuito</target>
@@ -257,6 +272,21 @@
         <target state="translated">Quando si registra un'azione dell'analizzatore di sintassi, operazioni o simboli, è necessario specificare rispettivamente almeno un tipo di sintassi, operazione o simbolo. In caso contrario, l'azione registrata non verrà mai richiamata durante l'analisi.</target>
         <note />
       </trans-unit>
+      <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription">
+        <source>A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'.</source>
+        <target state="translated">Un progetto contenente analizzatori o generatori di origine deve specificare la proprietà '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage">
+        <source>'{0}': A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'</source>
+        <target state="translated">'{0}': un progetto contenente analizzatori o generatori di origine deve specificare la proprietà '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersTitle">
+        <source>Specify analyzer banned API enforcement setting</source>
+        <target state="translated">Specificare l'impostazione di imposizione dell'API esclusa dell'analizzatore</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferIsKindDescription">
         <source>Prefer 'syntax.IsKind(kind)' to 'syntax.Kind() == kind' when checking syntax kinds. Code using 'IsKind' is slightly more efficient at runtime, so consistent use of this form where applicable helps improve performance in complex analysis scenarios.</source>
         <target state="translated">Preferire 'syntax.IsKind(kind)' a 'syntax.Kind() == kind' durante la verifica dei tipi di sintassi. Il codice che usa 'IsKind' è leggermente più efficiente in fase di runtime, di conseguenza l'uso coerente di questo formato dove possibile contribuisce a migliorare le prestazioni in scenari di analisi complessi.</target>
@@ -350,6 +380,21 @@
       <trans-unit id="RemoveUnshippedDeletedDiagnosticIdTitle">
         <source>Do not add removed analyzer diagnostic IDs to unshipped analyzer release</source>
         <target state="translated">Non aggiungere gli ID diagnostica dell'analizzatore rimossi alla versione dell'analizzatore non distribuita</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SymbolIsBannedInAnalyzersDescription">
+        <source>The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.</source>
+        <target state="translated">Il simbolo è stato contrassegnato come escluso dall'uso negli analizzatori e al suo posto deve esserne usato uno alternativo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SymbolIsBannedInAnalyzersMessage">
+        <source>The symbol '{0}' is banned for use by analyzers{1}</source>
+        <target state="translated">Il simbolo '{0}' è stato escluso per l'uso da parte degli analizzatori{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SymbolIsBannedInAnalyzersTitle">
+        <source>Do not use APIs banned for analyzers</source>
+        <target state="translated">Non usare API escluse per gli analizzatori</target>
         <note />
       </trans-unit>
       <trans-unit id="UnexpectedAnalyzerDiagnosticForRemovedDiagnosticIdDescription">
@@ -541,8 +586,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationTitle">
-        <source>Do not ignore values returned by methods on immutable objects.</source>
-        <target state="translated">Non ignorare i valori restituiti dai metodi su oggetti non modificabili.</target>
+        <source>Do not ignore values returned by methods on immutable objects</source>
+        <target state="translated">Non ignorare i valori restituiti dai metodi su oggetti non modificabili</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetFixAllProviderTitle">

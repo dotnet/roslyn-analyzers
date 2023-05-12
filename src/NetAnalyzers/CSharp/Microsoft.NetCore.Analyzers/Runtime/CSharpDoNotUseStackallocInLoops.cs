@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Runtime;
@@ -34,10 +35,21 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                         case SyntaxKind.AnonymousMethodExpression:
                             return;
 
+                        // foreach loops are special, in that as with other loops we don't want stackallocs
+                        // in the body of the loop, but in the expression of a foreach is ok.
+                        case SyntaxKind.ForEachStatement:
+                        case SyntaxKind.ForEachVariableStatement:
+                            var foreachStatement = (CommonForEachStatementSyntax)node;
+                            if (foreachStatement.Expression.Contains(ctx.Node))
+                            {
+                                continue;
+                            }
+
+                            goto case SyntaxKind.WhileStatement; // fall through
+
                         // Look for loops.  We don't bother with ad-hoc loops via gotos as we're
                         // too likely to incur false positives.
                         case SyntaxKind.ForStatement:
-                        case SyntaxKind.ForEachStatement:
                         case SyntaxKind.WhileStatement:
                         case SyntaxKind.DoStatement:
 
@@ -61,7 +73,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                                         foreach (IOperation child in block.Operations)
                                         {
                                             if (child.Syntax.SpanStart > node.SpanStart &&
-                                                (child is IReturnOperation || (child is IBranchOperation branch && branch.BranchKind == BranchKind.Break)))
+                                                (child is IReturnOperation or IBranchOperation { BranchKind: BranchKind.Break }))
                                             {
                                                 // Err on the side of false negatives / caution and say this stackalloc is ok.
                                                 // Note, too, it's possible we're breaking out of a nested loop, and the outer loop
@@ -78,7 +90,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                             }
 
                             // Warn as needed.
-                            if (ShouldWarn(ctx.SemanticModel.GetOperationWalkingUpParentChain(ctx.Node, default), ctx.Node))
+                            if (ShouldWarn(ctx.SemanticModel.GetOperationWalkingUpParentChain(ctx.Node, ctx.CancellationToken), ctx.Node))
                             {
                                 ctx.ReportDiagnostic(ctx.Node.CreateDiagnostic(Rule));
                             }

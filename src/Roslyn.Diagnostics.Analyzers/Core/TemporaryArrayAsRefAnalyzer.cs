@@ -12,10 +12,13 @@ namespace Roslyn.Diagnostics.Analyzers
 {
     using static RoslynDiagnosticsAnalyzersResources;
 
+    /// <summary>
+    /// RS0049: <inheritdoc cref="TemporaryArrayAsRefTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class TemporaryArrayAsRefAnalyzer : DiagnosticAnalyzer
     {
-        internal static DiagnosticDescriptor Rule = new(
+        internal static readonly DiagnosticDescriptor Rule = new(
             RoslynDiagnosticIds.TemporaryArrayAsRefRuleId,
             CreateLocalizableResourceString(nameof(TemporaryArrayAsRefTitle)),
             CreateLocalizableResourceString(nameof(TemporaryArrayAsRefMessage)),

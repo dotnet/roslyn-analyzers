@@ -946,6 +946,28 @@ End Class
         }
 
         [Fact]
+        [WorkItem(5999, "https://github.com/dotnet/roslyn-analyzers/issues/5999")]
+        public async Task CA1305_GuidParse_NoDiagnosticsAsync()
+        {
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
+                TestCode = @"
+namespace Test
+{
+    using System;
+    public class SomeClass
+    {
+        public Guid SomeMethod(string s)
+        {
+            return Guid.Parse(s);
+        }
+    }
+}",
+            }.RunAsync();
+        }
+
+        [Fact]
         public async Task CA1305_NullableInvariantTypes_NoDiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -1474,11 +1496,104 @@ End Namespace",
             await vbTest.RunAsync();
         }
 
+        [Fact]
+        [WorkItem(5843, "https://github.com/dotnet/roslyn-analyzers/issues/5843")]
+        public async Task IFormatProviderOptional()
+        {
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                TestCode = @"
+using System;
+public class C
+{
+    public void M(ReadOnlySpan<char> span)
+    {
+        // IFormatProvider is last argument
+        var d = {|#0:Decimal.Parse(span)|};
+
+        // IFormatProvider is not last argument
+        var date = {|#1:DateTime.Parse(span)|};
+
+        // This 'Parse' call doesn't have overloads
+        var c1 = {|#2:Parse("""")|};
+
+        // Based on other tests, passing null seems acceptable so do not raise here
+        var c2 = Parse("""", null);
+
+        // An overload with IFormatProvider exists.
+        var s = {|#3:MyMethod("""")|};
+    }
+
+    public C Parse(string s, IFormatProvider provider = null)
+    {
+        return null;
+    }
+
+    public string MyMethod(string s)
+    {
+        return null;
+    }
+
+    public string MyMethod(string s, IFormatProvider provider = null)
+    {
+        return null;
+    }
+}",
+                ExpectedDiagnostics =
+                {
+                    VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(0)
+                        .WithArguments("decimal.Parse(ReadOnlySpan<char>, [NumberStyles], [IFormatProvider])"),
+                    VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(1)
+                        .WithArguments("DateTime.Parse(ReadOnlySpan<char>, [IFormatProvider], [DateTimeStyles])"),
+                    VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(2)
+                        .WithArguments("C.Parse(string, [IFormatProvider])"),
+                    VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule).WithLocation(3)
+                        .WithArguments("C.MyMethod(string)", "C.M(ReadOnlySpan<char>)", "C.MyMethod(string, [IFormatProvider])"),
+                },
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                TestCode = @"
+Imports System
+
+Public Class C
+    Public Sub M()
+        Dim c1 = {|#0:Parse("""")|}
+        Dim c2 = Parse("""", Nothing)
+        Dim s = {|#1:MyMethod("""")|}
+    End Sub
+
+    Public Function Parse(ByVal s As String, ByVal Optional provider As IFormatProvider = Nothing) As C
+        Return Nothing
+    End Function
+
+    Public Function MyMethod(ByVal s As String) As String
+        Return Nothing
+    End Function
+
+    Public Function MyMethod(ByVal s As String, ByVal Optional provider As IFormatProvider = Nothing) As String
+        Return Nothing
+    End Function
+End Class
+",
+                ExpectedDiagnostics =
+                {
+                    VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(0)
+                        .WithArguments("C.Parse(String, [IFormatProvider])"),
+                    VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule).WithLocation(1)
+                        .WithArguments("C.MyMethod(String)", "C.M()", "C.MyMethod(String, [IFormatProvider])"),
+                },
+            }.RunAsync();
+        }
+
         private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3) =>
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int markupKey, string arg1, string arg2, string arg3) =>
@@ -1487,52 +1602,52 @@ End Namespace",
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderAlternateRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3) =>
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderUICultureStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3) =>
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.UICultureStringRule)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderUICultureRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3) =>
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.UICultureRule)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderAlternateStringRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3) =>
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderAlternateRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3) =>
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderUICultureStringRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3) =>
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.UICultureStringRule)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderUICultureRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3) =>
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.UICultureRule)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arg1, arg2, arg3);
     }
 }

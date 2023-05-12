@@ -163,6 +163,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     {
                         GetSymbolAndIndicesForMemberReference(memberReferenceParent, ref symbol, ref indices);
                     }
+
                     break;
 
                 case IInstanceReferenceOperation instanceReference:
@@ -182,6 +183,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                             analysisEntity = AnalysisEntity.Create(instanceReference, instanceLocation);
                         }
                     }
+
                     break;
 
                 case IConversionOperation conversion:
@@ -277,6 +279,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                         symbol = fieldReference.Field.ContainingType.GetUnderlyingValueTupleTypeOrThis().GetMembers(name).OfType<IFieldSymbol>().FirstOrDefault()
                             ?? symbol;
                     }
+
                     break;
 
                 case IEventReferenceOperation eventReference:
@@ -290,13 +293,14 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     // 3) Properties with a backing field (auto-generated properties)
                     if (!propertyReference.Arguments.IsEmpty ||
                         propertyReference.Property.IsReadOnly ||
-                        propertyReference.Property.IsPropertyWithBackingField())
+                        propertyReference.Property.IsPropertyWithBackingField(out _))
                     {
                         symbol = propertyReference.Property;
                         indices = !propertyReference.Arguments.IsEmpty ?
                             CreateAbstractIndices(propertyReference.Arguments.Select(a => a.Value).ToImmutableArray()) :
                             ImmutableArray<AbstractIndex>.Empty;
                     }
+
                     break;
             }
         }

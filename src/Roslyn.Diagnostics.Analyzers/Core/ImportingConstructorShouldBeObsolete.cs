@@ -15,6 +15,8 @@ namespace Roslyn.Diagnostics.Analyzers
     using static RoslynDiagnosticsAnalyzersResources;
 
     /// <summary>
+    /// RS0033: <inheritdoc cref="ImportingConstructorShouldBeObsoleteTitle"/>
+    /// 
     /// The importing constructor for a MEF-exported type should be marked obsolete.
     ///
     /// <code>
@@ -24,7 +26,7 @@ namespace Roslyn.Diagnostics.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ImportingConstructorShouldBeObsolete : DiagnosticAnalyzer
     {
-        internal static DiagnosticDescriptor Rule = new(
+        internal static readonly DiagnosticDescriptor Rule = new(
             RoslynDiagnosticIds.ImportingConstructorShouldBeObsoleteRuleId,
             CreateLocalizableResourceString(nameof(ImportingConstructorShouldBeObsoleteTitle)),
             CreateLocalizableResourceString(nameof(ImportingConstructorShouldBeObsoleteMessage)),

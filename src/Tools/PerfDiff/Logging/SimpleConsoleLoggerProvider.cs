@@ -6,7 +6,7 @@ using System.CommandLine;
 
 namespace PerfDiff.Logging
 {
-    internal class SimpleConsoleLoggerProvider : ILoggerProvider
+    internal sealed class SimpleConsoleLoggerProvider : ILoggerProvider
     {
         private readonly IConsole _console;
         private readonly LogLevel _minimalLogLevel;

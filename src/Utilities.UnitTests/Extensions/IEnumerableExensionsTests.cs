@@ -83,7 +83,7 @@ namespace Analyzer.Utilities.Extensions
         }
 
 #pragma warning disable CA1010 // Collections should implement generic interface
-        private class Collection : ICollection, IEnumerable<int>
+        private sealed class Collection : ICollection, IEnumerable<int>
         {
             public Collection(int count) => this.Count = count > 0 ? count : 0;
             public int Count { get; }
@@ -125,7 +125,7 @@ namespace Analyzer.Utilities.Extensions
             Assert.Equal(result, IEnumerableExtensions.HasFewerThan(new IntCollection(count), 2));
         }
 
-        private class IntCollection : ICollection<int>
+        private sealed class IntCollection : ICollection<int>
         {
             public IntCollection(int count) => this.Count = count > 0 ? count : 0;
             public int Count { get; }
@@ -137,6 +137,16 @@ namespace Analyzer.Utilities.Extensions
             public IEnumerator<int> GetEnumerator() => throw new NotImplementedException();
             public bool Remove(int item) => throw new NotImplementedException();
             IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
+        }
+
+        [Fact]
+        public void Concat_WhenCollectionIsNull_ThrowsDirectly()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                IEnumerable<int> collection = null;
+                collection.Concat(1);
+            });
         }
     }
 }

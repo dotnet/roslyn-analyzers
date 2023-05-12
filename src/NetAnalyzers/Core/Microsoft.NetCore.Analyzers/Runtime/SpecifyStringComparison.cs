@@ -54,7 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var stringType = context.Compilation.GetSpecialType(SpecialType.System_String);
 
             // Without these symbols the rule cannot run
-            if (stringComparisonType == null || stringType == null)
+            if (stringComparisonType == null)
             {
                 return;
             }
@@ -83,17 +83,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // Report correctness issue CA1310 for known string comparison methods that default to culture specific string comparison:
-                // https://docs.microsoft.com/dotnet/standard/base-types/best-practices-strings#string-comparisons-that-use-the-current-culture
+                // https://learn.microsoft.com/dotnet/standard/base-types/best-practices-strings#string-comparisons-that-use-the-current-culture
                 if (targetMethod.ContainingType.SpecialType == SpecialType.System_String &&
                     !overloadMap.IsEmpty &&
-                    overloadMap.ContainsKey(targetMethod))
+                    overloadMap.TryGetValue(targetMethod, out var overloadMethod))
                 {
                     ReportDiagnostic(
                         Rule_CA1310,
                         oaContext,
                         invocationExpression,
                         targetMethod,
-                        overloadMap[targetMethod]);
+                        overloadMethod);
 
                     return;
                 }
@@ -101,7 +101,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // Report maintainability issue CA1307 for any method that has an additional overload with the exact same parameter list,
                 // plus as additional StringComparison parameter. Default StringComparison may or may not match user's intent,
                 // but it is recommended to explicitly specify it for clarity and readability:
-                // https://docs.microsoft.com/dotnet/standard/base-types/best-practices-strings#recommendations-for-string-usage
+                // https://learn.microsoft.com/dotnet/standard/base-types/best-practices-strings#recommendations-for-string-usage
                 IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>();
                 if (methodsWithSameNameAsTargetMethod.HasMoreThan(1))
                 {

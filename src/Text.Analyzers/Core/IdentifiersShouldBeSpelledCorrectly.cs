@@ -16,7 +16,7 @@ namespace Text.Analyzers
     using static TextAnalyzersResources;
 
     /// <summary>
-    /// CA1704: Identifiers should be spelled correctly
+    /// CA1704: <inheritdoc cref="IdentifiersShouldBeSpelledCorrectlyTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class IdentifiersShouldBeSpelledCorrectlyAnalyzer : DiagnosticAnalyzer
@@ -26,11 +26,11 @@ namespace Text.Analyzers
         private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyTitle));
         private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyDescription));
 
-        private static readonly SourceTextValueProvider<CodeAnalysisDictionary> s_xmlDictionaryProvider = new(ParseXmlDictionary);
-        private static readonly SourceTextValueProvider<CodeAnalysisDictionary> s_dicDictionaryProvider = new(ParseDicDictionary);
+        private static readonly SourceTextValueProvider<(CodeAnalysisDictionary dictionary, Exception? exception)> s_xmlDictionaryProvider = new(static text => ParseDictionary(text, isXml: true));
+        private static readonly SourceTextValueProvider<(CodeAnalysisDictionary dictionary, Exception? exception)> s_dicDictionaryProvider = new(static text => ParseDictionary(text, isXml: false));
         private static readonly CodeAnalysisDictionary s_mainDictionary = GetMainDictionary();
 
-        internal static DiagnosticDescriptor FileParseRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor FileParseRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyFileParse)),
@@ -40,7 +40,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor AssemblyRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor AssemblyRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageAssembly)),
@@ -50,7 +50,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor NamespaceRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor NamespaceRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageNamespace)),
@@ -60,7 +60,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor TypeRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor TypeRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageType)),
@@ -70,7 +70,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor VariableRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor VariableRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageVariable)),
@@ -80,7 +80,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor MemberRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor MemberRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageMember)),
@@ -90,7 +90,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor MemberParameterRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor MemberParameterRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageMemberParameter)),
@@ -100,7 +100,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor DelegateParameterRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor DelegateParameterRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageDelegateParameter)),
@@ -110,7 +110,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor TypeTypeParameterRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor TypeTypeParameterRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageTypeTypeParameter)),
@@ -120,7 +120,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor MethodTypeParameterRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor MethodTypeParameterRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageMethodTypeParameter)),
@@ -130,7 +130,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor AssemblyMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor AssemblyMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageAssemblyMoreMeaningfulName)),
@@ -140,7 +140,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor NamespaceMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor NamespaceMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageNamespaceMoreMeaningfulName)),
@@ -150,7 +150,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor TypeMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor TypeMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageTypeMoreMeaningfulName)),
@@ -160,7 +160,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor MemberMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor MemberMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageMemberMoreMeaningfulName)),
@@ -170,7 +170,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor MemberParameterMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor MemberParameterMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageMemberParameterMoreMeaningfulName)),
@@ -180,7 +180,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor DelegateParameterMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor DelegateParameterMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageDelegateParameterMoreMeaningfulName)),
@@ -190,7 +190,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor TypeTypeParameterMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor TypeTypeParameterMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageTypeTypeParameterMoreMeaningfulName)),
@@ -200,7 +200,7 @@ namespace Text.Analyzers
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor MethodTypeParameterMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor MethodTypeParameterMoreMeaningfulNameRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             CreateLocalizableResourceString(nameof(IdentifiersShouldBeSpelledCorrectlyMessageMethodTypeParameterMoreMeaningfulName)),
@@ -238,14 +238,15 @@ namespace Text.Analyzers
             context.RegisterCompilationStartAction(OnCompilationStart);
         }
 
-        private static void OnCompilationStart(CompilationStartAnalysisContext compilationStartContext)
+        private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            var dictionaries = ReadDictionaries();
-            var projectDictionary = CodeAnalysisDictionary.CreateFromDictionaries(dictionaries.Concat(s_mainDictionary));
+            var cancellationToken = context.CancellationToken;
 
-            compilationStartContext.RegisterOperationAction(AnalyzeVariable, OperationKind.VariableDeclarator);
-            compilationStartContext.RegisterCompilationEndAction(AnalyzeAssembly);
-            compilationStartContext.RegisterSymbolAction(
+            var dictionaries = ReadDictionaries().Add(s_mainDictionary);
+
+            context.RegisterOperationAction(AnalyzeVariable, OperationKind.VariableDeclarator);
+            context.RegisterCompilationEndAction(AnalyzeAssembly);
+            context.RegisterSymbolAction(
                 AnalyzeSymbol,
                 SymbolKind.Namespace,
                 SymbolKind.NamedType,
@@ -255,45 +256,31 @@ namespace Text.Analyzers
                 SymbolKind.Field,
                 SymbolKind.Parameter);
 
-            IEnumerable<CodeAnalysisDictionary> ReadDictionaries()
+            ImmutableArray<CodeAnalysisDictionary> ReadDictionaries()
             {
-                var fileProvider = AdditionalFileProvider.FromOptions(compilationStartContext.Options);
+                var fileProvider = AdditionalFileProvider.FromOptions(context.Options);
                 return fileProvider.GetMatchingFiles(@"(?:dictionary|custom).*?\.(?:xml|dic)$")
-                    .Select(CreateDictionaryFromAdditionalText)
+                    .Select(GetOrCreateDictionaryFromAdditionalText)
                     .Where(x => x != null)
-                    .ToList();
+                    .ToImmutableArray();
+            }
 
-                CodeAnalysisDictionary CreateDictionaryFromAdditionalText(AdditionalText additionalFile)
+            CodeAnalysisDictionary GetOrCreateDictionaryFromAdditionalText(AdditionalText additionalText)
+            {
+                var isXml = additionalText.Path.EndsWith(".xml", StringComparison.OrdinalIgnoreCase);
+                var provider = isXml ? s_xmlDictionaryProvider : s_dicDictionaryProvider;
+
+                var (dictionary, exception) = context.TryGetValue(additionalText.GetText(cancellationToken), provider, out var result)
+                    ? result
+                    : default;
+
+                if (exception != null)
                 {
-                    var text = additionalFile.GetText(compilationStartContext.CancellationToken);
-                    var isXml = additionalFile.Path.EndsWith(".xml", StringComparison.OrdinalIgnoreCase);
-                    var provider = isXml ? s_xmlDictionaryProvider : s_dicDictionaryProvider;
-
-                    if (!compilationStartContext.TryGetValue(text, provider, out var dictionary))
-                    {
-                        try
-                        {
-                            // Annoyingly (and expectedly), TryGetValue swallows the parsing exception,
-                            // so we have to parse again to get it.
-                            var unused = isXml ? ParseXmlDictionary(text) : ParseDicDictionary(text);
-                            ReportFileParseDiagnostic(additionalFile.Path, "Unknown error");
-                        }
-#pragma warning disable CA1031 // Do not catch general exception types
-                        catch (Exception ex)
-#pragma warning restore CA1031 // Do not catch general exception types
-                        {
-                            ReportFileParseDiagnostic(additionalFile.Path, ex.Message);
-                        }
-                    }
-
-                    return dictionary;
+                    var diagnostic = Diagnostic.Create(FileParseRule, Location.None, additionalText.Path, exception.Message);
+                    context.RegisterCompilationEndAction(x => x.ReportDiagnostic(diagnostic));
                 }
 
-                void ReportFileParseDiagnostic(string filePath, string message)
-                {
-                    var diagnostic = Diagnostic.Create(FileParseRule, Location.None, filePath, message);
-                    compilationStartContext.RegisterCompilationEndAction(x => x.ReportDiagnostic(diagnostic));
-                }
+                return dictionary!;
             }
 
             void AnalyzeVariable(OperationAnalysisContext operationContext)
@@ -360,6 +347,18 @@ namespace Text.Analyzers
                         }
 
                         break;
+
+                    case IParameterSymbol parameter:
+                        //check if the member this parameter is part of is an override/interface implementation
+                        if (parameter.ContainingSymbol.IsImplementationOfAnyImplicitInterfaceMember() || parameter.ContainingSymbol.IsImplementationOfAnyExplicitInterfaceMember() || parameter.ContainingSymbol.IsOverride)
+                        {
+                            if (NameMatchesBase(parameter))
+                            {
+                                return;
+                            }
+                        }
+
+                        break;
                 }
 
                 ReportDiagnosticsForSymbol(symbol, symbolName, symbolContext.ReportDiagnostic);
@@ -397,7 +396,49 @@ namespace Text.Analyzers
             static bool IsWordNumeric(string word) => char.IsDigit(word[0]);
 
             bool IsWordSpelledCorrectly(string word)
-                => !projectDictionary.UnrecognizedWords.Contains(word) && projectDictionary.RecognizedWords.Contains(word);
+            {
+                return !dictionaries.Any(static (d, word) => d.ContainsUnrecognizedWord(word), word) && dictionaries.Any(static (d, word) => d.ContainsRecognizedWord(word), word);
+            }
+        }
+
+        /// <summary>
+        /// check if the parameter matches the name of the parameter in any base implementation
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        private static bool NameMatchesBase(IParameterSymbol parameter)
+        {
+            if (parameter.ContainingSymbol is IMethodSymbol methodSymbol)
+            {
+                ImmutableArray<IMethodSymbol> originalDefinitions = methodSymbol.GetOriginalDefinitions();
+
+                foreach (var methodDefinition in originalDefinitions)
+                {
+                    if (methodDefinition.Parameters.Length > parameter.Ordinal)
+                    {
+                        if (methodDefinition.Parameters[parameter.Ordinal].Name == parameter.Name)
+
+                            return true;
+                    }
+                }
+            }
+            else if (parameter.ContainingSymbol is IPropertySymbol propertySymbol)
+            {
+                ImmutableArray<IPropertySymbol> originalDefinitions = propertySymbol.GetOriginalDefinitions();
+
+                foreach (var propertyDefinition in originalDefinitions)
+                {
+                    if (propertyDefinition.Parameters.Length > parameter.Ordinal)
+                    {
+                        if (propertyDefinition.Parameters[parameter.Ordinal].Name == parameter.Name)
+
+                            return true;
+                    }
+                }
+            }
+
+            //name either does not match or there was an issue getting the base implementation
+            return false;
         }
 
         private static CodeAnalysisDictionary GetMainDictionary()
@@ -414,6 +455,20 @@ namespace Text.Analyzers
             // Added the words: 'namespace'
             var text = SourceText.From(TextAnalyzersResources.Dictionary);
             return ParseDicDictionary(text);
+        }
+
+        private static (CodeAnalysisDictionary dictionary, Exception? exception) ParseDictionary(SourceText text, bool isXml)
+        {
+            try
+            {
+                return (isXml ? ParseXmlDictionary(text) : ParseDicDictionary(text), exception: null);
+            }
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
+            {
+                return (null!, ex);
+            }
         }
 
         private static CodeAnalysisDictionary ParseXmlDictionary(SourceText text)

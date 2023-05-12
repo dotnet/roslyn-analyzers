@@ -5,28 +5,10 @@
     {
       "tool": {
         "name": "Roslyn.Diagnostics.Analyzers",
-        "version": "3.3.3",
+        "version": "3.3.5",
         "language": "en-US"
       },
       "rules": {
-        "RS0005": {
-          "id": "RS0005",
-          "shortDescription": "Do not use generic 'CodeAction.Create' to create 'CodeAction'",
-          "fullDescription": "Do not use generic 'CodeAction.Create' to create 'CodeAction'",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "RoslynDiagnosticsPerformance",
-            "isEnabledByDefault": true,
-            "typeName": "CodeActionCreateAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
         "RS0006": {
           "id": "RS0006",
           "shortDescription": "Do not mix attributes from different versions of MEF",
@@ -101,7 +83,7 @@
         },
         "RS0034": {
           "id": "RS0034",
-          "shortDescription": "Exported parts should be marked with 'ImportingConstructorAttribute'",
+          "shortDescription": "Exported parts should have a public constructor marked with 'ImportingConstructorAttribute'",
           "fullDescription": "Exported parts should be marked with 'ImportingConstructorAttribute'.",
           "defaultLevel": "warning",
           "properties": {
@@ -175,7 +157,7 @@
     {
       "tool": {
         "name": "Roslyn.Diagnostics.CSharp.Analyzers",
-        "version": "3.3.3",
+        "version": "3.3.5",
         "language": "en-US"
       },
       "rules": {
@@ -287,7 +269,7 @@
     {
       "tool": {
         "name": "Roslyn.Diagnostics.VisualBasic.Analyzers",
-        "version": "3.3.3",
+        "version": "3.3.5",
         "language": "en-US"
       },
       "rules": {

@@ -12,6 +12,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     using static MicrosoftCodeQualityAnalyzersResources;
 
+    /// <summary>
+    /// CA1021: <inheritdoc cref="AvoidOutParametersTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AvoidOutParameters : DiagnosticAnalyzer
     {
@@ -35,12 +38,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterCompilationStartAction(csac =>
+            context.RegisterCompilationStartAction(context =>
             {
-                var outAttributeType = csac.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesOutAttribute);
+                var outAttributeType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesOutAttribute);
                 var analyzer = new MethodAnalyzer(outAttributeType);
 
-                csac.RegisterSymbolAction(analyzer.Analyze, SymbolKind.Method);
+                context.RegisterSymbolAction(analyzer.Analyze, SymbolKind.Method);
             });
         }
 
@@ -56,8 +59,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             public void Analyze(SymbolAnalysisContext analysisContext)
             {
                 var methodSymbol = (IMethodSymbol)analysisContext.Symbol;
-
-                if (!analysisContext.Options.MatchesConfiguredVisibility(Rule, methodSymbol, analysisContext.Compilation))
+                if (methodSymbol.IsOverride ||
+                    !analysisContext.Options.MatchesConfiguredVisibility(Rule, methodSymbol, analysisContext.Compilation) ||
+                    methodSymbol.IsImplementationOfAnyInterfaceMember())
                 {
                     return;
                 }

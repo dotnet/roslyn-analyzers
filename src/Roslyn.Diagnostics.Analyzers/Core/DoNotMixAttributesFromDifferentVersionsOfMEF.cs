@@ -16,12 +16,12 @@ namespace Roslyn.Diagnostics.Analyzers
     using static RoslynDiagnosticsAnalyzersResources;
 
     /// <summary>
-    /// RS0006: Do not mix attributes from different versions of MEF
+    /// RS0006: <inheritdoc cref="DoNotMixAttributesFromDifferentVersionsOfMEFTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotMixAttributesFromDifferentVersionsOfMEFAnalyzer : DiagnosticAnalyzer
     {
-        internal static DiagnosticDescriptor Rule = new(
+        internal static readonly DiagnosticDescriptor Rule = new(
             RoslynDiagnosticIds.MixedVersionsOfMefAttributesRuleId,
             CreateLocalizableResourceString(nameof(DoNotMixAttributesFromDifferentVersionsOfMEFTitle)),
             CreateLocalizableResourceString(nameof(DoNotMixAttributesFromDifferentVersionsOfMEFMessage)),

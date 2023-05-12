@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
-    /// CA2016: Forward CancellationToken to invocations.
+    /// CA2016: <inheritdoc cref="ForwardCancellationTokenToInvocationsTitle"/>
     /// 
     /// Conditions for positive cases:
     ///     - The containing method signature receives a ct parameter. It can be a method, a nested method, an action or a func.
@@ -63,7 +63,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterCompilationStartAction(context => AnalyzeCompilationStart(context));
+            context.RegisterCompilationStartAction(AnalyzeCompilationStart);
         }
 
         private void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
@@ -135,7 +135,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             // Verify that the current invocation is not passing an explicit token already
             if (AnyArgument(invocation.Arguments,
-                            a => a.Parameter.Type.Equals(cancellationTokenType) && !a.IsImplicit))
+                            a => cancellationTokenType.Equals(a.Parameter?.Type) && !a.IsImplicit))
             {
                 return false;
             }
@@ -300,6 +300,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     arguments,
                     a => a.Parameter.Type.Equals(cancellationTokenType) && a.ArgumentKind == ArgumentKind.DefaultValue);
             }
+
             return false;
         }
 

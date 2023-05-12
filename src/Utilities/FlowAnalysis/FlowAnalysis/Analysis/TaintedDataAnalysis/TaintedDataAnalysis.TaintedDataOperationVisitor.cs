@@ -184,10 +184,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     TaintedDataAbstractValue childValue = Visit(childOperation, argument);
                     if (childValue.Kind == TaintedDataAbstractValueKind.Tainted)
                     {
-                        if (taintedValues == null)
-                        {
-                            taintedValues = new List<TaintedDataAbstractValue>();
-                        }
+                        taintedValues ??= new List<TaintedDataAbstractValue>();
 
                         taintedValues.Add(childValue);
                     }
@@ -487,7 +484,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 
                 IEnumerable<TaintedDataAbstractValue> taintedAbstractValues =
                     operation.ElementValues
-                        .Select<IOperation, TaintedDataAbstractValue>(e => this.GetCachedAbstractValue(e))
+                        .Select<IOperation, TaintedDataAbstractValue>(this.GetCachedAbstractValue)
                         .Where(v => v.Kind == TaintedDataAbstractValueKind.Tainted);
                 if (baseAbstractValue.Kind == TaintedDataAbstractValueKind.Tainted)
                 {
@@ -645,10 +642,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     {
                         if (methodMatcher(method.Name, arguments))
                         {
-                            if (taintedParameterPairs == null)
-                            {
-                                taintedParameterPairs = PooledHashSet<(string, string)>.GetInstance();
-                            }
+                            taintedParameterPairs ??= PooledHashSet<(string, string)>.GetInstance();
 
                             taintedParameterPairs.UnionWith(sourceToEnds.Where(s => taintedParameterNames.Contains(s.source)));
                         }

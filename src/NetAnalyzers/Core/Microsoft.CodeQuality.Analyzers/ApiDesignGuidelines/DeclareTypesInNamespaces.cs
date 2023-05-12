@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1050: Declare types in namespaces
+    /// CA1050: <inheritdoc cref="DeclareTypesInNamespacesTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DeclareTypesInNamespacesAnalyzer : DiagnosticAnalyzer
@@ -35,16 +35,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterSymbolAction(context => AnalyzeSymbol(context), SymbolKind.NamedType);
+            context.RegisterSymbolAction(AnalyzeNamedType, SymbolKind.NamedType);
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext context)
+        private static void AnalyzeNamedType(SymbolAnalysisContext context)
         {
-            ISymbol type = context.Symbol;
+            var type = (INamedTypeSymbol)context.Symbol;
 
             if (type.DeclaredAccessibility == Accessibility.Public &&
                 type.ContainingType == null &&
-                type.ContainingNamespace.IsGlobalNamespace)
+                type.ContainingNamespace.IsGlobalNamespace &&
+                !type.IsTopLevelStatementsEntryPointType())
             {
                 context.ReportDiagnostic(type.CreateDiagnostic(Rule));
             }

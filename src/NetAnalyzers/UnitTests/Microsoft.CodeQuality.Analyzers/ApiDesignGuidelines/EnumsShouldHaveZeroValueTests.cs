@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -448,46 +449,150 @@ End Enum
             await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
+        [Theory, WorkItem(5777, "https://github.com/dotnet/roslyn-analyzers/issues/5777")]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.additional_enum_none_names = Never")]
+        [InlineData("dotnet_code_quality.CA1008.additional_enum_none_names = Never")]
+        [InlineData("dotnet_code_quality.additional_enum_none_names = Never|Zero")]
+        [InlineData("dotnet_code_quality.CA1008.additional_enum_none_names = Never|Zero")]
+        public async Task EnumNoneValueMatchesUserOption(string editorConfigText)
+        {
+            var csTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System;
+
+[Flags]
+public enum E1
+{
+    None = 0,
+    A = 1
+}
+
+[Flags]
+public enum E2
+{
+    Never = 0,
+    A = 1
+}
+
+[Flags]
+public enum E3
+{
+    Zero = 0,
+    A = 1
+}"},
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
+                },
+            };
+
+            if (editorConfigText.Length == 0)
+            {
+                csTest.ExpectedDiagnostics.Add(GetCSharpRenameResultAt(14, 5, "E2", "Never"));
+            }
+
+            if (!editorConfigText.EndsWith("Zero", StringComparison.Ordinal))
+            {
+                csTest.ExpectedDiagnostics.Add(GetCSharpRenameResultAt(21, 5, "E3", "Zero"));
+            }
+
+            await csTest.RunAsync();
+
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+Imports System
+
+<System.Flags>
+Public Enum E
+    None = 0
+    A = 1
+End Enum
+
+<Flags>
+Public Enum E2
+    Never = 0
+    A = 1
+End Enum
+
+<Flags>
+Public Enum E3
+    Zero = 0
+    A = 1
+End Enum"},
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
+                },
+            };
+
+            if (editorConfigText.Length == 0)
+            {
+                vbTest.ExpectedDiagnostics.Add(GetCSharpRenameResultAt(12, 5, "E2", "Never"));
+            }
+
+            if (!editorConfigText.EndsWith("Zero", StringComparison.Ordinal))
+            {
+                vbTest.ExpectedDiagnostics.Add(GetCSharpRenameResultAt(18, 5, "E3", "Zero"));
+            }
+
+            await vbTest.RunAsync();
+        }
+
         private static DiagnosticResult GetCSharpMultipleZeroResultAt(int line, int column, string typeName)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZero)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(typeName);
 
         private static DiagnosticResult GetBasicMultipleZeroResultAt(int line, int column, string typeName)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZero)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(typeName);
 
         private static DiagnosticResult GetCSharpNoZeroResultAt(int line, int column, string typeName)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleNoZero)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(typeName);
 
         private static DiagnosticResult GetBasicNoZeroResultAt(int line, int column, string typeName)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleNoZero)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(typeName);
 
         private static DiagnosticResult GetCSharpRenameResultAt(int line, int column, string typeName, string newName)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(typeName, newName);
 
         private static DiagnosticResult GetBasicRenameResultAt(int line, int column, string typeName, string newName)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(typeName, newName);
     }
 }

@@ -41,10 +41,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                     return typeSyntax;
 
                 typeSyntax = CreateSimpleTypeSyntax(symbol);
-                if (!(typeSyntax is SimpleNameSyntax))
+                if (typeSyntax is not SimpleNameSyntax simpleNameSyntax)
                     return typeSyntax;
 
-                var simpleNameSyntax = (SimpleNameSyntax)typeSyntax;
                 if (symbol.ContainingType is not null)
                 {
                     if (symbol.ContainingType.TypeKind != TypeKind.Submission)
@@ -142,7 +141,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
                 var typeArguments = symbol.IsUnboundGenericType
                     ? Enumerable.Repeat((TypeSyntax)OmittedTypeArgument(), symbol.TypeArguments.Length)
-                    : symbol.TypeArguments.Select(t => GetTypeSyntaxForSymbol(t));
+                    : symbol.TypeArguments.Select(GetTypeSyntaxForSymbol);
 
                 return GenericName(
                     ToIdentifierToken(symbol.Name),
@@ -221,7 +220,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 var nullIndex = identifier.IndexOf('\0');
                 if (nullIndex >= 0)
                 {
-                    identifier = identifier.Substring(0, nullIndex);
+                    identifier = identifier[..nullIndex];
                 }
 
                 var needsEscaping = SyntaxFacts.GetKeywordKind(identifier) != SyntaxKind.None;

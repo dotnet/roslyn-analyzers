@@ -137,13 +137,13 @@ namespace Analyzer.Utilities
 
             if (balance == -2)
             {
-                rotated = currentNode.Right!.Balance < 0 ?
+                rotated = currentNode.Right!.Balance <= 0 ?
                     LeftSimple(currentNode) :
                     LeftComplex(currentNode);
             }
             else if (balance == 2)
             {
-                rotated = currentNode.Left!.Balance > 0 ?
+                rotated = currentNode.Left!.Balance >= 0 ?
                     RightSimple(currentNode) :
                     RightComplex(currentNode);
             }
@@ -167,7 +167,8 @@ namespace Analyzer.Utilities
 
         private static int Height(AvlNode? node)
         {
-            if (node == null) return 0;
+            if (node == null)
+                return 0;
 
             int a = Height(node.Left);
             int b = Height(node.Right);
@@ -290,7 +291,8 @@ namespace Analyzer.Utilities
             public static int AssertBalanced(AvlNode? V)
 #pragma warning restore CA1000 // Do not declare static members on generic types
             {
-                if (V == null) return 0;
+                if (V == null)
+                    return 0;
 
                 int a = AssertBalanced(V.Left);
                 int b = AssertBalanced(V.Right);
@@ -611,7 +613,7 @@ namespace Analyzer.Utilities
         public KeyCollection Keys => new(this);
 
 #pragma warning disable CA1815 // Override equals and operator equals on value types
-        internal struct KeyCollection : IEnumerable<K>
+        internal readonly struct KeyCollection : IEnumerable<K>
         {
             private readonly SmallDictionary<K, V> _dict;
 
@@ -665,17 +667,17 @@ namespace Analyzer.Utilities
                     _current = curr;
                     _next = curr.Next;
 
-                    PushIfNotNull(curr.Left);
-                    PushIfNotNull(curr.Right);
+                    PushIfNotNull(_stack, curr.Left);
+                    PushIfNotNull(_stack, curr.Right);
 
                     return true;
-                }
 
-                private void PushIfNotNull(AvlNode? child)
-                {
-                    if (child != null)
+                    static void PushIfNotNull(Stack<AvlNode> stack, AvlNode? child)
                     {
-                        _stack!.Push(child);
+                        if (child != null)
+                        {
+                            stack.Push(child);
+                        }
                     }
                 }
             }
@@ -686,7 +688,7 @@ namespace Analyzer.Utilities
             }
 
 #pragma warning disable CA1063, CA1816 // Implement IDisposable Correctly
-            public class EnumerableCore : IEnumerator<K>
+            public sealed class EnumerableCore : IEnumerator<K>
             {
                 private Enumerator _e;
 
@@ -727,7 +729,7 @@ namespace Analyzer.Utilities
 
         public ValueCollection Values => new(this);
 
-        internal struct ValueCollection : IEnumerable<V>
+        internal readonly struct ValueCollection : IEnumerable<V>
         {
             private readonly SmallDictionary<K, V> _dict;
 
@@ -783,17 +785,17 @@ namespace Analyzer.Utilities
                     _current = curr;
                     _next = curr.Next;
 
-                    PushIfNotNull(curr.Left);
-                    PushIfNotNull(curr.Right);
+                    PushIfNotNull(_stack, curr.Left);
+                    PushIfNotNull(_stack, curr.Right);
 
                     return true;
-                }
 
-                private void PushIfNotNull(AvlNode? child)
-                {
-                    if (child != null)
+                    static void PushIfNotNull(Stack<AvlNode> stack, AvlNode? child)
                     {
-                        _stack!.Push(child);
+                        if (child != null)
+                        {
+                            stack.Push(child);
+                        }
                     }
                 }
             }
@@ -803,7 +805,7 @@ namespace Analyzer.Utilities
                 return new Enumerator(_dict);
             }
 
-            public class EnumerableCore : IEnumerator<V>
+            public sealed class EnumerableCore : IEnumerator<V>
             {
                 private Enumerator _e;
 
@@ -889,17 +891,17 @@ namespace Analyzer.Utilities
                 _current = curr;
                 _next = curr.Next;
 
-                PushIfNotNull(curr.Left);
-                PushIfNotNull(curr.Right);
+                PushIfNotNull(_stack, curr.Left);
+                PushIfNotNull(_stack, curr.Right);
 
                 return true;
-            }
 
-            private void PushIfNotNull(AvlNode? child)
-            {
-                if (child != null)
+                static void PushIfNotNull(Stack<AvlNode> stack, AvlNode? child)
                 {
-                    _stack!.Push(child);
+                    if (child != null)
+                    {
+                        stack.Push(child);
+                    }
                 }
             }
         }
@@ -909,7 +911,7 @@ namespace Analyzer.Utilities
             return new Enumerator(this);
         }
 
-        public class EnumerableCore : IEnumerator<KeyValuePair<K, V>>
+        public sealed class EnumerableCore : IEnumerator<KeyValuePair<K, V>>
         {
             private Enumerator _e;
 

@@ -14,6 +14,10 @@ namespace Microsoft.NetCore.Analyzers.Tasks
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
+    /// <summary>
+    /// CA1842: <inheritdoc cref="DoNotUseWhenAllWithSingleTaskTitle"/>
+    /// CA1843: <inheritdoc cref="DoNotUseWaitAllWithSingleTaskTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class DoNotUseWhenAllOrWaitAllWithSingleArgument : DiagnosticAnalyzer
     {
@@ -38,7 +42,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(WhenAllRule, WaitAllRule);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(WhenAllRule, WaitAllRule);
 
         public sealed override void Initialize(AnalysisContext context)
         {
@@ -103,7 +107,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
             if (argument.Value is not IArrayCreationOperation
                 {
                     IsImplicit: true,
-                    Initializer: { ElementValues: { Length: 1 } initializerValues }
+                    Initializer.ElementValues: { Length: 1 } initializerValues
                 })
             {
                 return false;

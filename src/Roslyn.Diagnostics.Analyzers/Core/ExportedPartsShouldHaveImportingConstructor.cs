@@ -17,13 +17,14 @@ namespace Roslyn.Diagnostics.Analyzers
     using static RoslynDiagnosticsAnalyzersResources;
 
     /// <summary>
+    /// RS0034: <inheritdoc cref="ExportedPartsShouldHaveImportingConstructorTitle"/>
     /// MEF-exported types should have exactly one constructor, which should be explicitly defined and marked with
     /// <see cref="ImportingConstructorAttribute"/>.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ExportedPartsShouldHaveImportingConstructor : DiagnosticAnalyzer
     {
-        internal static DiagnosticDescriptor Rule = new(
+        internal static readonly DiagnosticDescriptor Rule = new(
             RoslynDiagnosticIds.ExportedPartsShouldHaveImportingConstructorRuleId,
             CreateLocalizableResourceString(nameof(ExportedPartsShouldHaveImportingConstructorTitle)),
             CreateLocalizableResourceString(nameof(ExportedPartsShouldHaveImportingConstructorMessage)),

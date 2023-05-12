@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Composition;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -13,11 +12,12 @@ using static Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA1840: Reports a diagnostic if a class that directly subclasses <see cref="System.IO.Stream"/> overrides 
+    /// CA1840: <inheritdoc cref="ProvideStreamMemoryBasedAsyncOverridesTitle"/>
+    /// Reports a diagnostic if a class that directly subclasses <see cref="System.IO.Stream"/> overrides 
     /// <see cref="System.IO.Stream.ReadAsync(byte[], int, int)"/> and/or <see cref="System.IO.Stream.WriteAsync(byte[], int, int)"/>, 
-    /// and does not override the corrasponding memory-based version.
+    /// and does not override the corresponding memory-based version.
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ProvideStreamMemoryBasedAsyncOverrides : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1844";
@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         private const string ReadAsyncName = nameof(System.IO.Stream.ReadAsync);
         private const string WriteAsyncName = nameof(System.IO.Stream.WriteAsync);

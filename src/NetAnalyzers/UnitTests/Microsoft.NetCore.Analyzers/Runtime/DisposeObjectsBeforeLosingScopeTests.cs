@@ -26,17 +26,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public partial class DisposeObjectsBeforeLosingScopeTests
     {
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
            => VerifyCS.Diagnostic(rule)
                .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyVB.Diagnostic(rule)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arguments);
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, string allocationText) =>
@@ -1467,7 +1467,7 @@ End Class
         [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
         internal async Task DocsMicrosoft_SampleAsync(DisposeAnalysisKind disposeAnalysisKind)
         {
-            // See https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2000
+            // See https://learn.microsoft.com/visualstudio/code-quality/ca2000
 
             var editorConfigFile = GetEditorConfigContent(disposeAnalysisKind);
 
@@ -12598,6 +12598,59 @@ class Program
         return disposables[0] ?? new Process();
     }
 }");
+        }
+
+        [Fact, WorkItem(4147, "https://github.com/dotnet/roslyn-analyzers/issues/4147")]
+        public async Task Dispose_ValueIsObviouslyMemoryStream_NoDiagnosticAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+    using System;
+    using System.IO;
+
+    class Program
+    {
+        public void TestCa2000()
+        {
+            var ms = new MemoryStream();
+            return;
+        }
+    }");
+        }
+
+        [WorkItem(4981, "https://github.com/dotnet/roslyn-analyzers/issues/4981")]
+        [Theory]
+        [InlineData("ms != null")]
+        [InlineData("ms is not null")]
+        [InlineData("!(ms is null)")]
+        public async Task TryFinallyIsNotNull_NoDiagnostic(string condition)
+        {
+            var code = @$"
+using System.IO;
+
+class Test
+{{
+    void M1()
+    {{
+        MemoryStream ms = null;
+        try
+        {{
+            ms = new MemoryStream();
+        }}
+        finally
+        {{
+            if ({condition}) {{
+                ms.Dispose();
+            }}
+        }}
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = code,
+                LanguageVersion = CSharpLanguageVersion.CSharp9,
+            }.RunAsync();
         }
     }
 }

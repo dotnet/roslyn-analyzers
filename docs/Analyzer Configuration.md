@@ -28,7 +28,7 @@ For example, end users can configure the analyzed API surface for analyzers usin
 
 ### VS2019 16.3 and later + Analyzer package version 3.3.x and later
 
-End users can enable `.editorconfig` based configuration for individual documents, folders, projects, solution or entire repo by creating an `.editorconfig` file with the options in the corresponding directory. This file can also contain `.editorconfig` based diagnostic severity configuration entries. See [here](https://docs.microsoft.com/visualstudio/code-quality/use-roslyn-analyzers#rule-severity) for more details.
+End users can enable `.editorconfig` based configuration for individual documents, folders, projects, solution or entire repo by creating an `.editorconfig` file with the options in the corresponding directory. This file can also contain `.editorconfig` based diagnostic severity configuration entries. See [here](https://learn.microsoft.com/visualstudio/code-quality/use-roslyn-analyzers#rule-severity) for more details.
 
 ### Prior to VS2019 16.3 or using an analyzer package version prior to 3.3.x
 
@@ -46,7 +46,7 @@ End users can enable `.editorconfig` based configuration for individual document
 
 Note that this additional file based approach is also supported on VS2019 16.3 and later releases for backwards compatibility.
 
-**The additional file based approach is no longer supported starting in Microsoft.CodeAnalysis.NetAnalyzers v5.0.4. It will be implicitly discovered (if the file is in the project's directory or any ancestor directory), or it should be converted into a 'globalconfig'. See [Configuration files for code analysis rules](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files).**
+**The additional file based approach is no longer supported starting in Microsoft.CodeAnalysis.NetAnalyzers v5.0.4. It will be implicitly discovered (if the file is in the project's directory or any ancestor directory), or it should be converted into a 'globalconfig'. See [Configuration files for code analysis rules](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files).**
 
 ## Supported .editorconfig options
 
@@ -57,69 +57,73 @@ This section documents the list of supported `.editorconfig` key-value options f
 Option Name: `api_surface`
 
 Configurable Rules:
-[CA1000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1000),
-[CA1002](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1002),
-[CA1003](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1003),
-[CA1005](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1005),
-[CA1008](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1008),
-[CA1010](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1010),
-[CA1012](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1012),
-[CA1021](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1021),
-[CA1024](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1024),
-[CA1027](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1027),
-[CA1028](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1028),
-[CA1030](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1030),
-[CA1036](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1036),
-[CA1040](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1040),
-[CA1041](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1041),
-[CA1043](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1043),
-[CA1044](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1044),
-[CA1045](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1045),
-[CA1046](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1046),
-[CA1047](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1047),
-[CA1051](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1051),
-[CA1052](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1052),
-[CA1054](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1054),
-[CA1055](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055),
-[CA1056](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1056),
-[CA1058](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1058),
-[CA1063](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1063),
-[CA1068](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1068),
-[CA1070](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1070),
-[CA1700](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1700),
-[CA1707](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1707),
-[CA1708](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1708),
-[CA1710](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1710),
-[CA1711](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1711),
-[CA1714](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1714),
-[CA1715](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1715),
-[CA1716](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716),
-[CA1717](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1717),
-[CA1720](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1720),
-[CA1721](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1721),
-[CA1725](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1725),
-[CA1801](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1801),
-[CA1802](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1802),
-[CA1815](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1815),
-[CA1819](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1819),
-[CA1822](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822),
-[CA2208](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2208),
-[CA2217](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2217),
-[CA2225](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2225),
-[CA2226](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2226),
-[CA2231](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2231),
-[CA2234](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234)
+[CA1000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1000),
+[CA1002](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1002),
+[CA1003](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1003),
+[CA1005](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1005),
+[CA1008](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1008),
+[CA1010](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1010),
+[CA1012](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1012),
+[CA1021](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1021),
+[CA1024](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1024),
+[CA1027](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1027),
+[CA1028](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1028),
+[CA1030](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1030),
+[CA1036](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1036),
+[CA1040](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1040),
+[CA1041](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1041),
+[CA1043](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1043),
+[CA1044](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1044),
+[CA1045](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1045),
+[CA1046](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1046),
+[CA1047](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1047),
+[CA1051](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1051),
+[CA1052](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1052),
+[CA1054](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1054),
+[CA1055](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055),
+[CA1056](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1056),
+[CA1058](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1058),
+[CA1062](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062),
+[CA1063](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1063),
+[CA1068](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1068),
+[CA1070](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1070),
+[CA1700](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1700),
+[CA1707](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1707),
+[CA1708](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1708),
+[CA1710](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1710),
+[CA1711](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1711),
+[CA1714](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1714),
+[CA1715](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1715),
+[CA1716](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716),
+[CA1717](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1717),
+[CA1720](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1720),
+[CA1721](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1721),
+[CA1725](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1725),
+[CA1801](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1801),
+[CA1802](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1802),
+[CA1815](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1815),
+[CA1819](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1819),
+[CA1822](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822),
+[CA1859](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859),
+[CA2208](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2208),
+[CA2217](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2217),
+[CA2225](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2225),
+[CA2226](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2226),
+[CA2231](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2231),
+[CA2234](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234)
 
 Option Values:
 
 | Option Value | Summary |
 | --- | --- |
 | `public` | Analyzes public APIs that are externally visible outside the assembly. |
-| `internal` or `friend` | Analyzes internal APIs that are visible within the assembly and to assemblies with [InternalsVisibleToAttribute](https://docs.microsoft.com/dotnet/api/system.runtime.compilerservices.internalsvisibletoattribute) access. |
+| `internal` or `friend` | Analyzes internal APIs that are visible within the assembly and to assemblies with [InternalsVisibleToAttribute](https://learn.microsoft.com/dotnet/api/system.runtime.compilerservices.internalsvisibletoattribute) access. |
 | `private` | Analyzes private APIs that are only visible within the containing type. |
 | `all` | Analyzes all APIs, regardless of the symbol visibility. |
 
-Default Value: `public`
+Default Value: `public`, except as listed below
+
+  1. CA1859: default value is `private`.
 
 Example: `dotnet_code_quality.api_surface = all`
 
@@ -129,9 +133,9 @@ Users can also provide a comma separated list of above option values. For exampl
 
 Option Name: `output_kind`
 
-Configurable Rules: [CA2007](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2007)
+Configurable Rules: [CA2007](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2007)
 
-Option Values: One or more fields of enum [Microsoft.CodeAnalysis.CompilationOptions.OutputKind](https://docs.microsoft.com/dotnet/api/microsoft.codeanalysis.outputkind) as a comma separated list.
+Option Values: One or more fields of enum [Microsoft.CodeAnalysis.CompilationOptions.OutputKind](https://learn.microsoft.com/dotnet/api/microsoft.codeanalysis.outputkind) as a comma separated list.
 
 Default Value: _All output kinds_
 
@@ -141,7 +145,7 @@ Example: `dotnet_code_quality.CA2007.output_kind = ConsoleApplication, Dynamical
 
 Option Name: `required_modifiers`
 
-Configurable Rules: [CA1802](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1802)
+Configurable Rules: [CA1802](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1802)
 
 Option Values: Comma separated listed of one or more modifier values from the below table. Note that not all values are applicable for every configurable rule.
 
@@ -168,7 +172,7 @@ Example: `dotnet_code_quality.CA1802.required_modifiers = none`.
 
 Option Name: `exclude_async_void_methods`
 
-Configurable Rules: [CA2007](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2007)
+Configurable Rules: [CA2007](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2007)
 
 Option Values: `true` or `false`
 
@@ -180,7 +184,7 @@ Example: `dotnet_code_quality.CA2007.exclude_async_void_methods = true`
 
 Option Name: `exclude_single_letter_type_parameters`
 
-Configurable Rules: [CA1715](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1715)
+Configurable Rules: [CA1715](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1715)
 
 Option Values: `true` or `false`
 
@@ -192,7 +196,7 @@ Example: `dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = tru
 
 Option Name: `exclude_extension_method_this_parameter`
 
-Configurable Rules: [CA1062](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062)
+Configurable Rules: [CA1062](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062)
 
 Option Values: `true` or `false`
 
@@ -204,7 +208,7 @@ Example: `dotnet_code_quality.CA1062.exclude_extension_method_this_parameter = t
 
 Option Name: `null_check_validation_methods`
 
-Configurable Rules: [CA1062](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062)
+Configurable Rules: [CA1062](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062)
 
 Option Values: Names of null check validation methods (separated by `|`) that validate arguments passed to the method are non-null.
 Allowed method name formats:
@@ -228,7 +232,7 @@ Examples:
 
 Option Name: `additional_string_formatting_methods`
 
-Configurable Rules: [CA2241](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2241)
+Configurable Rules: [CA2241](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2241)
 
 Option Values: Names of additional string formatting methods (separated by `|`).
 Allowed method name formats:
@@ -253,7 +257,7 @@ Option Name: `try_determine_additional_string_formatting_methods_automatically`
 Boolean option to enable heuristically detecting of additional string formatting methods
 A method is considered a string formatting method if it has a `string format` parameter followed by a `params object[]` parameter.
 
-Configurable Rules: [CA2241](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2241)
+Configurable Rules: [CA2241](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2241)
 
 Option Values: `true` or `false`
 
@@ -264,49 +268,52 @@ Example: `dotnet_code_quality.try_determine_additional_string_formatting_methods
 ### Excluded symbols
 
 Configurable Rules:
-[CA1001](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1001),
-[CA1062](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062),
-[CA1068](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1068),
-[CA1303](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1303),
-[CA1304](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1304),
-[CA1508](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1508),
-[CA2000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000),
-[CA2100](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100),
-[CA2301](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2301),
-[CA2302](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302),
-[CA2311](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2311),
-[CA2312](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2312),
-[CA2321](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2321),
-[CA2322](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2322),
-[CA2327](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2327),
-[CA2328](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2328),
-[CA2329](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2329),
-[CA2330](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2330),
-[CA3001](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3001),
-[CA3002](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3002),
-[CA3003](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3003),
-[CA3004](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3004),
-[CA3005](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3005),
-[CA3006](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3006),
-[CA3007](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3007),
-[CA3008](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3008),
-[CA3009](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3009),
-[CA3010](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3010),
-[CA3011](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3011),
-[CA3012](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3012),
-[CA5361](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5361),
-[CA5376](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5376),
-[CA5377](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5377),
-[CA5378](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5378),
-[CA5380](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5380),
-[CA5381](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5381),
-[CA5382](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5382),
-[CA5383](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5383),
-[CA5384](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5384),
-[CA5387](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5387),
-[CA5388](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5388),
-[CA5389](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5389),
-[CA5390](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5390)
+[CA1001](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1001),
+[CA1054](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1054),
+[CA1055](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055),
+[CA1056](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1056),
+[CA1062](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062),
+[CA1068](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1068),
+[CA1303](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1303),
+[CA1304](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1304),
+[CA1508](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1508),
+[CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000),
+[CA2100](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100),
+[CA2301](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2301),
+[CA2302](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302),
+[CA2311](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2311),
+[CA2312](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2312),
+[CA2321](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2321),
+[CA2322](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2322),
+[CA2327](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2327),
+[CA2328](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2328),
+[CA2329](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2329),
+[CA2330](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2330),
+[CA3001](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3001),
+[CA3002](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3002),
+[CA3003](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3003),
+[CA3004](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3004),
+[CA3005](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3005),
+[CA3006](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3006),
+[CA3007](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3007),
+[CA3008](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3008),
+[CA3009](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3009),
+[CA3010](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3010),
+[CA3011](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3011),
+[CA3012](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3012),
+[CA5361](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5361),
+[CA5376](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5376),
+[CA5377](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5377),
+[CA5378](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5378),
+[CA5380](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5380),
+[CA5381](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5381),
+[CA5382](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5382),
+[CA5383](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5383),
+[CA5384](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5384),
+[CA5387](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5387),
+[CA5388](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5388),
+[CA5389](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5389),
+[CA5390](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5390)
 
 #### Excluded symbol names
 
@@ -366,7 +373,7 @@ Examples:
 
 Option Name: `unsafe_DllImportSearchPath_bits`
 
-Configurable Rules: [CA5393](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5393)
+Configurable Rules: [CA5393](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5393)
 
 Option Values: Integer values of `System.Runtime.InteropServices.DllImportSearchPath`
 
@@ -378,7 +385,7 @@ Example: `dotnet_code_quality.CA5393.unsafe_DllImportSearchPath_bits = 770`
 
 Option Name: `exclude_aspnet_core_mvc_controllerbase`
 
-Configurable Rules: [CA5391](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5391)
+Configurable Rules: [CA5391](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5391)
 
 Option Values: `true` or `false`
 
@@ -390,7 +397,7 @@ Example: `dotnet_code_quality.CA5391.exclude_aspnet_core_mvc_controllerbase = fa
 
 Option Name: `disallowed_symbol_names`
 
-Configurable Rules: [CA1031](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1031)
+Configurable Rules: [CA1031](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1031)
 
 Option Values: Names of symbols (separated by `|`) that are disallowed in the context of the analysis.
 Allowed symbol name formats:
@@ -414,12 +421,12 @@ Examples:
 ### Dataflow analysis
 
 Configurable Rules:
-[CA1062](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062),
-[CA1303](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1303),
-[CA1508](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1508),
-[CA2000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000),
-[CA2100](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100),
-[CA2213](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2213),
+[CA1062](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062),
+[CA1303](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1303),
+[CA1508](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1508),
+[CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000),
+[CA2100](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100),
+[CA2213](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2213),
 Taint analysis rules
 
 #### Interprocedural analysis Kind
@@ -462,7 +469,7 @@ Example: `dotnet_code_quality.max_interprocedural_lambda_or_local_function_call_
 
 Option Name: `dispose_analysis_kind`
 
-Configurable Rules: [CA2000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000)
+Configurable Rules: [CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000)
 
 Option Values:
 
@@ -481,7 +488,7 @@ Example: `dotnet_code_quality.dispose_analysis_kind = AllPaths`
 
 Option Name: `dispose_ownership_transfer_at_constructor`
 
-Configurable Rules: [CA2000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000)
+Configurable Rules: [CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000)
 
 Option Values: `true` or `false`
 
@@ -517,7 +524,7 @@ class Test
 
 Option Name: `dispose_ownership_transfer_at_method_call`
 
-Configurable Rules: [CA2000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000)
+Configurable Rules: [CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000)
 
 Option Values: `true` or `false`
 
@@ -584,7 +591,7 @@ Example: `dotnet_code_quality.CA5387.sufficient_IterationCount_for_weak_KDF_algo
 
 Option Name: `enum_values_prefix_trigger`
 
-Configurable Rules: [CA1712](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1712)
+Configurable Rules: [CA1712](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1712)
 
 Option Values:
 
@@ -602,7 +609,7 @@ Example: `dotnet_code_quality.CA1712.enum_values_prefix_trigger = AnyEnumValue`
 
 Option Name: `exclude_indirect_base_types`
 
-Configurable Rules: [CA1710](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1710)
+Configurable Rules: [CA1710](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1710)
 
 Option Values: `true` or `false`
 
@@ -631,7 +638,7 @@ public class MyClass : MyBaseClass
 
 Option Name: `additional_required_suffixes`
 
-Configurable Rules: [CA1710](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1710)
+Configurable Rules: [CA1710](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1710)
 
 Option Values: List (separated by `|`) of type names with their required suffix (separated by `->`).
 Allowed type name formats:
@@ -653,7 +660,7 @@ Examples:
 
 Option Name: `additional_required_generic_interfaces`
 
-Configurable Rules: [CA1010](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1010)
+Configurable Rules: [CA1010](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1010)
 
 Option Values: List (separated by `|`) of interface names with their required generic fully qualified interface (separated by `->`).
 Allowed interface formats:
@@ -674,7 +681,7 @@ Examples:
 
 Option Name: `additional_inheritance_excluded_symbol_names`
 
-Configurable Rules: [CA1501](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1501)
+Configurable Rules: [CA1501](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1501)
 
 Option Values: Names of types or namespaces (separated by `|`), such that the type or type's namespace does not count in the inheritance hierarchy tree.
 Allowed symbol name formats:
@@ -703,7 +710,7 @@ Examples:
 
 Option Name: `analyzed_symbol_kinds`
 
-Configurable Rules: [CA1716](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716)
+Configurable Rules: [CA1716](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716)
 
 Option Values: One or more fields of enum [Microsoft.CodeAnalysis.SymbolKind](https://roslynsourceindex.azurewebsites.net/#Microsoft.CodeAnalysis/Symbols/SymbolKind.cs,30fd9c0834bef6ff) as a comma separated list.
 
@@ -715,7 +722,7 @@ Example: `dotnet_code_quality.CA1716.analyzed_symbol_kinds = Namespace, Property
 
 Option Name: `use_naming_heuristic`
 
-Configurable Rules: [CA1303](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1303)
+Configurable Rules: [CA1303](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1303)
 
 Option Values: `true` or `false`
 
@@ -727,7 +734,7 @@ Example: `dotnet_code_quality.CA1303.use_naming_heuristic = true`
 
 Option Name: `additional_use_results_methods`
 
-Configurable Rules: [CA1806](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1806)
+Configurable Rules: [CA1806](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1806)
 
 Option Values: Names of additional methods (separated by `|`).
 Allowed method name formats:
@@ -751,7 +758,7 @@ Examples:
 
 Option Name: `allowed_suffixes`
 
-Configurable Rules: [CA1711](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1711)
+Configurable Rules: [CA1711](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1711)
 
 Option Values: List (separated by `|`) of allowed suffixes
 
@@ -761,7 +768,7 @@ Example: `dotnet_code_quality.CA1711.allowed_suffixes = Flag|Flags`
 
 Option Name: `enable_platform_analyzer_on_pre_net5_target`
 
-Configurable Rules: [CA14016](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416)
+Configurable Rules: [CA1416](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416)
 
 Option Values: `true` or `false`
 
@@ -773,7 +780,7 @@ Example: `dotnet_code_quality.enable_platform_analyzer_on_pre_net5_target = true
 
 Option Name: `exclude_structs`
 
-Configurable Rules: [CA1051](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1051)
+Configurable Rules: [CA1051](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1051)
 
 Option Values: `true` or `false`
 
@@ -785,10 +792,100 @@ Example: `dotnet_code_quality.CA1051.exclude_structs = true`
 
 Option Name: `exclude_ordefault_methods`
 
-Configurable Rules: [CA1826](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1826)
+Configurable Rules: [CA1826](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1826)
 
 Option Values: `true` or `false`
 
 Default Value: `false`
 
 Example: `dotnet_code_quality.CA1826.exclude_ordefault_methods = true`
+
+### Additional enum `None` names
+
+Option Name: `additional_enum_none_names`
+
+Configurable Rules: [CA1008](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/CA1008)
+
+Option Values: Names of additional enum None names (separated by `|`).
+
+Default Value: empty
+
+Example: `dotnet_code_quality.CA1008.additional_enum_none_names = Never` or `dotnet_code_quality.CA1008.additional_enum_none_names = Never|Nothing`
+
+### Enumeration methods
+
+Option Name: `enumeration_methods`
+
+Configurable Rules: [CA1851](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/CA1851)
+
+Option Values: [Fully qualified names](https://github.com/dotnet/csharplang/blob/main/spec/documentation-comments.md#id-string-format) of additional methods enumerating all parameters with IEnumerable type (separated by `|`).
+
+Default Value: empty
+
+Example: `dotnet_code_quality.CA1851.enumeration_methods = M:NS.Cls.SomeMethod(System.Collections.Generic.IEnumerable{System.Int32})` or `dotnet_code_quality.CA1851.enumeration_methods = M:NS.Cls.SomeMethod*` or `M:NS.Cls.SomeMethod``1(System.Collections.Generic.IEnumerable{System.Int32}) | M:NS.Cls.OtherMethod*`
+
+### Linq Chain methods
+
+Option Name: `linq_chain_methods`
+
+Configurable Rules: [CA1851](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/CA1851)
+
+Option Values: [Fully qualified names](https://github.com/dotnet/csharplang/blob/main/spec/documentation-comments.md#id-string-format) of additional methods accepting IEnumerable parameters and return a new IEnumerable type instance(separated by `|`). By default, the IEnumerable type parameters of the Linq Chain method are considered not enumerated. This behavior could be overridden by combining using the `enumeration_methods` option.
+
+Default Value: empty
+
+This option is used to include customized methods like [Select](https://learn.microsoft.com/dotnet/api/system.linq.enumerable.select?view=net-6.0) into the analysis scope.
+Consider the example:
+
+```csharp
+public static MyClass
+{
+  public static IEnumerable<int> MyNoEnumerationIncrementSelect(this IEnumerable<int> source)
+  {
+      return source.Select(i => i + 1);
+  } 
+}
+```
+
+In this example the options could be: `dotnet_code_quality.CA1851.linq_chain_methods = M:MyClass.MyNoEnumerationIncrementSelect*`.
+If the method enumerates the parameter, this option can be used with `enumeration_methods` for example:
+
+```csharp
+public static MyClass
+{
+  public static IEnumerable<int> MyEnumerationLinqChain(this IEnumerable<int> source)
+  {
+      return source.ElementAt(10).Concat(source);
+  } 
+}
+```
+
+In this example the options would be `dotnet_code_quality.CA1851.linq_chain_methods = M:MyClass.MyEnumerationLinqChain*` and `dotnet_code_quality.CA1851.enumeration_methods = M:MyClass.MyEnumerationLinqChain*`.
+
+### Assume method enumerates parameters
+
+Option Name: `assume_method_enumerates_parameters`
+
+Configurable Rules: [CA1851](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/CA1851)
+
+Option Values: `true` or `false`
+If set to true, all IEnumerable type parameters would be assumed enumerated by the method invocation. This option does not affect methods specified in `linq_chain_methods`.
+
+Default Value: `false`
+
+Example: `dotnet_code_quality.CA1851.assume_method_enumerates_parameters = true`
+
+### Proceed with analysis even if InternalsVisibleTo is present
+
+Option Name: `ignore_internalsvisibleto`
+
+Configurable Rules: [CA1812](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/CA1812), [CA1852](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/CA1852)
+
+Option Values: `true` or `false`
+Certain diagnostics are normally disabled if the assembly being analyzed used the InternalsVisibleTo attribute to
+expose the assembly's internal symbols. This option lets you override this behavior and proceed with analysis
+regardless of whether the attribute is present.
+
+Default Value: `false`
+
+Example: `dotnet_code_quality.CA1852.ignore_internalsvisibleto = false`

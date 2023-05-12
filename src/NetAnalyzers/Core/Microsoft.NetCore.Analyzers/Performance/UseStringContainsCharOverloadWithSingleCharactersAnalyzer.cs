@@ -12,6 +12,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
+    /// <summary>
+    /// CA1847: <inheritdoc cref="UseStringContainsCharOverloadWithSingleCharactersTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseStringContainsCharOverloadWithSingleCharactersAnalyzer : DiagnosticAnalyzer
     {
@@ -27,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_rule_CA1847);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(s_rule_CA1847);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -51,6 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     return m.Parameters[0].Type.SpecialType == SpecialType.System_Char;
                 }
+
                 return false;
             });
 
@@ -86,6 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     return true;
                 }
+
                 return false;
             }
         }

@@ -13,6 +13,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     using static MicrosoftCodeQualityAnalyzersResources;
 
+    /// <summary>
+    /// CA1062: <inheritdoc cref="ValidateArgumentsOfPublicMethodsTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ValidateArgumentsOfPublicMethods : DiagnosticAnalyzer
     {
@@ -23,7 +26,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             CreateLocalizableResourceString(nameof(ValidateArgumentsOfPublicMethodsTitle)),
             CreateLocalizableResourceString(nameof(ValidateArgumentsOfPublicMethodsMessage)),
             DiagnosticCategory.Design,
-            RuleLevel.Disabled,    // After C# 9, the only recommended way to do this would be using the ! Operator and we can switch this to IDE Suggestion.
+            RuleLevel.Disabled,
             description: CreateLocalizableResourceString(nameof(ValidateArgumentsOfPublicMethodsDescription)),
             isPortedFxCopRule: true,
             isDataflowRule: true);
@@ -41,8 +44,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 {
                     // Analyze externally visible methods with reference type parameters.
                     if (operationBlockContext.OwningSymbol is not IMethodSymbol containingMethod ||
-                        !containingMethod.IsExternallyVisible() ||
                         !containingMethod.Parameters.Any(p => p.Type.IsReferenceType) ||
+                        !operationBlockContext.Options.MatchesConfiguredVisibility(Rule, containingMethod, operationBlockContext.Compilation) ||
                         operationBlockContext.Options.IsConfiguredToSkipAnalysis(Rule, containingMethod, operationBlockContext.Compilation))
                     {
                         return;

@@ -99,7 +99,7 @@ public class TestClass
     public void TestMethod()
     {
         // Let the operating system decide what TLS protocol version to use.
-        // See https://docs.microsoft.com/dotnet/framework/network-programming/tls
+        // See https://learn.microsoft.com/dotnet/framework/network-programming/tls
     }
 }");
         }
@@ -114,7 +114,7 @@ Imports System.Net
 Public Class TestClass
     Public Sub ExampleMethod()
         ' Let the operating system decide what TLS protocol version to use.
-        ' See https://docs.microsoft.com/dotnet/framework/network-programming/tls
+        ' See https://learn.microsoft.com/dotnet/framework/network-programming/tls
     End Sub
 End Class
 ");
@@ -526,17 +526,17 @@ class TestClass
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
            => VerifyCS.Diagnostic(rule)
                .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
            => VerifyVB.Diagnostic(rule)
                .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                .WithArguments(arguments);
     }
 }

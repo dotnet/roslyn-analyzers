@@ -3135,5 +3135,54 @@ internal class Class1
             }.RunAsync();
         }
 #endif
+
+        [Fact, WorkItem(5789, "https://github.com/dotnet/roslyn-analyzers/issues/5789")]
+        public async Task TestVarPattern()
+        {
+            var source = @"
+public class C
+{
+    public void M(object o)
+    {
+        if (o is var o2 && o2 != null)
+        {
+        }
+    }
+}
+";
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact, WorkItem(6453, "https://github.com/dotnet/roslyn-analyzers/issues/6453")]
+        public async Task IndexedValueCompare_NoDiagnosticAsync()
+        {
+            await VerifyCSharpAnalyzerAsync(@"
+using System.Collections.Generic;
+
+sealed class Data
+{
+    public int Value { get; }
+    public Data(int value)
+    {
+        Value = value;
+    }
+}
+
+static class Test
+{
+    static void Filter(List<Data> list, int j)
+    {
+        for (int i = 0; i < list.Count - 1; i++)
+        {
+            if (list[i + 1].Value != 0) continue;
+            if (list[i].Value == 0) continue; // <-------- CA1508 False positive
+            list.RemoveAt(i);
+        }
+    }
+}
+");
+        }
     }
 }

@@ -10,12 +10,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
+    /// <summary>
+    /// CA1419: <inheritdoc cref="ProvidePublicParameterlessSafeHandleConstructorTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ProvidePublicParameterlessSafeHandleConstructorAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1419";
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
                                                         RuleId,
                                                         CreateLocalizableResourceString(nameof(ProvidePublicParameterlessSafeHandleConstructorTitle)),
                                                         CreateLocalizableResourceString(nameof(ProvidePublicParameterlessSafeHandleConstructorMessage)),
@@ -25,7 +28,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                         isPortedFxCopRule: false,
                                                         isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -56,6 +59,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 // We only want to put the diagnostic on concrete SafeHandle-derived types.
                 return;
             }
+
             foreach (var constructor in type.InstanceConstructors)
             {
                 if (constructor.Parameters.Length == 0)
@@ -65,6 +69,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         // The parameterless constructor is as visible as the containing type, so there is no diagnostic to emit.
                         return;
                     }
+
                     context.ReportDiagnostic(constructor.CreateDiagnostic(Rule, type.Name));
                     break;
                 }

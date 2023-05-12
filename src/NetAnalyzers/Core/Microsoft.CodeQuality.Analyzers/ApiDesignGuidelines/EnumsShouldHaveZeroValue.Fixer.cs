@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
@@ -50,14 +50,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     {
                         case EnumsShouldHaveZeroValueAnalyzer.RuleRenameCustomTag:
                             title = MicrosoftCodeQualityAnalyzersResources.EnumsShouldZeroValueFlagsRenameCodeFix;
-                            context.RegisterCodeFix(new MyCodeAction(title,
+                            context.RegisterCodeFix(CodeAction.Create(title,
                                                         async ct => await GetUpdatedDocumentForRuleNameRenameAsync(context.Document, (IFieldSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
                                                         equivalenceKey: title),
                                                     diagnostic);
                             return;
                         case EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZeroCustomTag:
                             title = MicrosoftCodeQualityAnalyzersResources.EnumsShouldZeroValueFlagsMultipleZeroCodeFix;
-                            context.RegisterCodeFix(new MyCodeAction(title,
+                            context.RegisterCodeFix(CodeAction.Create(title,
                                                         async ct => await ApplyRuleNameMultipleZeroAsync(context.Document, (INamedTypeSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
                                                         equivalenceKey: title),
                                                     diagnostic);
@@ -65,7 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                         case EnumsShouldHaveZeroValueAnalyzer.RuleNoZeroCustomTag:
                             title = MicrosoftCodeQualityAnalyzersResources.EnumsShouldZeroValueNotFlagsNoZeroValueCodeFix;
-                            context.RegisterCodeFix(new MyCodeAction(title,
+                            context.RegisterCodeFix(CodeAction.Create(title,
                                                         async ct => await ApplyRuleNameNoZeroValueAsync(context.Document, (INamedTypeSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
                                                         equivalenceKey: title),
                                                     diagnostic);
@@ -108,7 +108,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             ISet<IFieldSymbol> set = EnumsShouldHaveZeroValueAnalyzer.GetZeroValuedFields(enumType).ToSet();
 
             bool makeNextFieldExplicit = false;
-            foreach (IFieldSymbol field in enumType.GetMembers().Where(m => m.Kind == SymbolKind.Field))
+            foreach (IFieldSymbol field in enumType.GetMembers().Where(m => m.Kind == SymbolKind.Field).Cast<IFieldSymbol>())
             {
                 bool isZeroValued = set.Contains(field);
                 bool isZeroValuedNamedNone = isZeroValued && EnumsShouldHaveZeroValueAnalyzer.IsMemberNamedNone(field);
@@ -146,7 +146,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             SymbolEditor editor = SymbolEditor.Create(document);
 
             // remove any non-zero member named 'None'
-            foreach (IFieldSymbol field in enumType.GetMembers().Where(m => m.Kind == SymbolKind.Field))
+            foreach (IFieldSymbol field in enumType.GetMembers().Where(m => m.Kind == SymbolKind.Field).Cast<IFieldSymbol>())
             {
                 if (EnumsShouldHaveZeroValueAnalyzer.IsMemberNamedNone(field))
                 {
@@ -163,15 +163,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         protected virtual SyntaxNode GetParentNodeOrSelfToFix(SyntaxNode nodeToFix)
         {
             return nodeToFix;
-        }
-
-        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
-        private class MyCodeAction : DocumentChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument, equivalenceKey)
-            {
-            }
         }
     }
 }

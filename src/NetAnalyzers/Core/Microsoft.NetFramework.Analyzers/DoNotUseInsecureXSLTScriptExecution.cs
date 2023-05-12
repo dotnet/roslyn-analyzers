@@ -14,6 +14,9 @@ namespace Microsoft.NetFramework.Analyzers
 {
     using static MicrosoftNetFrameworkAnalyzersResources;
 
+    /// <summary>
+    /// CA3076: <inheritdoc cref="InsecureXsltScriptProcessingMessage"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotUseInsecureXSLTScriptExecutionAnalyzer : DiagnosticAnalyzer
     {
@@ -190,6 +193,12 @@ namespace Microsoft.NetFramework.Analyzers
                 if (lhsSymbol is null)
                 {
                     return;
+                }
+
+                // handle target-typed new
+                if (rhs is IConversionOperation { IsImplicit: true })
+                {
+                    rhs = rhs.WalkDownConversion();
                 }
 
                 IMethodSymbol? rhsMethodSymbol = rhs.Kind switch

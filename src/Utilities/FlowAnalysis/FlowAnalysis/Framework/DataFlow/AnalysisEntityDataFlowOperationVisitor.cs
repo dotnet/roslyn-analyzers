@@ -217,8 +217,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         {
             if (AnalysisEntityFactory.TryCreate(target, out var targetAnalysisEntity))
             {
-                if (!HasCompletePointsToAnalysisResult &&
-                    targetAnalysisEntity.IsChildOrInstanceMemberNeedingCompletePointsToAnalysis())
+                if (!targetAnalysisEntity.ShouldBeTrackedForAnalysis(HasCompletePointsToAnalysisResult))
                 {
                     // We are not tracking points to values for fields and properties.
                     // So, it is not possible to accurately track value changes to target entity which is a member.
@@ -290,7 +289,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 
         protected override void SetValueForParameterOnEntry(IParameterSymbol parameter, AnalysisEntity analysisEntity, ArgumentInfo<TAbstractAnalysisValue>? assignedValue)
         {
-            Debug.Assert(Equals(analysisEntity.Symbol, parameter));
+            Debug.Assert(SymbolEqualityComparer.Default.Equals(analysisEntity.Symbol, parameter));
             if (assignedValue != null)
             {
                 SetAbstractValueForAssignment(analysisEntity, assignedValue.Operation, assignedValue.Value);
@@ -437,10 +436,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                 return ImmutableHashSet<AnalysisEntity>.Empty;
             }
 
-            if (predicate == null)
-            {
-                predicate = entity => IsChildAnalysisEntity(entity, instanceLocation);
-            }
+            predicate ??= entity => IsChildAnalysisEntity(entity, instanceLocation);
 
             return GetChildAnalysisEntities(predicate);
         }
@@ -801,13 +797,13 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                 {
                     // Root tuple entity, compare the underlying tuple types.
                     return childEntity.Parent == null &&
-                        tupleElementEntity.Type.OriginalDefinition.Equals(childEntity.Type.OriginalDefinition);
+                        SymbolEqualityComparer.Default.Equals(tupleElementEntity.Type.OriginalDefinition, childEntity.Type.OriginalDefinition);
                 }
 
                 // Must be a tuple element field entity.
                 return tupleElementEntity.Symbol is IFieldSymbol tupleElementField &&
                     childEntity.Symbol is IFieldSymbol childEntityField &&
-                    tupleElementField.OriginalDefinition.Equals(childEntityField.OriginalDefinition) &&
+                    SymbolEqualityComparer.Default.Equals(tupleElementField.OriginalDefinition, childEntityField.OriginalDefinition) &&
                     IsMatchingAssignedEntity(tupleElementEntity.Parent, childEntity.Parent);
             }
         }

@@ -10,6 +10,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
+    /// <summary>
+    /// CA2256: <inheritdoc cref="InterfaceMembersMissingImplementationTitle"/>
+    /// CA2257: <inheritdoc cref="MembersDeclaredOnImplementationTypeMustBeStaticTitle"/>
+    /// CA2258: <inheritdoc cref="DynamicInterfaceCastableImplementationUnsupportedTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     internal sealed class DynamicInterfaceCastableImplementationAnalyzer : DiagnosticAnalyzer
     {
@@ -54,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         internal const string NonStaticMemberIsMethodKey = nameof(NonStaticMemberIsMethodKey);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             DynamicInterfaceCastableImplementationUnsupported,
             InterfaceMembersMissingImplementation,
             MembersDeclaredOnImplementationTypeMustBeStatic);
@@ -99,7 +104,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 foreach (var member in iface.GetMembers())
                 {
-                    if (!member.IsStatic
+                    if (member.IsAbstract
+                        && member.Kind != SymbolKind.NamedType
                         && context.Compilation.IsSymbolAccessibleWithin(member, targetType)
                         && targetType.FindImplementationForInterfaceMember(member) is null)
                     {
@@ -133,6 +139,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         {
                             propertyBag = propertyBag.Add(NonStaticMemberIsMethodKey, string.Empty);
                         }
+
                         context.ReportDiagnostic(member.CreateDiagnostic(MembersDeclaredOnImplementationTypeMustBeStatic, propertyBag, member.ToDisplayString(), targetType.ToDisplayString()));
                     }
                 }

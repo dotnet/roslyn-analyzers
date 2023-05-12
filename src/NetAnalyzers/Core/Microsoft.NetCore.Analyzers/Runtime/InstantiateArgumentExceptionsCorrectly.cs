@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Globalization;
 using Analyzer.Utilities;
@@ -13,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
-    /// CA2208: Instantiate argument exceptions correctly
+    /// CA2208: <inheritdoc cref="InstantiateArgumentExceptionsCorrectlyTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class InstantiateArgumentExceptionsCorrectlyAnalyzer : DiagnosticAnalyzer
@@ -234,7 +235,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             foreach (IParameterSymbol parameter in symbol.GetParameters())
             {
+                // If the parameter name matches exactly, it's a match.
                 if (parameter.Name == stringArgumentValue)
+                {
+                    return true;
+                }
+
+                // If the string argument begins with the parameter name followed by punctuation, it's also considered a match.
+                // e.g. "arg.Length", "arg[0]", etc.
+                if (stringArgumentValue.Length > parameter.Name.Length &&
+                    stringArgumentValue.StartsWith(parameter.Name, StringComparison.Ordinal) &&
+                    char.IsPunctuation(stringArgumentValue, parameter.Name.Length))
                 {
                     return true;
                 }
@@ -253,6 +264,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
                 }
             }
+
             return false;
         }
 

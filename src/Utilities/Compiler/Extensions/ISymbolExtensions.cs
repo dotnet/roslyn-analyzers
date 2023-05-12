@@ -94,7 +94,7 @@ namespace Analyzer.Utilities.Extensions
 
         public static bool IsConstructor([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
-            return (symbol as IMethodSymbol)?.MethodKind == MethodKind.Constructor;
+            return symbol is IMethodSymbol { MethodKind: MethodKind.Constructor };
         }
 
         public static bool IsDestructor([NotNullWhen(returnValue: true)] this ISymbol? symbol)
@@ -104,13 +104,27 @@ namespace Analyzer.Utilities.Extensions
 
         public static bool IsIndexer([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
-            return (symbol as IPropertySymbol)?.IsIndexer == true;
+            return symbol is IPropertySymbol { IsIndexer: true };
         }
 
-        public static bool IsPropertyWithBackingField([NotNullWhen(returnValue: true)] this ISymbol? symbol)
+        public static bool IsPropertyWithBackingField([NotNullWhen(returnValue: true)] this ISymbol? symbol, [NotNullWhen(true)] out IFieldSymbol? backingField)
         {
-            return symbol is IPropertySymbol propertySymbol &&
-                propertySymbol.ContainingType.GetMembers().OfType<IFieldSymbol>().Any(f => f.IsImplicitlyDeclared && Equals(f.AssociatedSymbol, symbol));
+            if (symbol is IPropertySymbol propertySymbol)
+            {
+                foreach (ISymbol member in propertySymbol.ContainingType.GetMembers())
+                {
+                    if (member is IFieldSymbol associated &&
+                        associated.IsImplicitlyDeclared &&
+                        Equals(associated.AssociatedSymbol, propertySymbol))
+                    {
+                        backingField = associated;
+                        return true;
+                    }
+                }
+            }
+
+            backingField = null;
+            return false;
         }
 
         /// <summary>
@@ -139,12 +153,12 @@ namespace Analyzer.Utilities.Extensions
 
         public static bool IsUserDefinedOperator([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
-            return (symbol as IMethodSymbol)?.MethodKind == MethodKind.UserDefinedOperator;
+            return symbol is IMethodSymbol { MethodKind: MethodKind.UserDefinedOperator };
         }
 
         public static bool IsConversionOperator([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
-            return (symbol as IMethodSymbol)?.MethodKind == MethodKind.Conversion;
+            return symbol is IMethodSymbol { MethodKind: MethodKind.Conversion };
         }
 
         public static ImmutableArray<IParameterSymbol> GetParameters(this ISymbol? symbol)
@@ -153,7 +167,7 @@ namespace Analyzer.Utilities.Extensions
             {
                 IMethodSymbol m => m.Parameters,
                 IPropertySymbol p => p.Parameters,
-                _ => ImmutableArray.Create<IParameterSymbol>()
+                _ => ImmutableArray<IParameterSymbol>.Empty,
             };
         }
 
@@ -287,6 +301,14 @@ namespace Analyzer.Utilities.Extensions
         }
 
         /// <summary>
+        /// Gets the parameters whose type is equal to the given special type.
+        /// </summary>
+        public static IEnumerable<IParameterSymbol> GetParametersOfType(this IEnumerable<IParameterSymbol> parameters, SpecialType specialType)
+        {
+            return parameters.Where(p => p.Type.SpecialType == specialType);
+        }
+
+        /// <summary>
         /// Check whether given overloads has any overload whose parameters has the given type as its parameter type.
         /// </summary>
         public static bool HasOverloadWithParameterOfType(this IEnumerable<IMethodSymbol> overloads, IMethodSymbol self, INamedTypeSymbol type, CancellationToken cancellationToken)
@@ -365,7 +387,7 @@ namespace Analyzer.Utilities.Extensions
             return true;
         }
 
-        private static bool ParameterTypesAreSame(this IParameterSymbol parameter1, IParameterSymbol parameter2)
+        public static bool ParameterTypesAreSame(this IParameterSymbol parameter1, IParameterSymbol parameter2)
         {
             var type1 = parameter1.Type.OriginalDefinition;
             var type2 = parameter2.Type.OriginalDefinition;
@@ -379,14 +401,14 @@ namespace Analyzer.Utilities.Extensions
 
             // this doesn't account for type conversion but FxCop implementation seems doesn't either
             // so this should match FxCop implementation.
-            return type2.Equals(type1);
+            return SymbolEqualityComparer.Default.Equals(type2, type1);
         }
 
         /// <summary>
         /// Check whether return type, parameters count and parameter types are same for the given methods.
         /// </summary>
         public static bool ReturnTypeAndParametersAreSame(this IMethodSymbol method, IMethodSymbol otherMethod)
-            => method.ReturnType.Equals(otherMethod.ReturnType) &&
+            => SymbolEqualityComparer.Default.Equals(method.ReturnType, otherMethod.ReturnType) &&
                method.ParametersAreSame(otherMethod);
 
         /// <summary>
@@ -395,7 +417,7 @@ namespace Analyzer.Utilities.Extensions
         public static bool IsFromMscorlib(this ISymbol symbol, Compilation compilation)
         {
             var @object = compilation.GetSpecialType(SpecialType.System_Object);
-            return symbol.ContainingAssembly?.Equals(@object.ContainingAssembly) == true;
+            return SymbolEqualityComparer.Default.Equals(symbol.ContainingAssembly, @object.ContainingAssembly);
         }
 
         /// <summary>
@@ -408,7 +430,7 @@ namespace Analyzer.Utilities.Extensions
                 cancellationToken.ThrowIfCancellationRequested();
 
                 // does not account for method with optional parameters
-                if (method.Equals(overload) || overload.Parameters.Length != method.Parameters.Length)
+                if (SymbolEqualityComparer.Default.Equals(method, overload) || overload.Parameters.Length != method.Parameters.Length)
                 {
                     // either itself, or signature is not same
                     continue;
@@ -420,7 +442,7 @@ namespace Analyzer.Utilities.Extensions
                     continue;
                 }
 
-                if (overload.Parameters[parameterIndex].Type.Equals(type))
+                if (SymbolEqualityComparer.Default.Equals(overload.Parameters[parameterIndex].Type, type))
                 {
                     // we no longer interested in this overload. there can be only 1 match
                     return overload;
@@ -494,7 +516,7 @@ namespace Analyzer.Utilities.Extensions
         public static bool IsImplementationOfInterfaceMember(this ISymbol symbol, [NotNullWhen(returnValue: true)] ISymbol? interfaceMember)
         {
             return interfaceMember != null &&
-                   symbol.Equals(symbol.ContainingType.FindImplementationForInterfaceMember(interfaceMember));
+                SymbolEqualityComparer.Default.Equals(symbol, symbol.ContainingType.FindImplementationForInterfaceMember(interfaceMember));
         }
 
         /// <summary>
@@ -645,7 +667,7 @@ namespace Analyzer.Utilities.Extensions
 
             while (symbol != null)
             {
-                if (symbol.GetAttributes().Any(attr => attr.AttributeClass.Equals(attribute)))
+                if (symbol.GetAttributes().Any(attr => SymbolEqualityComparer.Default.Equals(attr.AttributeClass, attribute)))
                 {
                     return true;
                 }
@@ -684,7 +706,7 @@ namespace Analyzer.Utilities.Extensions
 
             while (symbol != null)
             {
-                if (symbol.GetAttributes().Any(attr => attr.AttributeClass.Equals(attribute)))
+                if (symbol.GetAttributes().Any(attr => SymbolEqualityComparer.Default.Equals(attr.AttributeClass, attribute)))
                 {
                     return true;
                 }
@@ -714,7 +736,7 @@ namespace Analyzer.Utilities.Extensions
             {
                 for (int i = 0; i < attributes.Length; i++)
                 {
-                    if (attributeData.AttributeClass.Equals(attributes[i]))
+                    if (SymbolEqualityComparer.Default.Equals(attributeData.AttributeClass, attributes[i]))
                     {
                         isAttributePresent[i] = true;
                     }
@@ -738,7 +760,7 @@ namespace Analyzer.Utilities.Extensions
                 return Enumerable.Empty<AttributeData>();
             }
 
-            return symbol.GetAttributes().Where(attr => attr.AttributeClass.Equals(attributeType));
+            return symbol.GetAttributes().Where(attr => SymbolEqualityComparer.Default.Equals(attr.AttributeClass, attributeType));
         }
 
         /// <summary>
@@ -754,12 +776,12 @@ namespace Analyzer.Utilities.Extensions
 
         /// <summary>
         /// Returns true for symbols whose name starts with an underscore and
-        /// are optionally followed by an integer, such as '_', '_1', '_2', etc.
+        /// are optionally followed by an integer or other underscores, such as '_', '_1', '_2', '__', '___', etc.
         /// These symbols can be treated as special discard symbol names.
         /// </summary>
         public static bool IsSymbolWithSpecialDiscardName([NotNullWhen(returnValue: true)] this ISymbol? symbol)
             => symbol?.Name.StartsWith("_", StringComparison.Ordinal) == true &&
-               (symbol.Name.Length == 1 || uint.TryParse(symbol.Name[1..], out _));
+               (symbol.Name.Length == 1 || uint.TryParse(symbol.Name[1..], out _) || symbol.Name.All(n => n.Equals('_')));
 
         public static bool IsConst([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {

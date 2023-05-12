@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.Lightup;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
@@ -250,6 +251,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             IDisposableNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
             IAsyncDisposableNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIAsyncDisposable);
             TaskNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
+            MemoryStreamNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIOMemoryStream);
             ValueTaskNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksValueTask);
             GenericTaskNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask1);
             MonitorNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingMonitor);
@@ -454,6 +456,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     {
                         MergeAnalysisDataFromUnhandledThrowOperations(caughtExceptionType: null);
                     }
+
                     break;
             }
 
@@ -826,8 +829,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             // If so, we return the abstract value for the task wrapping the underlying return value.
             if (OwningSymbol is IMethodSymbol method &&
                 method.IsAsync &&
-                method.ReturnType.OriginalDefinition.Equals(GenericTaskNamedType) &&
-                !method.ReturnType.Equals(returnValueOperation.Type))
+                SymbolEqualityComparer.Default.Equals(method.ReturnType.OriginalDefinition, GenericTaskNamedType) &&
+                !SymbolEqualityComparer.Default.Equals(method.ReturnType, returnValueOperation.Type))
             {
                 var location = AbstractLocation.CreateAllocationLocation(returnValueOperation, method.ReturnType, DataFlowAnalysisContext.InterproceduralAnalysisData?.CallStack);
                 implicitTaskPointsToValue = PointsToAbstractValue.Create(location, mayBeNull: false);
@@ -967,7 +970,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         private bool IsContractCheckArgument(IArgumentOperation operation)
             => operation.Parent is IInvocationOperation invocation &&
                invocation.Arguments[0] == operation &&
-               (IsDebugAssertMethod(invocation.TargetMethod) || IsContractCheckMethod(invocation.TargetMethod));
+               (IsAnyDebugAssertMethod(invocation.TargetMethod) || IsContractCheckMethod(invocation.TargetMethod));
 
         private bool IsContractCheckMethod(IMethodSymbol method)
         {
@@ -990,11 +993,19 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return false;
         }
 
-        private bool IsDebugAssertMethod(IMethodSymbol method)
-            => Equals(method, DebugAssertMethod);
+        /// <summary>
+        /// Checks if the method is an overload of the <see cref="Debug.Assert(bool)"/> method.
+        /// </summary>
+        /// <param name="method">The IMethodSymbol to test.</param>
+        /// <returns>True if the method is an overlaod of the <see cref="Debug.Assert(bool)"/> method.</returns>
+        private bool IsAnyDebugAssertMethod(IMethodSymbol method) =>
+            DebugAssertMethod != null &&
+            method.ContainingSymbol.Equals(DebugAssertMethod.ContainingSymbol, SymbolEqualityComparer.Default) &&
+            method.Name == DebugAssertMethod.Name &&
+            method.ReturnType == DebugAssertMethod.ReturnType;
 
         protected bool IsAnyAssertMethod(IMethodSymbol method)
-            => IsDebugAssertMethod(method) || IsContractCheckMethod(method);
+            => IsAnyDebugAssertMethod(method) || IsContractCheckMethod(method);
 
         #region Helper methods to get or cache analysis data for visited operations.
 
@@ -1251,29 +1262,33 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                 }
 
                 // Handle is pattern operations with constant pattern.
-                if (operation is IIsPatternOperation patternOperation &&
-                    patternOperation.Pattern is IConstantPatternOperation constantPattern)
+                if (operation is IIsPatternOperation isPatternOperation)
                 {
-                    if (constantPattern.Value.ConstantValue.HasValue)
-                    {
-                        if (constantPattern.Value.ConstantValue.Value == null)
-                        {
-                            switch (pointsToValue.NullState)
-                            {
-                                case NullAbstractValue.Null:
-                                    inference.AlwaysSucceed = true;
-                                    break;
+                    IPatternOperation patternOperation = isPatternOperation.Pattern;
+                    bool direct = true;
 
-                                case NullAbstractValue.NotNull:
-                                    inference.AlwaysFail = true;
-                                    break;
-                            }
+                    if (INegatedPatternOperationWrapper.IsInstance(patternOperation))
+                    {
+                        INegatedPatternOperationWrapper negatedPattern = INegatedPatternOperationWrapper.FromOperation(patternOperation);
+                        patternOperation = negatedPattern.Pattern;
+                        direct = false;
+                    }
+
+                    if (patternOperation is IConstantPatternOperation { Value.ConstantValue: { HasValue: true, Value: null } })
+                    {
+                        switch (pointsToValue.NullState)
+                        {
+                            case NullAbstractValue.Null:
+                                inference.AlwaysSucceed = direct;
+                                break;
+
+                            case NullAbstractValue.NotNull:
+                                inference.AlwaysFail = direct;
+                                break;
                         }
 
                         return true;
                     }
-
-                    return false;
                 }
 
                 if (targetType == null)
@@ -1542,8 +1557,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     switch (isPatternOperation.Pattern.Kind)
                     {
                         case OperationKind.DeclarationPattern:
-                            // Set predicated null/non-null value for declared pattern variable, i.e. for 'd' in "c is D d".
-                            predicateValueKind = SetValueForIsNullComparisonOperator(isPatternOperation.Pattern, equals: FlowBranchConditionKind == ControlFlowConditionKind.WhenFalse, targetAnalysisData: targetAnalysisData);
+                            if (!((IDeclarationPatternOperation)isPatternOperation.Pattern).MatchesNull)
+                            {
+                                // Set predicated null/non-null value for declared pattern variable, i.e. for 'd' in "c is D d".
+                                predicateValueKind = SetValueForIsNullComparisonOperator(isPatternOperation.Pattern, equals: FlowBranchConditionKind == ControlFlowConditionKind.WhenFalse, targetAnalysisData: targetAnalysisData);
+                            }
 
                             // Also set the predicated value for pattern value for true branch, i.e. for 'c' in "c is D d".
                             goto case OperationKind.DiscardPattern;
@@ -1578,6 +1596,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                                             predicateValueKind = SetValueForEqualsOrNotEqualsComparisonOperator(isPatternOperation.Value, negatedConstantPattern.Value,
                                                 equals: FlowBranchConditionKind == ControlFlowConditionKind.WhenFalse, isReferenceEquality: false, targetAnalysisData: targetAnalysisData);
                                         }
+
                                         break;
                                     }
                                     else
@@ -1591,6 +1610,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                                     {
                                         predicateValueKind = SetValueForIsNullComparisonOperator(isPatternOperation.Value, equals: false, targetAnalysisData: targetAnalysisData);
                                     }
+
                                     break;
 
                                 case "BinaryPattern":
@@ -1736,7 +1756,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 
                 foreach (var interfaceType in methodSymbol.ContainingType.AllInterfaces)
                 {
-                    if (interfaceType.OriginalDefinition.Equals(GenericIEquatableNamedType))
+                    if (SymbolEqualityComparer.Default.Equals(interfaceType.OriginalDefinition, GenericIEquatableNamedType))
                     {
                         var equalsMember = interfaceType.GetMembers("Equals").OfType<IMethodSymbol>().FirstOrDefault();
                         if (equalsMember != null && methodSymbol.IsOverrideOrImplementationOfInterfaceMember(equalsMember))
@@ -2320,7 +2340,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     // For regular invocation cases, we reset instance analysis data and argument data.
                     // Note that arguments are reset later by processing '_pendingArgumentsToReset'.
                     ResetInstanceAnalysisData(instanceReceiver);
-                    Debug.Assert(arguments.All(arg => _pendingArgumentsToReset.Contains(arg)));
+                    Debug.Assert(arguments.All(_pendingArgumentsToReset.Contains));
                 }
             }
 
@@ -3136,7 +3156,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     HandleEnterLockOperation(arguments[0].Value);
                 }
                 else if (InterlockedNamedType != null &&
-                    targetMethod.ContainingType.OriginalDefinition.Equals(InterlockedNamedType))
+                    SymbolEqualityComparer.Default.Equals(targetMethod.ContainingType.OriginalDefinition, InterlockedNamedType))
                 {
                     ProcessInterlockedOperation(targetMethod, arguments, InterlockedNamedType);
                 }
@@ -3513,6 +3533,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                         {
                             _escapedLocalFunctions.Add(methodReference.Method);
                         }
+
                         break;
                 }
             }
@@ -3627,6 +3648,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             {
                 PerformPredicateAnalysis(operation);
             }
+
             return value;
         }
 
@@ -4007,6 +4029,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         /// <see cref="INamedTypeSymbol"/> for <see cref="System.Threading.Tasks.Task"/>
         /// </summary>
         protected INamedTypeSymbol? TaskNamedType { get; }
+
+        /// <summary>
+        /// <see cref="INamedTypeSymbol"/> for <see cref="System.IO.MemoryStream"/>
+        /// </summary>
+        protected INamedTypeSymbol? MemoryStreamNamedType { get; }
 
         /// <summary>
         /// <see cref="INamedTypeSymbol"/> for System.Threading.Tasks.ValueTask/>

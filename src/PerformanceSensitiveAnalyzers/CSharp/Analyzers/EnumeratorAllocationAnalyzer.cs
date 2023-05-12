@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
     {
         public const string ReferenceTypeEnumeratorRuleId = "HAA0401";
 
-        internal static DiagnosticDescriptor ReferenceTypeEnumeratorRule = new(
+        internal static readonly DiagnosticDescriptor ReferenceTypeEnumeratorRule = new(
             ReferenceTypeEnumeratorRuleId,
             CreateLocalizableResourceString(nameof(ReferenceTypeEnumeratorRuleTitle)),
             CreateLocalizableResourceString(nameof(ReferenceTypeEnumeratorRuleMessage)),
@@ -28,7 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(ReferenceTypeEnumeratorRule);
 
-        protected override ImmutableArray<SyntaxKind> Expressions => ImmutableArray.Create(SyntaxKind.ForEachStatement, SyntaxKind.InvocationExpression);
+        protected override ImmutableArray<SyntaxKind> Expressions { get; } = ImmutableArray.Create(SyntaxKind.ForEachStatement, SyntaxKind.InvocationExpression);
 
         private static readonly object[] EmptyMessageArgs = Array.Empty<object>();
 
@@ -58,6 +58,7 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
                     // 1st we try and fallback to using the ConvertedType
                     enumerator = typeInfo.ConvertedType.GetMembers("GetEnumerator");
                 }
+
                 if ((enumerator == null || enumerator.IsEmpty) && typeInfo.Type.Interfaces != null)
                 {
                     // 2nd fallback, now we try and find the IEnumerable Interface explicitly

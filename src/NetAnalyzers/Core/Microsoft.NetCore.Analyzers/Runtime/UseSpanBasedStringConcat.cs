@@ -14,6 +14,9 @@ using static Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    /// <summary>
+    /// CA1845: <inheritdoc cref="UseSpanBasedStringConcatTitle"/>
+    /// </summary>
     public abstract class UseSpanBasedStringConcat : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1845";
@@ -42,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         /// </summary>
         private protected abstract IOperation WalkDownBuiltInImplicitConversionOnConcatOperand(IOperation operand);
 
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public sealed override void Initialize(AnalysisContext context)
         {

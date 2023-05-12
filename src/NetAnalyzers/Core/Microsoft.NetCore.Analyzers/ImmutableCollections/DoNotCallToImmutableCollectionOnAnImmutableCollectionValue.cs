@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
-    /// CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+    /// CA2009: <inheritdoc cref="DoNotCallToImmutableCollectionOnAnImmutableCollectionValueTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer : DiagnosticAnalyzer
@@ -43,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
             ["ToImmutableSortedSet"] = "System.Collections.Immutable.ImmutableSortedSet`1",
         }.ToImmutableDictionary();
 
-        public static ImmutableArray<string> ToImmutableMethodNames => ImmutableCollectionMetadataNames.Keys.ToImmutableArray();
+        public static ImmutableArray<string> ToImmutableMethodNames { get; } = ImmutableCollectionMetadataNames.Keys.ToImmutableArray();
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
@@ -91,9 +91,8 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
                         return;
                     }
 
-                    var receiverType = invocation.GetReceiverType(operationContext.Compilation, beforeConversion: true, cancellationToken: operationContext.CancellationToken);
-                    if (receiverType != null &&
-                        receiverType.DerivesFromOrImplementsAnyConstructionOf(immutableCollectionType))
+                    if (invocation.GetReceiverType(operationContext.Compilation, beforeConversion: true, cancellationToken: operationContext.CancellationToken) is INamedTypeSymbol receiverType
+                        && receiverType.DerivesFromOrImplementsAnyConstructionOf(immutableCollectionType))
                     {
                         operationContext.ReportDiagnostic(
                             invocation.CreateDiagnostic(

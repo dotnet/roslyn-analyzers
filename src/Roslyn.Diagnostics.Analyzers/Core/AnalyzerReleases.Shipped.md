@@ -45,3 +45,25 @@ RS0034 | RoslynDiagnosticsReliability | Warning | RoslyDiagnosticsReliability | 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 RS0013 | RoslyDiagnosticsPerformance | Disabled | DiagnosticDescriptorAccessAnalyzer
+
+## Release 3.3.3
+
+### New Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+RS0049 | RoslynDiagnosticsReliability | Warning | TemporaryArrayAsRefAnalyzer
+
+### Removed Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+RS0101 | RoslynDiagnosticsMaintainability | Warning | AbstractBlankLinesDiagnosticAnalyzer
+
+## Release 3.3.4
+
+### Removed Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+RS0005 | RoslyDiagnosticsPerformance | Warning | CodeActionCreateAnalyzer

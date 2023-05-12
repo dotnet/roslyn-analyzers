@@ -172,7 +172,7 @@ An analyzer start action enables performing stateful analysis over a given code 
 |CodeFix|False|
 ---
 
-## RS1014: Do not ignore values returned by methods on immutable objects.
+## RS1014: Do not ignore values returned by methods on immutable objects
 
 Many objects exposed by Roslyn are immutable. The return value from a method invocation on these objects should not be ignored.
 
@@ -422,6 +422,42 @@ Prefer 'syntax.IsKind(kind)' to 'syntax.Kind() == kind' when checking syntax kin
 |Enabled|True|
 |Severity|Warning|
 |CodeFix|True|
+---
+
+## RS1035: Do not use APIs banned for analyzers
+
+The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.
+
+|Item|Value|
+|-|-|
+|Category|MicrosoftCodeAnalysisCorrectness|
+|Enabled|True|
+|Severity|Error|
+|CodeFix|False|
+---
+
+## RS1036: Specify analyzer banned API enforcement setting
+
+A project containing analyzers or source generators should specify the property '\<EnforceExtendedAnalyzerRules>true\</EnforceExtendedAnalyzerRules>'.
+
+|Item|Value|
+|-|-|
+|Category|MicrosoftCodeAnalysisCorrectness|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## RS1037: Add "CompilationEnd" custom tag to compilation end diagnostic descriptor
+
+'DiagnosticDescriptor' assigned to field is used to report a compilation end diagnostic, but the 'DiagnosticDescriptor' constructor used to initialize it does not pass in the required custom tag "CompilationEnd". See documentation for 'WellKnownDiagnosticTags.CompilationEnd' for details.
+
+|Item|Value|
+|-|-|
+|Category|MicrosoftCodeAnalysisDesign|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
 ---
 
 ## [RS2000](https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md): Add analyzer diagnostic IDs to analyzer release

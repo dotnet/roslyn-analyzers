@@ -18,31 +18,31 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
         #region Verifiers
 
         private DiagnosticResult CSharpResult1401(int line, int column, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
            => VerifyCS.Diagnostic(PInvokeDiagnosticAnalyzer.RuleCA1401)
                .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                .WithArguments(arguments);
 
         private DiagnosticResult BasicResult1401(int line, int column, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyVB.Diagnostic(PInvokeDiagnosticAnalyzer.RuleCA1401)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arguments);
 
         private DiagnosticResult CSharpResult2101(int line, int column, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
            => VerifyCS.Diagnostic(PInvokeDiagnosticAnalyzer.RuleCA2101)
                .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                .WithArguments(arguments);
 
         private DiagnosticResult BasicResult2101(int line, int column, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyVB.Diagnostic(PInvokeDiagnosticAnalyzer.RuleCA2101)
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arguments);
 
         #endregion
@@ -638,6 +638,43 @@ End Class
                 BasicResult2101(6, 6),
                 BasicResult2101(10, 6),
                 BasicResult2101(22, 30));
+        }
+
+        [Fact]
+        public async Task CA2101WithoutBestFitMappingCSharpTestAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System.Runtime.InteropServices;
+using System.Text;
+
+class C
+{
+
+    [DllImport(""user32.dll"", BestFitMapping = false)]
+    private static extern void Method1(string s);
+
+    [DllImport(""user32.dll"", CharSet = CharSet.Ansi, BestFitMapping = false)]
+    private static extern void Method2(string s);
+
+    [DllImport(""user32.dll"", BestFitMapping = false)]
+    private static extern void Method3(StringBuilder s);
+
+    [DllImport(""user32.dll"", CharSet = CharSet.Ansi, BestFitMapping = false)]
+    private static extern void Method4(StringBuilder s);
+
+    [DllImport(""user32.dll"", BestFitMapping = false)]
+    private static extern string Method5();
+
+    [DllImport(""user32.dll"", BestFitMapping = false)]
+    private static extern StringBuilder Method6();
+
+    [DllImport(""user32.dll"", CharSet = CharSet.Ansi, BestFitMapping = false)]
+    private static extern string Method7();
+
+    [DllImport(""user32.dll"", CharSet = CharSet.Ansi, BestFitMapping = false)]
+    private static extern StringBuilder Method8();
+}
+");
         }
 
         #endregion

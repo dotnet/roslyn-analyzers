@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1056: Uri properties should not be strings
+    /// CA1056: <inheritdoc cref="UriPropertiesShouldNotBeStringsTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class UriPropertiesShouldNotBeStringsAnalyzer : DiagnosticAnalyzer
@@ -40,27 +40,24 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             context.RegisterCompilationStartAction(c =>
             {
-                var @string = c.Compilation.GetSpecialType(SpecialType.System_String);
                 var attribute = c.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
-                if (@string == null || attribute == null)
+                if (attribute == null)
                 {
                     // we don't have required types
                     return;
                 }
 
-                var analyzer = new PerCompilationAnalyzer(@string, attribute);
+                var analyzer = new PerCompilationAnalyzer(attribute);
                 c.RegisterSymbolAction(analyzer.Analyze, SymbolKind.Property);
             });
         }
 
         private class PerCompilationAnalyzer
         {
-            private readonly INamedTypeSymbol _string;
             private readonly INamedTypeSymbol _attribute;
 
-            public PerCompilationAnalyzer(INamedTypeSymbol @string, INamedTypeSymbol attribute)
+            public PerCompilationAnalyzer(INamedTypeSymbol attribute)
             {
-                _string = @string;
                 _attribute = attribute;
             }
 
@@ -83,7 +80,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                if (property.Type?.Equals(_string) != true)
+                if (property.Type?.SpecialType != SpecialType.System_String)
                 {
                     // not expected type
                     return;
@@ -98,6 +95,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 if (!property.SymbolNameContainsUriWords(context.CancellationToken))
                 {
                     // property name doesn't contain uri word
+                    return;
+                }
+
+                if (context.Options.IsConfiguredToSkipAnalysis(Rule, property, context.Compilation))
+                {
+                    // property is excluded from analysis
                     return;
                 }
 

@@ -193,13 +193,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ExportedPartsShouldHaveImportingConstructorMessage">
-        <source>'{0}' is MEF-exported and should have a single importing constructor of the correct form</source>
-        <target state="translated">'{0}' é exportado pelo MEF e deve ter um construtor de importação única do formato correto</target>
+        <source>'{0}' is MEF-exported and should have a single, public importing constructor of the correct form</source>
+        <target state="translated">'{0}' é exportado pelo MEF e deve ter um único construtor de importação público da forma correta</target>
         <note />
       </trans-unit>
       <trans-unit id="ExportedPartsShouldHaveImportingConstructorTitle">
-        <source>Exported parts should be marked with 'ImportingConstructorAttribute'</source>
-        <target state="translated">As partes exportadas devem ser marcadas com 'ImportingConstructorAttribute'</target>
+        <source>Exported parts should have a public constructor marked with 'ImportingConstructorAttribute'</source>
+        <target state="translated">As peças exportadas devem ter um construtor público marcado com 'ImportingConstructorAttribute'</target>
         <note />
       </trans-unit>
       <trans-unit id="ExposeMemberForTestingDescription">
@@ -295,6 +295,11 @@
       <trans-unit id="RelaxTestNamingSuppressorJustification">
         <source>Asynchronous test methods do not require the 'Async' suffix</source>
         <target state="translated">Os métodos de teste assíncronos não exigem o sufixo 'Async'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Run iterations">
+        <source>Run iterations</source>
+        <target state="translated">Executar iterações</target>
         <note />
       </trans-unit>
       <trans-unit id="TemporaryArrayAsRefDescription">

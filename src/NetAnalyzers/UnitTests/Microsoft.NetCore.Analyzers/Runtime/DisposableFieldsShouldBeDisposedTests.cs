@@ -20,17 +20,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class DisposableFieldsShouldBeDisposedTests
     {
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
            => VerifyCS.Diagnostic()
                .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not use banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning restore RS0030 // Do not use banned APIs
                 .WithArguments(arguments);
 
         [Fact]
@@ -648,6 +648,186 @@ End Class",
                 {
                     GetBasicResultAt(14, 22, "B", "a", "A"),
                 }
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(6075, "https://github.com/dotnet/roslyn-analyzers/issues/6075")]
+        public async Task AsyncDisposableDisposedInExplicitAsyncDisposable_Disposed_NoDiagnosticAsync()
+        {
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+class FileStream2 : IAsyncDisposable
+{
+    public ValueTask DisposeAsync() => default;
+}
+
+public sealed class Test : IAsyncDisposable, IDisposable
+{
+    private readonly HttpClient client;
+    private readonly FileStream2 stream;
+
+    public Test()
+    {
+        client = new HttpClient();
+        stream = new FileStream2();
+    }
+
+    public void Dispose()
+    {
+        client.Dispose();
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        await stream.DisposeAsync();
+    }
+}
+"
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+Imports System
+Imports System.IO
+Imports System.Net.Http
+Imports System.Threading.Tasks
+
+class FileStream2 
+	implements IAsyncDisposable
+	public function DisposeAsync() as ValueTask implements IAsyncDisposable.DisposeAsync
+		return nothing
+	end function
+end class
+
+public class Test 
+	implements IAsyncDisposable, IDisposable
+	
+    private readonly client as HttpClient
+    private readonly stream as FileStream2
+
+	public sub new()
+        client = new HttpClient
+        stream = new FileStream2
+	end sub
+
+	public sub Dispose() implements IDisposable.Dispose
+        client.Dispose()
+	end sub
+
+	function DisposeAsync() as ValueTask implements IAsyncDisposable.DisposeAsync
+		return stream.DisposeAsync()
+	end function
+end class
+"
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+Imports System
+Imports System.IO
+Imports System.Net.Http
+Imports System.Threading.Tasks
+
+class FileStream2 
+	implements IAsyncDisposable
+	public function DisposeAsync() as ValueTask implements IAsyncDisposable.DisposeAsync
+		return nothing
+	end function
+end class
+
+public class Test 
+	implements IAsyncDisposable, IDisposable
+	
+    private readonly client as HttpClient
+    private readonly stream as FileStream2
+
+	public sub new()
+        client = new HttpClient
+        stream = new FileStream2
+	end sub
+
+	public sub Dispose() implements IDisposable.Dispose
+        client.Dispose()
+	end sub
+
+    rem arbitrary implementation name
+	function DisposeOtherAsync() as ValueTask implements IAsyncDisposable.DisposeAsync
+		return stream.DisposeAsync()
+	end function
+end class
+"
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(6075, "https://github.com/dotnet/roslyn-analyzers/issues/6075")]
+        public async Task DisposableDisposedInExplicitDisposable_Disposed_NoDiagnosticAsync()
+        {
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+public sealed class Test : IDisposable
+{
+    private readonly HttpClient client;
+    private readonly FileStream stream;
+
+    public Test()
+    {
+        client = new HttpClient();
+        stream = new FileStream(""C://some-path"", FileMode.CreateNew);
+    }
+
+    void IDisposable.Dispose()
+    {
+        client.Dispose();
+        stream.Dispose();
+    }
+}
+"
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+Imports System
+Imports System.IO
+Imports System.Net.Http
+Imports System.Threading.Tasks
+
+public class Test 
+	implements IDisposable
+	
+    private readonly client as HttpClient
+    private readonly stream as FileStream
+
+	public sub new()
+        client = new HttpClient
+        stream = new FileStream(""C://some-path"", FileMode.CreateNew)
+	end sub
+
+	public sub Dispose() implements IDisposable.Dispose
+        client.Dispose()
+        stream.Dispose()
+	end sub
+end class
+"
             }.RunAsync();
         }
 
@@ -3468,6 +3648,189 @@ Class B
     End Function
 End Class"
             }.RunAsync();
+        }
+
+        [Fact, WorkItem(5099, "https://github.com/dotnet/roslyn-analyzers/issues/5099")]
+        public async Task OwnDisposableButDoesNotOverrideDisposableMember_Dispose()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.IO;
+
+class MyBase : IDisposable
+{
+    public virtual void Dispose()
+    {
+    }
+}
+
+class Sub : MyBase
+{
+}
+
+class SubSub : Sub
+{
+    private readonly FileStream [|disposableField|] = new FileStream("""", FileMode.Create);
+}");
+        }
+
+        [Fact, WorkItem(5099, "https://github.com/dotnet/roslyn-analyzers/issues/5099")]
+        public async Task OwnDisposableButDoesNotOverrideDisposableMember_DisposeBool()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.IO;
+
+class MyBase : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}
+
+class Sub : MyBase
+{
+}
+
+class SubSub : Sub
+{
+    private readonly FileStream [|disposableField|] = new FileStream("""", FileMode.Create);
+}");
+        }
+
+        [Fact, WorkItem(5099, "https://github.com/dotnet/roslyn-analyzers/issues/5099")]
+        public async Task OwnDisposableButDoesNotOverrideDisposableMember_DisposeAsync()
+        {
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+class MyBase : IAsyncDisposable
+{
+    public virtual ValueTask DisposeAsync()
+    {
+        return default(ValueTask);
+    }
+}
+
+class Sub : MyBase
+{
+}
+
+class SubSub : Sub
+{
+    private readonly FileStream [|disposableField|] = new FileStream("""", FileMode.Create);
+}"
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task FieldDisposableThatDoNotRequireToBeDisposed()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+public class BaseClass : IDisposable
+{
+    private readonly MemoryStream _stream = new MemoryStream();
+    private readonly StringReader _stringReader = new StringReader(""something"");
+    private readonly Task _task = new Task(() => {});
+
+    public void Dispose()
+    {
+    }
+}
+");
+        }
+
+        [Fact, WorkItem(6172, "https://github.com/dotnet/roslyn-analyzers/issues/6172")]
+        public async Task FieldIsDisposedInSubClassFollowingDisposePattern()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.IO;
+
+public class BaseClass : IDisposable
+{
+    private bool disposedValue;
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects)
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
+            disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+}
+
+public class SubClass1 : BaseClass
+{
+    private readonly MemoryStream _stream;
+
+    public SubClass1()
+    {
+        _stream = new MemoryStream();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        _stream.Dispose();
+    }
+}
+
+public class SubClass2 : BaseClass
+{
+    private readonly MemoryStream _stream;
+    private bool _isDisposed = false;
+
+    public SubClass2()
+    {
+        _stream = new MemoryStream();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        if (_isDisposed)
+        {
+            return;
+        }
+
+        if (disposing)
+        {
+            // free managed resources
+            _stream.Dispose();
+        }
+
+        _isDisposed = true;
+    }
+}");
         }
     }
 }

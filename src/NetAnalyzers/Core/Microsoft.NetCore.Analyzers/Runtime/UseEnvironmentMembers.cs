@@ -12,7 +12,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
-    /// <summary>CA1837, CA1839, CA1840: Use Environment.ProcessId / ProcessPath / CurrentManagedThreadId</summary>
+    /// <summary>
+    /// CA1837: <inheritdoc cref="UseEnvironmentProcessIdTitle"/>
+    /// CA1839: <inheritdoc cref="UseEnvironmentProcessPathTitle"/>
+    /// CA1840: <inheritdoc cref="UseEnvironmentCurrentManagedThreadIdTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseEnvironmentMembers : DiagnosticAnalyzer
     {
@@ -50,7 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(UseEnvironmentProcessIdRule, UseEnvironmentProcessPathRule, UseEnvironmentCurrentManagedThreadIdRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(UseEnvironmentProcessIdRule, UseEnvironmentProcessPathRule, UseEnvironmentCurrentManagedThreadIdRule);
 
         public override void Initialize(AnalysisContext context)
         {

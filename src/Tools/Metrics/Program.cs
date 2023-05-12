@@ -102,7 +102,7 @@ namespace Metrics
                                 return usage();
                             }
 
-                            var key = arg.Substring(0, index).ToUpperInvariant();
+                            var key = arg[..index].ToUpperInvariant();
                             var value = arg[(index + 1)..];
                             switch (key)
                             {
@@ -229,6 +229,7 @@ Display this help message.");
                         {
                             Console.WriteLine($"Writing output to '{outputFile}'...");
                         }
+
                         metricFile = new XmlTextWriter(outputFile, Encoding.UTF8);
                     }
                     else

@@ -12,7 +12,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1024: Use properties where appropriate
+    /// CA1024: <inheritdoc cref="UsePropertiesWhereAppropriateTitle"/>
     ///
     /// Cause:
     /// A public or protected method has a name that starts with Get, takes no parameters, and returns a value that is not an array.
@@ -84,6 +84,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     if (methodSymbol.IsGenericMethod ||
                         methodSymbol.IsVirtual ||
                         methodSymbol.IsOverride ||
+                        methodSymbol.IsExtern ||
                         methodSymbol.Name is GetHashCodeName or GetEnumeratorName ||
                         (methodSymbol.Name == GetPinnableReferenceName && (methodSymbol.ReturnsByRef || methodSymbol.ReturnsByRefReadonly)) ||
                         methodSymbol.ContainingType.GetMembers(methodSymbol.Name).Length > 1 ||

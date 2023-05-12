@@ -16,6 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
+    /// CA1849: <inheritdoc cref="UseAsyncMethodInAsyncContextTitle"/>
     /// This analyzer suggests using the async version of a method when inside a Task-returning method
     /// In addition, calling Task.Wait(), Task.Result or Task.GetAwaiter().GetResult() will produce a diagnostic
     /// </summary>
@@ -29,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(UseAsyncMethodInAsyncContextTitle));
         private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(UseAsyncMethodInAsyncContextDescription));
 
-        internal static DiagnosticDescriptor Descriptor = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static readonly DiagnosticDescriptor Descriptor = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
                                                                                       CreateLocalizableResourceString(nameof(UseAsyncMethodInAsyncContextMessage)),
                                                                                       DiagnosticCategory.Performance,
@@ -38,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                       isPortedFxCopRule: false,
                                                                                       isDataflowRule: false);
 
-        internal static DiagnosticDescriptor DescriptorNoAlternativeMethod = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static readonly DiagnosticDescriptor DescriptorNoAlternativeMethod = DiagnosticDescriptorHelper.Create(RuleId,
                                                                               s_localizableTitle,
                                                                               CreateLocalizableResourceString(nameof(UseAsyncMethodInAsyncContextMessage_NoAlternative)),
                                                                               DiagnosticCategory.Performance,
@@ -47,7 +48,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                               isPortedFxCopRule: false,
                                                                               isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Descriptor, DescriptorNoAlternativeMethod);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor, DescriptorNoAlternativeMethod);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -70,6 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 GetSymbolAndAddToList("Result", WellKnownTypeNames.SystemThreadingTasksValueTask, SymbolKind.Property, syncBlockingSymbols, context.Compilation);
                 GetSymbolAndAddToList("GetResult", WellKnownTypeNames.SystemRuntimeCompilerServicesTaskAwaiter, SymbolKind.Method, syncBlockingSymbols, context.Compilation);
                 GetSymbolAndAddToList("GetResult", WellKnownTypeNames.SystemRuntimeCompilerServicesValueTaskAwaiter, SymbolKind.Method, syncBlockingSymbols, context.Compilation);
+                GetSymbolAndAddToList("Sleep", WellKnownTypeNames.SystemThreadingThread, SymbolKind.Method, syncBlockingSymbols, context.Compilation);
 
                 if (!syncBlockingTypes.Any())
                 {
@@ -87,7 +89,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         if (context.Operation is IInvocationOperation invocationOperation)
                         {
-                            if (InspectAndReportBlockingMemberAccess(context, syncBlockingSymbols, SymbolKind.Method))
+                            var methodSymbol = invocationOperation.TargetMethod;
+                            if (InspectAndReportBlockingMemberAccess(context, methodSymbol, syncBlockingSymbols, SymbolKind.Method))
                             {
                                 // Don't return double-diagnostics.
                                 return;
@@ -95,10 +98,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                             // Also consider all method calls to check for Async-suffixed alternatives.
                             var semanticModel = context.Operation.SemanticModel;
-                            SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(context.Operation.Syntax, context.CancellationToken);
 
-                            if (symbolInfo.Symbol is IMethodSymbol methodSymbol &&
-                                !methodSymbol.Name.EndsWith(MandatoryAsyncSuffix, StringComparison.Ordinal) &&
+                            if (!methodSymbol.Name.EndsWith(MandatoryAsyncSuffix, StringComparison.Ordinal) &&
                                 !HasAsyncCompatibleReturnType(methodSymbol, syncBlockingTypes))
                             {
                                 IEnumerable<IMethodSymbol> methodSymbols = semanticModel.LookupSymbols(
@@ -135,7 +136,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                         else
                         {
-                            InspectAndReportBlockingMemberAccess(context, syncBlockingSymbols, SymbolKind.Property);
+                            InspectAndReportBlockingMemberAccess(context, ((IPropertyReferenceOperation)context.Operation).Property, syncBlockingSymbols, SymbolKind.Property);
                         }
                     }
                 }, OperationKind.Invocation, OperationKind.PropertyReference);
@@ -233,6 +234,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     return method;
                 }
+
                 containingSymbol = containingSymbol.ContainingSymbol;
             }
 
@@ -253,17 +255,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return HasAsyncCompatibleReturnType(parentMethod, syncBlockingTypes);
         }
 
-        private static bool InspectAndReportBlockingMemberAccess(OperationAnalysisContext context, List<SyncBlockingSymbol> syncBlockingSymbols, SymbolKind kind)
+        private static bool InspectAndReportBlockingMemberAccess(OperationAnalysisContext context, ISymbol memberSymbol, List<SyncBlockingSymbol> syncBlockingSymbols, SymbolKind kind)
         {
-            ISymbol? memberSymbol = context.Operation.SemanticModel.GetSymbolInfo(context.Operation.Syntax, context.CancellationToken).Symbol;
-            if (memberSymbol is null)
-            {
-                return false;
-            }
-
             foreach (SyncBlockingSymbol symbol in syncBlockingSymbols)
             {
-                if (symbol.Kind != kind) continue;
+                if (symbol.Kind != kind)
+                    continue;
                 if (symbol.Value.Equals(memberSymbol.OriginalDefinition))
                 {
                     Diagnostic diagnostic = context.Operation.Syntax.CreateDiagnostic(
@@ -275,6 +272,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return true;
                 }
             }
+
             return false;
         }
     }

@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -140,10 +138,14 @@ public abstract class C
 ");
         }
 
-        [Fact]
-        public async Task CA2200_DiagnosticForThrowCaughtExceptionAsync()
+        [Theory]
+        [InlineData(CodeAnalysis.CSharp.LanguageVersion.CSharp7)]
+        [InlineData(CodeAnalysis.CSharp.LanguageVersion.CSharp10)]
+        public async Task CA2200_DiagnosticForThrowCaughtExceptionAsync(Microsoft.CodeAnalysis.CSharp.LanguageVersion languageVersion)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await new VerifyCS.Test
+            {
+                TestCode = @"
 using System;
 
 class Program
@@ -164,8 +166,9 @@ class Program
     {
         throw new ArithmeticException();
     }
-}
-");
+}",
+                LanguageVersion = languageVersion,
+            }.RunAsync();
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System

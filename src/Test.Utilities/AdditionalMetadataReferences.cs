@@ -70,7 +70,6 @@ namespace Test.Utilities
 
         public static MetadataReference SystemCollectionsImmutableReference { get; } = MetadataReference.CreateFromFile(typeof(ImmutableHashSet<>).Assembly.Location);
         public static MetadataReference SystemComponentModelCompositionReference { get; } = MetadataReference.CreateFromFile(typeof(System.ComponentModel.Composition.ExportAttribute).Assembly.Location);
-        public static MetadataReference SystemCompositionReference { get; } = MetadataReference.CreateFromFile(typeof(System.Composition.ExportAttribute).Assembly.Location);
         public static MetadataReference SystemXmlDataReference { get; } = MetadataReference.CreateFromFile(typeof(System.Data.Rule).Assembly.Location);
         public static MetadataReference CodeAnalysisReference { get; } = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
         public static MetadataReference CSharpSymbolsReference { get; } = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
@@ -96,7 +95,7 @@ namespace Test.Utilities
                     "net6.0",
                     new PackageIdentity(
                         "Microsoft.NETCore.App.Ref",
-                        "6.0.0-preview.6.21352.12"),
+                        "6.0.0-rc.1.21451.13"),
                     Path.Combine("ref", "net6.0"));
             });
 

@@ -18,7 +18,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1508: Flags conditional expressions which are always true/false and null checks for operations that are always null/non-null based on predicate analysis.
+    /// CA1508: <inheritdoc cref="AvoidDeadConditionalCodeTitle"/>
+    /// 
+    /// Flags conditional expressions which are always true/false and null checks for operations that are always null/non-null based on predicate analysis.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AvoidDeadConditionalCode : DiagnosticAnalyzer
@@ -72,7 +74,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     {
                         static bool ShouldAnalyze(IOperation op) =>
                                 (op as IBinaryOperation)?.IsComparisonOperator() == true ||
-                                (op as IInvocationOperation)?.TargetMethod.ReturnType.SpecialType == SpecialType.System_Boolean ||
+                                op is IInvocationOperation { TargetMethod.ReturnType.SpecialType: SpecialType.System_Boolean } ||
                                 op.Kind == OperationKind.Coalesce ||
                                 op.Kind == OperationKind.ConditionalAccess ||
                                 op.Kind == OperationKind.IsNull ||

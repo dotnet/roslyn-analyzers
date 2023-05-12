@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -17,7 +15,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class UseAsyncMethodInAsyncContextTests
     {
-
         [Fact]
         public async Task TaskWaitInTaskReturningMethodGeneratesWarning()
         {
@@ -49,6 +46,39 @@ Module Program
 End Module
 ";
             await CreateVBTestAndRunAsync(testVB, VerifyVB.Diagnostic(UseAsyncMethodInAsyncContext.DescriptorNoAlternativeMethod).WithLocation(0).WithArguments("Public Overloads Sub Wait()"));
+        }
+
+        [Fact]
+        public async Task ThreadSleepInTaskReturningMethodGeneratesWarning()
+        {
+            var testCS = @"
+using System.Threading;
+using System.Threading.Tasks;
+
+class Test {
+    Task T() {
+        {|#0:Thread.Sleep(500)|};
+        return Task.FromResult(1);
+    }
+}
+";
+            await CreateCSTestAndRunAsync(testCS, VerifyCS.Diagnostic(UseAsyncMethodInAsyncContext.DescriptorNoAlternativeMethod).WithLocation(0).WithArguments("Thread.Sleep(int)"));
+
+            var testVB = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+
+Module Program
+    Sub Main()
+        Test()
+    End Sub
+    Function Test() As Task
+        {|#0:Thread.Sleep(500)|}
+        Return Task.FromResult(1)
+    End Function
+End Module
+";
+            await CreateVBTestAndRunAsync(testVB, VerifyVB.Diagnostic(UseAsyncMethodInAsyncContext.DescriptorNoAlternativeMethod).WithLocation(0).WithArguments("Public Shared Overloads Sub Sleep(millisecondsTimeout As Integer)"));
         }
 
         [Fact]

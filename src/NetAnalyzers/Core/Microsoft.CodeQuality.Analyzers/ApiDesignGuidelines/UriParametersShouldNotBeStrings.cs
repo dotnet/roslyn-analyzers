@@ -12,7 +12,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1054: Uri parameters should not be strings
+    /// CA1054: <inheritdoc cref="UriParametersShouldNotBeStringsTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class UriParametersShouldNotBeStringsAnalyzer : DiagnosticAnalyzer
@@ -41,29 +41,26 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             context.RegisterCompilationStartAction(c =>
             {
-                var @string = c.Compilation.GetSpecialType(SpecialType.System_String);
                 var uri = c.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemUri);
                 var attribute = c.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
-                if (@string == null || uri == null || attribute == null)
+                if (uri == null || attribute == null)
                 {
                     // we don't have required types
                     return;
                 }
 
-                var analyzer = new PerCompilationAnalyzer(@string, uri, attribute);
+                var analyzer = new PerCompilationAnalyzer(uri, attribute);
                 c.RegisterSymbolAction(analyzer.Analyze, SymbolKind.Method);
             });
         }
 
         private class PerCompilationAnalyzer
         {
-            private readonly INamedTypeSymbol _string;
             private readonly INamedTypeSymbol _uri;
             private readonly INamedTypeSymbol _attribute;
 
-            public PerCompilationAnalyzer(INamedTypeSymbol @string, INamedTypeSymbol uri, INamedTypeSymbol attribute)
+            public PerCompilationAnalyzer(INamedTypeSymbol uri, INamedTypeSymbol attribute)
             {
-                _string = @string;
                 _uri = uri;
                 _attribute = attribute;
             }
@@ -87,7 +84,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                var stringParameters = method.Parameters.GetParametersOfType(_string);
+                var stringParameters = method.Parameters.GetParametersOfType(SpecialType.System_String);
                 if (!stringParameters.Any())
                 {
                     // no string parameter. not interested.
@@ -104,6 +101,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 if (method.ContainingType.DerivesFrom(_attribute, baseTypesOnly: true))
                 {
                     // Attributes cannot accept System.Uri objects as positional or optional attributes
+                    return;
+                }
+
+                if (context.Options.IsConfiguredToSkipAnalysis(Rule, method, context.Compilation))
+                {
+                    // property is excluded from analysis
                     return;
                 }
 

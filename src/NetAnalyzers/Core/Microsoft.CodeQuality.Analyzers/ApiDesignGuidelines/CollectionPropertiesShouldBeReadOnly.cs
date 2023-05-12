@@ -14,7 +14,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA2227: Collection properties should be read only
+    /// CA2227: <inheritdoc cref="CollectionPropertiesShouldBeReadOnlyTitle"/>
     ///
     /// Cause:
     /// An externally visible writable property is a type that implements System.Collections.ICollection.
@@ -118,9 +118,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             // exclude readonly collections
-            if (property.Type.OriginalDefinition.Equals(knownTypes.ReadonlyCollection) ||
-                property.Type.OriginalDefinition.Equals(knownTypes.ReadonlyDictionary) ||
-                property.Type.OriginalDefinition.Equals(knownTypes.ReadonlyObservableCollection))
+            if (SymbolEqualityComparer.Default.Equals(property.Type.OriginalDefinition, knownTypes.ReadonlyCollection) ||
+                SymbolEqualityComparer.Default.Equals(property.Type.OriginalDefinition, knownTypes.ReadonlyDictionary) ||
+                SymbolEqualityComparer.Default.Equals(property.Type.OriginalDefinition, knownTypes.ReadonlyObservableCollection))
             {
                 return;
             }
@@ -131,12 +131,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
+            if (property.IsImplementationOfAnyInterfaceMember())
+            {
+                return;
+            }
+
             context.ReportDiagnostic(property.CreateDiagnostic(Rule, property.Name));
         }
 
         private static bool Inherits(ITypeSymbol symbol, ITypeSymbol baseType)
         {
-            Debug.Assert(baseType.Equals(baseType.OriginalDefinition));
+            Debug.Assert(SymbolEqualityComparer.Default.Equals(baseType, baseType.OriginalDefinition));
             return symbol?.OriginalDefinition.Inherits(baseType) ?? false;
         }
 

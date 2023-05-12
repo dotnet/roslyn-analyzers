@@ -14,7 +14,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
 
     internal partial class GlobalFlowStateAnalysis : ForwardDataFlowAnalysis<GlobalFlowStateAnalysisData, GlobalFlowStateAnalysisContext, GlobalFlowStateAnalysisResult, GlobalFlowStateBlockAnalysisResult, GlobalFlowStateAnalysisValueSet>
     {
-        internal class GlobalFlowStateAnalysisValueSetDomain : AbstractValueDomain<GlobalFlowStateAnalysisValueSet>
+        internal sealed class GlobalFlowStateAnalysisValueSetDomain : AbstractValueDomain<GlobalFlowStateAnalysisValueSet>
         {
             public static GlobalFlowStateAnalysisValueSetDomain Instance = new();
 
@@ -68,13 +68,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
                 {
                     return GlobalFlowStateAnalysisValueSet.Unknown;
                 }
-                else if (value1.Kind == GlobalFlowStateAnalysisValueSetKind.Empty)
+                else if (value1.Kind == GlobalFlowStateAnalysisValueSetKind.Empty || value2.Kind == GlobalFlowStateAnalysisValueSetKind.Empty)
                 {
-                    return value2;
-                }
-                else if (value2.Kind == GlobalFlowStateAnalysisValueSetKind.Empty)
-                {
-                    return value1;
+                    return GlobalFlowStateAnalysisValueSet.Empty;
                 }
 
                 Debug.Assert(value1.Kind == GlobalFlowStateAnalysisValueSetKind.Known);

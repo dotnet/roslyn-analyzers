@@ -29,6 +29,22 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
+        public async Task NoDiagnostics_StackallocAsSourceOfForeachLoop()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = LanguageVersion.CSharp8,
+                TestCode = @"
+                using System;
+                unsafe class TestClass {
+                    private static void SourceOfForeachLoop() {
+                        foreach (char c in stackalloc char[] { 'a', 'b', 'c' }) { }
+                    }
+                }"
+            }.RunAsync();
+        }
+
+        [Fact]
         public async Task NoDiagnostics_StackallocInLoopWithBreakAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -249,6 +265,46 @@ class TestClass {
                         }
                     }
                 }");
+        }
+
+        [Fact]
+        public async Task Diagnostics_StackallocAsSourceOfForeachLoopButInAnotherLoop()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = LanguageVersion.CSharp8,
+                TestCode = @"
+                using System;
+                unsafe class TestClass {
+                    private static void SourceOfForeachLoopInAnotherLoop() {
+                        for (int i = 0; i < 10; i++)
+                        {
+                            foreach (char c in {|CA2014:stackalloc char[] { 'a', 'b', 'c' }|}) { }
+                        }
+                    }
+                }"
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task Diagnostics_StackallocAsSourceOfForeachVariableLoop()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = LanguageVersion.CSharp8,
+                TestCode = @"
+                using System;
+                public class C
+                {
+                    public static void Foo()
+                    {
+                        foreach (var (x, y) in stackalloc (double, double)[] { (0, 0) })
+                        {
+                            Span<byte> span = {|CA2014:stackalloc byte[1024]|};
+                        }
+                    }
+                }"
+            }.RunAsync();
         }
     }
 }

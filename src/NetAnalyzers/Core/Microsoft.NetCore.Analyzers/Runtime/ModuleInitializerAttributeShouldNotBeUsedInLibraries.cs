@@ -11,7 +11,7 @@ using static Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA2255: ModuleInitializer attributes should not be used in libraries.
+    /// CA2255: <inheritdoc cref="ModuleInitializerAttributeShouldNotBeUsedInLibrariesTitle"/>
     /// </summary>
     /// <remarks>
     /// ModuleInitializer methods must:
@@ -27,7 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA2255";
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                     CreateLocalizableResourceString(nameof(ModuleInitializerAttributeShouldNotBeUsedInLibrariesTitle)),
                                                                     CreateLocalizableResourceString(nameof(ModuleInitializerAttributeShouldNotBeUsedInLibrariesMessage)),
                                                                     DiagnosticCategory.Usage,
@@ -36,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                     isPortedFxCopRule: false,
                                                                     isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -51,7 +51,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // Only validate libraries (which will still produce some false positives, but that is acceptable)
-                if (context.Compilation.Options.OutputKind != OutputKind.DynamicallyLinkedLibrary) return;
+                if (context.Compilation.Options.OutputKind != OutputKind.DynamicallyLinkedLibrary)
+                    return;
 
                 context.RegisterSymbolAction(context =>
                 {

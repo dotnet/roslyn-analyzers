@@ -16,6 +16,9 @@ namespace Microsoft.NetFramework.Analyzers
 {
     using static MicrosoftNetFrameworkAnalyzersResources;
 
+    /// <summary>
+    /// CA3077: <inheritdoc cref="InsecureDtdProcessingInApiDesign"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotUseInsecureDtdProcessingInApiDesignAnalyzer : DiagnosticAnalyzer
     {
@@ -84,8 +87,7 @@ namespace Microsoft.NetFramework.Analyzers
                 Version targetFrameworkVersion)
             {
                 _xmlTypes = xmlTypes;
-                _isFrameworkSecure = targetFrameworkVersion != null
-                    && targetFrameworkVersion >= s_minSecureFxVersion;
+                _isFrameworkSecure = targetFrameworkVersion >= s_minSecureFxVersion;
             }
 
             public void AnalyzeOperationBlock(OperationBlockStartAnalysisContext context)
@@ -96,6 +98,7 @@ namespace Microsoft.NetFramework.Analyzers
                 {
                     AnalyzeBlockForXmlTextReaderDerivedTypeConstructorDecl(context);
                 }
+
                 AnalyzeBlockForXmlTextReaderDerivedTypeMethodDecl(context);
             }
 
@@ -327,6 +330,7 @@ namespace Microsoft.NetFramework.Analyzers
                         {
                             locations.Enqueue(assignment.Syntax.GetLocation());
                         }
+
                         return;
                     }
 

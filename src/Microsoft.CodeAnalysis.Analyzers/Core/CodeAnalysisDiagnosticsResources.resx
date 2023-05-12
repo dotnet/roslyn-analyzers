@@ -269,7 +269,7 @@
     <value>'{0}' is immutable and '{1}' will not have any effect on it. Consider using the return value from '{1}'.</value>
   </data>
   <data name="DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationTitle" xml:space="preserve">
-    <value>Do not ignore values returned by methods on immutable objects.</value>
+    <value>Do not ignore values returned by methods on immutable objects</value>
   </data>
   <data name="DiagnosticIdMustBeAConstantTitle" xml:space="preserve">
     <value>DiagnosticId for analyzers must be a non-null constant</value>
@@ -514,6 +514,15 @@
   <data name="DefineDiagnosticDescriptionCorrectlyTitle" xml:space="preserve">
     <value>Define diagnostic description correctly</value>
   </data>
+  <data name="AddCompilationEndCustomTagDescription" xml:space="preserve">
+    <value>'DiagnosticDescriptor' assigned to field is used to report a compilation end diagnostic, but the 'DiagnosticDescriptor' constructor used to initialize it does not pass in the required custom tag "CompilationEnd". See documentation for 'WellKnownDiagnosticTags.CompilationEnd' for details.</value>
+  </data>
+  <data name="AddCompilationEndCustomTagMessage" xml:space="preserve">
+    <value>Add "CompilationEnd" custom tag to the diagnostic descriptor used to initialize field '{0}' as it is used to report a compilation end diagnostic</value>
+  </data>
+  <data name="AddCompilationEndCustomTagTitle" xml:space="preserve">
+    <value>Add "CompilationEnd" custom tag to compilation end diagnostic descriptor</value>
+  </data>
   <data name="CompareSymbolsCorrectlyDescriptionGetHashCode" xml:space="preserve">
     <value>Symbols should be compared for equality, not identity. An explicit call to 'GetHashCode' will likely result in the wrong behavior.</value>
   </data>
@@ -528,5 +537,23 @@
   </data>
   <data name="PreferIsKindFix" xml:space="preserve">
     <value>Use 'IsKind' instead of 'Kind'</value>
+  </data>
+  <data name="SymbolIsBannedInAnalyzersDescription" xml:space="preserve">
+    <value>The symbol has been marked as banned for use in analyzers, and an alternate should be used instead.</value>
+  </data>
+  <data name="SymbolIsBannedInAnalyzersMessage" xml:space="preserve">
+    <value>The symbol '{0}' is banned for use by analyzers{1}</value>
+  </data>
+  <data name="SymbolIsBannedInAnalyzersTitle" xml:space="preserve">
+    <value>Do not use APIs banned for analyzers</value>
+  </data>
+  <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription" xml:space="preserve">
+    <value>A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'.</value>
+  </data>
+  <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage" xml:space="preserve">
+    <value>'{0}': A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'</value>
+  </data>
+  <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersTitle" xml:space="preserve">
+    <value>Specify analyzer banned API enforcement setting</value>
   </data>
 </root>

@@ -23,8 +23,8 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
 
         private sealed class CodeBlockStartedAnalyzer : AbstractCodeBlockStartedAnalyzer<SyntaxKind>
         {
-            public CodeBlockStartedAnalyzer(INamedTypeSymbol genericEnumerableSymbol, IMethodSymbol genericEmptyEnumerableSymbol) :
-                base(genericEnumerableSymbol, genericEmptyEnumerableSymbol)
+            public CodeBlockStartedAnalyzer(INamedTypeSymbol genericEnumerableSymbol, IMethodSymbol genericEmptyEnumerableSymbol)
+                : base(genericEnumerableSymbol, genericEmptyEnumerableSymbol)
             {
             }
 
@@ -36,8 +36,8 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
 
         private sealed class SyntaxAnalyzer : AbstractSyntaxAnalyzer
         {
-            public SyntaxAnalyzer(INamedTypeSymbol genericEnumerableSymbol, IMethodSymbol genericEmptyEnumerableSymbol) :
-                base(genericEnumerableSymbol, genericEmptyEnumerableSymbol)
+            public SyntaxAnalyzer(INamedTypeSymbol genericEnumerableSymbol, IMethodSymbol genericEmptyEnumerableSymbol)
+                : base(genericEnumerableSymbol, genericEmptyEnumerableSymbol)
             {
             }
 
@@ -81,7 +81,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
                     // Check for explicit specification of empty or singleton array
 
                     if (arrayType.RankSpecifiers[0].ChildNodes()
-                        .FirstOrDefault(n => n.Kind() == SyntaxKind.NumericLiteralExpression) is LiteralExpressionSyntax literalRankSpecifier)
+                        .FirstOrDefault(n => n.IsKind(SyntaxKind.NumericLiteralExpression)) is LiteralExpressionSyntax literalRankSpecifier)
                     {
                         AnalyzeArrayLength((int)literalRankSpecifier.Token.Value, arrayCreationExpression, addDiagnostic);
                         return;

@@ -12,7 +12,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1068: CancellationToken parameters must come last.
+    /// CA1068: <inheritdoc cref="CancellationTokenParametersMustComeLastTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class CancellationTokenParametersMustComeLastAnalyzer : DiagnosticAnalyzer
@@ -46,6 +46,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesCallerFilePathAttribute));
                 builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesCallerLineNumberAttribute));
                 builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesCallerMemberNameAttribute));
+                builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesCallerArgumentExpressionAttribute));
                 var callerInformationAttributes = builder.ToImmutable();
 
                 if (cancellationTokenType == null)
@@ -56,6 +57,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 compilationContext.RegisterSymbolAction(symbolContext =>
                 {
                     var methodSymbol = (IMethodSymbol)symbolContext.Symbol;
+
+                    if (!methodSymbol.Parameters.Any(static (parameter, tokenType) => parameter.Type.Equals(tokenType), cancellationTokenType))
+                    {
+                        return;
+                    }
+
                     if (methodSymbol.IsOverride ||
                         methodSymbol.IsImplementationOfAnyInterfaceMember())
                     {
@@ -81,7 +88,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     }
 
                     // Ignore parameters that have any of these attributes.
-                    // C# reserved attributes: https://docs.microsoft.com/dotnet/csharp/language-reference/attributes/caller-information
+                    // C# reserved attributes: https://learn.microsoft.com/dotnet/csharp/language-reference/attributes/caller-information
                     while (last >= 0
                         && HasCallerInformationAttribute(methodSymbol.Parameters[last], callerInformationAttributes))
                     {
@@ -91,13 +98,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // Skip optional parameters, UNLESS one of them is a CancellationToken
                     // AND it's not the last one.
                     if (last >= 0 && methodSymbol.Parameters[last].IsOptional
-                        && !methodSymbol.Parameters[last].Type.Equals(cancellationTokenType))
+                        && !SymbolEqualityComparer.Default.Equals(methodSymbol.Parameters[last].Type, cancellationTokenType))
                     {
                         last--;
 
                         while (last >= 0 && methodSymbol.Parameters[last].IsOptional)
                         {
-                            if (methodSymbol.Parameters[last].Type.Equals(cancellationTokenType))
+                            if (SymbolEqualityComparer.Default.Equals(methodSymbol.Parameters[last].Type, cancellationTokenType))
                             {
                                 symbolContext.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule, methodSymbol.ToDisplayString()));
                             }
@@ -107,7 +114,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     }
 
                     // Ignore multiple cancellation token parameters at the end of the parameter list.
-                    while (last >= 0 && methodSymbol.Parameters[last].Type.Equals(cancellationTokenType))
+                    while (last >= 0 && SymbolEqualityComparer.Default.Equals(methodSymbol.Parameters[last].Type, cancellationTokenType))
                     {
                         last--;
                     }
@@ -121,7 +128,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // Ignore IProgress<T> when last
                     if (last >= 0
                         && iprogressType != null
-                        && methodSymbol.Parameters[last].Type.OriginalDefinition.Equals(iprogressType))
+                        && SymbolEqualityComparer.Default.Equals(methodSymbol.Parameters[last].Type.OriginalDefinition, iprogressType))
                     {
                         last--;
                     }
@@ -129,7 +136,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     for (int i = last - 1; i >= 0; i--)
                     {
                         ITypeSymbol parameterType = methodSymbol.Parameters[i].Type;
-                        if (!parameterType.Equals(cancellationTokenType))
+                        if (!SymbolEqualityComparer.Default.Equals(parameterType, cancellationTokenType))
                         {
                             continue;
                         }

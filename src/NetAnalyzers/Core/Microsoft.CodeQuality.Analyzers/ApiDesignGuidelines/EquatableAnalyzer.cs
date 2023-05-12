@@ -11,6 +11,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     using static MicrosoftCodeQualityAnalyzersResources;
 
+    /// <summary>
+    /// CA1066: <inheritdoc cref="ImplementIEquatableWhenOverridingObjectEqualsTitle"/>
+    /// CA1067: <inheritdoc cref="OverrideObjectEqualsTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class EquatableAnalyzer : DiagnosticAnalyzer
     {
@@ -49,9 +53,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            INamedTypeSymbol? objectType = context.Compilation.GetSpecialType(SpecialType.System_Object);
             INamedTypeSymbol? equatableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIEquatable1);
-            if (objectType != null && equatableType != null)
+            if (equatableType != null)
             {
                 context.RegisterSymbolAction(c => AnalyzeSymbol(c, equatableType), SymbolKind.NamedType);
             }

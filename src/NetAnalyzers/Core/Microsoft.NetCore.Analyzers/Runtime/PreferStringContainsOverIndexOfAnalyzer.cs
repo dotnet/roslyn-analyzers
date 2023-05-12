@@ -13,6 +13,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
+    /// CA2249: <inheritdoc cref="PreferStringContainsOverIndexOfTitle"/>
     /// Prefer string.Contains over string.IndexOf when the result is used to check for the presence/absence of a substring
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
@@ -38,8 +39,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterCompilationStartAction(context =>
             {
-                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemString, out INamedTypeSymbol? stringType) ||
-                    !context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemChar, out INamedTypeSymbol? charType) ||
+                if (context.Compilation.GetSpecialType(SpecialType.System_String) is not INamedTypeSymbol stringType ||
+                    context.Compilation.GetSpecialType(SpecialType.System_Char) is not INamedTypeSymbol charType ||
                     !context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison, out INamedTypeSymbol? stringComparisonType))
                 {
                     return;
@@ -135,6 +136,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 return;
                             }
                         }
+
                         localsToBailOut.Add(localReference.Local);
                     }
 
@@ -180,6 +182,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 return true;
                             }
                         }
+
                         return false;
                     }
 
@@ -193,6 +196,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 context.ReportDiagnostic(variableNameAndLocation.Value.CreateDiagnostic(Rule));
                             }
                         }
+
                         variableNameToOperationsMap.Free(context.CancellationToken);
                         localsToBailOut.Free(context.CancellationToken);
                     }

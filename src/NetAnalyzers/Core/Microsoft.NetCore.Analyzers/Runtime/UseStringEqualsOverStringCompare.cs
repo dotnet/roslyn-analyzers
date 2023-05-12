@@ -14,6 +14,7 @@ using static Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
+    /// CA2251: <inheritdoc cref="UseStringEqualsOverStringCompareTitle"/>
     /// Reports a diagnostic on any <see cref="IBinaryOperation"/> that:
     /// <list type="bullet">
     /// <item>Is an equals or not-equals operation</item>
@@ -38,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {

@@ -18,12 +18,17 @@ namespace Analyzer.Utilities.Extensions
                 throw new ArgumentNullException(nameof(source));
             }
 
-            foreach (T v in source)
-            {
-                yield return v;
-            }
+            return ConcatImpl(source, value);
 
-            yield return value;
+            static IEnumerable<T> ConcatImpl(IEnumerable<T> source, T value)
+            {
+                foreach (T v in source)
+                {
+                    yield return v;
+                }
+
+                yield return value;
+            }
         }
 
         public static ISet<T> ToSet<T>(this IEnumerable<T> source)
@@ -195,12 +200,15 @@ namespace Analyzer.Utilities.Extensions
             }
 
             using var enumerator = source.GetEnumerator();
-            while (count > 0 && enumerator.MoveNext()) { count--; }
+            while (count > 0 && enumerator.MoveNext())
+            {
+                count--;
+            }
 
             return count > 0;
         }
 
-        private class ComparisonComparer<T> : Comparer<T>
+        private sealed class ComparisonComparer<T> : Comparer<T>
         {
             private readonly Comparison<T> _compare;
 

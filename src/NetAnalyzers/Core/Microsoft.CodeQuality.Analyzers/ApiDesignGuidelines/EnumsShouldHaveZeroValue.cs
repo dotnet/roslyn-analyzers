@@ -15,7 +15,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1008: Enums should have zero value
+    /// CA1008: <inheritdoc cref="EnumsShouldHaveZeroValueTitle"/>
     ///
     /// Cause:
     /// An enumeration without an applied System.FlagsAttribute does not define a member that has a value of zero;
@@ -119,7 +119,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             if (symbol.HasAttribute(flagsAttribute))
             {
-                CheckFlags(symbol, zeroValuedFields, context.ReportDiagnostic);
+                CheckFlags(symbol, zeroValuedFields, context);
             }
             else
             {
@@ -127,7 +127,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        private static void CheckFlags(INamedTypeSymbol namedType, ImmutableArray<IFieldSymbol> zeroValuedFields, Action<Diagnostic> addDiagnostic)
+        private static void CheckFlags(INamedTypeSymbol namedType, ImmutableArray<IFieldSymbol> zeroValuedFields,
+            SymbolAnalysisContext context)
         {
             switch (zeroValuedFields.Length)
             {
@@ -137,8 +138,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 case 1:
                     if (!IsMemberNamedNone(zeroValuedFields[0]))
                     {
-                        // In enum '{0}', change the name of '{1}' to 'None'.
-                        addDiagnostic(zeroValuedFields[0].CreateDiagnostic(RuleRename, namedType.Name, zeroValuedFields[0].Name));
+                        var additionalEnumNoneNames =
+                            context.Options.GetStringOptionValue(
+                                EditorConfigOptionNames.AdditionalEnumNoneNames, RuleRename,
+                                namedType.Locations[0].SourceTree, context.Compilation)
+                            .Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries)
+                            .ToImmutableArray();
+
+                        if (!additionalEnumNoneNames.Any(name => string.Equals(name, zeroValuedFields[0].Name, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            // In enum '{0}', change the name of '{1}' to 'None'.
+                            context.ReportDiagnostic(zeroValuedFields[0].CreateDiagnostic(RuleRename, namedType.Name, zeroValuedFields[0].Name));
+                        }
                     }
 
                     break;
@@ -146,7 +157,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 default:
                     {
                         // Remove all members that have the value zero from {0} except for one member that is named 'None'.
-                        addDiagnostic(namedType.CreateDiagnostic(RuleMultipleZero, namedType.Name));
+                        context.ReportDiagnostic(namedType.CreateDiagnostic(RuleMultipleZero, namedType.Name));
                     }
 
                     break;
@@ -165,7 +176,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal static IEnumerable<IFieldSymbol> GetZeroValuedFields(INamedTypeSymbol enumType)
         {
             SpecialType specialType = enumType.EnumUnderlyingType.SpecialType;
-            foreach (IFieldSymbol field in enumType.GetMembers().Where(m => m.Kind == SymbolKind.Field))
+            foreach (IFieldSymbol field in enumType.GetMembers().Where(m => m.Kind == SymbolKind.Field).Cast<IFieldSymbol>())
             {
                 if (field.HasConstantValue && IsZeroValueConstant(field.ConstantValue, specialType))
                 {
@@ -181,7 +192,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public static bool IsMemberNamedNone(ISymbol symbol)
         {
-            return string.Equals(symbol.Name, "none", System.StringComparison.OrdinalIgnoreCase);
+            return string.Equals(symbol.Name, "none", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

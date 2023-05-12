@@ -5,166 +5,50 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
+using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
-using DiagnosticIds = Roslyn.Diagnostics.Analyzers.RoslynDiagnosticIds;
-
 namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 {
-    using static PublicApiAnalyzerResources;
-
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed partial class DeclarePublicApiAnalyzer : DiagnosticAnalyzer
     {
-        internal const string ShippedFileName = "PublicAPI.Shipped.txt";
-        internal const string UnshippedFileName = "PublicAPI.Unshipped.txt";
-        internal const string PublicApiNamePropertyBagKey = "PublicAPIName";
-        internal const string PublicApiNameWithNullabilityPropertyBagKey = "PublicAPINameWithNullability";
+        private static readonly SourceTextValueProvider<ApiData> s_shippingApiDataProvider = new(static text => ReadApiData(text, isShippedApi: true));
+        private static readonly SourceTextValueProvider<ApiData> s_nonShippingApiDataProvider = new(static text => ReadApiData(text, isShippedApi: false));
+
+        internal const string Extension = ".txt";
+        internal const string PublicShippedFileNamePrefix = "PublicAPI.Shipped";
+        internal const string PublicShippedFileName = PublicShippedFileNamePrefix + Extension;
+        internal const string InternalShippedFileNamePrefix = "InternalAPI.Shipped";
+        internal const string InternalShippedFileName = InternalShippedFileNamePrefix + Extension;
+        internal const string PublicUnshippedFileNamePrefix = "PublicAPI.Unshipped";
+        internal const string PublicUnshippedFileName = PublicUnshippedFileNamePrefix + Extension;
+        internal const string InternalUnshippedFileNamePrefix = "InternalAPI.Unshipped";
+        internal const string InternalUnshippedFileName = InternalUnshippedFileNamePrefix + Extension;
+        internal const string ApiNamePropertyBagKey = "APIName";
+        internal const string ApiNameWithNullabilityPropertyBagKey = "APINameWithNullability";
         internal const string MinimalNamePropertyBagKey = "MinimalName";
-        internal const string PublicApiNamesOfSiblingsToRemovePropertyBagKey = "PublicApiNamesOfSiblingsToRemove";
-        internal const string PublicApiNamesOfSiblingsToRemovePropertyBagValueSeparator = ";;";
+        internal const string ApiNamesOfSiblingsToRemovePropertyBagKey = "ApiNamesOfSiblingsToRemove";
+        internal const string ApiNamesOfSiblingsToRemovePropertyBagValueSeparator = ";;";
         internal const string RemovedApiPrefix = "*REMOVED*";
         internal const string NullableEnable = "#nullable enable";
         internal const string InvalidReasonShippedCantHaveRemoved = "The shipped API file can't have removed members";
         internal const string InvalidReasonMisplacedNullableEnable = "The '#nullable enable' marker can only appear as the first line in the shipped API file";
-        internal const string PublicApiIsShippedPropertyBagKey = "PublicAPIIsShipped";
+        internal const string ApiIsShippedPropertyBagKey = "APIIsShipped";
+        internal const string FileName = "FileName";
 
         private const char ObliviousMarker = '~';
+        private static readonly char[] ObliviousMarkerArray = { ObliviousMarker };
 
         /// <summary>
         /// Boolean option to configure if public API analyzer should bail out silently if public API files are missing.
         /// </summary>
-        private const string BailOnMissingPublicApiFilesEditorConfigOptionName = "dotnet_public_api_analyzer.require_api_files";
-
-        internal static readonly DiagnosticDescriptor DeclareNewApiRule = new(
-            id: DiagnosticIds.DeclarePublicApiRuleId,
-            title: CreateLocalizableResourceString(nameof(DeclarePublicApiTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(DeclarePublicApiMessage)),
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: CreateLocalizableResourceString(nameof(DeclarePublicApiDescription)),
-            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
-            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
-
-        internal static readonly DiagnosticDescriptor AnnotateApiRule = new(
-            id: DiagnosticIds.AnnotatePublicApiRuleId,
-            title: CreateLocalizableResourceString(nameof(AnnotatePublicApiTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(AnnotatePublicApiMessage)),
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: CreateLocalizableResourceString(nameof(AnnotatePublicApiDescription)),
-            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
-            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
-
-        internal static readonly DiagnosticDescriptor ObliviousApiRule = new(
-            id: DiagnosticIds.ObliviousPublicApiRuleId,
-            title: CreateLocalizableResourceString(nameof(ObliviousPublicApiTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(ObliviousPublicApiMessage)),
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: CreateLocalizableResourceString(nameof(ObliviousPublicApiDescription)),
-            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
-            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
-
-        internal static readonly DiagnosticDescriptor RemoveDeletedApiRule = new(
-            id: DiagnosticIds.RemoveDeletedApiRuleId,
-            title: CreateLocalizableResourceString(nameof(RemoveDeletedApiTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(RemoveDeletedApiMessage)),
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: CreateLocalizableResourceString(nameof(RemoveDeletedApiDescription)),
-            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
-            customTags: WellKnownDiagnosticTagsExtensions.CompilationEndAndTelemetry);
-
-        internal static readonly DiagnosticDescriptor RemovedApiIsNotActuallyRemovedRule = new(
-           id: DiagnosticIds.RemovedApiIsNotActuallyRemovedRuleId,
-           title: CreateLocalizableResourceString(nameof(RemovedApiIsNotActuallyRemovedTitle)),
-           messageFormat: CreateLocalizableResourceString(nameof(RemovedApiIsNotActuallyRemovedMessage)),
-           category: "ApiDesign",
-           defaultSeverity: DiagnosticSeverity.Warning,
-           isEnabledByDefault: true,
-           helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
-           customTags: WellKnownDiagnosticTagsExtensions.CompilationEndAndTelemetry);
-
-        internal static readonly DiagnosticDescriptor ExposedNoninstantiableType = new(
-            id: DiagnosticIds.ExposedNoninstantiableTypeRuleId,
-            title: CreateLocalizableResourceString(nameof(ExposedNoninstantiableTypeTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(ExposedNoninstantiableTypeMessage)),
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
-            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
-
-        internal static readonly DiagnosticDescriptor PublicApiFilesInvalid = new(
-            id: DiagnosticIds.PublicApiFilesInvalid,
-            title: CreateLocalizableResourceString(nameof(PublicApiFilesInvalidTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(PublicApiFilesInvalidMessage)),
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
-            customTags: WellKnownDiagnosticTagsExtensions.CompilationEndAndTelemetry);
-
-        internal static readonly DiagnosticDescriptor PublicApiFileMissing = new(
-            id: DiagnosticIds.PublicApiFileMissing,
-            title: CreateLocalizableResourceString(nameof(PublicApiFileMissingTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(PublicApiFileMissingMessage)),
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
-            customTags: WellKnownDiagnosticTagsExtensions.CompilationEndAndTelemetry);
-
-        internal static readonly DiagnosticDescriptor DuplicateSymbolInApiFiles = new(
-            id: DiagnosticIds.DuplicatedSymbolInPublicApiFiles,
-            title: CreateLocalizableResourceString(nameof(DuplicateSymbolsInPublicApiFilesTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(DuplicateSymbolsInPublicApiFilesMessage)),
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
-            customTags: WellKnownDiagnosticTagsExtensions.CompilationEndAndTelemetry);
-
-        internal static readonly DiagnosticDescriptor AvoidMultipleOverloadsWithOptionalParameters = new(
-            id: DiagnosticIds.AvoidMultipleOverloadsWithOptionalParameters,
-            title: CreateLocalizableResourceString(nameof(AvoidMultipleOverloadsWithOptionalParametersTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(AvoidMultipleOverloadsWithOptionalParametersMessage)),
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            helpLinkUri: @"https://github.com/dotnet/roslyn/blob/main/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md",
-            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
-
-        internal static readonly DiagnosticDescriptor OverloadWithOptionalParametersShouldHaveMostParameters = new(
-            id: DiagnosticIds.OverloadWithOptionalParametersShouldHaveMostParameters,
-            title: CreateLocalizableResourceString(nameof(OverloadWithOptionalParametersShouldHaveMostParametersTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(OverloadWithOptionalParametersShouldHaveMostParametersMessage)),
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            helpLinkUri: @"https://github.com/dotnet/roslyn/blob/main/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md",
-            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
-
-        internal static readonly DiagnosticDescriptor ShouldAnnotateApiFilesRule = new(
-            id: DiagnosticIds.ShouldAnnotateApiFilesRuleId,
-            title: CreateLocalizableResourceString(nameof(ShouldAnnotateApiFilesTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(ShouldAnnotateApiFilesMessage)),
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: CreateLocalizableResourceString(nameof(ShouldAnnotateApiFilesDescription)),
-            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
-            customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
+        private const string BaseEditorConfigPath = "dotnet_public_api_analyzer";
+        private const string BailOnMissingPublicApiFilesEditorConfigOptionName = $"{BaseEditorConfigPath}.require_api_files";
+        private const string NamespaceToIgnoreInTrackingEditorConfigOptionName = $"{BaseEditorConfigPath}.skip_namespaces";
 
         internal static readonly SymbolDisplayFormat ShortSymbolNameFormat =
             new(
@@ -209,11 +93,6 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 (SymbolDisplayMiscellaneousOptions)IncludeNullableReferenceTypeModifier |
                 (SymbolDisplayMiscellaneousOptions)IncludeNonNullableReferenceTypeModifier);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(DeclareNewApiRule, AnnotateApiRule, ObliviousApiRule, RemoveDeletedApiRule, ExposedNoninstantiableType,
-                PublicApiFilesInvalid, PublicApiFileMissing, DuplicateSymbolInApiFiles, AvoidMultipleOverloadsWithOptionalParameters,
-                OverloadWithOptionalParametersShouldHaveMostParameters, ShouldAnnotateApiFilesRule, RemovedApiIsNotActuallyRemovedRule);
-
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
@@ -224,68 +103,86 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             context.RegisterCompilationStartAction(OnCompilationStart);
         }
 
-        private void OnCompilationStart(CompilationStartAnalysisContext compilationContext)
+        private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            var errors = new List<Diagnostic>();
+            CheckAndRegisterImplementation(isPublic: true);
+            CheckAndRegisterImplementation(isPublic: false);
 
-            // Switch to "RegisterAdditionalFileAction" available in Microsoft.CodeAnalysis "3.8.x" to report additional file diagnostics: https://github.com/dotnet/roslyn-analyzers/issues/3918
-            if (!TryGetApiData(compilationContext.Options, compilationContext.Compilation, errors, compilationContext.CancellationToken, out ApiData shippedData, out ApiData unshippedData) ||
-                !ValidateApiFiles(shippedData, unshippedData, errors))
+            void CheckAndRegisterImplementation(bool isPublic)
             {
-                compilationContext.RegisterCompilationEndAction(context =>
+                var errors = new List<Diagnostic>();
+                // Switch to "RegisterAdditionalFileAction" available in Microsoft.CodeAnalysis "3.8.x" to report additional file diagnostics: https://github.com/dotnet/roslyn-analyzers/issues/3918
+                if (!TryGetAndValidateApiFiles(context, isPublic, errors, out var additionalFiles, out var shippedData, out var unshippedData))
                 {
-                    foreach (Diagnostic cur in errors)
+                    context.RegisterCompilationEndAction(context =>
                     {
-                        context.ReportDiagnostic(cur);
-                    }
-                });
+                        foreach (Diagnostic cur in errors)
+                        {
+                            context.ReportDiagnostic(cur);
+                        }
+                    });
 
-                return;
-            }
-
-            Debug.Assert(errors.Count == 0);
-
-            var impl = new Impl(compilationContext.Compilation, shippedData, unshippedData);
-            compilationContext.RegisterSymbolAction(
-                impl.OnSymbolAction,
-                SymbolKind.NamedType,
-                SymbolKind.Event,
-                SymbolKind.Field,
-                SymbolKind.Method);
-            compilationContext.RegisterSymbolAction(
-                impl.OnPropertyAction,
-                SymbolKind.Property);
-            compilationContext.RegisterCompilationEndAction(impl.OnCompilationEnd);
-        }
-
-        private static ApiData ReadApiData(string path, SourceText sourceText, bool isShippedApi)
-        {
-            var apiBuilder = ImmutableArray.CreateBuilder<ApiLine>();
-            var removedBuilder = ImmutableArray.CreateBuilder<RemovedApiLine>();
-            var maxNullableRank = -1;
-
-            int rank = -1;
-            foreach (TextLine line in sourceText.Lines)
-            {
-                string text = line.ToString();
-                if (string.IsNullOrWhiteSpace(text))
-                {
-                    continue;
+                    return;
                 }
 
-                rank++;
+                Debug.Assert(errors.Count == 0);
+
+                RegisterImplActions(context, new Impl(context.Compilation, additionalFiles, shippedData, unshippedData, isPublic, context.Options));
+                return;
+
+                bool TryGetAndValidateApiFiles(CompilationStartAnalysisContext context, bool isPublic, List<Diagnostic> errors, [NotNullWhen(true)] out ImmutableDictionary<AdditionalText, SourceText>? additionalFiles, [NotNullWhen(true)] out ApiData? shippedData, [NotNullWhen(true)] out ApiData? unshippedData)
+                {
+                    return TryGetApiData(context, isPublic, errors, out additionalFiles, out shippedData, out unshippedData)
+                           && ValidateApiFiles(additionalFiles, shippedData, unshippedData, isPublic, errors);
+                }
+
+                static void RegisterImplActions(CompilationStartAnalysisContext compilationContext, Impl impl)
+                {
+                    compilationContext.RegisterSymbolAction(
+                        impl.OnSymbolAction,
+                        SymbolKind.NamedType,
+                        SymbolKind.Event,
+                        SymbolKind.Field,
+                        SymbolKind.Method);
+                    compilationContext.RegisterSymbolAction(
+                        impl.OnPropertyAction,
+                        SymbolKind.Property);
+                    compilationContext.RegisterCompilationEndAction(impl.OnCompilationEnd);
+                }
+            }
+        }
+
+        private static ApiData ReadApiData(SourceText sourceText, bool isShippedApi)
+        {
+            var apiBuilder = ArrayBuilder<ApiLine>.GetInstance();
+            var removedBuilder = ArrayBuilder<RemovedApiLine>.GetInstance();
+            var lastNullableLineNumber = -1;
+
+            // current line we're on.  Note: we ignore whitespace lines when computing this.
+            var lineNumber = -1;
+
+            var additionalFileInfo = new AdditionalFileInfo(sourceText, isShippedApi);
+
+            foreach (var line in sourceText.Lines)
+            {
+                // Skip whitespace.
+                var text = line.ToString();
+                if (string.IsNullOrWhiteSpace(text))
+                    continue;
+
+                lineNumber++;
 
                 if (text == NullableEnable)
                 {
-                    maxNullableRank = rank;
+                    lastNullableLineNumber = lineNumber;
                     continue;
                 }
 
-                var apiLine = new ApiLine(text, line.Span, sourceText, path, isShippedApi);
+                var apiLine = new ApiLine(text, line.Span, additionalFileInfo);
                 if (text.StartsWith(RemovedApiPrefix, StringComparison.Ordinal))
                 {
-                    string removedtext = text[RemovedApiPrefix.Length..];
-                    removedBuilder.Add(new RemovedApiLine(removedtext, apiLine));
+                    var removedText = text[RemovedApiPrefix.Length..];
+                    removedBuilder.Add(new RemovedApiLine(removedText, apiLine));
                 }
                 else
                 {
@@ -293,47 +190,89 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 }
             }
 
-            return new ApiData(apiBuilder.ToImmutable(), removedBuilder.ToImmutable(), maxNullableRank);
+            return new ApiData(apiBuilder.ToImmutableAndFree(), removedBuilder.ToImmutableAndFree(), lastNullableLineNumber);
         }
 
-        private static bool TryGetApiData(AnalyzerOptions analyzerOptions, Compilation compilation, List<Diagnostic> errors, CancellationToken cancellationToken, out ApiData shippedData, out ApiData unshippedData)
+        private static bool TryGetApiData(CompilationStartAnalysisContext context, bool isPublic, List<Diagnostic> errors, [NotNullWhen(true)] out ImmutableDictionary<AdditionalText, SourceText>? additionalFiles, [NotNullWhen(true)] out ApiData? shippedData, [NotNullWhen(true)] out ApiData? unshippedData)
         {
-            if (!TryGetApiText(analyzerOptions.AdditionalFiles, cancellationToken, out var shippedText, out var unshippedText))
-            {
-                if (shippedText == null && unshippedText == null)
-                {
-                    if (TryGetEditorConfigOptionForMissingFiles(analyzerOptions, compilation, out var silentlyBailOutOnMissingApiFiles) &&
-                        silentlyBailOutOnMissingApiFiles)
-                    {
-                        shippedData = default;
-                        unshippedData = default;
-                        return false;
-                    }
+            using var allShippedData = ArrayBuilder<ApiData>.GetInstance();
+            using var allUnshippedData = ArrayBuilder<ApiData>.GetInstance();
 
-                    // Bootstrapping public API files.
-                    (shippedData, unshippedData) = (ApiData.Empty, ApiData.Empty);
-                    return true;
+            AddApiTexts(context, isPublic, out additionalFiles, allShippedData, allUnshippedData);
+
+            // Both missing.
+            if (allShippedData.Count == 0 && allUnshippedData.Count == 0)
+            {
+                if (TryGetEditorConfigOptionForMissingFiles(context.Options, context.Compilation, out var silentlyBailOutOnMissingApiFiles) &&
+                    silentlyBailOutOnMissingApiFiles)
+                {
+                    shippedData = null;
+                    unshippedData = null;
+                    return false;
                 }
 
-                var missingFileName = shippedText == null ? ShippedFileName : UnshippedFileName;
-                errors.Add(Diagnostic.Create(PublicApiFileMissing, Location.None, missingFileName));
-                shippedData = default;
-                unshippedData = default;
-                return false;
+                // Bootstrapping public API files.
+                (shippedData, unshippedData) = (ApiData.Empty, ApiData.Empty);
+                return true;
             }
 
-            shippedData = ReadApiData(shippedText.Value.path, shippedText.Value.text, isShippedApi: true);
-            unshippedData = ReadApiData(unshippedText.Value.path, unshippedText.Value.text, isShippedApi: false);
-            return true;
+            // Both there. Succeed and return what was found.
+            if (allShippedData.Count > 0 && allUnshippedData.Count > 0)
+            {
+                shippedData = Flatten(allShippedData);
+                unshippedData = Flatten(allUnshippedData);
+                return true;
+            }
+
+            // One missing.  Give custom error message depending on which it was.
+            var missingFileName = (allShippedData.Count == 0, isPublic) switch
+            {
+                (true, isPublic: true) => PublicShippedFileName,
+                (true, isPublic: false) => InternalShippedFileName,
+                (false, isPublic: true) => PublicUnshippedFileName,
+                (false, isPublic: false) => InternalUnshippedFileName
+            };
+
+            errors.Add(Diagnostic.Create(isPublic ? PublicApiFileMissing : InternalApiFileMissing, Location.None, missingFileName));
+            shippedData = null;
+            unshippedData = null;
+            return false;
+
+            // Takes potentially multiple ApiData instances, corresponding to different additional text files, and
+            // flattens them into the final instance we will use when analyzing the compilation.
+            static ApiData Flatten(ArrayBuilder<ApiData> allData)
+            {
+                Debug.Assert(allData.Count > 0);
+
+                // The common case is that we will have one file corresponding to the shipped data, and one for the
+                // unshipped data.  In that case, just return the instance directly.
+                if (allData.Count == 1)
+                    return allData[0];
+
+                var apiBuilder = ArrayBuilder<ApiLine>.GetInstance();
+                var removedBuilder = ArrayBuilder<RemovedApiLine>.GetInstance();
+
+                for (int i = 0, n = allData.Count; i < n; i++)
+                {
+                    var data = allData[i];
+                    apiBuilder.AddRange(data.ApiList);
+                    removedBuilder.AddRange(data.RemovedApiList);
+                }
+
+                return new ApiData(
+                    apiBuilder.ToImmutableAndFree(),
+                    removedBuilder.ToImmutableAndFree(),
+                    allData.Max(static d => d.NullableLineNumber));
+            }
         }
 
-        private static bool TryGetEditorConfigOptionForMissingFiles(AnalyzerOptions analyzerOptions, Compilation compilation, out bool optionValue)
+        private static bool TryGetEditorConfigOption(AnalyzerOptions analyzerOptions, SyntaxTree tree, string optionName, out string optionValue)
         {
-            optionValue = false;
+            optionValue = "";
             try
             {
                 var provider = analyzerOptions.GetType().GetRuntimeProperty("AnalyzerConfigOptionsProvider")?.GetValue(analyzerOptions);
-                if (provider == null || !compilation.SyntaxTrees.Any())
+                if (provider == null)
                 {
                     return false;
                 }
@@ -344,7 +283,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     return false;
                 }
 
-                var options = getOptionsMethod.Invoke(provider, new object[] { compilation.SyntaxTrees.First() });
+                var options = getOptionsMethod.Invoke(provider, new object[] { tree });
                 var tryGetValueMethod = options.GetType().GetRuntimeMethods().FirstOrDefault(m => m.Name == "TryGetValue");
                 if (tryGetValueMethod == null)
                 {
@@ -352,20 +291,19 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 }
 
                 // bool TryGetValue(string key, out string value);
-                var parameters = new object?[] { BailOnMissingPublicApiFilesEditorConfigOptionName, null };
+                var parameters = new object?[] { optionName, null };
                 if (tryGetValueMethod.Invoke(options, parameters) is not bool hasOption ||
                     !hasOption)
                 {
                     return false;
                 }
 
-                if (parameters[1] is not string value ||
-                    !bool.TryParse(value, out var boolValue))
+                if (parameters[1] is not string value)
                 {
                     return false;
                 }
 
-                optionValue = boolValue;
+                optionValue = value;
                 return true;
             }
 #pragma warning disable CA1031 // Do not catch general exception types
@@ -377,90 +315,101 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             }
         }
 
-        private static bool TryGetApiText(
-            ImmutableArray<AdditionalText> additionalTexts,
-            CancellationToken cancellationToken,
-            [NotNullWhen(returnValue: true)] out (string path, SourceText text)? shippedText,
-            [NotNullWhen(returnValue: true)] out (string path, SourceText text)? unshippedText)
+        private static bool TryGetEditorConfigOptionForMissingFiles(AnalyzerOptions analyzerOptions, Compilation compilation, out bool optionValue)
         {
-            shippedText = null;
-            unshippedText = null;
+            optionValue = false;
 
-            StringComparer comparer = StringComparer.Ordinal;
-            foreach (AdditionalText additionalText in additionalTexts)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                string fileName = Path.GetFileName(additionalText.Path);
-
-                bool isShippedFile = comparer.Equals(fileName, ShippedFileName);
-                bool isUnshippedFile = comparer.Equals(fileName, UnshippedFileName);
-
-                if (isShippedFile || isUnshippedFile)
-                {
-                    SourceText text = additionalText.GetText(cancellationToken);
-
-                    if (text == null)
-                    {
-                        continue;
-                    }
-
-                    var data = (additionalText.Path, text);
-                    if (isShippedFile)
-                    {
-                        shippedText = data;
-                    }
-
-                    if (isUnshippedFile)
-                    {
-                        unshippedText = data;
-                    }
-                    continue;
-                }
-            }
-
-            return shippedText != null && unshippedText != null;
+            return compilation.SyntaxTrees.FirstOrDefault() is { } tree
+                   && TryGetEditorConfigOption(analyzerOptions, tree, BailOnMissingPublicApiFilesEditorConfigOptionName, out string value)
+                   && bool.TryParse(value, out optionValue);
         }
 
-        private static bool ValidateApiFiles(ApiData shippedData, ApiData unshippedData, List<Diagnostic> errors)
+        private static bool TryGetEditorConfigOptionForSkippedNamespaces(AnalyzerOptions analyzerOptions, SyntaxTree tree, out ImmutableArray<string> skippedNamespaces)
         {
+            skippedNamespaces = ImmutableArray<string>.Empty;
+            if (!TryGetEditorConfigOption(analyzerOptions, tree, NamespaceToIgnoreInTrackingEditorConfigOptionName, out var namespacesString) || string.IsNullOrWhiteSpace(namespacesString))
+            {
+                return false;
+            }
+
+            var namespaceStrings = namespacesString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            if (namespaceStrings.Length == 0)
+            {
+                return false;
+            }
+
+            skippedNamespaces = namespaceStrings.ToImmutableArray();
+            return true;
+        }
+
+        [SuppressMessage("MicrosoftCodeAnalysisPerformance", "RS1012:Start action has no registered actions", Justification = "This is not a start action")]
+        private static void AddApiTexts(
+            CompilationStartAnalysisContext context,
+            bool isPublic,
+            out ImmutableDictionary<AdditionalText, SourceText> additionalFiles,
+            ArrayBuilder<ApiData> allShippedData,
+            ArrayBuilder<ApiData> allUnshippedData)
+        {
+            additionalFiles = ImmutableDictionary<AdditionalText, SourceText>.Empty;
+
+            foreach (var additionalText in context.Options.AdditionalFiles)
+            {
+                context.CancellationToken.ThrowIfCancellationRequested();
+
+                var file = new PublicApiFile(additionalText.Path, isPublic);
+
+                // if it's not an api file (quick filename check), we can just immediately ignore.
+                if (!file.IsApiFile)
+                    continue;
+
+                var apiDataProvider = file.IsShipping ? s_shippingApiDataProvider : s_nonShippingApiDataProvider;
+                var text = additionalText.GetText(context.CancellationToken);
+                additionalFiles = additionalFiles.Add(additionalText, text);
+                if (!context.TryGetValue(text, apiDataProvider, out var apiData))
+                    continue;
+
+                var resultList = file.IsShipping ? allShippedData : allUnshippedData;
+                resultList.Add(apiData);
+            }
+        }
+
+        private static bool ValidateApiFiles(ImmutableDictionary<AdditionalText, SourceText> additionalFiles, ApiData shippedData, ApiData unshippedData, bool isPublic, List<Diagnostic> errors)
+        {
+            var descriptor = isPublic ? PublicApiFilesInvalid : InternalApiFilesInvalid;
             if (!shippedData.RemovedApiList.IsEmpty)
             {
-                errors.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonShippedCantHaveRemoved));
+                errors.Add(Diagnostic.Create(descriptor, Location.None, InvalidReasonShippedCantHaveRemoved));
             }
 
-            if (shippedData.NullableRank > 0)
+            if (shippedData.NullableLineNumber > 0)
             {
                 // '#nullable enable' must be on the first line
-                errors.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonMisplacedNullableEnable));
+                errors.Add(Diagnostic.Create(descriptor, Location.None, InvalidReasonMisplacedNullableEnable));
             }
 
-            if (unshippedData.NullableRank > 0)
+            if (unshippedData.NullableLineNumber > 0)
             {
                 // '#nullable enable' must be on the first line
-                errors.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonMisplacedNullableEnable));
+                errors.Add(Diagnostic.Create(descriptor, Location.None, InvalidReasonMisplacedNullableEnable));
             }
 
-            var publicApiMap = new Dictionary<string, ApiLine>(StringComparer.Ordinal);
-            ValidateApiList(publicApiMap, shippedData.ApiList, errors);
-            ValidateApiList(publicApiMap, unshippedData.ApiList, errors);
+            using var publicApiMap = PooledDictionary<string, ApiLine>.GetInstance(StringComparer.Ordinal);
+            ValidateApiList(additionalFiles, publicApiMap, shippedData.ApiList, isPublic, errors);
+            ValidateApiList(additionalFiles, publicApiMap, unshippedData.ApiList, isPublic, errors);
 
             return errors.Count == 0;
         }
 
-        private static void ValidateApiList(Dictionary<string, ApiLine> publicApiMap, ImmutableArray<ApiLine> apiList, List<Diagnostic> errors)
+        private static void ValidateApiList(ImmutableDictionary<AdditionalText, SourceText> additionalFiles, Dictionary<string, ApiLine> publicApiMap, ImmutableArray<ApiLine> apiList, bool isPublic, List<Diagnostic> errors)
         {
             foreach (ApiLine cur in apiList)
             {
-                string textWithoutOblivious = cur.Text.TrimStart(ObliviousMarker);
+                string textWithoutOblivious = cur.Text.TrimStart(ObliviousMarkerArray);
                 if (publicApiMap.TryGetValue(textWithoutOblivious, out ApiLine existingLine))
                 {
-                    LinePositionSpan existingLinePositionSpan = existingLine.SourceText.Lines.GetLinePositionSpan(existingLine.Span);
-                    Location existingLocation = Location.Create(existingLine.Path, existingLine.Span, existingLinePositionSpan);
-
-                    LinePositionSpan duplicateLinePositionSpan = cur.SourceText.Lines.GetLinePositionSpan(cur.Span);
-                    Location duplicateLocation = Location.Create(cur.Path, cur.Span, duplicateLinePositionSpan);
-                    errors.Add(Diagnostic.Create(DuplicateSymbolInApiFiles, duplicateLocation, new[] { existingLocation }, cur.Text));
+                    Location existingLocation = existingLine.GetLocation(additionalFiles);
+                    Location duplicateLocation = cur.GetLocation(additionalFiles);
+                    errors.Add(Diagnostic.Create(isPublic ? DuplicateSymbolInPublicApiFiles : DuplicateSymbolInInternalApiFiles, duplicateLocation, new[] { existingLocation }, cur.Text));
                 }
                 else
                 {

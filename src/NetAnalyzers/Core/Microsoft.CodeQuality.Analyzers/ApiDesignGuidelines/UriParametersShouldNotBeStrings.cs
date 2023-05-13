@@ -98,15 +98,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                if (method.ExplicitInterfaceImplementations.Length > 0)
-                {
-                    // should not warn for implementations of interfaces that may be out of our control
-                    return;
-                }
-
                 if (method.ContainingType.DerivesFrom(_attribute, baseTypesOnly: true))
                 {
                     // Attributes cannot accept System.Uri objects as positional or optional attributes
+                    return;
+                }
+
+                if (method.IsImplementationOfAnyInterfaceMember())
+                {
+                    // should not warn for implementations of interfaces that may be out of our control
                     return;
                 }
 

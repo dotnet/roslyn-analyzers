@@ -153,7 +153,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
         }
 
-        [Fact]
+        [Fact, WorkItem(6371, "https://github.com/dotnet/roslyn-analyzers/issues/6371")]
         public async Task CA1054NoWarningsForInterfaceImplementationsAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"

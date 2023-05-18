@@ -3,13 +3,13 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CodeFixes;
 
-namespace Microsoft.NetCore.Analyzers.Runtime
+namespace Microsoft.NetCore.Analyzers.Performance
 {
     public abstract class PreferDictionaryTryGetValueFixer : CodeFixProvider
     {
         protected const string Value = "value";
         protected const string TryGetValue = nameof(TryGetValue);
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PreferDictionaryTryGetValueAnalyzer.RuleId);
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryGetValueRuleId);
 
         protected static string PreferDictionaryTryGetValueCodeFixTitle => MicrosoftNetCoreAnalyzersResources.PreferDictionaryTryGetValueCodeFixTitle;
 

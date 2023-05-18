@@ -1136,50 +1136,6 @@ namespace Analyzer.Utilities.Extensions
                 _ => false,
             };
 #endif
-
-        public static bool IsSameReferenceOperation(this IOperation sourceReference, IOperation targetReference)
-        {
-            switch (targetReference)
-            {
-                case ILocalReferenceOperation target when sourceReference is ILocalReferenceOperation source:
-                    return SymbolEqualityComparer.Default.Equals(target.Local, source.Local);
-                case IParameterReferenceOperation target when sourceReference is IParameterReferenceOperation source:
-                    return SymbolEqualityComparer.Default.Equals(target.Parameter, source.Parameter);
-                case IFieldReferenceOperation target when sourceReference is IFieldReferenceOperation source:
-                    return SymbolEqualityComparer.Default.Equals(target.Field, source.Field);
-                case IPropertyReferenceOperation target when sourceReference is IPropertyReferenceOperation source:
-                    return SymbolEqualityComparer.Default.Equals(target.Property, source.Property);
-                case IMemberReferenceOperation target when sourceReference is IMemberReferenceOperation source:
-                    return SymbolEqualityComparer.Default.Equals(target.Member, source.Member);
-                case IArrayElementReferenceOperation target when sourceReference is IArrayElementReferenceOperation source:
-                    if (source.Indices.Length != target.Indices.Length || !IsSameReferenceOperation(source.ArrayReference, target.ArrayReference))
-                    {
-                        return false;
-                    }
-
-                    for (int i = 0; i < target.Indices.Length; i++)
-                    {
-                        if (!IsSameConstantOrReferenceOperation(source.Indices[i], target.Indices[i]))
-                        {
-                            return false;
-                        }
-                    }
-
-                    return true;
-            }
-
-            return false;
-        }
-
-        private static bool IsSameConstantOrReferenceOperation(IOperation sourceReference, IOperation targetReference)
-        {
-            if (targetReference.ConstantValue.HasValue && sourceReference.ConstantValue.HasValue)
-            {
-                return sourceReference.ConstantValue.Equals(targetReference.ConstantValue);
-            }
-
-            return IsSameReferenceOperation(sourceReference, targetReference);
-        }
     }
 }
 

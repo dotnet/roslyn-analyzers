@@ -4,10 +4,10 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Performance.PreferDictionaryTryAddOverGuardedAddAnalyzer,
+    Microsoft.NetCore.Analyzers.Performance.PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer,
     Microsoft.NetCore.CSharp.Analyzers.Performance.CSharpPreferDictionaryTryAddValueOverGuardedAddFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Performance.PreferDictionaryTryAddOverGuardedAddAnalyzer,
+    Microsoft.NetCore.Analyzers.Performance.PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer,
     Microsoft.NetCore.VisualBasic.Analyzers.Performance.BasicPreferDictionaryTryAddValueOverGuardedAddFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
@@ -359,9 +359,15 @@ End If";
         {
             string testCode = CreateCSharpTestClass(codeSnippet);
             string fixedCode = CreateCSharpTestClass(fixedCodeSnippet);
-            var diagnostic = VerifyCS.Diagnostic(PreferDictionaryTryAddOverGuardedAddAnalyzer.RuleId).WithLocation(0).WithLocation(1);
+            var diagnostic = VerifyCS.Diagnostic(PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryAddRuleId).WithLocation(0).WithLocation(1);
 
-            return VerifyCS.VerifyCodeFixAsync(testCode, diagnostic, fixedCode);
+            return new VerifyCS.Test
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { diagnostic },
+                DisabledDiagnostics = { PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryGetValueRuleId }
+            }.RunAsync();
         }
 
         [Theory]
@@ -377,7 +383,11 @@ End If";
         {
             string testCode = CreateCSharpTestClass(codeSnippet);
 
-            return VerifyCS.VerifyAnalyzerAsync(testCode);
+            return new VerifyCS.Test
+            {
+                TestCode = testCode,
+                DisabledDiagnostics = { PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryGetValueRuleId }
+            }.RunAsync();
         }
 
         [Theory]
@@ -391,9 +401,15 @@ End If";
         {
             string testCode = CreateVbTestClass(codeSnippet);
             string fixedCode = CreateVbTestClass(fixedCodeSnippet);
-            var diagnostic = VerifyVB.Diagnostic(PreferDictionaryTryAddOverGuardedAddAnalyzer.RuleId).WithLocation(0).WithLocation(1);
+            var diagnostic = VerifyVB.Diagnostic(PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryAddRuleId).WithLocation(0).WithLocation(1);
 
-            return VerifyVB.VerifyCodeFixAsync(testCode, diagnostic, fixedCode);
+            return new VerifyVB.Test
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { diagnostic },
+                DisabledDiagnostics = { PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryGetValueRuleId }
+            }.RunAsync();
         }
 
         [Theory]
@@ -405,7 +421,11 @@ End If";
         {
             string testCode = CreateVbTestClass(codeSnippet);
 
-            return VerifyVB.VerifyAnalyzerAsync(testCode);
+            return new VerifyVB.Test
+            {
+                TestCode = testCode,
+                DisabledDiagnostics = { PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryGetValueRuleId }
+            }.RunAsync();
         }
 
         private static string CreateCSharpTestClass(string content)

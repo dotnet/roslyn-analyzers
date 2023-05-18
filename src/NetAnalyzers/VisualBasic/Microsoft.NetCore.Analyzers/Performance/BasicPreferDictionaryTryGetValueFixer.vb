@@ -7,9 +7,9 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Editing
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
-Imports Microsoft.NetCore.Analyzers.Runtime
+Imports Microsoft.NetCore.Analyzers.Performance
 
-Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
+Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
     <ExportCodeFixProvider(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicPreferDictionaryTryGetValueFixer
         Inherits PreferDictionaryTryGetValueFixer
@@ -41,7 +41,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                             Dim add = TryCast(invocation.Expression, MemberAccessExpressionSyntax)
                             If addStatementNode IsNot Nothing OrElse
                                add Is Nothing OrElse
-                               add.Name.Identifier.Text <> PreferDictionaryTryGetValueAnalyzer.AddMethodeName Then
+                               add.Name.Identifier.Text <> PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.Add Then
                                 Return
                             End If
 

@@ -11,10 +11,10 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Simplification;
-using Microsoft.NetCore.Analyzers.Runtime;
+using Microsoft.NetCore.Analyzers.Performance;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
+namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 {
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpPreferDictionaryTryGetValueFixer : PreferDictionaryTryGetValueFixer

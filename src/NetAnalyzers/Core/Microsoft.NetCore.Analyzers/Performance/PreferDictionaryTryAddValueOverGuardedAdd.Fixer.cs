@@ -16,6 +16,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(PreferDictionaryTryAddOverGuardedAddAnalyzer.RuleId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryAddRuleId);
     }
 }

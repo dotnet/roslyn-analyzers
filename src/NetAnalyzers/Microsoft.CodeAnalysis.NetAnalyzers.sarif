@@ -3064,7 +3064,7 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "PreferDictionaryTryGetValueAnalyzer",
+            "typeName": "PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -3164,7 +3164,7 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "PreferDictionaryTryAddOverGuardedAddAnalyzer",
+            "typeName": "PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"

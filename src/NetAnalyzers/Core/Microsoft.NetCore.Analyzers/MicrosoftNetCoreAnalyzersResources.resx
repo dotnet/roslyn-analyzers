@@ -2054,4 +2054,13 @@ Widening and user defined conversions are not supported with generic types.</val
   <data name="PreferIsEmptyOverAnyMessage" xml:space="preserve">
     <value>Prefer an 'IsEmpty' check rather than using 'Any()', both for clarity and for performance</value>
   </data>
+  <data name="AvoidPotentiallyExpensiveCallWhenLoggingDescription" xml:space="preserve">
+    <value>In many situations, logging is disabled or set at a log level that will result in an unnecessary evaluation for this argument.</value>
+  </data>
+  <data name="AvoidPotentiallyExpensiveCallWhenLoggingMessage" xml:space="preserve">
+    <value>This argument may be expensive and evaluated unnecessarily if logging is disabled</value>
+  </data>
+  <data name="AvoidPotentiallyExpensiveCallWhenLoggingTitle" xml:space="preserve">
+    <value>Avoid expensive logging</value>
+  </data>
 </root>

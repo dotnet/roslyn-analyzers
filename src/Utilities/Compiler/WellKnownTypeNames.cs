@@ -67,6 +67,7 @@ namespace Analyzer.Utilities
         public const string MicrosoftExtensionsLoggingILogger = "Microsoft.Extensions.Logging.ILogger";
         public const string MicrosoftExtensionsLoggingLoggerExtensions = "Microsoft.Extensions.Logging.LoggerExtensions";
         public const string MicrosoftExtensionsLoggingLoggerMessage = "Microsoft.Extensions.Logging.LoggerMessage";
+        public const string MicrosoftExtensionsLoggingLoggerMessageAttribute = "Microsoft.Extensions.Logging.LoggerMessageAttribute";
         public const string MicrosoftIdentityModelTokensAudienceValidator = "Microsoft.IdentityModel.Tokens.AudienceValidator";
         public const string MicrosoftIdentityModelTokensLifetimeValidator = "Microsoft.IdentityModel.Tokens.LifetimeValidator";
         public const string MicrosoftIdentityModelTokensSecurityToken = "Microsoft.IdentityModel.Tokens.SecurityToken";
@@ -593,6 +594,5 @@ namespace Analyzer.Utilities
         public const string XunitFactAttribute = "Xunit.FactAttribute";
         public const string XunitSdkDataAttribute = "Xunit.Sdk.DataAttribute";
         public const string XunitTraitAttribute = "Xunit.TraitAttribute";
-
     }
 }

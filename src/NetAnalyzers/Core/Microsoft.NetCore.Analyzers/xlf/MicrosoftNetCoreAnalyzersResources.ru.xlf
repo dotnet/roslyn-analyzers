@@ -53,12 +53,12 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidConstArraysDescription">
-        <source>Constant arrays passed as arguments are not reused which implies a new array is created each time. Consider extracting them to 'static readonly' fields to improve performance if the passed array is not mutated within the called method.</source>
+        <source>Constant arrays passed as arguments are not reused when called repeatedly, which implies a new array is created each time. Consider extracting them to 'static readonly' fields to improve performance if the passed array is not mutated within the called method.</source>
         <target state="needs-review-translation">Константные массивы, переданные в качестве аргументов, не используются повторно, что приводит к снижению производительности. Рассмотрите возможность извлечения их в статические поля "static readonly", чтобы повысить производительность.</target>
         <note>{Locked="static readonly"}</note>
       </trans-unit>
       <trans-unit id="AvoidConstArraysMessage">
-        <source>Prefer 'static readonly' fields over constant array arguments if the called method is not mutating the passed array</source>
+        <source>Prefer 'static readonly' fields over constant array arguments if the called method is not mutating the passed array and it is called repeatedly</source>
         <target state="needs-review-translation">Отдавайте предпочтение полям "static readonly", а не аргументам локального константного массива</target>
         <note>{Locked="static readonly"}</note>
       </trans-unit>

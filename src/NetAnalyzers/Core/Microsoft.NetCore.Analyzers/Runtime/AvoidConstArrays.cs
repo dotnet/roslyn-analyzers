@@ -37,10 +37,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterCompilationStartAction(context =>
+            context.RegisterCompilationStartAction(static context =>
             {
-                INamedTypeSymbol? readonlySpanType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1);
-                INamedTypeSymbol? functionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemFunc2);
+                var knownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
+                INamedTypeSymbol? readonlySpanType = knownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1);
+                INamedTypeSymbol? functionType = knownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemFunc2);
+                INamedTypeSymbol? readOnlyCollectionType = knownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsObjectModelReadOnlyCollection1);
 
                 // Analyzes an argument operation
                 context.RegisterOperationAction(context =>
@@ -58,7 +60,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                         // If no argument, return
                         // If argument is passed as a params array but isn't itself an array, return
-                        if (argumentOperation is null || (argumentOperation.Parameter.IsParams && arrayCreationOperation.IsImplicit))
+                        // If argument is passed to a static ReadOnlyCollection<T>, return
+                        if (argumentOperation is null || (argumentOperation.Parameter.IsParams && arrayCreationOperation.IsImplicit) || IsPassedToStaticReadOnlyCollection(argumentOperation, readOnlyCollectionType))
                         {
                             return;
                         }
@@ -148,6 +151,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 OperationKind.ArrayCreation,
                 OperationKind.Invocation);
             });
+        }
+
+        private static bool IsPassedToStaticReadOnlyCollection(IArgumentOperation argument, INamedTypeSymbol? readOnlyCollectionType)
+        {
+            return argument.Parent is IObjectCreationOperation objectCreation
+                   && objectCreation.Type.OriginalDefinition.Equals(readOnlyCollectionType, SymbolEqualityComparer.Default)
+                   && objectCreation.Parent is IAssignmentOperation { Target: IMemberReferenceOperation memberReference }
+                   && memberReference.Member.IsStatic;
         }
     }
 }

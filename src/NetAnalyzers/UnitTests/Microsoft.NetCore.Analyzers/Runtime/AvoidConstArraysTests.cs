@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.AvoidConstArraysAnalyzer,
@@ -778,6 +780,28 @@ public class A
     public A(string[] arr) { }
     private static List<string> GetValues(string[] arr) => null;
 }");
+        }
+
+        [Fact, WorkItem(6629, "https://github.com/dotnet/roslyn-analyzers/issues/6629")]
+        public Task StaticReadonlyCollection_NoDiagnostic()
+        {
+            return new VerifyCS.Test
+            {
+                TestCode = @"
+#nullable enable
+using System.Collections.ObjectModel;
+
+public class Test
+{
+    private static ReadOnlyCollection<string>? s_errorPayloadNames;
+
+    private void M(string eventName, string msg)
+    {
+        s_errorPayloadNames ??= new ReadOnlyCollection<string>(new string[] { ""message"" });
+    }
+}",
+                LanguageVersion = LanguageVersion.CSharp8
+            }.RunAsync();
         }
     }
 }

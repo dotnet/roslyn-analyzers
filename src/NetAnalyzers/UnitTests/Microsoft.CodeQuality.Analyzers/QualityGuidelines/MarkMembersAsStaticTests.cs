@@ -1500,6 +1500,5 @@ public class Test
                 LanguageVersion = LanguageVersion.CSharp8
             }.RunAsync();
         }
-
     }
 }

@@ -104,7 +104,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                     blockStartContext.RegisterOperationAction(operationContext =>
                     {
-                        if (((IInstanceReferenceOperation)operationContext.Operation).ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
+                        if (((IInstanceReferenceOperation)operationContext.Operation).ReferenceKind == InstanceReferenceKind.ContainingTypeInstance
+                            && (operationContext.Operation.Parent is not IInvocationOperation invocation || !invocation.TargetMethod.Equals(methodSymbol, SymbolEqualityComparer.Default)))
                         {
                             isInstanceReferenced = true;
                         }

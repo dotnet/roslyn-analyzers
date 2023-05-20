@@ -224,7 +224,7 @@
     <comment>{Locked="static readonly"}</comment>
   </data>
   <data name="AvoidConstArraysMessage" xml:space="preserve">
-    <value>Prefer 'static readonly' fields over constant array arguments if the called method is not mutating the passed array and it is called repeatedly</value>
+    <value>Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array</value>
     <comment>{Locked="static readonly"}</comment>
   </data>
   <data name="TestForEmptyStringsUsingStringLengthTitle" xml:space="preserve">

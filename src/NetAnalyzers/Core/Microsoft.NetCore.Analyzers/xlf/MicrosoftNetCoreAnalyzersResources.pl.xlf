@@ -58,7 +58,7 @@
         <note>{Locked="static readonly"}</note>
       </trans-unit>
       <trans-unit id="AvoidConstArraysMessage">
-        <source>Prefer 'static readonly' fields over constant array arguments if the called method is not mutating the passed array and it is called repeatedly</source>
+        <source>Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array</source>
         <target state="needs-review-translation">Preferuj pola „static readonly” niż argumenty lokalnej tablicy stałej</target>
         <note>{Locked="static readonly"}</note>
       </trans-unit>

@@ -2024,13 +2024,13 @@ Enumerable.OfType&lt;T&gt; 使用的泛型类型检查 (C# 'is' operator/IL 'isi
         <note />
       </trans-unit>
       <trans-unit id="PreferDictionaryTryAddDescription">
-        <source>Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add' except that it doesn't throw an exception when a value for a given key already exists, but rather returns 'false'.</source>
-        <target state="new">Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add' except that it doesn't throw an exception when a value for a given key already exists, but rather returns 'false'.</target>
+        <source>Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add', except that when the specified key already exists, it returns 'false' instead of throwing an exception.</source>
+        <target state="new">Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add', except that when the specified key already exists, it returns 'false' instead of throwing an exception.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferDictionaryTryAddMessage">
-        <source>Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check to avoid double lookup</source>
-        <target state="new">Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check to avoid double lookup</target>
+        <source>To avoid double lookup, call 'TryAdd' instead of calling 'Add' with a 'ContainsKey' guard</source>
+        <target state="new">To avoid double lookup, call 'TryAdd' instead of calling 'Add' with a 'ContainsKey' guard</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferDictionaryTryAddTitle">

@@ -3158,7 +3158,7 @@
         "CA1862": {
           "id": "CA1862",
           "shortDescription": "Prefer the 'IDictionary.TryAdd(TKey, TValue)' method",
-          "fullDescription": "Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add' except that it doesn't throw an exception when a value for a given key already exists, but rather returns 'false'.",
+          "fullDescription": "Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add', except that when the specified key already exists, it returns 'false' instead of throwing an exception.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862",
           "properties": {

@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer,
-    Microsoft.NetCore.CSharp.Analyzers.Performance.CSharpPreferDictionaryTryAddValueOverGuardedAddFixer>;
+    Microsoft.NetCore.CSharp.Analyzers.Performance.CSharpPreferDictionaryTryMethodsOverContainsKeyGuardFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer,
-    Microsoft.NetCore.VisualBasic.Analyzers.Performance.BasicPreferDictionaryTryAddValueOverGuardedAddFixer>;
+    Microsoft.NetCore.VisualBasic.Analyzers.Performance.BasicPreferDictionaryTryMethodsOverContainsKeyGuardFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {

@@ -2064,6 +2064,6 @@ Widening and user defined conversions are not supported with generic types.</val
     <value>To avoid double lookup, call 'TryAdd' instead of calling 'Add' with a 'ContainsKey' guard</value>
   </data>
   <data name="PreferDictionaryTryAddDescription" xml:space="preserve">
-    <value>refer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add', except that when the specified key already exists, it returns 'false' instead of throwing an exception.</value>
+    <value>Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add', except that when the specified key already exists, it returns 'false' instead of throwing an exception.</value>
   </data>
 </root>

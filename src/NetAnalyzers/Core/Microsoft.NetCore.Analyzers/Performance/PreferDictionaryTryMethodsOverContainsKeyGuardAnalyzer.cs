@@ -287,7 +287,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         }
 
                         break;
-
                     default:
                         conditionalOperation = null;
 
@@ -482,7 +481,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
 
                 if (!FindUsages(operation, ref context, searchContext))
+                {
                     break;
+                }
             }
         }
 
@@ -512,7 +513,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return target.Member.Equals(source.Member, SymbolEqualityComparer.Default);
                 case IArrayElementReferenceOperation source when targetReference is IArrayElementReferenceOperation target:
                     if (source.Indices.Length != target.Indices.Length || !IsSameReferenceOperation(source.ArrayReference, target.ArrayReference))
+                    {
                         return false;
+                    }
 
                     for (int i = 0; i < target.Indices.Length; i++)
                     {
@@ -531,7 +534,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             foreach (var target in targets)
             {
                 if (IsSameReferenceOperation(source, target))
+                {
                     return true;
+                }
             }
 
             return false;

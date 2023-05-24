@@ -121,7 +121,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             other is not null ? new SyntaxNode[] { arg, other } : new SyntaxNode[] { arg })).WithTriviaFrom(node));
         }
 
-        private sealed class CustomFixAllProvider : Analyzer.Utilities.DocumentBasedFixAllProvider
+        private sealed class CustomFixAllProvider : DocumentBasedFixAllProvider
         {
             public static readonly CustomFixAllProvider Instance = new();
 

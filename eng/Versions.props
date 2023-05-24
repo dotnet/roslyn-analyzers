@@ -44,35 +44,17 @@
            However, because these reference packages do not provide implementations, they cannot be used in any case
            where the package contents would be redisted or executed. An SBRP may not be created for a version that is used both
            as a reference assembly and redisted.
-
-         Repo-level source build and the roslyn-analzyers official build are a bit in tension.
-         For most repositories, we resolve this tension with a combination of source-build-reference-packages and
-         flow from other repositories. This is less feasible in roslyn-analyzers. We wish to maintain good prebuilt detection
-         and reasonably accurately approximate how this repo will be built in full source build without
-         changing how it's built officially for Microsoft too much.
-
-         To this end, the following is done:
-         - The input M.CA.* versions are chosen differently for source-build. A new version is chosen for source build
-           (same as the testing version) and applied to all uses of M.CA.*.
-         - The multi-version behavior is maintained for roslyn-analyzer's official Microsoft build.
     -->
     <MicrosoftCodeAnalysisCSharpCodeStyleVersion>4.5.0</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
     <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>4.5.0</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
-    <!-- Microsoft.CodeAnalysis versions for different purposes. Only MicrosoftCodeAnalysisVersion is used in source-build mode.
-         The pattern used is that a project that needs a different version creates a property here and uses it to override
-         MicrosoftCodeAnalysisVersion in non-source-build mode. -->
-    <!-- Recent stable version to test against, and use in source-build. Ideally these stay aligned. When this is updated,
-         please update the version number in the source build baseline. -->
-    <MicrosoftCodeAnalysisVersionForSourceBuild>4.6.0-1.final</MicrosoftCodeAnalysisVersionForSourceBuild>
+    <!-- Microsoft.CodeAnalysis versions for different purposes. -->
     <MicrosoftCodeAnalysisVersionForTests>4.6.0-1.final</MicrosoftCodeAnalysisVersionForTests>
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
     <MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>1.2.1</MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>
     <MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>2.9.0</MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>
     <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>2.9.0</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>
     <MicrosoftCodeAnalysisVersionForResxSourceGenerators>4.0.1</MicrosoftCodeAnalysisVersionForResxSourceGenerators>
-    <!-- Default/source-build version. -->
-    <MicrosoftCodeAnalysisVersion Condition="'$(DotNetBuildFromSource)' != 'true'">3.3.1</MicrosoftCodeAnalysisVersion>
-    <MicrosoftCodeAnalysisVersion Condition="'$(DotNetBuildFromSource)' == 'true'">$(MicrosoftCodeAnalysisVersionForSourceBuild)</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
     <DogfoodAnalyzersVersion>3.3.4</DogfoodAnalyzersVersion>
     <DogfoodNetAnalyzersVersion>8.0.0-preview1.22621.6</DogfoodNetAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
@@ -99,6 +81,7 @@
     <SystemCommandLineRenderingVersion>2.0.0-beta1.20074.1</SystemCommandLineRenderingVersion>
     <SystemCommandLineVersion>2.0.0-beta1.21216.1</SystemCommandLineVersion>
     <SystemComponentModelCompositionVersion>4.7.0</SystemComponentModelCompositionVersion>
+    <SystemCompositionVersion>8.0.0-preview.4.23259.5</SystemCompositionVersion>
     <SystemDirectoryServicesVersion>4.7.0</SystemDirectoryServicesVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>

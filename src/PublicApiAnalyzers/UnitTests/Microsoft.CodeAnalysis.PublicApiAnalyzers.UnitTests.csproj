@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
     <ServerGarbageCollection>true</ServerGarbageCollection>
-    <MicrosoftCodeAnalysisVersion Condition="'$(DotNetBuildFromSource)' != 'true'">$(MicrosoftCodeAnalysisVersionForTests)</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForTests)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisVersion)" />

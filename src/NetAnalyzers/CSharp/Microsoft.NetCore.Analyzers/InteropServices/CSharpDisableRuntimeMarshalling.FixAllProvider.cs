@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 {
     public sealed partial class CSharpDisableRuntimeMarshallingFixer
     {
-        private class CustomFixAllProvider : Analyzer.Utilities.DocumentBasedFixAllProvider
+        private class CustomFixAllProvider : DocumentBasedFixAllProvider
         {
             public static readonly CustomFixAllProvider Instance = new();
 

@@ -22,6 +22,11 @@
       <Sha>fb6291b40fa4334dbd167e2071953e83cc8b9fdc</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
+    <!-- Used in repo tooling. Not updated automatically -->
+    <Dependency Name="System.Composition" Version="8.0.0-preview.4.23259.5">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>84a3d0e37e8f22b0b55f8bf932cb788b2bdd728f</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.SourceLink.GitHub" Version="8.0.0-beta.23252.2" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
       <Sha>54eb3b811c57f5e94617d31a102fc9cb664ccdd5</Sha>

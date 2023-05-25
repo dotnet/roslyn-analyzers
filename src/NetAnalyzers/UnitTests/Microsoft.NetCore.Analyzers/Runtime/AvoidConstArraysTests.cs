@@ -768,6 +768,7 @@ using System.Collections.Generic;
 
 public class A
 {
+    public readonly List<string> Field1 = GetValues(new string[] { ""close"" });
     public static readonly A Field; 
     public static List<string> Property { get; } = GetValues(new string[] { ""close"" });
     public static string[] Property2 { get; } = new string[] { ""close"" };

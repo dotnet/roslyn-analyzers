@@ -51,6 +51,26 @@
 
 ## Testing against the Runtime and Roslyn Analyzers repo
 
+### Prerequisites
+
+#### Enable Long Paths
+
+Windows 10/11 do not allow Long Paths by default. Please enable them. You have two options:
+
+- Option A: Via regedit
+
+  1. Go to `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem`
+  2. Set `LongPathsEnabled` to `true`.
+
+- Option B: Via gpedit
+
+  1. Go to `Local Group Policy > Computer Configuration > Administrative Templates > System > Filesystem`
+  2. Find `Enable Win32 long paths` and enable it.
+
+For any of the two options, restart your machine so the new setting takes full effect.
+
+### Steps
+
 1. Navigate to the root of the Roslyn-analyzers repo and run these commands:
     - `cd roslyn-analyzers`
     - Set `RUNTIMEPACKAGEVERSION` variable with a version value whose major part is equal to the major part of the version the [runtime](https://github.com/dotnet/runtime/blob/main/eng/Versions.props#L53)/[roslyn-analyzers](https://github.com/dotnet/roslyn-analyzers/blob/main/eng/Versions.props#L50) repo is using. Example: `set RUNTIMEPACKAGEVERSION=8.0.0`

@@ -142,17 +142,18 @@ For instructions on using this tutorial, see [Instructions](https://github.com/d
 
 ## Getting Started
 
-1. Install Visual Studio 2022 or later, with at least the following workloads:
+1. Enable long path support: https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=registry#enable-long-paths-in-windows-10-version-1607-and-later
+2. Install Visual Studio 2022 or later, with at least the following workloads:
    1. .NET desktop development
    2. .NET Core cross-platform development
    3. Visual Studio extension development
-2. Clone this repository
-3. Install .NET SDK version specified in `.\global.json` with `"dotnet":`
+3. Clone this repository
+4. Install .NET SDK version specified in `.\global.json` with `"dotnet":`
    - Currently, the repository requires the .NET 8 SDK, for which the installer isn't yet published in [dotnet.microsoft.com](https://dotnet.microsoft.com/download/dotnet-core).
    - To install the .NET 8 SDK, see [dotnet/installer](https://github.com/dotnet/installer#table).
-4. Open a command prompt and go to the directory of the Roslyn Analyzer Repo
-5. Run the restore and build command: `build.cmd`(in the command prompt) or `.\build.cmd`(in PowerShell).
-6. Execute tests: `test.cmd` (in the command prompt) or `.\test.cmd` (in PowerShell).
+5. Open a command prompt and go to the directory of the Roslyn Analyzer Repo
+6. Run the restore and build command: `build.cmd`(in the command prompt) or `.\build.cmd`(in PowerShell).
+7. Execute tests: `test.cmd` (in the command prompt) or `.\test.cmd` (in PowerShell).
 
 ## Submitting Pull Requests
 

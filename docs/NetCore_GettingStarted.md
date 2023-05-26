@@ -1,6 +1,6 @@
 # Getting started with .NetCore/.NetStandard Analyzers
 
-1. Read through the [.NET Compiler Platform SDK](https://learn.microsoft.com/dotnet/csharp/roslyn-sdk/) for understanding the different Roslyn elements `(Syntax Nodes, Tokens, Trivia)`. The factory methods and APIs are super useful.  
+1. Read through the [.NET Compiler Platform SDK](https://learn.microsoft.com/dotnet/csharp/roslyn-sdk/) for understanding the different Roslyn elements `(Syntax Nodes, Tokens, Trivia)`. The factory methods and APIs are super useful.
 2. Learning this [tutorial](https://learn.microsoft.com/dotnet/csharp/roslyn-sdk/tutorials/how-to-write-csharp-analyzer-code-fix) for custom analyzers and trying it is quite useful to get started. It is an easy, step-by-step tutorial, and it also has a template for generating an analyzer, fixer and unit test, which saves time. The tutorial has a good explanation and would give you a good understanding of how Roslyn analyzers work.
 3. Clone the `dotnet/roslyn-analyzers` repo, install all required dependencies and build the repo by the [instructions](https://github.com/dotnet/roslyn-analyzers#getting-started).
 4. Follow the coding style of the `dotnet/roslyn-analyzers` repo. [Guidelines about new rule id and doc](https://github.com/dotnet/roslyn-analyzers/blob/main/GuidelinesForNewRules.md).
@@ -51,23 +51,7 @@
 
 ## Testing against the Runtime and Roslyn Analyzers repo
 
-### Prerequisites
-
-#### Enable Long Paths
-
-Windows 10/11 do not allow Long Paths by default. Please enable them. You have two options:
-
-- Option A: Via regedit
-
-  1. Go to `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem`
-  2. Set `LongPathsEnabled` to `true`.
-
-- Option B: Via gpedit
-
-  1. Go to `Local Group Policy > Computer Configuration > Administrative Templates > System > Filesystem`
-  2. Find `Enable Win32 long paths` and enable it.
-
-For any of the two options, restart your machine so the new setting takes full effect.
+Make sure you meet all the prerequisites, as described [here](https://github.com/dotnet/roslyn-analyzers/blob/main/README.md#getting-started).
 
 ### Steps
 

@@ -20,6 +20,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string PreferTryAddRuleId = "CA1862";
 
         internal const string Add = nameof(IDictionary<dynamic, dynamic>.Add);
+        private const string TryAdd = nameof(TryAdd);
         private const string ContainsKey = nameof(IDictionary<dynamic, dynamic>.ContainsKey);
         private const string Remove = nameof(IDictionary<dynamic, dynamic>.Remove);
         private const string Clear = nameof(IDictionary<dynamic, dynamic>.Clear);
@@ -123,15 +124,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (!TryGetDictionaryTypeAndMembers(context.Compilation, out var iDictionaryType, out var containsKeySymbol, out var addSymbol))
+            if (!TryGetDictionaryTypeAndMembers(context.Compilation, out var iDictionaryType, out var containsKeySymbol, out var addSymbol, out var tryAddSymbol))
             {
                 return;
             }
 
-            context.RegisterOperationAction(ctx => OnInvocationOperation(iDictionaryType, containsKeySymbol, addSymbol, ctx), OperationKind.Invocation);
+            context.RegisterOperationAction(ctx => OnInvocationOperation(iDictionaryType, containsKeySymbol, addSymbol, tryAddSymbol, ctx), OperationKind.Invocation);
         }
 
-        private static void OnInvocationOperation(INamedTypeSymbol iDictionaryType, IMethodSymbol containsKeySymbol, IMethodSymbol addSymbol, OperationAnalysisContext context)
+        private static void OnInvocationOperation(INamedTypeSymbol iDictionaryType, IMethodSymbol containsKeySymbol, IMethodSymbol addSymbol, IMethodSymbol? tryAddSymbol, OperationAnalysisContext context)
         {
             var containsOperation = (IInvocationOperation)context.Operation;
             if (!IsContainsKeyMethod(containsOperation.TargetMethod, containsKeySymbol)
@@ -145,6 +146,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             void ReportGuardedDictionaryPattern(SearchContext searchContext, DiagnosticDescriptor diagnosticDescriptor)
             {
+                if (searchContext == SearchContext.AddMethod && tryAddSymbol is null)
+                {
+                    return;
+                }
+
                 var usageContext = new DictionaryUsageContext(containsOperation.Instance, containsOperation.Arguments[0].Value, addSymbol);
                 if (!GetParentConditionalOperation(containsOperation, ref usageContext, searchContext, out var conditionalOperation, out var guardsTruePath))
                 {
@@ -204,19 +210,22 @@ namespace Microsoft.NetCore.Analyzers.Performance
             [NotNullWhen(true)]
             out IMethodSymbol? containsKeySymbol,
             [NotNullWhen(true)]
-            out IMethodSymbol? addSymbol)
+            out IMethodSymbol? addSymbol,
+            out IMethodSymbol? tryAddSymbol)
         {
             iDictionaryType = WellKnownTypeProvider.GetOrCreate(compilation).GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIDictionary2);
             if (iDictionaryType is null)
             {
                 containsKeySymbol = null;
                 addSymbol = null;
+                tryAddSymbol = null;
 
                 return false;
             }
 
             containsKeySymbol = iDictionaryType.GetMembers(ContainsKey).OfType<IMethodSymbol>().FirstOrDefault();
             addSymbol = iDictionaryType.GetMembers(Add).OfType<IMethodSymbol>().FirstOrDefault();
+            tryAddSymbol = iDictionaryType.GetMembers(TryAdd).OfType<IMethodSymbol>().FirstOrDefault();
 
             return containsKeySymbol is not null && addSymbol is not null;
         }

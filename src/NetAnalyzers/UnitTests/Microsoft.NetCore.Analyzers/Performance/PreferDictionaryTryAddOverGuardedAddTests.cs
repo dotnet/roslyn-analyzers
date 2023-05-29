@@ -20,6 +20,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         private const string CSharpTemplate = @"
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace UnitTests {{
     public class Test {{
@@ -213,6 +214,14 @@ if (!d.ContainsKey(key))
     d.Add(key, 2);
 }";
 
+        private const string DictionaryDoesNotHaveTryAddMethod = @"
+var builder = ImmutableDictionary.CreateBuilder<int, int>();
+var key = 1;
+if (!builder.ContainsKey(key))
+{
+    builder.Add(key, 2);
+}";
+
         #endregion
 
         #region VB Tests
@@ -379,6 +388,7 @@ End If";
         [InlineData(AddOnDifferentDictionary)]
         [InlineData(KeyIsModified)]
         [InlineData(DictionaryIsReplaced)]
+        [InlineData(DictionaryDoesNotHaveTryAddMethod)]
         public Task ShouldNotReportDiagnosticAsync(string codeSnippet)
         {
             string testCode = CreateCSharpTestClass(codeSnippet);

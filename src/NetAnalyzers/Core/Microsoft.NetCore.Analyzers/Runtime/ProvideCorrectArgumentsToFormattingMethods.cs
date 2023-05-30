@@ -346,7 +346,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return info;
                 }
 
-                if (TryGetFormatInfoByCompositeFormatStringSyntaxAttribute(method, out info))
+                if (StringSyntaxAttribute is not null &&
+                    TryGetFormatInfoByCompositeFormatStringSyntaxAttribute(method, out info))
                 {
                     return info;
                 }
@@ -408,6 +409,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     // no valid format string
                     return false;
                 }
+
                 if (method.Parameters[formatIndex].Type.SpecialType != SpecialType.System_String)
                 {
                     // no valid format string
@@ -448,20 +450,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             private int FindParameterIndexOfCompositeFormatStringSyntaxAttribute(ImmutableArray<IParameterSymbol> parameters)
             {
-                if (StringSyntaxAttribute is null)
-                {
-                    return -1;
-                }
-
                 for (var i = 0; i < parameters.Length; i++)
                 {
                     ImmutableArray<AttributeData> attributes = parameters[i].GetAttributes();
                     for (int j = 0; j < attributes.Length; j++)
                     {
-                        if (Equals(attributes[j].AttributeClass, StringSyntaxAttribute))
+                        if (StringSyntaxAttribute!.Equals(attributes[j].AttributeClass))
                         {
                             ImmutableArray<TypedConstant> arguments = attributes[j].ConstructorArguments;
-                            if (arguments.Length == 1 && Equals(arguments[0].Value, CompositeFormat))
+                            if (arguments.Length == 1 && CompositeFormat.Equals(arguments[0].Value))
                             {
                                 return i;
                             }

@@ -77,10 +77,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     case IFieldInitializerOperation fieldInitializer:
                         if (fieldInitializer.Value is IArrayCreationOperation arrayCreation &&
                             arrayCreation.Initializer is not null &&
-                            arrayCreation.Initializer.ElementValues.All(x => x.ConstantValue.HasValue))
+                            arrayCreation.Initializer.ElementValues.All(x => x.ConstantValue.HasValue) &&
+                            symbols.IsSupportedArrayElementType(arrayCreation.GetElementType()!))
                         {
                             foreach (var field in fieldInitializer.InitializedFields)
-                                cache.AddCandidate(field);
+                            {
+                                if (field.IsStatic && field.IsReadOnly && field.IsPrivate())
+                                    cache.AddCandidate(field);
+                            }
                         }
 
                         break;
@@ -235,95 +239,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             public IFieldSymbol Field { get; }
             public CancellationToken CancellationToken { get; }
             public VisitContext With(IOperation operation) => new(operation, Field, CancellationToken);
-        }
-
-        private static void OnCompilationStart(CompilationStartAnalysisContext context)
-        {
-            //  Bail if we're missing required symbols.
-            if (!OLDCache.TryCreateCache(context.Compilation, out var cache))
-                return;
-
-            var fieldReferenceVisitor = new OLDFieldReferenceVisitor(cache);
-
-            context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Field);
-            context.RegisterOperationAction(AnalyzeOperation, OperationKind.FieldReference, OperationKind.FieldInitializer);
-            context.RegisterCompilationEndAction(OnCompilationEnd);
-
-            return;
-
-            //  Local functions
-
-            //  Report diagnostics for all fields that survived candidate elimination and have a valid field initializer.
-            void OnCompilationEnd(CompilationAnalysisContext context)
-            {
-                var asSpanInvocationLookup = cache.GetSavedOperationsLookup();
-                foreach (var field in cache.CandidatesWithValidFieldInitializers)
-                {
-                    //  Save the locations of all operations that need to be fixed by the fixer.
-                    var savedLocations = asSpanInvocationLookup[field].Select(x => new SavedSpanLocation(x.Syntax.Span, x.Syntax.SyntaxTree.FilePath));
-                    string propertyValue = SavedSpanLocation.Serialize(savedLocations);
-                    var properties = ImmutableDictionary<string, string?>.Empty.Add(FixerDataPropertyName, propertyValue);
-                    var messageArgument = ((IArrayTypeSymbol)field.Type).ElementType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
-                    var diagnostic = field.CreateDiagnostic(Rule, properties, messageArgument);
-                    context.ReportDiagnostic(diagnostic);
-                }
-                cache.Dispose();
-            }
-
-            //  We start by finding all field symbols for static readonly fields that are
-            //  arrays of an allowed element type.
-            void AnalyzeSymbol(SymbolAnalysisContext context)
-            {
-                RoslynDebug.Assert(cache is not null, $"'{nameof(cache)}' was null.");
-
-                var field = (IFieldSymbol)context.Symbol;
-                if (field.IsStatic && field.IsReadOnly && field.Type is IArrayTypeSymbol arrayType && cache.IsSupportedArrayElementType(arrayType.ElementType))
-                {
-                    cache.AddCandidate(field);
-                }
-            }
-
-            //  We analyze two types of operations here: IFieldReferenceOperations and IFieldInitializerOperations.
-            //  We maintain a collection of candidate fields, and a collection of fields with valid field initializers.
-            //  We analyze IFieldReferenceOperations and eliminate candidates that are used in ways that prohibit
-            //  conversion to ReadOnlySpan.
-            //  We analyze IFieldInitializerOperations and add fields with valid initializers to a separate collection. We use a separate 
-            //  collection so we can more easily discard fields with no initializer at the end of compilation.
-            void AnalyzeOperation(OperationAnalysisContext context)
-            {
-                RoslynDebug.Assert(cache is not null, $"'{nameof(cache)}' was null.");
-                RoslynDebug.Assert(fieldReferenceVisitor is not null, $"'{nameof(fieldReferenceVisitor)}' was null.");
-
-                switch (context.Operation)
-                {
-                    case IFieldReferenceOperation fieldReference:
-                        if (fieldReference.GetValueUsageInfo(fieldReference.SemanticModel.GetEnclosingSymbol(fieldReference.Syntax.SpanStart, context.CancellationToken)) is
-                            ValueUsageInfo.ReadableWritableReference or ValueUsageInfo.WritableReference)
-                        {
-                            //  Eliminate candidates that are assigned to ref or out variables.
-                            cache.RemoveCandidate(fieldReference.Field);
-                        }
-                        else
-                        {
-                            //  Eliminate candidates that are used in ways that prohibit conversion to ReadOnlySpan (see
-                            //  visitor classes for details).
-                            fieldReference.Parent.Accept(fieldReferenceVisitor, new OLDVisitContext(fieldReference, fieldReference.Field, context.CancellationToken));
-                        }
-
-                        break;
-                    case IFieldInitializerOperation fieldInitializer:
-
-                        //  Eliminate candidates without an all-constant array initializer
-                        if (fieldInitializer.Value is IArrayCreationOperation arrayCreation &&
-                            arrayCreation.Initializer is not null &&
-                            arrayCreation.Initializer.ElementValues.All(x => x.ConstantValue.HasValue))
-                        {
-                            foreach (var field in fieldInitializer.InitializedFields)
-                                cache.AddFieldWithValidFieldInitializer(field);
-                        }
-                        break;
-                }
-            }
         }
 
         /// <summary>
@@ -488,7 +403,161 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
+        //  Not compared for equality
+#pragma warning disable CA1815
+        /// <summary>
+        /// Represents a saved span in source code that that needs to be fixed by the fixer.
+        /// Currently used to save field references that were passed to any 'AsSpan' overload.
+        /// </summary>
+        internal readonly struct SavedSpanLocation : IEquatable<SavedSpanLocation>
+#pragma warning restore CA1815
+        {
+            private const int SpanStartCaptureGroup = 1;
+            private const int SpanLengthCaptureGroup = 2;
+            private const int SourceFilePathCaptureGroup = 3;
+            private const string FieldSeparator = "|";
+            private const string SavedSpanSeparator = "\n";
+            private static readonly Regex s_parseRegex = new($"([0-9]+){Regex.Escape(FieldSeparator)}([0-9]+){Regex.Escape(FieldSeparator)}(.*)$");
+
+            public SavedSpanLocation(TextSpan span, string sourceFilePath)
+            {
+                Span = span;
+                SourceFilePath = sourceFilePath;
+            }
+
+            public TextSpan Span { get; }
+            public string SourceFilePath { get; }
+
+            public override string ToString()
+            {
+                return $@"{Span.Start}{FieldSeparator}{Span.Length}{FieldSeparator}{SourceFilePath}";
+            }
+
+            public static SavedSpanLocation Parse(string text)
+            {
+                var match = s_parseRegex.Match(text);
+                RoslynDebug.Assert(match.Success, "Invalid saved data format");
+
+                return new SavedSpanLocation(
+                    new TextSpan(
+                        int.Parse(match.Groups[SpanStartCaptureGroup].Value, CultureInfo.InvariantCulture),
+                        int.Parse(match.Groups[SpanLengthCaptureGroup].Value, CultureInfo.InvariantCulture)),
+                    match.Groups[SourceFilePathCaptureGroup].Value);
+            }
+
+            public static string Serialize(IEnumerable<SavedSpanLocation> savedSpans)
+            {
+                return string.Join(SavedSpanSeparator, savedSpans.Select(x => x.ToString()));
+            }
+
+            public static ImmutableArray<SavedSpanLocation> Deserialize(string text)
+            {
+                var lines = text.Split(new[] { SavedSpanSeparator }, StringSplitOptions.RemoveEmptyEntries);
+                var builder = ImmutableArray.CreateBuilder<SavedSpanLocation>(lines.Length);
+                builder.Count = lines.Length;
+                for (int i = 0; i < lines.Length; ++i)
+                    builder[i] = Parse(lines[i]);
+
+                return builder.MoveToImmutable();
+            }
+
+            public static bool Equals(SavedSpanLocation left, SavedSpanLocation right) => (left.Span, left.SourceFilePath) == (right.Span, right.SourceFilePath);
+            public static bool operator ==(SavedSpanLocation left, SavedSpanLocation right) => Equals(left, right);
+            public static bool operator !=(SavedSpanLocation left, SavedSpanLocation right) => !Equals(left, right);
+            public bool Equals(SavedSpanLocation other) => Equals(this, other);
+            public override bool Equals(object obj) => obj is SavedSpanLocation other && Equals(this, other);
+            public override int GetHashCode() => (Span, SourceFilePath).GetHashCode();
+        }
+
         #region OLD_STUFF
+        private static void OnCompilationStart(CompilationStartAnalysisContext context)
+        {
+            //  Bail if we're missing required symbols.
+            if (!OLDCache.TryCreateCache(context.Compilation, out var cache))
+                return;
+
+            var fieldReferenceVisitor = new OLDFieldReferenceVisitor(cache);
+
+            context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Field);
+            context.RegisterOperationAction(AnalyzeOperation, OperationKind.FieldReference, OperationKind.FieldInitializer);
+            context.RegisterCompilationEndAction(OnCompilationEnd);
+
+            return;
+
+            //  Local functions
+
+            //  Report diagnostics for all fields that survived candidate elimination and have a valid field initializer.
+            void OnCompilationEnd(CompilationAnalysisContext context)
+            {
+                var asSpanInvocationLookup = cache.GetSavedOperationsLookup();
+                foreach (var field in cache.CandidatesWithValidFieldInitializers)
+                {
+                    //  Save the locations of all operations that need to be fixed by the fixer.
+                    var savedLocations = asSpanInvocationLookup[field].Select(x => new SavedSpanLocation(x.Syntax.Span, x.Syntax.SyntaxTree.FilePath));
+                    string propertyValue = SavedSpanLocation.Serialize(savedLocations);
+                    var properties = ImmutableDictionary<string, string?>.Empty.Add(FixerDataPropertyName, propertyValue);
+                    var messageArgument = ((IArrayTypeSymbol)field.Type).ElementType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                    var diagnostic = field.CreateDiagnostic(Rule, properties, messageArgument);
+                    context.ReportDiagnostic(diagnostic);
+                }
+                cache.Dispose();
+            }
+
+            //  We start by finding all field symbols for static readonly fields that are
+            //  arrays of an allowed element type.
+            void AnalyzeSymbol(SymbolAnalysisContext context)
+            {
+                RoslynDebug.Assert(cache is not null, $"'{nameof(cache)}' was null.");
+
+                var field = (IFieldSymbol)context.Symbol;
+                if (field.IsStatic && field.IsReadOnly && field.Type is IArrayTypeSymbol arrayType && cache.IsSupportedArrayElementType(arrayType.ElementType))
+                {
+                    cache.AddCandidate(field);
+                }
+            }
+
+            //  We analyze two types of operations here: IFieldReferenceOperations and IFieldInitializerOperations.
+            //  We maintain a collection of candidate fields, and a collection of fields with valid field initializers.
+            //  We analyze IFieldReferenceOperations and eliminate candidates that are used in ways that prohibit
+            //  conversion to ReadOnlySpan.
+            //  We analyze IFieldInitializerOperations and add fields with valid initializers to a separate collection. We use a separate 
+            //  collection so we can more easily discard fields with no initializer at the end of compilation.
+            void AnalyzeOperation(OperationAnalysisContext context)
+            {
+                RoslynDebug.Assert(cache is not null, $"'{nameof(cache)}' was null.");
+                RoslynDebug.Assert(fieldReferenceVisitor is not null, $"'{nameof(fieldReferenceVisitor)}' was null.");
+
+                switch (context.Operation)
+                {
+                    case IFieldReferenceOperation fieldReference:
+                        if (fieldReference.GetValueUsageInfo(fieldReference.SemanticModel.GetEnclosingSymbol(fieldReference.Syntax.SpanStart, context.CancellationToken)) is
+                            ValueUsageInfo.ReadableWritableReference or ValueUsageInfo.WritableReference)
+                        {
+                            //  Eliminate candidates that are assigned to ref or out variables.
+                            cache.RemoveCandidate(fieldReference.Field);
+                        }
+                        else
+                        {
+                            //  Eliminate candidates that are used in ways that prohibit conversion to ReadOnlySpan (see
+                            //  visitor classes for details).
+                            fieldReference.Parent.Accept(fieldReferenceVisitor, new OLDVisitContext(fieldReference, fieldReference.Field, context.CancellationToken));
+                        }
+
+                        break;
+                    case IFieldInitializerOperation fieldInitializer:
+
+                        //  Eliminate candidates without an all-constant array initializer
+                        if (fieldInitializer.Value is IArrayCreationOperation arrayCreation &&
+                            arrayCreation.Initializer is not null &&
+                            arrayCreation.Initializer.ElementValues.All(x => x.ConstantValue.HasValue))
+                        {
+                            foreach (var field in fieldInitializer.InitializedFields)
+                                cache.AddFieldWithValidFieldInitializer(field);
+                        }
+                        break;
+                }
+            }
+        }
 
         /// <summary>
         /// Visits the parents of <see cref="IFieldReferenceOperation"/>s and eliminates candidates that
@@ -776,72 +845,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             public CancellationToken CancellationToken { get; }
 
             public OLDVisitContext WithOperation(IOperation newOperation) => new(newOperation, Field, CancellationToken);
-        }
-
-        //  Not compared for equality
-#pragma warning disable CA1815
-        /// <summary>
-        /// Represents a saved span in source code that that needs to be fixed by the fixer.
-        /// Currently used to save field references that were passed to any 'AsSpan' overload.
-        /// </summary>
-        internal readonly struct SavedSpanLocation : IEquatable<SavedSpanLocation>
-#pragma warning restore CA1815
-        {
-            private const int SpanStartCaptureGroup = 1;
-            private const int SpanLengthCaptureGroup = 2;
-            private const int SourceFilePathCaptureGroup = 3;
-            private const string FieldSeparator = "|";
-            private const string SavedSpanSeparator = "\n";
-            private static readonly Regex s_parseRegex = new($"([0-9]+){Regex.Escape(FieldSeparator)}([0-9]+){Regex.Escape(FieldSeparator)}(.*)$");
-
-            public SavedSpanLocation(TextSpan span, string sourceFilePath)
-            {
-                Span = span;
-                SourceFilePath = sourceFilePath;
-            }
-
-            public TextSpan Span { get; }
-            public string SourceFilePath { get; }
-
-            public override string ToString()
-            {
-                return $@"{Span.Start}{FieldSeparator}{Span.Length}{FieldSeparator}{SourceFilePath}";
-            }
-
-            public static SavedSpanLocation Parse(string text)
-            {
-                var match = s_parseRegex.Match(text);
-                RoslynDebug.Assert(match.Success, "Invalid saved data format");
-
-                return new SavedSpanLocation(
-                    new TextSpan(
-                        int.Parse(match.Groups[SpanStartCaptureGroup].Value, CultureInfo.InvariantCulture),
-                        int.Parse(match.Groups[SpanLengthCaptureGroup].Value, CultureInfo.InvariantCulture)),
-                    match.Groups[SourceFilePathCaptureGroup].Value);
-            }
-
-            public static string Serialize(IEnumerable<SavedSpanLocation> savedSpans)
-            {
-                return string.Join(SavedSpanSeparator, savedSpans.Select(x => x.ToString()));
-            }
-
-            public static ImmutableArray<SavedSpanLocation> Deserialize(string text)
-            {
-                var lines = text.Split(new[] { SavedSpanSeparator }, StringSplitOptions.RemoveEmptyEntries);
-                var builder = ImmutableArray.CreateBuilder<SavedSpanLocation>(lines.Length);
-                builder.Count = lines.Length;
-                for (int i = 0; i < lines.Length; ++i)
-                    builder[i] = Parse(lines[i]);
-
-                return builder.MoveToImmutable();
-            }
-
-            public static bool Equals(SavedSpanLocation left, SavedSpanLocation right) => (left.Span, left.SourceFilePath) == (right.Span, right.SourceFilePath);
-            public static bool operator ==(SavedSpanLocation left, SavedSpanLocation right) => Equals(left, right);
-            public static bool operator !=(SavedSpanLocation left, SavedSpanLocation right) => !Equals(left, right);
-            public bool Equals(SavedSpanLocation other) => Equals(this, other);
-            public override bool Equals(object obj) => obj is SavedSpanLocation other && Equals(this, other);
-            public override int GetHashCode() => (Span, SourceFilePath).GetHashCode();
         }
 
         #endregion

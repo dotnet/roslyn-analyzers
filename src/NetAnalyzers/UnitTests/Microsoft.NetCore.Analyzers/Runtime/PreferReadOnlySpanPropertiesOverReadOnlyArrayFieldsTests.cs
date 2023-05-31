@@ -382,6 +382,11 @@ public class C
         [InlineData("private static readonly string[] a = new string[] { nameof(a) };")]
         [InlineData("private static readonly byte[] a;")]
         [InlineData("private static readonly byte[] a = new byte[123];")]
+        [InlineData("internal static readonly byte[] a = new byte[] { 1 };")]
+        [InlineData("protected static readonly byte[] a = new byte[] { 1 };")]
+        [InlineData("public static readonly byte[] a = new byte[] { 1 };")]
+        [InlineData("protected internal static readonly byte[] a = new byte[] { 1 };")]
+        [InlineData("protected private static readonly byte[] a = new byte[] { 1 };")]
         public Task IllegalDeclarations_NoDiagnostic_CS(string declaration)
         {
             var test = new VerifyCS.Test

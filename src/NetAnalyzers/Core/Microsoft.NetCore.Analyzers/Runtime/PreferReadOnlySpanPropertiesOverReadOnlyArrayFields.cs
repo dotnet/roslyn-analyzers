@@ -37,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             Resx.CreateLocalizableResourceString(nameof(Resx.PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Description)),
             isPortedFxCopRule: false,
             isDataflowRule: false,
-            isReportedAtCompilationEnd: true);
+            isReportedAtCompilationEnd: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
@@ -70,8 +70,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             //  conversion to ReadOnlySpan.
             void AnalyzeOperation(OperationAnalysisContext context)
             {
-                RoslynDebug.Assert(cache is not null, $"{nameof(cache)} should not be null.");
-
                 switch (context.Operation)
                 {
                     case IFieldInitializerOperation fieldInitializer:
@@ -83,7 +81,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             foreach (var field in fieldInitializer.InitializedFields)
                             {
                                 if (field.IsStatic && field.IsReadOnly && field.IsPrivate())
-                                    cache.AddCandidate(field);
+                                    cache.Candidates.Add(field);
                             }
                         }
 
@@ -93,7 +91,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             ValueUsageInfo.ReadableWritableReference or ValueUsageInfo.WritableReference)
                         {
                             //  Eliminate candidates that are assigned to ref or out variables.
-                            cache.EliminateCandidate(fieldReference.Field);
+                            cache.Candidates.Eliminate(fieldReference.Field);
                         }
                         else
                         {
@@ -108,18 +106,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             //  Report diagnostics for all fields that survived candidate elimination and have a valid field initializer.
             void OnSymbolEnd(SymbolAnalysisContext context)
             {
-                RoslynDebug.Assert(cache is not null, $"{nameof(cache)} was null.");
-
-                var asSpanInvocationLookup = cache.GetSavedOperationsLookup();
-                foreach (var field in cache.Candidates)
+                try
                 {
-                    //  Save the locations of all operations that need to be fixed by the fixer.
-                    var savedLocations = asSpanInvocationLookup[field].Select(x => new SavedSpanLocation(x.Syntax.Span, x.Syntax.SyntaxTree.FilePath));
-                    string propertyValue = SavedSpanLocation.Serialize(savedLocations);
-                    var properties = ImmutableDictionary<string, string?>.Empty.Add(FixerDataPropertyName, propertyValue);
-                    var messageArgument = ((IArrayTypeSymbol)field.Type).ElementType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
-                    var diagnostic = field.CreateDiagnostic(Rule, properties, messageArgument);
-                    context.ReportDiagnostic(diagnostic);
+                    var asSpanInvocationLookup = cache.SavedOperations.ToLookup(t => t.Field, t => t.Operation, SymbolEqualityComparer.Default);
+                    foreach (var field in cache.Candidates)
+                    {
+                        //  Save the locations of all operations that need to be fixed by the fixer.
+                        var savedLocations = asSpanInvocationLookup[field].Select(x => new SavedSpanLocation(x.Syntax.Span, x.Syntax.SyntaxTree.FilePath));
+                        string propertyValue = SavedSpanLocation.Serialize(savedLocations);
+                        var properties = ImmutableDictionary<string, string?>.Empty.Add(FixerDataPropertyName, propertyValue);
+                        var messageArgument = ((IArrayTypeSymbol)field.Type).ElementType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                        var diagnostic = field.CreateDiagnostic(Rule, properties, messageArgument);
+                        context.ReportDiagnostic(diagnostic);
+                    }
+                }
+                finally
+                {
+                    cache.Dispose();
                 }
             }
         }
@@ -140,27 +143,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             public override Unit VisitSimpleAssignment(ISimpleAssignmentOperation operation, VisitContext argument)
             {
                 if (operation.Target.Equals(argument.Operation))
-                    _cache.EliminateCandidate(argument.Field);
+                    _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitSimpleAssignment(operation, argument);
             }
 
             public override Unit VisitCompoundAssignment(ICompoundAssignmentOperation operation, VisitContext argument)
             {
                 if (operation.Target.Equals(argument.Operation))
-                    _cache.EliminateCandidate(argument.Field);
+                    _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitCompoundAssignment(operation, argument);
             }
 
             public override Unit VisitTuple(ITupleOperation operation, VisitContext argument)
             {
                 if (operation.Parent is IDeconstructionAssignmentOperation deconstruction && deconstruction.Target.Equals(operation))
-                    _cache.EliminateCandidate(argument.Field);
+                    _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitTuple(operation, argument);
             }
 
             public override Unit VisitIncrementOrDecrement(IIncrementOrDecrementOperation operation, VisitContext argument)
             {
-                _cache.EliminateCandidate(argument.Field);
+                _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitIncrementOrDecrement(operation, argument);
             }
         }
@@ -188,7 +191,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     ValueUsageInfo.ReadableWritableReference or ValueUsageInfo.WritableReference)
                 {
                     //  Eliminate candidates who's elements are assigned to ref or out variables.
-                    _cache.EliminateCandidate(argument.Field);
+                    _cache.Candidates.Eliminate(argument.Field);
                 }
                 else
                 {
@@ -201,14 +204,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             public override Unit VisitInvocation(IInvocationOperation operation, VisitContext argument)
             {
-                _cache.EliminateCandidate(argument.Field);
+                _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitInvocation(operation, argument);
             }
 
             public override Unit VisitPropertyReference(IPropertyReferenceOperation operation, VisitContext argument)
             {
                 if (!operation.Property.Equals(_symbols.ArrayLengthProperty, SymbolEqualityComparer.Default))
-                    _cache.EliminateCandidate(argument.Field);
+                    _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitPropertyReference(operation, argument);
             }
 
@@ -219,11 +222,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     operation.Parent.Parent is IConversionOperation conversion &&
                     conversion.Type.OriginalDefinition.Equals(_symbols.ReadOnlySpanType, SymbolEqualityComparer.Default))
                 {
-                    _cache.AddSavedOperation(argument.Field, operation);
+                    _cache.SavedOperations.Add((argument.Field, operation));
                 }
                 else
                 {
-                    _cache.EliminateCandidate(argument.Field);
+                    _cache.Candidates.Eliminate(argument.Field);
                 }
 
                 return base.VisitArgument(operation, argument);
@@ -232,43 +235,43 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             public override Unit VisitConversion(IConversionOperation operation, VisitContext argument)
             {
                 if (!operation.Type.OriginalDefinition.Equals(_symbols.ReadOnlySpanType, SymbolEqualityComparer.Default))
-                    _cache.EliminateCandidate(argument.Field);
+                    _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitConversion(operation, argument);
             }
 
             public override Unit VisitSimpleAssignment(ISimpleAssignmentOperation operation, VisitContext argument)
             {
-                _cache.EliminateCandidate(argument.Field);
+                _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitSimpleAssignment(operation, argument);
             }
 
             public override Unit VisitCoalesceAssignment(ICoalesceAssignmentOperation operation, VisitContext argument)
             {
-                _cache.EliminateCandidate(argument.Field);
+                _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitCoalesceAssignment(operation, argument);
             }
 
             public override Unit VisitVariableInitializer(IVariableInitializerOperation operation, VisitContext argument)
             {
-                _cache.EliminateCandidate(argument.Field);
+                _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitVariableInitializer(operation, argument);
             }
 
             public override Unit VisitTuple(ITupleOperation operation, VisitContext argument)
             {
-                _cache.EliminateCandidate(argument.Field);
+                _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitTuple(operation, argument);
             }
 
             public override Unit VisitReturn(IReturnOperation operation, VisitContext argument)
             {
-                _cache.EliminateCandidate(argument.Field);
+                _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitReturn(operation, argument);
             }
 
             public override Unit VisitArrayInitializer(IArrayInitializerOperation operation, VisitContext argument)
             {
-                _cache.EliminateCandidate(argument.Field);
+                _cache.Candidates.Eliminate(argument.Field);
                 return base.VisitArrayInitializer(operation, argument);
             }
 
@@ -349,45 +352,75 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         /// <summary>
-        /// Stores potential candidate <see cref="IFieldSymbol"/>s and <see cref="IOperation"/>s that need to be
-        /// fixed by the fixer.
-        /// Candidates can be disqualified before they have been added to the internal collection using 
-        /// <see cref="EliminateCandidate(IFieldSymbol)"/> method. If eliminated candidates are later added,
-        /// the cache will remember that they have been eliminated.
+        /// A collection of candidate <see cref="IFieldSymbol"/>s.
+        /// Candidates can be removed from the collection using the <see cref="Eliminate(IFieldSymbol)"/> method
+        /// before they have been added.
+        /// If a candidate <see cref="IFieldSymbol"/> is added after having been eliminated, it is NOT a member of the collection.
         /// </summary>
-        private sealed class Cache : IDisposable
+        private sealed class CandidateCollection : IEnumerable<IFieldSymbol>, IDisposable
         {
-            private readonly PooledConcurrentSet<IFieldSymbol> _candidates;
-            private readonly PooledConcurrentSet<IFieldSymbol> _removedCandidates;
-            private readonly PooledConcurrentSet<(IFieldSymbol Field, IOperation Operation)> _savedOperations;
+            private readonly PooledConcurrentSet<IFieldSymbol> _potentialCandidates;
+            private readonly PooledConcurrentSet<IFieldSymbol> _eliminatedCandidates;
 
-            public Cache()
+            public CandidateCollection()
             {
-                _candidates = PooledConcurrentSet<IFieldSymbol>.GetInstance();
-                _removedCandidates = PooledConcurrentSet<IFieldSymbol>.GetInstance();
-                _savedOperations = PooledConcurrentSet<(IFieldSymbol, IOperation)>.GetInstance();
+                _potentialCandidates = PooledConcurrentSet<IFieldSymbol>.GetInstance();
+                _eliminatedCandidates = PooledConcurrentSet<IFieldSymbol>.GetInstance();
             }
 
-            public void AddCandidate(IFieldSymbol candidate) => _candidates.Add(candidate);
-            public void EliminateCandidate(IFieldSymbol candidate) => _removedCandidates.Add(candidate);
-            public void AddSavedOperation(IFieldSymbol field, IOperation operation) => _savedOperations.Add((field, operation));
-            public ILookup<IFieldSymbol, IOperation> GetSavedOperationsLookup() => _savedOperations.ToLookup(t => t.Field, t => t.Operation);
-            public IEnumerable<IFieldSymbol> Candidates
+            /// <summary>
+            /// Adds the specified potential candidate to the collection. If the candidate has previously been eliminated via a
+            /// call to <see cref="Eliminate(IFieldSymbol)"/>, it will not be added.
+            /// </summary>
+            /// <param name="potentialCandidate">The candidate to add.</param>
+            public void Add(IFieldSymbol potentialCandidate) => _potentialCandidates.Add(potentialCandidate);
+
+            /// <summary>
+            /// Eliminates the specified candidate from the collection. Once this method is called on a candidate,
+            /// it cannot be added to the collection, even if <see cref="Add(IFieldSymbol)"/> is later called.
+            /// </summary>
+            /// <param name="candidate">The candidate to eliminate.</param>
+            public void Eliminate(IFieldSymbol candidate) => _eliminatedCandidates.Add(candidate);
+
+            /// <summary>
+            /// Enumerates all potential candidates that have not been eliminated.
+            /// </summary>
+            /// <returns></returns>
+            public IEnumerator<IFieldSymbol> GetEnumerator()
             {
-                get
+                foreach (var field in _potentialCandidates)
                 {
-                    foreach (var candidate in _candidates)
-                    {
-                        if (!_removedCandidates.Contains(candidate))
-                            yield return candidate;
-                    }
+                    if (!_eliminatedCandidates.Contains(field))
+                        yield return field;
                 }
             }
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+
             public void Dispose()
             {
-                _candidates.Dispose();
-                _removedCandidates.Dispose();
-                _savedOperations.Dispose();
+                _potentialCandidates.Dispose();
+                _eliminatedCandidates.Dispose();
+            }
+        }
+
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+        private readonly struct Cache : IDisposable
+#pragma warning restore CA1815 // Override equals and operator equals on value types
+        {
+            public Cache()
+            {
+                Candidates = new CandidateCollection();
+                SavedOperations = PooledConcurrentSet<(IFieldSymbol, IOperation)>.GetInstance();
+            }
+
+            public CandidateCollection Candidates { get; }
+            public PooledConcurrentSet<(IFieldSymbol Field, IOperation Operation)> SavedOperations { get; }
+
+            public void Dispose()
+            {
+                Candidates?.Dispose();
+                SavedOperations?.Dispose();
             }
         }
 

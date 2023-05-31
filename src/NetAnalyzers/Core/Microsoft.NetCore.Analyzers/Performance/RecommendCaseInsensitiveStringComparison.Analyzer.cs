@@ -32,31 +32,23 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string StringStartsWithMethodName = "StartsWith";
         internal const string StringCompareToMethodName = "CompareTo";
 
-        private static readonly LocalizableString s_localizableStringComparisonTitle = CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparisonTitle));
-        private static readonly LocalizableString s_localizableStringComparisonMessage = CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparisonMessage));
-        private static readonly LocalizableString s_localizableStringComparisonDescription = CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparisonDescription));
-
-        private static readonly LocalizableString s_localizableStringComparerTitle = CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparerTitle));
-        private static readonly LocalizableString s_localizableStringComparerMessage = CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparerMessage));
-        private static readonly LocalizableString s_localizableStringComparerDescription = CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparerDescription));
-
         internal static readonly DiagnosticDescriptor RecommendCaseInsensitiveStringComparisonRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            s_localizableStringComparisonTitle,
-            s_localizableStringComparisonMessage,
+            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparisonTitle)),
+            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparisonMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
-            s_localizableStringComparisonDescription,
+            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparisonDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
         internal static readonly DiagnosticDescriptor RecommendCaseInsensitiveStringComparerRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            s_localizableStringComparerTitle,
-            s_localizableStringComparerMessage,
+            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparerTitle)),
+            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparerMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
-            s_localizableStringComparerDescription,
+            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparerDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 

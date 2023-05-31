@@ -66,10 +66,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             // Retrieve the essential types: string, StringComparison, StringComparer
 
-            if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemString, out INamedTypeSymbol? stringType))
-            {
-                return;
-            }
+            INamedTypeSymbol stringType = context.Compilation.GetSpecialType(SpecialType.System_String);
 
             if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison, out INamedTypeSymbol? stringComparisonType))
             {

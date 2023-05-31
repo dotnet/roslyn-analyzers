@@ -2,10 +2,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForNetAnalyzers)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Microsoft.CodeAnalysis.NetAnalyzers.csproj" />
-    <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForNetAnalyzers)</MicrosoftCodeAnalysisVersion>
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.NetAnalyzers.UnitTests" />

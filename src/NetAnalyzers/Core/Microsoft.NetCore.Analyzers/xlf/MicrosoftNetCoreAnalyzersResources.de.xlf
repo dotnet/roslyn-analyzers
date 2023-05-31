@@ -2263,6 +2263,36 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <target state="translated">Arbeitsspeicherbasierte asynchrone Methoden beim Erstellen von Unterklassen von „Stream“ außer Kraft setzen</target>
         <note />
       </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo'. Instead, use 'StringComparer' to perform case-insensitive comparisons.</source>
+        <target state="new">Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo'. Instead, use 'StringComparer' to perform case-insensitive comparisons.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerMessage">
+        <source>Prefer using 'StringComparer' to perform a case-insensitive comparison</source>
+        <target state="new">Prefer using 'StringComparer' to perform a case-insensitive comparison</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerTitle">
+        <source>Prefer using 'StringComparer' to perform case-insensitive string comparisons</source>
+        <target state="new">Prefer using 'StringComparer' to perform case-insensitive string comparisons</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons.</source>
+        <target state="new">Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonMessage">
+        <source>Prefer the string comparison method overload of '{0}' that takes a 'StringComparison' enum value to perform a case-insensitive comparison</source>
+        <target state="new">Prefer the string comparison method overload of '{0}' that takes a 'StringComparison' enum value to perform a case-insensitive comparison</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonTitle">
+        <source>Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons</source>
+        <target state="new">Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons</target>
+        <note />
+      </trans-unit>
       <trans-unit id="RemoveRedundantCall">
         <source>Remove redundant call</source>
         <target state="translated">Redundanten Aufruf entfernen</target>

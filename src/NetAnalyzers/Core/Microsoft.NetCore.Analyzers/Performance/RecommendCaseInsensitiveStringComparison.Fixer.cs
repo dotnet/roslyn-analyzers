@@ -87,7 +87,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             Task<Document> createChangedDocument(CancellationToken _) => FixInvocationAsync(doc, root,
                 invocation, instanceOperation,
                 stringComparisonType, stringComparerType,
-                invocation.TargetMethod.Name, caseChangingApproachName, ct);
+                invocation.TargetMethod.Name, caseChangingApproachName);
 
             context.RegisterCodeFix(
                 CodeAction.Create(
@@ -100,7 +100,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private static Task<Document> FixInvocationAsync(Document doc, SyntaxNode root,
             IInvocationOperation invocation, IInvocationOperation instanceOperation,
             INamedTypeSymbol stringComparisonType, INamedTypeSymbol stringComparerType,
-            string diagnosableMethodName, string caseChangingApproachName, CancellationToken ct)
+            string diagnosableMethodName, string caseChangingApproachName)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
 

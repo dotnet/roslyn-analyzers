@@ -54,6 +54,8 @@
     <MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>2.9.0</MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>
     <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>2.9.0</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>
     <MicrosoftCodeAnalysisVersionForResxSourceGenerators>4.0.1</MicrosoftCodeAnalysisVersionForResxSourceGenerators>
+    <MicrosoftCodeAnalysisVersionForNetAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForNetAnalyzers>
+    <MicrosoftCodeAnalysisVersionForTextAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForTextAnalyzers>
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
     <DogfoodAnalyzersVersion>3.3.4</DogfoodAnalyzersVersion>
     <DogfoodNetAnalyzersVersion>8.0.0-preview1.22621.6</DogfoodNetAnalyzersVersion>

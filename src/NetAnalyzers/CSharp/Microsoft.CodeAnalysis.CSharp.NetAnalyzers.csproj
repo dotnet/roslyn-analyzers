@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Microsoft.CodeAnalysis.NetAnalyzers.csproj" />
+    <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForNetAnalyzers)</MicrosoftCodeAnalysisVersion>
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.NetAnalyzers.UnitTests" />

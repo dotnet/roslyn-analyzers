@@ -44,11 +44,22 @@
            However, because these reference packages do not provide implementations, they cannot be used in any case
            where the package contents would be redisted or executed. An SBRP may not be created for a version that is used both
            as a reference assembly and redisted.
+
+           In this repo, the MicrosoftCodeAnalysis property should **not** be set globally in this file. Instead, it should
+           be set for each project, based on the properties below. When the project is executable, it should be
+           set only for non-source build or repo-source build. Product source build will set an incoming MicrosoftCodeAnalysis property
+           that will denote the available implementation version.
+
+           Example of surface area usage:
+
+           <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers)</MicrosoftCodeAnalysisVersion>
+
+           Example of executable usage:
+
+          <MicrosoftCodeAnalysisVersion Condition="'$(DotNetBuildFromSource)' != 'true' or '$(DotNetBuildFromSourceFlavor)' != 'Product'">$(MicrosoftCodeAnalysisVersionForExecution)</MicrosoftCodeAnalysisVersion>
     -->
-    <MicrosoftCodeAnalysisCSharpCodeStyleVersion>4.5.0</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
-    <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>4.5.0</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
     <!-- Microsoft.CodeAnalysis versions for different purposes. -->
-    <MicrosoftCodeAnalysisVersionForTests>4.6.0-1.final</MicrosoftCodeAnalysisVersionForTests>
+    <!-- Surface area that various projects compile against. These should have source-build reference packages -->
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
     <MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>1.2.1</MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>
     <MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>2.9.0</MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>
@@ -56,7 +67,15 @@
     <MicrosoftCodeAnalysisVersionForResxSourceGenerators>4.0.1</MicrosoftCodeAnalysisVersionForResxSourceGenerators>
     <MicrosoftCodeAnalysisVersionForNetAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForNetAnalyzers>
     <MicrosoftCodeAnalysisVersionForTextAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForTextAnalyzers>
-    <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>
+    <!-- Versions for tests and general utility execution. -->
+    <!-- This version is for utility and executable assemblies. The version here should not overlap with any of the surface
+         area versions. -->
+    <MicrosoftCodeAnalysisVersionForTests>4.6.0-1.final</MicrosoftCodeAnalysisVersionForTests>
+    <MicrosoftCodeAnalysisVersionForExecution>4.6.0-1.final</MicrosoftCodeAnalysisVersionForExecution>
+
+    <MicrosoftCodeAnalysisCSharpCodeStyleVersion>4.5.0</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
+    <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>4.5.0</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
     <DogfoodAnalyzersVersion>3.3.4</DogfoodAnalyzersVersion>
     <DogfoodNetAnalyzersVersion>8.0.0-preview1.22621.6</DogfoodNetAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>

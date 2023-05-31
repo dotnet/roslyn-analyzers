@@ -33,7 +33,7 @@
     </None>
   </ItemGroup>
   
-  <ItemGroup Condition="'$(DotNetBuildFromSource)' != 'true'" >
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' != 'true'">
     <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(MicrosoftCodeAnalysisBannedApiAnalyzersVersion)" />
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.txt" Condition="'$(BannedSymbolsOptOut)' != 'true'" />
   </ItemGroup>

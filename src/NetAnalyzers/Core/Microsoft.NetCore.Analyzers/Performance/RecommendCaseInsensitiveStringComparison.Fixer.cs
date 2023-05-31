@@ -62,7 +62,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             // Only diagnose overloads that take one string argument:
             // Contains(string), IndexOf(string), StartsWith(string), CompareTo(string)
-            if (invocation.Arguments.Count() != 1)
+            if (invocation.Arguments.Length != 1)
             {
                 return;
             }

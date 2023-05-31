@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -19,7 +20,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
     /// <summary>
     /// CA1862: Prefer the StringComparison method overloads to perform case-insensitive string comparisons.
     /// </summary>
-    public class RecommendCaseInsensitiveStringComparisonFixer : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = RecommendCaseInsensitiveStringComparisonAnalyzer.RuleId), Shared]
+    public sealed class RecommendCaseInsensitiveStringComparisonFixer : CodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(RecommendCaseInsensitiveStringComparisonAnalyzer.RuleId);
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;

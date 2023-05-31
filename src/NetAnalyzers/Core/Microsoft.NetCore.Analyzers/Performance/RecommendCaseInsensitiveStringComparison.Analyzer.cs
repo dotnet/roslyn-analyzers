@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Data;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -170,23 +171,16 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 IMethodSymbol diagnosableMethod = diagnosableInvocation.TargetMethod;
 
-                DiagnosticDescriptor rule;
                 if (diagnosableMethod.Equals(containsStringMethod) ||
                     diagnosableMethod.Equals(indexOfStringMethod) ||
                     diagnosableMethod.Equals(startsWithStringMethod))
                 {
-                    rule = RecommendCaseInsensitiveStringComparisonRule;
+                    context.ReportDiagnostic(diagnosableInvocation.CreateDiagnostic(RecommendCaseInsensitiveStringComparisonRule, diagnosableMethod.Name));
                 }
                 else if (diagnosableMethod.Equals(compareToStringMethod))
                 {
-                    rule = RecommendCaseInsensitiveStringComparerRule;
+                    context.ReportDiagnostic(diagnosableInvocation.CreateDiagnostic(RecommendCaseInsensitiveStringComparerRule));
                 }
-                else
-                {
-                    return;
-                }
-
-                context.ReportDiagnostic(diagnosableInvocation.CreateDiagnostic(rule, diagnosableMethod.Name));
 
             }, OperationKind.Invocation);
         }

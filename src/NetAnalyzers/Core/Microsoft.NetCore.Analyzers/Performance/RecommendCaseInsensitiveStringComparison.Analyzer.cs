@@ -168,7 +168,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return;
                 }
 
-                var diagnosableMethod = diagnosableInvocation.TargetMethod;
+                IMethodSymbol diagnosableMethod = diagnosableInvocation.TargetMethod;
 
                 DiagnosticDescriptor rule;
                 if (diagnosableMethod.Equals(containsStringMethod) ||

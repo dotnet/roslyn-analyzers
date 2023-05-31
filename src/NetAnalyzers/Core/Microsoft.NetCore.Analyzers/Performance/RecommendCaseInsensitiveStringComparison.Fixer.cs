@@ -27,10 +27,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             CancellationToken ct = context.CancellationToken;
-            if (ct.IsCancellationRequested)
-            {
-                return;
-            }
 
             Document doc = context.Document;
 
@@ -106,11 +102,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             INamedTypeSymbol stringComparisonType, INamedTypeSymbol stringComparerType,
             string diagnosableMethodName, string caseChangingApproachName, CancellationToken ct)
         {
-            if (ct.IsCancellationRequested)
-            {
-                return Task.FromCanceled<Document>(ct);
-            }
-
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
 
             SyntaxNode newInvocation;

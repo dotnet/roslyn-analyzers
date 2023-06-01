@@ -1,4 +1,4 @@
-{
+﻿{
   "$schema": "http://json.schemastore.org/sarif-1.0.0",
   "version": "1.0.0",
   "runs": [
@@ -3148,6 +3148,25 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1862": {
+          "id": "CA1862",
+          "shortDescription": "Prefer ReadOnlySpan`1 properties over readonly array fields",
+          "fullDescription": "If an array field is readonly and the array is never modified, the compiler can emit more efficient code if the readonly field is replaced with a read-only ReadOnlySpan`1 property.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "PreferReadOnlySpanPropertiesOverReadOnlyArrayFields",
+            "languages": [
+              "C#"
             ],
             "tags": [
               "Telemetry",

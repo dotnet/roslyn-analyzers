@@ -120,7 +120,7 @@ Class C
         {fixedLine}
     End Sub
 End Class
-"; ;
+";
             await VerifyVisualBasicAsync(originalCode, fixedCode);
         }
 

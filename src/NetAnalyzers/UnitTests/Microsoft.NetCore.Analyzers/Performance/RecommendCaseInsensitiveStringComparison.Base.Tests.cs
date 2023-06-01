@@ -18,11 +18,18 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
-                foreach (string method in new[] { "Contains", "IndexOf", "StartsWith" })
+                foreach (string method in new[] { "Contains", "StartsWith" })
                 {
                     yield return new object[] { $"a.{caseChanging}().{method}(b)", $"a.{method}(b, StringComparison.{replacement})" };
                 }
 
+                // IndexOf overloads
+                foreach (string arguments in new[] { "b", "b, 1", "b, 1, 1" })
+                {
+                    yield return new object[] { $"a.{caseChanging}().IndexOf({arguments})", $"a.IndexOf(b{arguments}, StringComparison.{replacement})" };
+                }
+
+                // Fixer converts to a different class
                 yield return new object[] { $"a.{caseChanging}().CompareTo(b)", $"StringComparer.{replacement}.Compare(a, b)" };
             }
         }
@@ -38,7 +45,13 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
 
                 // Tests having an appended method invocation at the end
-                yield return new object[] { $"a.{caseChanging}().IndexOf(b)", $"a.IndexOf(b, StringComparison.{replacement})", ".Equals(-1)" };
+
+                // IndexOf overloads
+                foreach (string arguments in new[] { "b", "b, 1", "b, 1, 1" })
+                {
+                    yield return new object[] { $"a.{caseChanging}().IndexOf({arguments})", $"a.IndexOf({arguments}, StringComparison.{replacement})", ".Equals(-1)" };
+                }
+
                 // Tests equality comparison (for VB the test should edit it)
                 yield return new object[] { $"a.{caseChanging}().CompareTo(b)", $"StringComparer.{replacement}.Compare(a, b)", " == -1" };
             }
@@ -48,12 +61,18 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
-                foreach (string method in new[] { "Contains", "IndexOf", "StartsWith" })
+                foreach (string method in new[] { "Contains", "StartsWith" })
                 {
-                    yield return new object[] { $"\"aBc\".{caseChanging}().{method}(\"cdE\")", $"\"aBc\".{method}(\"cdE\", StringComparison.{replacement})" };
+                    yield return new object[] { $"\"aBc\".{caseChanging}().{method}(\"CdE\")", $"\"aBc\".{method}(\"CdE\", StringComparison.{replacement})" };
                 }
 
-                yield return new object[] { $"\"aBc\".{caseChanging}().CompareTo(\"cdE\")", $"StringComparer.{replacement}.Compare(\"aBc\", \"cdE\")" };
+                // IndexOf overloads
+                foreach (string arguments in new[] { "\"CdE\"", "\"CdE\", 1", "\"CdE\", 1, 1" })
+                {
+                    yield return new object[] { $"\"aBc\".{caseChanging}().IndexOf({arguments})", $"\"aBc\".IndexOf({arguments}, StringComparison.{replacement})" };
+                }
+
+                yield return new object[] { $"\"aBc\".{caseChanging}().CompareTo(\"CdE\")", $"StringComparer.{replacement}.Compare(\"aBc\", \"CdE\")" };
             }
         }
 
@@ -61,9 +80,15 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
-                foreach (string method in new[] { "Contains", "IndexOf", "StartsWith" })
+                foreach (string method in new[] { "Contains", "StartsWith" })
                 {
                     yield return new object[] { $"GetStringA().{caseChanging}().{method}(GetStringB())", $"GetStringA().{method}(GetStringB(), StringComparison.{replacement})" };
+                }
+
+                // IndexOf overloads
+                foreach (string arguments in new[] { "GetStringB()", "GetStringB(), 1", "GetStringB(), 1, 1" })
+                {
+                    yield return new object[] { $"GetStringA().{caseChanging}().IndexOf({arguments})", $"GetStringA().IndexOf({arguments}, StringComparison.{replacement})" };
                 }
 
                 yield return new object[] { $"GetStringA().{caseChanging}().CompareTo(GetStringB())", $"StringComparer.{replacement}.Compare(GetStringA(), GetStringB())" };

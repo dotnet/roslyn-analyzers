@@ -17,13 +17,15 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
+    using RCISCAnalyzer = RecommendCaseInsensitiveStringComparisonAnalyzer;
+
     /// <summary>
     /// CA1862: Prefer the StringComparison method overloads to perform case-insensitive string comparisons.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = RecommendCaseInsensitiveStringComparisonAnalyzer.RuleId), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = RCISCAnalyzer.RuleId), Shared]
     public sealed class RecommendCaseInsensitiveStringComparisonFixer : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(RecommendCaseInsensitiveStringComparisonAnalyzer.RuleId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(RCISCAnalyzer.RuleId);
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -58,9 +60,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            // Only diagnose overloads that take one string argument:
-            // Contains(string), IndexOf(string), StartsWith(string), CompareTo(string)
-            if (invocation.Arguments.Length != 1)
+            string methodName = invocation.TargetMethod.Name;
+
+            // Only diagnose the one-parameter overloads of these methods: Contains(string), StartsWith(string), CompareTo(string)
+            if ((methodName.Equals(RCISCAnalyzer.StringContainsMethodName, System.StringComparison.Ordinal) ||
+                 methodName.Equals(RCISCAnalyzer.StringStartsWithMethodName, System.StringComparison.Ordinal) ||
+                 methodName.Equals(RCISCAnalyzer.StringCompareToMethodName, System.StringComparison.Ordinal)) && invocation.Arguments.Length != 1)
+            {
+                return;
+            }
+
+            // Only diagnose the one, two or three parameter overloads of IndexOf: IndexOf(string), IndexOf(string, int), IndexOf(string, int, int)
+            else if (methodName.Equals(RCISCAnalyzer.StringIndexOfMethodName, System.StringComparison.Ordinal) && invocation.Arguments.Length > 3)
             {
                 return;
             }
@@ -76,11 +87,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
             string caseChangingApproachName;
             switch (instanceOperation.TargetMethod.Name)
             {
-                case RecommendCaseInsensitiveStringComparisonAnalyzer.StringToLowerMethodName or RecommendCaseInsensitiveStringComparisonAnalyzer.StringToUpperMethodName:
-                    caseChangingApproachName = RecommendCaseInsensitiveStringComparisonAnalyzer.StringComparisonCurrentCultureIgnoreCaseName;
+                case RCISCAnalyzer.StringToLowerMethodName or RCISCAnalyzer.StringToUpperMethodName:
+                    caseChangingApproachName = RCISCAnalyzer.StringComparisonCurrentCultureIgnoreCaseName;
                     break;
-                case RecommendCaseInsensitiveStringComparisonAnalyzer.StringToLowerInvariantMethodName or RecommendCaseInsensitiveStringComparisonAnalyzer.StringToUpperInvariantMethodName:
-                    caseChangingApproachName = RecommendCaseInsensitiveStringComparisonAnalyzer.StringComparisonInvariantCultureIgnoreCaseName;
+                case RCISCAnalyzer.StringToLowerInvariantMethodName or RCISCAnalyzer.StringToUpperInvariantMethodName:
+                    caseChangingApproachName = RCISCAnalyzer.StringComparisonInvariantCultureIgnoreCaseName;
                     break;
                 default:
                     return;
@@ -89,13 +100,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
             Task<Document> createChangedDocument(CancellationToken _) => FixInvocationAsync(doc, root,
                 invocation, instanceOperation,
                 stringComparisonType, stringComparerType,
-                invocation.TargetMethod.Name, caseChangingApproachName);
+                methodName, caseChangingApproachName);
 
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparisonTitle,
                     createChangedDocument,
-                    equivalenceKey: MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparisonTitle + invocation.TargetMethod.Name + caseChangingApproachName),
+                    equivalenceKey: MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparisonTitle + methodName + caseChangingApproachName),
                 context.Diagnostics);
         }
 
@@ -108,17 +119,17 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             SyntaxNode newInvocation;
             if (diagnosableMethodName is
-                RecommendCaseInsensitiveStringComparisonAnalyzer.StringContainsMethodName or
-                RecommendCaseInsensitiveStringComparisonAnalyzer.StringIndexOfMethodName or
-                RecommendCaseInsensitiveStringComparisonAnalyzer.StringStartsWithMethodName)
+                RCISCAnalyzer.StringContainsMethodName or
+                RCISCAnalyzer.StringIndexOfMethodName or
+                RCISCAnalyzer.StringStartsWithMethodName)
             {
                 newInvocation = GetNewInvocationForContainsIndexOfAndStartsWith(generator,
                     invocation, instanceOperation, stringComparisonType, caseChangingApproachName);
             }
             else
             {
-                // CompareTo should be the only other possible option
-                Debug.Assert(diagnosableMethodName is RecommendCaseInsensitiveStringComparisonAnalyzer.StringCompareToMethodName);
+                Debug.Assert(diagnosableMethodName is RCISCAnalyzer.StringCompareToMethodName);
+
                 newInvocation = GetNewInvocationForCompareTo(generator,
                     invocation, instanceOperation, stringComparerType, caseChangingApproachName);
             }
@@ -131,20 +142,28 @@ namespace Microsoft.NetCore.Analyzers.Performance
             IInvocationOperation invocation, IInvocationOperation instanceOperation,
             INamedTypeSymbol stringComparisonType, string caseChangingApproachName)
         {
-            // For the Diagnosable methods Contains(string), IndexOf(string), StartsWith(string)
+            // For the Diagnosable methods Contains(string) and StartsWith(string)
             // If we have this code ('a' and 'b' are string instances):
             //     a.CaseChanging().Diagnosable(b);
             // We want to convert it to:
             //     a.Diagnosable(b, StringComparison.DesiredCultureDesiredCase);
 
+            // For IndexOf we have 3 options:
+            //    a.CaseChanging().IndexOf(b)                          => a.IndexOf(b, StringComparison.Desired)
+            //    a.CaseChanging().IndexOf(b, startIndex: n)           => a.IndexOf(b, startIndex: n, StringComparison.Desired)
+            //    a.CaseChanging().IndexOf(b, startIndex: n, count: m) => a.IndexOf(b, startIndex: n, count: m, StringComparison.Desired)
+
             // Retrieve "a" and replace the invoked CaseChanging method with the Diagnosable method
             SyntaxNode stringMemberAccessExpression = generator.MemberAccessExpression(instanceOperation.Instance.Syntax, invocation.TargetMethod.Name);
 
-            List<SyntaxNode> newArguments = new()
+            // Already verified in RegisterCodeFixesAsync, this is merely defensive
+            Debug.Assert(invocation.Arguments.Length <= 3);
+
+            List<SyntaxNode> newArguments = new();
+            foreach (IArgumentOperation argument in invocation.Arguments)
             {
-                // Retrieve "b"
-                invocation.Arguments.First().Syntax
-            };
+                newArguments.Add(argument.Syntax);
+            }
 
             // Retrieve "StringComparison.DesiredCultureDesiredCase"
             SyntaxNode stringComparisonEnumValueAccess = generator.MemberAccessExpression(
@@ -178,7 +197,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             // Create the ".Compare" expression using the above one
             SyntaxNode compareMethodInvocation = generator.MemberAccessExpression(
                 stringComparerPropertyInvocation,
-                "Compare");
+                RCISCAnalyzer.StringComparerCompareMethodName);
 
             List<SyntaxNode> newArguments = new()
             {

@@ -31,6 +31,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string StringIndexOfMethodName = "IndexOf";
         internal const string StringStartsWithMethodName = "StartsWith";
         internal const string StringCompareToMethodName = "CompareTo";
+        internal const string StringComparerCompareMethodName = "Compare";
 
         internal static readonly DiagnosticDescriptor RecommendCaseInsensitiveStringComparisonRule = DiagnosticDescriptorHelper.Create(
             RuleId,
@@ -67,6 +68,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             // Retrieve the essential types: string, StringComparison, StringComparer
 
             INamedTypeSymbol stringType = context.Compilation.GetSpecialType(SpecialType.System_String);
+            INamedTypeSymbol int32Type = context.Compilation.GetSpecialType(SpecialType.System_Int32);
 
             if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison, out INamedTypeSymbol? stringComparisonType))
             {
@@ -104,32 +106,66 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            // Retrieve the diagnosable string overload methods: Contains, IndexOf, StartsWith, CompareTo
+            // Create the different expected parameter combinations
 
             ParameterInfo[] stringParameter = new[]
             {
                 ParameterInfo.GetParameterInfo(stringType)
             };
 
+            ParameterInfo[] stringInt32Parameters = new[]
+            {
+                ParameterInfo.GetParameterInfo(stringType),
+                ParameterInfo.GetParameterInfo(int32Type)
+            };
+
+            ParameterInfo[] stringInt32Int32Parameters = new[]
+            {
+                ParameterInfo.GetParameterInfo(stringType),
+                ParameterInfo.GetParameterInfo(int32Type),
+                ParameterInfo.GetParameterInfo(int32Type)
+            };
+
+            // Retrieve the diagnosable string overload methods: Contains, IndexOf (3 overloads), StartsWith, CompareTo
+
+            // Contains(string)
             IMethodSymbol? containsStringMethod = stringType.GetMembers(StringContainsMethodName).OfType<IMethodSymbol>().GetFirstOrDefaultMemberWithParameterInfos(stringParameter);
             if (containsStringMethod == null)
             {
                 return;
             }
 
-            // TODO: There are more overloads that take StringComparison, diagnose only the simple one for now
-            IMethodSymbol? indexOfStringMethod = stringType.GetMembers(StringIndexOfMethodName).OfType<IMethodSymbol>().GetFirstOrDefaultMemberWithParameterInfos(stringParameter);
-            if (indexOfStringMethod == null)
-            {
-                return;
-            }
-
+            // StartsWith(string)
             IMethodSymbol? startsWithStringMethod = stringType.GetMembers(StringStartsWithMethodName).OfType<IMethodSymbol>().GetFirstOrDefaultMemberWithParameterInfos(stringParameter);
             if (startsWithStringMethod == null)
             {
                 return;
             }
 
+            IEnumerable<IMethodSymbol> indexOfMethods = stringType.GetMembers(StringIndexOfMethodName).OfType<IMethodSymbol>();
+
+            // IndexOf(string)
+            IMethodSymbol? indexOfStringMethod = indexOfMethods.GetFirstOrDefaultMemberWithParameterInfos(stringParameter);
+            if (indexOfStringMethod == null)
+            {
+                return;
+            }
+
+            // IndexOf(string, int startIndex)
+            IMethodSymbol? indexOfStringInt32Method = indexOfMethods.GetFirstOrDefaultMemberWithParameterInfos(stringInt32Parameters);
+            if (indexOfStringInt32Method == null)
+            {
+                return;
+            }
+
+            // IndexOf(string, int startIndex, int count)
+            IMethodSymbol? indexOfStringInt32Int32Method = indexOfMethods.GetFirstOrDefaultMemberWithParameterInfos(stringInt32Int32Parameters);
+            if (indexOfStringInt32Int32Method == null)
+            {
+                return;
+            }
+
+            // CompareTo(string)
             IMethodSymbol? compareToStringMethod = stringType.GetMembers(StringCompareToMethodName).OfType<IMethodSymbol>().GetFirstOrDefaultMemberWithParameterInfos(stringParameter);
             if (compareToStringMethod == null)
             {
@@ -171,8 +207,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 IMethodSymbol diagnosableMethod = diagnosableInvocation.TargetMethod;
 
                 if (diagnosableMethod.Equals(containsStringMethod) ||
+                    diagnosableMethod.Equals(startsWithStringMethod) ||
                     diagnosableMethod.Equals(indexOfStringMethod) ||
-                    diagnosableMethod.Equals(startsWithStringMethod))
+                    diagnosableMethod.Equals(indexOfStringInt32Method) ||
+                    diagnosableMethod.Equals(indexOfStringInt32Int32Method))
                 {
                     context.ReportDiagnostic(diagnosableInvocation.CreateDiagnostic(RecommendCaseInsensitiveStringComparisonRule, diagnosableMethod.Name));
                 }

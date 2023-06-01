@@ -180,7 +180,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     context.ReportDiagnostic(diagnosableInvocation.CreateDiagnostic(RecommendCaseInsensitiveStringComparerRule));
                 }
-
             }, OperationKind.Invocation);
         }
     }

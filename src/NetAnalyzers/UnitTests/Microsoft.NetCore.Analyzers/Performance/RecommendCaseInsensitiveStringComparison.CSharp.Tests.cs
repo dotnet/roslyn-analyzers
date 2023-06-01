@@ -13,7 +13,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
     {
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
-        public Task Diagnostic_Assign(string diagnosedLine, string fixedLine)
+        public async Task Diagnostic_Assign(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
 class C
@@ -35,12 +35,12 @@ class C
         var result = {fixedLine};
     }}
 }}";
-            return VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyCSharpAsync(originalCode, fixedCode);
         }
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
-        public Task Diagnostic_Return(string diagnosedLine, string fixedLine)
+        public async Task Diagnostic_Return(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
 class C
@@ -62,12 +62,12 @@ class C
         return {fixedLine};
     }}
 }}";
-            return VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyCSharpAsync(originalCode, fixedCode);
         }
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedWithEqualsToData))]
-        public Task Diagnostic_If(string diagnosedLine, string fixedLine, string equalsTo)
+        public async Task Diagnostic_If(string diagnosedLine, string fixedLine, string equalsTo)
         {
             string originalCode = $@"using System;
 class C
@@ -97,12 +97,12 @@ class C
         return 4;
     }}
 }}";
-            return VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyCSharpAsync(originalCode, fixedCode);
         }
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
-        public Task Diagnostic_IgnoreResult(string diagnosedLine, string fixedLine)
+        public async Task Diagnostic_IgnoreResult(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
 class C
@@ -124,12 +124,12 @@ class C
         {fixedLine};
     }}
 }}";
-            return VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyCSharpAsync(originalCode, fixedCode);
         }
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsData))]
-        public Task Diagnostic_StringLiterals_ReturnExpressionBody(string diagnosedLine, string fixedLine)
+        public async Task Diagnostic_StringLiterals_ReturnExpressionBody(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
 class C
@@ -141,12 +141,12 @@ class C
 {{
     object M() => {fixedLine};
 }}";
-            return VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyCSharpAsync(originalCode, fixedCode);
         }
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsData))]
-        public Task Diagnostic_StringReturningMethods_Discard(string diagnosedLine, string fixedLine)
+        public async Task Diagnostic_StringReturningMethods_Discard(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
 class C
@@ -168,10 +168,10 @@ class C
         _ = {fixedLine};
     }}
 }}";
-            return VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyCSharpAsync(originalCode, fixedCode);
         }
 
-        private Task VerifyCSharpAsync(string originalSource, string fixedSource)
+        private async Task VerifyCSharpAsync(string originalSource, string fixedSource)
         {
             VerifyCS.Test test = new()
             {
@@ -180,7 +180,7 @@ class C
                 MarkupOptions = MarkupOptions.UseFirstDescriptor
             };
 
-            return test.RunAsync();
+            await test.RunAsync();
         }
     }
 }

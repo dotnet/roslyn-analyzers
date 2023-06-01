@@ -13,7 +13,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
     {
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
-        public Task Diagnostic_Assign(string diagnosedLine, string fixedLine)
+        public async Task Diagnostic_Assign(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
 Class C
@@ -35,12 +35,12 @@ Class C
     End Function
 End Class
 ";
-            return VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyVisualBasicAsync(originalCode, fixedCode);
         }
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
-        public Task Diagnostic_Return(string diagnosedLine, string fixedLine)
+        public async Task Diagnostic_Return(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
 Class C
@@ -60,12 +60,12 @@ Class C
     End Function
 End Class
 ";
-            return VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyVisualBasicAsync(originalCode, fixedCode);
         }
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedWithEqualsToData))]
-        public Task Diagnostic_If(string diagnosedLine, string fixedLine, string equalsTo)
+        public async Task Diagnostic_If(string diagnosedLine, string fixedLine, string equalsTo)
         {
             if (equalsTo == " == -1")
             {
@@ -96,12 +96,12 @@ Class C
     End Function
 End Class
 ";
-            return VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyVisualBasicAsync(originalCode, fixedCode);
         }
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
-        public Task Diagnostic_IgnoreResult(string diagnosedLine, string fixedLine)
+        public async Task Diagnostic_IgnoreResult(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
 Class C
@@ -121,12 +121,12 @@ Class C
     End Sub
 End Class
 "; ;
-            return VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyVisualBasicAsync(originalCode, fixedCode);
         }
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsData))]
-        public Task Diagnostic_StringLiterals_Return(string diagnosedLine, string fixedLine)
+        public async Task Diagnostic_StringLiterals_Return(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
 Class C
@@ -142,12 +142,12 @@ Class C
     End Function
 End Class
 ";
-            return VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyVisualBasicAsync(originalCode, fixedCode);
         }
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsData))]
-        public Task Diagnostic_StringReturningMethods_Discard(string diagnosedLine, string fixedLine)
+        public async Task Diagnostic_StringReturningMethods_Discard(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
 Class C
@@ -175,7 +175,7 @@ Class C
     End Sub
 End Class
 ";
-            return VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyVisualBasicAsync(originalCode, fixedCode);
         }
 
         private Task VerifyVisualBasicAsync(string originalSource, string fixedSource)

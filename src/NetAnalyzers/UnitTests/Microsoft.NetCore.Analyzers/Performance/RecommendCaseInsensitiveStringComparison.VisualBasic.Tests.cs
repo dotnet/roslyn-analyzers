@@ -67,6 +67,11 @@ End Class
         [MemberData(nameof(DiagnosedAndFixedWithEqualsToData))]
         public Task Diagnostic_If(string diagnosedLine, string fixedLine, string equalsTo)
         {
+            if (equalsTo == " == -1")
+            {
+                equalsTo = " = -1"; // VB syntax
+            }
+
             string originalCode = $@"Imports System
 Class C
     Private Function M() As Integer
@@ -116,6 +121,60 @@ Class C
     End Sub
 End Class
 "; ;
+            return VerifyVisualBasicAsync(originalCode, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(DiagnosedAndFixedStringLiteralsData))]
+        public Task Diagnostic_StringLiterals_Return(string diagnosedLine, string fixedLine)
+        {
+            string originalCode = $@"Imports System
+Class C
+    Private Function M() As Integer
+        Return [|{diagnosedLine}|]
+    End Function
+End Class
+";
+            string fixedCode = $@"Imports System
+Class C
+    Private Function M() As Integer
+        Return {fixedLine}
+    End Function
+End Class
+";
+            return VerifyVisualBasicAsync(originalCode, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsData))]
+        public Task Diagnostic_StringReturningMethods_Discard(string diagnosedLine, string fixedLine)
+        {
+            string originalCode = $@"Imports System
+Class C
+    Public Function GetStringA() As String
+        Return ""aBc""
+    End Function
+    Public Function GetStringB() As String
+        Return ""DeF""
+    End Function
+    Public Sub M()
+        [|{diagnosedLine}|]
+    End Sub
+End Class
+";
+            string fixedCode = $@"Imports System
+Class C
+    Public Function GetStringA() As String
+        Return ""aBc""
+    End Function
+    Public Function GetStringB() As String
+        Return ""DeF""
+    End Function
+    Public Sub M()
+        {fixedLine}
+    End Sub
+End Class
+";
             return VerifyVisualBasicAsync(originalCode, fixedCode);
         }
 

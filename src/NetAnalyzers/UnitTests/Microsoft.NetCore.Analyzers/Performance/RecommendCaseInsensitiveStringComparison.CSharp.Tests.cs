@@ -127,6 +127,50 @@ class C
             return VerifyCSharpAsync(originalCode, fixedCode);
         }
 
+        [Theory]
+        [MemberData(nameof(DiagnosedAndFixedStringLiteralsData))]
+        public Task Diagnostic_StringLiterals_ReturnExpressionBody(string diagnosedLine, string fixedLine)
+        {
+            string originalCode = $@"using System;
+class C
+{{
+    object M() => [|{diagnosedLine}|];
+}}";
+            string fixedCode = $@"using System;
+class C
+{{
+    object M() => {fixedLine};
+}}";
+            return VerifyCSharpAsync(originalCode, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsData))]
+        public Task Diagnostic_StringReturningMethods_Discard(string diagnosedLine, string fixedLine)
+        {
+            string originalCode = $@"using System;
+class C
+{{
+    public string GetStringA() => ""aBc"";
+    public string GetStringB() => ""CdE"";
+    void M()
+    {{
+        _ = [|{diagnosedLine}|];
+    }}
+}}";
+            string fixedCode = $@"using System;
+class C
+{{
+    public string GetStringA() => ""aBc"";
+    public string GetStringB() => ""CdE"";
+    void M()
+    {{
+        _ = {fixedLine};
+    }}
+}}";
+            return VerifyCSharpAsync(originalCode, fixedCode);
+        }
+
         private Task VerifyCSharpAsync(string originalSource, string fixedSource)
         {
             VerifyCS.Test test = new()

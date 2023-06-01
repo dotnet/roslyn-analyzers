@@ -171,6 +171,29 @@ class C
             await VerifyCSharpAsync(originalCode, fixedCode);
         }
 
+        [Theory]
+        [MemberData(nameof(DiagnosedAndFixedParenthesizedData))]
+        public async Task Diagnostic_Parenthesized_ReturnCastedToString(string diagnosedLine, string fixedLine)
+        {
+            string originalCode = $@"using System;
+class C
+{{
+    string M()
+    {{
+        return ([|{diagnosedLine}|]).ToString();
+    }}
+}}";
+            string fixedCode = $@"using System;
+class C
+{{
+    string M()
+    {{
+        return ({fixedLine}).ToString();
+    }}
+}}";
+            await VerifyCSharpAsync(originalCode, fixedCode);
+        }
+
         private async Task VerifyCSharpAsync(string originalSource, string fixedSource)
         {
             VerifyCS.Test test = new()

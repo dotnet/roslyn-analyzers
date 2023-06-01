@@ -76,10 +76,17 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
+            // Ignore parenthesized operations
+            IOperation? instanceGenericOperation = invocation.Instance;
+            while (instanceGenericOperation is not null and IParenthesizedOperation parenthesizedOperation)
+            {
+                instanceGenericOperation = parenthesizedOperation.Operand;
+            }
+
             // There should be a child invocation on the left side (instance) of the large invocation
             // If the large invocation is "a.ToLower().Contains(b)"
             // Its instance is "a.ToLower()", the child invocation
-            if (invocation.Instance is not IInvocationOperation instanceOperation)
+            if (instanceGenericOperation is not IInvocationOperation instanceOperation)
             {
                 return;
             }

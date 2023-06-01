@@ -26,7 +26,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 // IndexOf overloads
                 foreach (string arguments in new[] { "b", "b, 1", "b, 1, 1" })
                 {
-                    yield return new object[] { $"a.{caseChanging}().IndexOf({arguments})", $"a.IndexOf(b{arguments}, StringComparison.{replacement})" };
+                    yield return new object[] { $"a.{caseChanging}().IndexOf({arguments})", $"a.IndexOf({arguments}, StringComparison.{replacement})" };
                 }
 
                 // Fixer converts to a different class
@@ -92,6 +92,25 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
 
                 yield return new object[] { $"GetStringA().{caseChanging}().CompareTo(GetStringB())", $"StringComparer.{replacement}.Compare(GetStringA(), GetStringB())" };
+            }
+        }
+
+        public static IEnumerable<object[]> DiagnosedAndFixedParenthesizedData()
+        {
+            foreach ((string caseChanging, string replacement) in Cultures)
+            {
+                foreach (string method in new[] { "Contains", "StartsWith" })
+                {
+                    yield return new object[] { $"(\"aBc\".{caseChanging}()).{method}(\"CdE\")", $"\"aBc\".{method}(\"CdE\", StringComparison.{replacement})" };
+                }
+
+                // IndexOf overloads
+                foreach (string arguments in new[] { "\"CdE\"", "\"CdE\", 1", "\"CdE\", 1, 1" })
+                {
+                    yield return new object[] { $"(\"aBc\".{caseChanging}()).IndexOf({arguments})", $"\"aBc\".IndexOf({arguments}, StringComparison.{replacement})" };
+                }
+
+                yield return new object[] { $"(\"aBc\".{caseChanging}()).CompareTo(\"CdE\")", $"StringComparer.{replacement}.Compare(\"aBc\", \"CdE\")" };
             }
         }
     }

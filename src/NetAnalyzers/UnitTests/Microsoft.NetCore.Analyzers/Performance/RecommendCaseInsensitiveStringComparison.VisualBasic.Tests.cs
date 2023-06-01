@@ -178,6 +178,25 @@ End Class
             await VerifyVisualBasicAsync(originalCode, fixedCode);
         }
 
+        [Theory]
+        [MemberData(nameof(DiagnosedAndFixedParenthesizedData))]
+        public async Task Diagnostic_Parenthesized_ReturnCastedToString(string diagnosedLine, string fixedLine)
+        {
+            string originalCode = $@"Imports System
+Class C
+    Public Function M() As Object
+        Return ([|{diagnosedLine}|]).ToString()
+    End Function
+End Class";
+            string fixedCode = $@"Imports System
+Class C
+    Public Function M() As Object
+        Return ({fixedLine}).ToString()
+    End Function
+End Class";
+            await VerifyVisualBasicAsync(originalCode, fixedCode);
+        }
+
         private Task VerifyVisualBasicAsync(string originalSource, string fixedSource)
         {
             VerifyVB.Test test = new()

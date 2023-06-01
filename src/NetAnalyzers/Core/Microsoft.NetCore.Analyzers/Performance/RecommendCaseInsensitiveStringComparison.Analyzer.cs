@@ -199,7 +199,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return;
                 }
 
-                if (caseChangingInvocation.Parent is not IInvocationOperation diagnosableInvocation)
+                // Ignore parenthesized operations
+                IOperation? ancestor = caseChangingInvocation.Parent;
+                while (ancestor is not null and IParenthesizedOperation)
+                {
+                    ancestor = ancestor.Parent;
+                }
+
+                if (ancestor is not IInvocationOperation diagnosableInvocation)
                 {
                     return;
                 }

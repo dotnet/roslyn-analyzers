@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Data;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;

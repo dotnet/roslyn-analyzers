@@ -62,16 +62,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             string methodName = invocation.TargetMethod.Name;
 
-            // Only diagnose the one-parameter overloads of these methods: Contains(string), StartsWith(string), CompareTo(string)
+            // Only fix the one-parameter overloads of these methods: Contains(string), StartsWith(string)
             if ((methodName.Equals(RCISCAnalyzer.StringContainsMethodName, System.StringComparison.Ordinal) ||
-                 methodName.Equals(RCISCAnalyzer.StringStartsWithMethodName, System.StringComparison.Ordinal) ||
-                 methodName.Equals(RCISCAnalyzer.StringCompareToMethodName, System.StringComparison.Ordinal)) && invocation.Arguments.Length != 1)
+                 methodName.Equals(RCISCAnalyzer.StringStartsWithMethodName, System.StringComparison.Ordinal)) && invocation.Arguments.Length != 1)
             {
                 return;
             }
-
-            // Only diagnose the one, two or three parameter overloads of IndexOf: IndexOf(string), IndexOf(string, int), IndexOf(string, int, int)
+            // Only fix the one, two or three parameter overloads of IndexOf: IndexOf(string), IndexOf(string, int), IndexOf(string, int, int)
             else if (methodName.Equals(RCISCAnalyzer.StringIndexOfMethodName, System.StringComparison.Ordinal) && invocation.Arguments.Length > 3)
+            {
+                return;
+            }
+            // No fixer for CompareTo, only diagnostic
+            else if (methodName.Equals(RCISCAnalyzer.StringCompareToMethodName, System.StringComparison.Ordinal))
             {
                 return;
             }
@@ -124,22 +127,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
 
-            SyntaxNode newInvocation;
-            if (diagnosableMethodName is
+            Debug.Assert(diagnosableMethodName is
                 RCISCAnalyzer.StringContainsMethodName or
                 RCISCAnalyzer.StringIndexOfMethodName or
-                RCISCAnalyzer.StringStartsWithMethodName)
-            {
-                newInvocation = GetNewInvocationForContainsIndexOfAndStartsWith(generator,
+                RCISCAnalyzer.StringStartsWithMethodName);
+            SyntaxNode newInvocation = GetNewInvocationForContainsIndexOfAndStartsWith(generator,
                     invocation, instanceOperation, stringComparisonType, caseChangingApproachName);
-            }
-            else
-            {
-                Debug.Assert(diagnosableMethodName is RCISCAnalyzer.StringCompareToMethodName);
-
-                newInvocation = GetNewInvocationForCompareTo(generator,
-                    invocation, instanceOperation, stringComparerType, caseChangingApproachName);
-            }
 
             SyntaxNode newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocation);
             return Task.FromResult(doc.WithSyntaxRoot(newRoot));
@@ -184,37 +177,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             // Generate the suggestion: "a.Diagnosable(b, StringComparison.DesiredCultureDesiredCase)"
             return generator.InvocationExpression(stringMemberAccessExpression, newArguments).WithTriviaFrom(invocation.Syntax);
-        }
-
-        private static SyntaxNode GetNewInvocationForCompareTo(SyntaxGenerator generator,
-            IInvocationOperation invocation, IInvocationOperation instanceOperation,
-            INamedTypeSymbol stringComparerType, string caseChangingApproachName)
-        {
-            // For the Diagnosable method CompareTo(string)
-            // If we have this code ('a' and 'b' are string instances):
-            //     a.ToLower().CompareTo(b)
-            // We want to convert it to:
-            //     StringComparer.DesiredCultureDesiredCase.Compare(a, b)
-
-            // Create the "StringComparer.DesiredCultureDesiredCase" member access expression
-            SyntaxNode stringComparerPropertyInvocation = generator.MemberAccessExpression(
-                generator.TypeExpressionForStaticMemberAccess(stringComparerType),
-                caseChangingApproachName);
-
-            // Create the ".Compare" expression using the above one
-            SyntaxNode compareMethodInvocation = generator.MemberAccessExpression(
-                stringComparerPropertyInvocation,
-                RCISCAnalyzer.StringComparerCompareMethodName);
-
-            List<SyntaxNode> newArguments = new()
-            {
-                // Retrieve a and b
-                generator.Argument(instanceOperation.Instance.Syntax),
-                invocation.Arguments.First().Syntax
-            };
-
-            // Generate the suggestion: "StringComparer.DesiredCultureDesiredCase.Compare(a, b)"
-            return generator.InvocationExpression(compareMethodInvocation, newArguments).WithTriviaFrom(invocation.Syntax);
         }
     }
 }

@@ -35,7 +35,7 @@ Class C
     End Function
 End Class
 ";
-            await VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyFixVisualBasicAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -60,7 +60,7 @@ Class C
     End Function
 End Class
 ";
-            await VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyFixVisualBasicAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -96,7 +96,7 @@ Class C
     End Function
 End Class
 ";
-            await VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyFixVisualBasicAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -121,7 +121,7 @@ Class C
     End Sub
 End Class
 ";
-            await VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyFixVisualBasicAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -142,7 +142,7 @@ Class C
     End Function
 End Class
 ";
-            await VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyFixVisualBasicAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -175,7 +175,7 @@ Class C
     End Sub
 End Class
 ";
-            await VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyFixVisualBasicAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -194,7 +194,7 @@ Class C
         Return ({fixedLine}).ToString()
     End Function
 End Class";
-            await VerifyVisualBasicAsync(originalCode, fixedCode);
+            await VerifyFixVisualBasicAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -212,10 +212,53 @@ Class C
     End Function
 End Class";
 
-            await VerifyVisualBasicAsync(originalCode, originalCode);
+            await VerifyNoDiagnosticVisualBasicAsync(originalCode);
         }
 
-        private Task VerifyVisualBasicAsync(string originalSource, string fixedSource)
+        [Theory]
+        [MemberData(nameof(DiagnosticNoFixCompareToData))]
+        public async Task Diagnostic_NoFix_CompareTo(string diagnosedLine)
+        {
+            string originalCode = $@"Imports System
+Class C
+    Public Function GetStringA() As String
+        Return ""aBc""
+    End Function
+    Public Function GetStringB() As String
+        Return ""cDe""
+    End Function
+    Public Function M() As Integer
+        Dim a As String = ""AbC""
+        Dim b As String = ""CdE""
+        Return [|{diagnosedLine}|]
+    End Function
+End Class";
+            await VerifyDiagnosticOnlyVisualBasicAsync(originalCode);
+        }
+
+        private async Task VerifyNoDiagnosticVisualBasicAsync(string originalSource)
+        {
+            VerifyVB.Test test = new()
+            {
+                TestCode = originalSource,
+                FixedCode = originalSource
+            };
+
+            await test.RunAsync();
+        }
+
+        private async Task VerifyDiagnosticOnlyVisualBasicAsync(string originalSource)
+        {
+            VerifyVB.Test test = new()
+            {
+                TestCode = originalSource,
+                MarkupOptions = MarkupOptions.UseFirstDescriptor
+            };
+
+            await test.RunAsync();
+        }
+
+        private async Task VerifyFixVisualBasicAsync(string originalSource, string fixedSource)
         {
             VerifyVB.Test test = new()
             {
@@ -224,7 +267,7 @@ End Class";
                 MarkupOptions = MarkupOptions.UseFirstDescriptor
             };
 
-            return test.RunAsync();
+            await test.RunAsync();
         }
     }
 }

@@ -28,9 +28,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"a.{caseChanging}().IndexOf({arguments})", $"a.IndexOf({arguments}, StringComparison.{replacement})" };
                 }
-
-                // Fixer converts to a different class
-                yield return new object[] { $"a.{caseChanging}().CompareTo(b)", $"StringComparer.{replacement}.Compare(a, b)" };
             }
         }
 
@@ -51,9 +48,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"a.{caseChanging}().IndexOf({arguments})", $"a.IndexOf({arguments}, StringComparison.{replacement})", ".Equals(-1)" };
                 }
-
-                // Tests equality comparison (for VB the test should edit it)
-                yield return new object[] { $"a.{caseChanging}().CompareTo(b)", $"StringComparer.{replacement}.Compare(a, b)", " == -1" };
             }
         }
 
@@ -71,8 +65,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"\"aBc\".{caseChanging}().IndexOf({arguments})", $"\"aBc\".IndexOf({arguments}, StringComparison.{replacement})" };
                 }
-
-                yield return new object[] { $"\"aBc\".{caseChanging}().CompareTo(\"CdE\")", $"StringComparer.{replacement}.Compare(\"aBc\", \"CdE\")" };
             }
         }
 
@@ -90,8 +82,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"GetStringA().{caseChanging}().IndexOf({arguments})", $"GetStringA().IndexOf({arguments}, StringComparison.{replacement})" };
                 }
-
-                yield return new object[] { $"GetStringA().{caseChanging}().CompareTo(GetStringB())", $"StringComparer.{replacement}.Compare(GetStringA(), GetStringB())" };
             }
         }
 
@@ -109,8 +99,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"(\"aBc\".{caseChanging}()).IndexOf({arguments})", $"\"aBc\".IndexOf({arguments}, StringComparison.{replacement})" };
                 }
-
-                yield return new object[] { $"(\"aBc\".{caseChanging}()).CompareTo(\"CdE\")", $"StringComparer.{replacement}.Compare(\"aBc\", \"CdE\")" };
             }
         }
 
@@ -135,6 +123,19 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             yield return new object[] { "\"aBc\".CompareTo(obj)" };
             yield return new object[] { "\"aBc\".ToLower().CompareTo(obj)" };
             yield return new object[] { "\"aBc\".CompareTo(\"cDe\")" };
+        }
+
+        public static IEnumerable<object[]> DiagnosticNoFixCompareToData()
+        {
+            // Tests need to define strings a, b, and methods GetStringA, GetStringB
+            foreach ((string caseChanging, _) in Cultures)
+            {
+                yield return new object[] { $"a.{caseChanging}().CompareTo(b)" };
+                yield return new object[] { $"a.{caseChanging}().CompareTo(b)" };
+                yield return new object[] { $"\"aBc\".{caseChanging}().CompareTo(\"CdE\")" };
+                yield return new object[] { $"GetStringA().{caseChanging}().CompareTo(GetStringB())" };
+                yield return new object[] { $"(\"aBc\".{caseChanging}()).CompareTo(\"CdE\")" };
+            }
         }
     }
 }

@@ -35,7 +35,7 @@ class C
         var result = {fixedLine};
     }}
 }}";
-            await VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyFixCSharpAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -62,7 +62,7 @@ class C
         return {fixedLine};
     }}
 }}";
-            await VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyFixCSharpAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -97,7 +97,7 @@ class C
         return 4;
     }}
 }}";
-            await VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyFixCSharpAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -124,7 +124,7 @@ class C
         {fixedLine};
     }}
 }}";
-            await VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyFixCSharpAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -141,7 +141,7 @@ class C
 {{
     object M() => {fixedLine};
 }}";
-            await VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyFixCSharpAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -168,7 +168,7 @@ class C
         _ = {fixedLine};
     }}
 }}";
-            await VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyFixCSharpAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -191,7 +191,7 @@ class C
         return ({fixedLine}).ToString();
     }}
 }}";
-            await VerifyCSharpAsync(originalCode, fixedCode);
+            await VerifyFixCSharpAsync(originalCode, fixedCode);
         }
 
         [Theory]
@@ -211,10 +211,51 @@ class C
     }}
 }}";
 
-            await VerifyCSharpAsync(originalCode, originalCode);
+            await VerifyNoDiagnosticCSharpAsync(originalCode);
         }
 
-        private async Task VerifyCSharpAsync(string originalSource, string fixedSource)
+        [Theory]
+        [MemberData(nameof(DiagnosticNoFixCompareToData))]
+        public async Task Diagnostic_NoFix_CompareTo(string diagnosedLine)
+        {
+            string originalCode = $@"using System;
+class C
+{{
+    string GetStringA() => ""aBc"";
+    string GetStringB() => ""cDe"";
+    int M()
+    {{
+        string a = ""AbC"";
+        string b = ""CdE"";
+        return [|{diagnosedLine}|];
+    }}
+}}";
+            await VerifyDiagnosticOnlyCSharpAsync(originalCode);
+        }
+
+        private async Task VerifyNoDiagnosticCSharpAsync(string originalSource)
+        {
+            VerifyCS.Test test = new()
+            {
+                TestCode = originalSource,
+                FixedCode = originalSource
+            };
+
+            await test.RunAsync();
+        }
+
+        private async Task VerifyDiagnosticOnlyCSharpAsync(string originalSource)
+        {
+            VerifyCS.Test test = new()
+            {
+                TestCode = originalSource,
+                MarkupOptions = MarkupOptions.UseFirstDescriptor
+            };
+
+            await test.RunAsync();
+        }
+
+        private async Task VerifyFixCSharpAsync(string originalSource, string fixedSource)
         {
             VerifyCS.Test test = new()
             {

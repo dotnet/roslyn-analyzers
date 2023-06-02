@@ -103,11 +103,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
             Task<Document> createChangedDocument(CancellationToken _) => FixInvocationAsync(doc, root,
                 invocation, instanceOperation, stringComparisonType, methodName, caseChangingApproachName);
 
+            // The CodeAction title is targeted to all the other methods
+            Debug.Assert(methodName is not RCISCAnalyzer.StringCompareToMethodName);
+
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparisonTitle,
+                    title: string.Format(MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle, methodName, caseChangingApproachName),
                     createChangedDocument,
-                    equivalenceKey: MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparisonTitle + methodName + caseChangingApproachName),
+                    equivalenceKey: MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparisonTitle + invocation.TargetMethod.Name + caseChangingApproachName),
                 context.Diagnostics);
         }
 

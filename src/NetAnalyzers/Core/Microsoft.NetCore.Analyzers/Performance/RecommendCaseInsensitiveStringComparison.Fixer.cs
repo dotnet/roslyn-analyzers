@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
@@ -50,12 +49,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             if (model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison)
                 is not INamedTypeSymbol stringComparisonType)
-            {
-                return;
-            }
-
-            if (model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparer)
-                is not INamedTypeSymbol stringComparerType)
             {
                 return;
             }
@@ -108,9 +101,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             Task<Document> createChangedDocument(CancellationToken _) => FixInvocationAsync(doc, root,
-                invocation, instanceOperation,
-                stringComparisonType, stringComparerType,
-                methodName, caseChangingApproachName);
+                invocation, instanceOperation, stringComparisonType, methodName, caseChangingApproachName);
 
             context.RegisterCodeFix(
                 CodeAction.Create(
@@ -122,8 +113,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static Task<Document> FixInvocationAsync(Document doc, SyntaxNode root,
             IInvocationOperation invocation, IInvocationOperation instanceOperation,
-            INamedTypeSymbol stringComparisonType, INamedTypeSymbol stringComparerType,
-            string diagnosableMethodName, string caseChangingApproachName)
+            INamedTypeSymbol stringComparisonType, string diagnosableMethodName, string caseChangingApproachName)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
 

@@ -197,6 +197,24 @@ End Class";
             await VerifyVisualBasicAsync(originalCode, fixedCode);
         }
 
+        [Theory]
+        [MemberData(nameof(NoDiagnosticContainsData))]
+        [InlineData("\"aBc\".CompareTo(Nothing)")]
+        [InlineData("\"aBc\".ToUpperInvariant().CompareTo(CObj(Nothing))")]
+        public async Task NoDiagnostic_All(string ignoredLine)
+        {
+            string originalCode = $@"Imports System
+Class C
+    Public Function M() As Object
+        Dim ch As Char = ""c""c
+        Dim obj As Object = 3
+        Return {ignoredLine}
+    End Function
+End Class";
+
+            await VerifyVisualBasicAsync(originalCode, originalCode);
+        }
+
         private Task VerifyVisualBasicAsync(string originalSource, string fixedSource)
         {
             VerifyVB.Test test = new()

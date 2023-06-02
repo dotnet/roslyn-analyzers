@@ -194,6 +194,26 @@ class C
             await VerifyCSharpAsync(originalCode, fixedCode);
         }
 
+        [Theory]
+        [MemberData(nameof(NoDiagnosticContainsData))]
+        [InlineData("\"aBc\".CompareTo(null)")]
+        [InlineData("\"aBc\".ToUpperInvariant().CompareTo((object)null)")]
+        public async Task NoDiagnostic_All(string ignoredLine)
+        {
+            string originalCode = $@"using System;
+class C
+{{
+    object M()
+    {{
+        char ch = 'c';
+        object obj = 3;
+        return {ignoredLine};
+    }}
+}}";
+
+            await VerifyCSharpAsync(originalCode, originalCode);
+        }
+
         private async Task VerifyCSharpAsync(string originalSource, string fixedSource)
         {
             VerifyCS.Test test = new()

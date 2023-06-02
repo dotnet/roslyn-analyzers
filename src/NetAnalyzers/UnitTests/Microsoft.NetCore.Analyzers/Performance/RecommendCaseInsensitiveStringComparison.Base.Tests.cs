@@ -113,5 +113,28 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 yield return new object[] { $"(\"aBc\".{caseChanging}()).CompareTo(\"CdE\")", $"StringComparer.{replacement}.Compare(\"aBc\", \"CdE\")" };
             }
         }
+
+        public static IEnumerable<object[]> NoDiagnosticContainsData()
+        {
+            // Test needs to define a char ch and an object obj
+            foreach (string method in new[] { "Contains", "IndexOf", "StartsWith" })
+            {
+                yield return new object[] { $"\"aBc\".{method}(\"cDe\")" };
+                yield return new object[] { $"\"aBc\".{method}(\"cDe\", StringComparison.CurrentCultureIgnoreCase)" };
+                yield return new object[] { $"\"aBc\".ToUpper().{method}(\"cDe\", StringComparison.InvariantCulture)" };
+                yield return new object[] { $"\"aBc\".{method}(ch)" };
+            }
+
+            // StarstWith does not have a (char, StringComparison) overload
+            foreach (string method in new[] { "Contains", "IndexOf" })
+            {
+                yield return new object[] { $"\"aBc\".{method}(ch, StringComparison.Ordinal)" };
+                yield return new object[] { $"\"aBc\".ToLowerInvariant().{method}(ch, StringComparison.CurrentCulture)" };
+            }
+
+            yield return new object[] { "\"aBc\".CompareTo(obj)" };
+            yield return new object[] { "\"aBc\".ToLower().CompareTo(obj)" };
+            yield return new object[] { "\"aBc\".CompareTo(\"cDe\")" };
+        }
     }
 }

@@ -53,25 +53,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            string methodName = invocation.TargetMethod.Name;
-
-            // Only fix the one-parameter overloads of these methods: Contains(string), StartsWith(string)
-            if ((methodName.Equals(RCISCAnalyzer.StringContainsMethodName, System.StringComparison.Ordinal) ||
-                 methodName.Equals(RCISCAnalyzer.StringStartsWithMethodName, System.StringComparison.Ordinal)) && invocation.Arguments.Length != 1)
-            {
-                return;
-            }
-            // Only fix the one, two or three parameter overloads of IndexOf: IndexOf(string), IndexOf(string, int), IndexOf(string, int, int)
-            else if (methodName.Equals(RCISCAnalyzer.StringIndexOfMethodName, System.StringComparison.Ordinal) && invocation.Arguments.Length > 3)
-            {
-                return;
-            }
-            // No fixer for CompareTo, only diagnostic
-            else if (methodName.Equals(RCISCAnalyzer.StringCompareToMethodName, System.StringComparison.Ordinal))
-            {
-                return;
-            }
-
             // Ignore parenthesized operations
             IOperation? instanceGenericOperation = invocation.Instance;
             while (instanceGenericOperation is not null and IParenthesizedOperation parenthesizedOperation)
@@ -101,14 +82,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             Task<Document> createChangedDocument(CancellationToken _) => FixInvocationAsync(doc, root,
-                invocation, instanceOperation, stringComparisonType, methodName, caseChangingApproachName);
+                invocation, instanceOperation, stringComparisonType, invocation.TargetMethod.Name, caseChangingApproachName);
 
-            // The CodeAction title is targeted to all the other methods
-            Debug.Assert(methodName is not RCISCAnalyzer.StringCompareToMethodName);
+            string title = string.Format(MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle, invocation.TargetMethod.Name, caseChangingApproachName);
 
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: string.Format(MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle, methodName, caseChangingApproachName),
+                    title,
                     createChangedDocument,
                     equivalenceKey: MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparisonTitle + invocation.TargetMethod.Name + caseChangingApproachName),
                 context.Diagnostics);

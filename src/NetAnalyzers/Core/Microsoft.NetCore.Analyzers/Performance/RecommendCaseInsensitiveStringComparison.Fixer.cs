@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
@@ -53,23 +54,50 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
+            bool isInverted = false;
+
             // Ignore parenthesized operations
-            IOperation? instanceGenericOperation = invocation.Instance;
-            while (instanceGenericOperation is not null and IParenthesizedOperation parenthesizedOperation)
+            IOperation? instanceOffendingOperation = invocation.Instance;
+            while (instanceOffendingOperation is not null and IParenthesizedOperation parenthesizedOperation)
             {
-                instanceGenericOperation = parenthesizedOperation.Operand;
+                instanceOffendingOperation = parenthesizedOperation.Operand;
             }
+
+            IInvocationOperation removableInvocation;
 
             // There should be a child invocation on the left side (instance) of the large invocation
             // If the large invocation is "a.ToLower().Contains(b)"
             // Its instance is "a.ToLower()", the child invocation
-            if (instanceGenericOperation is not IInvocationOperation instanceOperation)
+            if (instanceOffendingOperation is IInvocationOperation instanceInvocation &&
+                instanceInvocation.TargetMethod.Name is
+                    RCISCAnalyzer.StringToLowerMethodName or RCISCAnalyzer.StringToUpperMethodName or RCISCAnalyzer.StringToLowerInvariantMethodName or RCISCAnalyzer.StringToUpperInvariantMethodName)
             {
-                return;
+                removableInvocation = instanceInvocation;
+            }
+            // The other option is that the offending operation is the first argument
+            // a.Contains(b.ToLower(), ...)
+            else
+            {
+                IOperation? argumentOffendingOperation = invocation.Arguments.FirstOrDefault();
+                while (argumentOffendingOperation is not null and IParenthesizedOperation parenthesizedOperation)
+                {
+                    argumentOffendingOperation = parenthesizedOperation.Operand;
+                }
+
+                if (argumentOffendingOperation is IArgumentOperation argumentOperation &&
+                    argumentOperation.Children.FirstOrDefault() is IInvocationOperation argumentInvocation)
+                {
+                    removableInvocation = argumentInvocation;
+                    isInverted = true;
+                }
+                else
+                {
+                    return;
+                }
             }
 
             string caseChangingApproachName;
-            switch (instanceOperation.TargetMethod.Name)
+            switch (removableInvocation.TargetMethod.Name)
             {
                 case RCISCAnalyzer.StringToLowerMethodName or RCISCAnalyzer.StringToUpperMethodName:
                     caseChangingApproachName = RCISCAnalyzer.StringComparisonCurrentCultureIgnoreCaseName;
@@ -81,8 +109,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return;
             }
 
-            Task<Document> createChangedDocument(CancellationToken _) => FixInvocationAsync(doc, root,
-                invocation, instanceOperation, stringComparisonType, invocation.TargetMethod.Name, caseChangingApproachName);
+            Task<Document> createChangedDocument(CancellationToken _) => FixInvocationAsync(doc, root, isInverted,
+                invocation, removableInvocation, stringComparisonType, invocation.TargetMethod.Name, caseChangingApproachName);
 
             string title = string.Format(MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle, invocation.TargetMethod.Name, caseChangingApproachName);
 
@@ -94,8 +122,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 context.Diagnostics);
         }
 
-        private static Task<Document> FixInvocationAsync(Document doc, SyntaxNode root,
-            IInvocationOperation invocation, IInvocationOperation instanceOperation,
+        private static Task<Document> FixInvocationAsync(Document doc, SyntaxNode root, bool isInverted,
+            IInvocationOperation mainInvocation, IInvocationOperation removableInvocation,
             INamedTypeSymbol stringComparisonType, string diagnosableMethodName, string caseChangingApproachName)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
@@ -104,38 +132,59 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 RCISCAnalyzer.StringContainsMethodName or
                 RCISCAnalyzer.StringIndexOfMethodName or
                 RCISCAnalyzer.StringStartsWithMethodName);
-            SyntaxNode newInvocation = GetNewInvocationForContainsIndexOfAndStartsWith(generator,
-                    invocation, instanceOperation, stringComparisonType, caseChangingApproachName);
 
-            SyntaxNode newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocation);
+            SyntaxNode newInvocation = GetNewInvocation(generator, isInverted, mainInvocation, removableInvocation, stringComparisonType, caseChangingApproachName);
+
+            SyntaxNode newRoot = generator.ReplaceNode(root, mainInvocation.Syntax, newInvocation);
             return Task.FromResult(doc.WithSyntaxRoot(newRoot));
         }
 
-        private static SyntaxNode GetNewInvocationForContainsIndexOfAndStartsWith(SyntaxGenerator generator,
-            IInvocationOperation invocation, IInvocationOperation instanceOperation,
+        private static SyntaxNode GetNewInvocation(SyntaxGenerator generator, bool isInverted,
+            IInvocationOperation mainInvocation, IInvocationOperation removableInvocation,
             INamedTypeSymbol stringComparisonType, string caseChangingApproachName)
         {
             // For the Diagnosable methods Contains(string) and StartsWith(string)
             // If we have this code ('a' and 'b' are string instances):
-            //     a.CaseChanging().Diagnosable(b);
-            // We want to convert it to:
+            //     A) a.CaseChanging().Diagnosable(b);
+            //     B) a.Diagnosable(b.CaseChanging());
+            // We want to convert any of them to:
             //     a.Diagnosable(b, StringComparison.DesiredCultureDesiredCase);
 
             // For IndexOf we have 3 options:
-            //    a.CaseChanging().IndexOf(b)                          => a.IndexOf(b, StringComparison.Desired)
-            //    a.CaseChanging().IndexOf(b, startIndex: n)           => a.IndexOf(b, startIndex: n, StringComparison.Desired)
-            //    a.CaseChanging().IndexOf(b, startIndex: n, count: m) => a.IndexOf(b, startIndex: n, count: m, StringComparison.Desired)
+            //    A.1) a.CaseChanging().IndexOf(b)
+            //    A.2) a.IndexOf(b.CaseChanging())
+            //    B.1) a.CaseChanging().IndexOf(b, startIndex: n)
+            //    B.2) a.IndexOf(b.CaseChanging(), startIndex: n)
+            //    C.1) a.CaseChanging().IndexOf(b, startIndex: n, count: m)
+            //    C.2) a.IndexOf(b.CaseChanging(), startIndex: n, count: m)
+            // We want to convert them to (respectively):
+            //    A) a.IndexOf(b, StringComparison.Desired)
+            //    B) a.IndexOf(b, startIndex: n, StringComparison.Desired)
+            //    C) a.IndexOf(b, startIndex: n, count: m, StringComparison.Desired)
 
             // Retrieve "a" and replace the invoked CaseChanging method with the Diagnosable method
-            SyntaxNode stringMemberAccessExpression = generator.MemberAccessExpression(instanceOperation.Instance.Syntax, invocation.TargetMethod.Name);
 
             // Already verified in RegisterCodeFixesAsync, this is merely defensive
-            Debug.Assert(invocation.Arguments.Length <= 3);
+            Debug.Assert(mainInvocation.Arguments.Length <= 3);
 
+            SyntaxNode stringMemberAccessExpression;
             List<SyntaxNode> newArguments = new();
-            foreach (IArgumentOperation argument in invocation.Arguments)
+            int argIndex;
+            if (!isInverted)
             {
-                newArguments.Add(argument.Syntax);
+                stringMemberAccessExpression = generator.MemberAccessExpression(removableInvocation.Instance.Syntax, mainInvocation.TargetMethod.Name);
+                argIndex = 0;
+            }
+            else
+            {
+                stringMemberAccessExpression = generator.MemberAccessExpression(mainInvocation.Instance.Syntax, mainInvocation.TargetMethod.Name);
+                newArguments.Add(removableInvocation.Instance.Syntax); // Trim the case changing method
+                argIndex = 1; // Skips the first
+            }
+
+            for (; argIndex < mainInvocation.Arguments.Length; argIndex++)
+            {
+                newArguments.Add(mainInvocation.Arguments[argIndex].Syntax);
             }
 
             // Retrieve "StringComparison.DesiredCultureDesiredCase"
@@ -149,7 +198,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             newArguments.Add(stringComparisonArgument);
 
             // Generate the suggestion: "a.Diagnosable(b, StringComparison.DesiredCultureDesiredCase)"
-            return generator.InvocationExpression(stringMemberAccessExpression, newArguments).WithTriviaFrom(invocation.Syntax);
+            return generator.InvocationExpression(stringMemberAccessExpression, newArguments).WithTriviaFrom(mainInvocation.Syntax);
         }
     }
 }

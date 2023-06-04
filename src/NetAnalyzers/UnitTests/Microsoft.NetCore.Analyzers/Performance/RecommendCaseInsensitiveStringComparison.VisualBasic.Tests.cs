@@ -13,6 +13,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
     {
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
+        [MemberData(nameof(DiagnosedAndFixedInvertedData))]
         public async Task Diagnostic_Assign(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -65,6 +66,7 @@ End Class
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedWithEqualsToData))]
+        [MemberData(nameof(DiagnosedAndFixedWithEqualsToInvertedData))]
         public async Task Diagnostic_If(string diagnosedLine, string fixedLine, string equalsTo)
         {
             if (equalsTo == " == -1")
@@ -126,6 +128,7 @@ End Class
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsData))]
+        [MemberData(nameof(DiagnosedAndFixedStringLiteralsInvertedData))]
         public async Task Diagnostic_StringLiterals_Return(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -147,6 +150,7 @@ End Class
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsData))]
+        [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsInvertedData))]
         public async Task Diagnostic_StringReturningMethods_Discard(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -217,6 +221,7 @@ End Class";
 
         [Theory]
         [MemberData(nameof(DiagnosticNoFixCompareToData))]
+        [MemberData(nameof(DiagnosticNoFixCompareToInvertedData))]
         public async Task Diagnostic_NoFix_CompareTo(string diagnosedLine)
         {
             string originalCode = $@"Imports System

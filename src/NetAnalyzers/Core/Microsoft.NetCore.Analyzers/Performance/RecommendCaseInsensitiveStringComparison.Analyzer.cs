@@ -202,7 +202,16 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // Ignore parenthesized operations
                 IOperation? ancestor = caseChangingInvocation.WalkUpParentheses().WalkUpConversion().Parent;
 
-                if (ancestor is not IInvocationOperation diagnosableInvocation)
+                IInvocationOperation diagnosableInvocation;
+                if (ancestor is IInvocationOperation invocationAncestor)
+                {
+                    diagnosableInvocation = invocationAncestor;
+                }
+                else if (ancestor is IArgumentOperation argumentAncestor && argumentAncestor.Parent is IInvocationOperation argumentInvocationAncestor)
+                {
+                    diagnosableInvocation = argumentInvocationAncestor;
+                }
+                else
                 {
                     return;
                 }

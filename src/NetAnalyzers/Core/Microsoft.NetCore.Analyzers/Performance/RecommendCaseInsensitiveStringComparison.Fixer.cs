@@ -90,7 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 CodeAction.Create(
                     title,
                     createChangedDocument,
-                    equivalenceKey: MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparisonTitle + invocation.TargetMethod.Name + caseChangingApproachName),
+                    equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle)),
                 context.Diagnostics);
         }
 

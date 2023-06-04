@@ -14,6 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
         [MemberData(nameof(DiagnosedAndFixedInvertedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedNamedData))]
         public async Task Diagnostic_Assign(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
@@ -41,6 +42,8 @@ class C
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
+        [MemberData(nameof(DiagnosedAndFixedInvertedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedNamedData))]
         public async Task Diagnostic_Return(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
@@ -69,6 +72,7 @@ class C
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedWithEqualsToData))]
         [MemberData(nameof(DiagnosedAndFixedWithEqualsToInvertedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedWithEqualsToNamedData))]
         public async Task Diagnostic_If(string diagnosedLine, string fixedLine, string equalsTo)
         {
             string originalCode = $@"using System;
@@ -104,6 +108,8 @@ class C
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
+        [MemberData(nameof(DiagnosedAndFixedInvertedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedNamedData))]
         public async Task Diagnostic_IgnoreResult(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
@@ -132,6 +138,7 @@ class C
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsData))]
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsInvertedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedStringLiteralsNamedData))]
         public async Task Diagnostic_StringLiterals_ReturnExpressionBody(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
@@ -150,6 +157,7 @@ class C
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsData))]
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsInvertedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedStringReturningMethodsNamedData))]
         public async Task Diagnostic_StringReturningMethods_Discard(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
@@ -178,6 +186,7 @@ class C
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedParenthesizedData))]
         [MemberData(nameof(DiagnosedAndFixedParenthesizedInvertedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedParenthesizedNamedData))]
         public async Task Diagnostic_Parenthesized_ReturnCastedToString(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
@@ -200,7 +209,8 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(NoDiagnosticContainsData))]
+        [MemberData(nameof(NoDiagnosticData))]
+        [MemberData(nameof(CSharpNoDiagnosticNamedData))]
         [InlineData("\"aBc\".CompareTo(null)")]
         [InlineData("\"aBc\".ToUpperInvariant().CompareTo((object)null)")]
         public async Task NoDiagnostic_All(string ignoredLine)
@@ -222,6 +232,7 @@ class C
         [Theory]
         [MemberData(nameof(DiagnosticNoFixCompareToData))]
         [MemberData(nameof(DiagnosticNoFixCompareToInvertedData))]
+        [MemberData(nameof(CSharpDiagnosticNoFixCompareToNamedData))]
         public async Task Diagnostic_NoFix_CompareTo(string diagnosedLine)
         {
             string originalCode = $@"using System;

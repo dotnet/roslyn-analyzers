@@ -14,6 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
         [MemberData(nameof(DiagnosedAndFixedInvertedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedNamedData))]
         public async Task Diagnostic_Assign(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -41,6 +42,8 @@ End Class
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
+        [MemberData(nameof(DiagnosedAndFixedInvertedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedNamedData))]
         public async Task Diagnostic_Return(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -67,6 +70,7 @@ End Class
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedWithEqualsToData))]
         [MemberData(nameof(DiagnosedAndFixedWithEqualsToInvertedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedWithEqualsToNamedData))]
         public async Task Diagnostic_If(string diagnosedLine, string fixedLine, string equalsTo)
         {
             if (equalsTo == " == -1")
@@ -103,6 +107,8 @@ End Class
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
+        [MemberData(nameof(DiagnosedAndFixedInvertedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedNamedData))]
         public async Task Diagnostic_IgnoreResult(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -129,6 +135,7 @@ End Class
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsData))]
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsInvertedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedStringLiteralsNamedData))]
         public async Task Diagnostic_StringLiterals_Return(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -151,6 +158,7 @@ End Class
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsData))]
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsInvertedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedStringReturningMethodsNamedData))]
         public async Task Diagnostic_StringReturningMethods_Discard(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -184,6 +192,8 @@ End Class
 
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedParenthesizedData))]
+        [MemberData(nameof(DiagnosedAndFixedParenthesizedInvertedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedParenthesizedNamedData))]
         public async Task Diagnostic_Parenthesized_ReturnCastedToString(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -202,7 +212,8 @@ End Class";
         }
 
         [Theory]
-        [MemberData(nameof(NoDiagnosticContainsData))]
+        [MemberData(nameof(NoDiagnosticData))]
+        [MemberData(nameof(VisualBasicNoDiagnosticNamedData))]
         [InlineData("\"aBc\".CompareTo(Nothing)")]
         [InlineData("\"aBc\".ToUpperInvariant().CompareTo(CObj(Nothing))")]
         public async Task NoDiagnostic_All(string ignoredLine)
@@ -222,6 +233,7 @@ End Class";
         [Theory]
         [MemberData(nameof(DiagnosticNoFixCompareToData))]
         [MemberData(nameof(DiagnosticNoFixCompareToInvertedData))]
+        [MemberData(nameof(VisualBasicDiagnosticNoFixCompareToNamedData))]
         public async Task Diagnostic_NoFix_CompareTo(string diagnosedLine)
         {
             string originalCode = $@"Imports System

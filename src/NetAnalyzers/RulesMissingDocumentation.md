@@ -9,3 +9,4 @@ CA1513 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1856 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856> | Incorrect usage of ConstantExpected attribute |
 CA1857 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857> | A constant is expected for the parameter |
 CA2021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |
+CA2261 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2261> | Do not use ConfigureAwaitOptions.SuppressThrowing with Task\<TResult> |

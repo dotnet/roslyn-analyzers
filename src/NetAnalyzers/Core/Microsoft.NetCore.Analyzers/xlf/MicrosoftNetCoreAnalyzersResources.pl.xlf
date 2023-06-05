@@ -2073,24 +2073,24 @@ Konwersje poszerzane i zdefiniowane przez użytkownika nie są obsługiwane w pr
         <target state="translated">Preferuj porównywanie wartości „Length” z wartością 0 zamiast używania elementu „Any()”, zarówno w celu zapewnienia przejrzystości, jak i wydajności</target>
         <note />
       </trans-unit>
-      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_CodeFixTitle">
-        <source>Use ReadOnlySpan`1 property</source>
-        <target state="new">Use ReadOnlySpan`1 property</target>
+      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsCodeFixTitle">
+        <source>Use ReadOnlySpan&lt;T&gt; property</source>
+        <target state="new">Use ReadOnlySpan&lt;T&gt; property</target>
         <note />
       </trans-unit>
-      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Description">
-        <source>If an array field is readonly and the array is never modified, the compiler can emit more efficient code if the readonly field is replaced with a read-only ReadOnlySpan`1 property.</source>
-        <target state="new">If an array field is readonly and the array is never modified, the compiler can emit more efficient code if the readonly field is replaced with a read-only ReadOnlySpan`1 property.</target>
+      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsDescription">
+        <source>If an array field is readonly and the array is never modified, the compiler can emit more efficient code if the readonly field is replaced with a read-only ReadOnlySpan&lt;T&gt; property.</source>
+        <target state="new">If an array field is readonly and the array is never modified, the compiler can emit more efficient code if the readonly field is replaced with a read-only ReadOnlySpan&lt;T&gt; property.</target>
         <note />
       </trans-unit>
-      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Message">
+      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsMessage">
         <source>Prefer static ReadOnlySpan&lt;{0}&gt; property over static readonly {0}[] field</source>
         <target state="new">Prefer static ReadOnlySpan&lt;{0}&gt; property over static readonly {0}[] field</target>
         <note />
       </trans-unit>
-      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Title">
-        <source>Prefer ReadOnlySpan`1 properties over readonly array fields</source>
-        <target state="new">Prefer ReadOnlySpan`1 properties over readonly array fields</target>
+      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsTitle">
+        <source>Prefer ReadOnlySpan&lt;T&gt; properties over readonly array fields</source>
+        <target state="new">Prefer ReadOnlySpan&lt;T&gt; properties over readonly array fields</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">

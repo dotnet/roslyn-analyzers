@@ -30,11 +30,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            Resx.CreateLocalizableResourceString(nameof(Resx.PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Title)),
-            Resx.CreateLocalizableResourceString(nameof(Resx.PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Message)),
+            Resx.CreateLocalizableResourceString(nameof(Resx.PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsTitle)),
+            Resx.CreateLocalizableResourceString(nameof(Resx.PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
-            Resx.CreateLocalizableResourceString(nameof(Resx.PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_Description)),
+            Resx.CreateLocalizableResourceString(nameof(Resx.PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false,
             isReportedAtCompilationEnd: false);

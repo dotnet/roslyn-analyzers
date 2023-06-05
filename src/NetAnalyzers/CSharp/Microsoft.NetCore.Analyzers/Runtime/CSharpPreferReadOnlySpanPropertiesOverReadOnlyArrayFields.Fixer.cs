@@ -41,9 +41,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 return;
 
             var codeAction = CodeAction.Create(
-                MicrosoftNetCoreAnalyzersResources.PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_CodeFixTitle,
+                MicrosoftNetCoreAnalyzersResources.PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsCodeFixTitle,
                 GetChangedDocumentAsync,
-                nameof(MicrosoftNetCoreAnalyzersResources.PreferReadOnlySpanPropertiesOverReadOnlyArrayFields_CodeFixTitle));
+                nameof(MicrosoftNetCoreAnalyzersResources.PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsCodeFixTitle));
             context.RegisterCodeFix(codeAction, context.Diagnostics);
 
             return;

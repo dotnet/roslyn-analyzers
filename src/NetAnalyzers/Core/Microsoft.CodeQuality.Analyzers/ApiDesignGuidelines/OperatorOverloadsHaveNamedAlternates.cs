@@ -99,7 +99,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // don't report a diagnostic on the `op_False` method because then the user would see two diagnostics for what is really one error
                     // special-case looking for `IsTrue` instance property
                     // named properties can't be overloaded so there will only ever be 0 or 1
-                    IPropertySymbol property = ClassHierarchy(typeSymbol).SelectMany(x => x.GetMembers(IsTrueText).OfType<IPropertySymbol>()).FirstOrDefault();
+                    IPropertySymbol property = typeSymbol.GetBaseTypesAndThis().SelectMany(x => x.GetMembers(IsTrueText).OfType<IPropertySymbol>()).FirstOrDefault();
                     if (property == null || property.Type.SpecialType != SpecialType.System_Boolean)
                     {
                         symbolContext.ReportDiagnostic(CreateDiagnostic(PropertyRule, GetSymbolLocation(methodSymbol), AddAlternateText, IsTrueText, operatorName));
@@ -125,7 +125,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         unmatchedMethods.Add(expectedGroup.AlternateMethod2);
                     }
 
-                    foreach (IMethodSymbol candidateMethod in ClassHierarchy(typeSymbol).SelectMany(x => x.GetMembers().OfType<IMethodSymbol>()))
+                    foreach (IMethodSymbol candidateMethod in typeSymbol.GetBaseTypesAndThis().SelectMany(x => x.GetMembers().OfType<IMethodSymbol>()))
                     {
                         if (candidateMethod.Name == expectedGroup.AlternateMethod1 || candidateMethod.Name == expectedGroup.AlternateMethod2)
                         {
@@ -165,15 +165,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         }
                     }
                 }
-            }
-        }
-
-        private static IEnumerable<ITypeSymbol> ClassHierarchy(ITypeSymbol typeSymbol)
-        {
-            while (typeSymbol is not null)
-            {
-                yield return typeSymbol;
-                typeSymbol = typeSymbol.BaseType;
             }
         }
 

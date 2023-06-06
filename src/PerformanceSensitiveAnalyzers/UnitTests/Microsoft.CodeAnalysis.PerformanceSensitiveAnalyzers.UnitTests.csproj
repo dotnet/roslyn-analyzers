@@ -9,7 +9,8 @@
     <NoWarn>$(NoWarn);CA2007</NoWarn>
 
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
-    <!-- These unit tests fail when run agains MicrosoftCodeAnalysisVersionForTests (4.6.0-final.1) -->
+    <!-- These unit tests fail when run agains MicrosoftCodeAnalysisVersionForTests (4.6.0-final.1).
+         https://github.com/dotnet/roslyn-analyzers/issues/6672. -->
     <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzersTests)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
   <ItemGroup>

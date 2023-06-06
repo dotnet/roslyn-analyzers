@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.RecommendCaseInsensitiveStringComparisonAnalyzer,
-    Microsoft.NetCore.Analyzers.Performance.RecommendCaseInsensitiveStringComparisonFixer>;
+    Microsoft.NetCore.VisualBasic.Analyzers.Performance.BasicRecommendCaseInsensitiveStringComparisonFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
@@ -194,16 +194,23 @@ End Class
         [MemberData(nameof(DiagnosedAndFixedParenthesizedData))]
         [MemberData(nameof(DiagnosedAndFixedParenthesizedInvertedData))]
         [MemberData(nameof(VisualBasicDiagnosedAndFixedParenthesizedNamedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedParenthesizedNamedInvertedData))]
         public async Task Diagnostic_Parenthesized_ReturnCastedToString(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
 Class C
+    Public Function GetString() As String
+        Return ""AbC""
+    End Function
     Public Function M() As Object
         Return ([|{diagnosedLine}|]).ToString()
     End Function
 End Class";
             string fixedCode = $@"Imports System
 Class C
+    Public Function GetString() As String
+        Return ""AbC""
+    End Function
     Public Function M() As Object
         Return ({fixedLine}).ToString()
     End Function
@@ -213,9 +220,10 @@ End Class";
 
         [Theory]
         [MemberData(nameof(NoDiagnosticData))]
-        [MemberData(nameof(VisualBasicNoDiagnosticNamedData))]
         [InlineData("\"aBc\".CompareTo(Nothing)")]
         [InlineData("\"aBc\".ToUpperInvariant().CompareTo(CObj(Nothing))")]
+        [InlineData("\"aBc\".CompareTo(value:=CObj(1))")]
+        [InlineData("\"aBc\".CompareTo(strB:=\"cDe\")")]
         public async Task NoDiagnostic_All(string ignoredLine)
         {
             string originalCode = $@"Imports System

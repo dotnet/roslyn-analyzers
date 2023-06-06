@@ -68,6 +68,7 @@
     <MicrosoftCodeAnalysisVersionForNetAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForNetAnalyzers>
     <MicrosoftCodeAnalysisVersionForTextAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForTextAnalyzers>
     <MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>
+    <MicrosoftCodeAnalysisVersionForToolsAndUtilities>3.3.1</MicrosoftCodeAnalysisVersionForToolsAndUtilities>
     <!-- Versions for tests and general utility execution. -->
     <!-- This version is for utility and executable assemblies. The version here should not overlap with any of the surface
          area versions. -->
@@ -88,7 +89,7 @@
     <MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.23205.1</MicrosoftCodeAnalysisTestingVersion>
     <!-- Libs -->
     <BenchmarkDotNetVersion>0.13.0</BenchmarkDotNetVersion>
-    <HumanizerVersion>2.2.0</HumanizerVersion>
+    <HumanizerVersion>2.14.1</HumanizerVersion>
     <MicrosoftBuildLocatorVersion>1.4.1</MicrosoftBuildLocatorVersion>
     <MicrosoftDiagnosticsTracingTraceEventVersion>2.0.69</MicrosoftDiagnosticsTracingTraceEventVersion>
     <MicrosoftExtensionsLoggingVersion>6.0.0-preview.5.21301.5</MicrosoftExtensionsLoggingVersion>

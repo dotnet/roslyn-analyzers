@@ -1,14 +1,14 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ProvideObsoleteAttributeMessageAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpProvideObsoleteAttributeMessageAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ProvideObsoleteAttributeMessageAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicProvideObsoleteAttributeMessageAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
@@ -21,33 +21,40 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
-[Obsolete]
+[{|#0:Obsolete|}]
 public class A
 {
-    [Obsolete]
+    [{|#1:Obsolete|}]
     public A() { }
-    [Obsolete("""")]
+    [{|#2:Obsolete("""")|}]
     public int field;
-    [Obsolete]
+    [{|#3:Obsolete|}]
     public int Property { get; set; }
-    [Obsolete]
+    [{|#4:Obsolete|}]
     public void Method() {}
-    [Obsolete]
-    public event EventHandler<int> event1;
+    [{|#5:Obsolete|}]
+    public event EventHandler<int> FieldEvent;
+    [{|#6:Obsolete|}]
+    public event EventHandler<int> PropertyEvent
+    {
+        add { }
+        remove { }
+    }
 }
-[Obsolete]
+[{|#7:Obsolete|}]
 public interface I {}
-[Obsolete]
+[{|#8:Obsolete|}]
 public delegate void del(int x);
 ",
-            GetCSharpResultAt(4, 2, "A"),
-            GetCSharpResultAt(7, 6, ".ctor"),
-            GetCSharpResultAt(9, 6, "field"),
-            GetCSharpResultAt(11, 6, "Property"),
-            GetCSharpResultAt(13, 6, "Method"),
-            GetCSharpResultAt(15, 6, "event1"),
-            GetCSharpResultAt(18, 2, "I"),
-            GetCSharpResultAt(20, 2, "del"));
+            VerifyCS.Diagnostic().WithLocation(0).WithArguments("A"),
+            VerifyCS.Diagnostic().WithLocation(1).WithArguments("A"),
+            VerifyCS.Diagnostic().WithLocation(2).WithArguments("field"),
+            VerifyCS.Diagnostic().WithLocation(3).WithArguments("Property"),
+            VerifyCS.Diagnostic().WithLocation(4).WithArguments("Method"),
+            VerifyCS.Diagnostic().WithLocation(5).WithArguments("FieldEvent"),
+            VerifyCS.Diagnostic().WithLocation(6).WithArguments("PropertyEvent"),
+            VerifyCS.Diagnostic().WithLocation(7).WithArguments("I"),
+            VerifyCS.Diagnostic().WithLocation(8).WithArguments("del"));
         }
 
         [Fact]
@@ -78,7 +85,7 @@ End Interface
 Public Delegate Sub del(x As Integer)
 ",
             GetBasicResultAt(4, 2, "A"),
-            GetBasicResultAt(6, 6, ".ctor"),
+            GetBasicResultAt(6, 6, "New"),
             GetBasicResultAt(9, 6, "field"),
             GetBasicResultAt(11, 6, "prop"),
             GetBasicResultAt(13, 6, "Method"),

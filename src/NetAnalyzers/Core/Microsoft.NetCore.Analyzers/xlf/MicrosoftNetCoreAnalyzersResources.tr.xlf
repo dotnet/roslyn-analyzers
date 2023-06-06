@@ -2274,8 +2274,8 @@ Genel türlerde genişletme ve kullanıcı tanımlı dönüştürmeler desteklen
         <note />
       </trans-unit>
       <trans-unit id="RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle">
-        <source>Use string.{0}(string, StringComparison.{1})</source>
-        <target state="new">Use string.{0}(string, StringComparison.{1})</target>
+        <source>Use the string.{0}(string, StringComparison) overload</source>
+        <target state="new">Use the string.{0}(string, StringComparison) overload</target>
         <note />
       </trans-unit>
       <trans-unit id="RecommendCaseInsensitiveStringComparerTitle">

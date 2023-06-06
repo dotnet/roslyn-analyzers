@@ -32,6 +32,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string StringStartsWithMethodName = "StartsWith";
         internal const string StringCompareToMethodName = "CompareTo";
         internal const string StringComparerCompareMethodName = "Compare";
+        internal const string StringParameterName = "value";
+        internal const string StringComparisonParameterName = "comparisonType";
 
         internal static readonly DiagnosticDescriptor RecommendCaseInsensitiveStringComparisonRule = DiagnosticDescriptorHelper.Create(
             RuleId,

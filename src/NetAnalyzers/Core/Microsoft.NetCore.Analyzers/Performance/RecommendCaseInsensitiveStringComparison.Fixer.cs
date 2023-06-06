@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
@@ -23,8 +22,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
     /// CA1862: Prefer the StringComparison method overloads to perform case-insensitive string comparisons.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = RCISCAnalyzer.RuleId), Shared]
-    public sealed class RecommendCaseInsensitiveStringComparisonFixer : CodeFixProvider
+    public abstract class RecommendCaseInsensitiveStringComparisonFixer : CodeFixProvider
     {
+        protected abstract List<SyntaxNode> GetExistingArguments(SyntaxGenerator generator, IInvocationOperation mainInvocationOperation,
+            INamedTypeSymbol stringComparisonType, out SyntaxNode? mainInvocationInstance);
+
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(RCISCAnalyzer.RuleId);
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
@@ -54,65 +56,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            bool isInverted = false;
+            Task<Document> createChangedDocument(CancellationToken _) => FixInvocationAsync(doc, root,
+                invocation, stringComparisonType, invocation.TargetMethod.Name);
 
-            // Ignore parenthesized operations
-            IOperation? instanceOffendingOperation = invocation.Instance;
-            while (instanceOffendingOperation is not null and IParenthesizedOperation parenthesizedOperation)
-            {
-                instanceOffendingOperation = parenthesizedOperation.Operand;
-            }
-
-            IInvocationOperation removableInvocation;
-
-            // There should be a child invocation on the left side (instance) of the large invocation
-            // If the large invocation is "a.ToLower().Contains(b)"
-            // Its instance is "a.ToLower()", the child invocation
-            if (instanceOffendingOperation is IInvocationOperation instanceInvocation &&
-                instanceInvocation.TargetMethod.Name is
-                    RCISCAnalyzer.StringToLowerMethodName or RCISCAnalyzer.StringToUpperMethodName or RCISCAnalyzer.StringToLowerInvariantMethodName or RCISCAnalyzer.StringToUpperInvariantMethodName)
-            {
-                removableInvocation = instanceInvocation;
-            }
-            // The other option is that the offending operation is the first argument
-            // a.Contains(b.ToLower(), ...)
-            else
-            {
-                IOperation? argumentOffendingOperation = invocation.Arguments.FirstOrDefault();
-                while (argumentOffendingOperation is not null and IParenthesizedOperation parenthesizedOperation)
-                {
-                    argumentOffendingOperation = parenthesizedOperation.Operand;
-                }
-
-                if (argumentOffendingOperation is IArgumentOperation argumentOperation &&
-                    argumentOperation.Children.FirstOrDefault() is IInvocationOperation argumentInvocation)
-                {
-                    removableInvocation = argumentInvocation;
-                    isInverted = true;
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            string caseChangingApproachName;
-            switch (removableInvocation.TargetMethod.Name)
-            {
-                case RCISCAnalyzer.StringToLowerMethodName or RCISCAnalyzer.StringToUpperMethodName:
-                    caseChangingApproachName = RCISCAnalyzer.StringComparisonCurrentCultureIgnoreCaseName;
-                    break;
-                case RCISCAnalyzer.StringToLowerInvariantMethodName or RCISCAnalyzer.StringToUpperInvariantMethodName:
-                    caseChangingApproachName = RCISCAnalyzer.StringComparisonInvariantCultureIgnoreCaseName;
-                    break;
-                default:
-                    return;
-            }
-
-            Task<Document> createChangedDocument(CancellationToken _) => FixInvocationAsync(doc, root, isInverted,
-                invocation, removableInvocation, stringComparisonType, invocation.TargetMethod.Name, caseChangingApproachName);
-
-            string title = string.Format(MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle, invocation.TargetMethod.Name, caseChangingApproachName);
+            string title = string.Format(
+                MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle, invocation.TargetMethod.Name);
 
             context.RegisterCodeFix(
                 CodeAction.Create(
@@ -122,27 +70,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 context.Diagnostics);
         }
 
-        private static Task<Document> FixInvocationAsync(Document doc, SyntaxNode root, bool isInverted,
-            IInvocationOperation mainInvocation, IInvocationOperation removableInvocation,
-            INamedTypeSymbol stringComparisonType, string diagnosableMethodName, string caseChangingApproachName)
+        private Task<Document> FixInvocationAsync(Document doc, SyntaxNode root, IInvocationOperation mainInvocation,
+            INamedTypeSymbol stringComparisonType, string diagnosableMethodName)
         {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
+            // Defensive check: The max number of arguments is held by IndexOf
+            Debug.Assert(mainInvocation.Arguments.Length <= 3);
 
-            Debug.Assert(diagnosableMethodName is
-                RCISCAnalyzer.StringContainsMethodName or
-                RCISCAnalyzer.StringIndexOfMethodName or
-                RCISCAnalyzer.StringStartsWithMethodName);
-
-            SyntaxNode newInvocation = GetNewInvocation(generator, isInverted, mainInvocation, removableInvocation, stringComparisonType, caseChangingApproachName);
-
-            SyntaxNode newRoot = generator.ReplaceNode(root, mainInvocation.Syntax, newInvocation);
-            return Task.FromResult(doc.WithSyntaxRoot(newRoot));
-        }
-
-        private static SyntaxNode GetNewInvocation(SyntaxGenerator generator, bool isInverted,
-            IInvocationOperation mainInvocation, IInvocationOperation removableInvocation,
-            INamedTypeSymbol stringComparisonType, string caseChangingApproachName)
-        {
             // For the Diagnosable methods Contains(string) and StartsWith(string)
             // If we have this code ('a' and 'b' are string instances):
             //     A) a.CaseChanging().Diagnosable(b);
@@ -157,48 +90,115 @@ namespace Microsoft.NetCore.Analyzers.Performance
             //    B.2) a.IndexOf(b.CaseChanging(), startIndex: n)
             //    C.1) a.CaseChanging().IndexOf(b, startIndex: n, count: m)
             //    C.2) a.IndexOf(b.CaseChanging(), startIndex: n, count: m)
-            // We want to convert them to (respectively):
+            // We want to convert them to:
             //    A) a.IndexOf(b, StringComparison.Desired)
             //    B) a.IndexOf(b, startIndex: n, StringComparison.Desired)
             //    C) a.IndexOf(b, startIndex: n, count: m, StringComparison.Desired)
 
-            // Retrieve "a" and replace the invoked CaseChanging method with the Diagnosable method
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
 
-            // Already verified in RegisterCodeFixesAsync, this is merely defensive
-            Debug.Assert(mainInvocation.Arguments.Length <= 3);
+            /*
+            //// Ignore parenthesized operations
+            //IOperation? mainInstanceOperation = mainInvocation.Instance;
+            //while (mainInstanceOperation is not null and IParenthesizedOperation parenthesizedOperation)
+            //{
+            //    mainInstanceOperation = parenthesizedOperation.Operand;
+            //}
 
-            SyntaxNode stringMemberAccessExpression;
-            List<SyntaxNode> newArguments = new();
-            int argIndex;
-            if (!isInverted)
-            {
-                stringMemberAccessExpression = generator.MemberAccessExpression(removableInvocation.Instance.Syntax, mainInvocation.TargetMethod.Name);
-                argIndex = 0;
-            }
-            else
-            {
-                stringMemberAccessExpression = generator.MemberAccessExpression(mainInvocation.Instance.Syntax, mainInvocation.TargetMethod.Name);
-                newArguments.Add(removableInvocation.Instance.Syntax); // Trim the case changing method
-                argIndex = 1; // Skips the first
-            }
+            //IInvocationOperation removableInvocation;
 
-            for (; argIndex < mainInvocation.Arguments.Length; argIndex++)
-            {
-                newArguments.Add(mainInvocation.Arguments[argIndex].Syntax);
-            }
+            //// There should be a child invocation on the left side (instance) of the large invocation
+            //// If the large invocation is "a.ToLower().Contains(b)"
+            //// Its instance is "a.ToLower()", the child invocation
+            //if (mainInstanceOperation is IInvocationOperation instanceInvocation &&
+            //    instanceInvocation.TargetMethod.Name is
+            //        RCISCAnalyzer.StringToLowerMethodName or RCISCAnalyzer.StringToUpperMethodName or
+            //        RCISCAnalyzer.StringToLowerInvariantMethodName or RCISCAnalyzer.StringToUpperInvariantMethodName)
+            //{
+            //    removableInvocation = instanceInvocation;
+            //}
+            //// The other option is that the offending operation is the first argument
+            //// a.Contains(b.ToLower(), ...)
+            //else
+            //{
+            //    IOperation? argumentOffendingOperation = mainInvocation.Arguments.FirstOrDefault();
+            //    while (argumentOffendingOperation is not null and IParenthesizedOperation parenthesizedOperation)
+            //    {
+            //        argumentOffendingOperation = parenthesizedOperation.Operand;
+            //    }
 
-            // Retrieve "StringComparison.DesiredCultureDesiredCase"
+            //    // TODO: Do not use firstordefault, add test that puts "value" in another position
+            //    if (argumentOffendingOperation is IArgumentOperation argumentOperation &&
+            //        argumentOperation.Children.FirstOrDefault() is IInvocationOperation argumentInvocation)
+            //    {
+            //        removableInvocation = argumentInvocation;
+            //        isChangingCaseInArgument = true;
+            //    }
+            //}
+
+            //string caseChangingApproachName;
+            //if (removableInvocation.TargetMethod.Name is
+            //    RCISCAnalyzer.StringToLowerMethodName or RCISCAnalyzer.StringToUpperMethodName)
+            //{
+            //    caseChangingApproachName = RCISCAnalyzer.StringComparisonCurrentCultureIgnoreCaseName;
+            //}
+            //else
+            //{
+            //    Debug.Assert(removableInvocation.TargetMethod.Name is
+            //        RCISCAnalyzer.StringToLowerInvariantMethodName or RCISCAnalyzer.StringToUpperInvariantMethodName);
+
+            //    caseChangingApproachName = RCISCAnalyzer.StringComparisonInvariantCultureIgnoreCaseName;
+            //}
+            */
+
+            // Defensive check: Should not fix string.CompareTo
+            Debug.Assert(diagnosableMethodName is
+                RCISCAnalyzer.StringContainsMethodName or
+                RCISCAnalyzer.StringIndexOfMethodName or
+                RCISCAnalyzer.StringStartsWithMethodName);
+
+            List<SyntaxNode> newArguments = GetExistingArguments(generator, mainInvocation, stringComparisonType, out SyntaxNode? mainInvocationInstance);
+
+            SyntaxNode stringMemberAccessExpression = generator.MemberAccessExpression(mainInvocationInstance, mainInvocation.TargetMethod.Name);
+
+            //SyntaxNode stringMemberAccessExpression = mainInvocationInstance != null ?
+            //    // a.CaseChanging().Diagnosable(b, ...)
+            //    generator.MemberAccessExpression(mainInvocationInstance, mainInvocation.TargetMethod.Name) :
+            //    // a.Diagnosable(b.CaseChanging(), ...)
+            //    generator.MemberAccessExpression(mainInvocation.Instance.Syntax, mainInvocation.TargetMethod.Name);
+
+            SyntaxNode newInvocation = generator.InvocationExpression(stringMemberAccessExpression, newArguments).WithTriviaFrom(mainInvocation.Syntax);
+
+            SyntaxNode newRoot = generator.ReplaceNode(root, mainInvocation.Syntax, newInvocation);
+            return Task.FromResult(doc.WithSyntaxRoot(newRoot));
+        }
+
+        protected static SyntaxNode GetNewStringComparisonArgument(SyntaxGenerator generator,
+            INamedTypeSymbol stringComparisonType, string caseChangingApproachName, bool isAnyArgumentNamed)
+        {
+            // Generate the enum access expression for "StringComparison.DesiredCultureDesiredCase"
             SyntaxNode stringComparisonEnumValueAccess = generator.MemberAccessExpression(
                 generator.TypeExpressionForStaticMemberAccess(stringComparisonType),
-                generator.IdentifierName(caseChangingApproachName)
-            );
+                generator.IdentifierName(caseChangingApproachName));
 
-            // Convert the above member access into an argument node, then append it to the argument list: "b, StringComparison.DesiredCultureDesiredCase"
-            SyntaxNode stringComparisonArgument = generator.Argument(stringComparisonEnumValueAccess);
-            newArguments.Add(stringComparisonArgument);
+            // Convert the above into an argument node, then append it to the argument list: "b, StringComparison.DesiredCultureDesiredCase"
+            // If at least one of the pre-existing arguments is named, then the StringComparison enum value needs to be named too
+            SyntaxNode stringComparisonArgument = isAnyArgumentNamed ?
+                generator.Argument(name: RCISCAnalyzer.StringComparisonParameterName, RefKind.None, stringComparisonEnumValueAccess) :
+                generator.Argument(stringComparisonEnumValueAccess);
 
-            // Generate the suggestion: "a.Diagnosable(b, StringComparison.DesiredCultureDesiredCase)"
-            return generator.InvocationExpression(stringMemberAccessExpression, newArguments).WithTriviaFrom(mainInvocation.Syntax);
+            return stringComparisonArgument;
+        }
+
+        protected static string GetCaseChangingApproach(string methodName)
+        {
+            if (methodName is RCISCAnalyzer.StringToLowerMethodName or RCISCAnalyzer.StringToUpperMethodName)
+            {
+                return RCISCAnalyzer.StringComparisonCurrentCultureIgnoreCaseName;
+            }
+
+            Debug.Assert(methodName is RCISCAnalyzer.StringToLowerInvariantMethodName or RCISCAnalyzer.StringToUpperInvariantMethodName);
+            return RCISCAnalyzer.StringComparisonInvariantCultureIgnoreCaseName;
         }
     }
 }

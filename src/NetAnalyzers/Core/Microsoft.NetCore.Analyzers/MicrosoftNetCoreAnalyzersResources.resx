@@ -2054,4 +2054,22 @@ Widening and user defined conversions are not supported with generic types.</val
   <data name="PreferIsEmptyOverAnyMessage" xml:space="preserve">
     <value>Prefer an 'IsEmpty' check rather than using 'Any()', both for clarity and for performance</value>
   </data>
+  <data name="UseCompositeFormatTitle" xml:space="preserve">
+    <value>Use 'CompositeFormat'</value>
+  </data>
+  <data name="UseCompositeFormatMessage" xml:space="preserve">
+    <value>Cache a 'CompositeFormat' for repeated use in this formatting operation</value>
+  </data>
+  <data name="UseCompositeFormatDescription" xml:space="preserve">
+    <value>Cache and use a 'CompositeFormat' instance as the argument to this formatting operation, rather than passing in the original format string. This reduces the cost of the formatting operation.</value>
+  </data>
+  <data name="UseInterpolatedStringTitle" xml:space="preserve">
+    <value>Use an interpolated string</value>
+  </data>
+  <data name="UseInterpolatedStringMessage" xml:space="preserve">
+    <value>Use an interpolated string to perform the operation more efficiently</value>
+  </data>
+  <data name="UseInterpolatedStringDescription" xml:space="preserve">
+    <value>Using an interpolated string is both more concise and more efficient than performing the whole formatting operation at run-time.</value>
+  </data>
 </root>

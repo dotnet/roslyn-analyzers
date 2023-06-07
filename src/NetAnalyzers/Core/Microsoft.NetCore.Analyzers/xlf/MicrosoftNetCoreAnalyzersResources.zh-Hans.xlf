@@ -2748,6 +2748,21 @@ Enumerable.OfType&lt;T&gt; 使用的泛型类型检查 (C# 'is' operator/IL 'isi
         <target state="translated">使用 “ThrowIfCancellationRequested”</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseCompositeFormatDescription">
+        <source>Cache and use a 'CompositeFormat' instance as the argument to this formatting operation, rather than passing in the original format string. This reduces the cost of the formatting operation.</source>
+        <target state="new">Cache and use a 'CompositeFormat' instance as the argument to this formatting operation, rather than passing in the original format string. This reduces the cost of the formatting operation.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseCompositeFormatMessage">
+        <source>Cache a 'CompositeFormat' for repeated use in this formatting operation</source>
+        <target state="new">Cache a 'CompositeFormat' for repeated use in this formatting operation</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseCompositeFormatTitle">
+        <source>Use 'CompositeFormat'</source>
+        <target state="new">Use 'CompositeFormat'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseConcreteTypeDescription">
         <source>Using concrete types avoids virtual or interface call overhead and enables inlining.</source>
         <target state="translated">使用具体类型可避免虚拟或接口调用开销，并启用内联。</target>
@@ -2881,6 +2896,21 @@ Enumerable.OfType&lt;T&gt; 使用的泛型类型检查 (C# 'is' operator/IL 'isi
       <trans-unit id="UseIndexer">
         <source>Use indexer</source>
         <target state="translated">使用索引器</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseInterpolatedStringDescription">
+        <source>Using an interpolated string is both more concise and more efficient than performing the whole formatting operation at run-time.</source>
+        <target state="new">Using an interpolated string is both more concise and more efficient than performing the whole formatting operation at run-time.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseInterpolatedStringMessage">
+        <source>Use an interpolated string to perform the operation more efficiently</source>
+        <target state="new">Use an interpolated string to perform the operation more efficiently</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseInterpolatedStringTitle">
+        <source>Use an interpolated string</source>
+        <target state="new">Use an interpolated string</target>
         <note />
       </trans-unit>
       <trans-unit id="UseInvariantVersion">

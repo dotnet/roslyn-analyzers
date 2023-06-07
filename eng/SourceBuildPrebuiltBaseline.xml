@@ -6,13 +6,11 @@
     <!-- This packages contain functionality that is executed in the build -->
     <UsagePattern IdentityGlob="Microsoft.Net.Compilers.Toolset/*" />
     <UsagePattern IdentityGlob="System.Composition*/*" />
-    <!-- In SB mode, Microsoft.CodeAnalysis.Common has a dependency on CodeAnalysis.Analyzers and 
-         its dependencies. This is not an issue in full SB mode. -->
-    <UsagePattern IdentityGlob="Microsoft.CodeAnalysis.Analyzers*/*" />
-
-    <!-- This is the version of Microsoft.CodeAnalysis executed and built against in source build.
-         When updating that verison, update the version here. -->
+    
+    <!-- This is the version of Microsoft.CodeAnalysis used for tooling executed in repo source-build,
+         as well as unit tests. -->
     <UsagePattern IdentityGlob="Microsoft.CodeAnalysis*/*4.6.0-1.final*" />
-    <UsagePattern IdentityGlob="System.Threading.Channels/*6.0.0*" />
+    <!-- Dependency of Microsoft.CodeAnalysis.Common 4.6.0-1.final -->
+    <UsagePattern IdentityGlob="Microsoft.CodeAnalysis.Analyzers/*3.3.4*" />
   </IgnorePatterns>
 </UsageData>

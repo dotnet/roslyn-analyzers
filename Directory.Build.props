@@ -45,6 +45,12 @@
     <NoWarn Condition="'$(Language)' == 'C#'">$(NoWarn),1573,1591,1712</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+    <!-- When building in source build mode, treat this set of warnings not as errors.-->
+    <!-- Some crefs reference internal APIs not present in the reference package. -->
+    <NoWarn>$(NoWarn);CS1574;CS8602</NoWarn>
+  </PropertyGroup>
+
   <PropertyGroup>
     <!-- We generate per-project assembly attributes files, so we can safely delete them when cleaning the project -->
     <TargetFrameworkMonikerAssemblyAttributesFileClean>true</TargetFrameworkMonikerAssemblyAttributesFileClean>

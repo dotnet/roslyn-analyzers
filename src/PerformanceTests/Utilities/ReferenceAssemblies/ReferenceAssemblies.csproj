@@ -5,6 +5,8 @@
     <IsPackable>false</IsPackable>
     <NonShipping>true</NonShipping>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <!-- Excluded from source build. Otherwise this should be conditionalized to only be set when DotNetBuildFromSource != true -->
+    <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForToolsAndUtilities)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
 
   <ItemGroup>

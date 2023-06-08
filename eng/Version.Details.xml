@@ -5,6 +5,16 @@
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>66a912c9463eebe832cf742d2fe8bb2e1a4600ec</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23305.4">
+      <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
+      <Sha>540ccf1a6831993d8ac8bf10bdfd3fde93ecee2e</Sha>
+      <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
+    </Dependency>
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23214.1">
+      <Uri>https://github.com/dotnet/source-build-externals</Uri>
+      <Sha>de4dda48d0cf31e13182bc24107b2246c61ed483</Sha>
+      <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
+    </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23269.1">
@@ -12,15 +22,22 @@
       <Sha>fb6291b40fa4334dbd167e2071953e83cc8b9fdc</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
+    <!-- Used in repo tooling. Not updated automatically -->
+    <Dependency Name="System.Composition" Version="8.0.0-preview.4.23259.5">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>84a3d0e37e8f22b0b55f8bf932cb788b2bdd728f</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="8.0.0-beta.23252.2" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
+      <Uri>https://github.com/dotnet/sourcelink</Uri>
+      <Sha>54eb3b811c57f5e94617d31a102fc9cb664ccdd5</Sha>
+      <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
+    </Dependency>
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23266.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
+      <Uri>https://github.com/dotnet/xliff-tasks</Uri>
+      <Sha>9e7fbcab4e5275f63c0cd37553ba426de9194309</Sha>
+      <SourceBuild RepoName="xliff-tasks" ManagedOnly="true" />
+    </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.5.0">
-      <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>6a5a63bbc9f4449d9bd1e95a8f9624939c3ccdc3</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="4.5.0">
-      <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>6a5a63bbc9f4449d9bd1e95a8f9624939c3ccdc3</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="4.5.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>6a5a63bbc9f4449d9bd1e95a8f9624939c3ccdc3</Sha>
     </Dependency>

@@ -2,6 +2,8 @@
 
 using System.Globalization;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer,
@@ -396,6 +398,56 @@ End If";
             return new VerifyCS.Test
             {
                 TestCode = testCode,
+                DisabledDiagnostics = { PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryGetValueRuleId }
+            }.RunAsync();
+        }
+
+        [Fact]
+        public Task ValueIsCreatedInConditionalBlock()
+        {
+            return new VerifyCS.Test
+            {
+                TestCode = @"
+using System.Collections.Generic;
+using System.Xml;
+
+#nullable enable
+namespace UnitTests {
+    public class Program
+    {
+	    private SchemaInfo _schemaInfo = null!;
+	    private Dictionary<string, UndeclaredNotation>? _undeclaredNotations;
+	    
+	    private void Run()
+	    {
+		    XmlQualifiedName notationName = GetNameQualified(false);
+		    SchemaNotation? notation = null;
+		    if (!_schemaInfo.Notations.ContainsKey(notationName.Name))
+		    {
+			    _undeclaredNotations?.Remove(notationName.Name);
+			    notation = new SchemaNotation(notationName);
+			    _schemaInfo.Notations.Add(notation.Name.Name, notation);
+		    }
+	    }
+
+	    private XmlQualifiedName GetNameQualified(bool _) => throw null!;
+    }
+
+    class SchemaNotation
+    {
+	    internal SchemaNotation(XmlQualifiedName _) => throw null!;
+
+	    public XmlQualifiedName Name => throw null!;
+    }
+
+    class SchemaInfo
+    {
+	    public Dictionary<string, SchemaNotation> Notations => throw null!;
+    }
+
+    class UndeclaredNotation {}
+}",
+                LanguageVersion = LanguageVersion.CSharp8,
                 DisabledDiagnostics = { PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryGetValueRuleId }
             }.RunAsync();
         }

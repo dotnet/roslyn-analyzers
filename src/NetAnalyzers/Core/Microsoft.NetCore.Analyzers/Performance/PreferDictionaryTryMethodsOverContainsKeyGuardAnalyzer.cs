@@ -124,19 +124,24 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (!TryGetDictionaryTypeAndMembers(context.Compilation, out var iDictionaryType, out var containsKeySymbol, out var addSymbol, out var tryAddSymbol))
+            if (!TryGetDictionaryTypeAndMembers(context.Compilation, out var iDictionaryType, out var containsKeySymbol, out var addSymbol))
             {
                 return;
             }
 
-            context.RegisterOperationAction(ctx => OnInvocationOperation(iDictionaryType, containsKeySymbol, addSymbol, tryAddSymbol, ctx), OperationKind.Invocation);
+            context.RegisterOperationAction(ctx => OnInvocationOperation(iDictionaryType, containsKeySymbol, addSymbol, ctx), OperationKind.Invocation);
         }
 
-        private static void OnInvocationOperation(INamedTypeSymbol iDictionaryType, IMethodSymbol containsKeySymbol, IMethodSymbol addSymbol, IMethodSymbol? tryAddSymbol, OperationAnalysisContext context)
+        private static void OnInvocationOperation(INamedTypeSymbol iDictionaryType, IMethodSymbol containsKeySymbol, IMethodSymbol addSymbol, OperationAnalysisContext context)
         {
             var containsOperation = (IInvocationOperation)context.Operation;
-            if (!IsContainsKeyMethod(containsOperation.TargetMethod, containsKeySymbol)
-                || !IsDictionaryType(containsOperation.GetReceiverType(context.Compilation, true, context.CancellationToken), iDictionaryType))
+            if (!IsContainsKeyMethod(containsOperation.TargetMethod, containsKeySymbol))
+            {
+                return;
+            }
+
+            var suspectedDictionaryType = containsOperation.GetReceiverType(context.Compilation, true, context.CancellationToken);
+            if (!IsDictionaryType(suspectedDictionaryType, iDictionaryType))
             {
                 return;
             }
@@ -146,7 +151,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             void ReportGuardedDictionaryPattern(SearchContext searchContext, DiagnosticDescriptor diagnosticDescriptor)
             {
-                if (searchContext == SearchContext.AddMethod && tryAddSymbol is null)
+                if (searchContext == SearchContext.AddMethod && suspectedDictionaryType.GetMembers(TryAdd).IsEmpty)
                 {
                     return;
                 }
@@ -193,11 +198,27 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static bool AddArgumentIsDeclaredInBlock(IInvocationOperation invocation)
         {
-            if (invocation.Arguments[1].Value is ILocalReferenceOperation local && invocation.Parent?.Parent is IBlockOperation block)
+            if (invocation.Parent?.Parent is IBlockOperation block)
             {
-                return block.Operations
-                    .OfType<IVariableDeclarationGroupOperation>()
-                    .Any(g => g.GetDeclaredVariables().Any(v => SymbolEqualityComparer.Default.Equals(v, local.Local)));
+                foreach (var operation in block.Operations)
+                {
+                    var arguments = invocation.Arguments[0].Descendants().Concat(invocation.Arguments[1].Descendants());
+                    if (operation is IVariableDeclarationGroupOperation variableGroup)
+                    {
+                        var declaredVariables = variableGroup.GetDeclaredVariables();
+                        if (arguments.Any(d => d is ILocalReferenceOperation local
+                                                                                 && declaredVariables.Any(v => SymbolEqualityComparer.Default.Equals(v, local.Local))))
+                        {
+                            return true;
+                        }
+                    }
+
+                    if (operation is IExpressionStatementOperation { Operation: IAssignmentOperation assignmentOperation }
+                        && arguments.Any(d => IsSameReferenceOperation(assignmentOperation.Target, d)))
+                    {
+                        return true;
+                    }
+                }
             }
 
             return false;
@@ -210,22 +231,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
             [NotNullWhen(true)]
             out IMethodSymbol? containsKeySymbol,
             [NotNullWhen(true)]
-            out IMethodSymbol? addSymbol,
-            out IMethodSymbol? tryAddSymbol)
+            out IMethodSymbol? addSymbol)
         {
             iDictionaryType = WellKnownTypeProvider.GetOrCreate(compilation).GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIDictionary2);
             if (iDictionaryType is null)
             {
                 containsKeySymbol = null;
                 addSymbol = null;
-                tryAddSymbol = null;
 
                 return false;
             }
 
             containsKeySymbol = iDictionaryType.GetMembers(ContainsKey).OfType<IMethodSymbol>().FirstOrDefault();
             addSymbol = iDictionaryType.GetMembers(Add).OfType<IMethodSymbol>().FirstOrDefault();
-            tryAddSymbol = iDictionaryType.GetMembers(TryAdd).OfType<IMethodSymbol>().FirstOrDefault();
 
             return containsKeySymbol is not null && addSymbol is not null;
         }
@@ -236,7 +254,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                    || DoesSignatureMatch(suspectedContainsKeyMethod, containsKeyMethod);
         }
 
-        private static bool IsDictionaryType(ITypeSymbol? suspectedDictionaryType, ISymbol iDictionaryType)
+        private static bool IsDictionaryType([NotNullWhen(true)] ITypeSymbol? suspectedDictionaryType, ISymbol iDictionaryType)
         {
             // Either the type is the IDictionary or it is a type which (indirectly) implements it.
             return suspectedDictionaryType != null

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -531,28 +531,9 @@ class Test
     {
         var a = MyFormat("""", 1);
     }
-}",
-                        @"
-namespace System.Diagnostics.CodeAnalysis
-{
-    /// <summary>Specifies the syntax used in a string.</summary>
-    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public sealed class StringSyntaxAttribute : Attribute
-    {
-        /// <summary>The syntax identifier for strings containing composite formats for string formatting.</summary>
-        public const string CompositeFormat = nameof(CompositeFormat);
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref=""StringSyntaxAttribute""/> class with the identifier of the syntax used.
-        /// </summary>
-        /// <param name=""syntax"">The syntax identifier.</param>
-        public StringSyntaxAttribute(string syntax)
-        {
-        }
-    }
-}
-"
-                    }
+}"
+                    },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
                 }
             };
 
@@ -579,22 +560,9 @@ Class Test
     Private Sub M1(ByVal param As String)
         Dim a = MyFormat("""", 1)
     End Sub
-End Class",
-                                                @"
-Namespace System.Diagnostics.CodeAnalysis
-    <AttributeUsage(AttributeTargets.Parameter Or AttributeTargets.Field Or AttributeTargets.Property, AllowMultiple := False, Inherited := False)>
-    Public Class StringSyntaxAttribute
-        Inherits Attribute
-
-        Public Const CompositeFormat As String = ""CompositeFormat""
-
-        Sub  New(ByVal syntax As String)
-        End Sub
-    End Class
-End Namespace
-"
-
-                    }
+End Class"
+                    },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
                 }
             };
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="pt-BR" original="../MicrosoftNetCoreAnalyzersResources.resx">
     <body>
@@ -2071,6 +2071,26 @@ Ampliação e conversões definidas pelo usuário não são compatíveis com tip
       <trans-unit id="PreferLengthOverAnyMessage">
         <source>Prefer comparing 'Length' to 0 rather than using 'Any()', both for clarity and for performance</source>
         <target state="translated">Prefira comparar 'Length' com 0 em vez de usar 'Any()', tanto para clareza quanto para desempenho</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsCodeFixTitle">
+        <source>Use ReadOnlySpan&lt;T&gt; property</source>
+        <target state="new">Use ReadOnlySpan&lt;T&gt; property</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsDescription">
+        <source>If an array field is readonly and the array is never modified, the compiler can emit more efficient code if the readonly field is replaced with a read-only ReadOnlySpan&lt;T&gt; property.</source>
+        <target state="new">If an array field is readonly and the array is never modified, the compiler can emit more efficient code if the readonly field is replaced with a read-only ReadOnlySpan&lt;T&gt; property.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsMessage">
+        <source>Prefer static ReadOnlySpan&lt;{0}&gt; property over static readonly {0}[] field</source>
+        <target state="new">Prefer static ReadOnlySpan&lt;{0}&gt; property over static readonly {0}[] field</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferReadOnlySpanPropertiesOverReadOnlyArrayFieldsTitle">
+        <source>Prefer ReadOnlySpan&lt;T&gt; properties over readonly array fields</source>
+        <target state="new">Prefer ReadOnlySpan&lt;T&gt; properties over readonly array fields</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">

@@ -206,8 +206,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     if (operation is IVariableDeclarationGroupOperation variableGroup)
                     {
                         var declaredVariables = variableGroup.GetDeclaredVariables();
-                        if (arguments.Any(d => d is ILocalReferenceOperation local
-                                                                                 && declaredVariables.Any(v => SymbolEqualityComparer.Default.Equals(v, local.Local))))
+                        if (arguments.Any(d => d is ILocalReferenceOperation local && declaredVariables.Any(v => SymbolEqualityComparer.Default.Equals(v, local.Local))))
                         {
                             return true;
                         }

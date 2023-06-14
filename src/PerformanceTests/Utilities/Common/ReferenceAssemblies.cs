@@ -17,7 +17,7 @@ namespace PerformanceTests.Utilities
 
         public AssemblyIdentityComparer AssemblyIdentityComparer { get; } = AssemblyIdentityComparer.Default;
 
-        public string? ReferenceAssemblyPath { get; } = null;
+        public string? ReferenceAssemblyPath { get; }
 
         public ImmutableArray<string> Assemblies { get; } = ImmutableArray<string>.Empty;
 

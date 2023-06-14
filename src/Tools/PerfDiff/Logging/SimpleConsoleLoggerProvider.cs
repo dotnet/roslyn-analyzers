@@ -6,18 +6,11 @@ using System.CommandLine;
 
 namespace PerfDiff.Logging
 {
-    internal sealed class SimpleConsoleLoggerProvider : ILoggerProvider
+    internal sealed class SimpleConsoleLoggerProvider(IConsole console, LogLevel minimalLogLevel, LogLevel minimalErrorLevel) : ILoggerProvider
     {
-        private readonly IConsole _console;
-        private readonly LogLevel _minimalLogLevel;
-        private readonly LogLevel _minimalErrorLevel;
-
-        public SimpleConsoleLoggerProvider(IConsole console, LogLevel minimalLogLevel, LogLevel minimalErrorLevel)
-        {
-            _console = console;
-            _minimalLogLevel = minimalLogLevel;
-            _minimalErrorLevel = minimalErrorLevel;
-        }
+        private readonly IConsole _console = console;
+        private readonly LogLevel _minimalLogLevel = minimalLogLevel;
+        private readonly LogLevel _minimalErrorLevel = minimalErrorLevel;
 
         public ILogger CreateLogger(string categoryName)
         {

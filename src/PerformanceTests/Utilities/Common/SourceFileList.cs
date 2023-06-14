@@ -4,16 +4,10 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace PerformanceTests.Utilities
 {
-    public class SourceFileList : SourceFileCollection
+    public class SourceFileList(string defaultPrefix, string defaultExtension) : SourceFileCollection
     {
-        private readonly string _defaultPrefix;
-        private readonly string _defaultExtension;
-
-        public SourceFileList(string defaultPrefix, string defaultExtension)
-        {
-            _defaultPrefix = defaultPrefix;
-            _defaultExtension = defaultExtension;
-        }
+        private readonly string _defaultPrefix = defaultPrefix;
+        private readonly string _defaultExtension = defaultExtension;
 
         public void Add(string content)
         {

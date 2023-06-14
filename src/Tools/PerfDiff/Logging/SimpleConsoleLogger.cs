@@ -10,14 +10,14 @@ using System.CommandLine.Rendering;
 
 namespace PerfDiff.Logging
 {
-    internal sealed class SimpleConsoleLogger : ILogger
+    internal sealed class SimpleConsoleLogger(IConsole console, LogLevel minimalLogLevel, LogLevel minimalErrorLevel) : ILogger
     {
         private readonly object _gate = new();
 
-        private readonly IConsole _console;
-        private readonly ITerminal _terminal;
-        private readonly LogLevel _minimalLogLevel;
-        private readonly LogLevel _minimalErrorLevel;
+        private readonly IConsole _console = console;
+        private readonly ITerminal _terminal = console.GetTerminal();
+        private readonly LogLevel _minimalLogLevel = minimalLogLevel;
+        private readonly LogLevel _minimalErrorLevel = minimalErrorLevel;
 
         private static ImmutableDictionary<LogLevel, ConsoleColor> LogLevelColorMap => new Dictionary<LogLevel, ConsoleColor>
         {
@@ -29,14 +29,6 @@ namespace PerfDiff.Logging
             [LogLevel.Trace] = ConsoleColor.Gray,
             [LogLevel.None] = ConsoleColor.White,
         }.ToImmutableDictionary();
-
-        public SimpleConsoleLogger(IConsole console, LogLevel minimalLogLevel, LogLevel minimalErrorLevel)
-        {
-            _terminal = console.GetTerminal();
-            _console = console;
-            _minimalLogLevel = minimalLogLevel;
-            _minimalErrorLevel = minimalErrorLevel;
-        }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {

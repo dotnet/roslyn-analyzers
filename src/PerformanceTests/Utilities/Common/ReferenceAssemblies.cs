@@ -7,34 +7,23 @@ using Microsoft.CodeAnalysis;
 
 namespace PerformanceTests.Utilities
 {
-    public sealed partial class ReferenceAssemblies
+    public sealed partial class ReferenceAssemblies(string targetFramework, ImmutableArray<PortableExecutableReference> assemblies)
     {
-        private readonly ImmutableArray<PortableExecutableReference> _assemblies;
-
-        public ReferenceAssemblies(string targetFramework, ImmutableArray<PortableExecutableReference> assemblies)
-        {
-            _assemblies = assemblies;
-            TargetFramework = targetFramework ?? throw new ArgumentNullException(nameof(targetFramework));
-            AssemblyIdentityComparer = AssemblyIdentityComparer.Default;
-            ReferenceAssemblyPath = null;
-            Assemblies = ImmutableArray<string>.Empty;
-            FacadeAssemblies = ImmutableArray<string>.Empty;
-            LanguageSpecificAssemblies = ImmutableDictionary<string, ImmutableArray<string>>.Empty;
-        }
+        private readonly ImmutableArray<PortableExecutableReference> _assemblies = assemblies;
 
         public static ReferenceAssemblies Default => Net.Net60;
 
-        public string TargetFramework { get; }
+        public string TargetFramework { get; } = targetFramework ?? throw new ArgumentNullException(nameof(targetFramework));
 
-        public AssemblyIdentityComparer AssemblyIdentityComparer { get; }
+        public AssemblyIdentityComparer AssemblyIdentityComparer { get; } = AssemblyIdentityComparer.Default;
 
-        public string? ReferenceAssemblyPath { get; }
+        public string? ReferenceAssemblyPath { get; } = null;
 
-        public ImmutableArray<string> Assemblies { get; }
+        public ImmutableArray<string> Assemblies { get; } = ImmutableArray<string>.Empty;
 
-        public ImmutableArray<string> FacadeAssemblies { get; }
+        public ImmutableArray<string> FacadeAssemblies { get; } = ImmutableArray<string>.Empty;
 
-        public ImmutableDictionary<string, ImmutableArray<string>> LanguageSpecificAssemblies { get; }
+        public ImmutableDictionary<string, ImmutableArray<string>> LanguageSpecificAssemblies { get; } = ImmutableDictionary<string, ImmutableArray<string>>.Empty;
 
         public string? NuGetConfigFilePath { get; }
 

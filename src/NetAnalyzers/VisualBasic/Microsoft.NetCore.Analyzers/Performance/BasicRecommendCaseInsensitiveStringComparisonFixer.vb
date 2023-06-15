@@ -1,6 +1,8 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+Imports System.Composition
 Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Editing
 Imports Microsoft.CodeAnalysis.Operations
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
@@ -8,6 +10,7 @@ Imports Microsoft.NetCore.Analyzers.Performance
 
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
+    <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public Class BasicRecommendCaseInsensitiveStringComparisonFixer
         Inherits RecommendCaseInsensitiveStringComparisonFixer
 

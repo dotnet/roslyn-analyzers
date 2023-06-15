@@ -21,7 +21,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
     /// <summary>
     /// CA1862: Prefer the StringComparison method overloads to perform case-insensitive string comparisons.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = RCISCAnalyzer.RuleId), Shared]
     public abstract class RecommendCaseInsensitiveStringComparisonFixer : CodeFixProvider
     {
         protected abstract List<SyntaxNode> GetExistingArguments(SyntaxGenerator generator, IInvocationOperation mainInvocationOperation,

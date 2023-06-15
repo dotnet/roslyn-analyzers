@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Composition;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
@@ -12,6 +14,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 {
     using RCISCAnalyzer = RecommendCaseInsensitiveStringComparisonAnalyzer;
 
+    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     internal class CSharpRecommendCaseInsensitiveStringComparisonFixer : RecommendCaseInsensitiveStringComparisonFixer
     {
         protected override List<SyntaxNode> GetExistingArguments(SyntaxGenerator generator, IInvocationOperation mainInvocationOperation,

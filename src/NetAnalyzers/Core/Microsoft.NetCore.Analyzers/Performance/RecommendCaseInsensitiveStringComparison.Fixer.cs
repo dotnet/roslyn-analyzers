@@ -26,6 +26,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             INamedTypeSymbol stringComparisonType, out SyntaxNode? mainInvocationInstance);
 
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(RCISCAnalyzer.RuleId);
+
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)

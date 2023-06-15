@@ -11,7 +11,7 @@ Imports Microsoft.NetCore.Analyzers.Performance
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
-    Public Class BasicRecommendCaseInsensitiveStringComparisonFixer
+    Public NotInheritable Class BasicRecommendCaseInsensitiveStringComparisonFixer
         Inherits RecommendCaseInsensitiveStringComparisonFixer
 
         Protected Overrides Function GetExistingArguments(generator As SyntaxGenerator, mainInvocationOperation As IInvocationOperation,

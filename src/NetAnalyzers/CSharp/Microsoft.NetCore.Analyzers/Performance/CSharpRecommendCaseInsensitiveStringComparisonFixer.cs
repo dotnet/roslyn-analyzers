@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     using RCISCAnalyzer = RecommendCaseInsensitiveStringComparisonAnalyzer;
 
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    internal class CSharpRecommendCaseInsensitiveStringComparisonFixer : RecommendCaseInsensitiveStringComparisonFixer
+    public sealed class CSharpRecommendCaseInsensitiveStringComparisonFixer : RecommendCaseInsensitiveStringComparisonFixer
     {
         protected override List<SyntaxNode> GetExistingArguments(SyntaxGenerator generator, IInvocationOperation mainInvocationOperation,
             INamedTypeSymbol stringComparisonType, out SyntaxNode? mainInvocationInstance)

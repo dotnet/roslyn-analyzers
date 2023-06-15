@@ -106,12 +106,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             SyntaxNode stringMemberAccessExpression = generator.MemberAccessExpression(mainInvocationInstance, mainInvocation.TargetMethod.Name);
 
-            //SyntaxNode stringMemberAccessExpression = mainInvocationInstance != null ?
-            //    // a.CaseChanging().Diagnosable(b, ...)
-            //    generator.MemberAccessExpression(mainInvocationInstance, mainInvocation.TargetMethod.Name) :
-            //    // a.Diagnosable(b.CaseChanging(), ...)
-            //    generator.MemberAccessExpression(mainInvocation.Instance.Syntax, mainInvocation.TargetMethod.Name);
-
             SyntaxNode newInvocation = generator.InvocationExpression(stringMemberAccessExpression, newArguments).WithTriviaFrom(mainInvocation.Syntax);
 
             SyntaxNode newRoot = generator.ReplaceNode(root, mainInvocation.Syntax, newInvocation);

@@ -96,60 +96,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
 
-            /*
-            //// Ignore parenthesized operations
-            //IOperation? mainInstanceOperation = mainInvocation.Instance;
-            //while (mainInstanceOperation is not null and IParenthesizedOperation parenthesizedOperation)
-            //{
-            //    mainInstanceOperation = parenthesizedOperation.Operand;
-            //}
-
-            //IInvocationOperation removableInvocation;
-
-            //// There should be a child invocation on the left side (instance) of the large invocation
-            //// If the large invocation is "a.ToLower().Contains(b)"
-            //// Its instance is "a.ToLower()", the child invocation
-            //if (mainInstanceOperation is IInvocationOperation instanceInvocation &&
-            //    instanceInvocation.TargetMethod.Name is
-            //        RCISCAnalyzer.StringToLowerMethodName or RCISCAnalyzer.StringToUpperMethodName or
-            //        RCISCAnalyzer.StringToLowerInvariantMethodName or RCISCAnalyzer.StringToUpperInvariantMethodName)
-            //{
-            //    removableInvocation = instanceInvocation;
-            //}
-            //// The other option is that the offending operation is the first argument
-            //// a.Contains(b.ToLower(), ...)
-            //else
-            //{
-            //    IOperation? argumentOffendingOperation = mainInvocation.Arguments.FirstOrDefault();
-            //    while (argumentOffendingOperation is not null and IParenthesizedOperation parenthesizedOperation)
-            //    {
-            //        argumentOffendingOperation = parenthesizedOperation.Operand;
-            //    }
-
-            //    // TODO: Do not use firstordefault, add test that puts "value" in another position
-            //    if (argumentOffendingOperation is IArgumentOperation argumentOperation &&
-            //        argumentOperation.Children.FirstOrDefault() is IInvocationOperation argumentInvocation)
-            //    {
-            //        removableInvocation = argumentInvocation;
-            //        isChangingCaseInArgument = true;
-            //    }
-            //}
-
-            //string caseChangingApproachName;
-            //if (removableInvocation.TargetMethod.Name is
-            //    RCISCAnalyzer.StringToLowerMethodName or RCISCAnalyzer.StringToUpperMethodName)
-            //{
-            //    caseChangingApproachName = RCISCAnalyzer.StringComparisonCurrentCultureIgnoreCaseName;
-            //}
-            //else
-            //{
-            //    Debug.Assert(removableInvocation.TargetMethod.Name is
-            //        RCISCAnalyzer.StringToLowerInvariantMethodName or RCISCAnalyzer.StringToUpperInvariantMethodName);
-
-            //    caseChangingApproachName = RCISCAnalyzer.StringComparisonInvariantCultureIgnoreCaseName;
-            //}
-            */
-
             // Defensive check: Should not fix string.CompareTo
             Debug.Assert(diagnosableMethodName is
                 RCISCAnalyzer.StringContainsMethodName or

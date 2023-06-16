@@ -74,7 +74,7 @@
     <!-- Versions for tests and general utility execution. -->
     <!-- This version is for utility and executable assemblies. The version here should not overlap with any of the surface
          area versions. -->
-    <MicrosoftCodeAnalysisVersionForTests>4.6.0-1.final</MicrosoftCodeAnalysisVersionForTests>
+    <MicrosoftCodeAnalysisVersionForTests>4.7.0-2.final</MicrosoftCodeAnalysisVersionForTests>
     <MicrosoftCodeAnalysisVersionForExecution>4.6.0-1.final</MicrosoftCodeAnalysisVersionForExecution>
     <MicrosoftCodeAnalysisCSharpCodeStyleVersion>4.5.0</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
     <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>4.5.0</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>

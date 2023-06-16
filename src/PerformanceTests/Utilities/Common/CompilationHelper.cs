@@ -123,9 +123,14 @@ namespace PerformanceTests.Utilities
         /// <summary>
         /// This class just passes argument through to the projects options provider and it used to provider custom global options
         /// </summary>
-        private sealed class OptionsProvider((string, string)[] globalOptions) : AnalyzerConfigOptionsProvider
+        private sealed class OptionsProvider : AnalyzerConfigOptionsProvider
         {
-            public AnalyzerConfigOptions GlobalOptions { get; } = new ConfigOptions(globalOptions);
+            public OptionsProvider((string, string)[] globalOptions)
+            {
+                GlobalOptions = new ConfigOptions(globalOptions);
+            }
+
+            public AnalyzerConfigOptions GlobalOptions { get; }
 
             public override AnalyzerConfigOptions GetOptions(SyntaxTree tree)
                 => GlobalOptions;
@@ -137,9 +142,12 @@ namespace PerformanceTests.Utilities
         /// <summary>
         /// Allows adding additional global options
         /// </summary>
-        private sealed class ConfigOptions((string, string)[] globalOptions) : AnalyzerConfigOptions
+        private sealed class ConfigOptions : AnalyzerConfigOptions
         {
-            private readonly Dictionary<string, string> _globalOptions = globalOptions.ToDictionary(t => t.Item1, t => t.Item2);
+            private readonly Dictionary<string, string> _globalOptions;
+
+            public ConfigOptions((string, string)[] globalOptions)
+                => _globalOptions = globalOptions.ToDictionary(t => t.Item1, t => t.Item2);
 
             public override bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
                 => _globalOptions.TryGetValue(key, out value);

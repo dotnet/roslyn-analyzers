@@ -18,9 +18,14 @@ namespace PerformanceTests.Utilities
             return new CompositionContextShim(exportProvider);
         }
 
-        private sealed class CompositionContextShim(ExportProvider exportProvider) : CompositionContext
+        private sealed class CompositionContextShim : CompositionContext
         {
-            private readonly ExportProvider _exportProvider = exportProvider;
+            private readonly ExportProvider _exportProvider;
+
+            public CompositionContextShim(ExportProvider exportProvider)
+            {
+                _exportProvider = exportProvider;
+            }
 
             public override bool TryGetExport(CompositionContract contract, [NotNullWhen(true)] out object? export)
             {

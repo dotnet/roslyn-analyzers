@@ -5,10 +5,16 @@ using System.Collections.Generic;
 
 namespace PerformanceTests.Utilities
 {
-    public class ProjectCollection(string defaultLanguage, string defaultExtension) : Dictionary<string, ProjectState>
+    public class ProjectCollection : Dictionary<string, ProjectState>
     {
-        private readonly string _defaultLanguage = defaultLanguage;
-        private readonly string _defaultExtension = defaultExtension;
+        private readonly string _defaultLanguage;
+        private readonly string _defaultExtension;
+
+        public ProjectCollection(string defaultLanguage, string defaultExtension)
+        {
+            _defaultLanguage = defaultLanguage;
+            _defaultExtension = defaultExtension;
+        }
 
         public new ProjectState this[string projectName]
         {

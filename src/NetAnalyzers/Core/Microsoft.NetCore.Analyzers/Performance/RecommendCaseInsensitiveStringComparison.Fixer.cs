@@ -22,7 +22,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     /// </summary>
     public abstract class RecommendCaseInsensitiveStringComparisonFixer : CodeFixProvider
     {
-        protected abstract List<SyntaxNode> GetExistingArguments(SyntaxGenerator generator, IInvocationOperation mainInvocationOperation,
+        protected abstract List<SyntaxNode> GetNewArguments(SyntaxGenerator generator, IInvocationOperation mainInvocationOperation,
             INamedTypeSymbol stringComparisonType, out SyntaxNode? mainInvocationInstance);
 
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(RCISCAnalyzer.RuleId);
@@ -102,7 +102,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 RCISCAnalyzer.StringIndexOfMethodName or
                 RCISCAnalyzer.StringStartsWithMethodName);
 
-            List<SyntaxNode> newArguments = GetExistingArguments(generator, mainInvocation, stringComparisonType, out SyntaxNode? mainInvocationInstance);
+            List<SyntaxNode> newArguments = GetNewArguments(generator, mainInvocation, stringComparisonType, out SyntaxNode? mainInvocationInstance);
 
             SyntaxNode stringMemberAccessExpression = generator.MemberAccessExpression(mainInvocationInstance, mainInvocation.TargetMethod.Name);
 

@@ -14,7 +14,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
     Public NotInheritable Class BasicRecommendCaseInsensitiveStringComparisonFixer
         Inherits RecommendCaseInsensitiveStringComparisonFixer
 
-        Protected Overrides Function GetExistingArguments(generator As SyntaxGenerator, mainInvocationOperation As IInvocationOperation,
+        Protected Overrides Function GetNewArguments(generator As SyntaxGenerator, mainInvocationOperation As IInvocationOperation,
             stringComparisonType As INamedTypeSymbol, ByRef mainInvocationInstance As SyntaxNode) As List(Of SyntaxNode)
 
             Dim paramName As String = RecommendCaseInsensitiveStringComparisonAnalyzer.StringParameterName

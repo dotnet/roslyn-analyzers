@@ -123,7 +123,7 @@ namespace PerformanceTests.Utilities
         /// <summary>
         /// This class just passes argument through to the projects options provider and it used to provider custom global options
         /// </summary>
-        private class OptionsProvider : AnalyzerConfigOptionsProvider
+        private sealed class OptionsProvider : AnalyzerConfigOptionsProvider
         {
             public OptionsProvider((string, string)[] globalOptions)
             {
@@ -142,7 +142,7 @@ namespace PerformanceTests.Utilities
         /// <summary>
         /// Allows adding additional global options
         /// </summary>
-        private class ConfigOptions : AnalyzerConfigOptions
+        private sealed class ConfigOptions : AnalyzerConfigOptions
         {
             private readonly Dictionary<string, string> _globalOptions;
 

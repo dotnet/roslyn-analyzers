@@ -10,7 +10,7 @@ using System.CommandLine.Rendering;
 
 namespace PerfDiff.Logging
 {
-    internal class SimpleConsoleLogger : ILogger
+    internal sealed class SimpleConsoleLogger : ILogger
     {
         private readonly object _gate = new();
 

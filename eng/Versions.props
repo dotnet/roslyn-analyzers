@@ -1,7 +1,7 @@
 <Project>
   <Import Project="$(SourceBuildPackageVersionPropsPath)" Condition="'$(SourceBuildPackageVersionPropsPath)' != ''" />
   <PropertyGroup>
-    <VersionPrefix>3.3.5</VersionPrefix>
+    <VersionPrefix>3.11.0</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
     <NetAnalyzersVersionPrefix>8.0.0</NetAnalyzersVersionPrefix>
     <NetAnalyzersPreReleaseVersionLabel>preview</NetAnalyzersPreReleaseVersionLabel>
@@ -60,17 +60,17 @@
     -->
     <!-- Microsoft.CodeAnalysis versions for different purposes. -->
     <!-- Surface area that various projects compile against. These should have source-build reference packages -->
-    <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
+    <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.11</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
     <MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>1.2.1</MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>
-    <MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>2.9.0</MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>
-    <MicrosoftCodeAnalysisVersionForBannedApiAnalyzersTests>3.3.1</MicrosoftCodeAnalysisVersionForBannedApiAnalyzersTests>
-    <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>2.9.0</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>
-    <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzersTests>3.3.1</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzersTests>
+    <MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>3.11</MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>
+    <MicrosoftCodeAnalysisVersionForBannedApiAnalyzersTests>3.11</MicrosoftCodeAnalysisVersionForBannedApiAnalyzersTests>
+    <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>3.11</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>
+    <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzersTests>3.11</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzersTests>
     <MicrosoftCodeAnalysisVersionForResxSourceGenerators>4.0.1</MicrosoftCodeAnalysisVersionForResxSourceGenerators>
-    <MicrosoftCodeAnalysisVersionForNetAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForNetAnalyzers>
-    <MicrosoftCodeAnalysisVersionForTextAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForTextAnalyzers>
-    <MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>
-    <MicrosoftCodeAnalysisVersionForToolsAndUtilities>3.3.1</MicrosoftCodeAnalysisVersionForToolsAndUtilities>
+    <MicrosoftCodeAnalysisVersionForNetAnalyzers>3.11</MicrosoftCodeAnalysisVersionForNetAnalyzers>
+    <MicrosoftCodeAnalysisVersionForTextAnalyzers>3.11</MicrosoftCodeAnalysisVersionForTextAnalyzers>
+    <MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>3.11</MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>
+    <MicrosoftCodeAnalysisVersionForToolsAndUtilities>3.11</MicrosoftCodeAnalysisVersionForToolsAndUtilities>
     <!-- Versions for tests and general utility execution. -->
     <!-- This version is for utility and executable assemblies. The version here should not overlap with any of the surface
          area versions. -->

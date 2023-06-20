@@ -45,17 +45,17 @@ class C {{
         public async Task SingleExpectedConstructor_PrimaryConstructors_CSharpAsync(string mefNamespace)
         {
             var source = $$"""
-using {{mefNamespace}};
-using System.Diagnostics.CodeAnalysis;
+                using {{mefNamespace}};
+                using System.Diagnostics.CodeAnalysis;
 
-[Export]
-[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0034:Exported parts should have [ImportingConstructor]", Justification = "Used incorrectly by tests")]
-class C(string s)
-{
-    [ImportingConstructor]
-    public C() : this("") { }
-}
-""";
+                [Export]
+                [method: SuppressMessage("RoslynDiagnosticsReliability", "RS0034:Exported parts should have [ImportingConstructor]", Justification = "Used incorrectly by tests")]
+                class C(string s)
+                {
+                    [ImportingConstructor]
+                    public C() : this("") { }
+                }
+                """;
 
             await new VerifyCS.Test
             {

@@ -84,7 +84,7 @@ namespace Roslyn.Diagnostics.Analyzers
 
             foreach (var constructor in namedType.Constructors)
             {
-                if (constructor.IsImplicitlyDeclared)
+                if (constructor.IsImplicitlyDeclared && constructor.DeclaringSyntaxReferences.IsEmpty)
                 {
                     continue;
                 }

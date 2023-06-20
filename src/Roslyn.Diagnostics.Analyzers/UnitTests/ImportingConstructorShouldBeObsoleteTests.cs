@@ -51,6 +51,44 @@ namespace Microsoft.CodeAnalysis.Host.Mef {{
         [Theory]
         [InlineData("System.Composition")]
         [InlineData("System.ComponentModel.Composition")]
+        public async Task SingleExpectedConstructor_PrimaryConstructor_CSharpAsync(string mefNamespace)
+        {
+            var source = $$"""
+                using System;
+                using {{mefNamespace}};
+                using Microsoft.CodeAnalysis.Host.Mef;
+                using System.Diagnostics.CodeAnalysis;
+
+                [Export]
+                [method: ImportingConstructor]
+                [method: SuppressMessage(MefConstruction.ImportingConstructorMessage, "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code")]
+                class C(string s)
+                {
+                }
+
+                namespace Microsoft.CodeAnalysis.Host.Mef
+                {
+                    static class MefConstruction
+                    {
+                        internal const string ImportingConstructorMessage = "This exported object must be obtained through the MEF export provider.";
+                    }
+                }
+                """.NormalizeLineEndings();
+
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemComponentModelCompositionReference },
+                },
+                LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion.Preview,
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("System.Composition")]
+        [InlineData("System.ComponentModel.Composition")]
         public async Task SingleExpectedConstructor_VisualBasicAsync(string mefNamespace)
         {
             var source = $@"

@@ -58,7 +58,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             Task<Document> createChangedDocument(CancellationToken _) => FixInvocationAsync(doc, root,
                 invocation, stringComparisonType, invocation.TargetMethod.Name);
 
-            string title = string.Format(
+            string title = string.Format(System.Globalization.CultureInfo.CurrentCulture,
                 MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle, invocation.TargetMethod.Name);
 
             context.RegisterCodeFix(

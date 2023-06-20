@@ -673,11 +673,6 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
         <target state="translated">ServerCertificateValidationCallback 已設定為會一律傳回 true 來接受所有伺服器憑證的函式。請確保伺服器憑證經過驗證，以驗證收到要求之伺服器的身分識別。</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
-        <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
-        <target state="translated">當 CheckCertificateRevocationList 屬性設為 true 時，使用 HttpClient 而不提供平台特定處理常式 (WinHttpHandler 或 CurlHandler 或 HttpClientHandler)，將允許 HttpClient 接受已撤銷的憑證為有效。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderChecking">
         <source>Do Not Disable HTTP Header Checking</source>
         <target state="translated">請勿停用 HTTP 標頭檢查</target>
@@ -691,6 +686,11 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
       <trans-unit id="DoNotDisableHTTPHeaderCheckingMessage">
         <source>Do not disable HTTP header checking</source>
         <target state="translated">請勿停用 HTTP 標頭檢查</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
+        <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
+        <target state="translated">當 CheckCertificateRevocationList 屬性設為 true 時，使用 HttpClient 而不提供平台特定處理常式 (WinHttpHandler 或 CurlHandler 或 HttpClientHandler)，將允許 HttpClient 接受已撤銷的憑證為有效。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidation">
@@ -928,21 +928,6 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
         <target state="translated">對稱式加密應永遠使用不可重複的初始化向量以防止字典攻擊。</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
-        <source>Do Not Use Deprecated Security Protocols</source>
-        <target state="translated">請勿使用已淘汰的安全性通訊協定</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
-        <source>Using a deprecated security protocol rather than the system default is risky.</source>
-        <target state="translated">使用了已淘汰的安全性通訊協定而非系統預設值，相當具風險。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
-        <source>Hard-coded use of deprecated security protocol {0}</source>
-        <target state="translated">硬式編碼使用了已淘汰的安全性通訊協定 {0}</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotUseDSA">
         <source>Do Not Use Digital Signature Algorithm (DSA)</source>
         <target state="translated">請勿使用數位簽章演算法 (DSA)</target>
@@ -956,6 +941,21 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
       <trans-unit id="DoNotUseDSAMessage">
         <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
         <target state="translated">非對稱式加密演算法 {0} 是弱式加密。請改為至少有 2048 金鑰大小的 RSA、ECDH 或 ECDSA 演算法。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
+        <source>Do Not Use Deprecated Security Protocols</source>
+        <target state="translated">請勿使用已淘汰的安全性通訊協定</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
+        <source>Using a deprecated security protocol rather than the system default is risky.</source>
+        <target state="translated">使用了已淘汰的安全性通訊協定而非系統預設值，相當具風險。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
+        <source>Hard-coded use of deprecated security protocol {0}</source>
+        <target state="translated">硬式編碼使用了已淘汰的安全性通訊協定 {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyDescription">
@@ -1978,6 +1978,21 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
         <target state="translated">建議使用 'AsSpan' 而不是 'Substring'</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
+        <source>'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.</source>
+        <target state="translated">當字串是單一字元時，'StringBuilder.Append(char)' 比 'StringBuilder.Append(string)' 更有效率。當以常數呼叫 'Append' 時，建議使用常數字元，而不要使用包含一個字元的常數字串。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
+        <source>Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string</source>
+        <target state="translated">當輸入為常數單元字串時，請使用 'StringBuilder.Append(char)'，而非 'StringBuilder.Append(string)'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
+        <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
+        <target state="translated">請在適當時考慮使用 'StringBuilder.Append(char)'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferCountOverAnyCodeFixTitle">
         <source>Use 'Count' check instead of 'Any()'</source>
         <target state="translated">使用 'Count' 檢查而非 'Any()'</target>
@@ -2023,6 +2038,26 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
         <target state="translated">字典類型 '{0}' 建議使用 'ContainsValue' 而不是 'Values.Contains'</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="translated">使用 'TryGetValue(TKey，out TValue)'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
+        <target state="translated">建議使用 'TryGetValue' 呼叫，而不是由 'ContainsKey' 檢查所防護的字典索引子存取權。'ContainsKey' 和索引子會在罩下查閱索引鍵，因此使用 'TryGetValue' 會移除額外的查閱。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
+        <target state="translated">建議使用 'TryGetValue' 呼叫，而不是使用 'ContainsKey' 檢查所防護的字典索引子存取權，以避免再次查閱</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
+        <target state="translated">建議使用 'IDictionary.TryGetValue(TKey，out TValue)' 方法</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferHashDataCodefixTitle">
         <source>Replace with 'HashData' method</source>
         <target state="translated">以 'HashData' 方法取代</target>
@@ -2053,6 +2088,21 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
         <target state="translated">為了清楚明瞭和為了提升效能，偏好 'IsEmpty' 檢查，而不是使用 'Any()'</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferIsEmptyOverCountDescription">
+        <source>For determining whether the object contains or not any items, prefer using 'IsEmpty' property rather than retrieving the number of items from the 'Count' property and comparing it to 0 or 1.</source>
+        <target state="translated">若要判斷物件是否包含項目，建議使用 'IsEmpty' 屬性，而不要從 'Count' 屬性中擷取項目數來與 0 或 1 比較。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsEmptyOverCountMessage">
+        <source>Prefer 'IsEmpty' over 'Count' to determine whether the object is empty</source>
+        <target state="translated">若要判斷物件是否為空，建議使用 'IsEmpty'，而不要使用 'Count'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsEmptyOverCountTitle">
+        <source>Prefer IsEmpty over Count</source>
+        <target state="translated">建議使用 IsEmpty，而不要使用 Count</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferLengthCountIsEmptyOverAnyDescription">
         <source>Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rather than calling 'Enumerable.Any()'. The intent is clearer and it is more performant than using 'Enumerable.Any()' extension method.</source>
         <target state="translated">偏好使用 'IsEmpty'、'Count' 或 'Length' 屬性 (以可用者為准)，而不是呼叫 'Enumerable.Any()'。意圖更清楚，而且比使用 'Enumerable.Any()' 擴充方法更具效能。</target>
@@ -2076,21 +2126,6 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
       <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">
         <source>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</source>
         <target state="translated">'Stream' 具有採用 'Memory&lt;Byte&gt;' 作為第一個引數的 'ReadAsync' 多載，以及採用 'ReadOnlyMemory&lt;Byte&gt;' 作為第一個引數的 'WriteAsync' 多載。建議呼叫採用記憶體的多載，較有效率。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferIsEmptyOverCountDescription">
-        <source>For determining whether the object contains or not any items, prefer using 'IsEmpty' property rather than retrieving the number of items from the 'Count' property and comparing it to 0 or 1.</source>
-        <target state="translated">若要判斷物件是否包含項目，建議使用 'IsEmpty' 屬性，而不要從 'Count' 屬性中擷取項目數來與 0 或 1 比較。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferIsEmptyOverCountMessage">
-        <source>Prefer 'IsEmpty' over 'Count' to determine whether the object is empty</source>
-        <target state="translated">若要判斷物件是否為空，建議使用 'IsEmpty'，而不要使用 'Count'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferIsEmptyOverCountTitle">
-        <source>Prefer IsEmpty over Count</source>
-        <target state="translated">建議使用 IsEmpty，而不要使用 Count</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsMessage">
@@ -2141,21 +2176,6 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
       <trans-unit id="PreferTypedStringBuilderAppendOverloadsTitle">
         <source>Prefer strongly-typed Append and Insert method overloads on StringBuilder</source>
         <target state="translated">建議在 StringBuilder 上使用強型別 Append 及 Insert 方法多載</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
-        <source>'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.</source>
-        <target state="translated">當字串是單一字元時，'StringBuilder.Append(char)' 比 'StringBuilder.Append(string)' 更有效率。當以常數呼叫 'Append' 時，建議使用常數字元，而不要使用包含一個字元的常數字串。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
-        <source>Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string</source>
-        <target state="translated">當輸入為常數單元字串時，請使用 'StringBuilder.Append(char)'，而非 'StringBuilder.Append(string)'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
-        <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
-        <target state="translated">請在適當時考慮使用 'StringBuilder.Append(char)'</target>
         <note />
       </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage">
@@ -2263,6 +2283,41 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
         <target state="translated">加入子類別 'Stream' 時，提供非同步方法的記憶體型覆寫</target>
         <note />
       </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo', because they lead to an allocation. Instead, use 'StringComparer' to perform case-insensitive comparisons.</source>
+        <target state="new">Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo', because they lead to an allocation. Instead, use 'StringComparer' to perform case-insensitive comparisons.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerMessage">
+        <source>Prefer using 'StringComparer' to perform a case-insensitive comparison</source>
+        <target state="new">Prefer using 'StringComparer' to perform a case-insensitive comparison</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle">
+        <source>Use the 'string.{0}(string, StringComparison)' overload</source>
+        <target state="new">Use the 'string.{0}(string, StringComparison)' overload</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerTitle">
+        <source>Prefer using 'StringComparer' to perform case-insensitive string comparisons</source>
+        <target state="new">Prefer using 'StringComparer' to perform case-insensitive string comparisons</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons because they lead to an allocation. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons.</source>
+        <target state="new">Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons because they lead to an allocation. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonMessage">
+        <source>Prefer the string comparison method overload of '{0}' that takes a 'StringComparison' enum value to perform a case-insensitive comparison</source>
+        <target state="new">Prefer the string comparison method overload of '{0}' that takes a 'StringComparison' enum value to perform a case-insensitive comparison</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonTitle">
+        <source>Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons</source>
+        <target state="new">Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons</target>
+        <note />
+      </trans-unit>
       <trans-unit id="RemoveRedundantCall">
         <source>Remove redundant call</source>
         <target state="translated">移除冗餘的呼叫</target>
@@ -2358,6 +2413,16 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
         <target state="translated">檢閱程式碼以了解是否有插入 SQL 弱點</target>
         <note />
       </trans-unit>
+      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
+        <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="translated">發現潛在的插入 XPath 弱點，方法 '{1}' 中的 '{0}' 可能被來自方法 '{3}' 中 '{2}' 由使用者控制的資料所感染。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
+        <source>Review code for XPath injection vulnerabilities</source>
+        <target state="translated">檢閱程式碼以了解是否有插入 XPath 弱點</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReviewCodeForXamlInjectionVulnerabilitiesMessage">
         <source>Potential XAML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
         <target state="translated">發現潛在的插入 XAML 弱點，方法 '{1}' 中的 '{0}' 可能被來自方法 '{3}' 中 '{2}' 由使用者控制的資料所感染。</target>
@@ -2376,16 +2441,6 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
       <trans-unit id="ReviewCodeForXmlInjectionVulnerabilitiesTitle">
         <source>Review code for XML injection vulnerabilities</source>
         <target state="translated">檢閱程式碼以了解是否有插入 XML 弱點</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
-        <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">發現潛在的插入 XPath 弱點，方法 '{1}' 中的 '{0}' 可能被來自方法 '{3}' 中 '{2}' 由使用者控制的資料所感染。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
-        <source>Review code for XPath injection vulnerabilities</source>
-        <target state="translated">檢閱程式碼以了解是否有插入 XPath 弱點</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXssVulnerabilitiesMessage">
@@ -2968,6 +3023,26 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
         <target state="translated">如果可行的話，請考慮從共用存取簽章 (SAS) 改為使用 Azure 的角色型存取控制。如果您仍需要使用 SAS，請指定 SharedAccessProtocol.HttpsOnly。</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatCodeFixTitle">
+        <source>Use 'AsSpan' with 'string.Concat'</source>
+        <target state="translated">請將 'AsSpan' 與 'string.Concat' 一起使用</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatDescription">
+        <source>It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.</source>
+        <target state="translated">使用 'AsSpan' 和 'string.Concat' 比 'Substring' 和串連運算子更有效率。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatMessage">
+        <source>Use span-based 'string.Concat' and 'AsSpan' instead of 'Substring'</source>
+        <target state="translated">請使用範圍型的 'string.Concat' 和 'AsSpan'，而非 'Substring'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatTitle">
+        <source>Use span-based 'string.Concat'</source>
+        <target state="translated">請使用範圍型的 'string.Concat'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseSpanClearInsteadOfFillCodeFixTitle">
         <source>Use 'Clear()'</source>
         <target state="translated">使用 'Clear()'</target>
@@ -3008,6 +3083,21 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
         <target state="translated">使用 'StartsWith' 代替 'IndexOf'</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersDescription">
+        <source>'string.Contains(char)' is available as a better performing overload for single char lookup.</source>
+        <target state="translated">'string.Contains(char)' 對單一字元查閱而言可做為更佳的執行多載。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersMessage">
+        <source>Use 'string.Contains(char)' instead of 'string.Contains(string)' when searching for a single character</source>
+        <target state="translated">請在搜尋單一字元時使用 'string.Contains(char)' 而非 'string.Contains(string)'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersTitle">
+        <source>Use char literal for a single character lookup</source>
+        <target state="translated">請為單一字元查閱使用字元常值</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">
         <source>Use 'string.Equals'</source>
         <target state="translated">請使用 'string.Equals'</target>
@@ -3026,41 +3116,6 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
       <trans-unit id="UseStringEqualsOverStringCompareTitle">
         <source>Use 'string.Equals'</source>
         <target state="translated">請使用 'string.Equals'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatCodeFixTitle">
-        <source>Use 'AsSpan' with 'string.Concat'</source>
-        <target state="translated">請將 'AsSpan' 與 'string.Concat' 一起使用</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatDescription">
-        <source>It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.</source>
-        <target state="translated">使用 'AsSpan' 和 'string.Concat' 比 'Substring' 和串連運算子更有效率。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatMessage">
-        <source>Use span-based 'string.Concat' and 'AsSpan' instead of 'Substring'</source>
-        <target state="translated">請使用範圍型的 'string.Concat' 和 'AsSpan'，而非 'Substring'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatTitle">
-        <source>Use span-based 'string.Concat'</source>
-        <target state="translated">請使用範圍型的 'string.Concat'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersDescription">
-        <source>'string.Contains(char)' is available as a better performing overload for single char lookup.</source>
-        <target state="translated">'string.Contains(char)' 對單一字元查閱而言可做為更佳的執行多載。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersMessage">
-        <source>Use 'string.Contains(char)' instead of 'string.Contains(string)' when searching for a single character</source>
-        <target state="translated">請在搜尋單一字元時使用 'string.Contains(char)' 而非 'string.Contains(string)'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersTitle">
-        <source>Use char literal for a single character lookup</source>
-        <target state="translated">請為單一字元查閱使用字元常值</target>
         <note />
       </trans-unit>
       <trans-unit id="UseThrowHelperDescription">
@@ -3176,26 +3231,6 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
       <trans-unit id="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder">
         <source>{3} '{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</source>
         <target state="translated">{3} '{0}' 使用預覽類型 '{1}'，因此必須加入預覽功能。如需詳細資訊，請參閱 {2}。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
-        <source>Use 'TryGetValue(TKey, out TValue)'</source>
-        <target state="translated">使用 'TryGetValue(TKey，out TValue)'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueTitle">
-        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
-        <target state="translated">建議使用 'IDictionary.TryGetValue(TKey，out TValue)' 方法</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueMessage">
-        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
-        <target state="translated">建議使用 'TryGetValue' 呼叫，而不是使用 'ContainsKey' 檢查所防護的字典索引子存取權，以避免再次查閱</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueDescription">
-        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
-        <target state="translated">建議使用 'TryGetValue' 呼叫，而不是由 'ContainsKey' 檢查所防護的字典索引子存取權。'ContainsKey' 和索引子會在罩下查閱索引鍵，因此使用 'TryGetValue' 會移除額外的查閱。</target>
         <note />
       </trans-unit>
     </body>

@@ -673,11 +673,6 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <target state="translated">Die ServerCertificateValidationCallback-Eigenschaft wurde auf eine Funktion festgelegt, die alle Serverzertifikate akzeptiert, indem immer "true" zurückgegeben wird. Stellen Sie sicher, dass die Serverzertifikate darauf ausgelegt sind, die Identität des Servers zu überprüfen, der Anforderungen erhält.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
-        <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
-        <target state="translated">Die Verwendung von HttpClient ohne Bereitstellen eines plattformspezifischen Handlers (WinHttpHandler, CurlHandler oder HttpClientHandler), bei dem die CheckCertificateRevocationList-Eigenschaft auf TRUE festgelegt ist, ermöglicht, dass gesperrte Zertifikate vom HttpClient als gültig akzeptiert werden.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderChecking">
         <source>Do Not Disable HTTP Header Checking</source>
         <target state="translated">Deaktivieren Sie nicht die Überprüfung von HTTP-Headern.</target>
@@ -691,6 +686,11 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
       <trans-unit id="DoNotDisableHTTPHeaderCheckingMessage">
         <source>Do not disable HTTP header checking</source>
         <target state="translated">Deaktivieren Sie nicht die Überprüfung von HTTP-Headern.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
+        <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
+        <target state="translated">Die Verwendung von HttpClient ohne Bereitstellen eines plattformspezifischen Handlers (WinHttpHandler, CurlHandler oder HttpClientHandler), bei dem die CheckCertificateRevocationList-Eigenschaft auf TRUE festgelegt ist, ermöglicht, dass gesperrte Zertifikate vom HttpClient als gültig akzeptiert werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidation">
@@ -928,21 +928,6 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <target state="translated">Für die symmetrische Verschlüsselung muss immer ein nicht wiederholbarer Initialisierungsvektor verwendet werden, um Wörterbuchangriffe zu verhindern.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
-        <source>Do Not Use Deprecated Security Protocols</source>
-        <target state="translated">Verwenden Sie keine veralteten Sicherheitsprotokolle.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
-        <source>Using a deprecated security protocol rather than the system default is risky.</source>
-        <target state="translated">Die Verwendung eines veralteten Sicherheitsprotokolls anstelle des Systemstandards ist riskant.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
-        <source>Hard-coded use of deprecated security protocol {0}</source>
-        <target state="translated">Hartcodierte Verwendung des veralteten Sicherheitsprotokolls "{0}"</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotUseDSA">
         <source>Do Not Use Digital Signature Algorithm (DSA)</source>
         <target state="translated">Digitalen Signaturalgorithmus (DSA) nicht verwenden</target>
@@ -956,6 +941,21 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
       <trans-unit id="DoNotUseDSAMessage">
         <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
         <target state="translated">Der asymmetrische Verschlüsselungsalgorithmus "{0}" ist schwach. Wechseln Sie stattdessen zu einer RSA-Verschlüsselung mit ECDH- oder ECDSA-Algorithmus mit einer Schlüsselgröße von mindestens 2048.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
+        <source>Do Not Use Deprecated Security Protocols</source>
+        <target state="translated">Verwenden Sie keine veralteten Sicherheitsprotokolle.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
+        <source>Using a deprecated security protocol rather than the system default is risky.</source>
+        <target state="translated">Die Verwendung eines veralteten Sicherheitsprotokolls anstelle des Systemstandards ist riskant.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
+        <source>Hard-coded use of deprecated security protocol {0}</source>
+        <target state="translated">Hartcodierte Verwendung des veralteten Sicherheitsprotokolls "{0}"</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyDescription">
@@ -1978,6 +1978,21 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <target state="translated">"AsSpan" gegenüber "Substring" bevorzugen</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
+        <source>'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.</source>
+        <target state="translated">"StringBuilder.Append(char)" ist effizienter als "StringBuilder.Append(string)", wenn die Zeichenfolge ein einzelnes Zeichen enthält. Wenn "Append" mit einer Konstante aufgerufen wird, verwenden Sie eher ein konstantes Zeichen anstelle einer konstanten Zeichenfolge, die nur ein Zeichen enthält.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
+        <source>Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string</source>
+        <target state="translated">Verwenden Sie "StringBuilder.Append(char)" anstelle von "StringBuilder.Append(string)", wenn es sich bei der Eingabe um eine konstante Einheitenzeichenfolge handelt.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
+        <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
+        <target state="translated">Verwendung von "StringBuilder.Append(char)" erwägen</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferCountOverAnyCodeFixTitle">
         <source>Use 'Count' check instead of 'Any()'</source>
         <target state="translated">„Count“ anstelle von „Any()“ verwenden</target>
@@ -2023,6 +2038,26 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <target state="translated">Bevorzugen Sie "ContainsValue" gegenüber "Values.Contains" für den Wörterbuchtyp "{0}".</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="translated">„TryGetValue(TKey, out TValue)“ verwenden</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
+        <target state="translated">Ziehen Sie einen „TryGetValue“-Aufruf einem Wörterbuchindexerzugriff vor, der durch eine „ContainsKey“-Überprüfung geschützt wird. „ContainsKey“ und der Indexer würden beide den Schlüssel im Hintergrund suchen; die Verwendung von „TryGetValue“ entfernt die zusätzliche Suche.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
+        <target state="translated">Ziehen Sie einen „TryGetValue“-Aufruf einem Wörterbuchindexerzugriff vor, der durch eine „ContainsKey“-Überprüfung geschützt wird, um eine doppelte Suche zu vermeiden</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
+        <target state="translated">Methode „IDictionary.TryGetValue(TKey, out TValue)“ bevorzugen</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferHashDataCodefixTitle">
         <source>Replace with 'HashData' method</source>
         <target state="translated">Ersetzen Sie dies durch die Methode „HashData“.</target>
@@ -2053,6 +2088,21 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <target state="translated">Sowohl aus Gründen der Klarheit als auch der Leistung ist eine Überprüfung mit „IsEmpty“ der Verwendung von „Any()“ vorzuziehen</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferIsEmptyOverCountDescription">
+        <source>For determining whether the object contains or not any items, prefer using 'IsEmpty' property rather than retrieving the number of items from the 'Count' property and comparing it to 0 or 1.</source>
+        <target state="translated">Wenn Sie bestimmen möchten, ob das Objekt Elemente enthält oder nicht, verwenden Sie die Eigenschaft "IsEmpty", anstatt die Anzahl von Elementen aus der Eigenschaft "Count" abzurufen und mit 0 oder 1 zu vergleichen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsEmptyOverCountMessage">
+        <source>Prefer 'IsEmpty' over 'Count' to determine whether the object is empty</source>
+        <target state="translated">Verwenden Sie "IsEmpty" anstelle von "Count", um zu bestimmen, ob das Objekt leer ist.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsEmptyOverCountTitle">
+        <source>Prefer IsEmpty over Count</source>
+        <target state="translated">Ziehen Sie "IsEmpty" gegenüber "Count" vor</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferLengthCountIsEmptyOverAnyDescription">
         <source>Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rather than calling 'Enumerable.Any()'. The intent is clearer and it is more performant than using 'Enumerable.Any()' extension method.</source>
         <target state="translated">Verwenden Sie lieber die Eigenschaften „IsEmpty“, „Count“ oder „Length“, sofern verfügbar, statt „Enumerable.Any()“ aufzurufen. Die Absicht ist klarer und das Ausführungsverhalten besser als bei Verwendung der Erweiterungsmethode „Enumerable.Any()“.</target>
@@ -2076,21 +2126,6 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
       <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">
         <source>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</source>
         <target state="translated">Stream verfügt über eine Überladung "ReadAsync", die "Memory&lt;Byte&gt;" als erstes Argument akzeptiert, sowie über eine Überladung "WriteAsync", die "ReadOnlyMemory&lt;Byte&gt;" als erstes Argument akzeptiert. Rufen Sie möglichst arbeitsspeicherbasierte Überladungen auf, da diese effizienter sind.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferIsEmptyOverCountDescription">
-        <source>For determining whether the object contains or not any items, prefer using 'IsEmpty' property rather than retrieving the number of items from the 'Count' property and comparing it to 0 or 1.</source>
-        <target state="translated">Wenn Sie bestimmen möchten, ob das Objekt Elemente enthält oder nicht, verwenden Sie die Eigenschaft "IsEmpty", anstatt die Anzahl von Elementen aus der Eigenschaft "Count" abzurufen und mit 0 oder 1 zu vergleichen.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferIsEmptyOverCountMessage">
-        <source>Prefer 'IsEmpty' over 'Count' to determine whether the object is empty</source>
-        <target state="translated">Verwenden Sie "IsEmpty" anstelle von "Count", um zu bestimmen, ob das Objekt leer ist.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferIsEmptyOverCountTitle">
-        <source>Prefer IsEmpty over Count</source>
-        <target state="translated">Ziehen Sie "IsEmpty" gegenüber "Count" vor</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsMessage">
@@ -2141,21 +2176,6 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
       <trans-unit id="PreferTypedStringBuilderAppendOverloadsTitle">
         <source>Prefer strongly-typed Append and Insert method overloads on StringBuilder</source>
         <target state="translated">Stark typisierte Append- und Insert-Methodenüberladungen für StringBuilder bevorzugen</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
-        <source>'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.</source>
-        <target state="translated">"StringBuilder.Append(char)" ist effizienter als "StringBuilder.Append(string)", wenn die Zeichenfolge ein einzelnes Zeichen enthält. Wenn "Append" mit einer Konstante aufgerufen wird, verwenden Sie eher ein konstantes Zeichen anstelle einer konstanten Zeichenfolge, die nur ein Zeichen enthält.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
-        <source>Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string</source>
-        <target state="translated">Verwenden Sie "StringBuilder.Append(char)" anstelle von "StringBuilder.Append(string)", wenn es sich bei der Eingabe um eine konstante Einheitenzeichenfolge handelt.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
-        <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
-        <target state="translated">Verwendung von "StringBuilder.Append(char)" erwägen</target>
         <note />
       </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage">
@@ -2263,6 +2283,41 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <target state="translated">Arbeitsspeicherbasierte asynchrone Methoden beim Erstellen von Unterklassen von „Stream“ außer Kraft setzen</target>
         <note />
       </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo', because they lead to an allocation. Instead, use 'StringComparer' to perform case-insensitive comparisons.</source>
+        <target state="new">Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo', because they lead to an allocation. Instead, use 'StringComparer' to perform case-insensitive comparisons.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerMessage">
+        <source>Prefer using 'StringComparer' to perform a case-insensitive comparison</source>
+        <target state="new">Prefer using 'StringComparer' to perform a case-insensitive comparison</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle">
+        <source>Use the 'string.{0}(string, StringComparison)' overload</source>
+        <target state="new">Use the 'string.{0}(string, StringComparison)' overload</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerTitle">
+        <source>Prefer using 'StringComparer' to perform case-insensitive string comparisons</source>
+        <target state="new">Prefer using 'StringComparer' to perform case-insensitive string comparisons</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons because they lead to an allocation. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons.</source>
+        <target state="new">Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons because they lead to an allocation. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonMessage">
+        <source>Prefer the string comparison method overload of '{0}' that takes a 'StringComparison' enum value to perform a case-insensitive comparison</source>
+        <target state="new">Prefer the string comparison method overload of '{0}' that takes a 'StringComparison' enum value to perform a case-insensitive comparison</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonTitle">
+        <source>Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons</source>
+        <target state="new">Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons</target>
+        <note />
+      </trans-unit>
       <trans-unit id="RemoveRedundantCall">
         <source>Remove redundant call</source>
         <target state="translated">Redundanten Aufruf entfernen</target>
@@ -2358,6 +2413,16 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <target state="translated">Code auf Sicherheitsrisiken durch Einschleusung von SQL-Befehlen überprüfen</target>
         <note />
       </trans-unit>
+      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
+        <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch XPath-Einschleusung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" erweitert.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
+        <source>Review code for XPath injection vulnerabilities</source>
+        <target state="translated">Code auf Sicherheitsrisiken durch XPath-Einschleusung überprüfen</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReviewCodeForXamlInjectionVulnerabilitiesMessage">
         <source>Potential XAML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
         <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch XAML-Einschleusung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" erweitert.</target>
@@ -2376,16 +2441,6 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
       <trans-unit id="ReviewCodeForXmlInjectionVulnerabilitiesTitle">
         <source>Review code for XML injection vulnerabilities</source>
         <target state="translated">Code auf Sicherheitsrisiken durch XML-Einschleusung überprüfen</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
-        <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch XPath-Einschleusung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" erweitert.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
-        <source>Review code for XPath injection vulnerabilities</source>
-        <target state="translated">Code auf Sicherheitsrisiken durch XPath-Einschleusung überprüfen</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXssVulnerabilitiesMessage">
@@ -2968,6 +3023,26 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <target state="translated">Erwägen Sie (sofern möglich) die Verwendung der rollenbasierten Zugriffssteuerung von Azure anstelle einer Shared Access Signature (SAS). Wenn Sie weiterhin eine SAS benötigen, verwenden Sie "SharedAccessProtocol.HttpsOnly".</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatCodeFixTitle">
+        <source>Use 'AsSpan' with 'string.Concat'</source>
+        <target state="translated">"AsSpan" mit "string.Concat" verwenden</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatDescription">
+        <source>It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.</source>
+        <target state="translated">Die Verwendung von "AsSpan" und "string.Concat" ist effizienter als "Substring" und ein Verkettungsoperator.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatMessage">
+        <source>Use span-based 'string.Concat' and 'AsSpan' instead of 'Substring'</source>
+        <target state="translated">Verwenden Sie "string.Concat" und "AsSpan" auf span-Basis anstelle von "Substring".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatTitle">
+        <source>Use span-based 'string.Concat'</source>
+        <target state="translated">"string.Concat" auf span-Basis verwenden</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseSpanClearInsteadOfFillCodeFixTitle">
         <source>Use 'Clear()'</source>
         <target state="translated">Verwenden von „Clear()“</target>
@@ -3008,6 +3083,21 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <target state="translated">„StartsWith“ statt „IndexOf“ verwenden</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersDescription">
+        <source>'string.Contains(char)' is available as a better performing overload for single char lookup.</source>
+        <target state="translated">"string.Contains(char)" ist als leistungsfähigere Überladung für die Suche nach einzelnen Zeichen verfügbar.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersMessage">
+        <source>Use 'string.Contains(char)' instead of 'string.Contains(string)' when searching for a single character</source>
+        <target state="translated">Verwenden Sie "string.Contains(char)" anstelle von "string.Contains(string)" bei der Suche nach einem einzelnen Zeichen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersTitle">
+        <source>Use char literal for a single character lookup</source>
+        <target state="translated">Zeichenliteral für die Suche nach einem einzelnen Zeichen verwenden</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">
         <source>Use 'string.Equals'</source>
         <target state="translated">"string.Equals" verwenden</target>
@@ -3026,41 +3116,6 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
       <trans-unit id="UseStringEqualsOverStringCompareTitle">
         <source>Use 'string.Equals'</source>
         <target state="translated">"string.Equals" verwenden</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatCodeFixTitle">
-        <source>Use 'AsSpan' with 'string.Concat'</source>
-        <target state="translated">"AsSpan" mit "string.Concat" verwenden</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatDescription">
-        <source>It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.</source>
-        <target state="translated">Die Verwendung von "AsSpan" und "string.Concat" ist effizienter als "Substring" und ein Verkettungsoperator.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatMessage">
-        <source>Use span-based 'string.Concat' and 'AsSpan' instead of 'Substring'</source>
-        <target state="translated">Verwenden Sie "string.Concat" und "AsSpan" auf span-Basis anstelle von "Substring".</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatTitle">
-        <source>Use span-based 'string.Concat'</source>
-        <target state="translated">"string.Concat" auf span-Basis verwenden</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersDescription">
-        <source>'string.Contains(char)' is available as a better performing overload for single char lookup.</source>
-        <target state="translated">"string.Contains(char)" ist als leistungsfähigere Überladung für die Suche nach einzelnen Zeichen verfügbar.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersMessage">
-        <source>Use 'string.Contains(char)' instead of 'string.Contains(string)' when searching for a single character</source>
-        <target state="translated">Verwenden Sie "string.Contains(char)" anstelle von "string.Contains(string)" bei der Suche nach einem einzelnen Zeichen.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersTitle">
-        <source>Use char literal for a single character lookup</source>
-        <target state="translated">Zeichenliteral für die Suche nach einem einzelnen Zeichen verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="UseThrowHelperDescription">
@@ -3176,26 +3231,6 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
       <trans-unit id="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder">
         <source>{3} '{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</source>
         <target state="translated">{3} „{0}“ verwendet den Vorschautyp „{1}“, daher müssen Vorschaufeatures abonniert werden. Weitere Informationen finden Sie unter {2}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
-        <source>Use 'TryGetValue(TKey, out TValue)'</source>
-        <target state="translated">„TryGetValue(TKey, out TValue)“ verwenden</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueTitle">
-        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
-        <target state="translated">Methode „IDictionary.TryGetValue(TKey, out TValue)“ bevorzugen</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueMessage">
-        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
-        <target state="translated">Ziehen Sie einen „TryGetValue“-Aufruf einem Wörterbuchindexerzugriff vor, der durch eine „ContainsKey“-Überprüfung geschützt wird, um eine doppelte Suche zu vermeiden</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueDescription">
-        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
-        <target state="translated">Ziehen Sie einen „TryGetValue“-Aufruf einem Wörterbuchindexerzugriff vor, der durch eine „ContainsKey“-Überprüfung geschützt wird. „ContainsKey“ und der Indexer würden beide den Schlüssel im Hintergrund suchen; die Verwendung von „TryGetValue“ entfernt die zusätzliche Suche.</target>
         <note />
       </trans-unit>
     </body>

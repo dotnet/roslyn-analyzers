@@ -673,11 +673,6 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
         <target state="translated">ServerCertificateValidationCallback は、常時 true を返すことによってあらゆるサーバー証明書を受け入れる関数に設定されます。要求を受信するサーバーの ID を確認するサーバー証明書が検証されるようにします。</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
-        <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
-        <target state="translated">CheckCertificateRevocationList プロパティが true に設定されている場合、プラットフォーム固有のハンドラー (WinHttpHandler、CurlHandler、HttpClientHandler のいずれか) を指定せずに HttpClient を使用すると、失効した証明書が有効な証明書として HttpClient に受け入れられます。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderChecking">
         <source>Do Not Disable HTTP Header Checking</source>
         <target state="translated">HTTP ヘッダーのチェックを無効にしない</target>
@@ -691,6 +686,11 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
       <trans-unit id="DoNotDisableHTTPHeaderCheckingMessage">
         <source>Do not disable HTTP header checking</source>
         <target state="translated">HTTP ヘッダーのチェックを無効にしない</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
+        <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
+        <target state="translated">CheckCertificateRevocationList プロパティが true に設定されている場合、プラットフォーム固有のハンドラー (WinHttpHandler、CurlHandler、HttpClientHandler のいずれか) を指定せずに HttpClient を使用すると、失効した証明書が有効な証明書として HttpClient に受け入れられます。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidation">
@@ -928,21 +928,6 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
         <target state="translated">対称暗号化では、辞書攻撃を防ぐために、反復不能な初期化ベクトルを常に使用する必要があります。</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
-        <source>Do Not Use Deprecated Security Protocols</source>
-        <target state="translated">非推奨のセキュリティ プロトコルを使用しない</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
-        <source>Using a deprecated security protocol rather than the system default is risky.</source>
-        <target state="translated">システムの既定値ではなく、非推奨のセキュリティ プロトコルを使用することは安全ではありません。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
-        <source>Hard-coded use of deprecated security protocol {0}</source>
-        <target state="translated">非推奨のセキュリティ プロトコル {0} のハードコーディングされた使用</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotUseDSA">
         <source>Do Not Use Digital Signature Algorithm (DSA)</source>
         <target state="translated">デジタル署名アルゴリズム (DSA) を使用しない</target>
@@ -956,6 +941,21 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
       <trans-unit id="DoNotUseDSAMessage">
         <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
         <target state="translated">非対称暗号化アルゴリズム {0} が脆弱です。代わりに、キー サイズが少なくとも 2048 の RSA、ECDH、または ECDSA アルゴリズムに切り替えてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
+        <source>Do Not Use Deprecated Security Protocols</source>
+        <target state="translated">非推奨のセキュリティ プロトコルを使用しない</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
+        <source>Using a deprecated security protocol rather than the system default is risky.</source>
+        <target state="translated">システムの既定値ではなく、非推奨のセキュリティ プロトコルを使用することは安全ではありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
+        <source>Hard-coded use of deprecated security protocol {0}</source>
+        <target state="translated">非推奨のセキュリティ プロトコル {0} のハードコーディングされた使用</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyDescription">
@@ -1978,6 +1978,21 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
         <target state="translated">'Substring' よりも 'AsSpan' を優先します</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
+        <source>'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.</source>
+        <target state="translated">文字列が単一文字の場合、'StringBuilder.Append(char)' のほうが 'StringBuilder.Append(string)' よりも効率的です。定数を指定して 'Append' を呼び出す場合は、単一文字を含む定数文字列ではなく、定数 char を使用することをお勧めします。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
+        <source>Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string</source>
+        <target state="translated">入力が定数単位文字列である場合は、'StringBuilder.Append(string)' ではなく、'StringBuilder.Append(char)' を使用してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
+        <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
+        <target state="translated">該当する場合は 'StringBuilder.Append(char)' の使用を検討</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferCountOverAnyCodeFixTitle">
         <source>Use 'Count' check instead of 'Any()'</source>
         <target state="translated">'Any()' の代わりに 'Count' チェックを使用してください</target>
@@ -2023,6 +2038,26 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
         <target state="translated">ディクショナリ型 '{0}' の 'Values.Contains' よりも 'ContainsValue' を優先します </target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="translated">'TryGetValue(TKey, out TValue)' を使用する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
+        <target state="translated">'ContainsKey' チェックによって保護された Dictionary インデクサー アクセスよりも 'TryGetValue' 呼び出しを優先します。'ContainsKey' とインデクサーの両方が内部のキーを参照するため、'TryGetValue' を使用すると余分な参照が削除されます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
+        <target state="translated">二重参照を回避するには、'ContainsKey' チェックによって保護された Dictionary インデクサー アクセスよりも 'TryGetValue' 呼び出しを優先します</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
+        <target state="translated">'IDictionary.TryGetValue(TKey, out TValue)' メソッドを優先します</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferHashDataCodefixTitle">
         <source>Replace with 'HashData' method</source>
         <target state="translated">'HashData' メソッドに置き換える</target>
@@ -2053,6 +2088,21 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
         <target state="translated">明確性とパフォーマンスの両方のために、'Any()' を使用するのではなく、'IsEmpty' チェックを優先してください</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferIsEmptyOverCountDescription">
+        <source>For determining whether the object contains or not any items, prefer using 'IsEmpty' property rather than retrieving the number of items from the 'Count' property and comparing it to 0 or 1.</source>
+        <target state="translated">オブジェクトにアイテムが含まれているかどうかを判断するには、'Count' プロパティからアイテム数を取得し、それを 0 または 1 と比較する代わりに、'IsEmpty' プロパティを使用することをお勧めします。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsEmptyOverCountMessage">
+        <source>Prefer 'IsEmpty' over 'Count' to determine whether the object is empty</source>
+        <target state="translated">オブジェクトが空かどうかを判断するには、'Count' より 'IsEmpty' を優先してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsEmptyOverCountTitle">
+        <source>Prefer IsEmpty over Count</source>
+        <target state="translated">Count より IsEmpty を優先する</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferLengthCountIsEmptyOverAnyDescription">
         <source>Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rather than calling 'Enumerable.Any()'. The intent is clearer and it is more performant than using 'Enumerable.Any()' extension method.</source>
         <target state="translated">'Enumerable.Any()' を呼び出すのではなく、'IsEmpty'、'Count'、または 'Length' のいずれか使用可能なプロパティの使用を優先してください。この方が、'Enumerable.Any()' 拡張メソッドを使用するよりも意図が明確で、パフォーマンスが向上します。</target>
@@ -2076,21 +2126,6 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
       <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">
         <source>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</source>
         <target state="translated">'Stream' には、最初の引数として 'Memory&lt;Byte&gt;' を取る 'ReadAsync' オーバーロードと、最初の引数として 'ReadOnlyMemory&lt;Byte&gt;' を取る 'WriteAsync' オーバーロードがあります。より効率的なメモリ ベースのオーバーロードを呼び出すことをお勧めします。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferIsEmptyOverCountDescription">
-        <source>For determining whether the object contains or not any items, prefer using 'IsEmpty' property rather than retrieving the number of items from the 'Count' property and comparing it to 0 or 1.</source>
-        <target state="translated">オブジェクトにアイテムが含まれているかどうかを判断するには、'Count' プロパティからアイテム数を取得し、それを 0 または 1 と比較する代わりに、'IsEmpty' プロパティを使用することをお勧めします。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferIsEmptyOverCountMessage">
-        <source>Prefer 'IsEmpty' over 'Count' to determine whether the object is empty</source>
-        <target state="translated">オブジェクトが空かどうかを判断するには、'Count' より 'IsEmpty' を優先してください</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferIsEmptyOverCountTitle">
-        <source>Prefer IsEmpty over Count</source>
-        <target state="translated">Count より IsEmpty を優先する</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsMessage">
@@ -2141,21 +2176,6 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
       <trans-unit id="PreferTypedStringBuilderAppendOverloadsTitle">
         <source>Prefer strongly-typed Append and Insert method overloads on StringBuilder</source>
         <target state="translated">StringBuilder での厳密に型指定された Append および Insert メソッドのオーバーロードを推奨</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
-        <source>'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.</source>
-        <target state="translated">文字列が単一文字の場合、'StringBuilder.Append(char)' のほうが 'StringBuilder.Append(string)' よりも効率的です。定数を指定して 'Append' を呼び出す場合は、単一文字を含む定数文字列ではなく、定数 char を使用することをお勧めします。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
-        <source>Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string</source>
-        <target state="translated">入力が定数単位文字列である場合は、'StringBuilder.Append(string)' ではなく、'StringBuilder.Append(char)' を使用してください</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
-        <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
-        <target state="translated">該当する場合は 'StringBuilder.Append(char)' の使用を検討</target>
         <note />
       </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage">
@@ -2263,6 +2283,41 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
         <target state="translated">'Stream' をサブクラス化するときに非同期メソッドのメモリ ベースのオーバーライドを指定する</target>
         <note />
       </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo', because they lead to an allocation. Instead, use 'StringComparer' to perform case-insensitive comparisons.</source>
+        <target state="new">Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo', because they lead to an allocation. Instead, use 'StringComparer' to perform case-insensitive comparisons.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerMessage">
+        <source>Prefer using 'StringComparer' to perform a case-insensitive comparison</source>
+        <target state="new">Prefer using 'StringComparer' to perform a case-insensitive comparison</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle">
+        <source>Use the 'string.{0}(string, StringComparison)' overload</source>
+        <target state="new">Use the 'string.{0}(string, StringComparison)' overload</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerTitle">
+        <source>Prefer using 'StringComparer' to perform case-insensitive string comparisons</source>
+        <target state="new">Prefer using 'StringComparer' to perform case-insensitive string comparisons</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons because they lead to an allocation. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons.</source>
+        <target state="new">Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons because they lead to an allocation. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonMessage">
+        <source>Prefer the string comparison method overload of '{0}' that takes a 'StringComparison' enum value to perform a case-insensitive comparison</source>
+        <target state="new">Prefer the string comparison method overload of '{0}' that takes a 'StringComparison' enum value to perform a case-insensitive comparison</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonTitle">
+        <source>Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons</source>
+        <target state="new">Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons</target>
+        <note />
+      </trans-unit>
       <trans-unit id="RemoveRedundantCall">
         <source>Remove redundant call</source>
         <target state="translated">冗長な呼び出しを削除する</target>
@@ -2358,6 +2413,16 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
         <target state="translated">コードをレビューし、SQL インジェクションの脆弱性を確認する</target>
         <note />
       </trans-unit>
+      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
+        <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="translated">潜在的な XPath インジェクションの脆弱性が見つかりました。メソッド '{1}' の '{0}' は、メソッド '{3}' の '{2}' からのユーザーが制御するデータによって悪用される可能性があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
+        <source>Review code for XPath injection vulnerabilities</source>
+        <target state="translated">コードをレビューし、XPath インジェクションの脆弱性を確認する</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReviewCodeForXamlInjectionVulnerabilitiesMessage">
         <source>Potential XAML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
         <target state="translated">潜在的な XAML インジェクションの脆弱性が見つかりました。メソッド '{1}' の '{0}' は、メソッド '{3}' の '{2}' からのユーザーが制御するデータによって悪用される可能性があります。</target>
@@ -2376,16 +2441,6 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
       <trans-unit id="ReviewCodeForXmlInjectionVulnerabilitiesTitle">
         <source>Review code for XML injection vulnerabilities</source>
         <target state="translated">コードをレビューし、XML インジェクションの脆弱性を確認する</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
-        <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">潜在的な XPath インジェクションの脆弱性が見つかりました。メソッド '{1}' の '{0}' は、メソッド '{3}' の '{2}' からのユーザーが制御するデータによって悪用される可能性があります。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
-        <source>Review code for XPath injection vulnerabilities</source>
-        <target state="translated">コードをレビューし、XPath インジェクションの脆弱性を確認する</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXssVulnerabilitiesMessage">
@@ -2968,6 +3023,26 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
         <target state="translated">可能な場合は、Shared Access Signature (SAS) の代わりに、Azure のロールベースのアクセス制御を使用することを検討してください。依然として SAS を使用する必要がある場合は、SharedAccessProtocol.HttpsOnly を指定します。</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatCodeFixTitle">
+        <source>Use 'AsSpan' with 'string.Concat'</source>
+        <target state="translated">'AsSpan' を 'string.Concat' と共に使用します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatDescription">
+        <source>It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.</source>
+        <target state="translated">'Substring' と連結演算子を使うよりも 'AsSpan' と 'string.Concat' を使用する方が効率的です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatMessage">
+        <source>Use span-based 'string.Concat' and 'AsSpan' instead of 'Substring'</source>
+        <target state="translated">'Substring' ではなく、スパンベースの 'string.Concat' と 'AsSpan' を使用します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatTitle">
+        <source>Use span-based 'string.Concat'</source>
+        <target state="translated">スパンベースの 'string.Concat' を使用します。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseSpanClearInsteadOfFillCodeFixTitle">
         <source>Use 'Clear()'</source>
         <target state="translated">'Clear()' を使用する</target>
@@ -3008,6 +3083,21 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
         <target state="translated">'IndexOf' の代わりに 'StartsWith' を使用する</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersDescription">
+        <source>'string.Contains(char)' is available as a better performing overload for single char lookup.</source>
+        <target state="translated">'string.Contains(char)' は、単一文字検索のパフォーマンスのより高いオーバーロードとして使用できます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersMessage">
+        <source>Use 'string.Contains(char)' instead of 'string.Contains(string)' when searching for a single character</source>
+        <target state="translated">単一の文字を検索する場合には 'string.Contains(char)' ではなく、'string' を使用します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersTitle">
+        <source>Use char literal for a single character lookup</source>
+        <target state="translated">1 つの文字参照に単一文字検索を使用する</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">
         <source>Use 'string.Equals'</source>
         <target state="translated">'string.Equals' を使用します。</target>
@@ -3026,41 +3116,6 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
       <trans-unit id="UseStringEqualsOverStringCompareTitle">
         <source>Use 'string.Equals'</source>
         <target state="translated">'string.Equals' を使用します。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatCodeFixTitle">
-        <source>Use 'AsSpan' with 'string.Concat'</source>
-        <target state="translated">'AsSpan' を 'string.Concat' と共に使用します。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatDescription">
-        <source>It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.</source>
-        <target state="translated">'Substring' と連結演算子を使うよりも 'AsSpan' と 'string.Concat' を使用する方が効率的です。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatMessage">
-        <source>Use span-based 'string.Concat' and 'AsSpan' instead of 'Substring'</source>
-        <target state="translated">'Substring' ではなく、スパンベースの 'string.Concat' と 'AsSpan' を使用します。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatTitle">
-        <source>Use span-based 'string.Concat'</source>
-        <target state="translated">スパンベースの 'string.Concat' を使用します。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersDescription">
-        <source>'string.Contains(char)' is available as a better performing overload for single char lookup.</source>
-        <target state="translated">'string.Contains(char)' は、単一文字検索のパフォーマンスのより高いオーバーロードとして使用できます。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersMessage">
-        <source>Use 'string.Contains(char)' instead of 'string.Contains(string)' when searching for a single character</source>
-        <target state="translated">単一の文字を検索する場合には 'string.Contains(char)' ではなく、'string' を使用します。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersTitle">
-        <source>Use char literal for a single character lookup</source>
-        <target state="translated">1 つの文字参照に単一文字検索を使用する</target>
         <note />
       </trans-unit>
       <trans-unit id="UseThrowHelperDescription">
@@ -3176,26 +3231,6 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
       <trans-unit id="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder">
         <source>{3} '{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</source>
         <target state="translated">{3} '{0}' はプレビュー型 '{1}' を使用するため、プレビュー機能を選択する必要があります。詳細については、「{2}」を参照してください。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
-        <source>Use 'TryGetValue(TKey, out TValue)'</source>
-        <target state="translated">'TryGetValue(TKey, out TValue)' を使用する</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueTitle">
-        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
-        <target state="translated">'IDictionary.TryGetValue(TKey, out TValue)' メソッドを優先します</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueMessage">
-        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
-        <target state="translated">二重参照を回避するには、'ContainsKey' チェックによって保護された Dictionary インデクサー アクセスよりも 'TryGetValue' 呼び出しを優先します</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueDescription">
-        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
-        <target state="translated">'ContainsKey' チェックによって保護された Dictionary インデクサー アクセスよりも 'TryGetValue' 呼び出しを優先します。'ContainsKey' とインデクサーの両方が内部のキーを参照するため、'TryGetValue' を使用すると余分な参照が削除されます。</target>
         <note />
       </trans-unit>
     </body>

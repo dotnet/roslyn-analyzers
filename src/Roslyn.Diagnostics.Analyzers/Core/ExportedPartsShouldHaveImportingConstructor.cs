@@ -100,7 +100,9 @@ namespace Roslyn.Diagnostics.Analyzers
                     continue;
                 }
 
-                if (constructor.IsImplicitlyDeclared)
+                // See if there's a synthesized parameterless constructor (for example, for a struct with no explicit
+                // constructors at all).
+                if (constructor.IsImplicitlyDeclared && constructor.DeclaringSyntaxReferences.IsEmpty)
                 {
                     if (exportAttributeApplication.ApplicationSyntaxReference is object)
                     {

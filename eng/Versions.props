@@ -26,7 +26,7 @@
     <!-- Use the correct compiler version -->
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <!-- Dependencies from https://github.com/dotnet/roslyn -->
-    <MicrosoftNetCompilersToolsetVersion>4.5.0</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftNetCompilersToolsetVersion>4.6.0</MicrosoftNetCompilersToolsetVersion>
     <!-- Microsoft.CodeAnalysis.* versions. Read this!
          This repo uses a wide variety of M.CA.* package versions. This is an atypical pattern in
          .NET's repositories but a necessary one for roslyn-analyzers.
@@ -76,8 +76,8 @@
          area versions. -->
     <MicrosoftCodeAnalysisVersionForTests>4.6.0-1.final</MicrosoftCodeAnalysisVersionForTests>
     <MicrosoftCodeAnalysisVersionForExecution>4.6.0-1.final</MicrosoftCodeAnalysisVersionForExecution>
-    <MicrosoftCodeAnalysisCSharpCodeStyleVersion>4.5.0</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
-    <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>4.5.0</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
+    <MicrosoftCodeAnalysisCSharpCodeStyleVersion>4.6.0</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
+    <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>4.6.0</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
     <DogfoodAnalyzersVersion>3.3.4</DogfoodAnalyzersVersion>
     <DogfoodNetAnalyzersVersion>8.0.0-preview1.22621.6</DogfoodNetAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>

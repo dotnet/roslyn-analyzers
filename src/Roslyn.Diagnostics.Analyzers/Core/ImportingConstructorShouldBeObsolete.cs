@@ -84,6 +84,7 @@ namespace Roslyn.Diagnostics.Analyzers
 
             foreach (var constructor in namedType.Constructors)
             {
+                // Ignore parameterless struct constructors.
                 if (constructor.IsImplicitlyDeclared && constructor.DeclaringSyntaxReferences.IsEmpty)
                 {
                     continue;

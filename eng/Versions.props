@@ -69,7 +69,7 @@
     <MicrosoftCodeAnalysisVersionForResxSourceGenerators>4.0.1</MicrosoftCodeAnalysisVersionForResxSourceGenerators>
     <MicrosoftCodeAnalysisVersionForNetAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForNetAnalyzers>
     <MicrosoftCodeAnalysisVersionForTextAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForTextAnalyzers>
-    <MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>
+    <MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>3.7.0</MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>
     <MicrosoftCodeAnalysisVersionForToolsAndUtilities>3.3.1</MicrosoftCodeAnalysisVersionForToolsAndUtilities>
     <!-- Versions for tests and general utility execution. -->
     <!-- This version is for utility and executable assemblies. The version here should not overlap with any of the surface

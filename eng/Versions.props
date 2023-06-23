@@ -1,23 +1,10 @@
 <Project>
   <Import Project="$(SourceBuildPackageVersionPropsPath)" Condition="'$(SourceBuildPackageVersionPropsPath)' != ''" />
   <PropertyGroup>
-    <!--
-      Binaries that need to be executable during source build are restricted to versions available within source build.
-      This section defines executable versions of packages which are referenced via lower-version reference assemblies
-      during the build.
-    -->
-    <SystemCollectionsImmutableExecutableVersion>$(SystemCollectionsImmutableVersion)</SystemCollectionsImmutableExecutableVersion>
-    <SystemCollectionsImmutableExecutableVersion Condition="'$(SystemCollectionsImmutableExecutableVersion)' == ''">5.0.0</SystemCollectionsImmutableExecutableVersion>
-    <SystemReflectionMetadataExecutableVersion>$(SystemReflectionMetadataVersion)</SystemReflectionMetadataExecutableVersion>
-    <SystemReflectionMetadataExecutableVersion Condition="'$(SystemReflectionMetadataExecutableVersion)' == ''">5.0.0</SystemReflectionMetadataExecutableVersion>
-    <MicrosoftCodeAnalysisExecutableVersion>$(MicrosoftCodeAnalysisVersion)</MicrosoftCodeAnalysisExecutableVersion>
-    <MicrosoftCodeAnalysisExecutableVersion Condition="'$(MicrosoftCodeAnalysisExecutableVersion)' == ''">3.8.0</MicrosoftCodeAnalysisExecutableVersion>
-  </PropertyGroup>
-  <PropertyGroup>
     <VersionPrefix>3.3.5</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
     <NetAnalyzersVersionPrefix>8.0.0</NetAnalyzersVersionPrefix>
-    <NetAnalyzersPreReleaseVersionLabel>preview1</NetAnalyzersPreReleaseVersionLabel>
+    <NetAnalyzersPreReleaseVersionLabel>preview</NetAnalyzersPreReleaseVersionLabel>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <!--
         When StabilizePackageVersion is set to 'true', this branch will produce stable outputs for 'Shipping' packages
@@ -39,13 +26,58 @@
     <!-- Use the correct compiler version -->
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <!-- Dependencies from https://github.com/dotnet/roslyn -->
-    <MicrosoftNetCompilersToolsetVersion>4.4.0</MicrosoftNetCompilersToolsetVersion>
-    <MicrosoftCodeAnalysisCSharpCodeStyleVersion>4.4.0</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
-    <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>4.4.0</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
-    <!-- Roslyn -->
-    <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
+    <MicrosoftNetCompilersToolsetVersion>4.6.0</MicrosoftNetCompilersToolsetVersion>
+    <!-- Microsoft.CodeAnalysis.* versions. Read this!
+         This repo uses a wide variety of M.CA.* package versions. This is an atypical pattern in
+         .NET's repositories but a necessary one for roslyn-analyzers.
+
+         Some facts:
+         - These versions are chosen on purpose.
+         - They often represent the base required surface area of Microsoft.CA to support for a given feature or analyzer.
+           This means that the analyzer would be supported in the widest array of C# compilation scenarios.
+         - Most of these dependencies only represent target surface area. In some cases, the M.CA libraries are
+           redistributed (tools) or used within the build.
+         - Some of these versions are used for testing to ensure that analyzers built against older surface area
+           still work against new implementations.
+         - Linux source-build only builds a single implementation of M.CA.*.
+         - Linux source-build does have some ability to provide surface area packages via the source-build-reference-packages repo.
+           However, because these reference packages do not provide implementations, they cannot be used in any case
+           where the package contents would be redisted or executed. An SBRP may not be created for a version that is used both
+           as a reference assembly and redisted.
+
+           In this repo, the MicrosoftCodeAnalysis property should **not** be set globally in this file. Instead, it should
+           be set for each project, based on the properties below. When the project is executable, it should be
+           set only for non-source build or repo-source build. Product source build will set an incoming MicrosoftCodeAnalysis property
+           that will denote the available implementation version.
+
+           Example of surface area usage:
+
+           <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers)</MicrosoftCodeAnalysisVersion>
+
+           Example of executable usage:
+
+          <MicrosoftCodeAnalysisVersion Condition="'$(DotNetBuildFromSource)' != 'true' or '$(DotNetBuildFromSourceFlavor)' != 'Product'">$(MicrosoftCodeAnalysisVersionForExecution)</MicrosoftCodeAnalysisVersion>
+    -->
+    <!-- Microsoft.CodeAnalysis versions for different purposes. -->
+    <!-- Surface area that various projects compile against. These should have source-build reference packages -->
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
-    <MicrosoftCodeAnalysisVersionForTests>4.4.0-2.22416.9</MicrosoftCodeAnalysisVersionForTests>
+    <MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>1.2.1</MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>
+    <MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>2.9.0</MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>
+    <MicrosoftCodeAnalysisVersionForBannedApiAnalyzersTests>3.3.1</MicrosoftCodeAnalysisVersionForBannedApiAnalyzersTests>
+    <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>2.9.0</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>
+    <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzersTests>3.3.1</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzersTests>
+    <MicrosoftCodeAnalysisVersionForResxSourceGenerators>4.0.1</MicrosoftCodeAnalysisVersionForResxSourceGenerators>
+    <MicrosoftCodeAnalysisVersionForNetAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForNetAnalyzers>
+    <MicrosoftCodeAnalysisVersionForTextAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForTextAnalyzers>
+    <MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>3.7.0</MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>
+    <MicrosoftCodeAnalysisVersionForToolsAndUtilities>3.3.1</MicrosoftCodeAnalysisVersionForToolsAndUtilities>
+    <!-- Versions for tests and general utility execution. -->
+    <!-- This version is for utility and executable assemblies. The version here should not overlap with any of the surface
+         area versions. -->
+    <MicrosoftCodeAnalysisVersionForTests>4.7.0-3.23280.3</MicrosoftCodeAnalysisVersionForTests>
+    <MicrosoftCodeAnalysisVersionForExecution>4.6.0-1.final</MicrosoftCodeAnalysisVersionForExecution>
+    <MicrosoftCodeAnalysisCSharpCodeStyleVersion>4.6.0</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
+    <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>4.6.0</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
     <DogfoodAnalyzersVersion>3.3.4</DogfoodAnalyzersVersion>
     <DogfoodNetAnalyzersVersion>8.0.0-preview1.22621.6</DogfoodNetAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
@@ -56,10 +88,10 @@
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
     <MicrosoftVisualStudioThreadingAnalyzersVersion>17.0.26-alpha</MicrosoftVisualStudioThreadingAnalyzersVersion>
     <!-- Roslyn Testing -->
-    <MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.22419.1</MicrosoftCodeAnalysisTestingVersion>
+    <MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.23205.1</MicrosoftCodeAnalysisTestingVersion>
     <!-- Libs -->
     <BenchmarkDotNetVersion>0.13.0</BenchmarkDotNetVersion>
-    <HumanizerVersion>2.2.0</HumanizerVersion>
+    <HumanizerVersion>2.14.1</HumanizerVersion>
     <MicrosoftBuildLocatorVersion>1.4.1</MicrosoftBuildLocatorVersion>
     <MicrosoftDiagnosticsTracingTraceEventVersion>2.0.69</MicrosoftDiagnosticsTracingTraceEventVersion>
     <MicrosoftExtensionsLoggingVersion>6.0.0-preview.5.21301.5</MicrosoftExtensionsLoggingVersion>
@@ -72,6 +104,7 @@
     <SystemCommandLineRenderingVersion>2.0.0-beta1.20074.1</SystemCommandLineRenderingVersion>
     <SystemCommandLineVersion>2.0.0-beta1.21216.1</SystemCommandLineVersion>
     <SystemComponentModelCompositionVersion>4.7.0</SystemComponentModelCompositionVersion>
+    <SystemCompositionVersion>8.0.0-preview.4.23259.5</SystemCompositionVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
   </PropertyGroup>

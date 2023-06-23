@@ -47,6 +47,9 @@ dotnet_diagnostic.IDE0010.severity = silent
 # IDE0017: Object initialization can be simplified
 dotnet_diagnostic.IDE0017.severity = silent
 
+# IDE0031: Null check can be simplified
+dotnet_diagnostic.IDE0031.severity = silent
+
 # IDE0045: 'if' statement can be simplified
 dotnet_diagnostic.IDE0045.severity = silent
 
@@ -66,6 +69,9 @@ dotnet_diagnostic.IDE0065.severity = silent
 # IDE0072: Populate switch
 dotnet_diagnostic.IDE0072.severity = silent
 
+# IDE0074: Use compound assignment
+dotnet_diagnostic.IDE0074.severity = silent
+
 # IDE0083: Use pattern matching
 dotnet_diagnostic.IDE0083.severity = silent
 
@@ -77,6 +83,9 @@ dotnet_diagnostic.IDE0130.severity = silent
 
 # IDE0150: Null check can be clarified
 dotnet_diagnostic.IDE0150.severity = silent
+
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = suggestion
 
 ### Configuration for Microsoft.CodeAnalysis.NetAnalyzers analyzers executed on this repo ###
 

@@ -69,12 +69,12 @@
     <MicrosoftCodeAnalysisVersionForResxSourceGenerators>4.0.1</MicrosoftCodeAnalysisVersionForResxSourceGenerators>
     <MicrosoftCodeAnalysisVersionForNetAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForNetAnalyzers>
     <MicrosoftCodeAnalysisVersionForTextAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForTextAnalyzers>
-    <MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>3.3.1</MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>
+    <MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>3.7.0</MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>
     <MicrosoftCodeAnalysisVersionForToolsAndUtilities>3.3.1</MicrosoftCodeAnalysisVersionForToolsAndUtilities>
     <!-- Versions for tests and general utility execution. -->
     <!-- This version is for utility and executable assemblies. The version here should not overlap with any of the surface
          area versions. -->
-    <MicrosoftCodeAnalysisVersionForTests>4.6.0-1.final</MicrosoftCodeAnalysisVersionForTests>
+    <MicrosoftCodeAnalysisVersionForTests>4.7.0-3.23280.3</MicrosoftCodeAnalysisVersionForTests>
     <MicrosoftCodeAnalysisVersionForExecution>4.6.0-1.final</MicrosoftCodeAnalysisVersionForExecution>
     <MicrosoftCodeAnalysisCSharpCodeStyleVersion>4.6.0</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
     <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>4.6.0</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
@@ -105,7 +105,6 @@
     <SystemCommandLineVersion>2.0.0-beta1.21216.1</SystemCommandLineVersion>
     <SystemComponentModelCompositionVersion>4.7.0</SystemComponentModelCompositionVersion>
     <SystemCompositionVersion>8.0.0-preview.4.23259.5</SystemCompositionVersion>
-    <SystemDirectoryServicesVersion>4.7.0</SystemDirectoryServicesVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
   </PropertyGroup>

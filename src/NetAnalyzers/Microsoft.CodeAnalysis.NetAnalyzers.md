@@ -1716,27 +1716,9 @@ Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to
 |CodeFix|True|
 ---
 
-## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer the 'IDictionary.TryAdd(TKey, TValue)' method
+## [CA1863](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1863): Prefer the 'IDictionary.TryAdd(TKey, TValue)' method
 
 Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add', except that when the specified key already exists, it returns 'false' instead of throwing an exception.
-
-|Item|Value|
-|-|-|
-|Category|Performance|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|True|
----
-
-<<<<<<< HEAD
-## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer the 'IDictionary.TryAdd(TKey, TValue)' method
-
-Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add', except that when the specified key already exists, it returns 'false' instead of throwing an exception.
-=======
-## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer using 'StringComparer' to perform case-insensitive string comparisons
-
-Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo', because they lead to an allocation. Instead, use 'StringComparer' to perform case-insensitive comparisons.
->>>>>>> master
 
 |Item|Value|
 |-|-|

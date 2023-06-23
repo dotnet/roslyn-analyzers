@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     public sealed class PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer : DiagnosticAnalyzer
     {
         internal const string PreferTryGetValueRuleId = "CA1854";
-        internal const string PreferTryAddRuleId = "CA1862";
+        internal const string PreferTryAddRuleId = "CA1863";
 
         internal const string Add = nameof(IDictionary<dynamic, dynamic>.Add);
         private const string TryAdd = nameof(TryAdd);

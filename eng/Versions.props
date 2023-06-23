@@ -105,7 +105,6 @@
     <SystemCommandLineVersion>2.0.0-beta1.21216.1</SystemCommandLineVersion>
     <SystemComponentModelCompositionVersion>4.7.0</SystemComponentModelCompositionVersion>
     <SystemCompositionVersion>8.0.0-preview.4.23259.5</SystemCompositionVersion>
-    <SystemDirectoryServicesVersion>4.7.0</SystemDirectoryServicesVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
   </PropertyGroup>

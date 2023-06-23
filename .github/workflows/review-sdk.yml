@@ -46,7 +46,7 @@ jobs:
       run: |
         gh api graphql -f query='
           mutation($review: ID!) {
-            submitPullRequestReview(input: {pullRequestReviewId: $review, event: REQUEST_CHANGES, body: "This PR changes the .NET SDK version. Review required from @dotnet/roslyn-infrastructure before merging."}) {
+            submitPullRequestReview(input: {pullRequestReviewId: $review, event: REQUEST_CHANGES, body: "This PR changes the .NET SDK version. Review required from @dotnet/roslyn-infrastructure-current-swat before merging."}) {
               clientMutationId
             }
           }' -f review=$REVIEW_ID

@@ -452,15 +452,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 for (var i = 0; i < parameters.Length; i++)
                 {
-                    ImmutableArray<AttributeData> attributes = parameters[i].GetAttributes();
-                    for (int j = 0; j < attributes.Length; j++)
+                    if (String.Equals(parameters[i].Type, SymbolEqualityComparer.Default))
                     {
-                        if (StringSyntaxAttribute!.Equals(attributes[j].AttributeClass))
+                        foreach (AttributeData attribute in parameters[i].GetAttributes())
                         {
-                            ImmutableArray<TypedConstant> arguments = attributes[j].ConstructorArguments;
-                            if (arguments.Length == 1 && CompositeFormat.Equals(arguments[0].Value))
+                            if (StringSyntaxAttribute!.Equals(attribute.AttributeClass, SymbolEqualityComparer.Default))
                             {
-                                return i;
+                                ImmutableArray<TypedConstant> arguments = attribute.ConstructorArguments;
+                                if (arguments.Length == 1 && CompositeFormat.Equals(arguments[0].Value))
+                                {
+                                    return i;
+                                }
                             }
                         }
                     }

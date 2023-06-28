@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NETCore.App.Ref" Version="$(MicrosoftNETCoreAppRefVersion)" IncludeAssets="none" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.NETCore.App.Ref" Version="$(MicrosoftNETCoreAppRefVersion)" IncludeAssets="none" PrivateAssets="all" GeneratePathProperty="true"/>
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="$(MicrosoftCodeAnalysisVersion)" />
   </ItemGroup>
 

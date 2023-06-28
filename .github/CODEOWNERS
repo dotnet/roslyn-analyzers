@@ -2,3 +2,5 @@
 # More information: https://github.com/blog/2392-introducing-code-owners 
 
 * @dotnet/roslyn-analysis
+
+eng/SourceBuild* @dotnet/source-build-internal

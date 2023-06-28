@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     public sealed class PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer : DiagnosticAnalyzer
     {
         internal const string PreferTryGetValueRuleId = "CA1854";
-        internal const string PreferTryAddRuleId = "CA1863";
+        internal const string PreferTryAddRuleId = "CA1864";
 
         internal const string Add = nameof(IDictionary<dynamic, dynamic>.Add);
         private const string TryAdd = nameof(TryAdd);

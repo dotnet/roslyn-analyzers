@@ -62,7 +62,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 var node = root.FindNode(location.SourceSpan, getInnermostNodeForTie: true);
                 switch (node)
                 {
-                    case ElementAccessExpressionSyntax when diagnostic.Id == PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryGetValueRuleId:
+                    case ElementAccessExpressionSyntax:
                         dictionaryAccessors.Add(node);
                         break;
                     case ExpressionStatementSyntax exp:

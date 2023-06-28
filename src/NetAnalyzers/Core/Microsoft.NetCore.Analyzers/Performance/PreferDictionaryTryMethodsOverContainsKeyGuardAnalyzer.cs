@@ -225,12 +225,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static bool TryGetDictionaryTypeAndMembers(
             Compilation compilation,
-            [NotNullWhen(true)]
-            out INamedTypeSymbol? iDictionaryType,
-            [NotNullWhen(true)]
-            out IMethodSymbol? containsKeySymbol,
-            [NotNullWhen(true)]
-            out IMethodSymbol? addSymbol)
+            [NotNullWhen(true)] out INamedTypeSymbol? iDictionaryType,
+            [NotNullWhen(true)] out IMethodSymbol? containsKeySymbol,
+            [NotNullWhen(true)] out IMethodSymbol? addSymbol)
         {
             iDictionaryType = WellKnownTypeProvider.GetOrCreate(compilation).GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIDictionary2);
             if (iDictionaryType is null)
@@ -273,8 +270,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         //only handles simple conditions: .. && x.ContainsKey(y) or !x.ContainsKey(y) || ..
         private static bool GetParentConditionalOperation(IOperation operation, ref DictionaryUsageContext usageContext, SearchContext searchContext,
-            [NotNullWhen(true)]
-            out IConditionalOperation? conditionalOperation, out bool guardsTruePath)
+            [NotNullWhen(true)] out IConditionalOperation? conditionalOperation, out bool guardsTruePath)
         {
             guardsTruePath = true;
             if (operation.Parent is IUnaryOperation { OperatorKind: UnaryOperatorKind.Not })

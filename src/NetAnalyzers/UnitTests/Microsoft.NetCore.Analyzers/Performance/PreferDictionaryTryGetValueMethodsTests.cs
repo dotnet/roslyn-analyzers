@@ -1567,6 +1567,44 @@ class C
             }.RunAsync();
         }
 
+        [Fact]
+        [WorkItem(6589, "https://github.com/dotnet/roslyn-analyzers/issues/6589")]
+        public Task MultipleConditionsInIfStatement()
+        {
+            const string code = @"
+using System.Collections.Generic;
+
+namespace UnitTests {
+    class Program {
+        public void Test(int key, string text) {
+            var dictionary = new Dictionary<int, string>();
+            if({|#0:dictionary.ContainsKey(key)|} && !string.IsNullOrEmpty(text)) {
+                text = {|#1:dictionary[key]|};
+            }          
+        } 
+    }
+}";
+            const string fixedCode = @"
+using System.Collections.Generic;
+
+namespace UnitTests {
+    class Program {
+        public void Test(int key, string text) {
+            var dictionary = new Dictionary<int, string>();
+            if(dictionary.TryGetValue(key, out string value) && !string.IsNullOrEmpty(text)) {
+                text = value;
+            }          
+        } 
+    }
+}";
+            var diagnostic = VerifyCS
+                .Diagnostic(PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryGetValueDiagnostic)
+                .WithLocation(0)
+                .WithLocation(1);
+
+            return VerifyCS.VerifyCodeFixAsync(code, diagnostic, fixedCode);
+        }
+
         private static string CreateCSharpCode(string content)
         {
             return string.Format(CultureInfo.InvariantCulture, CSharpTemplate, content);

@@ -90,7 +90,7 @@
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
     <MicrosoftVisualStudioThreadingAnalyzersVersion>17.0.26-alpha</MicrosoftVisualStudioThreadingAnalyzersVersion>
     <!-- Roslyn Testing -->
-    <MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.23205.1</MicrosoftCodeAnalysisTestingVersion>
+    <MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.23322.1</MicrosoftCodeAnalysisTestingVersion>
     <!-- Libs -->
     <BenchmarkDotNetVersion>0.13.0</BenchmarkDotNetVersion>
     <HumanizerVersion>2.14.1</HumanizerVersion>
@@ -107,7 +107,6 @@
     <SystemCommandLineVersion>2.0.0-beta1.21216.1</SystemCommandLineVersion>
     <SystemComponentModelCompositionVersion>4.7.0</SystemComponentModelCompositionVersion>
     <SystemCompositionVersion>8.0.0-preview.4.23259.5</SystemCompositionVersion>
-    <SystemDirectoryServicesVersion>4.7.0</SystemDirectoryServicesVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
   </PropertyGroup>

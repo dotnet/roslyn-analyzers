@@ -24,7 +24,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     public sealed class UseAsyncMethodInAsyncContext : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1849";
-        internal const string AsyncMethodKeyName = "AsyncMethodName";
         internal const string MandatoryAsyncSuffix = "Async";
 
         private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(UseAsyncMethodInAsyncContextTitle));
@@ -74,8 +73,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 GetSymbolAndAddToList("GetResult", WellKnownTypeNames.SystemRuntimeCompilerServicesValueTaskAwaiter, SymbolKind.Method, syncBlockingSymbols, wellKnownTypeProvider);
                 GetSymbolAndAddToList("Sleep", WellKnownTypeNames.SystemThreadingThread, SymbolKind.Method, syncBlockingSymbols, wellKnownTypeProvider);
 
-                ISet<IMethodSymbol> excludedMethods = GetExcludedMethods(wellKnownTypeProvider).ToSet();
-                if (excludedMethods.Count == 0 || syncBlockingTypes.IsEmpty)
+                if (syncBlockingTypes.IsEmpty)
                 {
                     return;
                 }
@@ -85,6 +83,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
+                ISet<IMethodSymbol> excludedMethods = GetExcludedMethods(wellKnownTypeProvider).ToSet();
                 context.RegisterOperationAction(context =>
                 {
                     if (IsInTaskReturningMethodOrDelegate(context, syncBlockingTypes))
@@ -92,7 +91,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (context.Operation is IInvocationOperation invocationOperation)
                         {
                             var methodSymbol = invocationOperation.TargetMethod;
-                            if (excludedMethods.Contains(methodSymbol, SymbolEqualityComparer.Default) || InspectAndReportBlockingMemberAccess(context, methodSymbol, syncBlockingSymbols, SymbolKind.Method))
+                            if (excludedMethods.Contains(methodSymbol.OriginalDefinition, SymbolEqualityComparer.Default) || InspectAndReportBlockingMemberAccess(context, methodSymbol, syncBlockingSymbols, SymbolKind.Method))
                             {
                                 // Don't return double-diagnostics.
                                 return;
@@ -189,25 +188,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static IEnumerable<IMethodSymbol> GetExcludedMethods(WellKnownTypeProvider wellKnownTypeProvider)
         {
+            var methods = Enumerable.Empty<IMethodSymbol>();
             if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftEntityFrameworkCoreDbContext, out INamedTypeSymbol? dbContextType))
             {
-                ISymbol? addSymbol = dbContextType
-                    .GetMembers("Add")
-                    .FirstOrDefault(s => s.Kind == SymbolKind.Method);
-                ISymbol? addRangeSymbol = dbContextType
-                    .GetMembers("AddRange")
-                    .FirstOrDefault(s => s.Kind == SymbolKind.Method);
-
-                if (addSymbol is IMethodSymbol addMethod)
-                {
-                    yield return addMethod;
-                }
-
-                if (addRangeSymbol is IMethodSymbol addRangeMethod)
-                {
-                    yield return addRangeMethod;
-                }
+                methods = methods
+                    .Concat(dbContextType
+                        .GetMembers("Add")
+                        .OfType<IMethodSymbol>())
+                    .Concat(dbContextType
+                        .GetMembers("AddRange")
+                        .OfType<IMethodSymbol>());
             }
+
+            return methods;
         }
 
         /// <summary>

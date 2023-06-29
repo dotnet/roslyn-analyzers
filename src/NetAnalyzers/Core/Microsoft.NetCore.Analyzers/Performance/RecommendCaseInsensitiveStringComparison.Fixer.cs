@@ -22,8 +22,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
     /// </summary>
     public abstract class RecommendCaseInsensitiveStringComparisonFixer : CodeFixProvider
     {
-        protected abstract List<SyntaxNode> GetNewArguments(SyntaxGenerator generator, string caseChangingApproachValue, IInvocationOperation mainInvocationOperation,
+        protected abstract IEnumerable<SyntaxNode> GetNewArgumentsForInvocation(SyntaxGenerator generator, string caseChangingApproachValue, IInvocationOperation mainInvocationOperation,
             INamedTypeSymbol stringComparisonType, out SyntaxNode? mainInvocationInstance);
+
+        protected abstract IEnumerable<SyntaxNode> GetNewArgumentsForBinary(SyntaxGenerator generator, SyntaxNode rightNode, SyntaxNode typeMemberAccess);
 
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(RCISCAnalyzer.RuleId);
 
@@ -54,6 +56,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
 
+            // The desired case changing enum value should've already been chosen in the analyzer
             if (!context.Diagnostics[0].Properties.TryGetValue(RCISCAnalyzer.CaseChangingApproachName, out string? caseChangingApproachValue) || caseChangingApproachValue == null)
             {
                 return;
@@ -121,17 +124,17 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 RCISCAnalyzer.StringIndexOfMethodName or
                 RCISCAnalyzer.StringStartsWithMethodName);
 
-            List<SyntaxNode> newArguments = GetNewArguments(generator, caseChangingApproachValue, mainInvocation, stringComparisonType, out SyntaxNode? mainInvocationInstance);
+            IEnumerable<SyntaxNode> newArguments = GetNewArgumentsForInvocation(generator, caseChangingApproachValue, mainInvocation, stringComparisonType, out SyntaxNode? mainInvocationInstance);
 
             SyntaxNode stringMemberAccessExpression = generator.MemberAccessExpression(mainInvocationInstance, mainInvocation.TargetMethod.Name);
 
             SyntaxNode newInvocation = generator.InvocationExpression(stringMemberAccessExpression, newArguments).WithTriviaFrom(mainInvocation.Syntax);
 
-            SyntaxNode newRoot = generator.ReplaceNode(root, mainInvocation.Syntax, newInvocation);
+            SyntaxNode newRoot = generator.ReplaceNode(root, mainInvocation.Syntax, newInvocation.WithTriviaFrom(mainInvocation.Syntax));
             return Task.FromResult(doc.WithSyntaxRoot(newRoot));
         }
 
-        private static Task<Document> FixBinaryAsync(SyntaxGenerator generator, Document doc, SyntaxNode root, IBinaryOperation binaryOperation,
+        private Task<Document> FixBinaryAsync(SyntaxGenerator generator, Document doc, SyntaxNode root, IBinaryOperation binaryOperation,
             INamedTypeSymbol stringComparisonType, string caseChangingApproachValue)
         {
             SyntaxNode leftNode = binaryOperation.LeftOperand is IInvocationOperation leftInvocation ?
@@ -142,21 +145,22 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 rightInvocation.Instance.Syntax :
                 binaryOperation.RightOperand.Syntax;
 
-            SyntaxNode memberAccess = generator.MemberAccessExpression(leftNode, RCISCAnalyzer.StringEqualsMethodName);
+            SyntaxNode memberAccess = generator.MemberAccessExpression(leftNode, RCISCAnalyzer.StringEqualsMethodName).WithTriviaFrom(leftNode);
 
             SyntaxNode stringComparisonTypeExpression = generator.TypeExpressionForStaticMemberAccess(stringComparisonType);
 
             SyntaxNode typeMemberAccess = generator.MemberAccessExpression(stringComparisonTypeExpression, caseChangingApproachValue);
 
-            SyntaxNode[] arguments = new SyntaxNode[]
-            {
-                generator.Argument(rightNode),
-                generator.Argument(typeMemberAccess)
-            };
+            IEnumerable<SyntaxNode> newArguments = GetNewArgumentsForBinary(generator, rightNode, typeMemberAccess);
 
-            SyntaxNode newInvocation = generator.InvocationExpression(memberAccess, arguments);
+            SyntaxNode equalsInvocation = generator.InvocationExpression(memberAccess, newArguments);
 
-            SyntaxNode newRoot = generator.ReplaceNode(root, binaryOperation.Syntax, newInvocation);
+            // Determine if it should be a.Equals or !a.Equals
+            var replacement = binaryOperation.OperatorKind == BinaryOperatorKind.NotEquals ?
+                generator.LogicalNotExpression(equalsInvocation) :
+                equalsInvocation;
+
+            SyntaxNode newRoot = generator.ReplaceNode(root, binaryOperation.Syntax, replacement.WithTriviaFrom(binaryOperation.Syntax));
             return Task.FromResult(doc.WithSyntaxRoot(newRoot));
         }
 

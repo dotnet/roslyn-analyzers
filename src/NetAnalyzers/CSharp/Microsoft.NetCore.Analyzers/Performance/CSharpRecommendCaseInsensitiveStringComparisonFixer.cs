@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpRecommendCaseInsensitiveStringComparisonFixer : RecommendCaseInsensitiveStringComparisonFixer
     {
-        protected override List<SyntaxNode> GetNewArguments(SyntaxGenerator generator, string caseChangingApproachValue, IInvocationOperation mainInvocationOperation,
+        protected override IEnumerable<SyntaxNode> GetNewArgumentsForInvocation(SyntaxGenerator generator, string caseChangingApproachValue, IInvocationOperation mainInvocationOperation,
             INamedTypeSymbol stringComparisonType, out SyntaxNode? mainInvocationInstance)
         {
             List<SyntaxNode> arguments = new();
@@ -80,7 +80,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     newArgumentNode = node;
                 }
 
-                arguments.Add(newArgumentNode);
+                arguments.Add(newArgumentNode.WithTriviaFrom(node));
             }
 
             Debug.Assert(mainInvocationInstance != null);
@@ -91,5 +91,12 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
             return arguments;
         }
+
+        protected override IEnumerable<SyntaxNode> GetNewArgumentsForBinary(SyntaxGenerator generator, SyntaxNode rightNode, SyntaxNode typeMemberAccess) =>
+            new List<SyntaxNode>()
+            {
+                generator.Argument(rightNode),
+                generator.Argument(typeMemberAccess)
+            };
     }
 }

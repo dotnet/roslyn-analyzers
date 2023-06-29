@@ -14,9 +14,9 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
     Public NotInheritable Class BasicRecommendCaseInsensitiveStringComparisonFixer
         Inherits RecommendCaseInsensitiveStringComparisonFixer
 
-        Protected Overrides Function GetNewArguments(generator As SyntaxGenerator, caseChangingApproachValue As String,
+        Protected Overrides Function GetNewArgumentsForInvocation(generator As SyntaxGenerator, caseChangingApproachValue As String,
                 mainInvocationOperation As IInvocationOperation, stringComparisonType As INamedTypeSymbol,
-                ByRef mainInvocationInstance As SyntaxNode) As List(Of SyntaxNode)
+                ByRef mainInvocationInstance As SyntaxNode) As IEnumerable(Of SyntaxNode)
 
             Dim paramName As String = RecommendCaseInsensitiveStringComparisonAnalyzer.StringParameterName
 
@@ -93,7 +93,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
                 End If
 
-                arguments.Add(newArgumentNode)
+                arguments.Add(newArgumentNode.WithTriviaFrom(node))
 
             Next
 
@@ -107,6 +107,15 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
         End Function
 
+        Protected Overrides Function GetNewArgumentsForBinary(generator As SyntaxGenerator, rightNode As SyntaxNode, typeMemberAccess As SyntaxNode) As IEnumerable(Of SyntaxNode)
+
+            Return New List(Of SyntaxNode) From
+            {
+                generator.Argument(rightNode.WithoutTrivia()),' Need To remove any trivia because otherwise an unexpected newline is added
+                generator.Argument(typeMemberAccess)
+            }
+
+        End Function
     End Class
 
 End Namespace

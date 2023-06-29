@@ -245,6 +245,44 @@ End Class";
             await VerifyFixVisualBasicAsync(originalCode, fixedCode);
         }
 
+        [Fact]
+        public async Task Diagnostic_Equality_To_Equals_Trivia()
+        {
+            string originalCode = $@"Imports System
+Class C
+    Function M(a As String, b As String) As Boolean
+        ' Trivia1
+        Dim result As Boolean = [|a.ToLower() = b.ToLowerInvariant()|] ' Trivia2
+        ' Trivia3
+        If [|a.ToLowerInvariant() <> b.ToLower()|] Then ' Trivia4
+            ' Trivia5
+            Return [|b <> a.ToLowerInvariant()|] ' Trivia6
+            ' Trivia7
+        End If
+        ' Trivia8
+        Return [|""abc"" = a.ToUpperInvariant()|] ' Trivia9
+        ' Trivia10
+    End Function
+End Class";
+            string fixedCode = $@"Imports System
+Class C
+    Function M(a As String, b As String) As Boolean
+        ' Trivia1
+        Dim result As Boolean = a.Equals(b, StringComparison.CurrentCultureIgnoreCase) ' Trivia2
+        ' Trivia3
+        If Not a.Equals(b, StringComparison.CurrentCultureIgnoreCase) Then ' Trivia4
+            ' Trivia5
+            Return Not b.Equals(a, StringComparison.InvariantCultureIgnoreCase) ' Trivia6
+            ' Trivia7
+        End If
+        ' Trivia8
+        Return ""abc"".Equals(a, StringComparison.InvariantCultureIgnoreCase) ' Trivia9
+        ' Trivia10
+    End Function
+End Class";
+            await VerifyFixVisualBasicAsync(originalCode, fixedCode);
+        }
+
         [Theory]
         [MemberData(nameof(NoDiagnosticData))]
         [InlineData("\"aBc\".CompareTo(Nothing)")]

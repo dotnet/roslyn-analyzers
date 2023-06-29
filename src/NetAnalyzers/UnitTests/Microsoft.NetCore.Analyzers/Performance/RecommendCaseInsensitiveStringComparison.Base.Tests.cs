@@ -353,8 +353,18 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     yield return new object[] { $"a {before} b.To{casing}()",          $"{after}a.Equals(b, StringComparison.CurrentCultureIgnoreCase)" };
                     yield return new object[] { $"a {before} b.To{casing}Invariant()", $"{after}a.Equals(b, StringComparison.InvariantCultureIgnoreCase)" };
 
-                    yield return new object[] { $"\"abc\" {before} b.To{casing}()",          $"{after}\"abc\".Equals(b, StringComparison.CurrentCultureIgnoreCase)" };
-                    yield return new object[] { $"\"abc\" {before} b.To{casing}Invariant()", $"{after}\"abc\".Equals(b, StringComparison.InvariantCultureIgnoreCase)" };
+                    yield return new object[] { $"\"abc\" {before} b.To{casing}()",                                $"{after}\"abc\".Equals(b, StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"\"abc\" {before} b.To{casing}Invariant()",                       $"{after}\"abc\".Equals(b, StringComparison.InvariantCultureIgnoreCase)" };
+                    yield return new object[] { $"\"abc\".To{casing}() {before} b.To{casing}()",                   $"{after}\"abc\".Equals(b, StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"\"abc\".To{casing}() {before} b.To{casing}Invariant()",          $"{after}\"abc\".Equals(b, StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"\"abc\".To{casing}Invariant() {before} b.To{casing}Invariant()", $"{after}\"abc\".Equals(b, StringComparison.InvariantCultureIgnoreCase)" };
+
+                    yield return new object[] { $"GetString().To{casing}() {before} a.To{casing}()",          $"{after}GetString().Equals(a, StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"GetString().To{casing}() {before} a.To{casing}Invariant()", $"{after}GetString().Equals(a, StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"GetString().To{casing}Invariant() {before} a.To{casing}()", $"{after}GetString().Equals(a, StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"GetString().To{casing}() {before} a",                       $"{after}GetString().Equals(a, StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"GetString().To{casing}Invariant() {before} a",              $"{after}GetString().Equals(a, StringComparison.InvariantCultureIgnoreCase)" };
+                    yield return new object[] { $"GetString().To{casing}Invariant() {before} \"abc\"",        $"{after}GetString().Equals(\"abc\", StringComparison.InvariantCultureIgnoreCase)" };
                 }
             }
 #pragma warning restore format

@@ -218,6 +218,7 @@ class C
             string originalCode = $@"using System;
 class C
 {{
+    string GetString() => ""cde"";
     bool M(string a, string b)
     {{
         bool result = [|{diagnosedLine}|];
@@ -228,11 +229,47 @@ class C
             string fixedCode = $@"using System;
 class C
 {{
+    string GetString() => ""cde"";
     bool M(string a, string b)
     {{
         bool result = {fixedLine};
         if ({fixedLine}) return result;
         return {fixedLine};
+    }}
+}}";
+            await VerifyFixCSharpAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public async Task Diagnostic_Equality_To_Equals_Trivia()
+        {
+            string originalCode = $@"using System;
+class C
+{{
+    bool M(string a, string b)
+    {{
+        // Trivia
+        bool /* Trivia */ result = /* Trivia */ [|a.ToLower() // Trivia
+            == /* Trivia */ b.ToLowerInvariant()|] /* Trivia */; // Trivia
+        if (/* Trivia */ [|a.ToLowerInvariant() /* Trivia */ != /* Trivia */ b.ToLower()|] /* Trivia */) // Trivia
+            return /* Trivia */ [|b /* Trivia */ != /* Trivia */ a.ToLowerInvariant()|] /* Trivia */; // Trivia
+        return // Trivia
+            [|""abc"" /* Trivia */ == /* Trivia */ a.ToUpperInvariant()|] /* Trivia */; // Trivia
+        // Trivia
+    }}
+}}";
+            string fixedCode = $@"using System;
+class C
+{{
+    bool M(string a, string b)
+    {{
+        // Trivia
+        bool /* Trivia */ result = /* Trivia */ a.Equals(b, StringComparison.CurrentCultureIgnoreCase) /* Trivia */; // Trivia
+        if (/* Trivia */ !a.Equals(b, StringComparison.CurrentCultureIgnoreCase) /* Trivia */) // Trivia
+            return /* Trivia */ !b /* Trivia */ .Equals /* Trivia */ (a, StringComparison.InvariantCultureIgnoreCase) /* Trivia */; // Trivia
+        return // Trivia
+            ""abc"" /* Trivia */ .Equals /* Trivia */ (a, StringComparison.InvariantCultureIgnoreCase) /* Trivia */; // Trivia
+        // Trivia
     }}
 }}";
             await VerifyFixCSharpAsync(originalCode, fixedCode);

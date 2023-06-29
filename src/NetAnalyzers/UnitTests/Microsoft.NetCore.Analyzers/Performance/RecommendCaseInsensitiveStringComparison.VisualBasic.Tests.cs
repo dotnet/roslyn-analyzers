@@ -224,6 +224,9 @@ End Class";
         {
             string originalCode = $@"Imports System
 Class C
+    Function GetString() As String
+        Return ""cde""
+    End Function
     Function M(a As String, b As String) As Boolean
         Dim result As Boolean = [|{diagnosedLine}|]
         If [|{diagnosedLine}|] Then
@@ -234,6 +237,9 @@ Class C
 End Class";
             string fixedCode = $@"Imports System
 Class C
+    Function GetString() As String
+        Return ""cde""
+    End Function
     Function M(a As String, b As String) As Boolean
         Dim result As Boolean = {fixedLine}
         If {fixedLine} Then

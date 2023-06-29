@@ -212,6 +212,33 @@ class C
         }
 
         [Theory]
+        [MemberData(nameof(CSharpDiagnosedAndFixedEqualityToEqualsData))]
+        public async Task Diagnostic_Equality_To_Equals(string diagnosedLine, string fixedLine)
+        {
+            string originalCode = $@"using System;
+class C
+{{
+    bool M(string a, string b)
+    {{
+        bool result = [|{diagnosedLine}|];
+        if ([|{diagnosedLine}|]) return result;
+        return [|{diagnosedLine}|];
+    }}
+}}";
+            string fixedCode = $@"using System;
+class C
+{{
+    bool M(string a, string b)
+    {{
+        bool result = {fixedLine};
+        if ({fixedLine}) return result;
+        return {fixedLine};
+    }}
+}}";
+            await VerifyFixCSharpAsync(originalCode, fixedCode);
+        }
+
+        [Theory]
         [MemberData(nameof(NoDiagnosticData))]
         [InlineData("\"aBc\".CompareTo(null)")]
         [InlineData("\"aBc\".ToUpperInvariant().CompareTo((object)null)")]

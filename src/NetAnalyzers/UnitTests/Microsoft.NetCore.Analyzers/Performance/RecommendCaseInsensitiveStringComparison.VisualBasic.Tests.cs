@@ -219,6 +219,33 @@ End Class";
         }
 
         [Theory]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedEqualityToEqualsData))]
+        public async Task Diagnostic_Equality_To_Equals(string diagnosedLine, string fixedLine)
+        {
+            string originalCode = $@"Imports System
+Class C
+    Function M(a As String, b As String) As Boolean
+        Dim result As Boolean = [|{diagnosedLine}|]
+        If [|{diagnosedLine}|] Then
+            Return result
+        End If
+        Return [|{diagnosedLine}|]
+    End Function
+End Class";
+            string fixedCode = $@"Imports System
+Class C
+    Function M(a As String, b As String) As Boolean
+        Dim result As Boolean = {fixedLine}
+        If {fixedLine} Then
+            Return result
+        End If
+        Return {fixedLine}
+    End Function
+End Class";
+            await VerifyFixVisualBasicAsync(originalCode, fixedCode);
+        }
+
+        [Theory]
         [MemberData(nameof(NoDiagnosticData))]
         [InlineData("\"aBc\".CompareTo(Nothing)")]
         [InlineData("\"aBc\".ToUpperInvariant().CompareTo(CObj(Nothing))")]

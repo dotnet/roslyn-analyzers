@@ -16,6 +16,16 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         private static readonly string[] ContainsStartsWith = new[] { "Contains", "StartsWith" };
         private static readonly string[] UnnamedArgs = new[] { "", ", 1", ", 1, 1" };
+
+        private static readonly Tuple<string, string>[] CSharpComparisonOperators = new[] {
+            Tuple.Create("==", ""),
+            Tuple.Create("!=", "!")
+        };
+        private static readonly Tuple<string, string>[] VisualBasicComparisonOperators = new[] {
+            Tuple.Create("=", ""),
+            Tuple.Create("<>", "Not ")
+        };
+
         private const string CSharpSeparator = ": ";
         private const string VisualBasicSeparator = ":=";
 
@@ -317,6 +327,37 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     yield return new object[] { $"(GetString()).IndexOf(value{separator}(GetString().{caseChanging}()){arguments})", $"(GetString()).IndexOf(value{separator}GetString(){arguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
             }
+        }
+
+        public static IEnumerable<object[]> CSharpDiagnosedAndFixedEqualityToEqualsData() =>
+            DiagnosedAndFixedEqualityToEqualsData(CSharpComparisonOperators);
+        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedEqualityToEqualsData() =>
+            DiagnosedAndFixedEqualityToEqualsData(VisualBasicComparisonOperators);
+        private static IEnumerable<object[]> DiagnosedAndFixedEqualityToEqualsData(Tuple<string, string>[] comparisonOperators)
+        {
+#pragma warning disable format
+            foreach (string casing in new[]{ "Lower", "Upper" })
+            {
+                foreach ((string before, string after) in comparisonOperators)
+                {
+                    yield return new object[] { $"a.To{casing}() {before} b.To{casing}()",          $"{after}a.Equals(b, StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"a.To{casing}() {before} b.To{casing}Invariant()", $"{after}a.Equals(b, StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"a.To{casing}() {before} \"abc\"",              $"{after}a.Equals(\"abc\", StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"a.To{casing}() {before} b",                    $"{after}a.Equals(b, StringComparison.CurrentCultureIgnoreCase)" };
+
+                    yield return new object[] { $"a.To{casing}Invariant() {before} b.To{casing}Invariant()", $"{after}a.Equals(b, StringComparison.InvariantCultureIgnoreCase)" };
+                    yield return new object[] { $"a.To{casing}Invariant() {before} b.To{casing}()",          $"{after}a.Equals(b, StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"a.To{casing}Invariant() {before} \"abc\"",              $"{after}a.Equals(\"abc\", StringComparison.InvariantCultureIgnoreCase)" };
+                    yield return new object[] { $"a.To{casing}Invariant() {before} b",                    $"{after}a.Equals(b, StringComparison.InvariantCultureIgnoreCase)" };
+
+                    yield return new object[] { $"a {before} b.To{casing}()",          $"{after}a.Equals(b, StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"a {before} b.To{casing}Invariant()", $"{after}a.Equals(b, StringComparison.InvariantCultureIgnoreCase)" };
+
+                    yield return new object[] { $"\"abc\" {before} b.To{casing}()",          $"{after}\"abc\".Equals(b, StringComparison.CurrentCultureIgnoreCase)" };
+                    yield return new object[] { $"\"abc\" {before} b.To{casing}Invariant()", $"{after}\"abc\".Equals(b, StringComparison.InvariantCultureIgnoreCase)" };
+                }
+            }
+#pragma warning restore format
         }
 
         public static IEnumerable<object[]> NoDiagnosticData()

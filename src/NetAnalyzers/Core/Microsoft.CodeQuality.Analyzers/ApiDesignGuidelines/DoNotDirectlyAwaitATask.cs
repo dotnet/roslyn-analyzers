@@ -20,7 +20,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     public sealed class DoNotDirectlyAwaitATaskAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2007";
-
+        private const string ConfigureAwait = "ConfigureAwait";
         public static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
             CreateLocalizableResourceString(nameof(DoNotDirectlyAwaitATaskTitle)),
@@ -53,6 +53,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
 
                 var configuredAsyncDisposable = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesConfiguredAsyncDisposable);
+                var configuredCancelableAsyncEnumerable = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesConfiguredCancelableAsyncEnumerable);
 
                 context.RegisterOperationBlockStartAction(context =>
                 {
@@ -77,6 +78,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             context.RegisterOperationAction(context => AnalyzeUsingOperation(context, configuredAsyncDisposable), OperationKind.Using);
                             context.RegisterOperationAction(context => AnalyzeUsingDeclarationOperation(context, configuredAsyncDisposable), OperationKindEx.UsingDeclaration);
                         }
+                        if (configuredCancelableAsyncEnumerable is not null)
+                        {
+                            context.RegisterOperationAction(context => AnalyzeForEachOperation(context, configuredCancelableAsyncEnumerable), OperationKind.Loop);
+                        }
                     }
                 });
             });
@@ -92,6 +97,76 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 context.ReportDiagnostic(awaitExpression.Operation.Syntax.CreateDiagnostic(Rule));
             }
+        }
+
+        private static void AnalyzeForEachOperation(OperationAnalysisContext context,
+            INamedTypeSymbol configuredCancelableAsyncEnumerable)
+        {
+            if (context.Operation is not IForEachLoopOperation operation)
+                return;
+
+            if (!operation.IsAsynchronous())
+            {
+                return;
+            }
+
+            // Get the type of the expression being iterated over.
+            IOperation collectionOperation = operation.Collection;
+            ITypeSymbol? typeOfCollection = collectionOperation.Type;
+            if (Equals(typeOfCollection.OriginalDefinition, configuredCancelableAsyncEnumerable))
+            {
+                // Operation should be conversion to IAsyncEnumerable
+                if (collectionOperation is IConversionOperation conversionOperation)
+                {
+                    if (conversionOperation.Operand is ILocalReferenceOperation localReferenceOperation)
+                    {
+                        // Can we find the initializer of this local?
+                        var location = localReferenceOperation.Local.Locations.First();
+                        SyntaxNode? node = location.SourceTree?.GetRoot(context.CancellationToken)
+                                                               .FindNode(location.SourceSpan);
+                        if (node is not null)
+                        {
+                            var declaration = localReferenceOperation.SemanticModel.GetOperationWalkingUpParentChain(node, context.CancellationToken);
+                            if (declaration is IVariableDeclaratorOperation variableDeclaratorOperation)
+                            {
+                                IVariableInitializerOperation? initializerOperation = variableDeclaratorOperation.GetVariableInitializer();
+                                if (initializerOperation?.Value is IInvocationOperation invocationOperation)
+                                {
+                                    if (IsConfigureAwait(invocationOperation))
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (conversionOperation.Operand is IInvocationOperation invocationOperation)
+                    {
+                        if (IsConfigureAwait(invocationOperation))
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+
+            context.ReportDiagnostic(collectionOperation.Syntax.CreateDiagnostic(Rule));
+        }
+
+        private static bool IsConfigureAwait(IInvocationOperation? invocationOperation)
+        {
+            // Differentiate between
+            // .WithCancellation(...).ConfigureAwait(...)
+            // and .ConfigureAwait(...).WithCancellation(...)
+            // Fall back to just string comparison as it could be either
+            // the ConfiguredCancelableAsyncEnumerable member method or
+            // the TaskAsyncEnumerableExtensions extension method.
+            if (invocationOperation?.TargetMethod.Name == "WithCancellation")
+            {
+                invocationOperation = invocationOperation.Instance as IInvocationOperation;
+            }
+
+            return invocationOperation?.TargetMethod.Name == ConfigureAwait;
         }
 
         private static void AnalyzeUsingOperation(OperationAnalysisContext context, INamedTypeSymbol configuredAsyncDisposable)

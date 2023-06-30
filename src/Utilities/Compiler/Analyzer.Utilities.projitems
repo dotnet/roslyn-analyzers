@@ -65,6 +65,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WellKnownDiagnosticTagsExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Index.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IsExternalInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lightup\IForEachLoopOperationExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Lightup\IMethodSymbolExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Lightup\INegatedPatternOperationWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Lightup\IOperationWrapper.cs" />

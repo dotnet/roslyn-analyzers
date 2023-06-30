@@ -741,5 +741,250 @@ public class C
 
             await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
+
+        [Fact, WorkItem(3703, "https://github.com/dotnet/roslyn-analyzers/issues/3703")]
+        public async Task CSharpAwaitForEach()
+        {
+            var code = @"
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+public static class AsyncExtensions
+{
+    public static async Task<int> Sum(this IAsyncEnumerable<int> items)
+    {
+        int sum = 0;
+        await foreach (var item in [|items|])
+            sum += item;
+        return sum;
+    }
+}
+";
+            var fixedCode = @"
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+public static class AsyncExtensions
+{
+    public static async Task<int> Sum(this IAsyncEnumerable<int> items)
+    {
+        int sum = 0;
+        await foreach (var item in items.ConfigureAwait(false))
+            sum += item;
+        return sum;
+    }
+}
+";
+
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
+                    ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "5.0.0"))),
+                LanguageVersion = CSharpLanguageVersion.CSharp8,
+                TestCode = code,
+                FixedCode = fixedCode,
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(3703, "https://github.com/dotnet/roslyn-analyzers/issues/3703")]
+        public async Task CSharpAwaitForEachUsingLocalConfigureAwait()
+        {
+            var code = @"
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+public static class AsyncExtensions
+{
+    public static async Task<int> Sum(this IAsyncEnumerable<int> items)
+    {
+        var local = items.ConfigureAwait(false);
+        int sum = 0;
+        await foreach (var item in local)
+            sum += item;
+        return sum;
+    }
+}
+";
+
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
+                    ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "5.0.0"))),
+                LanguageVersion = CSharpLanguageVersion.CSharp8,
+                TestCode = code,
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(3703, "https://github.com/dotnet/roslyn-analyzers/issues/3703")]
+        public async Task CSharpAwaitForEachUsingLocal()
+        {
+            var code = @"
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+public static class AsyncExtensions
+{
+    public static async Task<int> Sum(this IAsyncEnumerable<int> items, CancellationToken cancellationToken)
+    {
+        var local = items;
+        int sum = 0;
+        await foreach (var item in [|local|])
+            sum += item;
+        return sum;
+    }
+}
+";
+            var fixedCode = @"
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+public static class AsyncExtensions
+{
+    public static async Task<int> Sum(this IAsyncEnumerable<int> items, CancellationToken cancellationToken)
+    {
+        var local = items;
+        int sum = 0;
+        await foreach (var item in local.ConfigureAwait(false))
+            sum += item;
+        return sum;
+    }
+}
+";
+
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
+                    ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "5.0.0"))),
+                LanguageVersion = CSharpLanguageVersion.CSharp8,
+                TestCode = code,
+                FixedCode = fixedCode,
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(3703, "https://github.com/dotnet/roslyn-analyzers/issues/3703")]
+        public async Task CSharpAwaitForEachUsingLocalWithCancellation()
+        {
+            var code = @"
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+public static class AsyncExtensions
+{
+    public static async Task<int> Sum(this IAsyncEnumerable<int> items, CancellationToken cancellationToken)
+    {
+        var local = items.WithCancellation(cancellationToken);
+        int sum = 0;
+        await foreach (var item in [|local|])
+            sum += item;
+        return sum;
+    }
+}
+";
+            var fixedCode = @"
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+public static class AsyncExtensions
+{
+    public static async Task<int> Sum(this IAsyncEnumerable<int> items, CancellationToken cancellationToken)
+    {
+        var local = items.WithCancellation(cancellationToken);
+        int sum = 0;
+        await foreach (var item in local.ConfigureAwait(false))
+            sum += item;
+        return sum;
+    }
+}
+";
+
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
+                    ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "5.0.0"))),
+                LanguageVersion = CSharpLanguageVersion.CSharp8,
+                TestCode = code,
+                FixedCode = fixedCode,
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(3703, "https://github.com/dotnet/roslyn-analyzers/issues/3703")]
+        public async Task CSharpAwaitForEachWithCancellation()
+        {
+            var code = @"
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+public static class AsyncExtensions
+{
+    public static async Task<int> Sum(this IAsyncEnumerable<int> items, CancellationToken cancellationToken)
+    {
+        int sum = 0;
+        await foreach (var item in [|items.WithCancellation(cancellationToken)|])
+            sum += item;
+        return sum;
+    }
+}
+";
+            var fixedCode = @"
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+public static class AsyncExtensions
+{
+    public static async Task<int> Sum(this IAsyncEnumerable<int> items, CancellationToken cancellationToken)
+    {
+        int sum = 0;
+        await foreach (var item in items.WithCancellation(cancellationToken).ConfigureAwait(false))
+            sum += item;
+        return sum;
+    }
+}
+";
+
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
+                    ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "5.0.0"))),
+                LanguageVersion = CSharpLanguageVersion.CSharp8,
+                TestCode = code,
+                FixedCode = fixedCode,
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(3703, "https://github.com/dotnet/roslyn-analyzers/issues/3703")]
+        public async Task CSharpAwaitForEachConfigureAwaitWithCancellation()
+        {
+            var code = @"
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+public static class AsyncExtensions
+{
+    public static async Task<int> Sum(this IAsyncEnumerable<int> items, CancellationToken cancellationToken)
+    {
+        int sum = 0;
+        // ConfigureAwait/WithCancellation can be in either order.
+        await foreach (var item in items.ConfigureAwait(false).WithCancellation(cancellationToken))
+            sum += item;
+        return sum;
+    }
+}
+";
+
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
+                    ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "5.0.0"))),
+                LanguageVersion = CSharpLanguageVersion.CSharp8,
+                TestCode = code,
+            }.RunAsync();
+        }
     }
 }

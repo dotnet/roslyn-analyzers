@@ -49,6 +49,26 @@
             ]
           }
         },
+        "CA1041": {
+          "id": "CA1041",
+          "shortDescription": "Provide ObsoleteAttribute message",
+          "fullDescription": "A type or member is marked by using a System.ObsoleteAttribute attribute that does not have its ObsoleteAttribute.Message property specified. When a type or member that is marked by using ObsoleteAttribute is compiled, the Message property of the attribute is displayed. This gives the user information about the obsolete type or member.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1041",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpProvideObsoleteAttributeMessageAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1200": {
           "id": "CA1200",
           "shortDescription": "Avoid using cref tags with a prefix",
@@ -1031,27 +1051,6 @@
             "category": "Design",
             "isEnabledByDefault": false,
             "typeName": "AvoidEmptyInterfacesAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
-        "CA1041": {
-          "id": "CA1041",
-          "shortDescription": "Provide ObsoleteAttribute message",
-          "fullDescription": "A type or member is marked by using a System.ObsoleteAttribute attribute that does not have its ObsoleteAttribute.Message property specified. When a type or member that is marked by using ObsoleteAttribute is compiled, the Message property of the attribute is displayed. This gives the user information about the obsolete type or member.",
-          "defaultLevel": "note",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1041",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": true,
-            "typeName": "ProvideObsoleteAttributeMessageAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -6126,6 +6125,26 @@
             "category": "Design",
             "isEnabledByDefault": false,
             "typeName": "BasicImplementStandardExceptionConstructorsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1041": {
+          "id": "CA1041",
+          "shortDescription": "Provide ObsoleteAttribute message",
+          "fullDescription": "A type or member is marked by using a System.ObsoleteAttribute attribute that does not have its ObsoleteAttribute.Message property specified. When a type or member that is marked by using ObsoleteAttribute is compiled, the Message property of the attribute is displayed. This gives the user information about the obsolete type or member.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1041",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "BasicProvideObsoleteAttributeMessageAnalyzer",
             "languages": [
               "Visual Basic"
             ],

@@ -5,9 +5,9 @@
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>ae1fff344d46976624e68ae17164e0607ab68b10</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23328.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23330.2">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>5740876021887c3a50d3dae34cc125dbab36316f</Sha>
+      <Sha>c7e229b7e8cd71c8479e236ae1efff3ad1d740f9</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23214.1">

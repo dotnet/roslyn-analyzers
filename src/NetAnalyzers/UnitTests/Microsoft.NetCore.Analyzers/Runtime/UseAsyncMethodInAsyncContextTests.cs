@@ -16,6 +16,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class UseAsyncMethodInAsyncContextTests
     {
+        private static readonly ImmutableArray<PackageIdentity> EntityFrameworkPackages = ImmutableArray.Create(new PackageIdentity("Microsoft.EntityFrameworkCore", "7.0.8"));
+
         [Fact]
         public async Task TaskWaitInTaskReturningMethodGeneratesWarning()
         {
@@ -1259,7 +1261,7 @@ class Test {
         ctx.Add(1);
     }
 }",
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net70.WithPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.EntityFrameworkCore", "7.0.8")))
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net70.WithPackages(EntityFrameworkPackages)
             }.RunAsync();
         }
 
@@ -1278,7 +1280,7 @@ class Test {
         ctx.AddRange(1, 2);
     }
 }",
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net70.WithPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.EntityFrameworkCore", "7.0.8")))
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net70.WithPackages(EntityFrameworkPackages)
             }.RunAsync();
         }
 
@@ -1298,7 +1300,7 @@ class Test {
     }
 }",
                 ExpectedDiagnostics = { new DiagnosticResult(UseAsyncMethodInAsyncContext.Descriptor).WithLocation(0).WithArguments("IDbContextFactory<DbContext>.CreateDbContext()", "IDbContextFactory<DbContext>.CreateDbContextAsync(CancellationToken)") },
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net70.WithPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.EntityFrameworkCore", "7.0.8")))
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net70.WithPackages(EntityFrameworkPackages)
             }.RunAsync();
         }
 

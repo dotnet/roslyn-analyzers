@@ -83,7 +83,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                ISet<IMethodSymbol> excludedMethods = GetExcludedMethods(wellKnownTypeProvider).ToSet();
+                ImmutableArray<IMethodSymbol> excludedMethods = GetExcludedMethods(wellKnownTypeProvider);
                 context.RegisterOperationAction(context =>
                 {
                     if (IsInTaskReturningMethodOrDelegate(context, syncBlockingTypes))
@@ -186,18 +186,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        private static IEnumerable<IMethodSymbol> GetExcludedMethods(WellKnownTypeProvider wellKnownTypeProvider)
+        private static ImmutableArray<IMethodSymbol> GetExcludedMethods(WellKnownTypeProvider wellKnownTypeProvider)
         {
-            var methods = Enumerable.Empty<IMethodSymbol>();
+            var methods = ImmutableArray<IMethodSymbol>.Empty;
             if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftEntityFrameworkCoreDbContext, out INamedTypeSymbol? dbContextType))
             {
-                methods = methods
-                    .Concat(dbContextType
-                        .GetMembers("Add")
-                        .OfType<IMethodSymbol>())
-                    .Concat(dbContextType
-                        .GetMembers("AddRange")
-                        .OfType<IMethodSymbol>());
+                var addMethods = dbContextType
+                    .GetMembers("Add")
+                    .OfType<IMethodSymbol>();
+                var addRangeMethods = dbContextType
+                    .GetMembers("AddRange")
+                    .OfType<IMethodSymbol>();
+                methods = methods.AddRange(addMethods.Concat(addRangeMethods));
             }
 
             return methods;

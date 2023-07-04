@@ -188,19 +188,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static ImmutableArray<IMethodSymbol> GetExcludedMethods(WellKnownTypeProvider wellKnownTypeProvider)
         {
-            var methods = ImmutableArray<IMethodSymbol>.Empty;
+            var methodsBuilder = ImmutableArray.CreateBuilder<IMethodSymbol>();
             if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftEntityFrameworkCoreDbContext, out INamedTypeSymbol? dbContextType))
             {
-                var addMethods = dbContextType
-                    .GetMembers("Add")
-                    .OfType<IMethodSymbol>();
-                var addRangeMethods = dbContextType
-                    .GetMembers("AddRange")
-                    .OfType<IMethodSymbol>();
-                methods = methods.AddRange(addMethods.Concat(addRangeMethods));
+                foreach (var method in dbContextType.GetMembers().OfType<IMethodSymbol>())
+                {
+                    if (method.Name is "Add" or "AddRange")
+                    {
+                        methodsBuilder.Add(method);
+                    }
+                }
             }
-
-            return methods;
+            return methodsBuilder.ToImmutable();
         }
 
         /// <summary>

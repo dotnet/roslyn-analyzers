@@ -199,6 +199,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
                 }
             }
+            
             return methodsBuilder.ToImmutable();
         }
 

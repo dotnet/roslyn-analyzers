@@ -130,7 +130,7 @@ namespace PerformanceTests.Utilities
                 GlobalOptions = new ConfigOptions(globalOptions);
             }
 
-            public AnalyzerConfigOptions GlobalOptions { get; }
+            public override AnalyzerConfigOptions GlobalOptions { get; }
 
             public override AnalyzerConfigOptions GetOptions(SyntaxTree tree)
                 => GlobalOptions;

@@ -45,7 +45,7 @@ namespace PerformanceTests.Utilities
             {
                 foreach (var assembly in _assemblies)
                 {
-                    if (!assembly.FilePath.Contains("VisualBasic"))
+                    if (assembly.FilePath != null && !assembly.FilePath.Contains("VisualBasic"))
                     {
                         references.Add(assembly);
                     }

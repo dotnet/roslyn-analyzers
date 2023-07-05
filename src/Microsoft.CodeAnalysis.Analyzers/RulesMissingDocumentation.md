@@ -23,7 +23,6 @@ RS1018 |  | DiagnosticId for analyzers must be in specified format |
 RS1019 |  | DiagnosticId must be unique across analyzers |
 RS1020 |  | Category for analyzers must be from the specified values |
 RS1021 |  | Invalid entry in analyzer category and diagnostic ID range specification file |
-RS1022 |  | Do not use types from Workspaces assembly in an analyzer |
 RS1024 |  | Symbols should be compared for equality |
 RS1025 |  | Configure generated code analysis |
 RS1026 |  | Enable concurrent execution |

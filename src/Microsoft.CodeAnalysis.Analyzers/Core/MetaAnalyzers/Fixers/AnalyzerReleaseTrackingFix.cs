@@ -120,8 +120,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
         {
             if (diagnostic.Properties != null &&
                 diagnostic.Properties.TryGetValue(DiagnosticDescriptorCreationAnalyzer.EntryToAddPropertyName, out entryToAdd) &&
-                !string.IsNullOrEmpty(entryToAdd))
+                !RoslynString.IsNullOrEmpty(entryToAdd))
             {
+                RoslynDebug.Assert(entryToAdd != null);
                 return true;
             }
 
@@ -136,7 +137,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
         {
             if (diagnostic.Properties != null &&
                 diagnostic.Properties.TryGetValue(DiagnosticDescriptorCreationAnalyzer.EntryToUpdatePropertyName, out entryToUpdate) &&
-                !string.IsNullOrEmpty(entryToUpdate) &&
+                !RoslynString.IsNullOrEmpty(entryToUpdate) &&
                 TryGetRuleIdForEntry(entryToUpdate, out ruleId))
             {
                 return true;

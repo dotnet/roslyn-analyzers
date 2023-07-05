@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -104,7 +103,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                     context.RegisterOperationAction(context =>
                     {
-                        if (((IInstanceReferenceOperation)context.Operation).ReferenceKind == InstanceReferenceKind.ContainingTypeInstance
+                        if (context.Operation is IInstanceReferenceOperation { ReferenceKind: InstanceReferenceKind.ContainingTypeInstance }
                             && (context.Operation.Parent is not IInvocationOperation invocation || !invocation.TargetMethod.Equals(methodSymbol, SymbolEqualityComparer.Default)))
                         {
                             isInstanceReferenced = true;
@@ -120,6 +119,17 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         }
                     }, OperationKind.None);
 
+                    context.RegisterOperationAction(context =>
+                    {
+                        if (context.Operation is IParameterReferenceOperation { Parameter.ContainingSymbol: IMethodSymbol { MethodKind: MethodKind.Constructor } })
+                        {
+                            // we're referencing a parameter not from our actual method, but from a type constructor.
+                            // This must be a primary constructor scenario, and we're capturing the parameter here.  
+                            // This member cannot be made static.
+                            isInstanceReferenced = true;
+                        }
+                    }, OperationKind.ParameterReference);
+
                     context.RegisterOperationBlockEndAction(context =>
                     {
                         if (!isInstanceReferenced)
@@ -127,7 +137,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                             if (methodSymbol.IsAccessorMethod())
                             {
                                 accessorCandidates.Add(methodSymbol, context.CancellationToken);
-                                propertyOrEventCandidates.Add(methodSymbol.AssociatedSymbol, context.CancellationToken);
+                                propertyOrEventCandidates.Add(methodSymbol.AssociatedSymbol!, context.CancellationToken);
                             }
                             else if (methodSymbol.IsExternallyVisible())
                             {
@@ -359,17 +369,17 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return false;
             }
 
-            var allAttributes = new List<AttributeData>();
-
             while (symbol != null)
             {
-                allAttributes.AddRange(symbol.GetAttributes());
+                if (symbol.HasAttribute(obsoleteAttributeType))
+                    return true;
+
                 symbol = symbol is IMethodSymbol method && method.AssociatedSymbol != null
                     ? method.AssociatedSymbol :
                     symbol.ContainingSymbol;
             }
 
-            return allAttributes.Any(attribute => attribute.AttributeClass.Equals(obsoleteAttributeType));
+            return false;
         }
     }
 }

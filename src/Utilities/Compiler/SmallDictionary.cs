@@ -74,7 +74,7 @@ namespace Analyzer.Utilities
             _root = Remove(_root, GetHashCode(key));
         }
 
-        private AvlNode? Remove(AvlNode? currentNode, int hashCode)
+        private static AvlNode? Remove(AvlNode? currentNode, int hashCode)
         {
             if (currentNode == null)
             {
@@ -647,7 +647,7 @@ namespace Analyzer.Utilities
                     }
                 }
 
-                public K Current => _current!.Key;
+                public readonly K Current => _current!.Key;
 
                 public bool MoveNext()
                 {
@@ -765,7 +765,7 @@ namespace Analyzer.Utilities
                     }
                 }
 
-                public V Current => _current!.Value;
+                public readonly V Current => _current!.Value;
 
                 public bool MoveNext()
                 {
@@ -871,7 +871,7 @@ namespace Analyzer.Utilities
                 }
             }
 
-            public KeyValuePair<K, V> Current => new(_current!.Key, _current!.Value);
+            public readonly KeyValuePair<K, V> Current => new(_current!.Key, _current!.Value);
 
             public bool MoveNext()
             {

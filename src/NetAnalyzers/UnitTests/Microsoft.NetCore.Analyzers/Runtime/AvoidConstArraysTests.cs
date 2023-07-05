@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
@@ -803,6 +803,37 @@ public class Test
 }",
                 LanguageVersion = LanguageVersion.CSharp8
             }.RunAsync();
+        }
+
+        [Fact, WorkItem(6686, "https://github.com/dotnet/roslyn-analyzers/issues/6686")]
+        public Task ArrayWithoutInitializer_NoDiagnostic()
+        {
+            return new VerifyCS.Test
+            {
+                TestCode = @"using System.Collections.Generic;
+
+public class MyClass
+{
+    public List<object> Cases => new() { new object[0] };
+}",
+                LanguageVersion = LanguageVersion.CSharp10
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(6686, "https://github.com/dotnet/roslyn-analyzers/issues/6697")]
+        public async Task ArrayWithoutInitializer_NoDiagnostic2()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class MyClass
+{
+    public void M1(Type[] types) { }
+    public void M2(int length)
+    {
+         M1(new Type[length]);
+    }
+}");
         }
     }
 }

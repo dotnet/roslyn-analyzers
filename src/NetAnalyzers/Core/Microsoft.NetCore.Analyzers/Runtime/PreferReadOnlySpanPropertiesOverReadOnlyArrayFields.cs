@@ -45,84 +45,93 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSymbolStartAction(OnSymbolStart, SymbolKind.NamedType);
+            context.RegisterCompilationStartAction(OnCompilationStart);
         }
 
-        private void OnSymbolStart(SymbolStartAnalysisContext context)
+        private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
             //  Bail if we're missing required symbols.
             if (!RequiredSymbols.TryGetRequiredSymbols(context.Compilation, out RequiredSymbols? symbols))
                 return;
 
-            var cache = new Cache();
-            var fieldReferenceVisitor = new FieldReferenceVisitor(symbols, cache);
-
-            context.RegisterOperationAction(AnalyzeOperation, OperationKind.FieldInitializer, OperationKind.FieldReference);
-            context.RegisterSymbolEndAction(OnSymbolEnd);
+            context.RegisterSymbolStartAction(OnSymbolStart, SymbolKind.NamedType);
 
             return;
 
-            //  Local functions
+            //  Local functions.
 
-            //  We analyze two types of operations: IFieldReferenceOperations and IFieldInitializerOperations.
-            //  We maintain collections of candidate fields with valid field initializers.
-            //  We analyze IFieldReferenceOperations and eliminate candidates that are used in ways that prohibit
-            //  conversion to ReadOnlySpan.
-            void AnalyzeOperation(OperationAnalysisContext context)
+            void OnSymbolStart(SymbolStartAnalysisContext context)
             {
-                switch (context.Operation)
+                var cache = new Cache();
+                var fieldReferenceVisitor = new FieldReferenceVisitor(symbols, cache);
+
+                context.RegisterOperationAction(AnalyzeOperation, OperationKind.FieldInitializer, OperationKind.FieldReference);
+                context.RegisterSymbolEndAction(OnSymbolEnd);
+
+                return;
+
+                //  Local functions
+
+                //  We analyze two types of operations: IFieldReferenceOperations and IFieldInitializerOperations.
+                //  We maintain collections of candidate fields with valid field initializers.
+                //  We analyze IFieldReferenceOperations and eliminate candidates that are used in ways that prohibit
+                //  conversion to ReadOnlySpan.
+                void AnalyzeOperation(OperationAnalysisContext context)
                 {
-                    case IFieldInitializerOperation fieldInitializer:
-                        if (fieldInitializer.Value is IArrayCreationOperation arrayCreation &&
-                            arrayCreation.Initializer is not null &&
-                            arrayCreation.Initializer.ElementValues.All(x => x.ConstantValue.HasValue) &&
-                            symbols.IsSupportedArrayElementType(arrayCreation.GetElementType()!))
-                        {
-                            foreach (var field in fieldInitializer.InitializedFields)
-                            {
-                                if (field.IsStatic && field.IsReadOnly && field.IsPrivate())
-                                    cache.Candidates.Add(field);
-                            }
-                        }
-
-                        break;
-                    case IFieldReferenceOperation fieldReference:
-                        if (fieldReference.GetValueUsageInfo(fieldReference.SemanticModel.GetEnclosingSymbol(fieldReference.Syntax.SpanStart, context.CancellationToken)) is
-                            ValueUsageInfo.ReadableWritableReference or ValueUsageInfo.WritableReference)
-                        {
-                            //  Eliminate candidates that are assigned to ref or out variables.
-                            cache.Candidates.Eliminate(fieldReference.Field);
-                        }
-                        else
-                        {
-                            //  Eliminate candidates that are used in ways that prohibit conversion to ReadOnlySpan.
-                            fieldReference.Parent.Accept(fieldReferenceVisitor, new VisitContext(fieldReference, fieldReference.Field, context.CancellationToken));
-                        }
-
-                        break;
-                }
-            }
-
-            //  Report diagnostics for all fields that survived candidate elimination and have a valid field initializer.
-            void OnSymbolEnd(SymbolAnalysisContext context)
-            {
-                try
-                {
-                    var asSpanInvocationLookup = cache.SavedOperations.ToLookup(t => t.Field, t => t.Operation, SymbolEqualityComparer.Default);
-                    foreach (var field in cache.Candidates)
+                    switch (context.Operation)
                     {
-                        //  Save the locations of all operations that need to be fixed by the fixer.
-                        var savedLocations = asSpanInvocationLookup[field].Select(x => new SavedSpanLocation(x.Syntax.Span, x.Syntax.SyntaxTree.FilePath));
-                        string propertyValue = SavedSpanLocation.Serialize(savedLocations);
-                        var properties = ImmutableDictionary<string, string?>.Empty.Add(FixerDataPropertyName, propertyValue);
-                        var messageArgument = ((IArrayTypeSymbol)field.Type).ElementType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
-                        var diagnostic = field.CreateDiagnostic(Rule, properties, messageArgument);
-                        context.ReportDiagnostic(diagnostic);
+                        case IFieldInitializerOperation fieldInitializer:
+                            if (fieldInitializer.Value is IArrayCreationOperation arrayCreation &&
+                                arrayCreation.Initializer is not null &&
+                                arrayCreation.Initializer.ElementValues.All(x => x.ConstantValue.HasValue) &&
+                                symbols.IsSupportedArrayElementType(arrayCreation.GetElementType()!))
+                            {
+                                foreach (var field in fieldInitializer.InitializedFields)
+                                {
+                                    if (field.IsStatic && field.IsReadOnly && field.IsPrivate())
+                                        cache.Candidates.Add(field);
+                                }
+                            }
+
+                            break;
+                        case IFieldReferenceOperation fieldReference:
+                            if (fieldReference.GetValueUsageInfo(fieldReference.SemanticModel.GetEnclosingSymbol(fieldReference.Syntax.SpanStart, context.CancellationToken)) is
+                                ValueUsageInfo.ReadableWritableReference or ValueUsageInfo.WritableReference)
+                            {
+                                //  Eliminate candidates that are assigned to ref or out variables.
+                                cache.Candidates.Eliminate(fieldReference.Field);
+                            }
+                            else
+                            {
+                                //  Eliminate candidates that are used in ways that prohibit conversion to ReadOnlySpan.
+                                fieldReference.Parent.Accept(fieldReferenceVisitor, new VisitContext(fieldReference, fieldReference.Field, context.CancellationToken));
+                            }
+
+                            break;
                     }
                 }
-                finally
+
+                //  Report diagnostics for all fields that survived candidate elimination and have a valid field initializer.
+                void OnSymbolEnd(SymbolAnalysisContext context)
                 {
-                    cache.Dispose();
+                    try
+                    {
+                        var asSpanInvocationLookup = cache.SavedOperations.ToLookup(t => t.Field, t => t.Operation, SymbolEqualityComparer.Default);
+                        foreach (var field in cache.Candidates)
+                        {
+                            //  Save the locations of all operations that need to be fixed by the fixer.
+                            var savedLocations = asSpanInvocationLookup[field].Select(x => new SavedSpanLocation(x.Syntax.Span, x.Syntax.SyntaxTree.FilePath));
+                            string propertyValue = SavedSpanLocation.Serialize(savedLocations);
+                            var properties = ImmutableDictionary<string, string?>.Empty.Add(FixerDataPropertyName, propertyValue);
+                            var messageArgument = ((IArrayTypeSymbol)field.Type).ElementType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                            var diagnostic = field.CreateDiagnostic(Rule, properties, messageArgument);
+                            context.ReportDiagnostic(diagnostic);
+                        }
+                    }
+                    finally
+                    {
+                        cache.Dispose();
+                    }
                 }
             }
         }

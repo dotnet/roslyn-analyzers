@@ -3215,6 +3215,26 @@
             ]
           }
         },
+        "CA1865": {
+          "id": "CA1865",
+          "shortDescription": "Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'",
+          "fullDescription": "Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists, and will not throw.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotGuardSetAddOrRemoveByContains",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2000": {
           "id": "CA2000",
           "shortDescription": "Dispose objects before losing scope",

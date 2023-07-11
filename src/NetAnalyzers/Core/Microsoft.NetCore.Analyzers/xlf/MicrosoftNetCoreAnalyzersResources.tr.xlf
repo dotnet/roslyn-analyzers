@@ -763,6 +763,21 @@ Genel türlerde genişletme ve kullanıcı tanımlı dönüştürmeler desteklen
         <target state="translated">Gereksiz 'Dictionary.ContainsKey(key)' çağrısı</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotGuardSetAddOrRemoveByContainsDescription">
+        <source>Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists, and will not throw.</source>
+        <target state="new">Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists, and will not throw.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardSetAddOrRemoveByContainsMessage">
+        <source>Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'</source>
+        <target state="new">Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardSetAddOrRemoveByContainsTitle">
+        <source>Unnecessary call to 'Set.Contains(item)'</source>
+        <target state="new">Unnecessary call to 'Set.Contains(item)'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotHardCodeCertificate">
         <source>Do not hard-code certificate</source>
         <target state="translated">Sertifikayı sabit olarak kodlama</target>

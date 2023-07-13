@@ -1510,7 +1510,7 @@
     <value>Unnecessary call to 'Dictionary.ContainsKey(key)'</value>
   </data>
   <data name="DoNotGuardSetAddOrRemoveByContainsDescription" xml:space="preserve">
-    <value>Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists, and will not throw.</value>
+    <value>Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists and will return if it was added or removed.</value>
   </data>
   <data name="DoNotGuardSetAddOrRemoveByContainsMessage" xml:space="preserve">
     <value>Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'</value>

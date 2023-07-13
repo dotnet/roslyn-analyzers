@@ -764,8 +764,8 @@ Konwersje poszerzane i zdefiniowane przez użytkownika nie są obsługiwane w pr
         <note />
       </trans-unit>
       <trans-unit id="DoNotGuardSetAddOrRemoveByContainsDescription">
-        <source>Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists, and will not throw.</source>
-        <target state="new">Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists, and will not throw.</target>
+        <source>Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists and will return if it was added or removed.</source>
+        <target state="new">Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists and will return if it was added or removed.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotGuardSetAddOrRemoveByContainsMessage">

@@ -635,7 +635,7 @@ End Class
 Class D
     Sub M(token As CancellationToken)
         If token.IsCancellationRequested Then
-            Throw New {|BC30389:C.S|}()
+            {|BC30665:Throw New {|BC30389:C.S|}()|}
         End If
     End Sub
 End Class

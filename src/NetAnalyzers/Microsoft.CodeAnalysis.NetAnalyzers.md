@@ -1740,7 +1740,7 @@ Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'Try
 |CodeFix|True|
 ---
 
-## [CA1865](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865): Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'
+## [CA1865](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865): Unnecessary call to 'Set.Contains(item)'
 
 Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists, and will not throw.
 

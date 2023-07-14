@@ -14,15 +14,11 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
         Inherits DoNotGuardSetAddOrRemoveByContainsFixer
 
         Protected Overrides Function SyntaxSupportedByFixer(conditionalSyntax As SyntaxNode) As Boolean
-            If TypeOf conditionalSyntax Is IfStatementSyntax Then
-                Return True
-            End If
-
             If TypeOf conditionalSyntax Is MultiLineIfBlockSyntax Then
                 Return CType(conditionalSyntax, MultiLineIfBlockSyntax).Statements.Count() = 1
             End If
 
-            Return False
+            Return TypeOf conditionalSyntax Is SingleLineIfStatementSyntax
         End Function
 
         Protected Overrides Function ReplaceConditionWithChild(document As Document, root As SyntaxNode, conditionalOperationNode As SyntaxNode, childOperationNode As SyntaxNode) As Document

@@ -16,11 +16,10 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     {
         protected override bool SyntaxSupportedByFixer(SyntaxNode conditionalSyntax)
         {
-            if (conditionalSyntax is ConditionalExpressionSyntax conditionalExpressionSyntax)
-                return conditionalExpressionSyntax.WhenTrue.ChildNodes().Count() == 1;
-
-            if (conditionalSyntax is IfStatementSyntax)
-                return true;
+            if (conditionalSyntax is IfStatementSyntax ifStatementSyntax)
+            {
+                return ifStatementSyntax.Statement.ChildNodes().Count() == 1;
+            }
 
             return false;
         }

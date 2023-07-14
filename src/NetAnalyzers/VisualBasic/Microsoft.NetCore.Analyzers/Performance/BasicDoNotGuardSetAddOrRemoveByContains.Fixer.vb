@@ -19,7 +19,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
             End If
 
             If TypeOf conditionalSyntax Is MultiLineIfBlockSyntax Then
-                Return CType(conditionalSyntax, MultiLineIfBlockSyntax).IfStatement.ChildNodes().Count() = 1
+                Return CType(conditionalSyntax, MultiLineIfBlockSyntax).Statements.Count() = 1
             End If
 
             Return False

@@ -241,7 +241,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task AddAdditionalStatements_ReportsDiagnostic_CS()
+        public async Task AddWithAdditionalStatements_ReportsDiagnostic_CS()
         {
             string source = CSUsings + CSNamespaceAndClassStart + @"
         private readonly HashSet<string> MySet = new HashSet<string>();
@@ -256,11 +256,11 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
         " + CSNamespaceAndClassEnd;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyCS.VerifyCodeFixAsync(source, source);
         }
 
         [Fact]
-        public async Task RemoveAdditionalStatements_ReportsDiagnostic_CS()
+        public async Task RemoveWithAdditionalStatements_ReportsDiagnostic_CS()
         {
             string source = CSUsings + CSNamespaceAndClassStart + @"
         private readonly HashSet<string> MySet = new HashSet<string>();
@@ -275,7 +275,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
         " + CSNamespaceAndClassEnd;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyCS.VerifyCodeFixAsync(source, source);
         }
 
         [Fact]
@@ -408,9 +408,7 @@ Namespace Testopolis
         Public MySet As New HashSet(Of String)()
 
         Public Sub New()
-            If Not [|MySet.Contains(""Item"")|] Then
-                MySet.Add(""Item"")
-            End If
+            If Not [|MySet.Contains(""Item"")|] Then MySet.Add(""Item"")
         End Sub
     End Class
 End Namespace";
@@ -440,6 +438,68 @@ Namespace Testopolis
         Public MySet As New HashSet(Of String)()
 
         Public Sub New()
+            If ([|MySet.Contains(""Item"")|]) Then MySet.Remove(""Item"")
+        End Sub
+    End Class
+End Namespace";
+
+            string fixedSource = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
+            MySet.Remove(""Item"")
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task AddIsTheOnlyStatementInBlock_OffersFixer_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
+            If Not [|MySet.Contains(""Item"")|] Then
+                MySet.Add(""Item"")
+            End If
+        End Sub
+    End Class
+End Namespace";
+
+            string fixedSource = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
+            MySet.Add(""Item"")
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task RemoveIsTheOnlyStatementInBlock_OffersFixer_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
             If ([|MySet.Contains(""Item"")|]) Then
                 MySet.Remove(""Item"")
             End If
@@ -455,6 +515,66 @@ Namespace Testopolis
 
         Public Sub New()
             MySet.Remove(""Item"")
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task AddHasElseStatement_OffersFixer_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
+            If Not [|MySet.Contains(""Item"")|] Then MySet.Add(""Item"") Else Throw new Exception(""Item already exists"")
+        End Sub
+    End Class
+End Namespace";
+
+            string fixedSource = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
+            If Not MySet.Add(""Item"") Then Throw new Exception(""Item already exists"")
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task RemoveHasElseStatement_OffersFixer_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
+            If [|MySet.Contains(""Item"")|] Then MySet.Remove(""Item"") Else Throw new Exception(""Item doesn't exist"")
+        End Sub
+    End Class
+End Namespace";
+
+            string fixedSource = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
+            If Not MySet.Remove(""Item"") Then Throw new Exception(""Item doesn't exist"")
         End Sub
     End Class
 End Namespace";
@@ -571,7 +691,28 @@ End Namespace";
         }
 
         [Fact]
-        public async Task AdditionalStatements_ReportsDiagnostic_VB()
+        public async Task AddWithAdditionalStatements_ReportsDiagnostic_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
+            If Not [|MySet.Contains(""Item"")|] Then
+                MySet.Add(""Item"")
+                Console.WriteLine()
+            End If
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveWithAdditionalStatements_ReportsDiagnostic_VB()
         {
             string source = @"
 " + VBUsings + @"
@@ -588,7 +729,41 @@ Namespace Testopolis
     End Class
 End Namespace";
 
-            await VerifyVB.VerifyAnalyzerAsync(source);
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task TriviaIsPreserved_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
+            ' reticulates the splines
+            If ([|MySet.Contains(""Item"")|]) Then
+                MySet.Remove(""Item"")
+            End If
+        End Sub
+    End Class
+End Namespace";
+
+            string fixedSource = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
+            ' reticulates the splines
+            MySet.Remove(""Item"")
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
 
         [Fact]

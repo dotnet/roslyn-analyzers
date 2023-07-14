@@ -46,10 +46,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            var title = MicrosoftNetCoreAnalyzersResources.DoNotGuardSetAddOrRemoveByContainsTitle;
-            var codeAction = CodeAction.Create(title,
+            var codeAction = CodeAction.Create(MicrosoftNetCoreAnalyzersResources.DoNotGuardSetAddOrRemoveByContainsTitle,
                 ct => Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalSyntax, childStatementSyntax)),
-                title);
+                nameof(MicrosoftNetCoreAnalyzersResources.DoNotGuardSetAddOrRemoveByContainsTitle));
 
             context.RegisterCodeFix(codeAction, diagnostic);
         }

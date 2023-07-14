@@ -129,7 +129,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return false;
             }
 
-            return DoesSignatureMatch(containsInvocation.TargetMethod, containsMethod);
+            return DoesImplementInterfaceMethod(containsInvocation.TargetMethod, containsMethod);
         }
 
         private static bool TryExtractAddOrRemoveInvocation(
@@ -150,8 +150,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             switch (firstOperation)
             {
                 case IInvocationOperation invocation:
-                    if ((containsNegated && DoesSignatureMatch(invocation.TargetMethod, addMethod)) ||
-                        (!containsNegated && DoesSignatureMatch(invocation.TargetMethod, removeMethod)))
+                    if ((containsNegated && DoesImplementInterfaceMethod(invocation.TargetMethod, addMethod)) ||
+                        (!containsNegated && DoesImplementInterfaceMethod(invocation.TargetMethod, removeMethod)))
                     {
                         addOrRemoveInvocation = invocation;
                         return true;
@@ -162,8 +162,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     var nestedAddOrRemove = expressionStatement.Children
                         .OfType<IInvocationOperation>()
                         .FirstOrDefault(i => containsNegated ?
-                            DoesSignatureMatch(i.TargetMethod, addMethod) :
-                            DoesSignatureMatch(i.TargetMethod, removeMethod));
+                            DoesImplementInterfaceMethod(i.TargetMethod, addMethod) :
+                            DoesImplementInterfaceMethod(i.TargetMethod, removeMethod));
 
                     if (nestedAddOrRemove != null)
                     {
@@ -189,12 +189,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             };
         }
 
-        private static bool DoesSignatureMatch(IMethodSymbol suspected, IMethodSymbol comparator)
+        private static bool DoesImplementInterfaceMethod(IMethodSymbol method, IMethodSymbol interfaceMethod)
         {
-            return suspected.OriginalDefinition.ReturnType.Name == comparator.ReturnType.Name
-               && suspected.Name == comparator.Name
-               && suspected.Parameters.Length == comparator.Parameters.Length
-               && suspected.Parameters.Zip(comparator.Parameters, (p1, p2) => p1.OriginalDefinition.Type.Name == p2.Type.Name).All(isParameterEqual => isParameterEqual);
+            return method.IsImplementationOfInterfaceMethod(method.Parameters[0].Type, interfaceMethod.ContainingType, interfaceMethod.Name);
         }
     }
 }

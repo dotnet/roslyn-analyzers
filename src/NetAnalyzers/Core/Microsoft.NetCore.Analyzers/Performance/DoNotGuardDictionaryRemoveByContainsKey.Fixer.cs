@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
@@ -29,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            var diagnostic = context.Diagnostics[0];
+            var diagnostic = context.Diagnostics.First();
             var conditionalOperationSpan = diagnostic.AdditionalLocations[0];
             var childLocation = diagnostic.AdditionalLocations[1];
             if (root.FindNode(conditionalOperationSpan.SourceSpan) is not SyntaxNode conditionalSyntax ||

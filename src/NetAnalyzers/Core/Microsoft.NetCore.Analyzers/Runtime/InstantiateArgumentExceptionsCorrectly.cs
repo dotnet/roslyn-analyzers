@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -103,7 +105,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
             else
             {
-                Diagnostic? diagnostic = null;
+                List<Diagnostic> diagnostics = new();
                 foreach (IArgumentOperation argument in creation.Arguments)
                 {
                     if (argument.Parameter?.Type.SpecialType != SpecialType.System_String)
@@ -117,18 +119,25 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         continue;
                     }
 
-                    diagnostic = CheckArgument(owningSymbol, creation, argument.Parameter, value, context);
+                    Diagnostic? diagnostic = CheckArgument(owningSymbol, creation, argument.Parameter, value, context);
 
-                    // RuleIncorrectMessage is the highest priority rule, no need to check other rules
-                    if (diagnostic != null && diagnostic.Descriptor.Equals(RuleIncorrectMessage))
+                    if (diagnostic != null)
                     {
-                        break;
+                        // RuleIncorrectMessage is the highest priority rule, no need to check other rules
+                        if (diagnostic.Descriptor.Equals(RuleIncorrectMessage))
+                        {
+                            context.ReportDiagnostic(diagnostic);
+                            return;
+                        }
+
+                        diagnostics.Add(diagnostic);
                     }
                 }
 
-                if (diagnostic != null)
+                if (diagnostics.Count != 0)
                 {
-                    context.ReportDiagnostic(diagnostic);
+                    // Report the last found diagnostic otherwise
+                    context.ReportDiagnostic(diagnostics.Last());
                 }
             }
         }

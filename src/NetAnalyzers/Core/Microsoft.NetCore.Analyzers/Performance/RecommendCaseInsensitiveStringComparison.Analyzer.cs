@@ -203,22 +203,22 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
+            // a.ToLower().Method()
             context.RegisterOperationAction(context =>
             {
-                if (context.Operation is IInvocationOperation caseChangingInvocation)
-                {
-                    AnalyzeInvocation(context, caseChangingInvocation, stringType,
-                        containsStringMethod, startsWithStringMethod, compareToStringMethod,
-                        indexOfStringMethod, indexOfStringInt32Method, indexOfStringInt32Int32Method);
-                }
-                else if (context.Operation is IBinaryOperation binaryOperation)
-                {
-                    AnalyzeBinaryOperation(context, binaryOperation, stringType);
-                }
-            },
-                OperationKind.Invocation, // a.ToLower().Method()
-                OperationKind.Binary // a.ToLower() == b.ToLower()
-            );
+                IInvocationOperation caseChangingInvocation = (IInvocationOperation)context.Operation;
+                AnalyzeInvocation(context, caseChangingInvocation, stringType,
+                    containsStringMethod, startsWithStringMethod, compareToStringMethod,
+                    indexOfStringMethod, indexOfStringInt32Method, indexOfStringInt32Int32Method);
+            }, OperationKind.Invocation);
+
+            // a.ToLower() == b.ToLower()
+            context.RegisterOperationAction(context =>
+            {
+                IBinaryOperation binaryOperation = (IBinaryOperation)context.Operation;
+                AnalyzeBinaryOperation(context, binaryOperation, stringType);
+
+            }, OperationKind.Binary);
         }
 
         private static void AnalyzeInvocation(OperationAnalysisContext context, IInvocationOperation caseChangingInvocation, INamedTypeSymbol stringType,

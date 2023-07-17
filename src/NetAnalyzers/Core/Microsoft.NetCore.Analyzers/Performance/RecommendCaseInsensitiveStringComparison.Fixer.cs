@@ -52,7 +52,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            IOperation operation = model.GetOperation(node, ct);
+            IOperation? operation = model.GetOperation(node, ct);
+            if (operation == null)
+            {
+                return;
+            }
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
 
@@ -77,7 +81,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle)),
                     context.Diagnostics);
             }
-            else if (operation is IBinaryOperation binaryOperation)
+            else if (operation is IBinaryOperation binaryOperation &&
+                     binaryOperation.LeftOperand != null && binaryOperation.RightOperand != null)
             {
                 Task<Document> createChangedDocument(CancellationToken _) => FixBinaryAsync(generator, doc, root, binaryOperation, stringComparisonType, caseChangingApproachValue);
 
@@ -138,11 +143,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
             INamedTypeSymbol stringComparisonType, string caseChangingApproachValue)
         {
             SyntaxNode leftNode = binaryOperation.LeftOperand is IInvocationOperation leftInvocation ?
-                leftInvocation.Instance.Syntax :
+                leftInvocation.Instance!.Syntax :
                 binaryOperation.LeftOperand.Syntax;
 
             SyntaxNode rightNode = binaryOperation.RightOperand is IInvocationOperation rightInvocation ?
-                rightInvocation.Instance.Syntax :
+                rightInvocation.Instance!.Syntax :
                 binaryOperation.RightOperand.Syntax;
 
             SyntaxNode memberAccess = generator.MemberAccessExpression(leftNode, RCISCAnalyzer.StringEqualsMethodName).WithTriviaFrom(leftNode);

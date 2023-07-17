@@ -325,6 +325,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             offendingMethodName = null;
 
+            if (invocation.Instance == null || invocation.Instance.Type == null)
+            {
+                return false;
+            }
+
             if (!invocation.Instance.Type.Equals(stringType))
             {
                 return false;

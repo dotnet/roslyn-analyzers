@@ -332,6 +332,20 @@ End Class";
             await VerifyDiagnosticOnlyVisualBasicAsync(originalCode);
         }
 
+        [Theory]
+        [MemberData(nameof(VisualBasicDiagnosticNoFixEqualsData))]
+        public async Task Diagnostic_NoFix_Equals(string diagnosedLine)
+        {
+            string originalCode = $@"Imports System
+Class C
+    Public Function M() As Boolean
+        Return [|{diagnosedLine}|]
+    End Function
+End Class";
+
+            await VerifyDiagnosticOnlyVisualBasicAsync(originalCode);
+        }
+
         private async Task VerifyNoDiagnosticVisualBasicAsync(string originalSource)
         {
             VerifyVB.Test test = new()

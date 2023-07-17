@@ -318,6 +318,22 @@ class C
             await VerifyDiagnosticOnlyCSharpAsync(originalCode);
         }
 
+        [Theory]
+        [MemberData(nameof(CSharpDiagnosticNoFixEqualsData))]
+        public async Task Diagnostic_NoFix_Equals(string diagnosedLine)
+        {
+            string originalCode = $@"using System;
+class C
+{{
+    bool M()
+    {{
+        return [|{diagnosedLine}|];
+    }}
+}}";
+
+            await VerifyDiagnosticOnlyCSharpAsync(originalCode);
+        }
+
         private async Task VerifyNoDiagnosticCSharpAsync(string originalSource)
         {
             VerifyCS.Test test = new()

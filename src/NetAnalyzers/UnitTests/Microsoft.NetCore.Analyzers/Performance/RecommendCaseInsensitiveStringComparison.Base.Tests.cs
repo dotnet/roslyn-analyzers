@@ -391,6 +391,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 yield return new object[] { $"\"aBc\".ToLowerInvariant().{method}(ch, StringComparison.CurrentCulture)" };
             }
 
+            // CompareTo
             yield return new object[] { "\"aBc\".CompareTo(obj)" };
             yield return new object[] { "\"aBc\".ToLower().CompareTo(obj)" };
             yield return new object[] { "\"aBc\".CompareTo(\"cDe\")" };
@@ -405,6 +406,25 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 yield return new object[] { $"\"aBc\".{caseChanging}().CompareTo(\"CdE\")" };
                 yield return new object[] { $"GetStringA().{caseChanging}().CompareTo(GetStringB())" };
                 yield return new object[] { $"(\"aBc\".{caseChanging}()).CompareTo(\"CdE\")" };
+            }
+        }
+
+        public static IEnumerable<object[]> CSharpDiagnosticNoFixEqualsData() => DiagnosticNoFixEqualsData(CSharpComparisonOperators);
+        public static IEnumerable<object[]> VisualBasicDiagnosticNoFixEqualsData() => DiagnosticNoFixEqualsData(VisualBasicComparisonOperators);
+
+        private static IEnumerable<object[]> DiagnosticNoFixEqualsData(Tuple<string, string>[] ops)
+        {
+            foreach ((string op, _) in ops)
+            {
+                yield return new object[] { $"\"aBc\".ToLower() {op} \"cDe\".ToLowerInvariant()" };
+                yield return new object[] { $"\"aBc\".ToLower() {op} \"cDe\".ToUpperInvariant()" };
+                yield return new object[] { $"\"aBc\".ToUpper() {op} \"cDe\".ToLowerInvariant()" };
+                yield return new object[] { $"\"aBc\".ToUpper() {op} \"cDe\".ToUpperInvariant()" };
+
+                yield return new object[] { $"\"aBc\".ToLowerInvariant() {op} \"cDe\".ToLower()" };
+                yield return new object[] { $"\"aBc\".ToLowerInvariant() {op} \"cDe\".ToUpper()" };
+                yield return new object[] { $"\"aBc\".ToUpperInvariant() {op} \"cDe\".ToLower()" };
+                yield return new object[] { $"\"aBc\".ToUpperInvariant() {op} \"cDe\".ToUpper()" };
             }
         }
 

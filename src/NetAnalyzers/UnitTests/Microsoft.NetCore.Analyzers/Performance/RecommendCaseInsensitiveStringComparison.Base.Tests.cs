@@ -7,23 +7,23 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public abstract class RecommendCaseInsensitiveStringComparison_Base_Tests
     {
-        private static readonly Tuple<string, string>[] Cultures = new[] {
-            Tuple.Create("ToLower", "CurrentCultureIgnoreCase"),
-            Tuple.Create("ToUpper", "CurrentCultureIgnoreCase"),
-            Tuple.Create("ToLowerInvariant", "InvariantCultureIgnoreCase"),
-            Tuple.Create("ToUpperInvariant", "InvariantCultureIgnoreCase")
+        private static readonly ValueTuple<string, string>[] Cultures = new[] {
+            ValueTuple.Create("ToLower", "CurrentCultureIgnoreCase"),
+            ValueTuple.Create("ToUpper", "CurrentCultureIgnoreCase"),
+            ValueTuple.Create("ToLowerInvariant", "InvariantCultureIgnoreCase"),
+            ValueTuple.Create("ToUpperInvariant", "InvariantCultureIgnoreCase")
         };
 
         private static readonly string[] ContainsStartsWith = new[] { "Contains", "StartsWith" };
         private static readonly string[] UnnamedArgs = new[] { "", ", 1", ", 1, 1" };
 
-        private static readonly Tuple<string, string>[] CSharpComparisonOperators = new[] {
-            Tuple.Create("==", ""),
-            Tuple.Create("!=", "!")
+        private static readonly ValueTuple<string, string>[] CSharpComparisonOperators = new[] {
+            ValueTuple.Create("==", ""),
+            ValueTuple.Create("!=", "!")
         };
-        private static readonly Tuple<string, string>[] VisualBasicComparisonOperators = new[] {
-            Tuple.Create("=", ""),
-            Tuple.Create("<>", "Not ")
+        private static readonly ValueTuple<string, string>[] VisualBasicComparisonOperators = new[] {
+            ValueTuple.Create("=", ""),
+            ValueTuple.Create("<>", "Not ")
         };
 
         private const string CSharpSeparator = ": ";
@@ -333,7 +333,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             DiagnosedAndFixedEqualityToEqualsData(CSharpComparisonOperators);
         public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedEqualityToEqualsData() =>
             DiagnosedAndFixedEqualityToEqualsData(VisualBasicComparisonOperators);
-        private static IEnumerable<object[]> DiagnosedAndFixedEqualityToEqualsData(Tuple<string, string>[] comparisonOperators)
+        private static IEnumerable<object[]> DiagnosedAndFixedEqualityToEqualsData(ValueTuple<string, string>[] comparisonOperators)
         {
 #pragma warning disable format
             foreach (string casing in new[]{ "Lower", "Upper" })
@@ -412,7 +412,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         public static IEnumerable<object[]> CSharpDiagnosticNoFixEqualsData() => DiagnosticNoFixEqualsData(CSharpComparisonOperators);
         public static IEnumerable<object[]> VisualBasicDiagnosticNoFixEqualsData() => DiagnosticNoFixEqualsData(VisualBasicComparisonOperators);
 
-        private static IEnumerable<object[]> DiagnosticNoFixEqualsData(Tuple<string, string>[] ops)
+        private static IEnumerable<object[]> DiagnosticNoFixEqualsData(ValueTuple<string, string>[] ops)
         {
             foreach ((string op, _) in ops)
             {

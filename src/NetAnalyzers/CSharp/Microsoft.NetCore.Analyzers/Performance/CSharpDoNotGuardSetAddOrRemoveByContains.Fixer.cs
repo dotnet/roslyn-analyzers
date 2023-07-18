@@ -14,8 +14,13 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpDoNotGuardSetAddOrRemoveByContainsFixer : DoNotGuardSetAddOrRemoveByContainsFixer
     {
-        protected override bool SyntaxSupportedByFixer(SyntaxNode conditionalSyntax)
+        protected override bool SyntaxSupportedByFixer(SyntaxNode conditionalSyntax, SyntaxNode childStatementSyntax)
         {
+            if (childStatementSyntax is not ExpressionStatementSyntax)
+            {
+                return false;
+            }
+
             if (conditionalSyntax is IfStatementSyntax ifStatementSyntax)
             {
                 return ifStatementSyntax.Statement.ChildNodes().Count() == 1;

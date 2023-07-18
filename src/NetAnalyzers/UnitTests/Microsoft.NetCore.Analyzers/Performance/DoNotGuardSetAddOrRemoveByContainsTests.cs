@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Threading.Tasks;
 using Test.Utilities;
 using Xunit;
@@ -271,6 +272,42 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             {
                 MySet.Remove(""Item"");
                 Console.WriteLine();
+            }
+        }
+        " + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AddWithVariableAssignment_ReportsDiagnostic_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly HashSet<string> MySet = new HashSet<string>();
+
+        public MyClass()
+        {
+            if (![|MySet.Contains(""Item"")|])
+            {
+                bool result = MySet.Add(""Item"");
+            }
+        }
+        " + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveWithVariableAssignment_ReportsDiagnostic_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly HashSet<string> MySet = new HashSet<string>();
+
+        public MyClass()
+        {
+            if ([|MySet.Contains(""Item"")|])
+            {
+                bool result = MySet.Remove(""Item"");
             }
         }
         " + CSNamespaceAndClassEnd;
@@ -688,6 +725,46 @@ Namespace Testopolis
 End Namespace";
 
             await VerifyVB.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task AddWithVariableAssignment_ReportsDiagnostic_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
+            If Not [|MySet.Contains(""Item"")|] Then
+                Dim result = MySet.Add(""Item"")
+            End If
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveWithVariableAssignment_ReportsDiagnostic_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MySet As New HashSet(Of String)()
+
+        Public Sub New()
+            If [|MySet.Contains(""Item"")|] Then
+                Dim result = MySet.Remove(""Item"")
+            End If
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
         }
 
         [Fact]

@@ -40,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             // We only offer a fixer if the conditonal true branch has a single statement, either 'Add' or 'Delete'
-            if (!SyntaxSupportedByFixer(conditionalSyntax))
+            if (!SyntaxSupportedByFixer(conditionalSyntax, childStatementSyntax))
             {
                 return;
             }
@@ -52,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             context.RegisterCodeFix(codeAction, diagnostic);
         }
 
-        protected abstract bool SyntaxSupportedByFixer(SyntaxNode conditionalSyntax);
+        protected abstract bool SyntaxSupportedByFixer(SyntaxNode conditionalSyntax, SyntaxNode childStatementSyntax);
 
         protected abstract Document ReplaceConditionWithChild(Document document, SyntaxNode root,
                                                               SyntaxNode conditionalOperationNode,

@@ -13,7 +13,11 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
     Public NotInheritable Class BasicDoNotGuardSetAddOrRemoveByContainsFixer
         Inherits DoNotGuardSetAddOrRemoveByContainsFixer
 
-        Protected Overrides Function SyntaxSupportedByFixer(conditionalSyntax As SyntaxNode) As Boolean
+        Protected Overrides Function SyntaxSupportedByFixer(conditionalSyntax As SyntaxNode, childStatementSyntax As SyntaxNode) As Boolean
+            If TypeOf childStatementSyntax IsNot ExpressionStatementSyntax Then
+                Return False
+            End If
+
             If TypeOf conditionalSyntax Is MultiLineIfBlockSyntax Then
                 Return CType(conditionalSyntax, MultiLineIfBlockSyntax).Statements.Count() = 1
             End If

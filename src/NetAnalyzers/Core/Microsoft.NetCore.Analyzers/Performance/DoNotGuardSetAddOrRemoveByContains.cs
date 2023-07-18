@@ -139,42 +139,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
             bool containsNegated,
             [NotNullWhen(true)] out IInvocationOperation? addOrRemoveInvocation)
         {
-            addOrRemoveInvocation = null;
-            var firstOperation = operations.FirstOrDefault();
-
-            if (firstOperation is null)
-            {
-                return false;
-            }
-
-            switch (firstOperation)
-            {
-                case IInvocationOperation invocation:
-                    if ((containsNegated && DoesImplementInterfaceMethod(invocation.TargetMethod, addMethod)) ||
-                        (!containsNegated && DoesImplementInterfaceMethod(invocation.TargetMethod, removeMethod)))
-                    {
-                        addOrRemoveInvocation = invocation;
-                        return true;
-                    }
-
-                    break;
-                case IExpressionStatementOperation expressionStatement:
-                    var nestedAddOrRemove = expressionStatement.Children
+            addOrRemoveInvocation = operations
+                .FirstOrDefault()
+                ?.DescendantsAndSelf()
                         .OfType<IInvocationOperation>()
                         .FirstOrDefault(i => containsNegated ?
                             DoesImplementInterfaceMethod(i.TargetMethod, addMethod) :
                             DoesImplementInterfaceMethod(i.TargetMethod, removeMethod));
 
-                    if (nestedAddOrRemove != null)
-                    {
-                        addOrRemoveInvocation = nestedAddOrRemove;
-                        return true;
-                    }
-
-                    break;
-            }
-
-            return false;
+            return addOrRemoveInvocation is not null;
         }
 
         private static bool AreInvocationsOnSameInstance(IInvocationOperation invocation1, IInvocationOperation invocation2)

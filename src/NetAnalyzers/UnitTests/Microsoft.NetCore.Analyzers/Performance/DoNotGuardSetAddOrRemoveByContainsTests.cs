@@ -895,6 +895,118 @@ End Namespace";
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
+        [Fact]
+        public async Task ContainsAndAddCalledWithDifferentArguments_NoDiagnostic_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly HashSet<string> MySet = new HashSet<string>();
+        private const string OtherItemField = ""Other Item"";
+
+        public string OtherItemProperty { get; } = ""Other Item"";
+
+        public MyClass(string otherItemParameter)
+        {
+            if (!MySet.Contains(""Item""))
+                MySet.Add(""Other Item"");
+
+            if (!MySet.Contains(""Item""))
+                MySet.Add(otherItemParameter);
+
+            if (!MySet.Contains(""Item""))
+                MySet.Add(OtherItemField);
+
+            if (!MySet.Contains(""Item""))
+                MySet.Add(OtherItemProperty);
+
+            string otherItemLocal = ""Other Item"";
+            if (!MySet.Contains(""Item""))
+                MySet.Add(otherItemLocal);
+        }" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task ContainsAndAddCalledWithSameArgumentsFields_OffersFixer_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly HashSet<string> MySet = new HashSet<string>();
+        private const string FieldItem = ""Item"";
+
+        public MyClass()
+        {
+            if (![|MySet.Contains(FieldItem)|])
+            {
+                MySet.Add(FieldItem);
+            }
+        }" + CSNamespaceAndClassEnd;
+
+            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly HashSet<string> MySet = new HashSet<string>();
+        private const string FieldItem = ""Item"";
+
+        public MyClass()
+        {
+            MySet.Add(FieldItem);
+        }" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task ContainsAndAddCalledWithSameArgumentsLocals_OffersFixer_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly HashSet<string> MySet = new HashSet<string>();
+
+        public MyClass()
+        {
+            const string LocalItem = ""Item"";
+
+            if (![|MySet.Contains(LocalItem)|])
+            {
+                MySet.Add(LocalItem);
+            }
+        }" + CSNamespaceAndClassEnd;
+
+            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly HashSet<string> MySet = new HashSet<string>();
+
+        public MyClass()
+        {
+            const string LocalItem = ""Item"";
+
+            MySet.Add(LocalItem);
+        }" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task ContainsAndAddCalledWithSameArgumentsParameters_OffersFixer_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly HashSet<string> MySet = new HashSet<string>();
+
+        public MyClass(string parameterItem)
+        {
+            if (![|MySet.Contains(parameterItem)|])
+            {
+                MySet.Add(parameterItem);
+            }
+        }" + CSNamespaceAndClassEnd;
+
+            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly HashSet<string> MySet = new HashSet<string>();
+
+        public MyClass(string parameterItem)
+        {
+            MySet.Add(parameterItem);
+        }" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
         [Theory]
         [InlineData("System.Collections.Generic.SortedSet<string>", "Add")]
         [InlineData("System.Collections.Generic.SortedSet<string>", "Remove")]

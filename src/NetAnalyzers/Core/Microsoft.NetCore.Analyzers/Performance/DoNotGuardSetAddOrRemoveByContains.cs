@@ -70,7 +70,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            if (!AreInvocationsOnSameInstance(containsInvocation, addOrRemoveInvocation))
+            if (!AreInvocationsOnSameInstance(containsInvocation, addOrRemoveInvocation) ||
+                !AreInvocationArgumentsEqual(containsInvocation, addOrRemoveInvocation))
             {
                 return;
             }
@@ -158,6 +159,46 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 (IPropertyReferenceOperation propRef1, IPropertyReferenceOperation propRef2) => propRef1.Member == propRef2.Member,
                 (IParameterReferenceOperation paramRef1, IParameterReferenceOperation paramRef2) => paramRef1.Parameter == paramRef2.Parameter,
                 (ILocalReferenceOperation localRef1, ILocalReferenceOperation localRef2) => localRef1.Local == localRef2.Local,
+                _ => false,
+            };
+        }
+
+        // Checks if invocation argument values are equal
+        //   1. Not equal: Contains(item) != Add(otherItem), Contains("const") != Add("other const")
+        //   2. Identical: Contains(item) == Add(item), Contains("const") == Add("const")
+        private static bool AreInvocationArgumentsEqual(IInvocationOperation invocation1, IInvocationOperation invocation2)
+        {
+            return invocation1.Arguments
+                .Zip(invocation2.Arguments, (a1, a2) => IsArgumentValueEqual(a1.Value, a2.Value))
+                .All(argumentsEqual => argumentsEqual);
+        }
+
+        private static bool IsArgumentValueEqual(IOperation targetArg, IOperation valueArg)
+        {
+            // Check if arguments are identical constant/local/parameter/field reference operations.
+            if (targetArg.Kind != valueArg.Kind)
+            {
+                return false;
+            }
+
+            if (targetArg.ConstantValue.HasValue != valueArg.ConstantValue.HasValue)
+            {
+                return false;
+            }
+
+            if (targetArg.ConstantValue.HasValue)
+            {
+                return Equals(targetArg.ConstantValue.Value, valueArg.ConstantValue.Value);
+            }
+
+            return targetArg switch
+            {
+                ILocalReferenceOperation targetLocalReference =>
+                    SymbolEqualityComparer.Default.Equals(targetLocalReference.Local, ((ILocalReferenceOperation)valueArg).Local),
+                IParameterReferenceOperation targetParameterReference =>
+                    SymbolEqualityComparer.Default.Equals(targetParameterReference.Parameter, ((IParameterReferenceOperation)valueArg).Parameter),
+                IFieldReferenceOperation fieldParameterReference =>
+                    SymbolEqualityComparer.Default.Equals(fieldParameterReference.Member, ((IFieldReferenceOperation)valueArg).Member),
                 _ => false,
             };
         }

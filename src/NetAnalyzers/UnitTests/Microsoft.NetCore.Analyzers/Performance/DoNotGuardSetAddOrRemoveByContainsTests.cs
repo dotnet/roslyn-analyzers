@@ -818,6 +818,55 @@ End Namespace";
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
+        [Theory]
+        [InlineData("System.Collections.Generic.SortedSet<string>", "Add")]
+        [InlineData("System.Collections.Generic.SortedSet<string>", "Remove")]
+        [InlineData("System.Collections.Generic.HashSet<string>", "Add")]
+        [InlineData("System.Collections.Generic.HashSet<string>", "Remove")]
+        [InlineData("System.Collections.Immutable.ImmutableHashSet<string>.Builder", "Add")]
+        [InlineData("System.Collections.Immutable.ImmutableHashSet<string>.Builder", "Remove")]
+        [InlineData("System.Collections.Immutable.ImmutableSortedSet<string>.Builder", "Add")]
+        [InlineData("System.Collections.Immutable.ImmutableSortedSet<string>.Builder", "Remove")]
+        public async Task SupportsSetsWithContainsReturningBool_OffersFixer_CS(string setType, string method)
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + $@"
+        {SetFieldDeclaration(setType)}
+
+        public MyClass()
+        {{
+            if ({(method == "Add" ? "!" : string.Empty)}[|MySet.Contains(""Item"")|])
+                MySet.{method}(""Item"");
+        }}" + CSNamespaceAndClassEnd;
+
+            string fixedSource = CSUsings + CSNamespaceAndClassStart + $@"
+        {SetFieldDeclaration(setType)}
+
+        public MyClass()
+        {{
+            MySet.{method}(""Item"");
+        }}" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Theory]
+        [InlineData("System.Collections.Immutable.ImmutableHashSet<string>", "Add")]
+        [InlineData("System.Collections.Immutable.ImmutableHashSet<string>", "Remove")]
+        [InlineData("System.Collections.Immutable.ImmutableSortedSet<string>", "Add")]
+        [InlineData("System.Collections.Immutable.ImmutableSortedSet<string>", "Remove")]
+        public async Task SupportsSetWithContainsReturningGenericType_ReportsDiagnostic_CS(string setType, string method)
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + $@"
+        private {setType} MySet = {setType[..setType.IndexOf('<', StringComparison.Ordinal)]}.Create<string>();
+
+        public MyClass()
+        {{
+            if ({(method == "Add" ? "!" : string.Empty)}[|MySet.Contains(""Item"")|])
+               MySet = MySet.{method}(""Item"");
+        }}" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
         #endregion
 
         #region Helpers
@@ -836,6 +885,13 @@ using System.Collections.Generic;";
 
         private const string VBUsings = @"Imports System
 Imports System.Collections.Generic";
+
+        private string SetFieldDeclaration(string setType)
+        {
+            return setType.Contains("Builder", StringComparison.Ordinal)
+                ? $"private readonly {setType} MySet = {setType[..setType.IndexOf('<', StringComparison.Ordinal)]}.CreateBuilder<string>();"
+                : $"private readonly {setType} MySet = new {setType}();";
+        }
         #endregion
     }
 }

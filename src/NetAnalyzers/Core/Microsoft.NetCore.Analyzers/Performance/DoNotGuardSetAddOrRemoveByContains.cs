@@ -104,30 +104,41 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             addMethodImmutableSet = null;
             removeMethodImmutableSet = null;
+            containsMethod = null;
+            addMethod = null;
+            removeMethod = null;
 
             var iSetType = WellKnownTypeProvider.GetOrCreate(compilation).GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericISet1);
             var iCollectionType = WellKnownTypeProvider.GetOrCreate(compilation).GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
 
             if (iSetType is null || iCollectionType is null)
             {
-                containsMethod = null;
-                addMethod = null;
-                removeMethod = null;
-
                 return false;
             }
 
             addMethod = iSetType.GetMembers(Add).OfType<IMethodSymbol>().FirstOrDefault();
-            containsMethod = iCollectionType.GetMembers(Contains).OfType<IMethodSymbol>().FirstOrDefault();
-            removeMethod = iCollectionType.GetMembers(Remove).OfType<IMethodSymbol>().FirstOrDefault();
+            foreach (var method in iCollectionType.GetMembers().OfType<IMethodSymbol>())
+            {
+                switch (method.Name)
+                {
+                    case Remove: removeMethod = method; break;
+                    case Contains: containsMethod = method; break;
+                }
+            }
 
             // Check for Add and Remove from IImmutableSet. This will not lead to a code fix.
             var iImmutableSetType = WellKnownTypeProvider.GetOrCreate(compilation).GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet1);
 
             if (iImmutableSetType is not null)
             {
-                addMethodImmutableSet = iImmutableSetType.GetMembers(Add).OfType<IMethodSymbol>().FirstOrDefault();
-                removeMethodImmutableSet = iImmutableSetType.GetMembers(Remove).OfType<IMethodSymbol>().FirstOrDefault();
+                foreach (var method in iImmutableSetType.GetMembers().OfType<IMethodSymbol>())
+                {
+                    switch (method.Name)
+                    {
+                        case Add: addMethodImmutableSet = method; break;
+                        case Remove: removeMethodImmutableSet = method; break;
+                    }
+                }
             }
 
             return containsMethod is not null && addMethod is not null && removeMethod is not null;

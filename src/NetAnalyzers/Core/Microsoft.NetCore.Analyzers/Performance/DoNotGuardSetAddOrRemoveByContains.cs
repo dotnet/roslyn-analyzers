@@ -48,15 +48,21 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (!TryGetRequiredMethods(context.Compilation, out var containsMethod, out var addMethod, out var removeMethod))
+            if (!TryGetRequiredMethods(context.Compilation, out var containsMethod, out var addMethod, out var removeMethod, out var addMethodImmutableSet, out var removeMethodImmutableSet))
             {
                 return;
             }
 
-            context.RegisterOperationAction(context => OnConditional(context, containsMethod, addMethod, removeMethod), OperationKind.Conditional);
+            context.RegisterOperationAction(context => OnConditional(context, containsMethod, addMethod, removeMethod, addMethodImmutableSet, removeMethodImmutableSet), OperationKind.Conditional);
         }
 
-        private static void OnConditional(OperationAnalysisContext context, IMethodSymbol containsMethod, IMethodSymbol addMethod, IMethodSymbol removeMethod)
+        private static void OnConditional(
+            OperationAnalysisContext context,
+            IMethodSymbol containsMethod,
+            IMethodSymbol addMethod,
+            IMethodSymbol removeMethod,
+            IMethodSymbol? addMethodImmutableSet,
+            IMethodSymbol? removeMethodImmutableSet)
         {
             var conditional = (IConditionalOperation)context.Operation;
 
@@ -67,7 +73,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             if (!TryExtractAddOrRemoveInvocation(conditional.WhenTrue.Children, addMethod, removeMethod, containsNegated, out var addOrRemoveInvocation))
             {
-                return;
+                if (addMethodImmutableSet is null ||
+                    removeMethodImmutableSet is null ||
+                    !TryExtractAddOrRemoveInvocation(conditional.WhenTrue.Children, addMethodImmutableSet, removeMethodImmutableSet, containsNegated, out addOrRemoveInvocation))
+                {
+                    return;
+                }
             }
 
             if (!AreInvocationsOnSameInstance(containsInvocation, addOrRemoveInvocation) ||
@@ -87,8 +98,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
             Compilation compilation,
             [NotNullWhen(true)] out IMethodSymbol? containsMethod,
             [NotNullWhen(true)] out IMethodSymbol? addMethod,
-            [NotNullWhen(true)] out IMethodSymbol? removeMethod)
+            [NotNullWhen(true)] out IMethodSymbol? removeMethod,
+            out IMethodSymbol? addMethodImmutableSet,
+            out IMethodSymbol? removeMethodImmutableSet)
         {
+            addMethodImmutableSet = null;
+            removeMethodImmutableSet = null;
+
             var iSetType = WellKnownTypeProvider.GetOrCreate(compilation).GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericISet1);
             var iCollectionType = WellKnownTypeProvider.GetOrCreate(compilation).GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
 
@@ -104,6 +120,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
             addMethod = iSetType.GetMembers(Add).OfType<IMethodSymbol>().FirstOrDefault();
             containsMethod = iCollectionType.GetMembers(Contains).OfType<IMethodSymbol>().FirstOrDefault();
             removeMethod = iCollectionType.GetMembers(Remove).OfType<IMethodSymbol>().FirstOrDefault();
+
+            // Check for Add and Remove from IImmutableSet. This will not lead to a code fix.
+            var iImmutableSetType = WellKnownTypeProvider.GetOrCreate(compilation).GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet1);
+
+            if (iImmutableSetType is not null)
+            {
+                addMethodImmutableSet = iImmutableSetType.GetMembers(Add).OfType<IMethodSymbol>().FirstOrDefault();
+                removeMethodImmutableSet = iImmutableSetType.GetMembers(Remove).OfType<IMethodSymbol>().FirstOrDefault();
+            }
 
             return containsMethod is not null && addMethod is not null && removeMethod is not null;
         }
@@ -143,10 +168,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
             addOrRemoveInvocation = operations
                 .FirstOrDefault()
                 ?.DescendantsAndSelf()
-                        .OfType<IInvocationOperation>()
-                        .FirstOrDefault(i => containsNegated ?
-                            DoesImplementInterfaceMethod(i.TargetMethod, addMethod) :
-                            DoesImplementInterfaceMethod(i.TargetMethod, removeMethod));
+                .OfType<IInvocationOperation>()
+                .FirstOrDefault(i => containsNegated ?
+                    DoesImplementInterfaceMethod(i.TargetMethod, addMethod) :
+                    DoesImplementInterfaceMethod(i.TargetMethod, removeMethod));
 
             return addOrRemoveInvocation is not null;
         }

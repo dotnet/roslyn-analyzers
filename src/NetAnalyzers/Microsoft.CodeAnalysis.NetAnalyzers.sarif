@@ -3217,8 +3217,8 @@
         },
         "CA1865": {
           "id": "CA1865",
-          "shortDescription": "Unnecessary call to 'Set.Contains(item)'",
-          "fullDescription": "Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists and will return if it was added or removed.",
+          "shortDescription": "Remove unnecessary call",
+          "fullDescription": "Do not guard 'Add(item)' or 'Remove(item)' with 'Contains(item)' for the set. The former two already check whether the item exists and will return if it was added or removed.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865",
           "properties": {

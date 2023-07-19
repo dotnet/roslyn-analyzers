@@ -764,18 +764,18 @@ Enumerable.OfType&lt;T&gt; 使用的泛型类型检查 (C# 'is' operator/IL 'isi
         <note />
       </trans-unit>
       <trans-unit id="DoNotGuardSetAddOrRemoveByContainsDescription">
-        <source>Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists and will return if it was added or removed.</source>
-        <target state="new">Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'. The former two already check whether the item exists and will return if it was added or removed.</target>
+        <source>Do not guard 'Add(item)' or 'Remove(item)' with 'Contains(item)' for the set. The former two already check whether the item exists and will return if it was added or removed.</source>
+        <target state="new">Do not guard 'Add(item)' or 'Remove(item)' with 'Contains(item)' for the set. The former two already check whether the item exists and will return if it was added or removed.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotGuardSetAddOrRemoveByContainsMessage">
-        <source>Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'</source>
-        <target state="new">Do not guard 'Set.Add(item)' or 'Set.Remove(item)' with 'Set.Contains(item)'</target>
+        <source>Do not guard '{0}' with '{1}'</source>
+        <target state="new">Do not guard '{0}' with '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotGuardSetAddOrRemoveByContainsTitle">
-        <source>Unnecessary call to 'Set.Contains(item)'</source>
-        <target state="new">Unnecessary call to 'Set.Contains(item)'</target>
+        <source>Remove unnecessary call</source>
+        <target state="new">Remove unnecessary call</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeCertificate">

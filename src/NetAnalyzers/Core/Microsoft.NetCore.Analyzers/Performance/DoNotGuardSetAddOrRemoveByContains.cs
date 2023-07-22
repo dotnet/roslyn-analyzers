@@ -241,6 +241,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static bool DoesImplementInterfaceMethod(IMethodSymbol method, IMethodSymbol interfaceMethod)
         {
+            if (method.Parameters.Length != 1)
+            {
+                return false;
+            }
+
             var typedInterface = interfaceMethod.ContainingType.Construct(method.Parameters[0].Type);
             var typedInterfaceMethod = typedInterface.GetMembers(interfaceMethod.Name).FirstOrDefault();
 

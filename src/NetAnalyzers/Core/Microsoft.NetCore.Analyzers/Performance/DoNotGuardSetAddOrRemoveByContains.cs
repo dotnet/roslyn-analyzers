@@ -91,7 +91,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
             locations.Add(conditional.Syntax.GetLocation());
             locations.Add(addOrRemoveInvocation.Syntax.Parent!.GetLocation());
 
-            context.ReportDiagnostic(containsInvocation.CreateDiagnostic(Rule, additionalLocations: locations.ToImmutable(), null));
+            var symbolDisplayFormat = SymbolDisplayFormat.MinimallyQualifiedFormat
+                .WithParameterOptions(SymbolDisplayParameterOptions.IncludeType)
+                .WithGenericsOptions(SymbolDisplayGenericsOptions.None)
+                .WithMemberOptions(SymbolDisplayMemberOptions.IncludeParameters | SymbolDisplayMemberOptions.IncludeContainingType)
+                .WithKindOptions(SymbolDisplayKindOptions.None);
+
+            context.ReportDiagnostic(containsInvocation.CreateDiagnostic(
+                Rule,
+                additionalLocations: locations.ToImmutable(),
+                properties: null,
+                addOrRemoveInvocation.TargetMethod.ToDisplayString(symbolDisplayFormat),
+                containsInvocation.TargetMethod.ToDisplayString(symbolDisplayFormat)));
         }
 
         private static bool TryGetRequiredMethods(

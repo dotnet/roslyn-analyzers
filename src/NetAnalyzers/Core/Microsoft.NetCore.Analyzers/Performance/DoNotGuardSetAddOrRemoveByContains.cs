@@ -176,15 +176,59 @@ namespace Microsoft.NetCore.Analyzers.Performance
             bool containsNegated,
             [NotNullWhen(true)] out IInvocationOperation? addOrRemoveInvocation)
         {
-            addOrRemoveInvocation = operations
-                .FirstOrDefault()
-                ?.DescendantsAndSelf()
+            addOrRemoveInvocation = null;
+            var firstOperation = operations.FirstOrDefault();
+
+            if (firstOperation is null)
+            {
+                return false;
+            }
+
+            switch (firstOperation)
+            {
+                case IInvocationOperation invocation:
+                    if ((containsNegated && DoesImplementInterfaceMethod(invocation.TargetMethod, addMethod)) ||
+                        (!containsNegated && DoesImplementInterfaceMethod(invocation.TargetMethod, removeMethod)))
+                    {
+                        addOrRemoveInvocation = invocation;
+                        return true;
+                    }
+
+                    break;
+
+                case ISimpleAssignmentOperation:
+                case IExpressionStatementOperation:
+                    var firstChildAddOrRemove = firstOperation.Children
+                        .OfType<IInvocationOperation>()
+                        .FirstOrDefault(i => containsNegated ?
+                            DoesImplementInterfaceMethod(i.TargetMethod, addMethod) :
+                            DoesImplementInterfaceMethod(i.TargetMethod, removeMethod));
+
+                    if (firstChildAddOrRemove != null)
+                    {
+                        addOrRemoveInvocation = firstChildAddOrRemove;
+                        return true;
+                    }
+
+                    break;
+
+                case IVariableDeclarationGroupOperation variableDeclarationGroup:
+                    var firstDescendantAddOrRemove = firstOperation.Descendants()
                 .OfType<IInvocationOperation>()
                 .FirstOrDefault(i => containsNegated ?
                     DoesImplementInterfaceMethod(i.TargetMethod, addMethod) :
                     DoesImplementInterfaceMethod(i.TargetMethod, removeMethod));
 
-            return addOrRemoveInvocation is not null;
+                    if (firstDescendantAddOrRemove != null)
+                    {
+                        addOrRemoveInvocation = firstDescendantAddOrRemove;
+                        return true;
+                    }
+
+                    break;
+            }
+
+            return false;
         }
 
         private static bool AreInvocationsOnSameInstance(IInvocationOperation invocation1, IInvocationOperation invocation2)

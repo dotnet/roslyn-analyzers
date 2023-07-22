@@ -409,6 +409,27 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task NestedConditional_NoDiagnostic_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly HashSet<string> MySet = new HashSet<string>();
+        private readonly HashSet<string> OtherSet = new HashSet<string>();
+
+        public MyClass()
+        {
+            if (MySet.Contains(""Item""))
+            {
+                if (OtherSet.Contains(""Item""))
+                {
+	                MySet.Remove(""Item"");
+                }
+            }
+        }" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
         public async Task TriviaIsPreserved_CS()
         {
             string source = CSUsings + CSNamespaceAndClassStart + @"

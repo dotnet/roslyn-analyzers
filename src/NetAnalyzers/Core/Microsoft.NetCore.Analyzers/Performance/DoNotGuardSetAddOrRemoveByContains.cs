@@ -225,10 +225,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 case IVariableDeclarationGroupOperation variableDeclarationGroup:
                     var firstDescendantAddOrRemove = firstOperation.Descendants()
-                .OfType<IInvocationOperation>()
-                .FirstOrDefault(i => containsNegated ?
-                    DoesImplementInterfaceMethod(i.TargetMethod, addMethod) :
-                    DoesImplementInterfaceMethod(i.TargetMethod, removeMethod));
+                        .OfType<IInvocationOperation>()
+                        .FirstOrDefault(i => containsNegated ?
+                            DoesImplementInterfaceMethod(i.TargetMethod, addMethod) :
+                            DoesImplementInterfaceMethod(i.TargetMethod, removeMethod));
 
                     if (firstDescendantAddOrRemove != null)
                     {
@@ -304,8 +304,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var typedInterface = interfaceMethod.ContainingType.Construct(method.Parameters[0].Type);
             var typedInterfaceMethod = typedInterface.GetMembers(interfaceMethod.Name).FirstOrDefault();
 
-            // Check against all original definitions to also cover external interface implementations
-            return method.GetOriginalDefinitions().Any(definition => SymbolEqualityComparer.Default.Equals(definition, typedInterfaceMethod));
+            // Also check against all original definitions to also cover external interface implementations
+            return SymbolEqualityComparer.Default.Equals(method, typedInterfaceMethod) ||
+                method.GetOriginalDefinitions().Any(definition => SymbolEqualityComparer.Default.Equals(definition, typedInterfaceMethod));
         }
     }
 }

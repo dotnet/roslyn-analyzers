@@ -1029,18 +1029,18 @@ End Namespace";
         }
 
         [Theory]
-        [InlineData("System.Collections.Generic.SortedSet<string>", "Add")]
-        [InlineData("System.Collections.Generic.SortedSet<string>", "Remove")]
-        [InlineData("System.Collections.Generic.HashSet<string>", "Add")]
-        [InlineData("System.Collections.Generic.HashSet<string>", "Remove")]
-        [InlineData("System.Collections.Immutable.ImmutableHashSet<string>.Builder", "Add")]
-        [InlineData("System.Collections.Immutable.ImmutableHashSet<string>.Builder", "Remove")]
-        [InlineData("System.Collections.Immutable.ImmutableSortedSet<string>.Builder", "Add")]
-        [InlineData("System.Collections.Immutable.ImmutableSortedSet<string>.Builder", "Remove")]
-        public async Task SupportsSetsWithContainsReturningBool_OffersFixer_CS(string setType, string method)
+        [InlineData("SortedSet<string>", "Add")]
+        [InlineData("SortedSet<string>", "Remove")]
+        [InlineData("HashSet<string>", "Add")]
+        [InlineData("HashSet<string>", "Remove")]
+        [InlineData("ImmutableHashSet<string>.Builder", "Add")]
+        [InlineData("ImmutableHashSet<string>.Builder", "Remove")]
+        [InlineData("ImmutableSortedSet<string>.Builder", "Add")]
+        [InlineData("ImmutableSortedSet<string>.Builder", "Remove")]
+        public async Task SupportsSetsWithAddOrRemoveReturningBool_OffersFixer_CS(string setType, string method)
         {
             string source = CSUsings + CSNamespaceAndClassStart + $@"
-        {SetFieldDeclaration(setType)}
+        private readonly {setType} MySet = {SetCreationExpression(setType)}
 
         public MyClass()
         {{
@@ -1049,7 +1049,7 @@ End Namespace";
         }}" + CSNamespaceAndClassEnd;
 
             string fixedSource = CSUsings + CSNamespaceAndClassStart + $@"
-        {SetFieldDeclaration(setType)}
+        private readonly {setType} MySet = {SetCreationExpression(setType)}
 
         public MyClass()
         {{
@@ -1060,14 +1060,64 @@ End Namespace";
         }
 
         [Theory]
-        [InlineData("System.Collections.Immutable.ImmutableHashSet<string>", "Add")]
-        [InlineData("System.Collections.Immutable.ImmutableHashSet<string>", "Remove")]
-        [InlineData("System.Collections.Immutable.ImmutableSortedSet<string>", "Add")]
-        [InlineData("System.Collections.Immutable.ImmutableSortedSet<string>", "Remove")]
-        public async Task SupportsSetWithContainsReturningGenericType_ReportsDiagnostic_CS(string setType, string method)
+        [InlineData("ISet<string>", "SortedSet<string>", "Add")]
+        [InlineData("ISet<string>", "SortedSet<string>", "Remove")]
+        [InlineData("ISet<string>", "HashSet<string>", "Add")]
+        [InlineData("ISet<string>", "HashSet<string>", "Remove")]
+        [InlineData("ISet<string>", "ImmutableHashSet<string>.Builder", "Add")]
+        [InlineData("ISet<string>", "ImmutableHashSet<string>.Builder", "Remove")]
+        [InlineData("ISet<string>", "ImmutableSortedSet<string>.Builder", "Add")]
+        [InlineData("ISet<string>", "ImmutableSortedSet<string>.Builder", "Remove")]
+        public async Task SupportsSetsWithAddOrRemoveReturningBoolWithInterfaceType_OffersFixer_CS(string interfaceType, string concreteType, string method)
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + $@"
+        private readonly {interfaceType} MySet = {SetCreationExpression(concreteType)}
+
+        public MyClass()
+        {{
+            if ({(method == "Add" ? "!" : string.Empty)}[|MySet.Contains(""Item"")|])
+                MySet.{method}(""Item"");
+        }}" + CSNamespaceAndClassEnd;
+
+            string fixedSource = CSUsings + CSNamespaceAndClassStart + $@"
+        private readonly {interfaceType} MySet = {SetCreationExpression(concreteType)}
+
+        public MyClass()
+        {{
+            MySet.{method}(""Item"");
+        }}" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Theory]
+        [InlineData("ImmutableHashSet<string>", "Add")]
+        [InlineData("ImmutableHashSet<string>", "Remove")]
+        [InlineData("ImmutableSortedSet<string>", "Add")]
+        [InlineData("ImmutableSortedSet<string>", "Remove")]
+        public async Task SupportsSetWithAddOrRemoveReturningGenericType_ReportsDiagnostic_CS(string setType, string method)
         {
             string source = CSUsings + CSNamespaceAndClassStart + $@"
         private {setType} MySet = {setType[..setType.IndexOf('<', StringComparison.Ordinal)]}.Create<string>();
+
+        public MyClass()
+        {{
+            if ({(method == "Add" ? "!" : string.Empty)}[|MySet.Contains(""Item"")|])
+               MySet = MySet.{method}(""Item"");
+        }}" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Theory]
+        [InlineData("IImmutableSet<string>", "ImmutableHashSet<string>", "Add")]
+        [InlineData("IImmutableSet<string>", "ImmutableHashSet<string>", "Remove")]
+        [InlineData("IImmutableSet<string>", "ImmutableSortedSet<string>", "Add")]
+        [InlineData("IImmutableSet<string>", "ImmutableSortedSet<string>", "Remove")]
+        public async Task SupportsSetWithAddOrRemoveReturningGenericTypeWithInterfaceType_ReportsDiagnostic_CS(string interfaceType, string concreteType, string method)
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + $@"
+        private {interfaceType} MySet = {concreteType[..concreteType.IndexOf('<', StringComparison.Ordinal)]}.Create<string>();
 
         public MyClass()
         {{
@@ -1081,7 +1131,8 @@ End Namespace";
 
         #region Helpers
         private const string CSUsings = @"using System;
-using System.Collections.Generic;";
+using System.Collections.Generic;
+using System.Collections.Immutable;";
 
         private const string CSNamespaceAndClassStart = @"namespace Testopolis
 {
@@ -1094,13 +1145,14 @@ using System.Collections.Generic;";
 }";
 
         private const string VBUsings = @"Imports System
-Imports System.Collections.Generic";
+Imports System.Collections.Generic
+Imports System.Collections.Immutable";
 
-        private string SetFieldDeclaration(string setType)
+        private string SetCreationExpression(string setType)
         {
             return setType.Contains("Builder", StringComparison.Ordinal)
-                ? $"private readonly {setType} MySet = {setType[..setType.IndexOf('<', StringComparison.Ordinal)]}.CreateBuilder<string>();"
-                : $"private readonly {setType} MySet = new {setType}();";
+                ? $"{setType[..setType.IndexOf('<', StringComparison.Ordinal)]}.CreateBuilder<string>();"
+                : $"new {setType}();";
         }
         #endregion
     }

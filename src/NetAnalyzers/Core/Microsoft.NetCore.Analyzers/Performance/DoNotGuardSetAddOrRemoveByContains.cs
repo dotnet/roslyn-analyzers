@@ -48,198 +48,43 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (!TryGetRequiredMethods(context.Compilation, out var containsMethod, out var addMethod, out var removeMethod, out var addMethodImmutableSet, out var removeMethodImmutableSet))
+            if (!RequiredSymbols.TryGetSymbols(context.Compilation, out var symbols))
             {
                 return;
             }
 
-            context.RegisterOperationAction(context => OnConditional(context, containsMethod, addMethod, removeMethod, addMethodImmutableSet, removeMethodImmutableSet), OperationKind.Conditional);
-        }
+            context.RegisterOperationAction(OnConditional, OperationKind.Conditional);
 
-        private static void OnConditional(
-            OperationAnalysisContext context,
-            IMethodSymbol containsMethod,
-            IMethodSymbol addMethod,
-            IMethodSymbol removeMethod,
-            IMethodSymbol? addMethodImmutableSet,
-            IMethodSymbol? removeMethodImmutableSet)
-        {
-            var conditional = (IConditionalOperation)context.Operation;
-
-            if (!TryExtractContainsInvocation(conditional.Condition, containsMethod, out var containsInvocation, out var containsNegated))
+            void OnConditional(OperationAnalysisContext context)
             {
-                return;
-            }
+                var conditional = (IConditionalOperation)context.Operation;
 
-            if (!TryExtractAddOrRemoveInvocation(conditional.WhenTrue.Children, addMethod, removeMethod, containsNegated, out var addOrRemoveInvocation))
-            {
-                if (addMethodImmutableSet is null ||
-                    removeMethodImmutableSet is null ||
-                    !TryExtractAddOrRemoveInvocation(conditional.WhenTrue.Children, addMethodImmutableSet, removeMethodImmutableSet, containsNegated, out addOrRemoveInvocation))
+                if (!symbols.HasApplicableContainsMethod(conditional.Condition, out var containsInvocation, out bool containsNegated) ||
+                    !symbols.HasApplicableAddOrRemoveMethod(conditional.WhenTrue.Children, containsNegated, out var addOrRemoveInvocation) ||
+                    !AreInvocationsOnSameInstance(containsInvocation, addOrRemoveInvocation) ||
+                    !AreInvocationArgumentsEqual(containsInvocation, addOrRemoveInvocation))
                 {
                     return;
                 }
+
+                using var locations = ArrayBuilder<Location>.GetInstance(2);
+                locations.Add(conditional.Syntax.GetLocation());
+                locations.Add(addOrRemoveInvocation.Syntax.Parent!.GetLocation());
+
+                // Build custom format instead of CSharpShortErrorMessageFormat/VisualBasicShortErrorMessageFormat to prevent unhelpful messages for VB.
+                var symbolDisplayFormat = SymbolDisplayFormat.MinimallyQualifiedFormat
+                    .WithParameterOptions(SymbolDisplayParameterOptions.IncludeType)
+                    .WithGenericsOptions(SymbolDisplayGenericsOptions.None)
+                    .WithMemberOptions(SymbolDisplayMemberOptions.IncludeParameters | SymbolDisplayMemberOptions.IncludeContainingType)
+                    .WithKindOptions(SymbolDisplayKindOptions.None);
+
+                context.ReportDiagnostic(containsInvocation.CreateDiagnostic(
+                    Rule,
+                    additionalLocations: locations.ToImmutable(),
+                    properties: null,
+                    addOrRemoveInvocation.TargetMethod.ToDisplayString(symbolDisplayFormat),
+                    containsInvocation.TargetMethod.ToDisplayString(symbolDisplayFormat)));
             }
-
-            if (!AreInvocationsOnSameInstance(containsInvocation, addOrRemoveInvocation) ||
-                !AreInvocationArgumentsEqual(containsInvocation, addOrRemoveInvocation))
-            {
-                return;
-            }
-
-            using var locations = ArrayBuilder<Location>.GetInstance(2);
-            locations.Add(conditional.Syntax.GetLocation());
-            locations.Add(addOrRemoveInvocation.Syntax.Parent!.GetLocation());
-
-            var symbolDisplayFormat = SymbolDisplayFormat.MinimallyQualifiedFormat
-                .WithParameterOptions(SymbolDisplayParameterOptions.IncludeType)
-                .WithGenericsOptions(SymbolDisplayGenericsOptions.None)
-                .WithMemberOptions(SymbolDisplayMemberOptions.IncludeParameters | SymbolDisplayMemberOptions.IncludeContainingType)
-                .WithKindOptions(SymbolDisplayKindOptions.None);
-
-            context.ReportDiagnostic(containsInvocation.CreateDiagnostic(
-                Rule,
-                additionalLocations: locations.ToImmutable(),
-                properties: null,
-                addOrRemoveInvocation.TargetMethod.ToDisplayString(symbolDisplayFormat),
-                containsInvocation.TargetMethod.ToDisplayString(symbolDisplayFormat)));
-        }
-
-        private static bool TryGetRequiredMethods(
-            Compilation compilation,
-            [NotNullWhen(true)] out IMethodSymbol? containsMethod,
-            [NotNullWhen(true)] out IMethodSymbol? addMethod,
-            [NotNullWhen(true)] out IMethodSymbol? removeMethod,
-            out IMethodSymbol? addMethodImmutableSet,
-            out IMethodSymbol? removeMethodImmutableSet)
-        {
-            addMethodImmutableSet = null;
-            removeMethodImmutableSet = null;
-            containsMethod = null;
-            addMethod = null;
-            removeMethod = null;
-
-            var iSetType = WellKnownTypeProvider.GetOrCreate(compilation).GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericISet1);
-            var iCollectionType = WellKnownTypeProvider.GetOrCreate(compilation).GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
-
-            if (iSetType is null || iCollectionType is null)
-            {
-                return false;
-            }
-
-            addMethod = iSetType.GetMembers(Add).OfType<IMethodSymbol>().FirstOrDefault();
-            foreach (var method in iCollectionType.GetMembers().OfType<IMethodSymbol>())
-            {
-                switch (method.Name)
-                {
-                    case Remove: removeMethod = method; break;
-                    case Contains: containsMethod = method; break;
-                }
-            }
-
-            // Check for Add and Remove from IImmutableSet. This will not lead to a code fix.
-            var iImmutableSetType = WellKnownTypeProvider.GetOrCreate(compilation).GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet1);
-
-            if (iImmutableSetType is not null)
-            {
-                foreach (var method in iImmutableSetType.GetMembers().OfType<IMethodSymbol>())
-                {
-                    switch (method.Name)
-                    {
-                        case Add: addMethodImmutableSet = method; break;
-                        case Remove: removeMethodImmutableSet = method; break;
-                    }
-                }
-            }
-
-            return containsMethod is not null && addMethod is not null && removeMethod is not null;
-        }
-
-        private static bool TryExtractContainsInvocation(
-            IOperation condition,
-            IMethodSymbol containsMethod,
-            [NotNullWhen(true)] out IInvocationOperation? containsInvocation,
-            out bool containsNegated)
-        {
-            containsNegated = false;
-            containsInvocation = null;
-
-            switch (condition.WalkDownParentheses())
-            {
-                case IInvocationOperation invocation:
-                    containsInvocation = invocation;
-                    break;
-                case IUnaryOperation unaryOperation when unaryOperation.OperatorKind == UnaryOperatorKind.Not && unaryOperation.Operand is IInvocationOperation operand:
-                    containsNegated = true;
-                    containsInvocation = operand;
-                    break;
-                default:
-                    return false;
-            }
-
-            return DoesImplementInterfaceMethod(containsInvocation.TargetMethod, containsMethod);
-        }
-
-        private static bool TryExtractAddOrRemoveInvocation(
-            IEnumerable<IOperation> operations,
-            IMethodSymbol addMethod,
-            IMethodSymbol removeMethod,
-            bool containsNegated,
-            [NotNullWhen(true)] out IInvocationOperation? addOrRemoveInvocation)
-        {
-            addOrRemoveInvocation = null;
-            var firstOperation = operations.FirstOrDefault();
-
-            if (firstOperation is null)
-            {
-                return false;
-            }
-
-            switch (firstOperation)
-            {
-                case IInvocationOperation invocation:
-                    if ((containsNegated && DoesImplementInterfaceMethod(invocation.TargetMethod, addMethod)) ||
-                        (!containsNegated && DoesImplementInterfaceMethod(invocation.TargetMethod, removeMethod)))
-                    {
-                        addOrRemoveInvocation = invocation;
-                        return true;
-                    }
-
-                    break;
-
-                case ISimpleAssignmentOperation:
-                case IExpressionStatementOperation:
-                    var firstChildAddOrRemove = firstOperation.Children
-                        .OfType<IInvocationOperation>()
-                        .FirstOrDefault(i => containsNegated ?
-                            DoesImplementInterfaceMethod(i.TargetMethod, addMethod) :
-                            DoesImplementInterfaceMethod(i.TargetMethod, removeMethod));
-
-                    if (firstChildAddOrRemove != null)
-                    {
-                        addOrRemoveInvocation = firstChildAddOrRemove;
-                        return true;
-                    }
-
-                    break;
-
-                case IVariableDeclarationGroupOperation variableDeclarationGroup:
-                    var firstDescendantAddOrRemove = firstOperation.Descendants()
-                        .OfType<IInvocationOperation>()
-                        .FirstOrDefault(i => containsNegated ?
-                            DoesImplementInterfaceMethod(i.TargetMethod, addMethod) :
-                            DoesImplementInterfaceMethod(i.TargetMethod, removeMethod));
-
-                    if (firstDescendantAddOrRemove != null)
-                    {
-                        addOrRemoveInvocation = firstDescendantAddOrRemove;
-                        return true;
-                    }
-
-                    break;
-            }
-
-            return false;
         }
 
         private static bool AreInvocationsOnSameInstance(IInvocationOperation invocation1, IInvocationOperation invocation2)
@@ -294,9 +139,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             };
         }
 
-        private static bool DoesImplementInterfaceMethod(IMethodSymbol method, IMethodSymbol interfaceMethod)
+        private static bool DoesImplementInterfaceMethod(IMethodSymbol? method, IMethodSymbol? interfaceMethod)
         {
-            if (method.Parameters.Length != 1)
+            if (method is null || interfaceMethod is null || method.Parameters.Length != 1)
             {
                 return false;
             }
@@ -307,6 +152,196 @@ namespace Microsoft.NetCore.Analyzers.Performance
             // Also check against all original definitions to also cover external interface implementations
             return SymbolEqualityComparer.Default.Equals(method, typedInterfaceMethod) ||
                 method.GetOriginalDefinitions().Any(definition => SymbolEqualityComparer.Default.Equals(definition, typedInterfaceMethod));
+        }
+
+        internal sealed class RequiredSymbols
+        {
+            private RequiredSymbols(IMethodSymbol addMethod, IMethodSymbol removeMethod, IMethodSymbol containsMethod, IMethodSymbol? addMethodImmutableSet, IMethodSymbol? removeMethodImmutableSet, IMethodSymbol? containsMethodImmutableSet)
+            {
+                AddMethod = addMethod;
+                RemoveMethod = removeMethod;
+                ContainsMethod = containsMethod;
+                AddMethodImmutableSet = addMethodImmutableSet;
+                RemoveMethodImmutableSet = removeMethodImmutableSet;
+                ContainsMethodImmutableSet = containsMethodImmutableSet;
+            }
+
+            public static bool TryGetSymbols(Compilation compilation, [NotNullWhen(true)] out RequiredSymbols? symbols)
+            {
+                symbols = default;
+
+                var typeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
+                var iSetType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericISet1);
+                var iCollectionType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
+
+                if (iSetType is null || iCollectionType is null)
+                {
+                    return false;
+                }
+
+                IMethodSymbol? addMethod = iSetType.GetMembers(Add).OfType<IMethodSymbol>().FirstOrDefault();
+                IMethodSymbol? removeMethod = null;
+                IMethodSymbol? containsMethod = null;
+
+                foreach (var method in iCollectionType.GetMembers().OfType<IMethodSymbol>())
+                {
+                    switch (method.Name)
+                    {
+                        case Remove: removeMethod = method; break;
+                        case Contains: containsMethod = method; break;
+                    }
+                }
+
+                if (addMethod is null || removeMethod is null || containsMethod is null)
+                {
+                    return false;
+                }
+
+                IMethodSymbol? addMethodImmutableSet = null;
+                IMethodSymbol? removeMethodImmutableSet = null;
+                IMethodSymbol? containsMethodImmutableSet = null;
+
+                // The methods from IImmutableSet are optional and will not lead to a code fix.
+                var iImmutableSetType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet1);
+
+                if (iImmutableSetType is not null)
+                {
+                    foreach (var method in iImmutableSetType.GetMembers().OfType<IMethodSymbol>())
+                    {
+                        switch (method.Name)
+                        {
+                            case Add: addMethodImmutableSet = method; break;
+                            case Remove: removeMethodImmutableSet = method; break;
+                            case Contains: containsMethodImmutableSet = method; break;
+                        }
+                    }
+                }
+
+                symbols = new RequiredSymbols(
+                    addMethod, removeMethod, containsMethod,
+                    addMethodImmutableSet, removeMethodImmutableSet, containsMethodImmutableSet);
+
+                return true;
+            }
+
+            // A condition contains an applicable 'Contains' method in the following cases:
+            //   1. The condition contains only the 'Contains' invocation.
+            //   2. The condition contains a unary not operation where the operand is a 'Contains' invocation.
+            //
+            // In all cases, the invocation must implement either 'ICollection.Contains' or 'IImmutableSet.Contains'.
+            public bool HasApplicableContainsMethod(
+                IOperation condition,
+                [NotNullWhen(true)] out IInvocationOperation? containsInvocation,
+                out bool containsNegated)
+            {
+                containsNegated = false;
+                containsInvocation = null;
+
+                switch (condition.WalkDownParentheses())
+                {
+                    case IInvocationOperation invocation:
+                        containsInvocation = invocation;
+                        break;
+                    case IUnaryOperation unaryOperation when unaryOperation.OperatorKind == UnaryOperatorKind.Not && unaryOperation.Operand is IInvocationOperation operand:
+                        containsNegated = true;
+                        containsInvocation = operand;
+                        break;
+                    default:
+                        return false;
+                }
+
+                return DoesImplementInterfaceMethod(containsInvocation.TargetMethod, ContainsMethod) ||
+                    DoesImplementInterfaceMethod(containsInvocation.TargetMethod, ContainsMethodImmutableSet);
+            }
+
+            // A true conditional block contains an applicable 'Add' or 'Remove' method if the first operation satisfies one of the following cases:
+            //   1. The operation is an invocation of 'Add' or 'Remove'.
+            //   2. The operation is either a simple assignment or an expression statement.
+            //      In this case the child statements are checked if they contain an invocation of 'Add' or 'Remove'.
+            //   3. The operation is a variable group declaration.
+            //      In this case the descendants are checked if they contain an invocation of 'Add' or 'Remove'.
+            //
+            // In all cases, the invocation must implement either
+            //   1. 'ISet.Add' or 'IImmutableSet.Add' if the call to 'Contains' is negated.
+            //   2. 'ICollection.Remove' or 'IImmutableSet.Remove' otherwise.
+            public bool HasApplicableAddOrRemoveMethod(
+                IEnumerable<IOperation> operations,
+                bool containsNegated,
+                [NotNullWhen(true)] out IInvocationOperation? addOrRemoveInvocation)
+            {
+                addOrRemoveInvocation = null;
+                var firstOperation = operations.FirstOrDefault();
+
+                if (firstOperation is null)
+                {
+                    return false;
+                }
+
+                switch (firstOperation)
+                {
+                    case IInvocationOperation invocation:
+                        if ((containsNegated && IsAnyAddMethod(invocation.TargetMethod)) ||
+                            (!containsNegated && IsAnyRemoveMethod(invocation.TargetMethod)))
+                        {
+                            addOrRemoveInvocation = invocation;
+                            return true;
+                        }
+
+                        break;
+
+                    case ISimpleAssignmentOperation:
+                    case IExpressionStatementOperation:
+                        var firstChildAddOrRemove = firstOperation.Children
+                            .OfType<IInvocationOperation>()
+                            .FirstOrDefault(i => containsNegated ?
+                                IsAnyAddMethod(i.TargetMethod) :
+                                IsAnyRemoveMethod(i.TargetMethod));
+
+                        if (firstChildAddOrRemove != null)
+                        {
+                            addOrRemoveInvocation = firstChildAddOrRemove;
+                            return true;
+                        }
+
+                        break;
+
+                    case IVariableDeclarationGroupOperation variableDeclarationGroup:
+                        var firstDescendantAddOrRemove = firstOperation.Descendants()
+                            .OfType<IInvocationOperation>()
+                            .FirstOrDefault(i => containsNegated ?
+                                IsAnyAddMethod(i.TargetMethod) :
+                                IsAnyRemoveMethod(i.TargetMethod));
+
+                        if (firstDescendantAddOrRemove != null)
+                        {
+                            addOrRemoveInvocation = firstDescendantAddOrRemove;
+                            return true;
+                        }
+
+                        break;
+                }
+
+                return false;
+            }
+
+            private bool IsAnyAddMethod(IMethodSymbol method)
+            {
+                return DoesImplementInterfaceMethod(method, AddMethod) ||
+                    DoesImplementInterfaceMethod(method, AddMethodImmutableSet);
+            }
+
+            private bool IsAnyRemoveMethod(IMethodSymbol method)
+            {
+                return DoesImplementInterfaceMethod(method, RemoveMethod) ||
+                    DoesImplementInterfaceMethod(method, RemoveMethodImmutableSet);
+            }
+
+            public IMethodSymbol AddMethod { get; }
+            public IMethodSymbol RemoveMethod { get; }
+            public IMethodSymbol ContainsMethod { get; }
+            public IMethodSymbol? AddMethodImmutableSet { get; }
+            public IMethodSymbol? RemoveMethodImmutableSet { get; }
+            public IMethodSymbol? ContainsMethodImmutableSet { get; }
         }
     }
 }

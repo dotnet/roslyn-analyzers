@@ -25,3 +25,4 @@ CA2021 | Reliability | Warning | DoNotCallEnumerableCastOrOfTypeWithIncompatible
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 CA2109 | Security | Disabled | ReviewVisibleEventHandlersAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2109)
+CA2262 | Usage | Enabled | ReviewVisibleEventHandlersAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2109)

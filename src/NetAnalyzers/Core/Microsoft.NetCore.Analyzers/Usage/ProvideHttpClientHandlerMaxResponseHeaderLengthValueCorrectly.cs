@@ -11,21 +11,21 @@ namespace Microsoft.NetCore.Analyzers.Usage
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
-    /// CA2262: <inheritdoc cref="HttpResponseHeaderTest"/>
+    /// CA2262: <inheritdoc cref="ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class HttpResponseHeaderTest : DiagnosticAnalyzer
+    public sealed class ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly : DiagnosticAnalyzer
     {
         private const string PropertyTypeName = "System.Net.Http.HttpClientHandler.MaxResponseHeadersLength";
         internal const string RuleId = "CA2262";
 
         internal static readonly DiagnosticDescriptor HeaderCheckRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            nameof(HttpResponseHeaderTest),
-            CreateLocalizableResourceString(nameof(HttpResponseHeaderTest)),
+            nameof(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly),
+            CreateLocalizableResourceString(nameof(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly)),
             DiagnosticCategory.Usage,
             RuleLevel.IdeSuggestion,
-            description: CreateLocalizableResourceString(nameof(HttpResponseHeaderTest)),
+            description: CreateLocalizableResourceString(nameof(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
@@ -47,7 +47,6 @@ namespace Microsoft.NetCore.Analyzers.Usage
                     }
 
                     var constantValue = propertyAssignment.Value.ConstantValue;
-
 
                 }, OperationKind.SimpleAssignment);
             });

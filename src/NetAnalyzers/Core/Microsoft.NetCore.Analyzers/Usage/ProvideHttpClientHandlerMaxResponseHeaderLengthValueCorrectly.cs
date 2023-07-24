@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -17,19 +18,20 @@ namespace Microsoft.NetCore.Analyzers.Usage
     public sealed class ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly : DiagnosticAnalyzer
     {
         private const string PropertyTypeName = "System.Net.Http.HttpClientHandler.MaxResponseHeadersLength";
+        private const int MaximumAlertLimit = 128;
         internal const string RuleId = "CA2262";
 
-        internal static readonly DiagnosticDescriptor HeaderCheckRule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor EnsureMaxResponseHeaderLengthRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            nameof(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly),
-            CreateLocalizableResourceString(nameof(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly)),
+            CreateLocalizableResourceString(nameof(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectlyTitle)),
+            CreateLocalizableResourceString(nameof(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectlyMessage)),
             DiagnosticCategory.Usage,
             RuleLevel.IdeSuggestion,
-            description: CreateLocalizableResourceString(nameof(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly)),
+            description: CreateLocalizableResourceString(nameof(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectlyDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(HeaderCheckRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(EnsureMaxResponseHeaderLengthRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -46,8 +48,17 @@ namespace Microsoft.NetCore.Analyzers.Usage
                         return;
                     }
 
-                    var constantValue = propertyAssignment.Value.ConstantValue;
+                    if (!propertyAssignment.Value.ConstantValue.HasValue)
+                    {
+                        return;
+                    }
 
+                    int propertyValue = System.Convert.ToInt32(propertyAssignment.Value.ConstantValue.Value);
+
+                    if (propertyValue > MaximumAlertLimit)
+                    {
+                        context.ReportDiagnostic(context.Operation.CreateDiagnostic(EnsureMaxResponseHeaderLengthRule, propertyValue));
+                    }
                 }, OperationKind.SimpleAssignment);
             });
         }

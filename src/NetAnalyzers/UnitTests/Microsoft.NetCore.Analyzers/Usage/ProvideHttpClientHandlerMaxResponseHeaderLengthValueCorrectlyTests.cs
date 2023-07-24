@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Xunit;
@@ -28,10 +29,10 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
                             MaxResponseHeadersLength = GetValue() // Do you really mean 16 MB?
                         };
 
-                        HttpClientHandler handler = new HttpClientHandler()
-                        {
-                            MaxResponseHeadersLength = val // Do you really mean 16 MB?
-                        };
+                        // HttpClientHandler handler = new HttpClientHandler()
+                        // {
+                        //     MaxResponseHeadersLength = val // Do you really mean 16 MB?
+                        // };
 
                         HttpClientHandler handler2 = new HttpClientHandler()
                         {

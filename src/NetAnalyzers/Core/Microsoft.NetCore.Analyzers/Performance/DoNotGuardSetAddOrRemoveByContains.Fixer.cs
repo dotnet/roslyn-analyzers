@@ -39,13 +39,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            // We only offer a fixer if the conditonal true branch has a single statement, either 'Add' or 'Delete'
+            // We only offer a fixer if the conditional true branch has a single statement, either 'Add' or 'Delete'
             if (!SyntaxSupportedByFixer(conditionalSyntax, childStatementSyntax))
             {
                 return;
             }
 
-            var codeAction = CodeAction.Create(MicrosoftNetCoreAnalyzersResources.DoNotGuardSetAddOrRemoveByContainsTitle,
+            var codeAction = CodeAction.Create(MicrosoftNetCoreAnalyzersResources.RemoveRedundantGuardCallCodeFixTitle,
                 ct => Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalSyntax, childStatementSyntax)),
                 nameof(MicrosoftNetCoreAnalyzersResources.DoNotGuardSetAddOrRemoveByContainsTitle));
 

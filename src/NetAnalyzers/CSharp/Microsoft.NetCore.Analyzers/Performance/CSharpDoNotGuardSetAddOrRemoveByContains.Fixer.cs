@@ -46,7 +46,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
                 newRoot = root.ReplaceNode(conditionalOperationNode, newConditionalOperationNode);
             }
-            else if (conditionalOperationNode is IfStatementSyntax ifStatementSyntax && ifStatementSyntax.Else != null)
+            else if (conditionalOperationNode is IfStatementSyntax { Else: not null } ifStatementSyntax)
             {
                 var expression = GetNegatedExpression(document, childOperationNode);
 

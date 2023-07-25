@@ -774,8 +774,8 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
         <note />
       </trans-unit>
       <trans-unit id="DoNotGuardSetAddOrRemoveByContainsTitle">
-        <source>Remove unnecessary call</source>
-        <target state="new">Remove unnecessary call</target>
+        <source>Unnecessary call to 'Contains(item)'</source>
+        <target state="new">Unnecessary call to 'Contains(item)'</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeCertificate">

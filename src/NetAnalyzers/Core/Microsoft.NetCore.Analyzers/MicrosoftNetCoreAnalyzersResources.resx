@@ -1516,7 +1516,7 @@
     <value>Do not guard '{0}' with '{1}'</value>
   </data>
   <data name="DoNotGuardSetAddOrRemoveByContainsTitle" xml:space="preserve">
-    <value>Remove unnecessary call</value>
+    <value>Unnecessary call to 'Contains(item)'</value>
   </data>
   <data name="RemoveRedundantGuardCallCodeFixTitle" xml:space="preserve">
     <value>Remove unnecessary call</value>

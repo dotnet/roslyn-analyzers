@@ -41,19 +41,22 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
             context.RegisterCompilationStartAction(context =>
             {
-                context.RegisterOperationAction(AnalyzeSimpleAssignmentOperationAndCreateDiagnostic, OperationKind.SimpleAssignment);
+                var propertySymbol = context.Compilation
+                                    .GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNetHttpHttpClientHandler)
+                                    ?.GetMembers(PropertyName)
+                                    .FirstOrDefault();
+
+                if (propertySymbol is null)
+                {
+                    return;
+                }
+
+                context.RegisterOperationAction(context => AnalyzeSimpleAssignmentOperationAndCreateDiagnostic(context, propertySymbol), OperationKind.SimpleAssignment);
             });
         }
 
-        private void AnalyzeSimpleAssignmentOperationAndCreateDiagnostic(OperationAnalysisContext context)
+        private static void AnalyzeSimpleAssignmentOperationAndCreateDiagnostic(OperationAnalysisContext context, ISymbol propertySymbol)
         {
-            var propertySymbol = GetMaxResponseHeaderLengthPropertySymbol(context);
-
-            if (propertySymbol is null)
-            {
-                return;
-            }
-
             var assignmentOperation = (ISimpleAssignmentOperation)context.Operation;
 
             if (!IsValidPropertyAssignmentOperation(assignmentOperation, propertySymbol))
@@ -85,13 +88,6 @@ namespace Microsoft.NetCore.Analyzers.Usage
             }
 
             return operation.Value is IFieldReferenceOperation or ILiteralOperation;
-        }
-
-        private static ISymbol? GetMaxResponseHeaderLengthPropertySymbol(OperationAnalysisContext context)
-        {
-            return context.Compilation
-                .GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNetHttpHttpClientHandler)
-                ?.GetMembers(PropertyName).FirstOrDefault();
         }
     }
 }

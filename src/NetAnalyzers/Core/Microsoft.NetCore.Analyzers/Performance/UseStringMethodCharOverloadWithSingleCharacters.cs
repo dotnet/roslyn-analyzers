@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -57,8 +58,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
             nameof(string.LastIndexOf));
 
         private INamedTypeSymbol? _stringComparisonType;
+        private INamedTypeSymbol? _cultureInfoType;
         private ISymbol? _ordinalStringComparisonSymbol;
         private ISymbol? _invariantCultureStringComparisonSymbol;
+        private ISymbol? _invariantCultureCultureInfoSymbol;
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
             = ImmutableArray.Create(SafeTransformationRule, NoSpecifiedComparisonRule, AnyOtherSpecifiedComparisonRule);
@@ -88,12 +91,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             var typeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
             _stringComparisonType = typeProvider.GetOrCreateTypeByMetadataName("System.StringComparison");
+            _cultureInfoType = typeProvider.GetOrCreateTypeByMetadataName("System.Globalization.CultureInfo");
 
-            if (!stringTypeHasCharOverload || _stringComparisonType == null)
+            if (!stringTypeHasCharOverload || _stringComparisonType == null || _cultureInfoType == null)
                 return;
 
             _ordinalStringComparisonSymbol = _stringComparisonType.GetMembers(nameof(StringComparison.Ordinal)).First();
             _invariantCultureStringComparisonSymbol = _stringComparisonType.GetMembers(nameof(StringComparison.InvariantCulture)).First();
+            _invariantCultureCultureInfoSymbol = _cultureInfoType.GetMembers(nameof(CultureInfo.InvariantCulture)).First();
 
             context.RegisterOperationAction(AnalyzeOperation, OperationKind.Invocation);
         }
@@ -107,9 +112,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 DiagnosticDescriptor? rule;
 
                 // CA1865: Method(string, StringComparison.Ordinal) or
-                //         Method(printable ascii string, StringComparison.InvariantCulture)
-                if (comparison == StringComparisonUsed.Ordinal ||
-                    (comparison == StringComparisonUsed.InvariantCulture && c.IsPrintableAscii()))
+                //         Method(printable ascii string, StringComparison.InvariantCulture) or
+                //         Method(printable ascii string, false/true, CultureInfo.InvariantCulture) or
+                if (comparison == ComparisonUsed.Ordinal ||
+                    (comparison == ComparisonUsed.InvariantCulture && c.IsPrintableAscii()))
                 {
                     rule = SafeTransformationRule;
                 }
@@ -118,7 +124,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     rule = NoSpecifiedComparisonRule;
                 }
-                // CA1867: Method(string, StringComparison.AnythingElse)
+                // CA1867: Method(string, StringComparison.AnythingElse) or
+                //         Method(string, false/true, CultureInfo.AnythingElse)
                 else
                 {
                     rule = AnyOtherSpecifiedComparisonRule;
@@ -136,7 +143,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             bool TryMatchTargetMethod(
                 IInvocationOperation invocationOperation,
                 [NotNullWhen(true)] out string? method,
-                out StringComparisonUsed? comparison)
+                out ComparisonUsed? comparison)
             {
                 method = null;
                 comparison = null;
@@ -151,21 +158,36 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                     foreach (var argument in invocationOperation.Arguments)
                     {
-                        if (argument.Value.Type != null &&
-                            argument.Value.Type.Equals(_stringComparisonType) &&
+                        if (argument.Value.Type == null)
+                            continue;
+
+                        if (argument.Value.Type.Equals(_stringComparisonType) &&
                             argument.Value is IFieldReferenceOperation fieldReferenceOperation)
                         {
                             if (fieldReferenceOperation.Field.Equals(_ordinalStringComparisonSymbol))
                             {
-                                comparison = StringComparisonUsed.Ordinal;
+                                comparison = ComparisonUsed.Ordinal;
                             }
                             else if (fieldReferenceOperation.Field.Equals(_invariantCultureStringComparisonSymbol))
                             {
-                                comparison = StringComparisonUsed.InvariantCulture;
+                                comparison = ComparisonUsed.InvariantCulture;
                             }
                             else
                             {
-                                comparison = StringComparisonUsed.Other;
+                                comparison = ComparisonUsed.Other;
+                            }
+                        }
+
+                        if (argument.Value.Type.Equals(_cultureInfoType) &&
+                            argument.Value is IPropertyReferenceOperation propertyReferenceOperation)
+                        {
+                            if (propertyReferenceOperation.Property.Equals(_invariantCultureCultureInfoSymbol))
+                            {
+                                comparison = ComparisonUsed.InvariantCulture;
+                            }
+                            else
+                            {
+                                comparison = ComparisonUsed.Other;
                             }
                         }
                     }
@@ -199,7 +221,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
         }
 
-        private enum StringComparisonUsed
+        private enum ComparisonUsed
         {
             Ordinal,
             InvariantCulture,

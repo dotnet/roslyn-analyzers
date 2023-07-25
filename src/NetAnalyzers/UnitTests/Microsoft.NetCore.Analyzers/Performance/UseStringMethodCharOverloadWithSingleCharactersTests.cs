@@ -18,26 +18,37 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public class UseStringMethodCharOverloadWithSingleCharactersTests
     {
-        private static readonly string[] TargetMethods = new[]
+        public static IEnumerable<object[]> Methods
         {
-            nameof(string.StartsWith),
-            nameof(string.EndsWith),
-            nameof(string.IndexOf),
-            nameof(string.LastIndexOf),
-        };
-
-#pragma warning disable CA1024 // Use properties where appropriate
-        public static IEnumerable<object[]> GetMethods()
-#pragma warning restore CA1024 // Use properties where appropriate
-        {
-            foreach (var method in TargetMethods)
+            get
             {
-                yield return new object[] { method };
+                yield return new object[] { nameof(string.StartsWith) };
+                yield return new object[] { nameof(string.EndsWith) };
+                yield return new object[] { nameof(string.IndexOf) };
+                yield return new object[] { nameof(string.LastIndexOf) };
+            }
+        }
+
+        public static IEnumerable<object[]> StartsEndsWithMethods
+        {
+            get
+            {
+                yield return new object[] { nameof(string.StartsWith) };
+                yield return new object[] { nameof(string.EndsWith) };
+            }
+        }
+
+        public static IEnumerable<object[]> IndexLastIndexOfMethods
+        {
+            get
+            {
+                yield return new object[] { nameof(string.IndexOf) };
+                yield return new object[] { nameof(string.LastIndexOf) };
             }
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(Methods))]
         public async Task CS_NotSingleChar(string method)
         {
             var testCode = $$"""
@@ -54,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(Methods))]
         public async Task CS_RegularStringLiteral(string method)
         {
             var testCode = $$"""
@@ -71,7 +82,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(Methods))]
         public async Task CS_StringComparisonOrdinal(string method)
         {
             var testCode = $$"""
@@ -109,7 +120,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(Methods))]
         public async Task CS_NamedArguments(string method)
         {
             var testCode = $$"""
@@ -140,7 +151,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(Methods))]
         public async Task CS_StringComparisonInvariantCultureAndAsciiChar(string method)
         {
             var testCode = $$"""
@@ -171,7 +182,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(Methods))]
         public async Task CS_StringComparisonInvariantCultureAndNonAsciiChar(string method)
         {
             var testCode = $$"""
@@ -190,7 +201,57 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(StartsEndsWithMethods))]
+        public async Task CS_CultureInfoInvariantCulture(string method)
+        {
+            var testCode = $$"""
+                using System.Globalization;
+
+                public class TestClass
+                {
+                    public void TestMethod()
+                    {
+                        "test".{{method}}{|CA1865:("a", false, CultureInfo.InvariantCulture)|};
+                    }
+                }
+                """;
+
+            var fixedCode = $$"""
+                using System.Globalization;
+
+                public class TestClass
+                {
+                    public void TestMethod()
+                    {
+                        "test".{{method}}('a');
+                    }
+                }
+                """;
+
+            await VerifyCSAsync(testCode, ReferenceAssemblies.NetStandard.NetStandard21, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(StartsEndsWithMethods))]
+        public async Task CS_CultureInfoAnythingElse(string method)
+        {
+            var testCode = $$"""
+                using System.Globalization;
+
+                public class TestClass
+                {
+                    public void TestMethod()
+                    {
+                        "test".{{method}}{|CA1867:("a", false, CultureInfo.CurrentCulture)|};
+                    }
+                }
+                """;
+
+            await VerifyCSAsync(testCode, ReferenceAssemblies.NetStandard.NetStandard21);
+        }
+
+        [Theory]
+        [MemberData(nameof(Methods))]
         public async Task CS_StringComparisonAnythingElse(string method)
         {
             var testCode = $$"""
@@ -209,7 +270,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(Methods))]
         public async Task VB_NotSingleChar(string method)
         {
             var testCode = $$"""
@@ -224,7 +285,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(Methods))]
         public async Task VB_RegularStringLiteral(string method)
         {
             var testCode = $$"""
@@ -239,7 +300,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(Methods))]
         public async Task VB_StringComparisonOrdinal(string method)
         {
             var testCode = $$"""
@@ -266,7 +327,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(Methods))]
         public async Task VB_StringComparisonInvariantCultureAndAsciiChar(string method)
         {
             var testCode = $$"""
@@ -293,7 +354,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(Methods))]
         public async Task VB_StringComparisonInvariantCultureAndNonAsciiChar(string method)
         {
             var testCode = $$"""
@@ -310,7 +371,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetMethods))]
+        [MemberData(nameof(Methods))]
         public async Task VB_StringComparisonAnythingElse(string method)
         {
             var testCode = $$"""

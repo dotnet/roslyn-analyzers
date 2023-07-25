@@ -110,6 +110,37 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         [Theory]
         [MemberData(nameof(GetMethods))]
+        public async Task CS_NamedArguments(string method)
+        {
+            var testCode = $$"""
+                using System;
+
+                public class TestClass
+                {
+                    public void TestMethod()
+                    {
+                        "test".{{method}}{|CA1865:(comparisonType: StringComparison.Ordinal, value: "a")|};
+                    }
+                }
+                """;
+
+            var fixedCode = $$"""
+                using System;
+
+                public class TestClass
+                {
+                    public void TestMethod()
+                    {
+                        "test".{{method}}('a');
+                    }
+                }
+                """;
+
+            await VerifyCSAsync(testCode, ReferenceAssemblies.NetStandard.NetStandard21, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetMethods))]
         public async Task CS_StringComparisonInvariantCultureAndAsciiChar(string method)
         {
             var testCode = $$"""

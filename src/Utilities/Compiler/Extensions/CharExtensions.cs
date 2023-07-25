@@ -4,6 +4,7 @@ namespace Analyzer.Utilities.Extensions
 {
     internal static class CharExtensions
     {
-        public static bool IsASCII(this char c) => (uint)c <= '\x007f';
+        // From: https://github.com/dotnet/runtime/blob/d1fc57ea18ee90aee8690697caed2b9f162409eb/src/libraries/System.Private.CoreLib/src/System/Char.cs#L91
+        public static bool IsAscii(this char c) => (uint)c <= '\x007f';
     }
 }

@@ -99,7 +99,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // CA1865: Method(string, StringComparison.Ordinal) or
                 //         Method(ascii string, StringComparison.InvariantCulture)
                 if (comparison == StringComparisonUsed.Ordinal ||
-                    (comparison == StringComparisonUsed.InvariantCulture && c.IsASCII()))
+                    (comparison == StringComparisonUsed.InvariantCulture && c.IsAscii()))
                 {
                     rule = SafeTransformationRule;
                 }

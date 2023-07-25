@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -97,23 +96,24 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private void AnalyzeOperation(OperationAnalysisContext context)
         {
             var invocationOperation = (IInvocationOperation)context.Operation;
-            if (TryMatchTargetMethod(invocationOperation, out var method, out var isOrdinalComparison, out var isInvariantCulture) &&
+            if (TryMatchTargetMethod(invocationOperation, out var method, out var comparison) &&
                 TryGetCharArgument(invocationOperation, out var stringArgument, out var c))
             {
                 DiagnosticDescriptor? rule;
 
-                // CA1865: Method(string, StringComparison.Ordinal) or Method(string, false/true, CultureInfo.InvariantCulture)
-                if (isOrdinalComparison == true ||
-                    (isInvariantCulture == true && c.IsASCII()))
+                // CA1865: Method(string, StringComparison.Ordinal) or
+                //         Method(ascii string, StringComparison.InvariantCulture)
+                if (comparison == UsedStringComparison.Ordinal ||
+                    (comparison == UsedStringComparison.InvariantCulture && c.IsASCII()))
                 {
                     rule = SafeTransformationRule;
                 }
                 // CA1866: Method(string)
-                else if (isOrdinalComparison == null)
+                else if (comparison == null)
                 {
                     rule = NoSpecifiedComparisonRule;
                 }
-                // CA1867: Anything else
+                // CA1867: Method(string, StringComparison.AnythingElse)
                 else
                 {
                     rule = AnyOtherSpecifiedComparisonRule;
@@ -131,18 +131,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
             bool TryMatchTargetMethod(
                 IInvocationOperation invocationOperation,
                 [MaybeNullWhen(false)] out string method,
-                out bool? isOrdinalComparison,
-                out bool? isInvariantCulture)
+                out UsedStringComparison? comparison)
             {
                 method = null;
-                isOrdinalComparison = null;
-                isInvariantCulture = null;
+                comparison = null;
 
                 var typeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
-                var cultureInfoType = typeProvider.GetOrCreateTypeByMetadataName("System.Globalization.CultureInfo");
                 var stringComparisonType = typeProvider.GetOrCreateTypeByMetadataName("System.StringComparison");
 
-                if (cultureInfoType == null || stringComparisonType == null)
+                if (stringComparisonType == null)
                 {
                     return false;
                 }
@@ -160,19 +157,26 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         if (argument.Value.Type == null)
                             continue;
 
-                        if (argument.Value.Type.Equals(cultureInfoType))
-                        {
-                            var invariantCultureSymbol = cultureInfoType.GetMembers(nameof(CultureInfo.InvariantCulture)).First();
-                            isInvariantCulture =
-                                argument.Value is IPropertyReferenceOperation propertyReferenceOperation &&
-                                propertyReferenceOperation.Property == invariantCultureSymbol;
-                        }
-                        else if (argument.Value.Type.Equals(stringComparisonType))
+                        if (argument.Value.Type.Equals(stringComparisonType))
                         {
                             var ordinalStringComparisonSymbol = stringComparisonType.GetMembers(nameof(StringComparison.Ordinal)).First();
-                            isOrdinalComparison =
-                                argument.Value is IFieldReferenceOperation fieldReferenceOperation &&
-                                fieldReferenceOperation.Field == ordinalStringComparisonSymbol;
+                            var invariantCultureStringComparisonSymbol = stringComparisonType.GetMembers(nameof(StringComparison.InvariantCulture)).First();
+
+                            if (argument.Value is IFieldReferenceOperation fieldReferenceOperation)
+                            {
+                                if (fieldReferenceOperation.Field.Equals(ordinalStringComparisonSymbol))
+                                {
+                                    comparison = UsedStringComparison.Ordinal;
+                                }
+                                else if (fieldReferenceOperation.Field.Equals(invariantCultureStringComparisonSymbol))
+                                {
+                                    comparison = UsedStringComparison.InvariantCulture;
+                                }
+                                else
+                                {
+                                    comparison = UsedStringComparison.Other;
+                                }
+                            }
                         }
                     }
 
@@ -203,6 +207,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 return false;
             }
+        }
+
+        private enum UsedStringComparison
+        {
+            Ordinal,
+            InvariantCulture,
+            Other,
         }
     }
 }

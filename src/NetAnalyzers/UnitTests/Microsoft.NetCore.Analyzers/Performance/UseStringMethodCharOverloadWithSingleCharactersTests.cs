@@ -15,24 +15,22 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public class UseStringMethodCharOverloadWithSingleCharactersTests
     {
+        private static readonly string[] _methods = new[]
+        {
+            nameof(string.StartsWith),
+            nameof(string.EndsWith),
+            nameof(string.IndexOf),
+            nameof(string.LastIndexOf),
+        };
+
+#pragma warning disable CA1024 // Use properties where appropriate
         public static IEnumerable<object[]> GetMethods()
+#pragma warning restore CA1024 // Use properties where appropriate
         {
-            yield return new object[] { nameof(string.StartsWith) };
-            yield return new object[] { nameof(string.EndsWith) };
-            yield return new object[] { nameof(string.IndexOf) };
-            yield return new object[] { nameof(string.LastIndexOf) };
-        }
-
-        public static IEnumerable<object[]> GetStartsEndsWithMethods()
-        {
-            yield return new object[] { nameof(string.StartsWith) };
-            yield return new object[] { nameof(string.EndsWith) };
-        }
-
-        public static IEnumerable<object[]> GetIndexLastIndexOfMethods()
-        {
-            yield return new object[] { nameof(string.IndexOf) };
-            yield return new object[] { nameof(string.LastIndexOf) };
+            foreach (var method in _methods)
+            {
+                yield return new object[] { method };
+            }
         }
 
         [Theory]
@@ -101,23 +99,23 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetStartsEndsWithMethods))]
-        public async Task CS_InvariantCultureAndAsciiChar(string method)
+        [MemberData(nameof(GetMethods))]
+        public async Task CS_StringComparisonInvariantCultureAndAsciiChar(string method)
         {
             var testCode = $$"""
-                using System.Globalization;
+                using System;
 
                 public class TestClass
                 {
                     public void TestMethod()
                     {
-                        "test".{{method}}{|CA1865:("a", false, CultureInfo.InvariantCulture)|};
+                        "test".{{method}}{|CA1865:("a", StringComparison.InvariantCulture)|};
                     }
                 }
                 """;
 
             var fixedCode = $$"""
-                using System.Globalization;
+                using System;
 
                 public class TestClass
                 {
@@ -132,17 +130,17 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetStartsEndsWithMethods))]
-        public async Task CS_InvariantCultureAndNonAsciiChar(string method)
+        [MemberData(nameof(GetMethods))]
+        public async Task CS_StringComparisonInvariantCultureAndNonAsciiChar(string method)
         {
             var testCode = $$"""
-                using System.Globalization;
+                using System;
 
                 public class TestClass
                 {
                     public void TestMethod()
                     {
-                        "test".{{method}}{|CA1866:("あ", false, CultureInfo.InvariantCulture)|};
+                        "test".{{method}}{|CA1867:("あ", StringComparison.InvariantCulture)|};
                     }
                 }
                 """;
@@ -227,21 +225,21 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetStartsEndsWithMethods))]
-        public async Task VB_InvariantCultureAndAsciiChar(string method)
+        [MemberData(nameof(GetMethods))]
+        public async Task VB_StringComparisonInvariantCultureAndAsciiChar(string method)
         {
             var testCode = $$"""
-                Imports System.Globalization
+                Imports System
 
                 Public Class TestClass
                     Public Sub TestMethod()
-                        Dim a = "test".{{method}}{|CA1865:("a", false, CultureInfo.InvariantCulture)|}
+                        Dim a = "test".{{method}}{|CA1865:("a", StringComparison.InvariantCulture)|}
                     End Sub
                 End Class
                 """;
 
             var fixedCode = $$"""
-                Imports System.Globalization
+                Imports System
 
                 Public Class TestClass
                     Public Sub TestMethod()
@@ -254,15 +252,15 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(GetStartsEndsWithMethods))]
-        public async Task VB_InvariantCultureAndNonAsciiChar(string method)
+        [MemberData(nameof(GetMethods))]
+        public async Task VB_StringComparisonInvariantCultureAndNonAsciiChar(string method)
         {
             var testCode = $$"""
-                Imports System.Globalization
+                Imports System
 
                 Public Class TestClass
                     Public Sub TestMethod()
-                        Dim a = "test".{{method}}{|CA1866:("あ", false, CultureInfo.InvariantCulture)|}
+                        Dim a = "test".{{method}}{|CA1867:("あ", StringComparison.InvariantCulture)|}
                     End Sub
                 End Class
                 """;

@@ -130,7 +130,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             bool TryMatchTargetMethod(
                 IInvocationOperation invocationOperation,
-                [MaybeNullWhen(false)] out string method,
+                [NotNullWhen(true)] out string? method,
                 out UsedStringComparison? comparison)
             {
                 method = null;
@@ -188,8 +188,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             static bool TryGetCharArgument(
                 IInvocationOperation invocationOperation,
-                [MaybeNullWhen(false)] out IArgumentOperation stringArgument,
-                [MaybeNullWhen(false)] out char c)
+                [NotNullWhen(true)] out IArgumentOperation? stringArgument,
+                out char c)
             {
                 stringArgument = null;
                 c = (char)0;

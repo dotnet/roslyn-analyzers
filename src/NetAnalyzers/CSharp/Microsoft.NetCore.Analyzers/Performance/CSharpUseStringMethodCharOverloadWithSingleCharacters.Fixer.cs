@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Composition;
+using System.Linq;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -68,11 +70,16 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
             protected override void ApplyFix(
                 DocumentEditor editor,
+                SemanticModel model,
                 SyntaxNode oldArgumentListNode,
                 char c)
             {
                 var argumentNode = editor.Generator.Argument(editor.Generator.LiteralExpression(c));
-                var argumentListNode = SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(new[] { argumentNode }));
+                var arguments = new[] { argumentNode }.Concat(((ArgumentListSyntax)oldArgumentListNode).Arguments
+                        .Select(arg => model.GetOperation(arg) as IArgumentOperation)
+                        .Where(PreserveArgument)
+                        .Select(arg => arg!.Syntax));
+                var argumentListNode = SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(arguments));
 
                 editor.ReplaceNode(oldArgumentListNode, argumentListNode);
             }

@@ -64,9 +64,12 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                 MyBase.New(document, argumentListNode, sourceCharLiteral)
             End Sub
 
-            Protected Overrides Sub ApplyFix(editor As DocumentEditor, oldArgumentListNode As SyntaxNode, c As Char)
+            Protected Overrides Sub ApplyFix(editor As DocumentEditor, model As SemanticModel, oldArgumentListNode As SyntaxNode, c As Char)
                 Dim argumentNode = editor.Generator.Argument(editor.Generator.LiteralExpression(c))
-                Dim argumentListNode = SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList({argumentNode}))
+                Dim arguments = {argumentNode}.Concat(
+                    CType(oldArgumentListNode, ArgumentListSyntax).Arguments.
+                        [Select](Function(arg) TryCast(model.GetOperation(arg), IArgumentOperation)).Where(Function(arg) PreserveArgument(arg)).[Select](Function(arg) arg.Syntax))
+                Dim argumentListNode = SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(arguments))
 
                 editor.ReplaceNode(oldArgumentListNode, argumentListNode)
             End Sub

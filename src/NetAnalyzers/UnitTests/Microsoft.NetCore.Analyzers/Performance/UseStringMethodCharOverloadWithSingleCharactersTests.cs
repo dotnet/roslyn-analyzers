@@ -29,7 +29,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             }
         }
 
-        public static IEnumerable<object[]> StartsEndsWithMethods
+        public static IEnumerable<object[]> StartsWithEndsWithMethods
         {
             get
             {
@@ -38,7 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             }
         }
 
-        public static IEnumerable<object[]> IndexLastIndexOfMethods
+        public static IEnumerable<object[]> IndexOfLastIndexOfMethods
         {
             get
             {
@@ -120,6 +120,37 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
+        [MemberData(nameof(IndexOfLastIndexOfMethods))]
+        public async Task CS_IndexOfLastIndexOf_PreservesStartsIndexAndCount(string method)
+        {
+            var testCode = $$"""
+                using System;
+
+                public class TestClass
+                {
+                    public void TestMethod()
+                    {
+                        "test".{{method}}{|CA1865:("a", 0, 1, StringComparison.Ordinal)|};
+                    }
+                }
+                """;
+
+            var fixedCode = $$"""
+                using System;
+
+                public class TestClass
+                {
+                    public void TestMethod()
+                    {
+                        "test".{{method}}('a', 0, 1);
+                    }
+                }
+                """;
+
+            await VerifyCSAsync(testCode, ReferenceAssemblies.NetStandard.NetStandard21, fixedCode);
+        }
+
+        [Theory]
         [MemberData(nameof(Methods))]
         public async Task CS_NamedArguments(string method)
         {
@@ -143,6 +174,37 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     public void TestMethod()
                     {
                         "test".{{method}}('a');
+                    }
+                }
+                """;
+
+            await VerifyCSAsync(testCode, ReferenceAssemblies.NetStandard.NetStandard21, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(IndexOfLastIndexOfMethods))]
+        public async Task CS_IndexOfLastIndexOf_PreservesStartsIndexAndCount_NamedArguments(string method)
+        {
+            var testCode = $$"""
+                using System;
+
+                public class TestClass
+                {
+                    public void TestMethod()
+                    {
+                        "test".{{method}}{|CA1865:("a", count: 1, startIndex: 0, comparisonType: StringComparison.Ordinal)|};
+                    }
+                }
+                """;
+
+            var fixedCode = $$"""
+                using System;
+
+                public class TestClass
+                {
+                    public void TestMethod()
+                    {
+                        "test".{{method}}('a', count: 1, startIndex: 0);
                     }
                 }
                 """;
@@ -201,7 +263,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(StartsEndsWithMethods))]
+        [MemberData(nameof(StartsWithEndsWithMethods))]
         public async Task CS_CultureInfoInvariantCulture(string method)
         {
             var testCode = $$"""
@@ -232,7 +294,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(StartsEndsWithMethods))]
+        [MemberData(nameof(StartsWithEndsWithMethods))]
         public async Task CS_CultureInfoAnythingElse(string method)
         {
             var testCode = $$"""
@@ -319,6 +381,33 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 Public Class TestClass
                     Public Sub TestMethod()
                         Dim a = "test".{{method}}("a"c)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVBAsync(testCode, ReferenceAssemblies.NetStandard.NetStandard21, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(IndexOfLastIndexOfMethods))]
+        public async Task VB_IndexOfLastIndexOf_PreservesStartsIndexAndCount(string method)
+        {
+            var testCode = $$"""
+                Imports System
+
+                Public Class TestClass
+                    Public Sub TestMethod()
+                        Dim a = "test".{{method}}{|CA1865:("a", 0, 1, StringComparison.Ordinal)|}
+                    End Sub
+                End Class
+                """;
+
+            var fixedCode = $$"""
+                Imports System
+
+                Public Class TestClass
+                    Public Sub TestMethod()
+                        Dim a = "test".{{method}}("a"c, 0, 1)
                     End Sub
                 End Class
                 """;

@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
@@ -54,13 +55,23 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             public override string EquivalenceKey => nameof(ReplaceStringLiteralWithCharLiteralCodeAction);
 
-            protected abstract void ApplyFix(DocumentEditor editor, SyntaxNode oldArgumentListNode, char c);
+            protected abstract void ApplyFix(DocumentEditor editor, SemanticModel model, SyntaxNode oldArgumentListNode, char c);
+
+            protected static bool PreserveArgument(IArgumentOperation? argument)
+            {
+                // In our target methods, IndexOf/LastIndexOf have additional int arguments for the `startIndex` and `count`
+                // that we want to preserve when fixing.
+                // A better method might be to detect StringComparison and CultureInfo in particular and return false on these instead,
+                // but that will require a lot of additional effort to resolve these types from here.
+                return argument?.Value.Type != null && argument.Value.Type.SpecialType == SpecialType.System_Int32;
+            }
 
             protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
             {
                 var editor = await DocumentEditor.CreateAsync(_document, cancellationToken).ConfigureAwait(false);
+                var model = await _document.GetRequiredSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-                ApplyFix(editor, _argumentListNode, _sourceCharLiteral);
+                ApplyFix(editor, model, _argumentListNode, _sourceCharLiteral);
 
                 return editor.GetChangedDocument();
             }

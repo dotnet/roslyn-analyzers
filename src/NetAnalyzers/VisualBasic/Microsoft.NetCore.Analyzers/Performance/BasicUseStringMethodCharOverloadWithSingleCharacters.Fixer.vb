@@ -16,7 +16,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
     Public NotInheritable Class BasicUseStringMethodCharOverloadWithSingleCharactersFixer
         Inherits UseStringMethodCharOverloadWithSingleCharactersFixer
 
-        Protected Overrides Function TryGetCharLiteral(model As SemanticModel, argumentListNode As SyntaxNode, ByRef c As Char) As Boolean
+        Protected Overrides Function TryGetChar(model As SemanticModel, argumentListNode As SyntaxNode, ByRef c As Char) As Boolean
             If TypeOf argumentListNode IsNot ArgumentListSyntax Then
                 Return False
             End If

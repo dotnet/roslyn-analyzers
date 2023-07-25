@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpUseStringMethodCharOverloadWithSingleCharactersFixer : UseStringMethodCharOverloadWithSingleCharactersFixer
     {
-        protected override bool TryGetCharLiteral(SemanticModel model, SyntaxNode argumentListNode, out char c)
+        protected override bool TryGetChar(SemanticModel model, SyntaxNode argumentListNode, out char c)
         {
             c = default;
 

@@ -22,21 +22,20 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var argumentListNode = root.FindNode(context.Span, getInnermostNodeForTie: true);
 
             var model = await context.Document.GetRequiredSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-
-            if (TryGetCharLiteral(model, argumentListNode, out var c))
+            if (TryGetChar(model, argumentListNode, out var c))
             {
                 context.RegisterCodeFix(CreateCodeAction(context.Document, argumentListNode, c), context.Diagnostics);
             }
         }
 
-        protected abstract bool TryGetCharLiteral(SemanticModel model, SyntaxNode argumentListNode, out char c);
-
-        protected abstract CodeAction CreateCodeAction(Document document, SyntaxNode argumentListNode, char sourceCharLiteral);
-
         public override FixAllProvider GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
+
+        protected abstract bool TryGetChar(SemanticModel model, SyntaxNode argumentListNode, out char c);
+
+        protected abstract CodeAction CreateCodeAction(Document document, SyntaxNode argumentListNode, char sourceCharLiteral);
 
         protected abstract class ReplaceStringLiteralWithCharLiteralCodeAction : CodeAction
         {

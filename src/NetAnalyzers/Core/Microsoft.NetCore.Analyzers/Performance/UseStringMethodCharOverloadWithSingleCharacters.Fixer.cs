@@ -23,13 +23,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             var model = await context.Document.GetRequiredSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            if (TryGetLiteralValueFromNode(model, argumentListNode, out var sourceCharLiteral))
+            if (TryGetCharLiteral(model, argumentListNode, out var c))
             {
-                context.RegisterCodeFix(CreateCodeAction(context.Document, argumentListNode, sourceCharLiteral), context.Diagnostics);
+                context.RegisterCodeFix(CreateCodeAction(context.Document, argumentListNode, c), context.Diagnostics);
             }
         }
 
-        protected abstract bool TryGetLiteralValueFromNode(SemanticModel model, SyntaxNode argumentListNode, out char charLiteral);
+        protected abstract bool TryGetCharLiteral(SemanticModel model, SyntaxNode argumentListNode, out char c);
 
         protected abstract CodeAction CreateCodeAction(Document document, SyntaxNode argumentListNode, char sourceCharLiteral);
 

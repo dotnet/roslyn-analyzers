@@ -16,7 +16,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
     Public NotInheritable Class BasicUseStringMethodCharOverloadWithSingleCharactersFixer
         Inherits UseStringMethodCharOverloadWithSingleCharactersFixer
 
-        Protected Overrides Function TryGetLiteralValueFromNode(model As SemanticModel, argumentListNode As SyntaxNode, ByRef charLiteral As Char) As Boolean
+        Protected Overrides Function TryGetCharLiteral(model As SemanticModel, argumentListNode As SyntaxNode, ByRef c As Char) As Boolean
             If TypeOf argumentListNode IsNot ArgumentListSyntax Then
                 Return False
             End If
@@ -34,7 +34,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
             Next
 
             If stringArgumentNode IsNot Nothing And TypeOf stringArgumentNode.GetExpression() Is LiteralExpressionSyntax Then
-                Return TryGetCharFromLiteralExpressionSyntax(CType(stringArgumentNode.GetExpression(), LiteralExpressionSyntax), charLiteral)
+                Return TryGetCharFromLiteralExpressionSyntax(CType(stringArgumentNode.GetExpression(), LiteralExpressionSyntax), c)
             End If
 
             Return False

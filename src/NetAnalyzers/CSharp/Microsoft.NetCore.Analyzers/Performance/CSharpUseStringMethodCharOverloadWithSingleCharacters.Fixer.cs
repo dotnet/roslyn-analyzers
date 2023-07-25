@@ -15,9 +15,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpUseStringMethodCharOverloadWithSingleCharactersFixer : UseStringMethodCharOverloadWithSingleCharactersFixer
     {
-        protected override bool TryGetLiteralValueFromNode(SemanticModel model, SyntaxNode argumentListNode, out char charLiteral)
+        protected override bool TryGetCharLiteral(SemanticModel model, SyntaxNode argumentListNode, out char c)
         {
-            charLiteral = default;
+            c = default;
 
             if (argumentListNode is not ArgumentListSyntax argumentList)
             {
@@ -38,7 +38,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             if (stringArgumentNode != null &&
                 stringArgumentNode.Expression is LiteralExpressionSyntax containedLiteralExpressionSyntax)
             {
-                return TryGetCharFromLiteralExpressionSyntax(containedLiteralExpressionSyntax, out charLiteral);
+                return TryGetCharFromLiteralExpressionSyntax(containedLiteralExpressionSyntax, out c);
             }
 
             return false;

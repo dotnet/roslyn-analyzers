@@ -27,6 +27,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private const string Add = nameof(Add);
         private const string Remove = nameof(Remove);
 
+        // Build custom format instead of CSharpShortErrorMessageFormat/VisualBasicShortErrorMessageFormat to prevent unhelpful messages for VB.
+        private static readonly SymbolDisplayFormat s_symbolDisplayFormat = SymbolDisplayFormat.MinimallyQualifiedFormat
+            .WithParameterOptions(SymbolDisplayParameterOptions.IncludeType)
+            .WithGenericsOptions(SymbolDisplayGenericsOptions.None)
+            .WithMemberOptions(SymbolDisplayMemberOptions.IncludeParameters | SymbolDisplayMemberOptions.IncludeContainingType)
+            .WithKindOptions(SymbolDisplayKindOptions.None);
+
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
             CreateLocalizableResourceString(nameof(DoNotGuardSetAddOrRemoveByContainsTitle)),
@@ -71,19 +78,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 locations.Add(conditional.Syntax.GetLocation());
                 locations.Add(addOrRemoveInvocation.Syntax.Parent!.GetLocation());
 
-                // Build custom format instead of CSharpShortErrorMessageFormat/VisualBasicShortErrorMessageFormat to prevent unhelpful messages for VB.
-                var symbolDisplayFormat = SymbolDisplayFormat.MinimallyQualifiedFormat
-                    .WithParameterOptions(SymbolDisplayParameterOptions.IncludeType)
-                    .WithGenericsOptions(SymbolDisplayGenericsOptions.None)
-                    .WithMemberOptions(SymbolDisplayMemberOptions.IncludeParameters | SymbolDisplayMemberOptions.IncludeContainingType)
-                    .WithKindOptions(SymbolDisplayKindOptions.None);
-
                 context.ReportDiagnostic(containsInvocation.CreateDiagnostic(
                     Rule,
                     additionalLocations: locations.ToImmutable(),
                     properties: null,
-                    addOrRemoveInvocation.TargetMethod.ToDisplayString(symbolDisplayFormat),
-                    containsInvocation.TargetMethod.ToDisplayString(symbolDisplayFormat)));
+                    addOrRemoveInvocation.TargetMethod.ToDisplayString(s_symbolDisplayFormat),
+                    containsInvocation.TargetMethod.ToDisplayString(s_symbolDisplayFormat)));
             }
         }
 

@@ -90,18 +90,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (!stringTypeHasCharOverload || stringComparisonType == null || cultureInfoType == null)
                 return;
 
-            var ordinalStringComparisonSymbol = stringComparisonType.GetMembers(nameof(StringComparison.Ordinal)).First();
-            var invariantCultureStringComparisonSymbol = stringComparisonType.GetMembers(nameof(StringComparison.InvariantCulture)).First();
-            var invariantCultureCultureInfoSymbol = cultureInfoType.GetMembers(nameof(CultureInfo.InvariantCulture)).First();
+            var stringComparisonOrdinalSymbol = stringComparisonType.GetMembers(nameof(StringComparison.Ordinal)).First();
+            var stringComparisonInvariantCultureSymbol = stringComparisonType.GetMembers(nameof(StringComparison.InvariantCulture)).First();
+            var cultureInfoInvariantCultureSymbol = cultureInfoType.GetMembers(nameof(CultureInfo.InvariantCulture)).First();
 
             context.RegisterOperationAction(
                 context => AnalyzeOperation(
                     context,
                     stringComparisonType,
                     cultureInfoType,
-                    ordinalStringComparisonSymbol,
-                    invariantCultureStringComparisonSymbol,
-                    invariantCultureCultureInfoSymbol),
+                    stringComparisonOrdinalSymbol,
+                    stringComparisonInvariantCultureSymbol,
+                    cultureInfoInvariantCultureSymbol),
                 OperationKind.Invocation);
         }
 
@@ -109,9 +109,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             OperationAnalysisContext context,
             INamedTypeSymbol stringComparisonType,
             INamedTypeSymbol cultureInfoType,
-            ISymbol ordinalStringComparisonSymbol,
-            ISymbol invariantCultureStringComparisonSymbol,
-            ISymbol invariantCultureCultureInfoSymbol)
+            ISymbol stringComparisonOrdinalSymbol,
+            ISymbol stringComparisonInvariantCultureSymbol,
+            ISymbol cultureInfoInvariantCultureSymbol)
         {
             var invocationOperation = (IInvocationOperation)context.Operation;
             if (TryMatchTargetMethod(invocationOperation, out var method, out var comparison) &&
@@ -172,11 +172,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         if (argument.Value.Type.Equals(stringComparisonType) &&
                             argument.Value is IFieldReferenceOperation fieldReferenceOperation)
                         {
-                            if (fieldReferenceOperation.Field.Equals(ordinalStringComparisonSymbol))
+                            if (fieldReferenceOperation.Field.Equals(stringComparisonOrdinalSymbol))
                             {
                                 comparison = ComparisonUsed.Ordinal;
                             }
-                            else if (fieldReferenceOperation.Field.Equals(invariantCultureStringComparisonSymbol))
+                            else if (fieldReferenceOperation.Field.Equals(stringComparisonInvariantCultureSymbol))
                             {
                                 comparison = ComparisonUsed.InvariantCulture;
                             }
@@ -189,7 +189,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         if (argument.Value.Type.Equals(cultureInfoType) &&
                             argument.Value is IPropertyReferenceOperation propertyReferenceOperation)
                         {
-                            if (propertyReferenceOperation.Property.Equals(invariantCultureCultureInfoSymbol))
+                            if (propertyReferenceOperation.Property.Equals(cultureInfoInvariantCultureSymbol))
                             {
                                 comparison = ComparisonUsed.InvariantCulture;
                             }

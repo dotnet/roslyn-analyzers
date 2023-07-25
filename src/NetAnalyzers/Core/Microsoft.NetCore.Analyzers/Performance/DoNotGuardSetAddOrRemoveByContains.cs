@@ -104,9 +104,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         //   2. Identical: Contains(item) == Add(item), Contains("const") == Add("const")
         private static bool AreInvocationArgumentsEqual(IInvocationOperation invocation1, IInvocationOperation invocation2)
         {
-            return invocation1.Arguments
-                .Zip(invocation2.Arguments, (a1, a2) => IsArgumentValueEqual(a1.Value, a2.Value))
-                .All(argumentsEqual => argumentsEqual);
+            return IsArgumentValueEqual(invocation1.Arguments[0].Value, invocation2.Arguments[0].Value);
         }
 
         private static bool IsArgumentValueEqual(IOperation targetArg, IOperation valueArg)

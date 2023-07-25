@@ -107,9 +107,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 DiagnosticDescriptor? rule;
 
                 // CA1865: Method(string, StringComparison.Ordinal) or
-                //         Method(ascii string, StringComparison.InvariantCulture)
+                //         Method(printable ascii string, StringComparison.InvariantCulture)
                 if (comparison == StringComparisonUsed.Ordinal ||
-                    (comparison == StringComparisonUsed.InvariantCulture && c.IsAscii()))
+                    (comparison == StringComparisonUsed.InvariantCulture && c.IsPrintableAscii()))
                 {
                     rule = SafeTransformationRule;
                 }

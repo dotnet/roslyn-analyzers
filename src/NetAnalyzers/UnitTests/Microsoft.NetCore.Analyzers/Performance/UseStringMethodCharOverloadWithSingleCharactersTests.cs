@@ -1,7 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -95,7 +98,14 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSAsync(testCode, ReferenceAssemblies.NetStandard.NetStandard21, fixedCode);
+            await VerifyCSAsync(
+                testCode, ReferenceAssemblies.NetStandard.NetStandard21, fixedCode,
+                (d, _, v) =>
+                {
+                    v.EqualOrDiff(
+                        $"Use 'string.{method}(char)' instead of 'string.{method}(string)' when you have a string with a single char",
+                        d.GetMessage(CultureInfo.InvariantCulture));
+                });
         }
 
         [Theory]
@@ -285,23 +295,33 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyVBAsync(testCode, ReferenceAssemblies.NetStandard.NetStandard21);
         }
 
-        private static async Task VerifyCSAsync(string source, ReferenceAssemblies referenceAssemblies, string fixedSource = null)
+        private static async Task VerifyCSAsync(
+            string source,
+            ReferenceAssemblies referenceAssemblies,
+            string fixedSource = null,
+            Action<Diagnostic, DiagnosticResult, IVerifier> diagnosticVerifier = null)
         {
             await new VerifyCS.Test()
             {
                 TestCode = source,
                 ReferenceAssemblies = referenceAssemblies,
                 FixedCode = fixedSource,
+                DiagnosticVerifier = diagnosticVerifier,
             }.RunAsync();
         }
 
-        private static async Task VerifyVBAsync(string source, ReferenceAssemblies referenceAssemblies, string fixedSource = null)
+        private static async Task VerifyVBAsync(
+            string source,
+            ReferenceAssemblies referenceAssemblies,
+            string fixedSource = null,
+            Action<Diagnostic, DiagnosticResult, IVerifier> diagnosticVerifier = null)
         {
             await new VerifyVB.Test()
             {
                 TestCode = source,
                 ReferenceAssemblies = referenceAssemblies,
                 FixedCode = fixedSource,
+                DiagnosticVerifier = diagnosticVerifier,
             }.RunAsync();
         }
     }

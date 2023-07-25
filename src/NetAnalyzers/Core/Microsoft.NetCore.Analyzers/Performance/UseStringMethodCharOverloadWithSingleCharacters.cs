@@ -73,9 +73,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var stringType = context.Compilation.GetSpecialType(SpecialType.System_String);
             var charType = context.Compilation.GetSpecialType(SpecialType.System_Char);
 
-            if (stringType is null || charType is null)
-                return;
-
             var stringTypeHasCharOverload = stringType.GetMembers(TargetMethods.First())
                 .OfType<IMethodSymbol>()
                 .Any(m =>

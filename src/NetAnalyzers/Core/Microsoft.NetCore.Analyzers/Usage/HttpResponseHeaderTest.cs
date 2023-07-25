@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -17,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class HttpResponseHeaderTest : DiagnosticAnalyzer
     {
-        private const string PropertyTypeName = "System.Net.Http.HttpClientHandler.MaxResponseHeadersLength";
+        private const string PropertyName = "MaxResponseHeadersLength";
         private const int MaximumAlertLimit = 128;
         internal const string RuleId = "CA2262";
 
@@ -40,41 +41,57 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
             context.RegisterCompilationStartAction(context =>
             {
-                context.RegisterOperationAction(context =>
-                {
-                    var propertyAssignment = (ISimpleAssignmentOperation)context.Operation;
-                    if (!IsHttpClientMaxResponseHeadersLengthAssignment(propertyAssignment))
-                    {
-                        return;
-                    }
-
-                    if (propertyAssignment.Value is null || !propertyAssignment.Value.ConstantValue.HasValue || propertyAssignment.Value.ConstantValue.Value is not int propertyValue)
-                    {
-                        return;
-                    }
-
-                    if (propertyValue > MaximumAlertLimit)
-                    {
-                        context.ReportDiagnostic(context.Operation.CreateDiagnostic(EnsureMaxResponseHeaderLengthRule, propertyValue));
-                    }
-                    
-                }, OperationKind.SimpleAssignment);
+                context.RegisterOperationAction(AnalyzeSimpleAssignmentOperationAndCreateDiagnostic, OperationKind.SimpleAssignment);
             });
         }
 
-        private static bool IsHttpClientMaxResponseHeadersLengthAssignment(ISimpleAssignmentOperation operation)
+        private void AnalyzeSimpleAssignmentOperationAndCreateDiagnostic(OperationAnalysisContext context)
+        {
+            var propertySymbol = GetMaxResponseHeaderLengthPropertySymbol(context);
+
+            if (propertySymbol is null)
+            {
+                return;
+            }
+
+            var assignmentOperation = (ISimpleAssignmentOperation)context.Operation;
+
+            if (!IsValidPropertyAssignmentOperation(assignmentOperation, propertySymbol))
+            {
+                return;
+            }
+
+            if (assignmentOperation.Value is null || !assignmentOperation.Value.ConstantValue.HasValue || assignmentOperation.Value.ConstantValue.Value is not int propertyValue)
+            {
+                return;
+            }
+
+            if (propertyValue > MaximumAlertLimit)
+            {
+                context.ReportDiagnostic(context.Operation.CreateDiagnostic(EnsureMaxResponseHeaderLengthRule, propertyValue));
+            }
+        }
+
+        private static bool IsValidPropertyAssignmentOperation(ISimpleAssignmentOperation operation, ISymbol propertySymbol)
         {
             if (operation.Target is not IPropertyReferenceOperation propertyReferenceOperation)
             {
                 return false;
             }
 
-            if (propertyReferenceOperation?.Member?.ToString()?.Equals(PropertyTypeName, System.StringComparison.Ordinal) is not true)
+            if (!propertyReferenceOperation.Member.Equals(propertySymbol))
             {
                 return false;
             }
 
             return operation.Value is IFieldReferenceOperation or ILiteralOperation;
+        }
+
+        private static ISymbol? GetMaxResponseHeaderLengthPropertySymbol(OperationAnalysisContext context)
+        {
+            return context.Compilation
+                .GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNetHttpHttpClientHandler)
+                ?.GetMembers(PropertyName).FirstOrDefault();
         }
     }
 }

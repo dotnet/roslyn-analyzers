@@ -50,13 +50,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        private static readonly ImmutableHashSet<string> TargetMethods = new[]
-        {
-             nameof(string.StartsWith),
-             nameof(string.EndsWith),
-             nameof(string.IndexOf),
-             nameof(string.LastIndexOf),
-        }.ToImmutableHashSet();
+        private static readonly ImmutableArray<string> TargetMethods = ImmutableArray.Create(
+            nameof(string.StartsWith),
+            nameof(string.EndsWith),
+            nameof(string.IndexOf),
+            nameof(string.LastIndexOf));
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
             = ImmutableArray.Create(SafeTransformationRule, NoSpecifiedComparisonRule, AnyOtherSpecifiedComparisonRule);

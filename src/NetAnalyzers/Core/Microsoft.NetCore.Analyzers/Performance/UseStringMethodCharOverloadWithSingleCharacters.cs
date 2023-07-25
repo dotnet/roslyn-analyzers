@@ -56,6 +56,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
             nameof(string.IndexOf),
             nameof(string.LastIndexOf));
 
+        private INamedTypeSymbol? _stringComparisonType;
+        private ISymbol? _ordinalStringComparisonSymbol;
+        private ISymbol? _invariantCultureStringComparisonSymbol;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
             = ImmutableArray.Create(SafeTransformationRule, NoSpecifiedComparisonRule, AnyOtherSpecifiedComparisonRule);
 
@@ -82,8 +86,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         m.Parameters[0].Type.SpecialType == SpecialType.System_Char;
                 });
 
-            if (!stringTypeHasCharOverload)
+            var typeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
+            _stringComparisonType = typeProvider.GetOrCreateTypeByMetadataName("System.StringComparison");
+
+            if (!stringTypeHasCharOverload || _stringComparisonType == null)
                 return;
+
+            _ordinalStringComparisonSymbol = _stringComparisonType.GetMembers(nameof(StringComparison.Ordinal)).First();
+            _invariantCultureStringComparisonSymbol = _stringComparisonType.GetMembers(nameof(StringComparison.InvariantCulture)).First();
 
             context.RegisterOperationAction(AnalyzeOperation, OperationKind.Invocation);
         }
@@ -131,12 +141,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 method = null;
                 comparison = null;
 
-                var typeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
-                var stringComparisonType = typeProvider.GetOrCreateTypeByMetadataName("System.StringComparison");
-
-                if (stringComparisonType == null)
-                    return false;
-
                 if (invocationOperation.TargetMethod is IMethodSymbol invokedMethod &&
                     invokedMethod.ContainingType.SpecialType == SpecialType.System_String &&
                     TargetMethods.Contains(invokedMethod.Name) &&
@@ -148,17 +152,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     foreach (var argument in invocationOperation.Arguments)
                     {
                         if (argument.Value.Type != null &&
-                            argument.Value.Type.Equals(stringComparisonType) &&
+                            argument.Value.Type.Equals(_stringComparisonType) &&
                             argument.Value is IFieldReferenceOperation fieldReferenceOperation)
                         {
-                            var ordinalStringComparisonSymbol = stringComparisonType.GetMembers(nameof(StringComparison.Ordinal)).First();
-                            var invariantCultureStringComparisonSymbol = stringComparisonType.GetMembers(nameof(StringComparison.InvariantCulture)).First();
-
-                            if (fieldReferenceOperation.Field.Equals(ordinalStringComparisonSymbol))
+                            if (fieldReferenceOperation.Field.Equals(_ordinalStringComparisonSymbol))
                             {
                                 comparison = StringComparisonUsed.Ordinal;
                             }
-                            else if (fieldReferenceOperation.Field.Equals(invariantCultureStringComparisonSymbol))
+                            else if (fieldReferenceOperation.Field.Equals(_invariantCultureStringComparisonSymbol))
                             {
                                 comparison = StringComparisonUsed.InvariantCulture;
                             }

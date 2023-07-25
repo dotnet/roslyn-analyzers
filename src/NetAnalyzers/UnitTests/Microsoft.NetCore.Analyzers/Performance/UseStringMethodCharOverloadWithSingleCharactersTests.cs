@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public class UseStringMethodCharOverloadWithSingleCharactersTests
     {
-        private static readonly string[] _methods = new[]
+        private static readonly string[] TargetMethods = new[]
         {
             nameof(string.StartsWith),
             nameof(string.EndsWith),
@@ -30,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         public static IEnumerable<object[]> GetMethods()
 #pragma warning restore CA1024 // Use properties where appropriate
         {
-            foreach (var method in _methods)
+            foreach (var method in TargetMethods)
             {
                 yield return new object[] { method };
             }

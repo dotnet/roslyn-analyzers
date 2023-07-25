@@ -50,7 +50,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        private static readonly ImmutableHashSet<string> _targetMethods = new[]
+        private static readonly ImmutableHashSet<string> TargetMethods = new[]
         {
              nameof(string.StartsWith),
              nameof(string.EndsWith),
@@ -78,7 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (stringType is null || charType is null)
                 return;
 
-            var stringTypeHasCharOverload = stringType.GetMembers(_targetMethods.First())
+            var stringTypeHasCharOverload = stringType.GetMembers(TargetMethods.First())
                 .OfType<IMethodSymbol>()
                 .Any(m =>
                 {
@@ -146,7 +146,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 if (invocationOperation.TargetMethod is IMethodSymbol invokedMethod &&
                     invokedMethod.ContainingType.SpecialType == SpecialType.System_String &&
-                    _targetMethods.Contains(invokedMethod.Name) &&
+                    TargetMethods.Contains(invokedMethod.Name) &&
                     invokedMethod.Parameters.Length > 0 &&
                     invokedMethod.Parameters[0].Type.SpecialType == SpecialType.System_String)
                 {

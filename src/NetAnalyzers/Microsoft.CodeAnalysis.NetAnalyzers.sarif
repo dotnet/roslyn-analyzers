@@ -4455,6 +4455,25 @@
             ]
           }
         },
+        "CA2262": {
+          "id": "CA2262",
+          "shortDescription": "Checks MaxResponseHeadersLength to be sent in KB",
+          "fullDescription": "If someone mistakenly provides a big value of HttpClientHandler.MaxResponseHeadersLength will receive a warning",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseConfigureAwaitWithSuppressThrowing",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "CA2300": {
           "id": "CA2300",
           "shortDescription": "Do not use insecure deserializer BinaryFormatter",

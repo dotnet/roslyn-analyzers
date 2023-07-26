@@ -13,10 +13,10 @@ namespace Microsoft.NetCore.Analyzers.Usage
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
-    /// CA2262: <inheritdoc cref="HttpResponseHeaderTest"/>
+    /// CA2262: <inheritdoc cref="ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class HttpResponseHeaderTest : DiagnosticAnalyzer
+    public sealed class ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly : DiagnosticAnalyzer
     {
         private const string PropertyName = "MaxResponseHeadersLength";
         private const int MaximumAlertLimit = 128;

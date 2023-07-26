@@ -84,8 +84,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 });
 
             var typeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
-            var stringComparisonType = typeProvider.GetOrCreateTypeByMetadataName("System.StringComparison");
-            var cultureInfoType = typeProvider.GetOrCreateTypeByMetadataName("System.Globalization.CultureInfo");
+            var stringComparisonType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison);
+            var cultureInfoType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemGlobalizationCultureInfo);
 
             if (!stringTypeHasCharOverload || stringComparisonType == null || cultureInfoType == null)
                 return;

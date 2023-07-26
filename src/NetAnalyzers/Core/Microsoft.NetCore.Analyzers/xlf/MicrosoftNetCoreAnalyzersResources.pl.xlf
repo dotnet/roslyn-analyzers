@@ -3174,8 +3174,8 @@ Konwersje poszerzane i zdefiniowane przez użytkownika nie są obsługiwane w pr
         <note />
       </trans-unit>
       <trans-unit id="UseStringMethodCharOverloadWithSingleCharactersMessage">
-        <source>Use '{0}' instead of '{1}' when you have a string with a single char</source>
-        <target state="new">Use '{0}' instead of '{1}' when you have a string with a single char</target>
+        <source>Use 'string.{0}(char)' instead of 'string.{0}(string)' when you have a string with a single char</source>
+        <target state="new">Use 'string.{0}(char)' instead of 'string.{0}(string)' when you have a string with a single char</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStringMethodCharOverloadWithSingleCharactersTitle">

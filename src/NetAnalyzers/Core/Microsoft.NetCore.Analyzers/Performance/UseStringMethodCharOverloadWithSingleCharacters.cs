@@ -142,9 +142,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 var argumentList = GetArgumentList(stringArgument.Syntax);
                 if (argumentList != null)
                 {
-                    var arg0 = $"string.{method}(char)";
-                    var arg1 = $"string.{method}(string)";
-                    context.ReportDiagnostic(argumentList.CreateDiagnostic(rule, new[] { arg0, arg1 }));
+                    context.ReportDiagnostic(argumentList.CreateDiagnostic(rule, new[] { method }));
                 }
             }
 

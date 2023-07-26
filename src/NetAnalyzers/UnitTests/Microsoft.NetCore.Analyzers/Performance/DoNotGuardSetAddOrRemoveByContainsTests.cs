@@ -20,11 +20,15 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task NonInvocationConditionDoesNotThrow_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        public MyClass()
-        {
-            if (!true) { }
-        }" + CSNamespaceAndClassEnd;
+            string source = """
+                class C
+                {
+                    void M()
+                    {
+                        if (!true) { }
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -32,22 +36,34 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task AddIsTheOnlyStatement_OffersFixer_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (![|MySet.Contains(""Item"")|])
-                MySet.Add(""Item"");
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+                    void M()
+                    {
+                        if (![|MySet.Contains("Item")|])
+                            MySet.Add("Item");
+                    }
+                }
+                """;
 
-        public MyClass()
-        {
-            MySet.Add(""Item"");
-        }" + CSNamespaceAndClassEnd;
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        MySet.Add("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -55,22 +71,34 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task RemoveIsTheOnlyStatement_OffersFixer_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if ([|MySet.Contains(""Item"")|])
-                MySet.Remove(""Item"");
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+                    void M()
+                    {
+                        if ([|MySet.Contains("Item")|])
+                            MySet.Remove("Item");
+                    }
+                }
+                """;
 
-        public MyClass()
-        {
-            MySet.Remove(""Item"");
-        }" + CSNamespaceAndClassEnd;
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        MySet.Remove("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -78,24 +106,36 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task AddIsTheOnlyStatementInABlock_OffersFixer_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (![|MySet.Contains(""Item"")|])
-            {
-                MySet.Add(""Item"");
-            }
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+                    void M()
+                    {
+                        if (![|MySet.Contains("Item")|])
+                        {
+                            MySet.Add("Item");
+                        }
+                    }
+                }
+                """;
 
-        public MyClass()
-        {
-            MySet.Add(""Item"");
-        }" + CSNamespaceAndClassEnd;
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        MySet.Add("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -103,24 +143,36 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task RemoveIsTheOnlyStatementInABlock_OffersFixer_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if ([|MySet.Contains(""Item"")|])
-            {
-                MySet.Remove(""Item"");
-            }
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+                    void M()
+                    {
+                        if ([|MySet.Contains("Item")|])
+                        {
+                            MySet.Remove("Item");
+                        }
+                    }
+                }
+                """;
 
-        public MyClass()
-        {
-            MySet.Remove(""Item"");
-        }" + CSNamespaceAndClassEnd;
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        MySet.Remove("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -128,25 +180,37 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task AddHasElseStatement_OffersFixer_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (![|MySet.Contains(""Item"")|])
-                MySet.Add(""Item"");
-            else
-                throw new Exception(""Item already exists"");
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+                    void M()
+                    {
+                        if (![|MySet.Contains("Item")|])
+                            MySet.Add("Item");
+                        else
+                            throw new System.Exception("Item already exists");
+                    }
+                }
+                """;
 
-        public MyClass()
-        {
-            if (!MySet.Add(""Item""))
-                throw new Exception(""Item already exists"");
-        }" + CSNamespaceAndClassEnd;
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (!MySet.Add("Item"))
+                            throw new System.Exception("Item already exists");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -154,25 +218,37 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task RemoveHasElseStatement_OffersFixer_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if ([|MySet.Contains(""Item"")|])
-                MySet.Remove(""Item"");
-            else
-                throw new Exception(""Item doesn't exist"");
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+                    void M()
+                    {
+                        if ([|MySet.Contains("Item")|])
+                            MySet.Remove("Item");
+                        else
+                            throw new System.Exception("Item doesn't exist");
+                    }
+                }
+                """;
 
-        public MyClass()
-        {
-            if (!MySet.Remove(""Item""))
-                throw new Exception(""Item doesn't exist"");
-        }" + CSNamespaceAndClassEnd;
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (!MySet.Remove("Item"))
+                            throw new System.Exception("Item doesn't exist");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -180,31 +256,43 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task AddHasElseBlock_OffersFixer_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (![|MySet.Contains(""Item"")|])
-            {
-                MySet.Add(""Item"");
-            }
-            else
-            {
-                throw new Exception(""Item already exists"");
-            }
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+                    void M()
+                    {
+                        if (![|MySet.Contains("Item")|])
+                        {
+                            MySet.Add("Item");
+                        }
+                        else
+                        {
+                            throw new System.Exception("Item already exists");
+                        }
+                    }
+                }
+                """;
 
-        public MyClass()
-        {
-            if (!MySet.Add(""Item""))
-            {
-                throw new Exception(""Item already exists"");
-            }
-        }" + CSNamespaceAndClassEnd;
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (!MySet.Add("Item"))
+                        {
+                            throw new System.Exception("Item already exists");
+                        }
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -212,31 +300,43 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task RemoveHasElseBlock_OffersFixer_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if ([|MySet.Contains(""Item"")|])
-            {
-                MySet.Remove(""Item"");
-            }
-            else
-            {
-                throw new Exception(""Item doesn't exist"");
-            }
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+                    void M()
+                    {
+                        if ([|MySet.Contains("Item")|])
+                        {
+                            MySet.Remove("Item");
+                        }
+                        else
+                        {
+                            throw new System.Exception("Item doesn't exist");
+                        }
+                    }
+                }
+                """;
 
-        public MyClass()
-        {
-            if (!MySet.Remove(""Item""))
-            {
-                throw new Exception(""Item doesn't exist"");
-            }
-        }" + CSNamespaceAndClassEnd;
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (!MySet.Remove("Item"))
+                        {
+                            throw new System.Exception("Item doesn't exist");
+                        }
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -244,18 +344,23 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task AddWithAdditionalStatements_ReportsDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (![|MySet.Contains(""Item"")|])
-            {
-                MySet.Add(""Item"");
-                Console.WriteLine();
-            }
-        }
-        " + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (![|MySet.Contains("Item")|])
+                        {
+                            MySet.Add("Item");
+                            System.Console.WriteLine();
+                        }
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, source);
         }
@@ -263,18 +368,23 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task RemoveWithAdditionalStatements_ReportsDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if ([|MySet.Contains(""Item"")|])
-            {
-                MySet.Remove(""Item"");
-                Console.WriteLine();
-            }
-        }
-        " + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if ([|MySet.Contains("Item")|])
+                        {
+                            MySet.Remove("Item");
+                            System.Console.WriteLine();
+                        }
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, source);
         }
@@ -282,17 +392,22 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task AddWithVariableAssignment_ReportsDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (![|MySet.Contains(""Item"")|])
-            {
-                bool result = MySet.Add(""Item"");
-            }
-        }
-        " + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (![|MySet.Contains("Item")|])
+                        {
+                            bool result = MySet.Add("Item");
+                        }
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, source);
         }
@@ -300,17 +415,22 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task RemoveWithVariableAssignment_ReportsDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+            using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if ([|MySet.Contains(""Item"")|])
+            class C
             {
-                bool result = MySet.Remove(""Item"");
+                private readonly HashSet<string> MySet = new HashSet<string>();
+
+                void M()
+                {
+                    if ([|MySet.Contains("Item")|])
+                    {
+                        bool result = MySet.Remove("Item");
+                    }
+                }
             }
-        }
-        " + CSNamespaceAndClassEnd;
+            """;
 
             await VerifyCS.VerifyCodeFixAsync(source, source);
         }
@@ -318,14 +438,20 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task AddWithNonNegatedContains_NoDiagnostics_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+            using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (MySet.Contains(""Item""))
-                MySet.Add(""Item"");
-        }" + CSNamespaceAndClassEnd;
+            class C
+            {
+                private readonly HashSet<string> MySet = new HashSet<string>();
+
+                void M()
+                {
+                    if (MySet.Contains("Item"))
+                        MySet.Add("Item");
+                }
+            }
+            """;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -333,14 +459,20 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task RemoveWithNegatedContains_NoDiagnostics_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (!MySet.Contains(""Item""))
-                MySet.Remove(""Item"");
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (!MySet.Contains("Item"))
+                            MySet.Remove("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -348,14 +480,20 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task AdditionalCondition_NoDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (MySet.Contains(""Item"") && MySet.Count > 2)
-                MySet.Remove(""Item"");
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (MySet.Contains("Item") && MySet.Count > 2)
+                            MySet.Remove("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -363,15 +501,21 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task ConditionInVariable_NoDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            var result = MySet.Contains(""Item"");
-            if (result)
-	            MySet.Remove(""Item"");
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        var result = MySet.Contains("Item");
+                        if (result)
+                            MySet.Remove("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -379,15 +523,21 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task RemoveInSeparateLine_NoDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (MySet.Contains(""Item""))
-	            _ = MySet.Count;
-	        MySet.Remove(""Item"");
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (MySet.Contains("Item"))
+                            _ = MySet.Count;
+                        MySet.Remove("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -395,15 +545,21 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task NotSetRemove_NoDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
-        private bool Remove(string item) => false;
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (MySet.Contains(""Item""))
-	            Remove(""Item"");
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+                    private bool Remove(string item) => false;
+
+                    void M()
+                    {
+                        if (MySet.Contains("Item"))
+                            Remove("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -411,20 +567,26 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task NestedConditional_NoDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
-        private readonly HashSet<string> OtherSet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (MySet.Contains(""Item""))
-            {
-                if (OtherSet.Contains(""Item""))
+                class C
                 {
-	                MySet.Remove(""Item"");
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+                    private readonly HashSet<string> OtherSet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (MySet.Contains("Item"))
+                        {
+                            if (OtherSet.Contains("Item"))
+                            {
+                                MySet.Remove("Item");
+                            }
+                        }
+                    }
                 }
-            }
-        }" + CSNamespaceAndClassEnd;
+                """;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -432,14 +594,20 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task TernaryOperator_NoDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            bool added = MySet.Contains(""Item"") ? false : MySet.Add(""Item"");
-            bool removed = MySet.Contains(""Item"") ? MySet.Remove(""Item""): false;
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        bool added = MySet.Contains("Item") ? false : MySet.Add("Item");
+                        bool removed = MySet.Contains("Item") ? MySet.Remove("Item"): false;
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, source);
         }
@@ -447,18 +615,24 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task NestedTernaryOperator_NoDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            bool nestedAdded = MySet.Contains(""Item"")
-                ? false
-                : MySet.Add(""Item"") ? true : false;
-            bool nestedRemoved = MySet.Contains(""Item"")
-                ? MySet.Remove(""Item"") ? true : false
-                : false;
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        bool nestedAdded = MySet.Contains("Item")
+                            ? false
+                            : MySet.Add("Item") ? true : false;
+                        bool nestedRemoved = MySet.Contains("Item")
+                            ? MySet.Remove("Item") ? true : false
+                            : false;
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, source);
         }
@@ -466,26 +640,38 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task TriviaIsPreserved_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            // reticulates the splines
-            if ([|MySet.Contains(""Item"")|])
-            {
-                MySet.Remove(""Item"");
-            }
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+                    void M()
+                    {
+                        // reticulates the splines
+                        if ([|MySet.Contains("Item")|])
+                        {
+                            MySet.Remove("Item");
+                        }
+                    }
+                }
+                """;
 
-        public MyClass()
-        {
-            // reticulates the splines
-            MySet.Remove(""Item"");
-        }" + CSNamespaceAndClassEnd;
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        // reticulates the splines
+                        MySet.Remove("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -493,29 +679,29 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task AddIsTheOnlyStatement_OffersFixer_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
 
-        Public Sub New()
-            If Not [|MySet.Contains(""Item"")|] Then MySet.Add(""Item"")
-        End Sub
-    End Class
-End Namespace";
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-            string fixedSource = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+                    Public Sub M()
+                        If Not [|MySet.Contains("Item")|] Then MySet.Add("Item")
+                    End Sub
+                End Class
+                """;
 
-        Public Sub New()
-            MySet.Add(""Item"")
-        End Sub
-    End Class
-End Namespace";
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        MySet.Add("Item")
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -523,29 +709,29 @@ End Namespace";
         [Fact]
         public async Task RemoveIsTheOnlyStatement_OffersFixer_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If ([|MySet.Contains(""Item"")|]) Then MySet.Remove(""Item"")
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If ([|MySet.Contains("Item")|]) Then MySet.Remove("Item")
+                    End Sub
+                End Class
+                """;
 
-            string fixedSource = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            MySet.Remove(""Item"")
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        MySet.Remove("Item")
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -553,31 +739,31 @@ End Namespace";
         [Fact]
         public async Task AddIsTheOnlyStatementInBlock_OffersFixer_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If Not [|MySet.Contains(""Item"")|] Then
-                MySet.Add(""Item"")
-            End If
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If Not [|MySet.Contains("Item")|] Then
+                            MySet.Add("Item")
+                        End If
+                    End Sub
+                End Class
+                """;
 
-            string fixedSource = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            MySet.Add(""Item"")
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        MySet.Add("Item")
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -585,31 +771,31 @@ End Namespace";
         [Fact]
         public async Task RemoveIsTheOnlyStatementInBlock_OffersFixer_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If ([|MySet.Contains(""Item"")|]) Then
-                MySet.Remove(""Item"")
-            End If
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If ([|MySet.Contains("Item")|]) Then
+                            MySet.Remove("Item")
+                        End If
+                    End Sub
+                End Class
+                """;
 
-            string fixedSource = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            MySet.Remove(""Item"")
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        MySet.Remove("Item")
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -617,29 +803,29 @@ End Namespace";
         [Fact]
         public async Task AddHasElseStatement_OffersFixer_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If Not [|MySet.Contains(""Item"")|] Then MySet.Add(""Item"") Else Throw new Exception(""Item already exists"")
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If Not [|MySet.Contains("Item")|] Then MySet.Add("Item") Else Throw new System.Exception("Item already exists")
+                    End Sub
+                End Class
+                """;
 
-            string fixedSource = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If Not MySet.Add(""Item"") Then Throw new Exception(""Item already exists"")
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If Not MySet.Add("Item") Then Throw new System.Exception("Item already exists")
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -647,29 +833,29 @@ End Namespace";
         [Fact]
         public async Task RemoveHasElseStatement_OffersFixer_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If [|MySet.Contains(""Item"")|] Then MySet.Remove(""Item"") Else Throw new Exception(""Item doesn't exist"")
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If [|MySet.Contains("Item")|] Then MySet.Remove("Item") Else Throw new System.Exception("Item doesn't exist")
+                    End Sub
+                End Class
+                """;
 
-            string fixedSource = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If Not MySet.Remove(""Item"") Then Throw new Exception(""Item doesn't exist"")
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If Not MySet.Remove("Item") Then Throw new System.Exception("Item doesn't exist")
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -677,35 +863,35 @@ End Namespace";
         [Fact]
         public async Task AddHasElseBlock_OffersFixer_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If Not [|MySet.Contains(""Item"")|] Then
-                MySet.Add(""Item"")
-            Else
-                Throw new Exception(""Item already exists"")
-            End If
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If Not [|MySet.Contains("Item")|] Then
+                            MySet.Add("Item")
+                        Else
+                            Throw new System.Exception("Item already exists")
+                        End If
+                    End Sub
+                End Class
+                """;
 
-            string fixedSource = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If Not MySet.Add(""Item"") Then
-                Throw new Exception(""Item already exists"")
-            End If
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If Not MySet.Add("Item") Then
+                            Throw new System.Exception("Item already exists")
+                        End If
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -713,35 +899,35 @@ End Namespace";
         [Fact]
         public async Task RemoveHasElseBlock_OffersFixer_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If [|MySet.Contains(""Item"")|] Then
-                MySet.Remove(""Item"")
-            Else
-                Throw new Exception(""Item doesn't exist"")
-            End If
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If [|MySet.Contains("Item")|] Then
+                            MySet.Remove("Item")
+                        Else
+                            Throw new System.Exception("Item doesn't exist")
+                        End If
+                    End Sub
+                End Class
+                """;
 
-            string fixedSource = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If Not MySet.Remove(""Item"") Then
-                Throw new Exception(""Item doesn't exist"")
-            End If
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If Not MySet.Remove("Item") Then
+                            Throw new System.Exception("Item doesn't exist")
+                        End If
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -749,17 +935,17 @@ End Namespace";
         [Fact]
         public async Task AddWithNonNegatedContains_NoDiagnostics_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If MySet.Contains(""Item"") Then MySet.Add(""Item"")
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If MySet.Contains("Item") Then MySet.Add("Item")
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyAnalyzerAsync(source);
         }
@@ -767,17 +953,17 @@ End Namespace";
         [Fact]
         public async Task RemoveWithNegatedContains_NoDiagnostics_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If Not MySet.Contains(""Item"") Then MySet.Remove(""Item"")
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If Not MySet.Contains("Item") Then MySet.Remove("Item")
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyAnalyzerAsync(source);
         }
@@ -785,19 +971,19 @@ End Namespace";
         [Fact]
         public async Task AddWithVariableAssignment_ReportsDiagnostic_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If Not [|MySet.Contains(""Item"")|] Then
-                Dim result = MySet.Add(""Item"")
-            End If
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If Not [|MySet.Contains("Item")|] Then
+                            Dim result = MySet.Add("Item")
+                        End If
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, source);
         }
@@ -805,19 +991,19 @@ End Namespace";
         [Fact]
         public async Task RemoveWithVariableAssignment_ReportsDiagnostic_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If [|MySet.Contains(""Item"")|] Then
-                Dim result = MySet.Remove(""Item"")
-            End If
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If [|MySet.Contains("Item")|] Then
+                            Dim result = MySet.Remove("Item")
+                        End If
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, source);
         }
@@ -825,20 +1011,20 @@ End Namespace";
         [Fact]
         public async Task AddWithAdditionalStatements_ReportsDiagnostic_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If Not [|MySet.Contains(""Item"")|] Then
-                MySet.Add(""Item"")
-                Console.WriteLine()
-            End If
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If Not [|MySet.Contains("Item")|] Then
+                            MySet.Add("Item")
+                            System.Console.WriteLine()
+                        End If
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, source);
         }
@@ -846,20 +1032,20 @@ End Namespace";
         [Fact]
         public async Task RemoveWithAdditionalStatements_ReportsDiagnostic_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            If [|MySet.Contains(""Item"")|] Then
-                MySet.Remove(""Item"")
-                Console.WriteLine()
-            End If
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        If [|MySet.Contains("Item")|] Then
+                            MySet.Remove("Item")
+                            System.Console.WriteLine()
+                        End If
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, source);
         }
@@ -867,33 +1053,33 @@ End Namespace";
         [Fact]
         public async Task TriviaIsPreserved_VB()
         {
-            string source = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            ' reticulates the splines
-            If ([|MySet.Contains(""Item"")|]) Then
-                MySet.Remove(""Item"")
-            End If
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        ' reticulates the splines
+                        If ([|MySet.Contains("Item")|]) Then
+                            MySet.Remove("Item")
+                        End If
+                    End Sub
+                End Class
+                """;
 
-            string fixedSource = @"
-" + VBUsings + @"
-Namespace Testopolis
-    Public Class SomeClass
-        Public MySet As New HashSet(Of String)()
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
 
-        Public Sub New()
-            ' reticulates the splines
-            MySet.Remove(""Item"")
-        End Sub
-    End Class
-End Namespace";
+                    Public Sub M()
+                        ' reticulates the splines
+                        MySet.Remove("Item")
+                    End Sub
+                End Class
+                """;
 
             await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -902,50 +1088,56 @@ End Namespace";
         [WorkItem(6377, "https://github.com/dotnet/roslyn-analyzers/issues/6377")]
         public async Task ContainsAndRemoveCalledOnDifferentInstances_NoDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> SetField1 = new HashSet<string>();
-        private readonly HashSet<string> SetField2 = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public HashSet<string> SetProperty1 { get; } = new HashSet<string>();
+                class C
+                {
+                    private readonly HashSet<string> SetField1 = new HashSet<string>();
+                    private readonly HashSet<string> SetField2 = new HashSet<string>();
 
-        public MyClass()
-        {
-            if (SetField2.Contains(""Item""))
-                SetField1.Remove(""Item"");
+                    public HashSet<string> SetProperty1 { get; } = new HashSet<string>();
 
-            if (!SetField1.Contains(""Item""))
-            {
-                SetField2.Remove(""Item"");
-            }
+                    void M()
+                    {
+                        if (SetField2.Contains("Item"))
+                            SetField1.Remove("Item");
 
-            if (SetProperty1.Contains(""Item""))
-                SetField1.Remove(""Item"");
+                        if (!SetField1.Contains("Item"))
+                        {
+                            SetField2.Remove("Item");
+                        }
 
-            if (!SetField1.Contains(""Item""))
-            {
-                SetProperty1.Remove(""Item"");
-            }
+                        if (SetProperty1.Contains("Item"))
+                            SetField1.Remove("Item");
 
-            var mySetLocal4 = new HashSet<string>();
-            if (mySetLocal4.Contains(""Item""))
-                SetField1.Remove(""Item"");
+                        if (!SetField1.Contains("Item"))
+                        {
+                            SetProperty1.Remove("Item");
+                        }
 
-            if (!SetField1.Contains(""Item""))
-            {
-                mySetLocal4.Remove(""Item"");
-            }
-        }
+                        var mySetLocal4 = new HashSet<string>();
+                        if (mySetLocal4.Contains("Item"))
+                            SetField1.Remove("Item");
 
-        private void RemoveItem(HashSet<string> setParam)
-        {
-            if (setParam.Contains(""Item""))
-                SetField1.Remove(""Item"");
+                        if (!SetField1.Contains("Item"))
+                        {
+                            mySetLocal4.Remove("Item");
+                        }
+                    }
 
-            if (!SetField1.Contains(""Item""))
-            {
-                setParam.Remove(""Item"");
-            }
-        }" + CSNamespaceAndClassEnd;
+                    private void RemoveItem(HashSet<string> setParam)
+                    {
+                        if (setParam.Contains("Item"))
+                            SetField1.Remove("Item");
+
+                        if (!SetField1.Contains("Item"))
+                        {
+                            setParam.Remove("Item");
+                        }
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -953,30 +1145,36 @@ End Namespace";
         [Fact]
         public async Task ContainsAndAddCalledWithDifferentArguments_NoDiagnostic_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
-        private const string OtherItemField = ""Other Item"";
+            string source = """
+                using System.Collections.Generic;
 
-        public string OtherItemProperty { get; } = ""Other Item"";
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+                    private const string OtherItemField = "Other Item";
 
-        public MyClass(string otherItemParameter)
-        {
-            if (!MySet.Contains(""Item""))
-                MySet.Add(""Other Item"");
+                    public string OtherItemProperty { get; } = "Other Item";
 
-            if (!MySet.Contains(""Item""))
-                MySet.Add(otherItemParameter);
+                    void M(string otherItemParameter)
+                    {
+                        if (!MySet.Contains("Item"))
+                            MySet.Add("Other Item");
 
-            if (!MySet.Contains(""Item""))
-                MySet.Add(OtherItemField);
+                        if (!MySet.Contains("Item"))
+                            MySet.Add(otherItemParameter);
 
-            if (!MySet.Contains(""Item""))
-                MySet.Add(OtherItemProperty);
+                        if (!MySet.Contains("Item"))
+                            MySet.Add(OtherItemField);
 
-            string otherItemLocal = ""Other Item"";
-            if (!MySet.Contains(""Item""))
-                MySet.Add(otherItemLocal);
-        }" + CSNamespaceAndClassEnd;
+                        if (!MySet.Contains("Item"))
+                            MySet.Add(OtherItemProperty);
+
+                        string otherItemLocal = "Other Item";
+                        if (!MySet.Contains("Item"))
+                            MySet.Add(otherItemLocal);
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, source);
         }
@@ -984,26 +1182,38 @@ End Namespace";
         [Fact]
         public async Task ContainsAndAddCalledWithSameArgumentsFields_OffersFixer_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
-        private const string FieldItem = ""Item"";
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            if (![|MySet.Contains(FieldItem)|])
-            {
-                MySet.Add(FieldItem);
-            }
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+                    private const string FieldItem = "Item";
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
-        private const string FieldItem = ""Item"";
+                    void M()
+                    {
+                        if (![|MySet.Contains(FieldItem)|])
+                        {
+                            MySet.Add(FieldItem);
+                        }
+                    }
+                }
+                """;
 
-        public MyClass()
-        {
-            MySet.Add(FieldItem);
-        }" + CSNamespaceAndClassEnd;
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+                    private const string FieldItem = "Item";
+
+                    void M()
+                    {
+                        MySet.Add(FieldItem);
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -1011,28 +1221,40 @@ End Namespace";
         [Fact]
         public async Task ContainsAndAddCalledWithSameArgumentsLocals_OffersFixer_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass()
-        {
-            const string LocalItem = ""Item"";
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
 
-            if (![|MySet.Contains(LocalItem)|])
-            {
-                MySet.Add(LocalItem);
-            }
-        }" + CSNamespaceAndClassEnd;
+                    void M()
+                    {
+                        const string LocalItem = "Item";
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+                        if (![|MySet.Contains(LocalItem)|])
+                        {
+                            MySet.Add(LocalItem);
+                        }
+                    }
+                }
+                """;
 
-        public MyClass()
-        {
-            const string LocalItem = ""Item"";
+            string fixedSource = """
+                using System.Collections.Generic;
 
-            MySet.Add(LocalItem);
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        const string LocalItem = "Item";
+
+                        MySet.Add(LocalItem);
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -1040,24 +1262,36 @@ End Namespace";
         [Fact]
         public async Task ContainsAndAddCalledWithSameArgumentsParameters_OffersFixer_CS()
         {
-            string source = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+            string source = """
+                using System.Collections.Generic;
 
-        public MyClass(string parameterItem)
-        {
-            if (![|MySet.Contains(parameterItem)|])
-            {
-                MySet.Add(parameterItem);
-            }
-        }" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
-        private readonly HashSet<string> MySet = new HashSet<string>();
+                    void M(string parameterItem)
+                    {
+                        if (![|MySet.Contains(parameterItem)|])
+                        {
+                            MySet.Add(parameterItem);
+                        }
+                    }
+                }
+                """;
 
-        public MyClass(string parameterItem)
-        {
-            MySet.Add(parameterItem);
-        }" + CSNamespaceAndClassEnd;
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M(string parameterItem)
+                    {
+                        MySet.Add(parameterItem);
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -1073,22 +1307,36 @@ End Namespace";
         [InlineData("ImmutableSortedSet<string>.Builder", "Remove")]
         public async Task SupportsSetsWithAddOrRemoveReturningBool_OffersFixer_CS(string setType, string method)
         {
-            string source = CSUsings + CSNamespaceAndClassStart + $@"
-        private readonly {setType} MySet = {SetCreationExpression(setType)}
+            string source = $$"""
+                using System.Collections.Generic;
+                using System.Collections.Immutable;
 
-        public MyClass()
-        {{
-            if ({(method == "Add" ? "!" : string.Empty)}[|MySet.Contains(""Item"")|])
-                MySet.{method}(""Item"");
-        }}" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly {{setType}} MySet = {{SetCreationExpression(setType)}}
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + $@"
-        private readonly {setType} MySet = {SetCreationExpression(setType)}
+                    void M()
+                    {
+                        if ({{(method == "Add" ? "!" : string.Empty)}}[|MySet.Contains("Item")|])
+                            MySet.{{method}}("Item");
+                    }
+                }
+                """;
 
-        public MyClass()
-        {{
-            MySet.{method}(""Item"");
-        }}" + CSNamespaceAndClassEnd;
+            string fixedSource = $$"""
+                using System.Collections.Generic;
+                using System.Collections.Immutable;
+
+                class C
+                {
+                    private readonly {{setType}} MySet = {{SetCreationExpression(setType)}}
+
+                    void M()
+                    {
+                        MySet.{{method}}("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -1104,22 +1352,36 @@ End Namespace";
         [InlineData("ISet<string>", "ImmutableSortedSet<string>.Builder", "Remove")]
         public async Task SupportsSetsWithAddOrRemoveReturningBoolWithInterfaceType_OffersFixer_CS(string interfaceType, string concreteType, string method)
         {
-            string source = CSUsings + CSNamespaceAndClassStart + $@"
-        private readonly {interfaceType} MySet = {SetCreationExpression(concreteType)}
+            string source = $$"""
+                using System.Collections.Generic;
+                using System.Collections.Immutable;
 
-        public MyClass()
-        {{
-            if ({(method == "Add" ? "!" : string.Empty)}[|MySet.Contains(""Item"")|])
-                MySet.{method}(""Item"");
-        }}" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private readonly {{interfaceType}} MySet = {{SetCreationExpression(concreteType)}}
 
-            string fixedSource = CSUsings + CSNamespaceAndClassStart + $@"
-        private readonly {interfaceType} MySet = {SetCreationExpression(concreteType)}
+                    void M()
+                    {
+                        if ({{(method == "Add" ? "!" : string.Empty)}}[|MySet.Contains("Item")|])
+                            MySet.{{method}}("Item");
+                    }
+                }
+                """;
 
-        public MyClass()
-        {{
-            MySet.{method}(""Item"");
-        }}" + CSNamespaceAndClassEnd;
+            string fixedSource = $$"""
+                using System.Collections.Generic;
+                using System.Collections.Immutable;
+
+                class C
+                {
+                    private readonly {{interfaceType}} MySet = {{SetCreationExpression(concreteType)}}
+
+                    void M()
+                    {
+                        MySet.{{method}}("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -1131,14 +1393,21 @@ End Namespace";
         [InlineData("ImmutableSortedSet<string>", "Remove")]
         public async Task SupportsSetWithAddOrRemoveReturningGenericType_ReportsDiagnostic_CS(string setType, string method)
         {
-            string source = CSUsings + CSNamespaceAndClassStart + $@"
-        private {setType} MySet = {setType[..setType.IndexOf('<', StringComparison.Ordinal)]}.Create<string>();
+            string source = $$"""
+                using System.Collections.Generic;
+                using System.Collections.Immutable;
 
-        public MyClass()
-        {{
-            if ({(method == "Add" ? "!" : string.Empty)}[|MySet.Contains(""Item"")|])
-               MySet = MySet.{method}(""Item"");
-        }}" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private {{setType}} MySet = {{setType[..setType.IndexOf('<', StringComparison.Ordinal)]}}.Create<string>();
+
+                    void M()
+                    {
+                        if ({{(method == "Add" ? "!" : string.Empty)}}[|MySet.Contains("Item")|])
+                           MySet = MySet.{{method}}("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, source);
         }
@@ -1150,38 +1419,27 @@ End Namespace";
         [InlineData("IImmutableSet<string>", "ImmutableSortedSet<string>", "Remove")]
         public async Task SupportsSetWithAddOrRemoveReturningGenericTypeWithInterfaceType_ReportsDiagnostic_CS(string interfaceType, string concreteType, string method)
         {
-            string source = CSUsings + CSNamespaceAndClassStart + $@"
-        private {interfaceType} MySet = {concreteType[..concreteType.IndexOf('<', StringComparison.Ordinal)]}.Create<string>();
+            string source = $$"""
+                using System.Collections.Generic;
+                using System.Collections.Immutable;
 
-        public MyClass()
-        {{
-            if ({(method == "Add" ? "!" : string.Empty)}[|MySet.Contains(""Item"")|])
-               MySet = MySet.{method}(""Item"");
-        }}" + CSNamespaceAndClassEnd;
+                class C
+                {
+                    private {{interfaceType}} MySet = {{concreteType[..concreteType.IndexOf('<', StringComparison.Ordinal)]}}.Create<string>();
+
+                    void M()
+                    {
+                        if ({{(method == "Add" ? "!" : string.Empty)}}[|MySet.Contains("Item")|])
+                           MySet = MySet.{{method}}("Item");
+                    }
+                }
+                """;
 
             await VerifyCS.VerifyCodeFixAsync(source, source);
         }
         #endregion
 
         #region Helpers
-        private const string CSUsings = @"using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;";
-
-        private const string CSNamespaceAndClassStart = @"namespace Testopolis
-{
-    public class MyClass
-    {
-";
-
-        private const string CSNamespaceAndClassEnd = @"
-    }
-}";
-
-        private const string VBUsings = @"Imports System
-Imports System.Collections.Generic
-Imports System.Collections.Immutable";
-
         private string SetCreationExpression(string setType)
         {
             return setType.Contains("Builder", StringComparison.Ordinal)

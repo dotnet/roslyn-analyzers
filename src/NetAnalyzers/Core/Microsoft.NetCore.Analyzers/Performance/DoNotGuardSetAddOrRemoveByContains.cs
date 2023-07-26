@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -67,7 +66,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 var conditional = (IConditionalOperation)context.Operation;
 
                 if (!symbols.HasApplicableContainsMethod(conditional.Condition, out var containsInvocation, out bool containsNegated) ||
-                    !symbols.HasApplicableAddOrRemoveMethod(conditional.WhenTrue.Children, containsNegated, out var addOrRemoveInvocation) ||
+                    !symbols.HasApplicableAddOrRemoveMethod(conditional, containsNegated, out var addOrRemoveInvocation) ||
                     !AreInvocationsOnSameInstance(containsInvocation, addOrRemoveInvocation) ||
                     !AreInvocationArgumentsEqual(containsInvocation, addOrRemoveInvocation))
                 {
@@ -252,7 +251,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     DoesImplementInterfaceMethod(containsInvocation.TargetMethod, ContainsMethodImmutableSet);
             }
 
-            // A true conditional block contains an applicable 'Add' or 'Remove' method if the first operation satisfies one of the following cases:
+            // A conditional contains an applicable 'Add' or 'Remove' method if the first operation of WhenTrue or WhenFalse satisfies one of the following:
             //   1. The operation is an invocation of 'Add' or 'Remove'.
             //   2. The operation is either a simple assignment or an expression statement.
             //      In this case the child statements are checked if they contain an invocation of 'Add' or 'Remove'.
@@ -260,66 +259,72 @@ namespace Microsoft.NetCore.Analyzers.Performance
             //      In this case the descendants are checked if they contain an invocation of 'Add' or 'Remove'.
             //
             // In all cases, the invocation must implement either
-            //   1. 'ISet.Add' or 'IImmutableSet.Add' if the call to 'Contains' is negated.
-            //   2. 'ICollection.Remove' or 'IImmutableSet.Remove' otherwise.
+            //   1. 'ISet.Add' or 'IImmutableSet.Add'
+            //   2. 'ICollection.Remove' or 'IImmutableSet.Remove'
             public bool HasApplicableAddOrRemoveMethod(
-                IEnumerable<IOperation> operations,
+                IConditionalOperation conditional,
                 bool containsNegated,
                 [NotNullWhen(true)] out IInvocationOperation? addOrRemoveInvocation)
             {
-                addOrRemoveInvocation = null;
-                var firstOperation = operations.FirstOrDefault();
+                addOrRemoveInvocation = GetApplicableAddOrRemove(conditional.WhenTrue.Children.FirstOrDefault(), extractAdd: containsNegated);
 
-                if (firstOperation is null)
+                if (addOrRemoveInvocation is null)
                 {
-                    return false;
+                    addOrRemoveInvocation = GetApplicableAddOrRemove(conditional.WhenFalse?.Children.FirstOrDefault(), extractAdd: !containsNegated);
                 }
 
-                switch (firstOperation)
+                return addOrRemoveInvocation is not null;
+            }
+
+            private IInvocationOperation? GetApplicableAddOrRemove(IOperation? operation, bool extractAdd)
+            {
+                if (operation is null)
+                {
+                    return null;
+                }
+
+                switch (operation)
                 {
                     case IInvocationOperation invocation:
-                        if ((containsNegated && IsAnyAddMethod(invocation.TargetMethod)) ||
-                            (!containsNegated && IsAnyRemoveMethod(invocation.TargetMethod)))
+                        if ((extractAdd && IsAnyAddMethod(invocation.TargetMethod)) ||
+                            (!extractAdd && IsAnyRemoveMethod(invocation.TargetMethod)))
                         {
-                            addOrRemoveInvocation = invocation;
-                            return true;
+                            return invocation;
                         }
 
                         break;
 
                     case ISimpleAssignmentOperation:
                     case IExpressionStatementOperation:
-                        var firstChildAddOrRemove = firstOperation.Children
+                        var firstChildAddOrRemove = operation.Children
                             .OfType<IInvocationOperation>()
-                            .FirstOrDefault(i => containsNegated ?
+                            .FirstOrDefault(i => extractAdd ?
                                 IsAnyAddMethod(i.TargetMethod) :
                                 IsAnyRemoveMethod(i.TargetMethod));
 
                         if (firstChildAddOrRemove != null)
                         {
-                            addOrRemoveInvocation = firstChildAddOrRemove;
-                            return true;
+                            return firstChildAddOrRemove;
                         }
 
                         break;
 
                     case IVariableDeclarationGroupOperation variableDeclarationGroup:
-                        var firstDescendantAddOrRemove = firstOperation.Descendants()
+                        var firstDescendantAddOrRemove = operation.Descendants()
                             .OfType<IInvocationOperation>()
-                            .FirstOrDefault(i => containsNegated ?
+                            .FirstOrDefault(i => extractAdd ?
                                 IsAnyAddMethod(i.TargetMethod) :
                                 IsAnyRemoveMethod(i.TargetMethod));
 
                         if (firstDescendantAddOrRemove != null)
                         {
-                            addOrRemoveInvocation = firstDescendantAddOrRemove;
-                            return true;
+                            return firstDescendantAddOrRemove;
                         }
 
                         break;
                 }
 
-                return false;
+                return null;
             }
 
             private bool IsAnyAddMethod(IMethodSymbol method)

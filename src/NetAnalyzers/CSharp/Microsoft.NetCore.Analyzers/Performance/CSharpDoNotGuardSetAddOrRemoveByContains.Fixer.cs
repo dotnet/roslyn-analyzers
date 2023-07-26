@@ -23,7 +23,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
             if (conditionalSyntax is IfStatementSyntax ifStatementSyntax)
             {
-                return ifStatementSyntax.Statement.ChildNodes().Count() == 1;
+                var addOrRemoveInElse = childStatementSyntax.Parent is ElseClauseSyntax || childStatementSyntax.Parent?.Parent is ElseClauseSyntax;
+
+                return addOrRemoveInElse
+                    ? ifStatementSyntax.Else?.Statement.ChildNodes().Count() == 1
+                    : ifStatementSyntax.Statement.ChildNodes().Count() == 1;
             }
 
             return false;
@@ -49,10 +53,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             else if (conditionalOperationNode is IfStatementSyntax { Else: not null } ifStatementSyntax)
             {
                 var expression = GetNegatedExpression(document, childOperationNode);
+                var addOrRemoveInElse = childOperationNode.Parent is ElseClauseSyntax || childOperationNode.Parent?.Parent is ElseClauseSyntax;
 
                 SyntaxNode newConditionalOperationNode = ifStatementSyntax
                     .WithCondition((ExpressionSyntax)expression)
-                    .WithStatement(ifStatementSyntax.Else.Statement)
+                    .WithStatement(addOrRemoveInElse ? ifStatementSyntax.Statement : ifStatementSyntax.Else.Statement)
                     .WithElse(null)
                     .WithAdditionalAnnotations(Formatter.Annotation).WithTriviaFrom(conditionalOperationNode);
 

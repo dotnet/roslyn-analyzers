@@ -19,7 +19,13 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
             End If
 
             If TypeOf conditionalSyntax Is MultiLineIfBlockSyntax Then
-                Return CType(conditionalSyntax, MultiLineIfBlockSyntax).Statements.Count() = 1
+                Dim addOrRemoveInElse = TypeOf childStatementSyntax.Parent Is ElseBlockSyntax
+
+                If addOrRemoveInElse Then
+                    Return CType(conditionalSyntax, MultiLineIfBlockSyntax).ElseBlock.Statements.Count() = 1
+                Else
+                    Return CType(conditionalSyntax, MultiLineIfBlockSyntax).Statements.Count() = 1
+                End If
             End If
 
             Return TypeOf conditionalSyntax Is SingleLineIfStatementSyntax
@@ -33,11 +39,10 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
             If multiLineIfBlockSyntax?.ElseBlock?.ChildNodes().Any() Then
                 Dim generator = SyntaxGenerator.GetGenerator(document)
                 Dim negatedExpression = generator.LogicalNotExpression(CType(childOperationNode, ExpressionStatementSyntax).Expression.WithoutTrivia())
-
-                Dim oldElseBlock = multiLineIfBlockSyntax.ElseBlock.Statements
+                Dim addOrRemoveInElse = TypeOf childOperationNode.Parent Is ElseBlockSyntax
 
                 newConditionNode = multiLineIfBlockSyntax.WithIfStatement(multiLineIfBlockSyntax.IfStatement.WithCondition(CType(negatedExpression, ExpressionSyntax))) _
-                    .WithStatements(oldElseBlock) _
+                    .WithStatements(If(addOrRemoveInElse, multiLineIfBlockSyntax.Statements, multiLineIfBlockSyntax.ElseBlock.Statements)) _
                     .WithElseBlock(Nothing) _
                     .WithAdditionalAnnotations(Formatter.Annotation).WithTriviaFrom(conditionalOperationNode)
             Else
@@ -46,11 +51,10 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                 If singleLineIfBlockSyntax?.ElseClause?.ChildNodes().Any() Then
                     Dim generator = SyntaxGenerator.GetGenerator(document)
                     Dim negatedExpression = generator.LogicalNotExpression(CType(childOperationNode, ExpressionStatementSyntax).Expression.WithoutTrivia())
-
-                    Dim oldElseBlock = singleLineIfBlockSyntax.ElseClause.Statements
+                    Dim addOrRemoveInElse = TypeOf childOperationNode.Parent Is SingleLineElseClauseSyntax
 
                     newConditionNode = singleLineIfBlockSyntax.WithCondition(CType(negatedExpression, ExpressionSyntax)) _
-                        .WithStatements(oldElseBlock) _
+                        .WithStatements(If(addOrRemoveInElse, singleLineIfBlockSyntax.Statements, singleLineIfBlockSyntax.ElseClause.Statements)) _
                         .WithElseClause(Nothing) _
                         .WithAdditionalAnnotations(Formatter.Annotation).WithTriviaFrom(conditionalOperationNode)
                 Else

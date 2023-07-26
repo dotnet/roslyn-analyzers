@@ -104,7 +104,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task AddIsTheOnlyStatementInABlock_OffersFixer_CS()
+        public async Task AddIsTheOnlyStatementInBlock_OffersFixer_CS()
         {
             string source = """
                 using System.Collections.Generic;
@@ -141,7 +141,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task RemoveIsTheOnlyStatementInABlock_OffersFixer_CS()
+        public async Task RemoveIsTheOnlyStatementInBlock_OffersFixer_CS()
         {
             string source = """
                 using System.Collections.Generic;
@@ -254,6 +254,82 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task AddWhenFalseHasElseStatement_OffersFixer_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if ([|MySet.Contains("Item")|])
+                            throw new System.Exception("Item already exists");
+                        else
+                            MySet.Add("Item");
+                    }
+                }
+                """;
+
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (!MySet.Add("Item"))
+                            throw new System.Exception("Item already exists");
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task RemoveWhenFalseHasElseStatement_OffersFixer_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (![|MySet.Contains("Item")|])
+                            throw new System.Exception("Item doesn't exist");
+                        else
+                            MySet.Remove("Item");
+                    }
+                }
+                """;
+
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (!MySet.Remove("Item"))
+                            throw new System.Exception("Item doesn't exist");
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
         public async Task AddHasElseBlock_OffersFixer_CS()
         {
             string source = """
@@ -342,6 +418,94 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task AddWhenFalseHasElseBlock_OffersFixer_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if ([|MySet.Contains("Item")|])
+                        {
+                            throw new System.Exception("Item already exists");
+                        }
+                        else
+                        {
+                            MySet.Add("Item");
+                        }
+                    }
+                }
+                """;
+
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (!MySet.Add("Item"))
+                        {
+                            throw new System.Exception("Item already exists");
+                        }
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task RemoveWhenFalseHasElseBlock_OffersFixer_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (![|MySet.Contains("Item")|])
+                        {
+                            throw new System.Exception("Item doesn't exist");
+                        }
+                        else
+                        {
+                            MySet.Remove("Item");
+                        }
+                    }
+                }
+                """;
+
+            string fixedSource = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (!MySet.Remove("Item"))
+                        {
+                            throw new System.Exception("Item doesn't exist");
+                        }
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
         public async Task AddWithAdditionalStatements_ReportsDiagnostic_CS()
         {
             string source = """
@@ -378,6 +542,62 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     void M()
                     {
                         if ([|MySet.Contains("Item")|])
+                        {
+                            MySet.Remove("Item");
+                            System.Console.WriteLine();
+                        }
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AddWhenFalseWithAdditionalStatements_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if ([|MySet.Contains("Item")|])
+                        {
+                            throw new System.Exception("Item already exists");
+                        }
+                        else
+                        {
+                            MySet.Add("Item");
+                            System.Console.WriteLine();
+                        }
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveWhenFalseWithAdditionalStatements_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (![|MySet.Contains("Item")|])
+                        {
+                            throw new System.Exception("Item doesn't exist");
+                        }
+                        else
                         {
                             MySet.Remove("Item");
                             System.Console.WriteLine();
@@ -436,6 +656,60 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task AddWhenFalseWithVariableAssignment_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if ([|MySet.Contains("Item")|])
+                        {
+                            throw new System.Exception("Item already exists");
+                        }
+                        else
+                        {
+                            bool result = MySet.Add("Item");
+                        }
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveWhenFalseWithVariableAssignment_ReportsDiagnostic_CS()
+        {
+            string source = """
+            using System.Collections.Generic;
+
+            class C
+            {
+                private readonly HashSet<string> MySet = new HashSet<string>();
+
+                void M()
+                {
+                    if (![|MySet.Contains("Item")|])
+                    {
+                        throw new System.Exception("Item doesn't exist");
+                    }
+                    else
+                    {
+                        bool result = MySet.Remove("Item");
+                    }
+                }
+            }
+            """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
         public async Task AddWithNonNegatedContains_NoDiagnostics_CS()
         {
             string source = """
@@ -469,6 +743,52 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     void M()
                     {
                         if (!MySet.Contains("Item"))
+                            MySet.Remove("Item");
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task AddWhenFalseWithNegatedContains_NoDiagnostics_CS()
+        {
+            string source = """
+            using System.Collections.Generic;
+
+            class C
+            {
+                private readonly HashSet<string> MySet = new HashSet<string>();
+
+                void M()
+                {
+                    if (!MySet.Contains("Item"))
+                        throw new System.Exception("Item doesn't exist");
+                    else
+                        MySet.Add("Item");
+                }
+            }
+            """;
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task RemoveWhenFalseWithNonNegatedContains_NoDiagnostics_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        if (MySet.Contains("Item"))
+                            throw new System.Exception("Item already exists");
+                        else
                             MySet.Remove("Item");
                     }
                 }
@@ -861,6 +1181,66 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task AddWhenFalseHasElseStatement_OffersFixer_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If [|MySet.Contains("Item")|] Then Throw new System.Exception("Item already exists") Else MySet.Add("Item")
+                    End Sub
+                End Class
+                """;
+
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If Not MySet.Add("Item") Then Throw new System.Exception("Item already exists")
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task RemoveWhenFalseHasElseStatement_OffersFixer_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If Not [|MySet.Contains("Item")|] Then Throw new System.Exception("Item doesn't exist") Else MySet.Remove("Item")
+                    End Sub
+                End Class
+                """;
+
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If Not MySet.Remove("Item") Then Throw new System.Exception("Item doesn't exist")
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
         public async Task AddHasElseBlock_OffersFixer_VB()
         {
             string source = """
@@ -933,6 +1313,78 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task AddWhenFalseHasElseBlock_OffersFixer_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If [|MySet.Contains("Item")|] Then
+                            Throw new System.Exception("Item already exists")
+                        Else
+                            MySet.Add("Item")
+                        End If
+                    End Sub
+                End Class
+                """;
+
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If Not MySet.Add("Item") Then
+                            Throw new System.Exception("Item already exists")
+                        End If
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task RemoveWhenFalseHasElseBlock_OffersFixer_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If Not [|MySet.Contains("Item")|] Then
+                            Throw new System.Exception("Item doesn't exist")
+                        Else
+                            MySet.Remove("Item")
+                        End If
+                    End Sub
+                End Class
+                """;
+
+            string fixedSource = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If Not MySet.Remove("Item") Then
+                            Throw new System.Exception("Item doesn't exist")
+                        End If
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
         public async Task AddWithNonNegatedContains_NoDiagnostics_VB()
         {
             string source = """
@@ -961,6 +1413,42 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                     Public Sub M()
                         If Not MySet.Contains("Item") Then MySet.Remove("Item")
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task AddWhenFalseWithNegatedContains_NoDiagnostics_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If Not MySet.Contains("Item") Then Throw new System.Exception("Item doesn't exist") Else MySet.Add("Item")
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task RemoveWhenFalseWithNonNegatedContains_NoDiagnostics_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If MySet.Contains("Item") Then Throw new System.Exception("Item already exists") Else MySet.Remove("Item")
                     End Sub
                 End Class
                 """;
@@ -1009,6 +1497,50 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task AddWhenFalseWithVariableAssignment_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If [|MySet.Contains("Item")|] Then
+                            Throw new System.Exception("Item already exists")
+                        Else
+                            Dim result = MySet.Add("Item")
+                        End If
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveWhenFalseWithVariableAssignment_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If Not [|MySet.Contains("Item")|] Then
+                            Throw new System.Exception("Item doesn't exist")
+                        Else
+                            Dim result = MySet.Remove("Item")
+                        End If
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
         public async Task AddWithAdditionalStatements_ReportsDiagnostic_VB()
         {
             string source = """
@@ -1040,6 +1572,52 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                     Public Sub M()
                         If [|MySet.Contains("Item")|] Then
+                            MySet.Remove("Item")
+                            System.Console.WriteLine()
+                        End If
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AddWhenFalseWithAdditionalStatements_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If [|MySet.Contains("Item")|] Then
+                            Throw new System.Exception("Item already exists")
+                        Else
+                            MySet.Add("Item")
+                            System.Console.WriteLine()
+                        End If
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveWhenFalseWithAdditionalStatements_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        If Not [|MySet.Contains("Item")|] Then
+                            Throw new System.Exception("Item doesn't exist")
+                        Else
                             MySet.Remove("Item")
                             System.Console.WriteLine()
                         End If

@@ -86,14 +86,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 Task<Document> createChangedDocument(CancellationToken _) => FixBinaryAsync(generator, doc, root, binaryOperation, stringComparisonType, caseChangingApproachValue);
 
-                string title = string.Format(System.Globalization.CultureInfo.CurrentCulture,
-                    MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle, RCISCAnalyzer.StringEqualsMethodName);
+                string title = MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringEqualsCodeFixTitle;
 
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         title,
                         createChangedDocument,
-                        equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle)),
+                        equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringEqualsCodeFixTitle)),
                     context.Diagnostics);
             }
         }

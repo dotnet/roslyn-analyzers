@@ -63,8 +63,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
+        internal static readonly DiagnosticDescriptor RecommendCaseInsensitiveStringEqualsRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringEqualsTitle)),
+            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringEqualsMessage)),
+            DiagnosticCategory.Performance,
+            RuleLevel.IdeSuggestion,
+            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringEqualsDescription)),
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            RecommendCaseInsensitiveStringComparisonRule, RecommendCaseInsensitiveStringComparerRule);
+            RecommendCaseInsensitiveStringComparisonRule, RecommendCaseInsensitiveStringComparerRule, RecommendCaseInsensitiveStringEqualsRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -288,8 +298,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     { CaseChangingApproachName, caseChangingApproachValue }
                 }.ToImmutableDictionary();
 
-                context.ReportDiagnostic(
-                    binaryOperation.CreateDiagnostic(RecommendCaseInsensitiveStringComparerRule, dict));
+                context.ReportDiagnostic(binaryOperation.CreateDiagnostic(RecommendCaseInsensitiveStringEqualsRule, dict));
             }
         }
 

@@ -185,8 +185,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                                 comparison = ComparisonUsed.Other;
                             }
                         }
-
-                        if (argument.Value.Type.Equals(cultureInfoType) &&
+                        else if (argument.Value.Type.Equals(cultureInfoType) &&
                             argument.Value is IPropertyReferenceOperation propertyReferenceOperation)
                         {
                             if (propertyReferenceOperation.Property.Equals(cultureInfoInvariantCultureSymbol))

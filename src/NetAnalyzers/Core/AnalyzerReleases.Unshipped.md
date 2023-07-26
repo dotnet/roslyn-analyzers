@@ -4,7 +4,7 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-CA1865 | Performance | Info | DoNotGuardSetAddOrRemoveByContains, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865)
+CA1868 | Performance | Info | DoNotGuardSetAddOrRemoveByContains, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865)
 CA2261 | Usage | Warning | DoNotUseConfigureAwaitWithSuppressThrowing, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250)
 CA1510 | Maintainability | Info | UseExceptionThrowHelpers, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510)
 CA1511 | Maintainability | Info | UseExceptionThrowHelpers, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1511)

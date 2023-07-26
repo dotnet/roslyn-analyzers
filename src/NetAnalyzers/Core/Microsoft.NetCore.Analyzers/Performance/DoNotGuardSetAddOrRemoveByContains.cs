@@ -15,12 +15,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
-    /// CA1865: <inheritdoc cref="@DoNotGuardSetAddOrRemoveByContainsTitle"/>
+    /// CA1868: <inheritdoc cref="@DoNotGuardSetAddOrRemoveByContainsTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotGuardSetAddOrRemoveByContains : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1865";
+        internal const string RuleId = "CA1868";
 
         private const string Contains = nameof(Contains);
         private const string Add = nameof(Add);

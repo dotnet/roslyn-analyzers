@@ -430,6 +430,40 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task TernaryOperator_NoDiagnostic_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly HashSet<string> MySet = new HashSet<string>();
+
+        public MyClass()
+        {
+            bool added = MySet.Contains(""Item"") ? false : MySet.Add(""Item"");
+            bool removed = MySet.Contains(""Item"") ? MySet.Remove(""Item""): false;
+        }" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task NestedTernaryOperator_NoDiagnostic_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly HashSet<string> MySet = new HashSet<string>();
+
+        public MyClass()
+        {
+            bool nestedAdded = MySet.Contains(""Item"")
+                ? false
+                : MySet.Add(""Item"") ? true : false;
+            bool nestedRemoved = MySet.Contains(""Item"")
+                ? MySet.Remove(""Item"") ? true : false
+                : false;
+        }" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
         public async Task TriviaIsPreserved_CS()
         {
             string source = CSUsings + CSNamespaceAndClassStart + @"

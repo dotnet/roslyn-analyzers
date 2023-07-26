@@ -7,23 +7,23 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public abstract class RecommendCaseInsensitiveStringComparison_Base_Tests
     {
-        private static readonly ValueTuple<string, string>[] Cultures = new[] {
-            ValueTuple.Create("ToLower", "CurrentCultureIgnoreCase"),
-            ValueTuple.Create("ToUpper", "CurrentCultureIgnoreCase"),
-            ValueTuple.Create("ToLowerInvariant", "InvariantCultureIgnoreCase"),
-            ValueTuple.Create("ToUpperInvariant", "InvariantCultureIgnoreCase")
+        private static readonly (string, string)[] Cultures = new[] {
+            ("ToLower", "CurrentCultureIgnoreCase"),
+            ("ToUpper", "CurrentCultureIgnoreCase"),
+            ("ToLowerInvariant", "InvariantCultureIgnoreCase"),
+            ("ToUpperInvariant", "InvariantCultureIgnoreCase")
         };
 
         private static readonly string[] ContainsStartsWith = new[] { "Contains", "StartsWith" };
         private static readonly string[] UnnamedArgs = new[] { "", ", 1", ", 1, 1" };
 
-        private static readonly ValueTuple<string, string>[] CSharpComparisonOperators = new[] {
-            ValueTuple.Create("==", ""),
-            ValueTuple.Create("!=", "!")
+        private static readonly (string, string)[] CSharpComparisonOperators = new[] {
+            ("==", ""),
+            ("!=", "!")
         };
-        private static readonly ValueTuple<string, string>[] VisualBasicComparisonOperators = new[] {
-            ValueTuple.Create("=", ""),
-            ValueTuple.Create("<>", "Not ")
+        private static readonly (string, string)[] VisualBasicComparisonOperators = new[] {
+            ("=", ""),
+            ("<>", "Not ")
         };
 
         private const string CSharpSeparator = ": ";

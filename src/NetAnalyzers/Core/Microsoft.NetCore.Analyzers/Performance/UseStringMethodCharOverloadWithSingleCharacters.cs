@@ -119,9 +119,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 DiagnosticDescriptor? rule;
 
-                // CA1865: Method(string, StringComparison.Ordinal) or
-                //         Method(printable ascii string, StringComparison.InvariantCulture) or
-                //         Method(printable ascii string, false/true, CultureInfo.InvariantCulture) or
+                // CA1865: Method(string, StringComparison.Ordinal)
+                //         Method(printable ascii string, StringComparison.InvariantCulture)
+                //         Method(printable ascii string, false/true, CultureInfo.InvariantCulture)
                 if (comparison == ComparisonUsed.Ordinal ||
                     (comparison == ComparisonUsed.InvariantCulture && c.IsPrintableAscii()))
                 {
@@ -132,7 +132,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     rule = NoSpecifiedComparisonRule;
                 }
-                // CA1867: Method(string, StringComparison.AnythingElse) or
+                // CA1867: Method(string, StringComparison.AnythingElse)
                 //         Method(string, false/true, CultureInfo.AnythingElse)
                 else
                 {

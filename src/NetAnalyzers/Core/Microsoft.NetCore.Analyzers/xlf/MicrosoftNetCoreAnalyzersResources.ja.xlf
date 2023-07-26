@@ -3169,8 +3169,8 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
         <note />
       </trans-unit>
       <trans-unit id="UseStringMethodCharOverloadWithSingleCharactersDescription">
-        <source>The char overload is a better performing overload for a string with a single char.</source>
-        <target state="new">The char overload is a better performing overload for a string with a single char.</target>
+        <source>The char overload is a better performing overload than a string with a single char.</source>
+        <target state="new">The char overload is a better performing overload than a string with a single char.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStringMethodCharOverloadWithSingleCharactersMessage">

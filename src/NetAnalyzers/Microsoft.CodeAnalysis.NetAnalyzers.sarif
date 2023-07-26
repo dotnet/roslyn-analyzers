@@ -325,7 +325,7 @@
         "CA1865": {
           "id": "CA1865",
           "shortDescription": "Use char overload",
-          "fullDescription": "The char overload is a better performing overload for a string with a single char.",
+          "fullDescription": "The char overload is a better performing overload than a string with a single char.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865",
           "properties": {
@@ -344,7 +344,7 @@
         "CA1866": {
           "id": "CA1866",
           "shortDescription": "Use char overload",
-          "fullDescription": "The char overload is a better performing overload for a string with a single char.",
+          "fullDescription": "The char overload is a better performing overload than a string with a single char.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1866",
           "properties": {
@@ -363,7 +363,7 @@
         "CA1867": {
           "id": "CA1867",
           "shortDescription": "Use char overload",
-          "fullDescription": "The char overload is a better performing overload for a string with a single char.",
+          "fullDescription": "The char overload is a better performing overload than a string with a single char.",
           "defaultLevel": "warning",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867",
           "properties": {
@@ -6413,7 +6413,7 @@
         "CA1865": {
           "id": "CA1865",
           "shortDescription": "Use char overload",
-          "fullDescription": "The char overload is a better performing overload for a string with a single char.",
+          "fullDescription": "The char overload is a better performing overload than a string with a single char.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865",
           "properties": {
@@ -6432,7 +6432,7 @@
         "CA1866": {
           "id": "CA1866",
           "shortDescription": "Use char overload",
-          "fullDescription": "The char overload is a better performing overload for a string with a single char.",
+          "fullDescription": "The char overload is a better performing overload than a string with a single char.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1866",
           "properties": {
@@ -6451,7 +6451,7 @@
         "CA1867": {
           "id": "CA1867",
           "shortDescription": "Use char overload",
-          "fullDescription": "The char overload is a better performing overload for a string with a single char.",
+          "fullDescription": "The char overload is a better performing overload than a string with a single char.",
           "defaultLevel": "warning",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867",
           "properties": {

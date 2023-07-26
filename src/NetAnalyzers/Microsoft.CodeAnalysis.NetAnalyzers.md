@@ -1742,7 +1742,7 @@ Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'Try
 
 ## [CA1865](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865): Use char overload
 
-The char overload is a better performing overload for a string with a single char.
+The char overload is a better performing overload than a string with a single char.
 
 |Item|Value|
 |-|-|
@@ -1754,7 +1754,7 @@ The char overload is a better performing overload for a string with a single cha
 
 ## [CA1866](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1866): Use char overload
 
-The char overload is a better performing overload for a string with a single char.
+The char overload is a better performing overload than a string with a single char.
 
 |Item|Value|
 |-|-|
@@ -1766,7 +1766,7 @@ The char overload is a better performing overload for a string with a single cha
 
 ## [CA1867](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867): Use char overload
 
-The char overload is a better performing overload for a string with a single char.
+The char overload is a better performing overload than a string with a single char.
 
 |Item|Value|
 |-|-|

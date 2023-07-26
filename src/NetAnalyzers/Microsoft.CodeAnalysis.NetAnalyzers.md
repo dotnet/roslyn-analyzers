@@ -1704,7 +1704,7 @@ Constant arrays passed as arguments are not reused when called repeatedly, which
 |CodeFix|True|
 ---
 
-## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer using 'string.Equals(string, StringComparison)' to perform case-insensitive string comparisons
+## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons
 
 Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons, as in 'string.ToLower() == string.ToLower()', because they lead to an allocation. Instead, use 'string.Equals(string, StringComparison)' to perform case-insensitive comparisons.
 

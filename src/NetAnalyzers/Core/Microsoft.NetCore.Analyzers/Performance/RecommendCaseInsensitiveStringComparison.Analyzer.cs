@@ -55,7 +55,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         internal static readonly DiagnosticDescriptor RecommendCaseInsensitiveStringComparerRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparerTitle)),
+            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparisonTitle)),
             CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparerMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
@@ -65,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         internal static readonly DiagnosticDescriptor RecommendCaseInsensitiveStringEqualsRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringEqualsTitle)),
+            CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringComparisonTitle)),
             CreateLocalizableResourceString(nameof(RecommendCaseInsensitiveStringEqualsMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,

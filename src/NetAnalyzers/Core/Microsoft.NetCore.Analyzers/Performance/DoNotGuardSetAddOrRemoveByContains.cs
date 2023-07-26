@@ -257,6 +257,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             //      In this case the child statements are checked if they contain an invocation of 'Add' or 'Remove'.
             //   3. The operation is a variable group declaration.
             //      In this case the descendants are checked if they contain an invocation of 'Add' or 'Remove'.
+            // OR when the WhenTrue or WhenFalse is a InvocationOperation (in the case of a ternary operator).
             //
             // In all cases, the invocation must implement either
             //   1. 'ISet.Add' or 'IImmutableSet.Add'
@@ -266,11 +267,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 bool containsNegated,
                 [NotNullWhen(true)] out IInvocationOperation? addOrRemoveInvocation)
             {
-                addOrRemoveInvocation = GetApplicableAddOrRemove(conditional.WhenTrue.Children.FirstOrDefault(), extractAdd: containsNegated);
+                addOrRemoveInvocation = GetApplicableAddOrRemove(conditional.WhenTrue, extractAdd: containsNegated);
 
                 if (addOrRemoveInvocation is null)
                 {
-                    addOrRemoveInvocation = GetApplicableAddOrRemove(conditional.WhenFalse?.Children.FirstOrDefault(), extractAdd: !containsNegated);
+                    addOrRemoveInvocation = GetApplicableAddOrRemove(conditional.WhenFalse, extractAdd: !containsNegated);
                 }
 
                 return addOrRemoveInvocation is not null;
@@ -278,12 +279,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             private IInvocationOperation? GetApplicableAddOrRemove(IOperation? operation, bool extractAdd)
             {
-                if (operation is null)
+                if (operation is IInvocationOperation ternaryInvocation)
                 {
-                    return null;
+                    if ((extractAdd && IsAnyAddMethod(ternaryInvocation.TargetMethod)) ||
+                        (!extractAdd && IsAnyRemoveMethod(ternaryInvocation.TargetMethod)))
+                    {
+                        return ternaryInvocation;
+                    }
                 }
 
-                switch (operation)
+                var firstChildOperation = operation?.Children.FirstOrDefault();
+
+                switch (firstChildOperation)
                 {
                     case IInvocationOperation invocation:
                         if ((extractAdd && IsAnyAddMethod(invocation.TargetMethod)) ||
@@ -296,7 +303,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                     case ISimpleAssignmentOperation:
                     case IExpressionStatementOperation:
-                        var firstChildAddOrRemove = operation.Children
+                        var firstChildAddOrRemove = firstChildOperation.Children
                             .OfType<IInvocationOperation>()
                             .FirstOrDefault(i => extractAdd ?
                                 IsAnyAddMethod(i.TargetMethod) :
@@ -310,7 +317,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         break;
 
                     case IVariableDeclarationGroupOperation variableDeclarationGroup:
-                        var firstDescendantAddOrRemove = operation.Descendants()
+                        var firstDescendantAddOrRemove = firstChildOperation.Descendants()
                             .OfType<IInvocationOperation>()
                             .FirstOrDefault(i => extractAdd ?
                                 IsAnyAddMethod(i.TargetMethod) :

@@ -39,7 +39,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            // We only offer a fixer if the conditional true branch has a single statement, either 'Add' or 'Delete'
             if (!SyntaxSupportedByFixer(conditionalSyntax, childStatementSyntax))
             {
                 return;

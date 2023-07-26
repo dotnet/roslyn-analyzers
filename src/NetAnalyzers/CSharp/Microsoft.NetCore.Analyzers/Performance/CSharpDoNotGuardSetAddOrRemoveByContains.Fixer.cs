@@ -37,20 +37,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         {
             SyntaxNode newRoot;
 
-            if (conditionalOperationNode is ConditionalExpressionSyntax conditionalExpressionSyntax &&
-                conditionalExpressionSyntax.WhenFalse.ChildNodes().Any())
-            {
-                var expression = GetNegatedExpression(document, childOperationNode);
-
-                SyntaxNode newConditionalOperationNode = conditionalExpressionSyntax
-                    .WithCondition((ExpressionSyntax)expression)
-                    .WithWhenTrue(conditionalExpressionSyntax.WhenFalse)
-                    .WithWhenFalse(null!)
-                    .WithAdditionalAnnotations(Formatter.Annotation).WithTriviaFrom(conditionalOperationNode);
-
-                newRoot = root.ReplaceNode(conditionalOperationNode, newConditionalOperationNode);
-            }
-            else if (conditionalOperationNode is IfStatementSyntax { Else: not null } ifStatementSyntax)
+            if (conditionalOperationNode is IfStatementSyntax { Else: not null } ifStatementSyntax)
             {
                 var expression = GetNegatedExpression(document, childOperationNode);
                 var addOrRemoveInElse = childOperationNode.Parent is ElseClauseSyntax || childOperationNode.Parent?.Parent is ElseClauseSyntax;

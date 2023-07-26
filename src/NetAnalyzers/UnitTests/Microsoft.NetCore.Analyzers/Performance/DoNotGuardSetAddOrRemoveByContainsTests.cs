@@ -912,7 +912,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task TernaryOperator_NoDiagnostic_CS()
+        public async Task AddInTernaryWhenTrue_ReportsDiagnostic_CS()
         {
             string source = """
                 using System.Collections.Generic;
@@ -923,8 +923,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                     void M()
                     {
-                        bool added = MySet.Contains("Item") ? false : MySet.Add("Item");
-                        bool removed = MySet.Contains("Item") ? MySet.Remove("Item"): false;
+                        bool added = ![|MySet.Contains("Item")|] ? MySet.Add("Item") : false;
                     }
                 }
                 """;
@@ -933,7 +932,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task NestedTernaryOperator_NoDiagnostic_CS()
+        public async Task AddInTernaryWhenFalse_ReportsDiagnostic_CS()
         {
             string source = """
                 using System.Collections.Generic;
@@ -944,12 +943,171 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                     void M()
                     {
-                        bool nestedAdded = MySet.Contains("Item")
+                        bool added = [|MySet.Contains("Item")|] ? false : MySet.Add("Item");
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveInTernaryWhenTrue_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        bool removed = [|MySet.Contains("Item")|] ? MySet.Remove("Item") : false;
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveInTernaryWhenFalse_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        bool removed = ![|MySet.Contains("Item")|] ? false : MySet.Remove("Item");
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AddInTernaryWhenFalseNested_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        bool nestedAdded = [|MySet.Contains("Item")|]
                             ? false
                             : MySet.Add("Item") ? true : false;
-                        bool nestedRemoved = MySet.Contains("Item")
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveInTernaryWhenTrueNested_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        bool nestedRemoved = [|MySet.Contains("Item")|]
                             ? MySet.Remove("Item") ? true : false
                             : false;
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AddInTernaryWhenTrueWithNonNegatedContains_NoDiagnostic_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        bool added = MySet.Contains("Item") ? MySet.Add("Item") : false;
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AddInTernaryWhenFalseWithNegatedContains_NoDiagnostic_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        bool added = !MySet.Contains("Item") ? false : MySet.Add("Item");
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveInTernaryWhenTrueWithNegatedContains_NoDiagnostic_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        bool removed = !MySet.Contains("Item") ? MySet.Remove("Item") : false;
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveInTernaryWhenFalseWithNonNegatedContains_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System.Collections.Generic;
+
+                class C
+                {
+                    private readonly HashSet<string> MySet = new HashSet<string>();
+
+                    void M()
+                    {
+                        bool removed = MySet.Contains("Item") ? false : MySet.Remove("Item");
                     }
                 }
                 """;
@@ -1621,6 +1779,186 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                             MySet.Remove("Item")
                             System.Console.WriteLine()
                         End If
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AddInTernaryWhenTrue_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        Dim added = If(Not [|MySet.Contains("Item")|], MySet.Add("Item"), false)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AddInTernaryWhenFalse_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        Dim added = If([|MySet.Contains("Item")|], false, MySet.Add("Item"))
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveInTernaryWhenTrue_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        Dim removed = If([|MySet.Contains("Item")|], MySet.Remove("Item"), false)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveInTernaryWhenFalse_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        Dim added = If(Not [|MySet.Contains("Item")|], false, MySet.Remove("Item"))
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AddInTernaryWhenFalseNested_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        Dim added = If([|MySet.Contains("Item")|], false, If(MySet.Add("Item"), true, false))
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveInTernaryWhenTrueNested_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        Dim added = If([|MySet.Contains("Item")|], If(MySet.Remove("Item"), true, false), false)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AddInTernaryWhenTrueWithNonNegatedContains_NoDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        Dim added = If(MySet.Contains("Item"), MySet.Add("Item"), false)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AddInTernaryWhenFalseWithNegatedContains_NoDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        Dim added = If(Not MySet.Contains("Item"), false, MySet.Add("Item"))
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveInTernaryWhenTrueWithNegatedContains_NoDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        Dim added = If(Not MySet.Contains("Item"), MySet.Remove("Item"), false)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task RemoveInTernaryWhenFalseWithNonNegatedContains_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System.Collections.Generic
+                
+                Public Class C
+                    Private ReadOnly MySet As New HashSet(Of String)()
+
+                    Public Sub M()
+                        Dim added = If(MySet.Contains("Item"), false, MySet.Remove("Item"))
                     End Sub
                 End Class
                 """;

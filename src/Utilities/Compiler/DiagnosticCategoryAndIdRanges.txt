@@ -1,4 +1,4 @@
-﻿# This file contains the allowed analyzer rule "Category" and corresponding "Diagnostic ID range"
+# This file contains the allowed analyzer rule "Category" and corresponding "Diagnostic ID range"
 # FORMAT:
 # 'Category': Comma separate list of 'StartId-EndId' or 'Id' or 'Prefix'
 

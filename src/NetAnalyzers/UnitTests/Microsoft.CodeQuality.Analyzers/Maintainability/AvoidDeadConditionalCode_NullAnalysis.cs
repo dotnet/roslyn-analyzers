@@ -7280,5 +7280,245 @@ class C
                 },
             }.RunAsync();
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact, WorkItem(6520, "https://github.com/dotnet/roslyn-analyzers/issues/6520")]
+        public async Task CompareTwoUnrelatedEnumVariables_NoDiagnosticsAsync()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+public class Parser
+{
+    private static ParsedPredicate ParsePredicate(ParsedPredicate predicate, PredicateOperand identifier, PredicateOperand literal)
+    {
+        if (predicate.Left.TypePrimitive == PredicateTypePrimitive.F1)
+        {
+            identifier = predicate.Left;
+            literal = predicate.Right;
+        }
+        else
+        {
+            identifier = predicate.Right;
+            literal = predicate.Left;
+        }
+
+        if (identifier.TypePrimitive != PredicateTypePrimitive.F1)
+        {
+            return predicate;
+        }
+
+        if (literal.TypePrimitive == PredicateTypePrimitive.F2)
+        {
+        }
+
+        return predicate;
+    }
+}
+
+public class PredicateOperand
+{
+    public PredicateTypePrimitive TypePrimitive { get; set; }
+}
+
+public enum PredicateTypePrimitive
+{
+    F1,
+    F2,
+}
+
+public class ParsedPredicate
+{
+    public PredicateOperand Left { get; }
+    public PredicateOperand Right { get; }
+}",
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8,
+            }.RunAsync();
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact, WorkItem(6520, "https://github.com/dotnet/roslyn-analyzers/issues/6520")]
+        public async Task CompareTwoRelatedEnumVariables_DiagnosticsAsync()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+public class Parser
+{
+    private static ParsedPredicate ParsePredicate(ParsedPredicate predicate, PredicateOperand identifier, PredicateOperand literal)
+    {
+        if (predicate.Left.TypePrimitive == PredicateTypePrimitive.F1)
+        {
+            identifier = predicate.Left;
+            literal = predicate.Right;
+        }
+        else
+        {
+            identifier = predicate.Right;
+            literal = predicate.Left;
+        }
+
+        if (identifier.TypePrimitive != PredicateTypePrimitive.F1)
+        {
+            return predicate;
+        }
+
+        if (identifier.TypePrimitive == PredicateTypePrimitive.F2)
+        {
+        }
+
+        return predicate;
+    }
+}
+
+public class PredicateOperand
+{
+    public PredicateTypePrimitive TypePrimitive { get; set; }
+}
+
+public enum PredicateTypePrimitive
+{
+    F1,
+    F2,
+}
+
+public class ParsedPredicate
+{
+    public PredicateOperand Left { get; }
+    public PredicateOperand Right { get; }
+}",
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8,
+                ExpectedDiagnostics =
+                {
+                    // /0/Test0.cs(22,13): warning CA1508: 'identifier.TypePrimitive == PredicateTypePrimitive.F2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                    GetCSharpResultAt(22, 13, "identifier.TypePrimitive == PredicateTypePrimitive.F2", "false")
+                }
+            }.RunAsync();
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(6435, "https://github.com/dotnet/roslyn-analyzers/issues/6435")]
+        public async Task UserDefinedConversion_NoDiagnosticsAsync()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+#nullable enable
+
+internal struct S
+{
+    public bool Flag;
+    public static explicit operator byte[]?(S s)
+    {
+        if (s.Flag)
+            return null;
+        return new byte[10];
+    }
+}
+
+internal static class C
+{
+    public static bool M(S s)
+    {
+        byte[]? a = (byte[]?)s;
+        bool b = a == null;      // incorrect CA1508; this b could be true or false
+        return b;
+    }
+}",
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8,
+            }.RunAsync();
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(6249, "https://github.com/dotnet/roslyn-analyzers/issues/6249")]
+        public async Task TupleElementExchange_NoDiagnosticsAsync()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+using System.Collections.Generic;
+using System.Diagnostics;
+
+class Test
+{
+    public static List<T> Test1<T>(IEnumerable<T> source)
+    {
+        var current = new Queue<T>(source);
+        var next = new Queue<T>();
+        var result = new List<T>(current.Count);
+
+        while (true)
+        {
+            while (current.TryDequeue(out var item))
+            {
+                next.Enqueue(item);
+            }
+
+            // swap with tuple
+            (next, current) = (current, next);
+
+            Debug.Assert(next.Count == 0);
+
+            // the following line is marked by CA1508
+            if (current.Count == 0)
+                return result;
+        }
+    }
+}",
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8,
+            }.RunAsync();
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(6048, "https://github.com/dotnet/roslyn-analyzers/issues/6048")]
+        public async Task RethrowInCatchClause_NoDiagnosticsAsync()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+using System;
+
+class Test
+{
+    public static void M()
+    {
+        try
+        {
+            throw new Random().NextDouble() > 0.5 ? new Exception() : new ArgumentException();
+        }
+        catch (Exception e)
+        {
+            if (e is ArgumentException ae) // can be both true or false depending on the Exception thrown from the try-block, yet is flagged with CA1508 
+                Console.Out.WriteLine(""ArgumentException"");
+
+            throw;
+        }
+    }
+
+    public static void M2()
+    {
+        try
+        {
+            throw new Exception();
+        }
+        catch (Exception e)
+        {
+            if (e is ArgumentException ae)
+            {
+            }
+
+            throw;
+        }
+    }
+}",
+            }.RunAsync();
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
     public sealed class ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly : DiagnosticAnalyzer
     {
         private const string PropertyName = "MaxResponseHeadersLength";
-        private const int MaximumAlertLimit = 128;
+        private const int MaxLimitToReport = 128;
         internal const string RuleId = "CA2262";
 
         internal static readonly DiagnosticDescriptor EnsureMaxResponseHeaderLengthRule = DiagnosticDescriptorHelper.Create(
@@ -69,7 +69,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 return;
             }
 
-            if (propertyValue > MaximumAlertLimit)
+            if (propertyValue > MaxLimitToReport)
             {
                 context.ReportDiagnostic(context.Operation.CreateDiagnostic(EnsureMaxResponseHeaderLengthRule, propertyValue));
             }

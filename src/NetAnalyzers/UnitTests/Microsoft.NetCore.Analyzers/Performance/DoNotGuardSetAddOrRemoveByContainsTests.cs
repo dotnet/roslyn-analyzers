@@ -1096,7 +1096,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task RemoveInTernaryWhenFalseWithNonNegatedContains_ReportsDiagnostic_CS()
+        public async Task RemoveInTernaryWhenFalseWithNonNegatedContains_NoDiagnostic_CS()
         {
             string source = """
                 using System.Collections.Generic;

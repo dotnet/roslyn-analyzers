@@ -52,6 +52,21 @@
         <target state="translated">Evitar la recursividad infinita</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidLengthCheckWhenSlicingToEndDescription">
+        <source>An explicit length check can be error-prone and can be avoided when slicing to end of the buffer.</source>
+        <target state="new">An explicit length check can be error-prone and can be avoided when slicing to end of the buffer.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidLengthCheckWhenSlicingToEndMessage">
+        <source>'{0}' uses a length check that can be avoided</source>
+        <target state="new">'{0}' uses a length check that can be avoided</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidLengthCheckWhenSlicingToEndTitle">
+        <source>Remove redundant length argument</source>
+        <target state="new">Remove redundant length argument</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidMultipleEnumerationsMessage">
         <source>Possible multiple enumerations of 'IEnumerable' collection. Consider using an implementation that avoids multiple enumerations.</source>
         <target state="translated">Posibles enumeraciones múltiples de la colección “IEnumerable”. Considere la posibilidad de usar una implementación que evite varias enumeraciones.</target>

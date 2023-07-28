@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
     public sealed class DoNotPassStructToArgumentNullExceptionThrowIfNullAnalyzer : DiagnosticAnalyzer
     {
         internal const string NonNullableStructRuleId = "CA2262";
-        internal const string NullableStructRuleId = "CA1865";
+        internal const string NullableStructRuleId = "CA1869";
 
         internal static readonly DiagnosticDescriptor DoNotPassNonNullableStructDiagnostic = DiagnosticDescriptorHelper.Create(
             NonNullableStructRuleId,

@@ -24,7 +24,7 @@ CA1863 | Performance | Hidden | UseCompositeFormatAnalyzer, [Documentation](http
 CA1864 | Performance | Info | PreferDictionaryTryAddValueOverGuardedAddAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1864)
 CA2021 | Reliability | Warning | DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021)
 CA2262 | Usage | Warning | DoNotPassStructToArgumentNullExceptionThrowIfNullAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262)
-CA1865 | Performance | Info | DoNotPassStructToArgumentNullExceptionThrowIfNullAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865)
+CA1869 | Performance | Info | DoNotPassStructToArgumentNullExceptionThrowIfNullAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1869)
 
 ### Removed Rules
 

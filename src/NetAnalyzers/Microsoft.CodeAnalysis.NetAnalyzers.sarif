@@ -3292,6 +3292,26 @@
             ]
           }
         },
+        "CA1869": {
+          "id": "CA1869",
+          "shortDescription": "Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'",
+          "fullDescription": "'ArgumentNullException.ThrowIfNull' accepts an 'object', so passing a nullable struct may cause the value to be boxed.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1869",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotPassStructToArgumentNullExceptionThrowIfNullAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2000": {
           "id": "CA2000",
           "shortDescription": "Dispose objects before losing scope",
@@ -4388,6 +4408,26 @@
             "category": "Usage",
             "isEnabledByDefault": true,
             "typeName": "DoNotUseConfigureAwaitWithSuppressThrowing",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2262": {
+          "id": "CA2262",
+          "shortDescription": "Do not pass a struct to 'ArgumentNullException.ThrowIfNull'",
+          "fullDescription": "'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. A non-nullable struct can never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.",
+          "defaultLevel": "warning",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotPassStructToArgumentNullExceptionThrowIfNullAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"

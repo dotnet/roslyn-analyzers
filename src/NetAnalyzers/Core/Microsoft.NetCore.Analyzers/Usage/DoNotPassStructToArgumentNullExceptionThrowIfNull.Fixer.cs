@@ -40,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
                 if (newRoot is not null)
                 {
-                    var codeAction = CodeAction.Create(MicrosoftNetCoreAnalyzersResources.DoNotPassNullableStructToArgumentNullExceptionThrowIfNullCodeFixTitle, _ => Task.FromResult(context.Document.WithSyntaxRoot(newRoot)));
+                    var codeAction = CodeAction.Create(MicrosoftNetCoreAnalyzersResources.DoNotPassNullableStructToArgumentNullExceptionThrowIfNullCodeFixTitle, _ => Task.FromResult(context.Document.WithSyntaxRoot(newRoot)), diagnostic.Id);
                     context.RegisterCodeFix(codeAction, diagnostic);
                 }
             }

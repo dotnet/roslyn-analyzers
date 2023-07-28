@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -10,7 +11,7 @@ using Microsoft.NetCore.Analyzers.Usage;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Usage
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpDoNotPassStructToArgumentNullExceptionThrowIfNullFixer : DoNotPassStructToArgumentNullExceptionThrowIfNullFixer<InvocationExpressionSyntax>
     {
         protected override async Task<SyntaxNode> GetNewRootForNullableStructAsync(Document document, InvocationExpressionSyntax invocation, CancellationToken cancellationToken)

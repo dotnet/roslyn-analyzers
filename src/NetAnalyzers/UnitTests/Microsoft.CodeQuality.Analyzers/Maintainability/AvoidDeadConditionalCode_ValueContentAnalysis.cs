@@ -3312,6 +3312,7 @@ class C
         {
             var source = @"
 using System.Threading.Tasks;
+
 public class C
 {
     static async Task Main(string[] args)
@@ -3319,14 +3320,17 @@ public class C
         var obj = await GetSomeObject(""something"");
         if (obj?.Content == null)
             return;
+
         var obj2 = await GetSomeObject(null);
         if (obj2?.Content == null)
             return;
     }
+
     static Task<SomeObject> GetSomeObject(string content)
     {
         return Task.FromResult(new SomeObject() { Content = content });
     }
+
     public class SomeObject
     {
         public string Content { get; set; }
@@ -3342,6 +3346,7 @@ public class C
         {
             var source = @"
 using System.Threading.Tasks;
+
 public class C
 {
     static async Task Main(string[] args)
@@ -3349,13 +3354,16 @@ public class C
         var obj = await GetSomeObject(""something"");
         if (obj?.Content == null)
             return;
+
         if (obj?.Content == null)
             return;
     }
+
     static Task<SomeObject> GetSomeObject(string content)
     {
         return Task.FromResult(new SomeObject() { Content = content });
     }
+
     public class SomeObject
     {
         public string Content { get; set; }
@@ -3370,6 +3378,7 @@ public class C
         {
             var source = @"
 using System.Threading.Tasks;
+
 public class C
 {
     static void Main(string[] args)
@@ -3377,14 +3386,17 @@ public class C
         var obj = GetSomeObject(""something"");
         if (obj?.Content == null)
             return;
+
         var obj2 = GetSomeObject(null);
         if (obj2?.Content == null)
             return;
     }
+
     static SomeObject GetSomeObject(string content)
     {
         return new SomeObject() { Content = content };
     }
+
     public class SomeObject
     {
         public string Content { get; set; }

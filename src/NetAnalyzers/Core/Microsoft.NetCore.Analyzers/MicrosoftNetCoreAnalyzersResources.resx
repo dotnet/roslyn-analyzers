@@ -2105,4 +2105,25 @@ Widening and user defined conversions are not supported with generic types.</val
   <data name="UseCompositeFormatDescription" xml:space="preserve">
     <value>Cache and use a 'CompositeFormat' instance as the argument to this formatting operation, rather than passing in the original format string. This reduces the cost of the formatting operation.</value>
   </data>
+  <data name="DoNotPassNonNullableStructToArgumentNullExceptionThrowIfNullTitle" xml:space="preserve">
+    <value>Do not pass a struct to 'ArgumentNullException.ThrowIfNull'</value>
+  </data>
+  <data name="DoNotPassNonNullableStructToArgumentNullExceptionThrowIfNullMessage" xml:space="preserve">
+    <value>A non-nullable struct can never be 'null', so calling 'ArgumentNullException.ThrowIfNull' does nothing</value>
+  </data>
+  <data name="DoNotPassNonNullableStructToArgumentNullExceptionThrowIfNullDescription" xml:space="preserve">
+    <value>'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. A non-nullable struct can never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.</value>
+  </data>
+  <data name="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullTitle" xml:space="preserve">
+    <value>Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'</value>
+  </data>
+  <data name="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullMessage" xml:space="preserve">
+    <value>Passing a nullable struct to 'ArgumentNullException.ThrowIfNull' may cause boxing</value>
+  </data>
+  <data name="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullDescription" xml:space="preserve">
+    <value>'ArgumentNullException.ThrowIfNull' accepts an 'object', so passing a nullable struct may cause the value to be boxed.</value>
+  </data>
+  <data name="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullCodeFixTitle" xml:space="preserve">
+    <value>Do not call 'ArgumentNullException.ThrowIfNull' with a struct.</value>
+  </data>
 </root>

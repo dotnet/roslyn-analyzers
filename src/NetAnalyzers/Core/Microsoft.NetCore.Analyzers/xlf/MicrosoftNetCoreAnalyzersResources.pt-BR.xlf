@@ -828,6 +828,41 @@ Ampliação e conversões definidas pelo usuário não são compatíveis com tip
         <target state="translated">Não passar literais como parâmetros localizados</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotPassNonNullableStructToArgumentNullExceptionThrowIfNullDescription">
+        <source>'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. A non-nullable struct can never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.</source>
+        <target state="new">'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. A non-nullable struct can never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNonNullableStructToArgumentNullExceptionThrowIfNullMessage">
+        <source>A non-nullable struct can never be 'null', so calling 'ArgumentNullException.ThrowIfNull' does nothing</source>
+        <target state="new">A non-nullable struct can never be 'null', so calling 'ArgumentNullException.ThrowIfNull' does nothing</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNonNullableStructToArgumentNullExceptionThrowIfNullTitle">
+        <source>Do not pass a struct to 'ArgumentNullException.ThrowIfNull'</source>
+        <target state="new">Do not pass a struct to 'ArgumentNullException.ThrowIfNull'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullCodeFixTitle">
+        <source>Do not call 'ArgumentNullException.ThrowIfNull' with a struct.</source>
+        <target state="new">Do not call 'ArgumentNullException.ThrowIfNull' with a struct.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullDescription">
+        <source>'ArgumentNullException.ThrowIfNull' accepts an 'object', so passing a nullable struct may cause the value to be boxed.</source>
+        <target state="new">'ArgumentNullException.ThrowIfNull' accepts an 'object', so passing a nullable struct may cause the value to be boxed.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullMessage">
+        <source>Passing a nullable struct to 'ArgumentNullException.ThrowIfNull' may cause boxing</source>
+        <target state="new">Passing a nullable struct to 'ArgumentNullException.ThrowIfNull' may cause boxing</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullTitle">
+        <source>Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'</source>
+        <target state="new">Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesDescription">
         <source>An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.</source>
         <target state="translated">Uma exceção de tipo que não é suficientemente especificada nem reservada pelo tempo de execução nunca deve ser gerada pelo código do usuário. Isso torna o erro original difícil de ser detectado e depurado. Se esta instância de exceção puder ser gerada, use um tipo de exceção diferente.</target>

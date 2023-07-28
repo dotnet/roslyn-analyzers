@@ -3340,7 +3340,6 @@ public class C
             await VerifyCS.VerifyCodeFixAsync(source, source);
         }
 
-
         [Fact, WorkItem(5245, "https://github.com/dotnet/roslyn-analyzers/issues/5245")]
         public async Task TestAsyncMethod_SameInstance()
         {

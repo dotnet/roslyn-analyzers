@@ -30,6 +30,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             context.RegisterCodeFix(codeAction, context.Diagnostics);
         }
 
+        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+
         protected abstract SyntaxNode? MakeInternal(SyntaxNode node);
 
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(MakeTypesInternal<SymbolKind>.RuleId);

@@ -6,6 +6,7 @@ CA1510 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1511 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1511> | Use ArgumentException throw helper |
 CA1512 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1512> | Use ArgumentOutOfRangeException throw helper |
 CA1513 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1513> | Use ObjectDisposedException throw helper |
+CA1514 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514> | Make all public types internal |
 CA1856 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856> | Incorrect usage of ConstantExpected attribute |
 CA1857 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1857> | A constant is expected for the parameter |
 CA1862 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862> | Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons |

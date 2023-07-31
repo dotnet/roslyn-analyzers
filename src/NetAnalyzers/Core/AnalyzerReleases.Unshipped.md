@@ -4,6 +4,7 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
+CA1514 | Maintainability | Disabled | MakeTypesInternal, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514)
 CA1865 | Performance | Info | UseStringMethodCharOverloadWithSingleCharacters, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865)
 CA1866 | Performance | Info | UseStringMethodCharOverloadWithSingleCharacters, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1866)
 CA1867 | Performance | Disabled | UseStringMethodCharOverloadWithSingleCharacters, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867)

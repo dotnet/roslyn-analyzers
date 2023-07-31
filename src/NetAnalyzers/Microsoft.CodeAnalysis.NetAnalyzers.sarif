@@ -126,6 +126,25 @@
             ]
           }
         },
+        "CA1514": {
+          "id": "CA1514",
+          "shortDescription": "Make all public types internal",
+          "fullDescription": "Different than libraries, applications aren't referenced and thus all types can be made internal.",
+          "defaultLevel": "warning",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpMakeTypesInternal",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1802": {
           "id": "CA1802",
           "shortDescription": "Use literals where appropriate",
@@ -6285,6 +6304,25 @@
             ],
             "tags": [
               "Dataflow",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1514": {
+          "id": "CA1514",
+          "shortDescription": "Make all public types internal",
+          "fullDescription": "Different than libraries, applications aren't referenced and thus all types can be made internal.",
+          "defaultLevel": "warning",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "BasicMakeTypesInternal",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]

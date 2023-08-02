@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly : DiagnosticAnalyzer
     {
-        private const string PropertyName = "MaxResponseHeadersLength";
+        private const string MaxResponseHeadersLengthPropertyName = "MaxResponseHeadersLength";
         private const int MaxLimitToReport = 128;
         internal const string RuleId = "CA2262";
 
@@ -43,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
             {
                 var propertySymbol = context.Compilation
                                     .GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNetHttpHttpClientHandler)
-                                    ?.GetMembers(PropertyName)
+                                    ?.GetMembers(MaxResponseHeadersLengthPropertyName)
                                     .FirstOrDefault();
 
                 if (propertySymbol is null)

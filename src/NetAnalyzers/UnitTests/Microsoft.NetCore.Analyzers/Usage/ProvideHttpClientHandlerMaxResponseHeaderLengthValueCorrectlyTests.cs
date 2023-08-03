@@ -27,26 +27,42 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
 
                     public void TestMethod() {
 
-                        HttpClientHandler handler3 = new HttpClientHandler()
+                        HttpClientHandler handler = new HttpClientHandler()
                         {
                             MaxResponseHeadersLength = GetValue()
                         };
 
-                        HttpClientHandler handler = new HttpClientHandler()
+                        HttpClientHandler handler2 = new HttpClientHandler()
                         {
                             {|#0:MaxResponseHeadersLength = val|}
                         };
 
-                        HttpClientHandler handler2 = new HttpClientHandler()
+                        HttpClientHandler handler3 = new HttpClientHandler()
                         {
                             {|#1:MaxResponseHeadersLength = 1414|}
+                        };
+
+                        HttpClientHandler handler4 = new HttpClientHandler()
+                        {
+                            MaxResponseHeadersLength  = int.MaxValue
+                        };
+      
+                        SocketsHttpHandler handler5 = new SocketsHttpHandler() 
+                        {
+                            MaxResponseHeadersLength  = int.MaxValue
+                        };
+
+                        SocketsHttpHandler handler6 = new SocketsHttpHandler() 
+                        {
+                            {|#2:MaxResponseHeadersLength = 1000|}
                         };
                     }
                 }
                         
                 ",
             VerifyCS.Diagnostic(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly.RuleId).WithLocation(0).WithArguments(242424),
-            VerifyCS.Diagnostic(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly.RuleId).WithLocation(1).WithArguments(1414)
+            VerifyCS.Diagnostic(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly.RuleId).WithLocation(1).WithArguments(1414),
+            VerifyCS.Diagnostic(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly.RuleId).WithLocation(2).WithArguments(1000)
             );
 
             await VerifyVB.VerifyAnalyzerAsync(@"

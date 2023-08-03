@@ -41,25 +41,31 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
             context.RegisterCompilationStartAction(context =>
             {
-                var propertySymbol = context.Compilation
+                var httpClientHandlerPropSymbol = context.Compilation
                                     .GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNetHttpHttpClientHandler)
                                     ?.GetMembers(MaxResponseHeadersLengthPropertyName)
                                     .FirstOrDefault();
 
-                if (propertySymbol is null)
+                var socketClientHandlerPropSymbol = context.Compilation
+                                    .GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNetHttpSocketsHttpHandler)
+                                    ?.GetMembers(MaxResponseHeadersLengthPropertyName)
+                                    .FirstOrDefault();
+
+                if (httpClientHandlerPropSymbol is null || socketClientHandlerPropSymbol is null)
                 {
                     return;
                 }
 
-                context.RegisterOperationAction(context => AnalyzeSimpleAssignmentOperationAndCreateDiagnostic(context, propertySymbol), OperationKind.SimpleAssignment);
+                ImmutableArray<ISymbol> symbols = ImmutableArray.Create(httpClientHandlerPropSymbol, socketClientHandlerPropSymbol);
+                context.RegisterOperationAction(context => AnalyzeSimpleAssignmentOperationAndCreateDiagnostic(context, symbols), OperationKind.SimpleAssignment);
             });
         }
 
-        private static void AnalyzeSimpleAssignmentOperationAndCreateDiagnostic(OperationAnalysisContext context, ISymbol propertySymbol)
+        private static void AnalyzeSimpleAssignmentOperationAndCreateDiagnostic(OperationAnalysisContext context, ImmutableArray<ISymbol> propSymbols)
         {
             var assignmentOperation = (ISimpleAssignmentOperation)context.Operation;
 
-            if (!IsValidPropertyAssignmentOperation(assignmentOperation, propertySymbol))
+            if (!IsValidPropertyAssignmentOperation(assignmentOperation, propSymbols))
             {
                 return;
             }
@@ -70,20 +76,20 @@ namespace Microsoft.NetCore.Analyzers.Usage
             }
 
             // If the user set the value to int.MaxValue, their intention is to disable the limit, and we shouldn't emit a warning.
-            if (propertyValue > MaxLimitToReport && propertyValue != int.MaxValue)
+            if (propertyValue is > MaxLimitToReport and not int.MaxValue)
             {
                 context.ReportDiagnostic(context.Operation.CreateDiagnostic(EnsureMaxResponseHeaderLengthRule, propertyValue));
             }
         }
 
-        private static bool IsValidPropertyAssignmentOperation(ISimpleAssignmentOperation operation, ISymbol propertySymbol)
+        private static bool IsValidPropertyAssignmentOperation(ISimpleAssignmentOperation operation, ImmutableArray<ISymbol> propSymbols)
         {
             if (operation.Target is not IPropertyReferenceOperation propertyReferenceOperation)
             {
                 return false;
             }
 
-            if (!propertyReferenceOperation.Member.Equals(propertySymbol))
+            if (!propSymbols.Contains(propertyReferenceOperation.Member))
             {
                 return false;
             }

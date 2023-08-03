@@ -69,7 +69,8 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 return;
             }
 
-            if (propertyValue > MaxLimitToReport)
+            // If the user set the value to int.MaxValue, their intention is to disable the limit, and we shouldn't emit a warning.
+            if (propertyValue > MaxLimitToReport && propertyValue != int.MaxValue)
             {
                 context.ReportDiagnostic(context.Operation.CreateDiagnostic(EnsureMaxResponseHeaderLengthRule, propertyValue));
             }

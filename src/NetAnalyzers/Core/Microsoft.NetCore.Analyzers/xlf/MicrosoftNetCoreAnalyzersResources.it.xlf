@@ -608,6 +608,31 @@ L'ampliamento e le conversioni definite dall'utente non sono supportate con tipi
         <target state="translated">Non chiamare ToImmutableCollection su un valore ImmutableCollection</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCompareSpanToNullDefaultCodeFixTitle">
+        <source>Compare to 'default'</source>
+        <target state="new">Compare to 'default'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCompareSpanToNullDescription">
+        <source>Comparing a Span&lt;T&gt; to 'null' will not perform an actual null check, so it is more explicit to compare to 'default' or to use 'IsEmpty'.</source>
+        <target state="new">Comparing a Span&lt;T&gt; to 'null' will not perform an actual null check, so it is more explicit to compare to 'default' or to use 'IsEmpty'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCompareSpanToNullIsEmptyCodeFixTitle">
+        <source>Use 'IsEmpty'</source>
+        <target state="new">Use 'IsEmpty'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCompareSpanToNullMessage">
+        <source>Compare a Span&lt;T&gt; to 'default' or use 'IsEmpty' instead of comparing to 'null'</source>
+        <target state="new">Compare a Span&lt;T&gt; to 'default' or use 'IsEmpty' instead of comparing to 'null'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCompareSpanToNullTitle">
+        <source>Do not compare Span&lt;T&gt; to 'null'</source>
+        <target state="new">Do not compare Span&lt;T&gt; to 'null'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCreateTaskCompletionSourceWithWrongArgumentsDescription">
         <source>TaskCompletionSource has constructors that take TaskCreationOptions that control the underlying Task, and constructors that take object state that's stored in the task.  Accidentally passing a TaskContinuationOptions instead of a TaskCreationOptions will result in the call treating the options as state.</source>
         <target state="translated">TaskCompletionSource include costruttori che accettano enumerazioni TaskCreationOptions che controllano l'attività sottostante e costruttori che accettano lo stato dell'oggetto archiviato nell'attività. Se si passa accidentalmente un'enumerazione TaskContinuationOptions invece di TaskCreationOptions, la chiamata considererà le opzioni come stato.</target>

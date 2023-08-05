@@ -2538,6 +2538,18 @@ The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generi
 |CodeFix|False|
 ---
 
+## [CA2262](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262): Do not compare Span\<T> to 'null'
+
+Comparing a Span\<T> to 'null' will not perform an actual null check, so it is more explicit to compare to 'default' or to use 'IsEmpty'.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|True|
+---
+
 ## [CA2300](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2300): Do not use insecure deserializer BinaryFormatter
 
 The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rule CA2300, and enable rules CA2301 and CA2302.

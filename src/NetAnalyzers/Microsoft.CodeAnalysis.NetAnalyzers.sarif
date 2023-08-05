@@ -4398,6 +4398,26 @@
             ]
           }
         },
+        "CA2262": {
+          "id": "CA2262",
+          "shortDescription": "Do not compare Span<T> to 'null'",
+          "fullDescription": "Comparing a Span<T> to 'null' will not perform an actual null check, so it is more explicit to compare to 'default' or to use 'IsEmpty'.",
+          "defaultLevel": "warning",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotCompareSpanToNullAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2300": {
           "id": "CA2300",
           "shortDescription": "Do not use insecure deserializer BinaryFormatter",

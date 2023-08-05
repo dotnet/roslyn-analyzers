@@ -2129,4 +2129,19 @@ Widening and user defined conversions are not supported with generic types.</val
   <data name="UseStringMethodCharOverloadWithSingleCharactersTitle" xml:space="preserve">
     <value>Use char overload</value>
   </data>
+  <data name="DoNotCompareSpanToNullDescription" xml:space="preserve">
+    <value>Comparing a Span&lt;T&gt; to 'null' will not perform an actual null check, so it is more explicit to compare to 'default' or to use 'IsEmpty'.</value>
+  </data>
+  <data name="DoNotCompareSpanToNullMessage" xml:space="preserve">
+    <value>Compare a Span&lt;T&gt; to 'default' or use 'IsEmpty' instead of comparing to 'null'</value>
+  </data>
+  <data name="DoNotCompareSpanToNullTitle" xml:space="preserve">
+    <value>Do not compare Span&lt;T&gt; to 'null'</value>
+  </data>
+  <data name="DoNotCompareSpanToNullDefaultCodeFixTitle" xml:space="preserve">
+    <value>Compare to 'default'</value>
+  </data>
+  <data name="DoNotCompareSpanToNullIsEmptyCodeFixTitle" xml:space="preserve">
+    <value>Use 'IsEmpty'</value>
+  </data>
 </root>

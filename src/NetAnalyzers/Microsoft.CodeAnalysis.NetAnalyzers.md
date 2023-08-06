@@ -2550,9 +2550,9 @@ The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generi
 |CodeFix|False|
 ---
 
-## [CA2262](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262): Do not pass a struct to 'ArgumentNullException.ThrowIfNull'
+## [CA2262](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262): Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'
 
-'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. A non-nullable struct can never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.
+'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.
 
 |Item|Value|
 |-|-|

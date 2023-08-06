@@ -843,24 +843,29 @@ Ampliação e conversões definidas pelo usuário não são compatíveis com tip
         <target state="translated">Não passar literais como parâmetros localizados</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotPassNonNullableStructToArgumentNullExceptionThrowIfNullDescription">
-        <source>'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. A non-nullable struct can never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.</source>
-        <target state="new">'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. A non-nullable struct can never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.</target>
+      <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullCodeFixTitle">
+        <source>Do not call 'ArgumentNullException.ThrowIfNull' with a non-nullable value</source>
+        <target state="new">Do not call 'ArgumentNullException.ThrowIfNull' with a non-nullable value</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotPassNonNullableStructToArgumentNullExceptionThrowIfNullMessage">
-        <source>A non-nullable struct can never be 'null', so calling 'ArgumentNullException.ThrowIfNull' does nothing</source>
-        <target state="new">A non-nullable struct can never be 'null', so calling 'ArgumentNullException.ThrowIfNull' does nothing</target>
+      <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullDescription">
+        <source>'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.</source>
+        <target state="new">'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotPassNonNullableStructToArgumentNullExceptionThrowIfNullTitle">
-        <source>Do not pass a struct to 'ArgumentNullException.ThrowIfNull'</source>
-        <target state="new">Do not pass a struct to 'ArgumentNullException.ThrowIfNull'</target>
+      <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullMessage">
+        <source>Calling 'ArgumentNullException.ThrowIfNull' and passing a non-nullable value does nothing</source>
+        <target state="new">Calling 'ArgumentNullException.ThrowIfNull' and passing a non-nullable value does nothing</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullTitle">
+        <source>Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'</source>
+        <target state="new">Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullCodeFixTitle">
-        <source>Do not call 'ArgumentNullException.ThrowIfNull' with a struct.</source>
-        <target state="new">Do not call 'ArgumentNullException.ThrowIfNull' with a struct.</target>
+        <source>Do not call 'ArgumentNullException.ThrowIfNull' with a struct</source>
+        <target state="new">Do not call 'ArgumentNullException.ThrowIfNull' with a struct</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullDescription">

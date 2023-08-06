@@ -12,7 +12,7 @@ using Microsoft.NetCore.Analyzers.Usage;
 namespace Microsoft.NetCore.CSharp.Analyzers.Usage
 {
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public sealed class CSharpDoNotPassStructToArgumentNullExceptionThrowIfNullFixer : DoNotPassStructToArgumentNullExceptionThrowIfNullFixer<InvocationExpressionSyntax>
+    public sealed class CSharpDoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullFixer : DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullFixer<InvocationExpressionSyntax>
     {
         protected override async Task<SyntaxNode> GetNewRootForNullableStructAsync(Document document, InvocationExpressionSyntax invocation, CancellationToken cancellationToken)
         {

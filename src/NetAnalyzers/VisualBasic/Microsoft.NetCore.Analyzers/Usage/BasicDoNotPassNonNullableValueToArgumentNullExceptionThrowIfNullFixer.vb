@@ -9,8 +9,8 @@ Imports Microsoft.NetCore.Analyzers.Usage
 
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Usage
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
-    Public NotInheritable Class BasicDoNotPassStructToArgumentNullExceptionThrowIfNullFixer
-        Inherits DoNotPassStructToArgumentNullExceptionThrowIfNullFixer(Of InvocationExpressionSyntax)
+    Public NotInheritable Class BasicDoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullFixer
+        Inherits DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullFixer(Of InvocationExpressionSyntax)
 
         Protected Overrides Async Function GetNewRootForNullableStructAsync(document As Document, invocation As InvocationExpressionSyntax, cancellationToken As CancellationToken) As Task(Of SyntaxNode)
             Dim editor = Await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(False)

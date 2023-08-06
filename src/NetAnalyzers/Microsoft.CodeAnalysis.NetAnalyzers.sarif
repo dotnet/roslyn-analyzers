@@ -3301,7 +3301,7 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "DoNotPassStructToArgumentNullExceptionThrowIfNullAnalyzer",
+            "typeName": "DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull",
             "languages": [
               "C#",
               "Visual Basic"
@@ -4420,14 +4420,14 @@
         },
         "CA2262": {
           "id": "CA2262",
-          "shortDescription": "Do not pass a struct to 'ArgumentNullException.ThrowIfNull'",
-          "fullDescription": "'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. A non-nullable struct can never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.",
+          "shortDescription": "Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'",
+          "fullDescription": "'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.",
           "defaultLevel": "warning",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
-            "typeName": "DoNotPassStructToArgumentNullExceptionThrowIfNullAnalyzer",
+            "typeName": "DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull",
             "languages": [
               "C#",
               "Visual Basic"

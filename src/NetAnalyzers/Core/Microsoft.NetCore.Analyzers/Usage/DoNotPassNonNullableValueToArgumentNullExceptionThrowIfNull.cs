@@ -12,18 +12,18 @@ using static Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 namespace Microsoft.NetCore.Analyzers.Usage
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotPassStructToArgumentNullExceptionThrowIfNullAnalyzer : DiagnosticAnalyzer
+    public sealed class DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull : DiagnosticAnalyzer
     {
-        internal const string NonNullableStructRuleId = "CA2262";
+        internal const string NonNullableValueRuleId = "CA2262";
         internal const string NullableStructRuleId = "CA1869";
 
-        internal static readonly DiagnosticDescriptor DoNotPassNonNullableStructDiagnostic = DiagnosticDescriptorHelper.Create(
-            NonNullableStructRuleId,
-            CreateLocalizableResourceString(nameof(DoNotPassNonNullableStructToArgumentNullExceptionThrowIfNullTitle)),
-            CreateLocalizableResourceString(nameof(DoNotPassNonNullableStructToArgumentNullExceptionThrowIfNullMessage)),
+        internal static readonly DiagnosticDescriptor DoNotPassNonNullableValueDiagnostic = DiagnosticDescriptorHelper.Create(
+            NonNullableValueRuleId,
+            CreateLocalizableResourceString(nameof(DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullTitle)),
+            CreateLocalizableResourceString(nameof(DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullMessage)),
             DiagnosticCategory.Usage,
             RuleLevel.BuildWarning,
-            CreateLocalizableResourceString(nameof(DoNotPassNonNullableStructToArgumentNullExceptionThrowIfNullDescription)),
+            CreateLocalizableResourceString(nameof(DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
@@ -46,7 +46,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 var typeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
                 var throwIfNullMethod = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentNullException)
                     ?.GetMembers("ThrowIfNull")
-                    .FirstOrDefault(m => m is IMethodSymbol method && method.Parameters[0].Type.SpecialType == SpecialType.System_Object);
+                    .FirstOrDefault(m => m is IMethodSymbol { Parameters: [{ Type.SpecialType: SpecialType.System_Object }, _] });
                 if (throwIfNullMethod is null)
                 {
                     return;
@@ -59,11 +59,12 @@ namespace Microsoft.NetCore.Analyzers.Usage
         private static void AnalyzeInvocation(OperationAnalysisContext context, IMethodSymbol throwIfNullMethod)
         {
             var invocation = (IInvocationOperation)context.Operation;
-            if (invocation.TargetMethod.Equals(throwIfNullMethod))
+            if (invocation.TargetMethod.Equals(throwIfNullMethod, SymbolEqualityComparer.Default))
             {
-                if (invocation.Arguments[0].Value.WalkDownConversion().Type.IsNonNullableValueType())
+                if (invocation.Arguments[0].Value.WalkDownConversion().Type.IsNonNullableValueType()
+                    || invocation.Arguments[0].Value.WalkDownConversion().Kind is OperationKind.NameOf or OperationKind.ObjectCreation or OperationKind.ObjectOrCollectionInitializer)
                 {
-                    context.ReportDiagnostic(invocation.CreateDiagnostic(DoNotPassNonNullableStructDiagnostic));
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(DoNotPassNonNullableValueDiagnostic));
                 }
 
                 if (invocation.Arguments[0].Value.WalkDownConversion().Type.IsNullableValueType())
@@ -73,6 +74,6 @@ namespace Microsoft.NetCore.Analyzers.Usage
             }
         }
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DoNotPassNonNullableStructDiagnostic, DoNotPassNullableStructDiagnostic);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DoNotPassNonNullableValueDiagnostic, DoNotPassNullableStructDiagnostic);
     }
 }

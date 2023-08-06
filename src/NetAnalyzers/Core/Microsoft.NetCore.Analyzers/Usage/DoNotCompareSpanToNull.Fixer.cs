@@ -9,6 +9,8 @@ namespace Microsoft.NetCore.Analyzers.Usage
     {
         protected const string IsEmpty = nameof(IsEmpty);
 
+        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(DoNotCompareSpanToNullAnalyzer.RuleId);
     }
 }

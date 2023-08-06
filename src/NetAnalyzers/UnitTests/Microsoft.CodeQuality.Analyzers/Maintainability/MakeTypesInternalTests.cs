@@ -439,6 +439,74 @@ Class Program
 End Class");
         }
 
+        [Theory]
+        [MemberData(nameof(NonDiagnosticTriggeringOutputKinds))]
+        public async Task Delegates_LibraryCode_NoDiagnostic(OutputKind outputKind)
+        {
+            await VerifyCsAsync(outputKind, @"
+public delegate int GetValue(string s);
+public delegate void Print(object x);
+public delegate bool Match();
+");
+
+            await VerifyVbAsync(outputKind, @"
+Imports System
+
+Public Delegate Function GetValue(s As String) As Int32
+Public Delegate Sub Print(x As Object)
+Public Delegate Function Match() As Boolean
+");
+        }
+
+        [Theory]
+        [MemberData(nameof(DiagnosticTriggeringOutputKinds))]
+        public async Task Delegates_ApplicationCode_Diagnostic(OutputKind outputKind)
+        {
+            await VerifyCsAsync(outputKind, @"
+public delegate int [|GetValue|](string s);
+public delegate void [|Print|](object x);
+public delegate bool [|Match|]();
+internal delegate char GetFirst(string s);
+
+class Program {
+    public static void Main() {}
+}",
+                @"
+internal delegate int GetValue(string s);
+internal delegate void Print(object x);
+internal delegate bool Match();
+internal delegate char GetFirst(string s);
+
+class Program {
+    public static void Main() {}
+}");
+
+            await VerifyVbAsync(outputKind, @"
+Imports System
+
+Public Delegate Function [|GetValue|](s As String) As Int32
+Public Delegate Sub [|Print|](x As Object)
+Public Delegate Function [|Match|]() As Boolean
+Friend Delegate Function GetFirst(s As String) As Char
+
+Class Program
+    Public Shared Sub Main()
+    End Sub
+End Class",
+                @"
+Imports System
+
+Friend Delegate Function GetValue(s As String) As Int32
+Friend Delegate Sub Print(x As Object)
+Friend Delegate Function Match() As Boolean
+Friend Delegate Function GetFirst(s As String) As Char
+
+Class Program
+    Public Shared Sub Main()
+    End Sub
+End Class");
+        }
+
         private Task VerifyCsAsync(OutputKind outputKind, string testCode, string fixedCode = null)
         {
             return new VerifyCS.Test

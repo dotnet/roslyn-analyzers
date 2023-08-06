@@ -18,21 +18,31 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
 
         protected override SyntaxKind EnumKind { get; } = SyntaxKind.EnumDeclaration;
 
+        protected override ImmutableArray<SyntaxKind> DelegateKinds { get; } = ImmutableArray.Create(SyntaxKind.DelegateDeclaration);
+
         protected override void AnalyzeTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var type = (TypeDeclarationSyntax)context.Node;
-            if (type.Modifiers.Any(SyntaxKind.PublicKeyword))
-            {
-                context.ReportDiagnostic(type.Identifier.CreateDiagnostic(Rule));
-            }
+            ReportIfPublic(context, type.Modifiers, type.Identifier);
         }
 
         protected override void AnalyzeEnumDeclaration(SyntaxNodeAnalysisContext context)
         {
             var @enum = (EnumDeclarationSyntax)context.Node;
-            if (@enum.Modifiers.Any(SyntaxKind.PublicKeyword))
+            ReportIfPublic(context, @enum.Modifiers, @enum.Identifier);
+        }
+
+        protected override void AnalyzeDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var @delegate = (DelegateDeclarationSyntax)context.Node;
+            ReportIfPublic(context, @delegate.Modifiers, @delegate.Identifier);
+        }
+
+        private static void ReportIfPublic(SyntaxNodeAnalysisContext context, SyntaxTokenList modifiers, SyntaxToken identifier)
+        {
+            if (modifiers.Any(SyntaxKind.PublicKeyword))
             {
-                context.ReportDiagnostic(@enum.Identifier.CreateDiagnostic(Rule));
+                context.ReportDiagnostic(identifier.CreateDiagnostic(Rule));
             }
         }
     }

@@ -29,16 +29,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterCompilationStartAction(compilationStartContext =>
+            context.RegisterCompilationStartAction(context =>
             {
-                var compilation = compilationStartContext.Compilation;
+                var compilation = context.Compilation;
                 if (compilation.Options.OutputKind is not (OutputKind.ConsoleApplication or OutputKind.WindowsApplication or OutputKind.WindowsRuntimeApplication))
                 {
                     return;
                 }
 
-                compilationStartContext.RegisterSyntaxNodeAction(AnalyzeTypeDeclaration, TypeKinds);
-                compilationStartContext.RegisterSyntaxNodeAction(AnalyzeEnumDeclaration, EnumKind);
+                context.RegisterSyntaxNodeAction(AnalyzeTypeDeclaration, TypeKinds);
+                context.RegisterSyntaxNodeAction(AnalyzeEnumDeclaration, EnumKind);
+                context.RegisterSyntaxNodeAction(AnalyzeDelegateDeclaration, DelegateKinds);
             });
         }
 
@@ -46,9 +47,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         protected abstract TSyntaxKind EnumKind { get; }
 
+        protected abstract ImmutableArray<TSyntaxKind> DelegateKinds { get; }
+
         protected abstract void AnalyzeTypeDeclaration(SyntaxNodeAnalysisContext context);
 
         protected abstract void AnalyzeEnumDeclaration(SyntaxNodeAnalysisContext context);
+
+        protected abstract void AnalyzeDelegateDeclaration(SyntaxNodeAnalysisContext context);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
     }

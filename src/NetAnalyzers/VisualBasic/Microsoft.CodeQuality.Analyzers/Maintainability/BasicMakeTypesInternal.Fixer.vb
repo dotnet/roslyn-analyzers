@@ -29,6 +29,14 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                 Return enumStatement.WithModifiers(modifiers)
             End If
 
+            Dim delegateStatement = TryCast(node, DelegateStatementSyntax)
+            If delegateStatement IsNot Nothing
+                Dim publicKeyword = delegateStatement.Modifiers.First(Function(m) m.IsKind(SyntaxKind.PublicKeyword))
+                Dim modifiers = delegateStatement.Modifiers.Replace(publicKeyword, SyntaxFactory.Token(SyntaxKind.FriendKeyword))
+
+                Return delegateStatement.WithModifiers(modifiers)
+            End If
+
             Return Nothing
         End Function
     End Class

@@ -15,17 +15,21 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         {
             var root = await context.Document.GetRequiredSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var node = root.FindNode(context.Span);
-            var newNode = MakeInternal(node);
-            if (newNode is null)
-            {
-                return;
-            }
-
-            root = root.ReplaceNode(node, newNode.WithTriviaFrom(node));
 
             var codeAction = CodeAction.Create(
                 MicrosoftCodeQualityAnalyzersResources.MakeTypesInternalCodeFixTitle,
-                _ => Task.FromResult(context.Document.WithSyntaxRoot(root)),
+                _ =>
+                {
+                    var newNode = MakeInternal(node);
+                    if (newNode is null)
+                    {
+                        return Task.FromResult(context.Document);
+                    }
+
+                    var newRoot = root.ReplaceNode(node, newNode.WithTriviaFrom(node));
+
+                    return Task.FromResult(context.Document.WithSyntaxRoot(newRoot));
+                },
                 MicrosoftCodeQualityAnalyzersResources.MakeTypesInternalCodeFixTitle);
             context.RegisterCodeFix(codeAction, context.Diagnostics);
         }

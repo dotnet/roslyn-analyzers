@@ -31,6 +31,14 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
                 return @enum.WithModifiers(modifiers);
             }
 
+            if (node is DelegateDeclarationSyntax @delegate)
+            {
+                var publicKeyword = @delegate.Modifiers.First(m => m.IsKind(SyntaxKind.PublicKeyword));
+                var modifiers = @delegate.Modifiers.Replace(publicKeyword, SyntaxFactory.Token(SyntaxKind.InternalKeyword));
+
+                return @delegate.WithModifiers(modifiers);
+            }
+
             return null;
         }
     }

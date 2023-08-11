@@ -3292,12 +3292,12 @@
             ]
           }
         },
-        "CA1865": {
-          "id": "CA1865",
+        "CA1869": {
+          "id": "CA1869",
           "shortDescription": "Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal",
           "fullDescription": "Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance.",
           "defaultLevel": "note",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1869",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,

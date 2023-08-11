@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     public sealed class AvoidSingleUseOfLocalJsonSerializerOptions : DiagnosticAnalyzer
     {
         internal static readonly DiagnosticDescriptor s_Rule = DiagnosticDescriptorHelper.Create(
-            id: "CA1865",
+            id: "CA1869",
             title: CreateLocalizableResourceString(nameof(AvoidSingleUseOfLocalJsonSerializerOptionsTitle)),
             messageFormat: CreateLocalizableResourceString(nameof(AvoidSingleUseOfLocalJsonSerializerOptionsMessage)),
             category: DiagnosticCategory.Performance,

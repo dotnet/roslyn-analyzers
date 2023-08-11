@@ -3216,6 +3216,26 @@
             ]
           }
         },
+        "CA1865": {
+          "id": "CA1865",
+          "shortDescription": "Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal",
+          "fullDescription": "Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidSingleUseOfLocalJsonSerializerOptions",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2000": {
           "id": "CA2000",
           "shortDescription": "Dispose objects before losing scope",

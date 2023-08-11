@@ -5,7 +5,7 @@ using Test.Utilities;
 using Xunit;
 using CSharpLanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidDeadConditionalCode,
+    Microsoft.CodeQuality.CSharp.Analyzers.Maintainability.CSharpAvoidDeadConditionalCode,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
@@ -3273,6 +3273,109 @@ class C
     }
 }",
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8
+            }.RunAsync();
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact, WorkItem(6483, "https://github.com/dotnet/roslyn-analyzers/issues/6483")]
+        public async Task IsPatternExpression_Unboxing_NoDiagnosticsAsync()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+class C
+{
+    public void Run(object value)
+    {
+        if (value is null)
+        {
+            return;
+        }
+
+        var x = value is double num1;
+        if (x)
+        {
+            return;
+        }
+
+        if (!(value is int num2))
+        {
+            return;
+        }
+    }
+}",
+            }.RunAsync();
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact, WorkItem(5160, "https://github.com/dotnet/roslyn-analyzers/issues/5160")]
+        public async Task CatchBlock_WithinForLoop_NoDiagnosticsAsync()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+using System;
+
+class C
+{
+    void M1()
+    {
+        const int attempts = 5;
+
+        for (int i = 0; i < attempts; i++)
+        {
+            try
+            {
+                Console.WriteLine($""Hello world: {i}"");
+
+                if (i == attempts - 1) // Last iteration.
+                {
+                    throw new InvalidOperationException(""Oops, something went wrong!"");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($""Exception caught: {ex.Message}"");
+
+                if (i == attempts - 1)
+                {
+                    Console.WriteLine(""This should never happen, according to CA1508."");
+                }
+            }
+        }
+    }
+
+    void M2()
+    {
+        for (int i = 0; i <= 5; i++)
+        {
+            try
+            {
+                MayThrowException(i);
+                if (i == 0)
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception)
+            {
+                if (i == 1)
+                {
+                    Console.WriteLine();
+                }
+            }
+        }
+    }
+
+    private void MayThrowException(int i)
+    {
+        if (i % 2 == 1)
+        {
+            throw new Exception();
+        }
+    }
+}",
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8,
             }.RunAsync();
         }
     }

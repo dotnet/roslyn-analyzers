@@ -67,6 +67,21 @@
         <target state="translated">Unikaj tablic stałych jako argumentów</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsDescription">
+        <source>Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance.</source>
+        <target state="new">Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsMessage">
+        <source>Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance</source>
+        <target state="new">Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsTitle">
+        <source>Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal</source>
+        <target state="new">Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidStringBuilderPInvokeParametersDescription">
         <source>Marshalling of 'StringBuilder' always creates a native buffer copy, resulting in multiple allocations for one marshalling operation.</source>
         <target state="translated">Marshalling elementu „StringBuilder” zawsze tworzy natywną kopię buforu, co powoduje powstanie wielu alokacji dla jednej operacji marshallingu.</target>

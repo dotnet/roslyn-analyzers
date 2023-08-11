@@ -2105,4 +2105,13 @@ Widening and user defined conversions are not supported with generic types.</val
   <data name="UseCompositeFormatDescription" xml:space="preserve">
     <value>Cache and use a 'CompositeFormat' instance as the argument to this formatting operation, rather than passing in the original format string. This reduces the cost of the formatting operation.</value>
   </data>
+  <data name="AvoidSingleUseOfLocalJsonSerializerOptionsMessage" xml:space="preserve">
+    <value>Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance</value>
+  </data>
+  <data name="AvoidSingleUseOfLocalJsonSerializerOptionsDescription" xml:space="preserve">
+    <value>Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance.</value>
+  </data>
+  <data name="AvoidSingleUseOfLocalJsonSerializerOptionsTitle" xml:space="preserve">
+    <value>Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal</value>
+  </data>
 </root>

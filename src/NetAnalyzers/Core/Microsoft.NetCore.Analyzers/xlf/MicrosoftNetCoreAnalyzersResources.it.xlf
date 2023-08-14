@@ -68,18 +68,18 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsDescription">
-        <source>Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance.</source>
-        <target state="new">Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance.</target>
+        <source>Reuse the 'JsonSerializerOptions' instance by moving it to a static field, or use a singleton. Single-use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.</source>
+        <target state="new">Reuse the 'JsonSerializerOptions' instance by moving it to a static field, or use a singleton. Single-use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsMessage">
-        <source>Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance</source>
-        <target state="new">Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance</target>
+        <source>Reuse the 'JsonSerializerOptions' instance by moving it to a static field, or use a singleton</source>
+        <target state="new">Reuse the 'JsonSerializerOptions' instance by moving it to a static field, or use a singleton</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsTitle">
-        <source>Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal</source>
-        <target state="new">Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal</target>
+        <source>Reuse 'JsonSerializerOptions' instances</source>
+        <target state="new">Reuse 'JsonSerializerOptions' instances</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidStringBuilderPInvokeParametersDescription">

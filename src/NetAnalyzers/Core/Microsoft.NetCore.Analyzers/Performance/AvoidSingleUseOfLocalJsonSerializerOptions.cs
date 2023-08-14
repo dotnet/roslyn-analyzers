@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.Operations;
 using System.Diagnostics.CodeAnalysis;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
@@ -94,11 +93,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             IBlockOperation? localBlock = objCreation.GetFirstParentBlock();
-            bool ret = false;
+            bool isSingleUseJsonSerializerInvocation = false;
 
-            foreach (ILocalReferenceOperation descendant in localBlock.Descendants().OfType<ILocalReferenceOperation>())
+            foreach (IOperation descendant in localBlock.Descendants())
             {
-                if (!localSymbols.Contains(descendant.Local))
+                if (descendant is not ILocalReferenceOperation localRefOperation ||
+                    !localSymbols.Contains(localRefOperation.Local))
                 {
                     continue;
                 }
@@ -107,12 +107,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 if (IsArgumentOfJsonSerializer(descendant, jsonSerializerSymbol, out bool isArgumentOfInvocation))
                 {
                     // Case: used more than once i.e: not single-use.
-                    if (ret)
+                    if (isSingleUseJsonSerializerInvocation)
                     {
                         return false;
                     }
 
-                    ret = true;
+                    isSingleUseJsonSerializerInvocation = true;
                 }
 
                 // Case: passed as argument of a non-JsonSerializer method.
@@ -139,7 +139,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
             }
 
-            return ret;
+            return isSingleUseJsonSerializerInvocation;
         }
 
         [return: NotNullIfNotNull(nameof(operation))]
@@ -168,7 +168,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return false;
         }
 
-        private static bool IsFieldOrPropertyAssignment(ILocalReferenceOperation operation)
+        private static bool IsFieldOrPropertyAssignment(IOperation operation)
         {
             IOperation? current = operation.Parent;
 

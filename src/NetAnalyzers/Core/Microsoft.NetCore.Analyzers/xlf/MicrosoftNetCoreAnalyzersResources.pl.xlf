@@ -68,18 +68,18 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsDescription">
-        <source>Reuse the 'JsonSerializerOptions' instance by moving it to a static field, or use a singleton. Single-use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.</source>
-        <target state="new">Reuse the 'JsonSerializerOptions' instance by moving it to a static field, or use a singleton. Single-use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.</target>
+        <source>Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead. Single use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.</source>
+        <target state="new">Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead. Single use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsMessage">
-        <source>Reuse the 'JsonSerializerOptions' instance by moving it to a static field, or use a singleton</source>
-        <target state="new">Reuse the 'JsonSerializerOptions' instance by moving it to a static field, or use a singleton</target>
+        <source>Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead.</source>
+        <target state="new">Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsTitle">
-        <source>Reuse 'JsonSerializerOptions' instances</source>
-        <target state="new">Reuse 'JsonSerializerOptions' instances</target>
+        <source>Cache and reuse 'JsonSerializerOptions' instances</source>
+        <target state="new">Cache and reuse 'JsonSerializerOptions' instances</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidStringBuilderPInvokeParametersDescription">

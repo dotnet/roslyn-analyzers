@@ -1788,9 +1788,9 @@ Do not guard 'Add(item)' or 'Remove(item)' with 'Contains(item)' for the set. Th
 |CodeFix|True|
 ---
 
-## [CA1869](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1869): Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal
+## [CA1869](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1869): Cache and reuse 'JsonSerializerOptions' instances
 
-Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance.
+Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead. Single use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.
 
 |Item|Value|
 |-|-|

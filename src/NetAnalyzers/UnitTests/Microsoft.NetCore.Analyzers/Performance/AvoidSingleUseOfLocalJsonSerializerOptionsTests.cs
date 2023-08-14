@@ -111,7 +111,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [InlineData("(({|CA1869:new JsonSerializerOptions()|}))")]
         [InlineData("1 == 1 ? {|CA1869:new JsonSerializerOptions()|} : null")]
         [InlineData("1 == 1 ? null : 2 == 2 ? null : {|CA1869:new JsonSerializerOptions()|}")]
-        public Task CS_UseNewLocalOptionsAsArgument_Variants(string expression) 
+        public Task CS_UseNewLocalOptionsAsArgument_Variants(string expression)
             => VerifyCS.VerifyAnalyzerAsync($$"""
                 using System.Text.Json;
 

@@ -3294,8 +3294,8 @@
         },
         "CA1869": {
           "id": "CA1869",
-          "shortDescription": "Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal",
-          "fullDescription": "Avoid single-use of local 'JsonSerializerOptions' as it is suboptimal, use a singleton instance instead to improve performance.",
+          "shortDescription": "Cache and reuse 'JsonSerializerOptions' instances",
+          "fullDescription": "Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead. Single use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1869",
           "properties": {

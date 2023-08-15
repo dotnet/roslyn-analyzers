@@ -16,3 +16,4 @@ CA1867 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1869 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1869> | Cache and reuse 'JsonSerializerOptions' instances |
 CA2021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |
 CA2261 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2261> | Do not use ConfigureAwaitOptions.SuppressThrowing with Task\<TResult> |
+CA2263 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263> | Prefer generic overload when type is known |

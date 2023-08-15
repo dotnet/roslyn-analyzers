@@ -17,7 +17,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     /// <summary>
     /// CA1514: <inheritdoc cref="MicrosoftCodeQualityAnalyzersResources.@AvoidLengthCheckWhenSlicingToEndTitle"/>
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = AvoidUnusedPrivateFieldsAnalyzer.RuleId), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class AvoidLengthCheckWhenSlicingToEndFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(AvoidLengthCheckWhenSlicingToEndAnalyzer.RuleId);

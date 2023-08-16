@@ -1295,7 +1295,7 @@ using System.Threading.Tasks;
 
 class Test {
     public async Task RunAsync(DbSet set) {
-        ctx.AddRange(1, 2);
+        set.AddRange(1, 2);
     }
 }",
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net70.WithPackages(EntityFrameworkPackages)

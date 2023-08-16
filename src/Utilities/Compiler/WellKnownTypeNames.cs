@@ -65,6 +65,7 @@ namespace Analyzer.Utilities
         public const string MicrosoftCodeAnalysisVisualBasicVisualBasicCompilation = "Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilation";
         public const string MicrosoftCodeAnalysisVisualBasicVisualBasicExtensions = "Microsoft.CodeAnalysis.VisualBasic.VisualBasicExtensions";
         public const string MicrosoftEntityFrameworkCoreDbContext = "Microsoft.EntityFrameworkCore.DbContext";
+        public const string MicrosoftEntityFrameworkCoreDbSet = "Microsoft.EntityFrameworkCore.DbSet";
         public const string MicrosoftEntityFrameworkCoreEntityFrameworkQueryableExtensions = "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions";
         public const string MicrosoftEntityFrameworkCoreRelationalQueryableExtensions = "Microsoft.EntityFrameworkCore.RelationalQueryableExtensions";
         public const string MicrosoftExtensionsLoggingILogger = "Microsoft.Extensions.Logging.ILogger";

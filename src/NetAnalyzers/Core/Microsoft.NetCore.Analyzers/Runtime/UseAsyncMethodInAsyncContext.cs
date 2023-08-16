@@ -191,7 +191,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var entityFrameworkTypeNames = new[]
             {
                 WellKnownTypeNames.MicrosoftEntityFrameworkCoreDbContext,
-                WellKnownTypeNames.MicrosoftEntityFrameworkCoreDbSet
+                WellKnownTypeNames.MicrosoftEntityFrameworkCoreDbSet1
             };
 
             var methodsBuilder = ImmutableArray.CreateBuilder<IMethodSymbol>();

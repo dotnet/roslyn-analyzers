@@ -1294,7 +1294,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 class Test {
-    public async Task RunAsync(DbSet set) {
+    public async Task RunAsync(DbSet<object> set) {
         set.AddRange(1, 2);
     }
 }",

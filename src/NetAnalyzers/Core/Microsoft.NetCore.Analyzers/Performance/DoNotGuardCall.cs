@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -15,26 +16,27 @@ namespace Microsoft.NetCore.Analyzers.Performance
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
-    /// CA1868: <inheritdoc cref="@DoNotGuardSetAddOrRemoveByContainsTitle"/>
+    /// CA1853: <inheritdoc cref="DoNotGuardDictionaryRemoveByContainsKeyTitle"/>
+    /// CA1868: <inheritdoc cref="DoNotGuardSetAddOrRemoveByContainsTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotGuardSetAddOrRemoveByContains : DiagnosticAnalyzer
+    public sealed class DoNotGuardCallAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1868";
+        internal const string DoNotGuardDictionaryRemoveByContainsKeyRuleId = "CA1853";
+        internal const string DoNotGuardSetAddOrRemoveByContainsRuleId = "CA1868";
 
-        private const string Contains = nameof(Contains);
-        private const string Add = nameof(Add);
-        private const string Remove = nameof(Remove);
+        internal static readonly DiagnosticDescriptor DoNotGuardDictionaryRemoveByContainsKeyRule = DiagnosticDescriptorHelper.Create(
+            DoNotGuardDictionaryRemoveByContainsKeyRuleId,
+            CreateLocalizableResourceString(nameof(DoNotGuardDictionaryRemoveByContainsKeyTitle)),
+            CreateLocalizableResourceString(nameof(DoNotGuardDictionaryRemoveByContainsKeyMessage)),
+            DiagnosticCategory.Performance,
+            RuleLevel.IdeSuggestion,
+            CreateLocalizableResourceString(nameof(DoNotGuardDictionaryRemoveByContainsKeyDescription)),
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
 
-        // Build custom format instead of CSharpShortErrorMessageFormat/VisualBasicShortErrorMessageFormat to prevent unhelpful messages for VB.
-        private static readonly SymbolDisplayFormat s_symbolDisplayFormat = SymbolDisplayFormat.MinimallyQualifiedFormat
-            .WithParameterOptions(SymbolDisplayParameterOptions.IncludeType)
-            .WithGenericsOptions(SymbolDisplayGenericsOptions.None)
-            .WithMemberOptions(SymbolDisplayMemberOptions.IncludeParameters | SymbolDisplayMemberOptions.IncludeContainingType)
-            .WithKindOptions(SymbolDisplayKindOptions.None);
-
-        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
-            RuleId,
+        internal static readonly DiagnosticDescriptor DoNotGuardSetAddOrRemoveByContainsRule = DiagnosticDescriptorHelper.Create(
+            DoNotGuardSetAddOrRemoveByContainsRuleId,
             CreateLocalizableResourceString(nameof(DoNotGuardSetAddOrRemoveByContainsTitle)),
             CreateLocalizableResourceString(nameof(DoNotGuardSetAddOrRemoveByContainsMessage)),
             DiagnosticCategory.Performance,
@@ -43,9 +45,42 @@ namespace Microsoft.NetCore.Analyzers.Performance
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
+        // Build custom format instead of CSharpShortErrorMessageFormat/VisualBasicShortErrorMessageFormat to prevent unhelpful messages for VB.
+        private static readonly SymbolDisplayFormat s_symbolDisplayFormat = SymbolDisplayFormat.MinimallyQualifiedFormat
+            .WithParameterOptions(SymbolDisplayParameterOptions.IncludeType)
+            .WithGenericsOptions(SymbolDisplayGenericsOptions.None)
+            .WithMemberOptions(SymbolDisplayMemberOptions.IncludeParameters | SymbolDisplayMemberOptions.IncludeContainingType)
+            .WithKindOptions(SymbolDisplayKindOptions.None);
 
-        public override void Initialize(AnalysisContext context)
+        private static readonly ImmutableHashSet<GuardedCallContext> s_guardedCallContexts = ImmutableHashSet.Create(
+            new GuardedCallContext(
+                DoNotGuardDictionaryRemoveByContainsKeyRule,
+                new ConditionMethodContext(WellKnownTypeNames.SystemCollectionsGenericIDictionary2, "ContainsKey"),
+                ImmutableArray.Create(
+                    new GuardedMethodContext(WellKnownTypeNames.SystemCollectionsGenericIDictionary2, "Remove", 1, ExpectsConditionNegated: false),
+                    new GuardedMethodContext(WellKnownTypeNames.SystemCollectionsGenericDictionary2, "Remove", 2, ExpectsConditionNegated: false))),
+            new GuardedCallContext(
+                DoNotGuardDictionaryRemoveByContainsKeyRule,
+                new ConditionMethodContext(WellKnownTypeNames.SystemCollectionsGenericIReadOnlyDictionary2, "ContainsKey"),
+                ImmutableArray.Create(
+                    new GuardedMethodContext(WellKnownTypeNames.SystemCollectionsImmutableIImmutableDictionary2, "Remove", 1, ExpectsConditionNegated: false))),
+            new GuardedCallContext(
+                DoNotGuardSetAddOrRemoveByContainsRule,
+                new ConditionMethodContext(WellKnownTypeNames.SystemCollectionsGenericICollection1, "Contains"),
+                ImmutableArray.Create(
+                    new GuardedMethodContext(WellKnownTypeNames.SystemCollectionsGenericISet1, "Add", 1, ExpectsConditionNegated: true),
+                    new GuardedMethodContext(WellKnownTypeNames.SystemCollectionsGenericICollection1, "Remove", 1, ExpectsConditionNegated: false))),
+            new GuardedCallContext(
+                DoNotGuardSetAddOrRemoveByContainsRule,
+                new ConditionMethodContext(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet1, "Contains"),
+                ImmutableArray.Create(
+                    new GuardedMethodContext(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet1, "Add", 1, ExpectsConditionNegated: true),
+                    new GuardedMethodContext(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet1, "Remove", 1, ExpectsConditionNegated: false))));
+
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+            ImmutableArray.Create(DoNotGuardDictionaryRemoveByContainsKeyRule, DoNotGuardSetAddOrRemoveByContainsRule);
+
+        public sealed override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
@@ -54,41 +89,44 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (!RequiredSymbols.TryGetSymbols(context.Compilation, out var symbols))
+            foreach (var guardedCallContext in s_guardedCallContexts)
             {
-                return;
-            }
-
-            context.RegisterOperationAction(OnConditional, OperationKind.Conditional);
-
-            void OnConditional(OperationAnalysisContext context)
-            {
-                var conditional = (IConditionalOperation)context.Operation;
-
-                if (!symbols.HasApplicableContainsMethod(conditional.Condition, out var containsInvocation, out bool containsNegated) ||
-                    !symbols.HasApplicableAddOrRemoveMethod(conditional, containsNegated, out var addOrRemoveInvocation) ||
-                    !AreInvocationsOnSameInstance(containsInvocation, addOrRemoveInvocation) ||
-                    !AreInvocationArgumentsEqual(containsInvocation, addOrRemoveInvocation))
+                if (!GuardedCallSymbols.TryGetSymbols(context.Compilation, guardedCallContext, out var symbols))
                 {
                     return;
                 }
 
-                using var locations = ArrayBuilder<Location>.GetInstance(2);
-                locations.Add(conditional.Syntax.GetLocation());
-                locations.Add(addOrRemoveInvocation.Syntax.Parent!.GetLocation());
+                context.RegisterOperationAction(OnConditional, OperationKind.Conditional);
 
-                context.ReportDiagnostic(containsInvocation.CreateDiagnostic(
-                    Rule,
-                    additionalLocations: locations.ToImmutable(),
-                    properties: null,
-                    addOrRemoveInvocation.TargetMethod.ToDisplayString(s_symbolDisplayFormat),
-                    containsInvocation.TargetMethod.ToDisplayString(s_symbolDisplayFormat)));
+                void OnConditional(OperationAnalysisContext context)
+                {
+                    var conditional = (IConditionalOperation)context.Operation;
+
+                    if (!symbols.HasApplicableConditionInvocation(conditional.Condition, out var conditionInvocation, out bool containsNegated) ||
+                        !symbols.HasApplicableGuardedInvocation(conditional, containsNegated, out var guardedInvocation) ||
+                        !AreInvocationsOnSameInstance(conditionInvocation, guardedInvocation) ||
+                        !AreInvocationArgumentsEqual(conditionInvocation, guardedInvocation))
+                    {
+                        return;
+                    }
+
+                    using var locations = ArrayBuilder<Location>.GetInstance(2);
+                    locations.Add(conditional.Syntax.GetLocation());
+                    locations.Add(guardedInvocation.Syntax.Parent!.GetLocation());
+
+                    context.ReportDiagnostic(conditionInvocation.CreateDiagnostic(
+                        guardedCallContext.Rule,
+                        additionalLocations: locations.ToImmutable(),
+                        properties: null,
+                        guardedInvocation.TargetMethod.ToDisplayString(s_symbolDisplayFormat),
+                        conditionInvocation.TargetMethod.ToDisplayString(s_symbolDisplayFormat)));
+                }
             }
         }
 
         private static bool AreInvocationsOnSameInstance(IInvocationOperation invocation1, IInvocationOperation invocation2)
         {
-            return (invocation1.Instance, invocation2.Instance) switch
+            return (invocation1.GetInstance()?.WalkDownConversion(), invocation2.GetInstance()?.WalkDownConversion()) switch
             {
                 (IFieldReferenceOperation fieldRef1, IFieldReferenceOperation fieldRef2) => fieldRef1.Member == fieldRef2.Member,
                 (IPropertyReferenceOperation propRef1, IPropertyReferenceOperation propRef2) => propRef1.Member == propRef2.Member,
@@ -98,191 +136,195 @@ namespace Microsoft.NetCore.Analyzers.Performance
             };
         }
 
-        // Checks if invocation argument values are equal
-        //   1. Not equal: Contains(item) != Add(otherItem), Contains("const") != Add("other const")
-        //   2. Identical: Contains(item) == Add(item), Contains("const") == Add("const")
         private static bool AreInvocationArgumentsEqual(IInvocationOperation invocation1, IInvocationOperation invocation2)
         {
-            return IsArgumentValueEqual(invocation1.Arguments[0].Value, invocation2.Arguments[0].Value);
+            return AreArgumentValuesEqual(GetFirstNonInstanceArgument(invocation1)?.Value, GetFirstNonInstanceArgument(invocation2)?.Value);
         }
 
-        private static bool IsArgumentValueEqual(IOperation targetArg, IOperation valueArg)
+        private static IArgumentOperation? GetFirstNonInstanceArgument(IInvocationOperation invocation)
         {
-            // Check if arguments are identical constant/local/parameter/field reference operations.
-            if (targetArg.Kind != valueArg.Kind)
+            // Return the second argument in parameter order for extension methods with no instance
+            var parameterIndex = invocation.IsExtensionMethodAndHasNoInstance() ? 1 : 0;
+            invocation.Arguments.TryGetArgumentForParameterAtIndex(parameterIndex, out var argument);
+
+            return argument;
+        }
+
+        // Check if arguments are identical constant/local/parameter/field reference operations.
+        private static bool AreArgumentValuesEqual(IOperation? argumentValue1, IOperation? argumentValue2)
+        {
+            if (argumentValue1 is null || argumentValue2 is null ||
+                argumentValue1.Kind != argumentValue2.Kind ||
+                argumentValue1.ConstantValue.HasValue != argumentValue2.ConstantValue.HasValue)
             {
                 return false;
             }
 
-            if (targetArg.ConstantValue.HasValue != valueArg.ConstantValue.HasValue)
+            if (argumentValue1.ConstantValue.HasValue)
             {
-                return false;
+                return Equals(argumentValue1.ConstantValue.Value, argumentValue2.ConstantValue.Value);
             }
 
-            if (targetArg.ConstantValue.HasValue)
-            {
-                return Equals(targetArg.ConstantValue.Value, valueArg.ConstantValue.Value);
-            }
-
-            return targetArg switch
+            return argumentValue1 switch
             {
                 ILocalReferenceOperation targetLocalReference =>
-                    SymbolEqualityComparer.Default.Equals(targetLocalReference.Local, ((ILocalReferenceOperation)valueArg).Local),
+                    SymbolEqualityComparer.Default.Equals(targetLocalReference.Local, ((ILocalReferenceOperation)argumentValue2).Local),
                 IParameterReferenceOperation targetParameterReference =>
-                    SymbolEqualityComparer.Default.Equals(targetParameterReference.Parameter, ((IParameterReferenceOperation)valueArg).Parameter),
+                    SymbolEqualityComparer.Default.Equals(targetParameterReference.Parameter, ((IParameterReferenceOperation)argumentValue2).Parameter),
                 IFieldReferenceOperation fieldParameterReference =>
-                    SymbolEqualityComparer.Default.Equals(fieldParameterReference.Member, ((IFieldReferenceOperation)valueArg).Member),
+                    SymbolEqualityComparer.Default.Equals(fieldParameterReference.Member, ((IFieldReferenceOperation)argumentValue2).Member),
                 _ => false,
             };
         }
 
-        private static bool DoesImplementInterfaceMethod(IMethodSymbol? method, IMethodSymbol? interfaceMethod)
+        private static bool DoesImplementInterfaceMethod(IMethodSymbol? method, IMethodSymbol? interfaceMethod, Compilation compilation)
         {
-            if (method is null || interfaceMethod is null || method.Parameters.Length != 1)
+            if (method is null || interfaceMethod is null)
             {
                 return false;
             }
 
-            var typedInterface = interfaceMethod.ContainingType.Construct(method.Parameters[0].Type);
-            var typedInterfaceMethod = typedInterface.GetMembers(interfaceMethod.Name).FirstOrDefault();
-
-            // Also check against all original definitions to also cover external interface implementations
-            return SymbolEqualityComparer.Default.Equals(method, typedInterfaceMethod) ||
-                method.GetOriginalDefinitions().Any(definition => SymbolEqualityComparer.Default.Equals(definition, typedInterfaceMethod));
-        }
-
-        internal sealed class RequiredSymbols
-        {
-            private RequiredSymbols(IMethodSymbol addMethod, IMethodSymbol removeMethod, IMethodSymbol containsMethod, IMethodSymbol? addMethodImmutableSet, IMethodSymbol? removeMethodImmutableSet, IMethodSymbol? containsMethodImmutableSet)
+            // This also covers implementation through extension methods, like CollectionExtensions.Remove(IDictionary<TKey, TValue>, TKey, out TValue)
+            if (method.IsExtensionMethod)
             {
-                AddMethod = addMethod;
-                RemoveMethod = removeMethod;
-                ContainsMethod = containsMethod;
-                AddMethodImmutableSet = addMethodImmutableSet;
-                RemoveMethodImmutableSet = removeMethodImmutableSet;
-                ContainsMethodImmutableSet = containsMethodImmutableSet;
+                if (method.ReducedFrom is null && method.Parameters.Length > 0)
+                {
+                    method = method.ReduceExtensionMethod(method.Parameters[0].Type) ?? method;
+                }
+
+                return method.Name.Equals(interfaceMethod.Name, StringComparison.Ordinal) &&
+                    method.OriginalDefinition.ParametersAreSame(interfaceMethod) &&
+                    method.OriginalDefinition.ReturnType.IsAssignableTo(interfaceMethod.ReturnType, compilation);
             }
 
-            public static bool TryGetSymbols(Compilation compilation, [NotNullWhen(true)] out RequiredSymbols? symbols)
+            var originalDefinitions = method.GetOriginalDefinitions().WhereAsArray(m => method.ReturnType.IsAssignableTo(m.ReturnType, compilation));
+
+            // For both branches use the original definition as the interface method is non-constructed.
+            if (originalDefinitions.Length == 0)
+            {
+                // This branch is for access through interface types.
+                return SymbolEqualityComparer.Default.Equals(method.OriginalDefinition, interfaceMethod);
+            }
+            else
+            {
+                return originalDefinitions.Any(o => SymbolEqualityComparer.Default.Equals(o.OriginalDefinition, interfaceMethod));
+            }
+        }
+
+        private record ConditionMethodContext(string ContainingTypeName, string Name);
+        private record GuardedMethodContext(string ContainingTypeName, string Name, int ParameterCount, bool ExpectsConditionNegated);
+        private record GuardedCallContext(DiagnosticDescriptor Rule, ConditionMethodContext ConditionMethodContext, ImmutableArray<GuardedMethodContext> GuardedMethodContexts);
+        private record GuardedMethod(IMethodSymbol Symbol, bool ExpectsConditionNegated);
+
+        private class GuardedCallSymbols
+        {
+            private readonly Compilation _compilation;
+            private readonly IMethodSymbol _conditionMethod;
+            private readonly ImmutableArray<GuardedMethod> _guardedMethods;
+
+            private GuardedCallSymbols(Compilation compilation, IMethodSymbol conditionMethod, ImmutableArray<GuardedMethod> guardedMethods)
+            {
+                _compilation = compilation;
+                _conditionMethod = conditionMethod;
+                _guardedMethods = guardedMethods;
+            }
+
+            public static bool TryGetSymbols(Compilation compilation, GuardedCallContext context, [NotNullWhen(true)] out GuardedCallSymbols? symbols)
             {
                 symbols = default;
 
                 var typeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
-                var iSetType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericISet1);
-                var iCollectionType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
+                var conditionMethodType = typeProvider.GetOrCreateTypeByMetadataName(context.ConditionMethodContext.ContainingTypeName);
+                var conditionMethod = conditionMethodType?
+                    .GetMembers(context.ConditionMethodContext.Name)
+                    .OfType<IMethodSymbol>()
+                    .FirstOrDefault();
 
-                if (iSetType is null || iCollectionType is null)
+                if (conditionMethodType is null || conditionMethod is null)
                 {
                     return false;
                 }
 
-                IMethodSymbol? addMethod = iSetType.GetMembers(Add).OfType<IMethodSymbol>().FirstOrDefault();
-                IMethodSymbol? removeMethod = null;
-                IMethodSymbol? containsMethod = null;
+                var guardedMethodsBuilder = ImmutableArray.CreateBuilder<GuardedMethod>();
 
-                foreach (var method in iCollectionType.GetMembers().OfType<IMethodSymbol>())
+                foreach (var guardedMethodContext in context.GuardedMethodContexts)
                 {
-                    switch (method.Name)
+                    var guardedMethodType = typeProvider.GetOrCreateTypeByMetadataName(guardedMethodContext.ContainingTypeName);
+                    var guardedMethod = guardedMethodType?
+                        .GetMembers(guardedMethodContext.Name)
+                        .OfType<IMethodSymbol>()
+                        .Where(m => m.Parameters.Length == guardedMethodContext.ParameterCount)
+                        .FirstOrDefault();
+
+                    if (guardedMethodType is null || guardedMethod is null)
                     {
-                        case Remove: removeMethod = method; break;
-                        case Contains: containsMethod = method; break;
+                        return false;
                     }
+
+                    guardedMethodsBuilder.Add(new GuardedMethod(guardedMethod, guardedMethodContext.ExpectsConditionNegated));
                 }
 
-                if (addMethod is null || removeMethod is null || containsMethod is null)
-                {
-                    return false;
-                }
-
-                IMethodSymbol? addMethodImmutableSet = null;
-                IMethodSymbol? removeMethodImmutableSet = null;
-                IMethodSymbol? containsMethodImmutableSet = null;
-
-                // The methods from IImmutableSet are optional and will not lead to a code fix.
-                var iImmutableSetType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet1);
-
-                if (iImmutableSetType is not null)
-                {
-                    foreach (var method in iImmutableSetType.GetMembers().OfType<IMethodSymbol>())
-                    {
-                        switch (method.Name)
-                        {
-                            case Add: addMethodImmutableSet = method; break;
-                            case Remove: removeMethodImmutableSet = method; break;
-                            case Contains: containsMethodImmutableSet = method; break;
-                        }
-                    }
-                }
-
-                symbols = new RequiredSymbols(
-                    addMethod, removeMethod, containsMethod,
-                    addMethodImmutableSet, removeMethodImmutableSet, containsMethodImmutableSet);
+                symbols = new GuardedCallSymbols(compilation, conditionMethod, guardedMethodsBuilder.ToImmutable());
 
                 return true;
             }
 
-            // A condition contains an applicable 'Contains' method in the following cases:
-            //   1. The condition contains only the 'Contains' invocation.
-            //   2. The condition contains a unary not operation where the operand is a 'Contains' invocation.
-            //
-            // In all cases, the invocation must implement either 'ICollection.Contains' or 'IImmutableSet.Contains'.
-            public bool HasApplicableContainsMethod(
+            // A condition contains an applicable invocation if one of the following is true:
+            //   1. The condition contains only the invocation and the target method implements the condition method.
+            //   2. The condition contains an unary not operation where the operand is an invocation that satisfies the first case.
+            public bool HasApplicableConditionInvocation(
                 IOperation condition,
-                [NotNullWhen(true)] out IInvocationOperation? containsInvocation,
-                out bool containsNegated)
+                [NotNullWhen(true)] out IInvocationOperation? conditionInvocation,
+                out bool conditionNegated)
             {
-                containsNegated = false;
-                containsInvocation = null;
+                conditionNegated = false;
+                conditionInvocation = null;
 
                 switch (condition.WalkDownParentheses())
                 {
                     case IInvocationOperation invocation:
-                        containsInvocation = invocation;
+                        conditionInvocation = invocation;
                         break;
                     case IUnaryOperation unaryOperation when unaryOperation.OperatorKind == UnaryOperatorKind.Not && unaryOperation.Operand is IInvocationOperation operand:
-                        containsNegated = true;
-                        containsInvocation = operand;
+                        conditionNegated = true;
+                        conditionInvocation = operand;
                         break;
                     default:
                         return false;
                 }
 
-                return DoesImplementInterfaceMethod(containsInvocation.TargetMethod, ContainsMethod) ||
-                    DoesImplementInterfaceMethod(containsInvocation.TargetMethod, ContainsMethodImmutableSet);
+                return DoesImplementInterfaceMethod(conditionInvocation.TargetMethod, _conditionMethod, _compilation);
             }
 
-            // A conditional contains an applicable 'Add' or 'Remove' method if the first operation of WhenTrue or WhenFalse satisfies one of the following:
-            //   1. The operation is an invocation of 'Add' or 'Remove'.
+            // A conditional contains an applicable guarded invocation if the first operation of WhenTrue or WhenFalse satisfies one of the following:
+            //   1. The operation is a guarded invocation itself.
             //   2. The operation is either a simple assignment or an expression statement.
-            //      In this case the child statements are checked if they contain an invocation of 'Add' or 'Remove'.
+            //      In this case the child statements are checked if they contain a guarded invocation.
             //   3. The operation is a variable group declaration.
-            //      In this case the descendants are checked if they contain an invocation of 'Add' or 'Remove'.
-            // OR when the WhenTrue or WhenFalse is a InvocationOperation (in the case of a ternary operator).
+            //      In this case the descendants are checked if they contain a guarded invocation.
+            // OR when the WhenTrue or WhenFalse is an InvocationOperation (in the case of a ternary operator).
             //
-            // In all cases, the invocation must implement either
-            //   1. 'ISet.Add' or 'IImmutableSet.Add'
-            //   2. 'ICollection.Remove' or 'IImmutableSet.Remove'
-            public bool HasApplicableAddOrRemoveMethod(
+            // In all cases, the target method must implement any guarded method and the condition negation must match the expected (or differ for the when false case).
+            public bool HasApplicableGuardedInvocation(
                 IConditionalOperation conditional,
-                bool containsNegated,
-                [NotNullWhen(true)] out IInvocationOperation? addOrRemoveInvocation)
+                bool conditionNegated,
+                [NotNullWhen(true)] out IInvocationOperation? guardedInvocation)
             {
-                addOrRemoveInvocation = GetApplicableAddOrRemove(conditional.WhenTrue, extractAdd: containsNegated);
+                guardedInvocation = GetApplicableGuardedInvocation(conditional.WhenTrue, conditionNegated);
 
-                if (addOrRemoveInvocation is null)
+                if (guardedInvocation is null)
                 {
-                    addOrRemoveInvocation = GetApplicableAddOrRemove(conditional.WhenFalse, extractAdd: !containsNegated);
+                    guardedInvocation = GetApplicableGuardedInvocation(conditional.WhenFalse, !conditionNegated);
                 }
 
-                return addOrRemoveInvocation is not null;
+                return guardedInvocation is not null;
             }
 
-            private IInvocationOperation? GetApplicableAddOrRemove(IOperation? operation, bool extractAdd)
+            private IInvocationOperation? GetApplicableGuardedInvocation(IOperation? operation, bool conditionNegated)
             {
                 if (operation is IInvocationOperation ternaryInvocation)
                 {
-                    if ((extractAdd && IsAnyAddMethod(ternaryInvocation.TargetMethod)) ||
-                        (!extractAdd && IsAnyRemoveMethod(ternaryInvocation.TargetMethod)))
+                    if (IsAnyGuardedMethod(ternaryInvocation.TargetMethod, conditionNegated))
                     {
                         return ternaryInvocation;
                     }
@@ -293,8 +335,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 switch (firstChildOperation)
                 {
                     case IInvocationOperation invocation:
-                        if ((extractAdd && IsAnyAddMethod(invocation.TargetMethod)) ||
-                            (!extractAdd && IsAnyRemoveMethod(invocation.TargetMethod)))
+                        if (IsAnyGuardedMethod(invocation.TargetMethod, conditionNegated))
                         {
                             return invocation;
                         }
@@ -305,9 +346,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     case IExpressionStatementOperation:
                         var firstChildAddOrRemove = firstChildOperation.Children
                             .OfType<IInvocationOperation>()
-                            .FirstOrDefault(i => extractAdd ?
-                                IsAnyAddMethod(i.TargetMethod) :
-                                IsAnyRemoveMethod(i.TargetMethod));
+                            .FirstOrDefault(i => IsAnyGuardedMethod(i.TargetMethod, conditionNegated));
 
                         if (firstChildAddOrRemove != null)
                         {
@@ -319,9 +358,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     case IVariableDeclarationGroupOperation variableDeclarationGroup:
                         var firstDescendantAddOrRemove = firstChildOperation.Descendants()
                             .OfType<IInvocationOperation>()
-                            .FirstOrDefault(i => extractAdd ?
-                                IsAnyAddMethod(i.TargetMethod) :
-                                IsAnyRemoveMethod(i.TargetMethod));
+                            .FirstOrDefault(i => IsAnyGuardedMethod(i.TargetMethod, conditionNegated));
 
                         if (firstDescendantAddOrRemove != null)
                         {
@@ -334,24 +371,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return null;
             }
 
-            private bool IsAnyAddMethod(IMethodSymbol method)
+            private bool IsAnyGuardedMethod(IMethodSymbol method, bool conditionNegated)
             {
-                return DoesImplementInterfaceMethod(method, AddMethod) ||
-                    DoesImplementInterfaceMethod(method, AddMethodImmutableSet);
+                return _guardedMethods.Any(m => m.ExpectsConditionNegated == conditionNegated && DoesImplementInterfaceMethod(method, m.Symbol, _compilation));
             }
-
-            private bool IsAnyRemoveMethod(IMethodSymbol method)
-            {
-                return DoesImplementInterfaceMethod(method, RemoveMethod) ||
-                    DoesImplementInterfaceMethod(method, RemoveMethodImmutableSet);
-            }
-
-            public IMethodSymbol AddMethod { get; }
-            public IMethodSymbol RemoveMethod { get; }
-            public IMethodSymbol ContainsMethod { get; }
-            public IMethodSymbol? AddMethodImmutableSet { get; }
-            public IMethodSymbol? RemoveMethodImmutableSet { get; }
-            public IMethodSymbol? ContainsMethodImmutableSet { get; }
         }
     }
 }

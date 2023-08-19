@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.IO;
 using Microsoft.CodeAnalysis;
@@ -11,6 +10,13 @@ namespace Test.Utilities
 {
     public static class AdditionalMetadataReferences
     {
+        public static ReferenceAssemblies Net80 { get; } = new ReferenceAssemblies(
+            "net8.0",
+            new PackageIdentity(
+                "Microsoft.NETCore.App.Ref",
+                "8.0.0-preview.6.23329.7"),
+            Path.Combine("ref", "net8.0"));
+
         public static ReferenceAssemblies Default { get; } = CreateDefaultReferenceAssemblies();
 
         public static ReferenceAssemblies DefaultWithoutRoslynSymbols { get; } = ReferenceAssemblies.Default
@@ -21,8 +27,9 @@ namespace Test.Utilities
             .AddAssemblies(ImmutableArray.Create("System.Web", "System.Web.Extensions"));
 
         public static ReferenceAssemblies DefaultForTaintedDataAnalysis { get; } = ReferenceAssemblies.NetFramework.Net472.Default
-            .AddAssemblies(ImmutableArray.Create("PresentationFramework", "System.DirectoryServices", "System.Web", "System.Web.Extensions", "System.Xaml"))
+            .AddAssemblies(ImmutableArray.Create("PresentationFramework", "System.Web", "System.Web.Extensions", "System.Xaml"))
             .AddPackages(ImmutableArray.Create(
+                new PackageIdentity("System.DirectoryServices", "6.0.1"),
                 new PackageIdentity("AntiXSS", "4.3.0"),
                 new PackageIdentity("Microsoft.AspNetCore.Mvc", "2.2.0"),
                 new PackageIdentity("Microsoft.EntityFrameworkCore.Relational", "2.0.3")));
@@ -79,7 +86,6 @@ namespace Test.Utilities
         public static MetadataReference SystemRuntimeSerialization { get; } = MetadataReference.CreateFromFile(typeof(System.Runtime.Serialization.NetDataContractSerializer).Assembly.Location);
 #endif
         public static MetadataReference TestReferenceAssembly { get; } = MetadataReference.CreateFromFile(typeof(OtherDll.OtherDllStaticMethods).Assembly.Location);
-        public static MetadataReference SystemDirectoryServices { get; } = MetadataReference.CreateFromFile(typeof(System.DirectoryServices.DirectoryEntry).Assembly.Location);
 #if !NETCOREAPP
         public static MetadataReference SystemXaml { get; } = MetadataReference.CreateFromFile(typeof(System.Xaml.XamlReader).Assembly.Location);
         public static MetadataReference PresentationFramework { get; } = MetadataReference.CreateFromFile(typeof(System.Windows.Markup.XamlReader).Assembly.Location);
@@ -87,19 +93,6 @@ namespace Test.Utilities
         public static MetadataReference SystemWebExtensions { get; } = MetadataReference.CreateFromFile(typeof(System.Web.Script.Serialization.JavaScriptSerializer).Assembly.Location);
         public static MetadataReference SystemServiceModel { get; } = MetadataReference.CreateFromFile(typeof(System.ServiceModel.OperationContractAttribute).Assembly.Location);
 #endif
-
-        private static readonly Lazy<ReferenceAssemblies> _lazyNet60 =
-            new(() =>
-            {
-                return new ReferenceAssemblies(
-                    "net6.0",
-                    new PackageIdentity(
-                        "Microsoft.NETCore.App.Ref",
-                        "6.0.0-rc.1.21451.13"),
-                    Path.Combine("ref", "net6.0"));
-            });
-
-        public static ReferenceAssemblies Net60 => _lazyNet60.Value;
 
         private static ReferenceAssemblies CreateDefaultReferenceAssemblies()
         {

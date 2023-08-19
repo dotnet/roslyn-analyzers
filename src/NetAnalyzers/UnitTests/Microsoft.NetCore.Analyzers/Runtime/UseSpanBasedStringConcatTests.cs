@@ -268,7 +268,7 @@ var _ = {|#0:Fwd({|#1:foo.Substring(1) + bar.Substring(1)|}) + Fwd({|#2:foo.Subs
                     @"
 var _ = string.Concat(Fwd(string.Concat(foo.AsSpan(1), bar.AsSpan(1))), Fwd(string.Concat(foo.AsSpan(1), bar)).AsSpan(1), Fwd(string.Concat(foo, bar.AsSpan(1))));",
                     new[] { 0, 1, 2, 3 },
-                    4, 3, 3
+                    4, 2, 2
                 };
             }
         }
@@ -312,7 +312,7 @@ Dim s = {|#0:Fwd({|#1:foo.Substring(1) & bar.Substring(1)|}) & Fwd({|#2:foo.Subs
                     @"
 Dim s = String.Concat(Fwd(String.Concat(foo.AsSpan(1), bar.AsSpan(1))), Fwd(String.Concat(foo.AsSpan(1), bar)).AsSpan(1), Fwd(String.Concat(foo, bar.AsSpan(1))))",
                     new[] { 0, 1, 2, 3 },
-                    4, 3, 3
+                    4, 2, 2
                 };
             }
         }
@@ -758,6 +758,31 @@ Dim s As String = {expression}";
             {
                 TestCode = VBUsings + VBWithBody(statements),
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+            };
+            return test.RunAsync();
+        }
+
+        [Fact]
+        public Task TestSystemImportedFromGlobalUsing()
+        {
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        "global using System;", CSWithBody("var _ = [|foo + bar.Substring(1)|];"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        "global using System;", CSWithBody("var _ = string.Concat(foo, bar.AsSpan(1));"),
+                    },
+                },
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp10,
             };
             return test.RunAsync();
         }

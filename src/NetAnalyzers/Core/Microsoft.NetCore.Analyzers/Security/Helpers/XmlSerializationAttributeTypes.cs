@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.NetCore.Analyzers.Security.Helpers
@@ -10,7 +10,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
     /// Just a common way to get <see cref="INamedTypeSymbol"/>s for attributes that affect XML serialization.
     /// </summary>
     /// <remarks>
-    /// https://learn.microsoft.com/en-us/dotnet/standard/serialization/attributes-that-control-xml-serialization
+    /// https://learn.microsoft.com/dotnet/standard/serialization/attributes-that-control-xml-serialization
     /// </remarks>
     public class XmlSerializationAttributeTypes
     {
@@ -89,20 +89,20 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         /// <returns>True if the symbol has an XML serialization attribute on it, false otherwise.</returns>
         public bool HasAnyAttribute(ISymbol symbol)
         {
-            return symbol.GetAttributes().Any(attributeData =>
-                attributeData.AttributeClass.Equals(this.XmlAnyAttributeAttribute)
-                || attributeData.AttributeClass.Equals(this.XmlAnyElementAttribute)
-                || attributeData.AttributeClass.Equals(this.XmlArrayAttribute)
-                || attributeData.AttributeClass.Equals(this.XmlArrayItemAttribute)
-                || attributeData.AttributeClass.Equals(this.XmlAttributeAttribute)
-                || attributeData.AttributeClass.Equals(this.XmlChoiceIdentifierAttribute)
-                || attributeData.AttributeClass.Equals(this.XmlElementAttribute)
-                || attributeData.AttributeClass.Equals(this.XmlEnumAttribute)
-                || attributeData.AttributeClass.Equals(this.XmlIgnoreAttribute)
-                || attributeData.AttributeClass.Equals(this.XmlIncludeAttribute)
-                || attributeData.AttributeClass.Equals(this.XmlRootAttribute)
-                || attributeData.AttributeClass.Equals(this.XmlTextAttribute)
-                || attributeData.AttributeClass.Equals(this.XmlTypeAttribute));
+            return symbol.HasAnyAttribute(
+                this.XmlAnyAttributeAttribute,
+                this.XmlAnyElementAttribute,
+                this.XmlArrayAttribute,
+                this.XmlArrayItemAttribute,
+                this.XmlAttributeAttribute,
+                this.XmlChoiceIdentifierAttribute,
+                this.XmlElementAttribute,
+                this.XmlEnumAttribute,
+                this.XmlIgnoreAttribute,
+                this.XmlIncludeAttribute,
+                this.XmlRootAttribute,
+                this.XmlTextAttribute,
+                this.XmlTypeAttribute);
         }
     }
 }

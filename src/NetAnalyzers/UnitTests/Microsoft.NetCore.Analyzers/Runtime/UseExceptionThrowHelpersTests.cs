@@ -100,12 +100,12 @@ class C
         {|CA1510:if (arg is null)
             throw new ArgumentNullException(nameof(arg));|}
         {|CA1510:if (arg == null)
-            throw new ArgumentNullException(nameof(arg), (string)null);|}
+            throw new ArgumentNullException(""arg"", (string)null);|}
         {|CA1510:if (null == arg)
             throw new ArgumentNullException(nameof(arg));|}
         {|CA1510:if (arg is null)
         {
-            throw new ArgumentNullException(nameof(arg));
+            throw new ArgumentNullException(""arg"");
         }|}
         {|CA1510:if (arg == null)
         {
@@ -165,8 +165,19 @@ class C
             Console.WriteLine(arg);
         }
 
+        if (arg is null)
+            throw new ArgumentNullException(ComputeName(nameof(arg)));
+
+        if (arg is null)
+            throw new ArgumentNullException(innerException: null, paramName: ComputeName(nameof(arg)));
+
+        if (arg is null)
+            throw new ArgumentNullException(IntPtr.Size == 8 ? ""arg"" : ""arg"");
+
         throw new ArgumentNullException(nameof(arg)); // no guard
     }
+
+    static string ComputeName(string arg) => arg;
 
     string this[string name]
     {
@@ -282,8 +293,19 @@ class C
             Console.WriteLine(arg);
         }
 
+        if (arg is null)
+            throw new ArgumentNullException(ComputeName(nameof(arg)));
+
+        if (arg is null)
+            throw new ArgumentNullException(innerException: null, paramName: ComputeName(nameof(arg)));
+
+        if (arg is null)
+            throw new ArgumentNullException(IntPtr.Size == 8 ? ""arg"" : ""arg"");
+
         throw new ArgumentNullException(nameof(arg)); // no guard
     }
+
+    static string ComputeName(string arg) => arg;
 
     string this[string name]
     {
@@ -330,7 +352,6 @@ class GenericType<T>
 "
             }.RunAsync();
         }
-
 
         [Fact]
         public async Task ArgumentNullExceptionThrowIfNull_EnsureSystemIsUsed()
@@ -690,6 +711,8 @@ namespace System
         public static void ThrowIfGreaterThanOrEqual<T>(T arg, T other) { }
         public static void ThrowIfLessThan<T>(T arg, T other) { }
         public static void ThrowIfLessThanOrEqual<T>(T arg, T other) { }
+        public static void ThrowIfEqual<T>(T arg, T other) { }
+        public static void ThrowIfNotEqual<T>(T arg, T other) { }
     }
 }
 
@@ -742,6 +765,23 @@ class C
             throw new ArgumentOutOfRangeException(nameof(arg));
         }|}
 
+        {|CA1512:if (arg == 42)
+        {
+            throw new ArgumentOutOfRangeException(nameof(arg));
+        }|}
+        {|CA1512:if (42 == arg)
+        {
+            throw new ArgumentOutOfRangeException(nameof(arg));
+        }|}
+        {|CA1512:if (arg != 42)
+        {
+            throw new ArgumentOutOfRangeException(nameof(arg));
+        }|}
+        {|CA1512:if (42 != arg)
+        {
+            throw new ArgumentOutOfRangeException(nameof(arg));
+        }|}
+
         {|CA1512:if (arg > (int)TimeSpan.FromSeconds(42).TotalSeconds)
         {
             throw new ArgumentOutOfRangeException(nameof(arg));
@@ -752,9 +792,6 @@ class C
         }|}
 
         if (arg is 42)
-            throw new ArgumentOutOfRangeException(nameof(arg));
-
-        if (arg == 42)
             throw new ArgumentOutOfRangeException(nameof(arg));
 
         if (arg is 0)
@@ -802,6 +839,8 @@ namespace System
         public static void ThrowIfGreaterThanOrEqual<T>(T arg, T other) { }
         public static void ThrowIfLessThan<T>(T arg, T other) { }
         public static void ThrowIfLessThanOrEqual<T>(T arg, T other) { }
+        public static void ThrowIfEqual<T>(T arg, T other) { }
+        public static void ThrowIfNotEqual<T>(T arg, T other) { }
     }
 }
 
@@ -831,13 +870,15 @@ class C
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(arg, 42);
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(arg, 42);
 
+        ArgumentOutOfRangeException.ThrowIfEqual(arg, 42);
+        ArgumentOutOfRangeException.ThrowIfEqual(arg, 42);
+        ArgumentOutOfRangeException.ThrowIfNotEqual(arg, 42);
+        ArgumentOutOfRangeException.ThrowIfNotEqual(arg, 42);
+
         ArgumentOutOfRangeException.ThrowIfGreaterThan(arg, (int)TimeSpan.FromSeconds(42).TotalSeconds);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(arg, (int)TimeSpan.FromSeconds(42).TotalSeconds);
 
         if (arg is 42)
-            throw new ArgumentOutOfRangeException(nameof(arg));
-
-        if (arg == 42)
             throw new ArgumentOutOfRangeException(nameof(arg));
 
         if (arg is 0)
@@ -865,6 +906,50 @@ class C
     {
         if (arg < 0)
             throw new ArgumentOutOfRangeException(nameof(arg));
+    }
+}
+"
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task ArgumentOutOfRangeExceptionThrowIf_NoDiagnosticForMissingHelper()
+        {
+            await new VerifyCS.Test()
+            {
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                TestCode =
+@"
+using System;
+
+namespace System
+{
+    public class ArgumentOutOfRangeException : Exception
+    {
+        public ArgumentOutOfRangeException(string paramName) { }
+        public ArgumentOutOfRangeException(string paramName, string message) { }
+        public static void ThrowIfZero<T>(T arg) { }
+        public static void ThrowIfNegative<T>(T arg) { }
+        public static void ThrowIfNegativeOrZero<T>(T arg) { }
+        public static void ThrowIfGreaterThan<T>(T arg, T other) { }
+        public static void ThrowIfGreaterThanOrEqual<T>(T arg, T other) { }
+        public static void ThrowIfLessThan<T>(T arg, T other) { }
+        public static void ThrowIfLessThanOrEqual<T>(T arg, T other) { }
+    }
+}
+
+class C
+{
+    void M(int arg)
+    {
+        if (arg != 42)
+        {
+            throw new ArgumentOutOfRangeException(nameof(arg));
+        }
+        if (42 != arg)
+        {
+            throw new ArgumentOutOfRangeException(nameof(arg));
+        }
     }
 }
 "
@@ -981,6 +1066,17 @@ class C
         }
     }
 }
+
+struct S
+{
+    private bool IsDisposed { get; set; }
+
+    void M()
+    {
+        if (IsDisposed) throw new ObjectDisposedException(null);
+        if (IsDisposed) throw new ObjectDisposedException(this.GetType().FullName);
+    }
+}
 ",
                 FixedCode =
 @"
@@ -1034,6 +1130,17 @@ class C
         }
     }
 }
+
+struct S
+{
+    private bool IsDisposed { get; set; }
+
+    void M()
+    {
+        if (IsDisposed) throw new ObjectDisposedException(null);
+        if (IsDisposed) throw new ObjectDisposedException(this.GetType().FullName);
+    }
+}
 "
             };
             test.FixedState.MarkupHandling = CodeAnalysis.Testing.MarkupMode.Allow;
@@ -1062,6 +1169,10 @@ Class C
         End If|}
 
         {|CA1512:If value < 42 Then
+        	 Throw New ArgumentOutOfRangeException(nameof(value))
+        End If|}
+
+        {|CA1512:If value = 42 Then
         	 Throw New ArgumentOutOfRangeException(nameof(value))
         End If|}
     End Sub
@@ -1123,6 +1234,12 @@ Namespace System
 
         Public Shared Sub ThrowIfLessThanOrEqual(Of T)(ByVal arg As T, ByVal other As T)
         End Sub
+
+        Public Shared Sub ThrowIfEqual(Of T)(ByVal arg As T, ByVal other As T)
+        End Sub
+
+        Public Shared Sub ThrowIfNotEqual(Of T)(ByVal arg As T, ByVal other As T)
+        End Sub
     End Class
 
     Public Class ObjectDisposedException
@@ -1154,6 +1271,8 @@ Class C
         ObjectDisposedException.ThrowIf(arg Is Nothing, Me)
 
         ArgumentOutOfRangeException.ThrowIfLessThan(value, 42)
+
+        ArgumentOutOfRangeException.ThrowIfEqual(value, 42)
     End Sub
 End Class
 
@@ -1212,6 +1331,12 @@ Namespace System
         End Sub
 
         Public Shared Sub ThrowIfLessThanOrEqual(Of T)(ByVal arg As T, ByVal other As T)
+        End Sub
+
+        Public Shared Sub ThrowIfEqual(Of T)(ByVal arg As T, ByVal other As T)
+        End Sub
+
+        Public Shared Sub ThrowIfNotEqual(Of T)(ByVal arg As T, ByVal other As T)
         End Sub
     End Class
 

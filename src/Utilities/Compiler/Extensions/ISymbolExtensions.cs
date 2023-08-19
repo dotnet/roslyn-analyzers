@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 #nullable disable warnings
 
@@ -94,7 +94,7 @@ namespace Analyzer.Utilities.Extensions
 
         public static bool IsConstructor([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
-            return (symbol as IMethodSymbol)?.MethodKind == MethodKind.Constructor;
+            return symbol is IMethodSymbol { MethodKind: MethodKind.Constructor };
         }
 
         public static bool IsDestructor([NotNullWhen(returnValue: true)] this ISymbol? symbol)
@@ -104,7 +104,7 @@ namespace Analyzer.Utilities.Extensions
 
         public static bool IsIndexer([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
-            return (symbol as IPropertySymbol)?.IsIndexer == true;
+            return symbol is IPropertySymbol { IsIndexer: true };
         }
 
         public static bool IsPropertyWithBackingField([NotNullWhen(returnValue: true)] this ISymbol? symbol, [NotNullWhen(true)] out IFieldSymbol? backingField)
@@ -153,12 +153,12 @@ namespace Analyzer.Utilities.Extensions
 
         public static bool IsUserDefinedOperator([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
-            return (symbol as IMethodSymbol)?.MethodKind == MethodKind.UserDefinedOperator;
+            return symbol is IMethodSymbol { MethodKind: MethodKind.UserDefinedOperator };
         }
 
         public static bool IsConversionOperator([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
-            return (symbol as IMethodSymbol)?.MethodKind == MethodKind.Conversion;
+            return symbol is IMethodSymbol { MethodKind: MethodKind.Conversion };
         }
 
         public static ImmutableArray<IParameterSymbol> GetParameters(this ISymbol? symbol)
@@ -621,6 +621,44 @@ namespace Analyzer.Utilities.Extensions
             };
         }
 
+        public static AttributeData? GetAttribute(this ISymbol symbol, [NotNullWhen(true)] INamedTypeSymbol? attributeType)
+        {
+            return symbol.GetAttributes(attributeType).FirstOrDefault();
+        }
+
+        public static IEnumerable<AttributeData> GetAttributes(this ISymbol symbol, IEnumerable<INamedTypeSymbol?> attributesToMatch)
+        {
+            foreach (var attribute in symbol.GetAttributes())
+            {
+                if (attribute.AttributeClass == null)
+                    continue;
+
+                foreach (var attributeToMatch in attributesToMatch)
+                {
+                    if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, attributeToMatch))
+                    {
+                        yield return attribute;
+                        break;
+                    }
+                }
+            }
+        }
+
+        public static IEnumerable<AttributeData> GetAttributes(this ISymbol symbol, params INamedTypeSymbol?[] attributeTypesToMatch)
+        {
+            return symbol.GetAttributes(attributesToMatch: attributeTypesToMatch);
+        }
+
+        public static bool HasAnyAttribute(this ISymbol symbol, IEnumerable<INamedTypeSymbol> attributesToMatch)
+        {
+            return symbol.GetAttributes(attributesToMatch).Any();
+        }
+
+        public static bool HasAnyAttribute(this ISymbol symbol, params INamedTypeSymbol?[] attributeTypesToMatch)
+        {
+            return symbol.GetAttributes(attributeTypesToMatch).Any();
+        }
+
         /// <summary>
         /// Returns a value indicating whether the specified symbol has the specified
         /// attribute.
@@ -639,9 +677,18 @@ namespace Analyzer.Utilities.Extensions
         /// If <paramref name="symbol"/> is a type, this method does not find attributes
         /// on its base types.
         /// </remarks>
-        public static bool HasAttribute(this ISymbol symbol, [NotNullWhen(returnValue: true)] INamedTypeSymbol? attribute)
+        public static bool HasAnyAttribute(this ISymbol symbol, [NotNullWhen(returnValue: true)] INamedTypeSymbol? attribute)
         {
-            return attribute != null && symbol.GetAttributes().Any(attr => attr.AttributeClass.Equals(attribute));
+            if (attribute is null)
+                return false;
+
+            foreach (var actualAttribute in symbol.GetAttributes())
+            {
+                if (SymbolEqualityComparer.Default.Equals(actualAttribute.AttributeClass, attribute))
+                    return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -667,7 +714,7 @@ namespace Analyzer.Utilities.Extensions
 
             while (symbol != null)
             {
-                if (symbol.GetAttributes().Any(attr => SymbolEqualityComparer.Default.Equals(attr.AttributeClass, attribute)))
+                if (symbol.HasAnyAttribute(attribute))
                 {
                     return true;
                 }
@@ -706,7 +753,7 @@ namespace Analyzer.Utilities.Extensions
 
             while (symbol != null)
             {
-                if (symbol.GetAttributes().Any(attr => SymbolEqualityComparer.Default.Equals(attr.AttributeClass, attribute)))
+                if (symbol.HasAnyAttribute(attribute))
                 {
                     return true;
                 }
@@ -747,23 +794,6 @@ namespace Analyzer.Utilities.Extensions
         }
 
         /// <summary>
-        /// Gets enumeration of attributes that are of the specified type.
-        /// </summary>
-        /// <param name="symbol">This symbol whose attributes to get.</param>
-        /// <param name="attributeType">Type of attribute to look for.</param>
-        /// <returns>Enumeration of attributes.</returns>
-        [SuppressMessage("RoslyDiagnosticsPerformance", "RS0001:Use SpecializedCollections.EmptyEnumerable()", Justification = "Not available in all projects")]
-        public static IEnumerable<AttributeData> GetAttributes(this ISymbol symbol, INamedTypeSymbol? attributeType)
-        {
-            if (attributeType == null)
-            {
-                return Enumerable.Empty<AttributeData>();
-            }
-
-            return symbol.GetAttributes().Where(attr => SymbolEqualityComparer.Default.Equals(attr.AttributeClass, attributeType));
-        }
-
-        /// <summary>
         /// Indicates if a symbol has at least one location in source.
         /// </summary>
         public static bool IsInSource(this ISymbol symbol)
@@ -776,12 +806,12 @@ namespace Analyzer.Utilities.Extensions
 
         /// <summary>
         /// Returns true for symbols whose name starts with an underscore and
-        /// are optionally followed by an integer, such as '_', '_1', '_2', etc.
+        /// are optionally followed by an integer or other underscores, such as '_', '_1', '_2', '__', '___', etc.
         /// These symbols can be treated as special discard symbol names.
         /// </summary>
         public static bool IsSymbolWithSpecialDiscardName([NotNullWhen(returnValue: true)] this ISymbol? symbol)
             => symbol?.Name.StartsWith("_", StringComparison.Ordinal) == true &&
-               (symbol.Name.Length == 1 || uint.TryParse(symbol.Name[1..], out _));
+               (symbol.Name.Length == 1 || uint.TryParse(symbol.Name[1..], out _) || symbol.Name.All(n => n.Equals('_')));
 
         public static bool IsConst([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {

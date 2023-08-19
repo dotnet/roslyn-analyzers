@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -68,7 +68,7 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
                 {
                     var invocation = (IInvocationOperation)operationContext.Operation;
                     var targetMethod = invocation.TargetMethod;
-                    if (targetMethod == null || !ImmutableCollectionMetadataNames.TryGetValue(targetMethod.Name, out string metadataName))
+                    if (targetMethod == null || !ImmutableCollectionMetadataNames.TryGetValue(targetMethod.Name, out var metadataName))
                     {
                         return;
                     }
@@ -91,9 +91,8 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
                         return;
                     }
 
-                    var receiverType = invocation.GetReceiverType(operationContext.Compilation, beforeConversion: true, cancellationToken: operationContext.CancellationToken);
-                    if (receiverType != null &&
-                        receiverType.DerivesFromOrImplementsAnyConstructionOf(immutableCollectionType))
+                    if (invocation.GetReceiverType(operationContext.Compilation, beforeConversion: true, cancellationToken: operationContext.CancellationToken) is INamedTypeSymbol receiverType
+                        && receiverType.DerivesFromOrImplementsAnyConstructionOf(immutableCollectionType))
                     {
                         operationContext.ReportDiagnostic(
                             invocation.CreateDiagnostic(

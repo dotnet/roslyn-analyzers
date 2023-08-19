@@ -30,7 +30,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
         /// <summary>
         /// Just a container for parameters necessary for PropertySetAnalysis for unit tests below.
         /// </summary>
-        private class PropertySetAnalysisParameters
+        private sealed class PropertySetAnalysisParameters
         {
             public PropertySetAnalysisParameters(string typeToTrack, ConstructorMapper constructorMapper, PropertyMapperCollection propertyMapperCollection, HazardousUsageEvaluatorCollection hazardousUsageEvaluatorCollection)
             {
@@ -57,10 +57,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
             PropertySetAnalysisParameters propertySetAnalysisParameters,
             params (int Line, int Column, string Method, HazardousUsageEvaluationResult Result)[] expectedResults)
         {
-            if (expectedResults == null)
-            {
-                expectedResults = Array.Empty<(int Line, int Column, string MethodName, HazardousUsageEvaluationResult Result)>();
-            }
+            expectedResults ??= Array.Empty<(int Line, int Column, string MethodName, HazardousUsageEvaluationResult Result)>();
 
             Project project = CreateProject(new string[] { source, TestTypeToTrackSource });
             Compilation compilation = project.GetCompilationAsync().Result;
@@ -142,6 +139,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
                     TestOutput.WriteLine(
                         $"Line {lineNumber}, Column {columnNumber}, {MethodSymbolOrReturnString(kvp.Key.Method)}: {kvp.Value}");
                 }
+
                 TestOutput.WriteLine("============================");
 
                 throw;
@@ -1287,6 +1285,7 @@ class TestClass
             ProjectId projectId = ProjectId.CreateNewId(debugName: TestProjectName);
 
             var defaultReferences = ReferenceAssemblies.NetFramework.Net48.Default;
+            defaultReferences = defaultReferences.AddPackages(ImmutableArray.Create(new PackageIdentity("System.DirectoryServices", "6.0.1")));
             var references = Task.Run(() => defaultReferences.ResolveAsync(LanguageNames.CSharp, CancellationToken.None)).GetAwaiter().GetResult();
 
 #pragma warning disable CA2000 // Dispose objects before losing scope - Current solution/project takes the dispose ownership of the created AdhocWorkspace
@@ -1299,15 +1298,12 @@ class TestClass
 #if !NETCOREAPP
                 .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemWebReference)
                 .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemRuntimeSerialization)
-#endif
-                .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemDirectoryServices)
-#if !NETCOREAPP
                 .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemXaml)
                 .AddMetadataReference(projectId, AdditionalMetadataReferences.PresentationFramework)
                 .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemWebExtensions)
 #endif
                 .WithProjectCompilationOptions(projectId, options)
-                .WithProjectParseOptions(projectId, null)
+                .WithProjectParseOptions(projectId, new CSharpParseOptions())
                 .GetProject(projectId);
 
             // Enable Flow-Analysis feature on the project
@@ -1349,6 +1345,7 @@ class TestClass
             {
                 Assert.Same(model, operation.SemanticModel);
             }
+
             return (operation, model, syntaxNode);
         }
 
@@ -1359,10 +1356,7 @@ class TestClass
 
         protected static List<SyntaxNode> GetSyntaxNodeList(SyntaxNode node, List<SyntaxNode> synList)
         {
-            if (synList == null)
-            {
-                synList = new List<SyntaxNode>();
-            }
+            synList ??= new List<SyntaxNode>();
 
             synList.Add(node);
 

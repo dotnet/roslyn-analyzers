@@ -11,7 +11,6 @@
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
-  <Import Project="eng/Testing.props"/>
 
   <PropertyGroup>
     <!-- Do not ship packages by default -->
@@ -44,6 +43,15 @@
       CS1712: Type parameter 'parameter' has no matching typeparam tag in the XML comment on 'type_or_member' (but other type parameters do)
     -->
     <NoWarn Condition="'$(Language)' == 'C#'">$(NoWarn),1573,1591,1712</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+    <!-- When building in source build mode, treat this set of warnings not as errors.-->
+    <!-- Some crefs reference internal APIs not present in the reference package. -->
+    <NoWarn>$(NoWarn);CS1574;CS8602</NoWarn>
+    <!-- Source build reference assemblies are not correctly annotated.
+      https://github.com/dotnet/source-build/issues/3531 -->
+    <NoWarn>$(NoWarn);CS8603</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>

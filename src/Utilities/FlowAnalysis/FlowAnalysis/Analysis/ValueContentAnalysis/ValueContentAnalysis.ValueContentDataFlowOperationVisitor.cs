@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -34,7 +35,10 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
             protected override void SetAbstractValue(AnalysisEntity analysisEntity, ValueContentAbstractValue value)
                 => SetAbstractValue(CurrentAnalysisData, analysisEntity, value);
 
-            private static void SetAbstractValue(ValueContentAnalysisData analysisData, AnalysisEntity analysisEntity, ValueContentAbstractValue value)
+            private void SetAbstractValue(ValueContentAnalysisData analysisData, AnalysisEntity analysisEntity, ValueContentAbstractValue value)
+                => SetAbstractValue(analysisData, analysisEntity, value, HasCompletePointsToAnalysisResult);
+
+            private static void SetAbstractValue(ValueContentAnalysisData analysisData, AnalysisEntity analysisEntity, ValueContentAbstractValue value, bool hasCompletePointsToAnalysisResult)
             {
                 // PERF: Avoid creating an entry if the value is the default unknown value.
                 if (value == ValueContentAbstractValue.MayBeContainsNonLiteralState &&
@@ -43,7 +47,10 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
                     return;
                 }
 
-                analysisData.SetAbstractValue(analysisEntity, value);
+                if (analysisEntity.ShouldBeTrackedForAnalysis(hasCompletePointsToAnalysisResult))
+                {
+                    analysisData.SetAbstractValue(analysisEntity, value);
+                }
             }
 
             protected override bool HasAbstractValue(AnalysisEntity analysisEntity)
@@ -55,8 +62,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
             protected override ValueContentAbstractValue GetAbstractValue(AnalysisEntity analysisEntity)
                 => CurrentAnalysisData.TryGetValue(analysisEntity, out var value) ? value : ValueDomain.UnknownOrMayBeValue;
 
-            protected override ValueContentAbstractValue GetAbstractDefaultValue(ITypeSymbol type)
-                => type != null ?
+            protected override ValueContentAbstractValue GetAbstractDefaultValue(ITypeSymbol? type)
+                => type != null && !type.CanHoldNullValue() ?
                    ValueContentAbstractValue.DoesNotContainLiteralOrNonLiteralState :
                    ValueContentAbstractValue.ContainsNullLiteralState;
 
@@ -223,8 +230,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
                 ICompoundAssignmentOperation operation,
                 ValueContentAbstractValue targetValue,
                 ValueContentAbstractValue assignedValue,
-                ITypeSymbol targetType,
-                ITypeSymbol assignedValueType)
+                ITypeSymbol? targetType,
+                ITypeSymbol? assignedValueType)
             {
                 return targetValue.MergeBinaryOperation(assignedValue, operation.OperatorKind, targetType, assignedValueType, operation.Type);
             }

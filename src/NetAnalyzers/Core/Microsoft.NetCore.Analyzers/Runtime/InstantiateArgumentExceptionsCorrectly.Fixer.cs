@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Composition;
@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
+using Analyzer.Utilities;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -27,10 +28,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var diagnostic = context.Diagnostics.First();
-            string paramPositionString = diagnostic.Properties.GetValueOrDefault(InstantiateArgumentExceptionsCorrectlyAnalyzer.MessagePosition);
+            string? paramPositionString = diagnostic.Properties.GetValueOrDefault(InstantiateArgumentExceptionsCorrectlyAnalyzer.MessagePosition);
             if (paramPositionString != null)
             {
-                SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+                SyntaxNode root = await context.Document.GetRequiredSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxNode node = root.FindNode(context.Span, getInnermostNodeForTie: true);
                 if (node != null)
                 {
@@ -41,7 +42,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static async Task PopulateCodeFixAsync(CodeFixContext context, Diagnostic diagnostic, string paramPositionString, SyntaxNode node)
         {
-            SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            SemanticModel model = await context.Document.GetRequiredSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             var operation = model.GetOperation(node, context.CancellationToken);
             if (operation is IObjectCreationOperation creation)
             {
@@ -64,6 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             createChangedDocument: c => SwapArgumentsOrderAsync(context.Document, creation, paramPosition, creation.Arguments.Length, c),
                             equivalenceKey: MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyFlipArgumentOrderCodeFixTitle);
                     }
+
                     context.RegisterCodeFix(codeAction, diagnostic);
                 }
             }
@@ -97,6 +99,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     newCreation = editor.Generator.ObjectCreationExpression(creation.Type, parameter, creation.Arguments[1].Syntax, creation.Arguments[0].Syntax);
                 }
             }
+
             editor.ReplaceNode(creation.Syntax, newCreation);
             return editor.GetChangedDocument();
         }
@@ -112,10 +115,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static SyntaxNode AddNameOfIfLiteral(IOperation expression, SyntaxGenerator generator)
         {
-            if (expression is ILiteralOperation literal)
+            if (expression is ILiteralOperation literal &&
+                literal.ConstantValue.Value is { } value)
             {
-                return generator.NameOfExpression(generator.IdentifierName(literal.ConstantValue.Value.ToString()));
+                return generator.NameOfExpression(generator.IdentifierName(value.ToString()));
             }
+
             return expression.Syntax;
         }
     }

@@ -20,69 +20,45 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 {
     public partial class DeclarePublicApiAnalyzer : DiagnosticAnalyzer
     {
-        private sealed class ApiLine
+        private sealed record AdditionalFileInfo(SourceText SourceText, bool IsShippedApi)
         {
-            public string Text { get; }
-            public TextSpan Span { get; }
-            public SourceText SourceText { get; }
-            public string Path { get; }
-            public bool IsShippedApi { get; }
-
-            internal ApiLine(string text, TextSpan span, SourceText sourceText, string path, bool isShippedApi)
+            public string GetPath(ImmutableDictionary<AdditionalText, SourceText> additionalFiles)
             {
-                Text = text;
-                Span = span;
-                SourceText = sourceText;
-                Path = path;
-                IsShippedApi = isShippedApi;
+                foreach (var (additionalText, sourceText) in additionalFiles)
+                {
+                    if (SourceText == sourceText)
+                        return additionalText.Path;
+                }
+
+                throw new InvalidOperationException();
             }
         }
 
-#pragma warning disable CA1815 // Override equals and operator equals on value types
-        private readonly struct RemovedApiLine
-#pragma warning restore CA1815 // Override equals and operator equals on value types
+        private readonly record struct ApiLine(string Text, TextSpan Span, AdditionalFileInfo FileInfo)
         {
-            public string Text { get; }
-            public ApiLine ApiLine { get; }
+            public bool IsDefault => FileInfo == null;
 
-            internal RemovedApiLine(string text, ApiLine apiLine)
+            public SourceText SourceText => FileInfo.SourceText;
+            public bool IsShippedApi => FileInfo.IsShippedApi;
+
+            public string GetPath(ImmutableDictionary<AdditionalText, SourceText> additionalFiles)
+                => FileInfo.GetPath(additionalFiles);
+
+            public Location GetLocation(ImmutableDictionary<AdditionalText, SourceText> additionalFiles)
             {
-                Text = text;
-                ApiLine = apiLine;
+                LinePositionSpan linePositionSpan = SourceText.Lines.GetLinePositionSpan(Span);
+                return Location.Create(GetPath(additionalFiles), Span, linePositionSpan);
             }
         }
 
-#pragma warning disable CA1815 // Override equals and operator equals on value types
-        private readonly struct ApiName
-#pragma warning restore CA1815 // Override equals and operator equals on value types
+        private readonly record struct RemovedApiLine(string Text, ApiLine ApiLine);
+
+        private readonly record struct ApiName(string Name, string NameWithNullability);
+
+        /// <param name="NullableLineNumber">Number for the max line where #nullable enable was found (-1 otherwise)</param>
+        private sealed record ApiData(ImmutableArray<ApiLine> ApiList, ImmutableArray<RemovedApiLine> RemovedApiList, int NullableLineNumber)
         {
-            public string Name { get; }
-            public string NameWithNullability { get; }
-
-            public ApiName(string name, string nameWithNullability)
-            {
-                Name = name;
-                NameWithNullability = nameWithNullability;
-            }
-        }
-
-#pragma warning disable CA1815 // Override equals and operator equals on value types
-        private readonly struct ApiData
-#pragma warning restore CA1815 // Override equals and operator equals on value types
-        {
-            public static readonly ApiData Empty = new(ImmutableArray<ApiLine>.Empty, ImmutableArray<RemovedApiLine>.Empty, nullableRank: -1);
-
-            public ImmutableArray<ApiLine> ApiList { get; }
-            public ImmutableArray<RemovedApiLine> RemovedApiList { get; }
-            // Number for the max line where #nullable enable was found (-1 otherwise)
-            public int NullableRank { get; }
-
-            internal ApiData(ImmutableArray<ApiLine> apiList, ImmutableArray<RemovedApiLine> removedApiList, int nullableRank)
-            {
-                ApiList = apiList;
-                RemovedApiList = removedApiList;
-                NullableRank = nullableRank;
-            }
+            public static readonly ApiData Empty = new(ImmutableArray<ApiLine>.Empty, ImmutableArray<RemovedApiLine>.Empty, NullableLineNumber: -1);
         }
 
         private sealed class Impl
@@ -95,35 +71,44 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
             private readonly Compilation _compilation;
+            private readonly ImmutableDictionary<AdditionalText, SourceText> _additionalFiles;
             private readonly ApiData _unshippedData;
             private readonly bool _useNullability;
             private readonly bool _isPublic;
             private readonly ConcurrentDictionary<(ITypeSymbol Type, bool IsPublic), bool> _typeCanBeExtendedCache = new();
             private readonly ConcurrentDictionary<string, UnusedValue> _visitedApiList = new(StringComparer.Ordinal);
             private readonly ConcurrentDictionary<SyntaxTree, ImmutableArray<string>> _skippedNamespacesCache = new();
-            private readonly IReadOnlyDictionary<string, ApiLine> _apiMap;
+            private readonly Lazy<IReadOnlyDictionary<string, ApiLine>> _apiMap;
             private readonly AnalyzerOptions _analyzerOptions;
 
-            internal Impl(Compilation compilation, ApiData shippedData, ApiData unshippedData, bool isPublic, AnalyzerOptions analyzerOptions)
+            internal Impl(Compilation compilation, ImmutableDictionary<AdditionalText, SourceText> additionalFiles, ApiData shippedData, ApiData unshippedData, bool isPublic, AnalyzerOptions analyzerOptions)
             {
                 _compilation = compilation;
-                _useNullability = shippedData.NullableRank >= 0 || unshippedData.NullableRank >= 0;
+                _additionalFiles = additionalFiles;
+                _useNullability = shippedData.NullableLineNumber >= 0 || unshippedData.NullableLineNumber >= 0;
                 _unshippedData = unshippedData;
 
-                var publicApiMap = new Dictionary<string, ApiLine>(StringComparer.Ordinal);
-                foreach (ApiLine cur in shippedData.ApiList)
-                {
-                    publicApiMap.Add(cur.Text, cur);
-                }
-
-                foreach (ApiLine cur in unshippedData.ApiList)
-                {
-                    publicApiMap.Add(cur.Text, cur);
-                }
-
-                _apiMap = publicApiMap;
+                _apiMap = new Lazy<IReadOnlyDictionary<string, ApiLine>>(() => CreateApiMap(shippedData, unshippedData));
                 _isPublic = isPublic;
                 _analyzerOptions = analyzerOptions;
+
+                static IReadOnlyDictionary<string, ApiLine> CreateApiMap(ApiData shippedData, ApiData unshippedData)
+                {
+                    // Defer allocating/creating the apiMap until it's needed as there are many cases where it's never used
+                    //   and can be fairly large.
+                    var publicApiMap = new Dictionary<string, ApiLine>(shippedData.ApiList.Length + unshippedData.ApiList.Length, StringComparer.Ordinal);
+                    foreach (ApiLine cur in shippedData.ApiList)
+                    {
+                        publicApiMap.Add(cur.Text, cur);
+                    }
+
+                    foreach (ApiLine cur in unshippedData.ApiList)
+                    {
+                        publicApiMap.Add(cur.Text, cur);
+                    }
+
+                    return publicApiMap;
+                }
             }
 
             internal void OnSymbolAction(SymbolAnalysisContext symbolContext)
@@ -189,16 +174,36 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 OnSymbolActionCore(symbol, reportDiagnostic, isImplicitlyDeclaredConstructor: false, obsoleteAttribute, cancellationToken, explicitLocation: explicitLocation);
 
                 // Handle implicitly declared public constructors.
-                if (symbol.Kind == SymbolKind.NamedType)
+                if (symbol is INamedTypeSymbol namedType)
                 {
-                    var namedType = (INamedTypeSymbol)symbol;
-                    if ((namedType.TypeKind == TypeKind.Class && namedType.InstanceConstructors.Length == 1)
-                        || namedType.TypeKind == TypeKind.Struct)
+                    IMethodSymbol? implicitConstructor = null;
+                    if (namedType is { TypeKind: TypeKind.Class, InstanceConstructors.Length: 1 } or { TypeKind: TypeKind.Struct })
                     {
-                        var implicitConstructor = namedType.InstanceConstructors.FirstOrDefault(x => x.IsImplicitlyDeclared);
+                        implicitConstructor = namedType.InstanceConstructors.FirstOrDefault(x => x.IsImplicitlyDeclared);
                         if (implicitConstructor != null)
-                        {
                             OnSymbolActionCore(implicitConstructor, reportDiagnostic, isImplicitlyDeclaredConstructor: true, obsoleteAttribute, cancellationToken, explicitLocation: explicitLocation);
+                    }
+
+                    // Ensure that any implicitly declared members of a record are emitted as well.
+                    foreach (var member in namedType.GetMembers())
+                    {
+                        // Handled above.
+                        if (member.Equals(implicitConstructor))
+                            continue;
+
+                        if (IsTrackedAPI(member, cancellationToken) && member is IMethodSymbol { IsImplicitlyDeclared: true } method)
+                        {
+                            // Record property accessors (for `record X(int P)`) are considered implicitly declared.
+                            // However, we still handle the normal property symbol for that through our standard symbol
+                            // callbacks.  So we don't need to process those here.
+                            //
+                            // We do, however, need to process any implicit accessors for *implicit* properties. For
+                            // example, for the implicit `virtual Type EqualityContract { get; }` member
+                            if (method.MethodKind is not (MethodKind.PropertyGet or MethodKind.PropertySet) ||
+                                method is { MethodKind: MethodKind.PropertyGet or MethodKind.PropertySet, AssociatedSymbol.IsImplicitlyDeclared: true })
+                            {
+                                OnSymbolActionCore(member, reportDiagnostic, isImplicitlyDeclaredConstructor: false, obsoleteAttribute, cancellationToken, explicitLocation: explicitLocation);
+                            }
                         }
                     }
                 }
@@ -225,6 +230,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 _visitedApiList.TryAdd(WithObliviousMarker(publicApiName.NameWithNullability), default);
 
                 List<Location> locationsToReport = new List<Location>();
+                IReadOnlyDictionary<string, ApiLine> apiMap = _apiMap.Value;
 
                 if (explicitLocation != null)
                 {
@@ -241,25 +247,25 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 if (_useNullability)
                 {
                     symbolUsesOblivious = UsesOblivious(symbol);
-                    if (symbolUsesOblivious)
+                    if (symbolUsesOblivious && !symbol.IsImplicitlyDeclared)
                     {
                         reportObliviousApi(symbol);
                     }
 
-                    var hasApiEntryWithNullability = _apiMap.TryGetValue(publicApiName.NameWithNullability, out foundApiLine);
+                    var hasApiEntryWithNullability = apiMap.TryGetValue(publicApiName.NameWithNullability, out foundApiLine);
 
                     var hasApiEntryWithNullabilityAndOblivious =
                         !hasApiEntryWithNullability &&
                         symbolUsesOblivious &&
-                        _apiMap.TryGetValue(WithObliviousMarker(publicApiName.NameWithNullability), out foundApiLine);
+                        apiMap.TryGetValue(WithObliviousMarker(publicApiName.NameWithNullability), out foundApiLine);
 
                     if (!hasApiEntryWithNullability && !hasApiEntryWithNullabilityAndOblivious)
                     {
-                        var hasApiEntryWithoutNullability = _apiMap.TryGetValue(publicApiName.Name, out foundApiLine);
+                        var hasApiEntryWithoutNullability = apiMap.TryGetValue(publicApiName.Name, out foundApiLine);
 
                         var hasApiEntryWithoutNullabilityButOblivious =
                             !hasApiEntryWithoutNullability &&
-                            _apiMap.TryGetValue(WithObliviousMarker(publicApiName.Name), out foundApiLine);
+                            apiMap.TryGetValue(WithObliviousMarker(publicApiName.Name), out foundApiLine);
 
                         if (!hasApiEntryWithoutNullability && !hasApiEntryWithoutNullabilityButOblivious)
                         {
@@ -267,17 +273,17 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         }
                         else
                         {
-                            reportAnnotateApi(symbol, isImplicitlyDeclaredConstructor, publicApiName, foundApiLine.IsShippedApi, foundApiLine.Path);
+                            reportAnnotateApi(symbol, isImplicitlyDeclaredConstructor, publicApiName, foundApiLine.IsShippedApi, foundApiLine.GetPath(_additionalFiles));
                         }
                     }
                     else if (hasApiEntryWithNullability && symbolUsesOblivious)
                     {
-                        reportAnnotateApi(symbol, isImplicitlyDeclaredConstructor, publicApiName, foundApiLine.IsShippedApi, foundApiLine.Path);
+                        reportAnnotateApi(symbol, isImplicitlyDeclaredConstructor, publicApiName, foundApiLine.IsShippedApi, foundApiLine.GetPath(_additionalFiles));
                     }
                 }
                 else
                 {
-                    var hasApiEntryWithoutNullability = _apiMap.TryGetValue(publicApiName.Name, out foundApiLine);
+                    var hasApiEntryWithoutNullability = apiMap.TryGetValue(publicApiName.Name, out foundApiLine);
                     if (!hasApiEntryWithoutNullability)
                     {
                         reportDeclareNewApi(symbol, isImplicitlyDeclaredConstructor, publicApiName.Name);
@@ -293,7 +299,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 if (symbol.Kind == SymbolKind.Method)
                 {
                     var method = (IMethodSymbol)symbol;
-                    var isMethodShippedApi = foundApiLine?.IsShippedApi == true;
+                    var isMethodShippedApi = !foundApiLine.IsDefault && foundApiLine.IsShippedApi;
 
                     // Check if a public API is a constructor that makes this class instantiable, even though the base class
                     // is not instantiable. That API pattern is not allowed, because it causes protected members of
@@ -332,7 +338,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                             }
 
                             // Don't flag obsolete overloads
-                            if (overload.HasAttribute(obsoleteAttribute))
+                            if (overload.HasAnyAttribute(obsoleteAttribute))
                             {
                                 continue;
                             }
@@ -407,7 +413,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         .Add(MinimalNamePropertyBagKey, errorMessageName)
                         .Add(ApiNamesOfSiblingsToRemovePropertyBagKey, siblingPublicApiNamesToRemove);
 
-                    reportDiagnosticAtLocations(GetDiagnostic(DeclareNewPublicApiRule, DeclareNewInternalApiRule), propertyBag, errorMessageName);
+                    reportDiagnosticAtLocations(GetDiagnostic(DeclareNewPublicApiRule, DeclareNewInternalApiRule), propertyBag, publicApiName);
                 }
 
                 void reportAnnotateApi(ISymbol symbol, bool isImplicitlyDeclaredConstructor, ApiName publicApiName, bool isShipped, string filename)
@@ -421,7 +427,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         .Add(ApiIsShippedPropertyBagKey, isShipped ? "true" : "false")
                         .Add(FileName, filename);
 
-                    reportDiagnosticAtLocations(GetDiagnostic(AnnotatePublicApiRule, AnnotateInternalApiRule), propertyBag, errorMessageName);
+                    reportDiagnosticAtLocations(GetDiagnostic(AnnotatePublicApiRule, AnnotateInternalApiRule), propertyBag, publicApiName.NameWithNullability);
                 }
 
                 string withObliviousIfNeeded(string name)
@@ -441,13 +447,13 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 {
                     if (_useNullability)
                     {
-                        return _apiMap.TryGetValue(overloadPublicApiName.NameWithNullability, out overloadPublicApiLine) ||
-                            _apiMap.TryGetValue(WithObliviousMarker(overloadPublicApiName.NameWithNullability), out overloadPublicApiLine) ||
-                            _apiMap.TryGetValue(overloadPublicApiName.Name, out overloadPublicApiLine);
+                        return apiMap.TryGetValue(overloadPublicApiName.NameWithNullability, out overloadPublicApiLine) ||
+                            apiMap.TryGetValue(WithObliviousMarker(overloadPublicApiName.NameWithNullability), out overloadPublicApiLine) ||
+                            apiMap.TryGetValue(overloadPublicApiName.Name, out overloadPublicApiLine);
                     }
                     else
                     {
-                        return _apiMap.TryGetValue(overloadPublicApiName.Name, out overloadPublicApiLine);
+                        return apiMap.TryGetValue(overloadPublicApiName.Name, out overloadPublicApiLine);
                     }
                 }
             }
@@ -630,7 +636,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             private static bool ContainsPublicApiName(string apiLineText, string publicApiNameToSearch)
             {
-                apiLineText = apiLineText.Trim(ObliviousMarker);
+                apiLineText = apiLineText.TrimStart(ObliviousMarkerArray);
 
                 // Ensure we don't search in parameter list/return type.
                 var indexOfParamsList = apiLineText.IndexOf('(');
@@ -665,10 +671,9 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                 if (typeForwardedToAttribute != null)
                 {
-                    foreach (var attribute in compilation.Assembly.GetAttributes())
+                    foreach (var attribute in compilation.Assembly.GetAttributes(typeForwardedToAttribute))
                     {
-                        if (attribute.AttributeClass.Equals(typeForwardedToAttribute) &&
-                            attribute.AttributeConstructor.Parameters.Length == 1 &&
+                        if (attribute.AttributeConstructor.Parameters.Length == 1 &&
                             attribute.ConstructorArguments.Length == 1 &&
                             attribute.ConstructorArguments[0].Value is INamedTypeSymbol forwardedType)
                         {
@@ -711,7 +716,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             /// </summary>
             internal void ReportDeletedApiList(Action<Diagnostic> reportDiagnostic)
             {
-                foreach (KeyValuePair<string, ApiLine> pair in _apiMap)
+                IReadOnlyDictionary<string, ApiLine> apiMap = _apiMap.Value;
+                foreach (KeyValuePair<string, ApiLine> pair in apiMap)
                 {
                     if (_visitedApiList.ContainsKey(pair.Key))
                     {
@@ -723,7 +729,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         continue;
                     }
 
-                    Location location = GetLocationFromApiLine(pair.Value);
+                    Location location = pair.Value.GetLocation(_additionalFiles);
                     ImmutableDictionary<string, string> propertyBag = ImmutableDictionary<string, string>.Empty.Add(ApiNamePropertyBagKey, pair.Value.Text);
                     reportDiagnostic(Diagnostic.Create(GetDiagnostic(RemoveDeletedPublicApiRule, RemoveDeletedInternalApiRule), location, propertyBag, pair.Value.Text));
                 }
@@ -738,23 +744,26 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 {
                     if (_visitedApiList.ContainsKey(markedAsRemoved.Text))
                     {
-                        Location location = GetLocationFromApiLine(markedAsRemoved.ApiLine);
+                        Location location = markedAsRemoved.ApiLine.GetLocation(_additionalFiles);
                         reportDiagnostic(Diagnostic.Create(RemovedApiIsNotActuallyRemovedRule, location, messageArgs: markedAsRemoved.Text));
                     }
                 }
             }
 
-            private static Location GetLocationFromApiLine(ApiLine apiLine)
-            {
-                LinePositionSpan linePositionSpan = apiLine.SourceText.Lines.GetLinePositionSpan(apiLine.Span);
-                return Location.Create(apiLine.Path, apiLine.Span, linePositionSpan);
-            }
-
             private bool IsTrackedAPI(ISymbol symbol, CancellationToken cancellationToken)
             {
-                if (symbol is IMethodSymbol methodSymbol && s_ignorableMethodKinds.Contains(methodSymbol.MethodKind))
+                if (symbol is IMethodSymbol methodSymbol)
                 {
-                    return false;
+                    if (s_ignorableMethodKinds.Contains(methodSymbol.MethodKind))
+                        return false;
+
+                    if (methodSymbol is { MethodKind: MethodKind.Constructor, ContainingType.TypeKind: TypeKind.Enum })
+                        return false;
+
+                    // include a delegate's 'Invoke' method so we encode its signature (it would be a breaking change to
+                    // change that). All other delegate methods can be ignored though.
+                    if (methodSymbol is { ContainingType.TypeKind: TypeKind.Delegate, MethodKind: not MethodKind.DelegateInvoke })
+                        return false;
                 }
 
                 // We don't consider properties to be public APIs. Instead, property getters and setters
@@ -793,6 +802,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         {
                             continue;
                         }
+
                         (skippedNamespaces ??= PooledHashSet<string>.GetInstance()).AddRange(currentSkippedNamespaces);
                     }
 

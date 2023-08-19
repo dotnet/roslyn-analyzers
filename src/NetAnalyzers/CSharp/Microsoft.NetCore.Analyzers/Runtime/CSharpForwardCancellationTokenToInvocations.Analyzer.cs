@@ -24,14 +24,16 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                     // so that the diagnostic gets properly returned in the method name only.
                     return memberBindingExpression.Name;
                 }
+
                 return invocationExpression.Expression;
             }
+
             return null;
         }
         protected override bool ArgumentsImplicitOrNamed(INamedTypeSymbol cancellationTokenType, ImmutableArray<IArgumentOperation> arguments)
         {
             return arguments.Any(a =>
-                (a.IsImplicit && !a.Parameter.Type.Equals(cancellationTokenType)) ||
+                (a.IsImplicit && a.Parameter != null && !a.Parameter.Type.Equals(cancellationTokenType)) ||
                 (a.Syntax is ArgumentSyntax argumentNode && argumentNode.NameColon != null));
         }
     }

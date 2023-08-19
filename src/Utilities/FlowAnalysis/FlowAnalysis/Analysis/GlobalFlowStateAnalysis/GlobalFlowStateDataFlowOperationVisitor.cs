@@ -35,6 +35,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
             _globalValuesMapBuilder = ImmutableDictionary.CreateBuilder<IOperation, TAbstractAnalysisValue>();
         }
 
+        internal override bool SkipExceptionPathsAnalysisPostPass => true;
+
         protected abstract void SetAbstractValue(
             DictionaryAnalysisData<AnalysisEntity, TAbstractAnalysisValue> analysisData, AnalysisEntity analysisEntity, TAbstractAnalysisValue value);
 
@@ -60,7 +62,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
                 ImmutableArray<AbstractIndex>.Empty,
                 owningSymbol.GetMemberOrLocalOrParameterType()!,
                 instanceLocation: PointsToAbstractValue.Unknown,
-                parent: null);
+                parent: null,
+                entityForInstanceLocation: null);
         }
 
         public sealed override DictionaryAnalysisData<AnalysisEntity, TAbstractAnalysisValue> Flow(
@@ -151,7 +154,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
 
         #region Visitor methods
 
-        public override TAbstractAnalysisValue Visit(IOperation operation, object? argument)
+        public override TAbstractAnalysisValue Visit(IOperation? operation, object? argument)
         {
             var value = base.Visit(operation, argument);
 

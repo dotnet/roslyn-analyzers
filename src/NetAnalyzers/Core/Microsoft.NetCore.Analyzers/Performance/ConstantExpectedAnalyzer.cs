@@ -15,8 +15,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
     using static MicrosoftNetCoreAnalyzersResources;
     public abstract partial class ConstantExpectedAnalyzer : DiagnosticAnalyzer
     {
-        protected static readonly string ConstantExpectedAttribute = nameof(ConstantExpectedAttribute);
-        protected static readonly string ConstantExpected = nameof(ConstantExpected);
+        protected const string ConstantExpectedAttribute = nameof(ConstantExpectedAttribute);
+        protected const string ConstantExpected = nameof(ConstantExpected);
         protected const string ConstantExpectedMin = "Min";
         protected const string ConstantExpectedMax = "Max";
         private static readonly LocalizableString s_localizableApplicationTitle = CreateLocalizableResourceString(nameof(ConstantExpectedApplicationTitle));
@@ -135,6 +135,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 return;
             }
+
             context.RegisterOperationAction(context => OnInvocation(context, constantExpectedContext), OperationKind.Invocation);
             context.RegisterSymbolAction(context => OnMethodSymbol(context, constantExpectedContext), SymbolKind.Method);
             RegisterAttributeSyntax(context, constantExpectedContext);
@@ -156,7 +157,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 CheckParameters(methodSymbol.Parameters, interfaceMethodSymbol.Parameters);
             }
-
 
             void CheckParameters(ImmutableArray<IParameterSymbol> parameters, ImmutableArray<IParameterSymbol> baseParameters)
             {
@@ -182,6 +182,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     continue;
                 }
+
                 var v = argument.Value.WalkDownConversion();
                 if (v is IParameterReferenceOperation parameterReference &&
                     constantExpectedContext.TryCreateConstantExpectedParameter(parameterReference.Parameter, out var currConstantParameter))
@@ -190,10 +191,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         context.ReportDiagnostic(parameterCheckDiagnostic);
                     }
+
                     continue;
                 }
-                var constantValue = v.ConstantValue;
-                if (!argConstantParameter.ValidateValue(argument, constantValue, out var valueDiagnostic))
+
+                if (v.ConstantValue is { } constantValue &&
+                    !argConstantParameter.ValidateValue(argument, constantValue, out var valueDiagnostic))
                 {
                     context.ReportDiagnostic(valueDiagnostic);
                 }
@@ -238,6 +241,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         continue;
                     }
+
                     var baseParameter = baseParameters[i];
                     if (HasConstantExpectedAttributeData(baseParameter) && !HasConstantExpectedAttributeData(parameter))
                     {
@@ -246,6 +250,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         arraybuilder.Add(diagnostic);
                     }
                 }
+
                 diagnostics = arraybuilder.ToImmutable();
                 return diagnostics.Length is 0;
             }
@@ -278,11 +283,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// <param name="parameterSymbol"></param>
             /// <param name="parameter"></param>
             /// <returns></returns>
-            public bool TryCreateConstantExpectedParameter(IParameterSymbol parameterSymbol, [NotNullWhen(true)] out ConstantExpectedParameter? parameter)
+            public bool TryCreateConstantExpectedParameter([NotNullWhen(true)] IParameterSymbol? parameterSymbol, [NotNullWhen(true)] out ConstantExpectedParameter? parameter)
             {
                 var underlyingType = GetUnderlyingType(parameterSymbol);
 
-                if (!TryGetConstantExpectedAttributeData(parameterSymbol, out var attributeData))
+                if (underlyingType == null ||
+                    !TryGetConstantExpectedAttributeData(parameterSymbol, out var attributeData))
                 {
                     parameter = null;
                     return false;
@@ -333,7 +339,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 var underlyingType = GetUnderlyingType(parameterSymbol);
 
-                if (!TryGetConstantExpectedAttributeData(parameterSymbol, out var attributeData))
+                if (underlyingType == null ||
+                    !TryGetConstantExpectedAttributeData(parameterSymbol, out var attributeData))
                 {
                     diagnostics = ImmutableArray<Diagnostic>.Empty;
                     return false;
@@ -370,7 +377,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     case SpecialType.None when parameterSymbol.Type.TypeKind == TypeKind.TypeParameter:
                         return ValidateMinMaxIsNull(parameterSymbol, attributeData, helper, out diagnostics);
                     default:
-                        diagnostics = helper.ParameterIsInvalid(parameterSymbol.Type.ToDisplayString(), attributeData.ApplicationSyntaxReference.GetSyntax());
+                        var syntax = attributeData.ApplicationSyntaxReference?.GetSyntax() ?? parameterSymbol.DeclaringSyntaxReferences[0].GetSyntax();
+                        diagnostics = DiagnosticHelper.ParameterIsInvalid(parameterSymbol.Type.ToDisplayString(), syntax);
                         return false;
                 }
 
@@ -391,48 +399,41 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             errorFlags |= ErrorKind.MaxIsIncompatible;
                         }
                     }
+
                     if (errorFlags is not 0)
                     {
-                        diagnostics = helper.GetError(errorFlags, parameterSymbol, attributeData.ApplicationSyntaxReference.GetSyntax(), "null", "null");
+                        var syntax = attributeData.ApplicationSyntaxReference?.GetSyntax() ?? parameterSymbol.DeclaringSyntaxReferences[0].GetSyntax();
+                        diagnostics = helper.GetError(errorFlags, parameterSymbol, syntax, "null", "null");
                         return false;
                     }
+
                     diagnostics = ImmutableArray<Diagnostic>.Empty;
                     return true;
                 }
             }
 
-            private static ITypeSymbol GetUnderlyingType(IParameterSymbol parameterSymbol)
+            private static ITypeSymbol? GetUnderlyingType(IParameterSymbol? parameterSymbol)
             {
-                ITypeSymbol underlyingType;
-                if (parameterSymbol.Type.TypeKind is TypeKind.Enum)
+                if (parameterSymbol?.Type.TypeKind is TypeKind.Enum)
                 {
                     var enumType = (INamedTypeSymbol)parameterSymbol.Type;
-                    underlyingType = enumType.EnumUnderlyingType;
+                    return enumType.EnumUnderlyingType;
                 }
                 else
                 {
-                    underlyingType = parameterSymbol.Type;
+                    return parameterSymbol?.Type;
                 }
-
-                return underlyingType;
             }
 
-            public bool TryGetConstantExpectedAttributeData(IParameterSymbol parameter, [NotNullWhen(true)] out AttributeData? attributeData)
+            public bool TryGetConstantExpectedAttributeData([NotNullWhen(true)] IParameterSymbol? parameter, [NotNullWhen(true)] out AttributeData? attributeData)
             {
-                attributeData = parameter.GetAttributes()
-                    .FirstOrDefault(attrData => IsConstantExpectedAttribute(attrData.AttributeClass));
+                attributeData = parameter?.GetAttribute(AttributeSymbol);
                 return attributeData is not null;
             }
 
             private bool HasConstantExpectedAttributeData(IParameterSymbol parameter)
             {
-                return parameter.GetAttributes()
-                    .Any(attrData => IsConstantExpectedAttribute(attrData.AttributeClass));
-            }
-
-            private bool IsConstantExpectedAttribute(INamedTypeSymbol namedType)
-            {
-                return namedType.Equals(AttributeSymbol, SymbolEqualityComparer.Default);
+                return parameter.HasAnyAttribute(AttributeSymbol);
             }
 
             public static bool TryCreate(Compilation compilation, [NotNullWhen(true)] out ConstantExpectedContext? constantExpectedContext)
@@ -463,28 +464,29 @@ namespace Microsoft.NetCore.Analyzers.Performance
             public IParameterSymbol Parameter { get; }
 
             /// <summary>
-            /// Validates the provided constant value is within the constaints of ConstantExpected attribute set
+            /// Validates the provided constant value is within the constraints of ConstantExpected attribute set
             /// </summary>
             /// <param name="argument"></param>
             /// <param name="constant"></param>
             /// <param name="validationDiagnostics">Non empty when method returns false</param>
             /// <returns></returns>
-            public abstract bool ValidateValue(IArgumentOperation argument, Optional<object> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics);
+            public abstract bool ValidateValue(IArgumentOperation argument, Optional<object?> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics);
 
-            public bool ValidateConstant(IArgumentOperation argument, Optional<object> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
+            public static bool ValidateConstant(IArgumentOperation argument, Optional<object?> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
             {
                 if (!constant.HasValue)
                 {
                     validationDiagnostics = argument.CreateDiagnostic(CA1857.ConstantNotConstantRule);
                     return false;
                 }
+
                 validationDiagnostics = null;
                 return true;
             }
 
             public abstract bool ValidateParameterIsWithinRange(ConstantExpectedParameter subsetCandidate, IArgumentOperation argument, [NotNullWhen(false)] out Diagnostic? validationDiagnostics);
             protected Diagnostic CreateConstantInvalidConstantRuleDiagnostic(IArgumentOperation argument) => argument.CreateDiagnostic(CA1857.ConstantInvalidConstantRule, Parameter.Type.ToDisplayString());
-            protected Diagnostic CreateConstantOutOfBoundsRuleDiagnostic(IArgumentOperation argument, string minText, string maxText) => argument.CreateDiagnostic(CA1857.ConstantOutOfBoundsRule, minText, maxText);
+            protected static Diagnostic CreateConstantOutOfBoundsRuleDiagnostic(IArgumentOperation argument, string minText, string maxText) => argument.CreateDiagnostic(CA1857.ConstantOutOfBoundsRule, minText, maxText);
         }
 
         private sealed class StringConstantExpectedParameter : ConstantExpectedParameter
@@ -498,21 +500,24 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     validationDiagnostics = CreateConstantInvalidConstantRuleDiagnostic(argument);
                     return false;
                 }
+
                 validationDiagnostics = null;
                 return true;
             }
 
-            public override bool ValidateValue(IArgumentOperation argument, Optional<object> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
+            public override bool ValidateValue(IArgumentOperation argument, Optional<object?> constant, [NotNullWhen(false)] out Diagnostic? validationDiagnostics)
             {
                 if (!ValidateConstant(argument, constant, out validationDiagnostics))
                 {
                     return false;
                 }
+
                 if (constant.Value is not string and not null)
                 {
                     validationDiagnostics = CreateConstantInvalidConstantRuleDiagnostic(argument);
                     return false;
                 }
+
                 validationDiagnostics = null;
                 return true;
             }
@@ -525,21 +530,25 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     parameter = null;
                     return false;
                 }
+
                 parameter = new StringConstantExpectedParameter(parameterSymbol);
                 return true;
             }
         }
 
+#pragma warning disable CA1815 // Override equals and operator equals on value types
         private readonly struct AttributeConstant
+#pragma warning restore CA1815 // Override equals and operator equals on value types
         {
-            public readonly object? Min;
-            public readonly object? Max;
+            public object? Min { get; }
+            public object? Max { get; }
 
             public AttributeConstant(object? min, object? max)
             {
                 Min = min;
                 Max = max;
             }
+
             public static AttributeConstant Get(AttributeData attributeData)
             {
                 object? minConstant = null;
@@ -565,18 +574,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         return null;
                     }
+
                     return typedConstant.Kind == TypedConstantKind.Array ? typedConstant.Values : typedConstant.Value;
                 }
             }
         }
-
 
         protected abstract class DiagnosticHelper
         {
             public abstract Location? GetMinLocation(SyntaxNode attributeSyntax);
             public abstract Location? GetMaxLocation(SyntaxNode attributeSyntax);
 
-            public ImmutableArray<Diagnostic> ParameterIsInvalid(string expectedTypeName, SyntaxNode attributeSyntax) => ImmutableArray.Create(Diagnostic.Create(CA1856.UnsupportedTypeRule, attributeSyntax.GetLocation(), expectedTypeName));
+            public static ImmutableArray<Diagnostic> ParameterIsInvalid(string expectedTypeName, SyntaxNode attributeSyntax) => ImmutableArray.Create(Diagnostic.Create(CA1856.UnsupportedTypeRule, attributeSyntax.GetLocation(), expectedTypeName));
 
             public Diagnostic MinIsIncompatible(string expectedTypeName, SyntaxNode attributeSyntax) => Diagnostic.Create(CA1856.IncompatibleConstantTypeRule, GetMinLocation(attributeSyntax)!, ConstantExpectedMin, expectedTypeName);
 

@@ -1,7 +1,7 @@
 <!--
 
 Make sure you have read the contribution guidelines: 
-- https://docs.microsoft.com/contribute/dotnet/dotnet-contribute-code-analysis#contribute-docs-for-caxxxx-rules
+- https://learn.microsoft.com/contribute/dotnet/dotnet-contribute-code-analysis#contribute-docs-for-caxxxx-rules
 - https://github.com/dotnet/roslyn-analyzers/blob/main/GuidelinesForNewRules.md
 
 If your Pull Request is doing one of the following:

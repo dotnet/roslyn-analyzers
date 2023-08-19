@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -57,7 +58,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                 var constantIncompatibleTypes = builder.ToImmutable();
 
-                context.RegisterOperationAction(context =>
+#pragma warning disable IDE0039 // Use local function
+                Action<OperationAnalysisContext> operationAction = context =>
                 {
                     var fieldInitializer = context.Operation as IFieldInitializerOperation;
 
@@ -70,6 +72,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         lastField == null ||
                         lastField.IsConst ||
                         !lastField.IsReadOnly ||
+                        (lastField.Type?.Name == lastField.Name && fieldInitializerValue.DescendantsAndSelf().Any(d => d is IFieldReferenceOperation field && lastField.Type.Equals(field.Field.Type, SymbolEqualityComparer.Default))) ||
                         !fieldInitializerValue.ConstantValue.HasValue ||
                         !context.Options.MatchesConfiguredVisibility(DefaultRule, lastField, context.Compilation, defaultRequiredVisibility: SymbolVisibilityGroup.Internal | SymbolVisibilityGroup.Private) ||
                         !context.Options.MatchesConfiguredModifiers(DefaultRule, lastField, context.Compilation, defaultRequiredModifiers: SymbolModifiers.Static))
@@ -87,9 +90,10 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                     // Though null is const we don't fire the diagnostic to be FxCop Compact
                     if (initializerValue != null &&
-                        !constantIncompatibleTypes.Contains(fieldInitializerValue.Type))
+                        fieldInitializerValue.Type is { } fieldInitializerType &&
+                        !constantIncompatibleTypes.Contains(fieldInitializerType))
                     {
-                        if (fieldInitializerValue.Type?.SpecialType == SpecialType.System_String &&
+                        if (fieldInitializerType.SpecialType == SpecialType.System_String &&
                             ((string)initializerValue).Length == 0)
                         {
                             context.ReportDiagnostic(lastField.CreateDiagnostic(EmptyStringRule, lastField.Name));
@@ -98,8 +102,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                         context.ReportDiagnostic(lastField.CreateDiagnostic(DefaultRule, lastField.Name));
                     }
-                },
-                OperationKind.FieldInitializer);
+                };
+
+                context.RegisterSymbolStartAction(context =>
+                {
+                    context.RegisterOperationAction(operationAction, OperationKind.FieldInitializer);
+                }, SymbolKind.Field);
             });
         }
 

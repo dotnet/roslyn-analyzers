@@ -6,10 +6,8 @@ using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Analyzer.Utilities.Lightup;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using NullableAnnotation = Analyzer.Utilities.Lightup.NullableAnnotation;
 
 namespace Roslyn.Diagnostics.Analyzers
 {
@@ -114,7 +112,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 case TypeKind.Class:
                 case TypeKind.Interface:
                 case TypeKind.Delegate:
-                    return type.NullableAnnotation() != NullableAnnotation.NotAnnotated;
+                    return type.NullableAnnotation != NullableAnnotation.NotAnnotated;
 
                 case TypeKind.Enum:
                     return true;
@@ -126,14 +124,14 @@ namespace Roslyn.Diagnostics.Analyzers
                     if (knownNonDefaultableTypes.TryGetValue(namedType, out var isNonDefaultable))
                         return !isNonDefaultable;
 
-                    isNonDefaultable = namedType.HasAttribute(nonDefaultableAttribute);
+                    isNonDefaultable = namedType.HasAnyAttribute(nonDefaultableAttribute);
                     return !knownNonDefaultableTypes.GetOrAdd(namedType, isNonDefaultable);
 
                 case TypeKind.TypeParameter:
                     if (knownNonDefaultableTypes.TryGetValue(type, out isNonDefaultable))
                         return !isNonDefaultable;
 
-                    isNonDefaultable = type.HasAttribute(nonDefaultableAttribute);
+                    isNonDefaultable = type.HasAnyAttribute(nonDefaultableAttribute);
                     return !knownNonDefaultableTypes.GetOrAdd(type, isNonDefaultable);
 
                 case TypeKind.Unknown:

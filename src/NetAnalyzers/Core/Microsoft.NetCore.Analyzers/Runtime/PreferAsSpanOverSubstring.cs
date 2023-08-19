@@ -54,20 +54,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             void OnOperationBlockStart(OperationBlockStartAnalysisContext context)
             {
-                var invocations = PooledConcurrentSet<IInvocationOperation>.GetInstance();
+                var invocations = TemporarySet<IInvocationOperation>.Empty;
 
                 context.RegisterOperationAction(context =>
                 {
                     var argument = (IArgumentOperation)context.Operation;
                     if (symbols.IsAnySubstringInvocation(argument.Value.WalkDownConversion(c => c.IsImplicit)) && argument.Parent is IInvocationOperation invocation)
                     {
-                        invocations.Add(invocation);
+                        invocations.Add(invocation, context.CancellationToken);
                     }
                 }, OperationKind.Argument);
 
                 context.RegisterOperationBlockEndAction(context =>
                 {
-                    foreach (var invocation in invocations)
+                    foreach (var invocation in invocations.NonConcurrentEnumerable)
                     {
                         //  We search for an overload of the invoked member whose signature matches the signature of
                         //  the invoked member, except with ReadOnlySpan<char> substituted in for some of the 
@@ -100,7 +100,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             int substringCalls = 0;
             foreach (var argument in invocation.Arguments)
             {
-                if (symbols.IsAnySubstringInvocation(argument.Value.WalkDownConversion(c => c.IsImplicit)))
+                if (symbols.IsAnySubstringInvocation(argument.Value.WalkDownConversion(c => c.IsImplicit)) &&
+                    argument.Parameter != null)
                 {
                     isSubstringLookup[argument.Parameter.Ordinal] = true;
                     ++substringCalls;
@@ -171,7 +172,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static IEnumerable<IMethodSymbol> GetAllAccessibleOverloadsAtInvocationCallSite(IInvocationOperation invocation, CancellationToken cancellationToken)
         {
             var method = invocation.TargetMethod;
-            var model = invocation.SemanticModel;
+            var model = invocation.SemanticModel!;
             int location = invocation.Syntax.SpanStart;
             var instance = invocation.Instance;
 
@@ -200,7 +201,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             static INamedTypeSymbol GetEnclosingType(SemanticModel model, int location, CancellationToken cancellationToken)
             {
-                ISymbol symbol = model.GetEnclosingSymbol(location, cancellationToken);
+                ISymbol symbol = model.GetEnclosingSymbol(location, cancellationToken)!;
                 if (symbol is not INamedTypeSymbol type)
                     type = symbol.ContainingType;
 

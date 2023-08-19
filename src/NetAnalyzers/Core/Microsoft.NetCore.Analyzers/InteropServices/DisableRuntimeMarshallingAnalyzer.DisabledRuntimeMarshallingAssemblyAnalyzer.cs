@@ -34,6 +34,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     marshalMethods.AddRange(marshalType.GetMembers("PtrToStructure"));
                     _marshalMethods = marshalMethods.ToImmutable();
                 }
+
                 _autoLayoutCache = autoLayoutCache;
             }
 
@@ -99,7 +100,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 var functionPointerInvocation = IFunctionPointerInvocationOperationWrapper.FromOperation(context.Operation);
 
-                if (functionPointerInvocation.GetFunctionPointerSignature().CallingConvention() == System.Reflection.Metadata.SignatureCallingConvention.Default)
+                if (functionPointerInvocation.GetFunctionPointerSignature().CallingConvention == System.Reflection.Metadata.SignatureCallingConvention.Default)
                 {
                     return;
                 }
@@ -117,12 +118,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 Debug.Assert(_unmanagedFunctionPointerAttribute is not null);
                 INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
-                if (type.TypeKind != TypeKind.Delegate || !type.HasAttribute(_unmanagedFunctionPointerAttribute))
+                if (type.TypeKind != TypeKind.Delegate || !type.HasAnyAttribute(_unmanagedFunctionPointerAttribute))
                 {
                     return;
                 }
 
-                AnalyzeMethodSignature(_autoLayoutCache, context.ReportDiagnostic, type.DelegateInvokeMethod);
+                AnalyzeMethodSignature(_autoLayoutCache, context.ReportDiagnostic, type.DelegateInvokeMethod!);
             }
 
             public void AnalyzeMethod(SymbolAnalysisContext context)
@@ -146,12 +147,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     reportDiagnostic(method.CreateDiagnostic(FeatureUnsupportedWhenRuntimeMarshallingDisabledSetLastErrorTrue));
                 }
 
-                if (!method.MethodImplementationFlags().HasFlag(System.Reflection.MethodImplAttributes.PreserveSig))
+                if (!method.MethodImplementationFlags.HasFlag(System.Reflection.MethodImplAttributes.PreserveSig))
                 {
                     reportDiagnostic(method.CreateDiagnostic(FeatureUnsupportedWhenRuntimeMarshallingDisabledHResultSwapping));
                 }
 
-                if (method.HasAttribute(_lcidConversionAttribute))
+                if (method.HasAnyAttribute(_lcidConversionAttribute))
                 {
                     reportDiagnostic(method.CreateDiagnostic(FeatureUnsupportedWhenRuntimeMarshallingDisabledUsingLCIDConversionAttribute));
                 }

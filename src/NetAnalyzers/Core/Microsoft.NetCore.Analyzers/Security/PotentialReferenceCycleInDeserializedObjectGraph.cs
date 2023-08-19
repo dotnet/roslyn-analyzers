@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -124,9 +124,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                         }
 
                         if (point.IsInSource() &&
-                            point.HasAttribute(serializableAttributeTypeSymbol))
+                            point.HasAnyAttribute(serializableAttributeTypeSymbol))
                         {
-                            var fieldPoints = point.GetMembers().OfType<IFieldSymbol>().Where(s => !s.HasAttribute(nonSerializedAttribute) &&
+                            var fieldPoints = point.GetMembers().OfType<IFieldSymbol>().Where(s => !s.HasAnyAttribute(nonSerializedAttribute) &&
                                                                                                         !s.IsStatic);
 
                             foreach (var fieldPoint in fieldPoints)
@@ -165,7 +165,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                         }
 
                         // 4. Base type.
-                        result.Add(type.BaseType);
+                        if (type.BaseType != null)
+                        {
+                            result.Add(type.BaseType);
+                        }
 
                         return result;
                     }
@@ -178,7 +181,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                     // graph: The graph
                     void AddLine(ISymbol from, ISymbol to, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
                     {
-                        graph.AddOrUpdate(from, new ConcurrentDictionary<ISymbol, bool> { [to] = true }, (k, v) => { v[to] = true; return v; });
+                        graph.AddOrUpdate(from, new ConcurrentDictionary<ISymbol, bool> { [to] = true }, (k, v) =>
+                        {
+                            v[to] = true;
+                            return v;
+                        });
                         degree.AddOrUpdate(from, 1, (k, v) => v + 1);
                     }
 

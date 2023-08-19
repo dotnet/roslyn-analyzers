@@ -308,7 +308,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 var invocation = (TInvocationExpressionSyntax)context.Node;
                 SemanticModel semanticModel = context.SemanticModel;
 
-                ISymbol symbol = semanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol;
+                ISymbol? symbol = semanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol;
                 if (symbol == null || symbol.Kind != SymbolKind.Method || !symbol.Name.StartsWith("Register", StringComparison.Ordinal))
                 {
                     return;
@@ -331,7 +331,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                         int argumentCount = arguments.Count();
                         if (argumentCount >= 1)
                         {
-                            ITypeSymbol type = semanticModel.GetTypeInfo(arguments.First(), context.CancellationToken).ConvertedType;
+                            ITypeSymbol? type = semanticModel.GetTypeInfo(arguments.First(), context.CancellationToken).ConvertedType;
                             if (type == null || type.Name.Equals(nameof(Action), StringComparison.Ordinal))
                             {
                                 if (argumentCount == 1)
@@ -360,9 +360,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                                     {
                                         symbol = semanticModel.GetSymbolInfo(argument, context.CancellationToken).Symbol;
                                         if (symbol != null &&
-#pragma warning disable CA1508 // Avoid dead conditional code - https://github.com/dotnet/roslyn-analyzers/issues/4519
                                             symbol.Kind == SymbolKind.Field &&
-#pragma warning restore CA1508 // Avoid dead conditional code
                                             SymbolEqualityComparer.Default.Equals(_symbolKind, symbol.ContainingType) &&
                                             !s_supportedSymbolKinds.Contains(symbol.Name))
                                         {
@@ -389,7 +387,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     }
                     else
                     {
-                        ITypeParameterSymbol typeParam = method.TypeParameters.FirstOrDefault(t => t.Name == DiagnosticWellKnownNames.TLanguageKindEnumName);
+                        ITypeParameterSymbol? typeParam = method.TypeParameters.FirstOrDefault(t => t.Name == DiagnosticWellKnownNames.TLanguageKindEnumName);
                         if (typeParam != null)
                         {
                             int index = method.TypeParameters.IndexOf(typeParam);

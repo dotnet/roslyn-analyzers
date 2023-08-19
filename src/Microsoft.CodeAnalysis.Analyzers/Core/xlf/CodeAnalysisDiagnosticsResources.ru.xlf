@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="ru" original="../CodeAnalysisDiagnosticsResources.resx">
     <body>
+      <trans-unit id="AddCompilationEndCustomTagDescription">
+        <source>'DiagnosticDescriptor' assigned to field is used to report a compilation end diagnostic, but the 'DiagnosticDescriptor' constructor used to initialize it does not pass in the required custom tag "CompilationEnd". See documentation for 'WellKnownDiagnosticTags.CompilationEnd' for details.</source>
+        <target state="translated">Дескриптор "DiagnosticDescriptor", назначенный полю, используется для передачи диагностических данных окончания компиляции, но конструктор "DiagnosticDescriptor" не передал необходимый настраиваемый тег "CompilationEnd". Дополнительные сведения см. в документации по "WellKnownDiagnosticTags.CompilationEnd".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCompilationEndCustomTagMessage">
+        <source>Add "CompilationEnd" custom tag to the diagnostic descriptor used to initialize field '{0}' as it is used to report a compilation end diagnostic</source>
+        <target state="translated">Добавить настраиваемый тег "CompilationEnd" к дескриптору диагностики, используемому для инициализации поля "{0}", поскольку он передает диагностические данные окончания компиляции</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCompilationEndCustomTagTitle">
+        <source>Add "CompilationEnd" custom tag to compilation end diagnostic descriptor</source>
+        <target state="translated">Добавить настраиваемый тег "CompilationEnd" к дескриптору диагностики окончания компиляции</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AddEntryForDiagnosticIdInAnalyzerReleaseCodeFixTitle">
         <source>Add rule entry to unshipped release file</source>
         <target state="translated">Добавить запись правила в неотправленный файл выпуска</target>
@@ -100,6 +115,31 @@
       <trans-unit id="DefineDiagnosticTitleCorrectlyTitle">
         <source>Define diagnostic title correctly</source>
         <target state="translated">Укажите название диагностики правильно</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDeclareCSharpCompilerFeatureInAssemblyWithVisualBasicReferenceMessage">
+        <source>This C# compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.VisualBasic. The Microsoft.CodeAnalysis.VisualBasic assembly is not always provided during C# compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</source>
+        <target state="translated">Это расширение компилятора C# не следует реализовывать в сборке, содержащей ссылку на Microsoft.CodeAnalysis.VisualBasic. Сборка Microsoft.CodeAnalysis.VisualBasic не всегда предоставляется в сценариях компиляции C#, поэтому ссылки на нее могут привести к непредсказуемому поведению расширения компилятора.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDeclareCompilerFeatureInAssemblyWithWorkspacesReferenceMessage">
+        <source>This compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.Workspaces. The Microsoft.CodeAnalysis.Workspaces assembly is not provided during command line compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</source>
+        <target state="translated">Это расширение компилятора не следует реализовывать в сборке, содержащей ссылку на Microsoft.CodeAnalysis.Workspaces. Сборка Microsoft.CodeAnalysis.Workspaces не предоставляется в сценариях компиляции из командной строки, поэтому ссылки на нее могут привести к непредсказуемому поведению расширения компилятора.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDeclareVisualBasicCompilerFeatureInAssemblyWithCSharpReferenceMessage">
+        <source>This Visual Basic compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.CSharp. The Microsoft.CodeAnalysis.CSharp assembly is not always provided during Visual Basic compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</source>
+        <target state="translated">Это расширение компилятора Visual Basic не следует реализовывать в сборке, содержащей ссылку на Microsoft.CodeAnalysis.CSharp. Сборка Microsoft.CodeAnalysis.CSharp не всегда предоставляется в сценариях компиляции Visual Basic, поэтому ссылки на нее могут привести к непредсказуемому поведению расширения компилятора.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotRegisterCompilerTypesWithBadAssemblyReferenceRuleDescription">
+        <source>Types which implement compiler extension points should not be declared in assemblies that contain references to assemblies which are not provided by all compilation scenarios. Doing so may cause the feature to behave unpredictably.</source>
+        <target state="translated">Типы, реализующие точки расширения компилятора, не следует объявлять в сборках, содержащих ссылки на сборки, которые не предоставляются всеми сценариями компиляции. Это может привести к непредсказуемому поведению функции.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotRegisterCompilerTypesWithBadAssemblyReferenceRuleTitle">
+        <source>Compiler extensions should be implemented in assemblies with compiler-provided references</source>
+        <target state="translated">Расширения компилятора должны быть реализованы в сборках с предоставленными компилятором ссылками.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCompilationGetSemanticModelDescription">
@@ -571,8 +611,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationTitle">
-        <source>Do not ignore values returned by methods on immutable objects.</source>
-        <target state="translated">Не игнорируйте значения, возвращаемые методами для неизменяемых объектов.</target>
+        <source>Do not ignore values returned by methods on immutable objects</source>
+        <target state="translated">Не игнорировать значения, возвращаемые методами для неизменяемых объектов</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetFixAllProviderTitle">

@@ -12,13 +12,7 @@ namespace Reference.Assemblies
         private static Stream GetResourceStream(string name)
         {
             var assembly = typeof(ResourceLoader).GetTypeInfo().Assembly;
-
-            var stream = assembly.GetManifestResourceStream(name);
-            if (stream == null)
-            {
-                throw new InvalidOperationException($"Resource '{name}' not found in {assembly.FullName}.");
-            }
-
+            var stream = assembly.GetManifestResourceStream(name) ?? throw new InvalidOperationException($"Resource '{name}' not found in {assembly.FullName}.");
             return stream;
         }
 
@@ -38,7 +32,7 @@ namespace Reference.Assemblies
         {
             if (resource == null)
             {
-                resource = GetResourceBlob(name);
+                resource ??= GetResourceBlob(name);
             }
 
             return resource;

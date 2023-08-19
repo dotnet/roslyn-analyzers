@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var root = await context.Document.GetRequiredSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var node = root.FindNode(context.Span);
 
             if (ShouldFix(node))
@@ -51,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 generator.IdentifierName("CurrentCulture"));
         }
 
-        protected abstract Task<Document> UseInvariantVersionAsync(Document document, SyntaxGenerator syntaxGenerator, SyntaxNode root, SyntaxNode node);
+        protected abstract Task<Document> UseInvariantVersionAsync(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode node);
 
         protected static string GetReplacementMethodName(string currentMethodName) => currentMethodName switch
         {

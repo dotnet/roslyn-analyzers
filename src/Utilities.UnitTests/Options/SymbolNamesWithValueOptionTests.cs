@@ -37,6 +37,7 @@ namespace Analyzer.Utilities.UnitTests.Options
                 {
                     callCount++;
                 }
+
                 return new SymbolNamesWithValueOption<Unit>.NameParts(symbolName, Unit.Default);
             }
 
@@ -381,6 +382,7 @@ public namespace MyCompany.MyProduct.MyFeature
                     {
                         return currentType;
                     }
+
                     currentType = currentType.ContainingType;
                 }
 
@@ -391,6 +393,7 @@ public namespace MyCompany.MyProduct.MyFeature
                     {
                         return currentNamespace;
                     }
+
                     currentNamespace = currentNamespace.ContainingNamespace;
                 }
 
@@ -420,7 +423,7 @@ public namespace MyCompany.MyProduct.MyFeature
                 .AddProject(projectId, TestProjectName, TestProjectName, LanguageNames.CSharp)
                 .AddMetadataReferences(projectId, references)
                 .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-                .WithProjectParseOptions(projectId, null)
+                .WithProjectParseOptions(projectId, new CSharpParseOptions())
                 .GetProject(projectId);
 
             int count = 0;

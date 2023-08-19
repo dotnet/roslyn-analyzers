@@ -114,10 +114,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         }
 
                         indexerArgument = elementReference.Indices[0];
-                        containingType = elementReference.ArrayReference.Type;
+                        containingType = elementReference.ArrayReference.Type!;
                     }
-                    else if (operationContext.Operation.Kind == OperationKind.None
-                        || operationContext.Operation.Kind == OperationKindEx.ImplicitIndexerReference)
+                    else if (operationContext.Operation.Kind is OperationKind.None or OperationKindEx.ImplicitIndexerReference)
                     {
                         // The forward support via the "None" operation kind is only available for C#.
                         if (operationContext.Compilation.Language != LanguageNames.CSharp)
@@ -138,7 +137,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             return;
                         }
 
-                        containingType = enumerator.Current.Type;
+                        containingType = enumerator.Current.Type!;
 
                         if (!enumerator.MoveNext())
                         {
@@ -204,7 +203,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             rule,
                             dictBuilder.ToImmutable(),
                             methodToUse,
-                            rangeOperation.Type.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                            rangeOperation.Type!.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
                             containingType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
                 },
                 OperationKind.PropertyReference,

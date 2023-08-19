@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.Analyzers",
-        "version": "3.3.4",
+        "version": "3.11.0",
         "language": "en-US"
       },
       "rules": {
@@ -92,7 +92,6 @@
               "Visual Basic"
             ],
             "tags": [
-              "CompilationEnd",
               "Telemetry"
             ]
           }
@@ -111,7 +110,24 @@
               "Visual Basic"
             ],
             "tags": [
-              "CompilationEnd",
+              "Telemetry"
+            ]
+          }
+        },
+        "RS1014": {
+          "id": "RS1014",
+          "shortDescription": "Do not ignore values returned by methods on immutable objects",
+          "fullDescription": "Many objects exposed by Roslyn are immutable. The return value from a method invocation on these objects should not be ignored.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "MicrosoftCodeAnalysisCorrectness",
+            "isEnabledByDefault": true,
+            "typeName": "ImmutableObjectMethodAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
               "Telemetry"
             ]
           }
@@ -148,7 +164,6 @@
               "Visual Basic"
             ],
             "tags": [
-              "CompilationEnd",
               "Telemetry"
             ]
           }
@@ -442,6 +457,43 @@
             ]
           }
         },
+        "RS1037": {
+          "id": "RS1037",
+          "shortDescription": "Add \"CompilationEnd\" custom tag to compilation end diagnostic descriptor",
+          "fullDescription": "'DiagnosticDescriptor' assigned to field is used to report a compilation end diagnostic, but the 'DiagnosticDescriptor' constructor used to initialize it does not pass in the required custom tag \"CompilationEnd\". See documentation for 'WellKnownDiagnosticTags.CompilationEnd' for details.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "MicrosoftCodeAnalysisDesign",
+            "isEnabledByDefault": true,
+            "typeName": "DiagnosticDescriptorCreationAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "RS1038": {
+          "id": "RS1038",
+          "shortDescription": "Compiler extensions should be implemented in assemblies with compiler-provided references",
+          "fullDescription": "Types which implement compiler extension points should not be declared in assemblies that contain references to assemblies which are not provided by all compilation scenarios. Doing so may cause the feature to behave unpredictably.",
+          "defaultLevel": "warning",
+          "helpUri": "https://github.com/dotnet/roslyn-analyzers/blob/main/docs/rules/RS1038.md",
+          "properties": {
+            "category": "MicrosoftCodeAnalysisCorrectness",
+            "isEnabledByDefault": true,
+            "typeName": "CompilerExtensionStrictApiAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "RS2000": {
           "id": "RS2000",
           "shortDescription": "Add analyzer diagnostic IDs to analyzer release",
@@ -623,7 +675,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.CSharp.Analyzers",
-        "version": "3.3.4",
+        "version": "3.11.0",
         "language": "en-US"
       },
       "rules": {
@@ -746,28 +798,12 @@
             ]
           }
         },
-        "RS1014": {
-          "id": "RS1014",
-          "shortDescription": "Do not ignore values returned by methods on immutable objects.",
-          "fullDescription": "Many objects exposed by Roslyn are immutable. The return value from a method invocation on these objects should not be ignored.",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "MicrosoftCodeAnalysisCorrectness",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpImmutableObjectMethodAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
         "RS1022": {
           "id": "RS1022",
           "shortDescription": "Do not use types from Workspaces assembly in an analyzer",
           "fullDescription": "Diagnostic analyzer types should not use types from Workspaces assemblies. Workspaces assemblies are only available when the analyzer executes in Visual Studio IDE live analysis, but are not available during command line build. Referencing types from Workspaces assemblies will lead to runtime exception during analyzer execution in command line build.",
           "defaultLevel": "warning",
+          "helpUri": "https://github.com/dotnet/roslyn-analyzers/blob/main/docs/rules/RS1022.md",
           "properties": {
             "category": "MicrosoftCodeAnalysisCorrectness",
             "isEnabledByDefault": true,
@@ -838,7 +874,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.VisualBasic.Analyzers",
-        "version": "3.3.4",
+        "version": "3.11.0",
         "language": "en-US"
       },
       "rules": {
@@ -966,6 +1002,7 @@
           "shortDescription": "Do not use types from Workspaces assembly in an analyzer",
           "fullDescription": "Diagnostic analyzer types should not use types from Workspaces assemblies. Workspaces assemblies are only available when the analyzer executes in Visual Studio IDE live analysis, but are not available during command line build. Referencing types from Workspaces assemblies will lead to runtime exception during analyzer execution in command line build.",
           "defaultLevel": "warning",
+          "helpUri": "https://github.com/dotnet/roslyn-analyzers/blob/main/docs/rules/RS1022.md",
           "properties": {
             "category": "MicrosoftCodeAnalysisCorrectness",
             "isEnabledByDefault": true,

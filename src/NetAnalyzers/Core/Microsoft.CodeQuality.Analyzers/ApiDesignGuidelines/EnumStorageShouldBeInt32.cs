@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
@@ -59,7 +59,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            SpecialType underlyingType = symbol.EnumUnderlyingType.SpecialType;
+            SpecialType underlyingType = symbol.EnumUnderlyingType!.SpecialType;
             if (underlyingType == SpecialType.System_Int32)
             {
                 return;
@@ -72,7 +72,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             // If enum is Int64 and has Flags attributes then exit
-            if (underlyingType == SpecialType.System_Int64 && symbol.HasAttribute(flagsAttribute))
+            if (underlyingType == SpecialType.System_Int64 && symbol.HasAnyAttribute(flagsAttribute))
             {
                 return;
             }

@@ -7,11 +7,6 @@
         <target state="translated">Добавьте атрибут "NonSerialized" в это поле.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AddPublicParameterlessConstructor">
-        <source>Add a public constructor that takes zero parameters</source>
-        <target state="translated">Добавить общедоступный конструктор, принимающий нулевые параметры</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AddSerializableAttributeCodeActionTitle">
         <source>Add Serializable attribute</source>
         <target state="translated">Добавить атрибут Serializable</target>
@@ -50,6 +45,41 @@
       <trans-unit id="AttributeStringLiteralsShouldParseCorrectlyTitle">
         <source>Attribute string literals should parse correctly</source>
         <target state="translated">Синтаксический анализ строковых литералов атрибута должен осуществляться правильно</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysCodeFixTitle">
+        <source>Extract to static readonly field</source>
+        <target state="translated">Извлечь в поле "static readonly"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysDescription">
+        <source>Constant arrays passed as arguments are not reused when called repeatedly, which implies a new array is created each time. Consider extracting them to 'static readonly' fields to improve performance if the passed array is not mutated within the called method.</source>
+        <target state="translated">Постоянные массивы, передаваемые в качестве аргументов, не будут использоваться при повторном вызове, что подразумевает создание нового массива каждый раз. Попробуйте извлечь их в статичные поля, доступные только для чтения ("static readonly"), чтобы повысить производительность, если переданный массив не был изменен в вызываемом методе.</target>
+        <note>{Locked="static readonly"}</note>
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysMessage">
+        <source>Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array</source>
+        <target state="translated">Выбирать статичные поля, доступные только для чтения ("static readonly"), вместо аргументов постоянного массива, если вызываемый метод вызывается повторно и не изменяет переданный массив</target>
+        <note>{Locked="static readonly"}</note>
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysTitle">
+        <source>Avoid constant arrays as arguments</source>
+        <target state="translated">Избегайте использования константных массивов в качестве аргументов</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsDescription">
+        <source>Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead. Single use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.</source>
+        <target state="new">Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead. Single use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsMessage">
+        <source>Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead.</source>
+        <target state="new">Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsTitle">
+        <source>Cache and reuse 'JsonSerializerOptions' instances</source>
+        <target state="new">Cache and reuse 'JsonSerializerOptions' instances</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidStringBuilderPInvokeParametersDescription">
@@ -170,11 +200,6 @@
       <trans-unit id="CallGCSuppressFinalizeCorrectlyTitle">
         <source>Dispose methods should call SuppressFinalize</source>
         <target state="translated">Методы Dispose должны вызывать SuppressFinalize</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">Надежность</target>
         <note />
       </trans-unit>
       <trans-unit id="CommaSeparator">
@@ -547,34 +572,45 @@
         <target state="translated">Не пропускать всегда проверку токенов в делегатах</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCallDangerousMethodsInDeserialization">
-        <source>Do Not Call Dangerous Methods In Deserialization</source>
-        <target state="translated">Не вызывать опасные методы десериализации</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserializationDescription">
         <source>Insecure Deserialization is a vulnerability which occurs when untrusted data is used to abuse the logic of an application, inflict a Denial-of-Service (DoS) attack, or even execute arbitrary code upon it being deserialized. It’s frequently possible for malicious users to abuse these deserialization features when the application is deserializing untrusted data which is under their control. Specifically, invoke dangerous methods in the process of deserialization. Successful insecure deserialization attacks could allow an attacker to carry out attacks such as DoS attacks, authentication bypasses, and remote code execution.</source>
         <target state="translated">Небезопасная десериализация — это уязвимость, которая возникает, когда недоверенные данные используются для нарушения логики работы приложения, проведения атак типа "отказ в обслуживании" или даже для выполнения произвольного кода при его десериализации. Злоумышленники часто используют эти возможности десериализации, контролируя недоверенные данные, которые десериализуются приложением, в частности, путем вызова опасных методов в ходе десериализации. При успешном проведении атак с небезопасной десериализацией злоумышленник может провести атаки типа "отказ в обслуживании", обойти проверку подлинности и выполнить код удаленно.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserializationMessage">
-        <source>When deserializing an instance of class {0}, method {1} can call dangerous method {2}. The potential method invocations are: {3}.</source>
-        <target state="translated">При десериализации экземпляра класса {0} метод {1} может вызывать опасный метод {2}. Потенциальные вызовы методов: {3}.</target>
+        <source>When deserializing an instance of class '{0}', method '{1}' can directly or indirectly call dangerous method '{2}'</source>
+        <target state="translated">При десериализации экземпляра класса '{0}' метод '{1}' может прямо или косвенно вызывать опасный метод '{2}'</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">
-        <source>When a constructor calls a virtual method, the constructor for the instance that invokes the method may not have executed.</source>
-        <target state="translated">Когда конструктор вызывает виртуальный метод, конструктор может не выполняться для экземпляра, вызывающего этот метод.</target>
+      <trans-unit id="DoNotCallDangerousMethodsInDeserializationTitle">
+        <source>Do Not Call Dangerous Methods In Deserialization</source>
+        <target state="translated">Не вызывать опасные методы десериализации</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCallOverridableMethodsInConstructorsMessage">
-        <source>Do not call overridable methods in constructors</source>
-        <target state="translated">Не вызывайте переопределяемые методы в конструкторах</target>
+      <trans-unit id="DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesDescription">
+        <source>Enumerable.Cast&lt;T&gt; and Enumerable.OfType&lt;T&gt; require compatible types to function expectedly.  
+The generic cast (IL 'unbox.any') used by the sequence returned by Enumerable.Cast&lt;T&gt; will throw InvalidCastException at runtime on elements of the types specified.  
+The generic type check (C# 'is' operator/IL 'isinst') used by Enumerable.OfType&lt;T&gt; will never succeed with elements of types specified, resulting in an empty sequence.  
+Widening and user defined conversions are not supported with generic types.</source>
+        <target state="translated">Для нормальной работы Enumerable.Cast&lt;T&gt; и Enumerable.OfType&lt;T&gt; требуются совместимые типы. 
+Универсальное приведение (выражение промежуточного языка 'unbox.any'), используемое последовательностью, возвращенной enumerable.Cast&lt;T&gt;, вызовет исключение InvalidCastException во время выполнения для элементов указанных типов. 
+Проверка универсального типа (оператор C# 'is'/выражение промежуточного языка 'isinst'), используемая Enumerable.OfType&lt;T&gt;, никогда не будет выполнена успешно с элементами указанных типов, что приведет к получению пустой последовательности.  
+Расширяемые и определяемые пользователем преобразования не поддерживаются для универсальных типов.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCallOverridableMethodsInConstructorsTitle">
-        <source>Do not call overridable methods in constructors</source>
-        <target state="translated">Не вызывайте переопределяемые методы в конструкторах</target>
+      <trans-unit id="DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesMessageCast">
+        <source>Type '{0}' is incompatible with type '{1}' and cast attempts will throw InvalidCastException at runtime</source>
+        <target state="translated">Тип '{0}' несовместим с типом '{1}', и приведение типов вызовет исключение InvalidCastException во время выполнения</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesMessageOfType">
+        <source>This call will always result in an empty sequence because type '{0}' is incompatible with type '{1}'</source>
+        <target state="translated">Этот вызов всегда приведет к пустой последовательности, так как тип '{0}' несовместим с типом '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesTitle">
+        <source>Do not call Enumerable.Cast&lt;T&gt; or Enumerable.OfType&lt;T&gt; with incompatible types</source>
+        <target state="translated">Не вызывайте Enumerable.Cast&lt;T&gt; или Enumerable.OfType&lt;T&gt; с несовместимыми типами</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallToImmutableCollectionOnAnImmutableCollectionValueMessage">
@@ -585,21 +621,6 @@
       <trans-unit id="DoNotCallToImmutableCollectionOnAnImmutableCollectionValueTitle">
         <source>Do not call ToImmutableCollection on an ImmutableCollection value</source>
         <target state="translated">Не вызывайте ToImmutableCollection для значения ImmutableCollection</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersDescription">
-        <source>Do not author general catch handlers in code that receives corrupted state exceptions.</source>
-        <target state="translated">Не создавайте общие обработчики catch в коде, получающем исключения поврежденного состояния.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersMessage">
-        <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="translated">Не перехватывайте исключения поврежденного состояния в общих обработчиках.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersTitle">
-        <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="translated">Не перехватывайте исключения поврежденного состояния в общих обработчиках.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCreateTaskCompletionSourceWithWrongArgumentsDescription">
@@ -667,11 +688,6 @@
         <target state="translated">В качестве значения параметра ServerCertificateValidationCallback задается функция, которая принимает любой сертификат сервера, всегда возвращая значение true. Убедитесь, что сертификаты серверов проверяются, чтобы подтвердить подлинность сервера, принимающего запросы.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
-        <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
-        <target state="translated">Если при использовании HttpClient не указан обработчик для конкретной платформы (WinHttpHandler, CurlHandler или HttpClientHandler) и свойство CheckCertificateRevocationList имеет значение true (истина), то отозванные сертификаты будут приниматься клиентом HttpClient как действительные.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderChecking">
         <source>Do Not Disable HTTP Header Checking</source>
         <target state="translated">Не отключайте проверку заголовков HTTP</target>
@@ -685,6 +701,11 @@
       <trans-unit id="DoNotDisableHTTPHeaderCheckingMessage">
         <source>Do not disable HTTP header checking</source>
         <target state="translated">Не отключайте проверку заголовков HTTP</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
+        <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
+        <target state="translated">Если при использовании HttpClient не указан обработчик для конкретной платформы (WinHttpHandler, CurlHandler или HttpClientHandler) и свойство CheckCertificateRevocationList имеет значение true (истина), то отозванные сертификаты будут приниматься клиентом HttpClient как действительные.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidation">
@@ -755,6 +776,21 @@
       <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyTitle">
         <source>Unnecessary call to 'Dictionary.ContainsKey(key)'</source>
         <target state="translated">Ненужный вызов \"Dictionary.ContainsKey(key)\"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardSetAddOrRemoveByContainsDescription">
+        <source>Do not guard 'Add(item)' or 'Remove(item)' with 'Contains(item)' for the set. The former two already check whether the item exists and will return if it was added or removed.</source>
+        <target state="translated">Не защищайте "Add(item)" или "Remove(item)" с помощью "Contains(item)" для набора. Первые два уже проверяют, существует ли элемент, и вернут отклик о его добавлении или удалении.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardSetAddOrRemoveByContainsMessage">
+        <source>Do not guard '{0}' with '{1}'</source>
+        <target state="translated">Не защищайте "{0}" с помощью "{1}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardSetAddOrRemoveByContainsTitle">
+        <source>Unnecessary call to 'Contains(item)'</source>
+        <target state="translated">Ненужный вызов "Contains(item)"</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeCertificate">
@@ -887,6 +923,21 @@
         <target state="translated">{0} использует взломанный алгоритм шифрования {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseConfigureAwaitWithSuppressThrowingDescription">
+        <source>The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generic Task, not a Task&lt;TResult&gt;.  To use it with a Task&lt;TResult&gt;, first cast to the base Task.</source>
+        <target state="translated">ConfigureAwaitOptions.SuppressThrowing поддерживается только с неуниверсальной задачей, а не с задачей&lt;TResult&gt;. Чтобы использовать его с задачей&lt;TResult&gt;, сначала выполните приведение к базовой задаче.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseConfigureAwaitWithSuppressThrowingMessage">
+        <source>The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generic Task</source>
+        <target state="translated">ConfigureAwaitOptions.SuppressThrowing поддерживается только с неуниверсальной задачей</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseConfigureAwaitWithSuppressThrowingTitle">
+        <source>Do not use ConfigureAwaitOptions.SuppressThrowing with Task&lt;TResult&gt;</source>
+        <target state="translated">Не использовать ConfigureAwaitOptions.SuppressThrowing с задачей&lt;TResult&gt;</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
         <source>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
         <target state="translated">Для непустых коллекций методы CountAsync() и LongCountAsync() перечисляют всю последовательность, а метод AnyAsync() останавливается на первом элементе или на первом элементе, который соответствует условию.</target>
@@ -922,21 +973,6 @@
         <target state="translated">Для предотвращения атак перебором по словарю в симметричном шифровании всегда нужно использовать невоспроизводимый вектор инициализации.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
-        <source>Do Not Use Deprecated Security Protocols</source>
-        <target state="translated">Не используйте нерекомендуемые протоколы безопасности</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
-        <source>Using a deprecated security protocol rather than the system default is risky.</source>
-        <target state="translated">Использование нерекомендуемого протокола безопасности вместо заданного по умолчанию в системе является рискованным.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
-        <source>Hard-coded use of deprecated security protocol {0}</source>
-        <target state="translated">Жестко заданное использование нерекомендуемого протокола безопасности {0}</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotUseDSA">
         <source>Do Not Use Digital Signature Algorithm (DSA)</source>
         <target state="translated">Не использовать алгоритм DSA</target>
@@ -950,6 +986,21 @@
       <trans-unit id="DoNotUseDSAMessage">
         <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
         <target state="translated">Алгоритм асимметричного шифрования {0} является ненадежным. Перейдите на алгоритм RSA с размером ключа не менее 2048 бит либо на алгоритм ECDH или ECDSA.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
+        <source>Do Not Use Deprecated Security Protocols</source>
+        <target state="translated">Не используйте нерекомендуемые протоколы безопасности</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
+        <source>Using a deprecated security protocol rather than the system default is risky.</source>
+        <target state="translated">Использование нерекомендуемого протокола безопасности вместо заданного по умолчанию в системе является рискованным.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
+        <source>Hard-coded use of deprecated security protocol {0}</source>
+        <target state="translated">Жестко заданное использование нерекомендуемого протокола безопасности {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyDescription">
@@ -980,16 +1031,6 @@
       <trans-unit id="DoNotUseInsecureRandomnessMessage">
         <source>{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security.</source>
         <target state="translated">{0} является небезопасным генератором случайных чисел. Если случайные числа требуются для обеспечения безопасности, используйте криптографически безопасные генераторы случайных чисел.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseMD5">
-        <source>Do not use insecure cryptographic algorithm MD5.</source>
-        <target state="translated">Не используйте небезопасный алгоритм шифрования MD5.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseMD5Description">
-        <source>This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="translated">Этот тип реализует криптографически небезопасную хэш-функцию MD5. С точки зрения вычислений для алгоритмов MD5 и HMACMD5 возможны хэш-конфликты. Замените на хэш-алгоритм из семейства SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseObsoleteKDFAlgorithm">
@@ -1023,33 +1064,23 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReferenceEqualsWithValueTypesComparerMessage">
-        <source>Do not pass an argument with value type '{0}' to the 'Equals' method on 'ReferenceEqualityComparer'. Due to value boxing, this call to 'Equals' will always return 'false'.</source>
-        <target state="translated">Не передавайте аргумент с типом значения "{0}" методу "Equals" в "ReferenceEqualityComparer". Из-за упаковки-преобразования значения этот вызов "Equals" будет всегда возвращать "false".</target>
+        <source>Do not pass an argument with value type '{0}' to the 'Equals' method on 'ReferenceEqualityComparer'. Due to value boxing, this call to 'Equals' can return an unexpected result. Consider using 'EqualityComparer' instead, or pass reference type arguments if you intend to use 'ReferenceEqualityComparer'.</source>
+        <target state="translated">Не передавайте аргумент с типом значения '{0}' в метод 'Equals' в 'ReferenceEqualityComparer'. Из-за упаковки-преобразования значения этот вызов 'Equals' может вернуть непредвиденный результат. Рассмотрите возможность использования 'EqualityComparer' или передавайте аргументы ссылочного типа, если предполагается использовать 'ReferenceEqualityComparer'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReferenceEqualsWithValueTypesDescription">
-        <source>Value type typed arguments are uniquely boxed for each call to this method, therefore the result is always false.</source>
-        <target state="translated">При каждом вызове этого метода отдельно выполняется упаковка-преобразование типизированных аргументов типа значения. Поэтому результат всегда равен false.</target>
+        <source>Value type typed arguments are uniquely boxed for each call to this method, therefore the result can be unexpected.</source>
+        <target state="translated">При каждом вызове этого метода отдельно выполняется упаковка-преобразование типизированных аргументов типа значения. Поэтому результат может быть непредвиденным.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReferenceEqualsWithValueTypesMethodMessage">
-        <source>Do not pass an argument with value type '{0}' to 'ReferenceEquals'. Due to value boxing, this call to 'ReferenceEquals' will always return 'false'.</source>
-        <target state="translated">Не передавайте аргумент с типом значения "{0}" в "ReferenceEquals". Из-за упаковки-преобразования значения этот вызов "ReferenceEquals" будет всегда возвращать "false".</target>
+        <source>Do not pass an argument with value type '{0}' to 'ReferenceEquals'. Due to value boxing, this call to 'ReferenceEquals' can return an unexpected result. Consider using 'Equals' instead, or pass reference type arguments if you intend to use 'ReferenceEquals'.</source>
+        <target state="translated">Не передавайте аргумент с типом значения '{0}' в 'ReferenceEquals'. Из-за упаковки-преобразования значения этот вызов 'ReferenceEquals' может вернуть непредвиденный результат. Рассмотрите возможность использования 'Equals' или передавайте аргументы ссылочного типа, если предполагается использовать 'ReferenceEquals'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReferenceEqualsWithValueTypesTitle">
         <source>Do not use ReferenceEquals with value types</source>
         <target state="translated">Не используйте ReferenceEquals с типами значений</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseSHA1">
-        <source>Do not use insecure cryptographic algorithm SHA1.</source>
-        <target state="translated">Не используйте небезопасный алгоритм шифрования SHA1.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseSHA1Description">
-        <source>This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="translated">Этот тип реализует криптографически небезопасную хэш-функцию SHA1. С точки зрения вычислений для алгоритмов SHA-1 и SHA-0 возможны хэш-конфликты. Замените на хэш-алгоритм из семейства SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseStackallocInLoopsDescription">
@@ -1245,21 +1276,6 @@
       <trans-unit id="FieldIsPreviewTypeMessageWithCustomMessagePlaceholder">
         <source>{3} '{0}''s type contains the preview type '{1}' and requires opting into preview features. See {2} for more information.</source>
         <target state="translated">Тип "{0}" {3} содержит предварительную версию типа "{1}", поэтому требуется согласие на использование предварительных версий функций. Дополнительные сведения см. в разделе {2}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="FinalizersShouldCallBaseClassFinalizerDescription">
-        <source>Finalization must be propagated through the inheritance hierarchy. To guarantee this, types must call their base class Finalize method in their own Finalize method.</source>
-        <target state="translated">Завершение должно распространяться через иерархию наследования. Для этого типы должны вызывать метод Finalize своего базового класса в своем собственном методе Finalize.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="FinalizersShouldCallBaseClassFinalizerMessage">
-        <source>Finalizers should call base class finalizer</source>
-        <target state="translated">Методы завершения должны вызывать метод завершения базового класса</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="FinalizersShouldCallBaseClassFinalizerTitle">
-        <source>Finalizers should call base class finalizer</source>
-        <target state="translated">Методы завершения должны вызывать метод завершения базового класса</target>
         <note />
       </trans-unit>
       <trans-unit id="ForwardCancellationTokenToInvocationsDescription">
@@ -1872,26 +1888,6 @@
         <target state="translated">"{0}" {3} переопределяет предварительную версию метода "{1}", поэтому требуется согласие на использование предварительных версий функций. Дополнительные сведения см. в разделе {2}.</target>
         <note />
       </trans-unit>
-      <trans-unit id="PInvokeDeclarationsShouldBePortableDescription">
-        <source>This rule evaluates the size of each parameter and the return value of a P/Invoke, and verifies that the size of the parameter is correct when marshaled to unmanaged code on 32-bit and 64-bit operating systems.</source>
-        <target state="translated">Это правило оценивает каждый параметр и возвращает значение P/Invoke, а затем проверяет правильность размера параметра при маршалировании в неуправляемый код на 32- и 64-разрядных операционных системах.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PInvokeDeclarationsShouldBePortableMessageParameter">
-        <source>As it is declared in your code, parameter {0} of P/Invoke {1} will be {2} bytes wide on {3} platforms. This is not correct, as the actual native declaration of this API indicates it should be {4} bytes wide on {3} platforms. Consult the MSDN Platform SDK documentation for help determining what data type should be used instead of {5}.</source>
-        <target state="translated">Как объявлено в вашем коде, параметр {0} для P/Invoke {1} будет иметь размер {2} байт для платформ {3}. Это неправильно, так как текущее объявление в машинном коде для данного API указывает, что его размер должен быть {4} байт для платформ {3}. Обратитесь к документации по пакету SDK для платформы MSDN и выясните, какой тип данных следует использовать вместо {5}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PInvokeDeclarationsShouldBePortableMessageReturn">
-        <source>As it is declared in your code, the return type of P/Invoke {0} will be {1} bytes wide on {2} platforms. This is not correct, as the actual native declaration of this API indicates it should be {3} bytes wide on {2} platforms. Consult the MSDN Platform SDK documentation for help determining what data type should be used instead of {4}.</source>
-        <target state="translated">Как объявлено в вашем коде, тип возвращаемого значения для P/Invoke {0} будет иметь размер {1} байт для платформ {2}. Это неправильно, так как текущее объявление в машинном коде для данного API указывает, что его размер должен быть {3} байт для платформ {2}. Обратитесь к документации по пакету SDK для платформы MSDN и выясните, какой тип данных следует использовать вместо {4}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PInvokeDeclarationsShouldBePortableTitle">
-        <source>PInvoke declarations should be portable</source>
-        <target state="translated">Объявления PInvoke должны быть переносимыми</target>
-        <note />
-      </trans-unit>
       <trans-unit id="PInvokesShouldNotBeVisibleDescription">
         <source>A public or protected method in a public type has the System.Runtime.InteropServices.DllImportAttribute attribute (also implemented by the Declare keyword in Visual Basic). Such methods should not be exposed.</source>
         <target state="translated">Общий или защищенный метод в общем типе имеет атрибут System.Runtime.InteropServices.DllImportAttribute (также реализуемый ключевым словом Declare в Visual Basic). Предоставлять такие методы не следует.</target>
@@ -2027,6 +2023,31 @@
         <target state="translated">Предпочтительное использование "AsSpan" вместо "Substring"</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
+        <source>'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.</source>
+        <target state="translated">Если строка представляет собой одиночный символ, то метод "StringBuilder.Append(char)" более эффективен по сравнению с методом "StringBuilder.Append(string)". При вызове метода "Append" с константой рекомендуется использовать символьную константу, а не строковую константу, содержащую один символ.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
+        <source>Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string</source>
+        <target state="translated">Если строка представляет собой константу, используйте метод "StringBuilder.Append(char)" вместо "StringBuilder.Append(string)".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
+        <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
+        <target state="translated">Рекомендация использовать метод "StringBuilder.Append(char)" по мере возможности</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferCountOverAnyCodeFixTitle">
+        <source>Use 'Count' check instead of 'Any()'</source>
+        <target state="translated">Используйте проверку 'Count' вместо 'Any()'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferCountOverAnyMessage">
+        <source>Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance</source>
+        <target state="translated">Для ясности и для обеспечения производительности старайтесь сравнивать 'Count' с 0 вместо того, чтобы использовать 'Any()'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferDictionaryContainsKeyCodeFixTitle">
         <source>Use 'ContainsKey'</source>
         <target state="translated">Использовать "ContainsKey"</target>
@@ -2062,6 +2083,46 @@
         <target state="translated">Предпочтительное использование "ContainsValue" вместо "Vаlues.Contains" для словаря типа "{0}"</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferDictionaryTryAddDescription">
+        <source>Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add', except that when the specified key already exists, it returns 'false' instead of throwing an exception.</source>
+        <target state="translated">Предпочитать вызов "TryAdd" вызову "Add", защищенному с помощью проверки "ContainsKey". "TryAdd" ведет себя так же, как и "Add", за исключением того, что при существовании указанного ключа он возвращает значение "false" вместо выдачи исключения.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryAddMessage">
+        <source>To avoid double lookup, call 'TryAdd' instead of calling 'Add' with a 'ContainsKey' guard</source>
+        <target state="translated">Чтобы избежать двойного поиска, вызовите "TryAdd" вместо вызова "Add" с защитой "ContainsKey"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryAddTitle">
+        <source>Prefer the 'IDictionary.TryAdd(TKey, TValue)' method</source>
+        <target state="translated">Предпочитать метод "IDictionary.TryAdd(TKey, TValue)"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryAddValueCodeFixTitle">
+        <source>Use 'TryAdd(TKey, TValue)'</source>
+        <target state="translated">Использовать "TryAdd(TKey, TValue)"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="translated">Использовать "TryGetValue(TKey, out TValue)"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
+        <target state="translated">Предпочитать вызов TryGetValue"доступу к индексатору словаря, защищенного проверкой ContainsKey. Как ContainsKey, так и индексатор будут искать ключ в фоновом режиме, поэтому при использовании TryGetValue удаляется дополнительный поиск.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
+        <target state="translated">Предпочитать вызов TryGetValue доступу к индексатору словаря, защищенного проверкой ContainsKey, чтобы избежать двойного поиска</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
+        <target state="translated">Предпочитать метод "IDictionary.TryGetValue(TKey, out TValue)"</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferHashDataCodefixTitle">
         <source>Replace with 'HashData' method</source>
         <target state="translated">Заменить методом HashData</target>
@@ -2082,9 +2143,14 @@
         <target state="translated">Предпочитать статический метод "HashData" методу "ComputeHash"</target>
         <note />
       </trans-unit>
-      <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">
-        <source>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</source>
-        <target state="translated">"Stream" содержит перегрузку "ReadAsync", которая принимает в качестве первого аргумента "Memory&lt;Byte&gt;", и перегрузку "WriteAsync", которая принимает в качестве первого аргумента "ReadOnlyMemory&lt;Byte&gt;". Старайтесь использовать перегрузки на основе памяти, которые являются более эффективными.</target>
+      <trans-unit id="PreferIsEmptyOverAnyCodeFixTitle">
+        <source>Use 'IsEmpty' check instead of 'Any()'</source>
+        <target state="translated">Используйте проверку 'IsEmpty' вместо 'Any()'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsEmptyOverAnyMessage">
+        <source>Prefer an 'IsEmpty' check rather than using 'Any()', both for clarity and for performance</source>
+        <target state="translated">Для ясности и для обеспечения производительности старайтесь использовать проверку 'IsEmpty' вместо 'Any()'</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsEmptyOverCountDescription">
@@ -2100,6 +2166,31 @@
       <trans-unit id="PreferIsEmptyOverCountTitle">
         <source>Prefer IsEmpty over Count</source>
         <target state="translated">Старайтесь использовать "IsEmpty" вместо "Count"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferLengthCountIsEmptyOverAnyDescription">
+        <source>Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rather than calling 'Enumerable.Any()'. The intent is clearer and it is more performant than using 'Enumerable.Any()' extension method.</source>
+        <target state="translated">Старайтесь использовать свойства 'IsEmpty', 'Count' или 'Length' в зависимости от доступности вместо вызова 'Enumerable.Any()'. Намерение является более четким и более эффективным по сравнению с использованием метода расширения 'Enumerable.Any()'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferLengthCountIsEmptyOverAnyTitle">
+        <source>Avoid using 'Enumerable.Any()' extension method</source>
+        <target state="translated">Не используйте метод расширения 'Enumerable.Any()'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferLengthOverAnyCodeFixTitle">
+        <source>Use 'Length' check instead of 'Any()'</source>
+        <target state="translated">Используйте проверку 'Length' вместо 'Any()'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferLengthOverAnyMessage">
+        <source>Prefer comparing 'Length' to 0 rather than using 'Any()', both for clarity and for performance</source>
+        <target state="translated">Для ясности и для обеспечения производительности старайтесь сравнивать 'Length' с 0 вместо того, чтобы использовать 'Any()'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">
+        <source>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</source>
+        <target state="translated">"Stream" содержит перегрузку "ReadAsync", которая принимает в качестве первого аргумента "Memory&lt;Byte&gt;", и перегрузку "WriteAsync", которая принимает в качестве первого аргумента "ReadOnlyMemory&lt;Byte&gt;". Старайтесь использовать перегрузки на основе памяти, которые являются более эффективными.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsMessage">
@@ -2152,21 +2243,6 @@
         <target state="translated">Рекомендация использовать строго типизированные перегрузки методов Append и Insert в StringBuilder</target>
         <note />
       </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
-        <source>'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.</source>
-        <target state="translated">Если строка представляет собой одиночный символ, то метод "StringBuilder.Append(char)" более эффективен по сравнению с методом "StringBuilder.Append(string)". При вызове метода "Append" с константой рекомендуется использовать символьную константу, а не строковую константу, содержащую один символ.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
-        <source>Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string</source>
-        <target state="translated">Если строка представляет собой константу, используйте метод "StringBuilder.Append(char)" вместо "StringBuilder.Append(string)".</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
-        <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
-        <target state="translated">Рекомендация использовать метод "StringBuilder.Append(char)" по мере возможности</target>
-        <note />
-      </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage">
         <source>Starting with .NET 7 the explicit conversion '{0}' will not throw when overflowing in an unchecked context. Wrap the expression with a 'checked' statement to restore the .NET 6 behavior.</source>
         <target state="translated">Начиная с .NET 7 явное преобразование "{0}" не будет вызываться при переполнении в непроверенном контексте. Чтобы восстановить поведение .NET 6, оберните выражение оператором "checked".</target>
@@ -2179,7 +2255,7 @@
       </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesDescription">
         <source>Some built-in operators added in .NET 7 behave differently when overflowing than did the corresponding user-defined operators in .NET 6 and earlier versions. Some operators that previously threw in an unchecked context now don't throw unless wrapped within a checked context. Also, some operators that did not previously throw in a checked context now throw unless wrapped in an unchecked context.</source>
-        <target state="new">Some built-in operators added in .NET 7 behave differently when overflowing than did the corresponding user-defined operators in .NET 6 and earlier versions. Some operators that previously threw in an unchecked context now don't throw unless wrapped within a checked context. Also, some operators that did not previously throw in a checked context now throw unless wrapped in an unchecked context.</target>
+        <target state="translated">Некоторые встроенные операторы, добавленные в .NET 7, при переполнении выполняют действия, которые отличаются от пользовательских операторов в .NET 6 и более ранних версиях. Некоторые операторы, которые ранее обеспечивали вызов в непроверенном контексте, теперь не делают этого, если они не упакованы в проверенный контекст. Кроме того, некоторые операторы, которые ранее не обеспечивали вызов в проверенном контексте, теперь делают это, если они не упакованы в непроверенный контекст.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorThrowsMessage">
@@ -2189,7 +2265,7 @@
       </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesTitle">
         <source>Prevent behavioral change</source>
-        <target state="new">Prevent behavioral change</target>
+        <target state="translated">Запретить изменение в поведении</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentToEnumHasFlagDescription">
@@ -2272,6 +2348,51 @@
         <target state="translated">Указать переопределения асинхронных методов на основе памяти при создании подкласса "Stream"</target>
         <note />
       </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo', because they lead to an allocation. Instead, use 'StringComparer' to perform case-insensitive comparisons.</source>
+        <target state="translated">Избегайте вызова ToLower, ToUpper, ToLowerInvariant и ToUpperInvariant для сравнения строк без учета регистра при использовании CompareTo, так как они приведут к выделению. Вместо этого используйте StringComparer для сравнения без учета регистра.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerMessage">
+        <source>Prefer using 'StringComparer' to perform a case-insensitive comparison</source>
+        <target state="translated">Используйте StringComparer для сравнения без учета регистра</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle">
+        <source>Use the 'string.{0}(string, StringComparison)' overload</source>
+        <target state="translated">Используйте перегрузку "string.{0}(string, StringComparison)"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons because they lead to an allocation. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons.</source>
+        <target state="translated">Избегайте вызова ToLower, ToUpper, ToLowerInvariant и ToUpperInvariant для сравнения строк без учета регистра, так как они приведут к выделению. Вместо этого вызывайте перегрузки методов Contains, IndexOf и StartsWith, которые принимают значение перечисления StringComparison для сравнения без учета регистра.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonMessage">
+        <source>Prefer the string comparison method overload of '{0}' that takes a 'StringComparison' enum value to perform a case-insensitive comparison</source>
+        <target state="translated">Используйте перегрузку метода сравнения строк "{0}", которая принимает значение перечисления StringComparison для сравнения без учета регистра</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonTitle">
+        <source>Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons</source>
+        <target state="translated">Используйте перегрузки метода StringComparison для сравнения строк без учета регистра</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringEqualsCodeFixTitle">
+        <source>Use 'string.Equals(string, StringComparison)'</source>
+        <target state="translated">Используйте "string.Equals(string, StringComparison)"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringEqualsDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons, as in 'string.ToLower() == string.ToLower()', because they lead to an allocation. Instead, use 'string.Equals(string, StringComparison)' to perform case-insensitive comparisons.</source>
+        <target state="translated">Избегайте вызовов "ToLower", "ToUpper", "ToLowerInvariant" и "ToUpperInvariant" для выполнения сравнения строк без учета регистра, как в "string.ToLower() == string.ToLower()", так как они приводят к распределению. Вместо этого используйте "string.Equals(string, StringComparison)" для выполнения сравнений без учета регистра.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringEqualsMessage">
+        <source>Prefer using 'string.Equals(string, StringComparison)' to perform a case-insensitive comparison</source>
+        <target state="translated">Предпочтительно использование "string.Equals(string, StringComparison)" для сравнения без чувствительностью к регистру</target>
+        <note />
+      </trans-unit>
       <trans-unit id="RemoveRedundantCall">
         <source>Remove redundant call</source>
         <target state="translated">Удалить избыточный вызов</target>
@@ -2285,21 +2406,6 @@
       <trans-unit id="ReplaceStringLiteralWithCharLiteralCodeActionTitle">
         <source>Replace string literal with char literal</source>
         <target state="translated">Заменить строковый литерал на знаковый литерал</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RethrowToPreserveStackDetailsDescription">
-        <source>An exception is rethrown and the exception is explicitly specified in the throw statement. If an exception is rethrown by specifying the exception in the throw statement, the list of method calls between the original method that threw the exception and the current method is lost.</source>
-        <target state="translated">Исключение выдается повторно и явно указывается в операторе throw. Если исключение порождается повторно путем его указания в операторе throw, список вызовов метода между исходным методом, породившим исключение, и текущим методом теряется.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RethrowToPreserveStackDetailsMessage">
-        <source>Rethrow to preserve stack details</source>
-        <target state="translated">Повторно порождайте исключения для сохранения сведений стека</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RethrowToPreserveStackDetailsTitle">
-        <source>Rethrow to preserve stack details</source>
-        <target state="translated">Повторно порождайте исключения для сохранения сведений стека</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForDllInjectionVulnerabilitiesMessage">
@@ -2382,6 +2488,16 @@
         <target state="translated">Проверьте код на наличие уязвимостей к внедрению кода SQL</target>
         <note />
       </trans-unit>
+      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
+        <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="translated">Обнаружена потенциальная уязвимость к внедрению кода XPath, где "{0}" в методе "{1}" может быть испорчен пользовательскими данными из "{2}" в методе "{3}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
+        <source>Review code for XPath injection vulnerabilities</source>
+        <target state="translated">Проверьте код на наличие уязвимостей к внедрению кода XPath</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReviewCodeForXamlInjectionVulnerabilitiesMessage">
         <source>Potential XAML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
         <target state="translated">Обнаружена потенциальная уязвимость к внедрению кода XAML, где "{0}" в методе "{1}" может быть испорчен пользовательскими данными из "{2}" в методе "{3}".</target>
@@ -2400,16 +2516,6 @@
       <trans-unit id="ReviewCodeForXmlInjectionVulnerabilitiesTitle">
         <source>Review code for XML injection vulnerabilities</source>
         <target state="translated">Проверьте код на наличие уязвимостей к внедрению кода XML</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
-        <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Обнаружена потенциальная уязвимость к внедрению кода XPath, где "{0}" в методе "{1}" может быть испорчен пользовательскими данными из "{2}" в методе "{3}".</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
-        <source>Review code for XPath injection vulnerabilities</source>
-        <target state="translated">Проверьте код на наличие уязвимостей к внедрению кода XPath</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXssVulnerabilitiesMessage">
@@ -2562,26 +2668,6 @@
         <target state="translated">Член вызова неуправляемого кода разрешает вызовы с неполным доверием, имеет строковый параметр и не маршалирует строку явным образом. Это может привести к уязвимости системы безопасности.</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsMessageField">
-        <source>To reduce security risk, marshal field {0} as Unicode, by setting StructLayout.CharSet on {1} to CharSet.Unicode, or by explicitly marshaling the field as UnmanagedType.LPWStr. If you need to marshal this string as ANSI or system-dependent, use the BestFitMapping attribute to turn best-fit mapping off, and for added security, ensure ThrowOnUnmappableChar is on.</source>
-        <target state="translated">Чтобы уменьшить угрозу безопасности, маршалируйте поле {0} как Юникод, установив значение StructLayout.CharSet для StructLayout.CharSet в {1} либо явно маршалировав поле как UnmanagedType.LPWStr. Если необходимо маршалировать эту строку как ANSI или зависящую от системы, используйте атрибут BestFitMapping для отключения сопоставления путем автоматического подбора, а также включите параметр ThrowOnUnmappableChar.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsMessageFieldImplicitAnsi">
-        <source>To reduce security risk, marshal field {0} as Unicode, by setting StructLayout.CharSet on {1} to CharSet.Unicode, or by explicitly marshaling the field as UnmanagedType.LPWStr. If you need to marshal this string as ANSI or system-dependent, specify MarshalAs explicitly, use the BestFitMapping attribute to turn best-fit mapping off, and for added security, to turn ThrowOnUnmappableChar on.</source>
-        <target state="translated">Чтобы уменьшить угрозу безопасности, маршалируйте поле {0} как Юникод, установив значение StructLayout.CharSet для StructLayout.CharSet в {1} либо явно маршалировав поле как UnmanagedType.LPWStr. Если необходимо маршалировать эту строку как ANSI или зависящую от системы, явно укажите MarshalAs, используйте атрибут BestFitMapping для отключения сопоставления путем автоматического подбора, а также включите параметр ThrowOnUnmappableChar для обеспечения дополнительной безопасности.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsMessageParameter">
-        <source>To reduce security risk, marshal parameter {0} as Unicode, by setting DllImport.CharSet to CharSet.Unicode, or by explicitly marshaling the parameter as UnmanagedType.LPWStr. If you need to marshal this string as ANSI or system-dependent, set BestFitMapping=false; for added security, also set ThrowOnUnmappableChar=true.</source>
-        <target state="translated">Чтобы уменьшить угрозу безопасности, маршалируйте параметр {0} как Юникод, установив значение CharSet.Unicode для DllImport.CharSet либо явно маршалировав параметр как UnmanagedType.LPWStr. Если необходимо маршалировать эту строку как ANSI или зависящую от системы, установите BestFitMapping=false; для обеспечения дополнительной безопасности также установите ThrowOnUnmappableChar=true.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsMessageParameterImplicitAnsi">
-        <source>To reduce security risk, marshal parameter {0} as Unicode, by setting DllImport.CharSet to CharSet.Unicode, or by explicitly marshaling the parameter as UnmanagedType.LPWStr. If you need to marshal this string as ANSI or system-dependent, specify MarshalAs explicitly, and set BestFitMapping=false; for added security, also set ThrowOnUnmappableChar=true.</source>
-        <target state="translated">Чтобы уменьшить угрозу безопасности, маршалируйте параметр {0} как Юникод, установив значение CharSet.Unicode для DllImport.CharSet либо явно маршалировав параметр как UnmanagedType.LPWStr. Если необходимо маршалировать эту строку как ANSI или зависящую от системы, явно укажите MarshalAs и установите BestFitMapping=false; для обеспечения дополнительной безопасности также установите ThrowOnUnmappableChar=true.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsTitle">
         <source>Specify marshaling for P/Invoke string arguments</source>
         <target state="translated">Укажите маршалинг для строковых аргументов P/Invoke</target>
@@ -2684,17 +2770,17 @@
       </trans-unit>
       <trans-unit id="UseArgumentExceptionThrowHelperTitle">
         <source>Use ArgumentException throw helper</source>
-        <target state="new">Use ArgumentException throw helper</target>
+        <target state="translated">Использовать вспомогательное приложение по вызову ArgumentException</target>
         <note />
       </trans-unit>
       <trans-unit id="UseArgumentNullExceptionThrowHelperTitle">
         <source>Use ArgumentNullException throw helper</source>
-        <target state="new">Use ArgumentNullException throw helper</target>
+        <target state="translated">Использовать вспомогательное приложение по вызову ArgumentNullException</target>
         <note />
       </trans-unit>
       <trans-unit id="UseArgumentOutOfRangeExceptionThrowHelperTitle">
         <source>Use ArgumentOutOfRangeException throw helper</source>
-        <target state="new">Use ArgumentOutOfRangeException throw helper</target>
+        <target state="translated">Использовать вспомогательное приложение по вызову ArgumentOutOfRangeException</target>
         <note />
       </trans-unit>
       <trans-unit id="UseArrayEmpty">
@@ -2790,6 +2876,56 @@
       <trans-unit id="UseCancellationTokenThrowIfCancellationRequestedTitle">
         <source>Use 'ThrowIfCancellationRequested'</source>
         <target state="translated">Использовать "ThrowIfCancellationRequested"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseCompositeFormatDescription">
+        <source>Cache and use a 'CompositeFormat' instance as the argument to this formatting operation, rather than passing in the original format string. This reduces the cost of the formatting operation.</source>
+        <target state="translated">Кэшируйте и используйте экземпляр "CompositeFormat" в качестве аргумента для этой операции форматирования вместо передачи в исходной строке формата. Это сокращает затраты на операцию форматирования.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseCompositeFormatMessage">
+        <source>Cache a 'CompositeFormat' for repeated use in this formatting operation</source>
+        <target state="translated">Кэшировать "CompositeFormat" для многократного использования в этой операции форматирования</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseCompositeFormatTitle">
+        <source>Use 'CompositeFormat'</source>
+        <target state="translated">Использовать "CompositeFormat"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeDescription">
+        <source>Using concrete types avoids virtual or interface call overhead and enables inlining.</source>
+        <target state="translated">Использование конкретных типов позволяет избежать потребления ресурсов на виртуальные вызовы и вызовы интерфейса и включить встраивание.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForFieldMessage">
+        <source>Change type of field '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Измените тип поля "{0}" с "{1}" на "{2}" для повышения производительности</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForLocalMessage">
+        <source>Change type of variable '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Измените тип переменной "{0}" с "{1}" на "{2}" для повышения производительности</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForMethodReturnMessage">
+        <source>Change return type of method '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Измените тип возвращаемого значения метода "{0}" с "{1}" на "{2}" для повышения производительности</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForParameterMessage">
+        <source>Change type of parameter '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Измените тип параметра "{0}" с "{1}" на "{2}" для повышения производительности</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForPropertyMessage">
+        <source>Change type of property '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Измените тип свойства '{0}' с '{1}' на '{2}' для повышения производительности</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeTitle">
+        <source>Use concrete types when possible for improved performance</source>
+        <target state="translated">Используйте конкретные типы, когда это возможно, для повышения производительности</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">
@@ -2914,22 +3050,12 @@
       </trans-unit>
       <trans-unit id="UseObjectDisposedExceptionThrowHelperTitle">
         <source>Use ObjectDisposedException throw helper</source>
-        <target state="new">Use ObjectDisposedException throw helper</target>
+        <target state="translated">Использовать вспомогательное приложение по вызову ObjectDisposedException</target>
         <note />
       </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonDescription">
         <source>A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.</source>
         <target state="translated">Нелингвистическая операция сравнения строк не задает для параметра StringComparison значение Ordinal или OrdinalIgnoreCase. Задав явным образом значение StringComparison.Ordinal или StringComparison.OrdinalIgnoreCase для параметра, можно сделать код более быстродействующим, корректным и надежным.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseOrdinalStringComparisonMessageStringComparer">
-        <source>{0} passes '{1}' as the 'StringComparer' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparer.Ordinal' or 'StringComparer.OrdinalIgnoreCase' instead.</source>
-        <target state="translated">{0} передает "{1}" в {2} в качестве параметра "StringComparer". Чтобы выполнить нелингвистическое сравнение, укажите "StringComparer.Ordinal" или "StringComparer.OrdinalIgnoreCase".</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseOrdinalStringComparisonMessageStringComparison">
-        <source>{0} passes '{1}' as the 'StringComparison' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparison.Ordinal' or 'StringComparison.OrdinalIgnoreCase' instead.</source>
-        <target state="translated">{0} передает "{1}" в {2} в качестве параметра "StringComparison". Чтобы выполнить нелингвистическое сравнение, укажите "StringComparison.Ordinal" или "StringComparison.OrdinalIgnoreCase".</target>
         <note />
       </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonTitle">
@@ -2987,6 +3113,26 @@
         <target state="translated">Если возможно, попробуйте использовать управление доступом на основе ролей Azure, а не подписанный URL-адрес (SAS). Если все-таки требуется использовать SAS, укажите SharedAccessProtocol.HttpsOnly.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatCodeFixTitle">
+        <source>Use 'AsSpan' with 'string.Concat'</source>
+        <target state="translated">Использовать "AsSpan" с "string.Concat"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatDescription">
+        <source>It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.</source>
+        <target state="translated">Использование "AsSpan" и "string.Concat" более эффективно, чем применение "Substring" и оператора объединения.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatMessage">
+        <source>Use span-based 'string.Concat' and 'AsSpan' instead of 'Substring'</source>
+        <target state="translated">Использовать "string.Concat" и "AsSpan" на основе интервалов вместо "Substring"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatTitle">
+        <source>Use span-based 'string.Concat'</source>
+        <target state="translated">Использовать "string.Concat" на основе интервалов</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseSpanClearInsteadOfFillCodeFixTitle">
         <source>Use 'Clear()'</source>
         <target state="translated">Использовать "Clear()"</target>
@@ -3005,6 +3151,41 @@
       <trans-unit id="UseSpanClearInsteadOfFillTitle">
         <source>Prefer 'Clear' over 'Fill'</source>
         <target state="translated">Предпочитать "Clear" вместо "Fill"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFixTitle">
+        <source>Use 'StartsWith'</source>
+        <target state="translated">Используйте "'StartsWith"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroDescription">
+        <source>It is both clearer and faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.</source>
+        <target state="translated">Использовать "StartsWith" вместо сравнения результата "IndexOf" с нулем понятнее и быстрее.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroMessage">
+        <source>Use 'StartsWith' instead of comparing the result of 'IndexOf' to 0</source>
+        <target state="translated">Используйте "StartsWith" вместо сравнения результата "IndexOf" с 0</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroTitle">
+        <source>Use 'StartsWith' instead of 'IndexOf'</source>
+        <target state="translated">Используйте "StartsWith" вместо "IndexOf"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersDescription">
+        <source>'string.Contains(char)' is available as a better performing overload for single char lookup.</source>
+        <target state="translated">"string.Contains(char)" доступен в качестве перегрузки с улучшенной производительностью для поиска одного знака.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersMessage">
+        <source>Use 'string.Contains(char)' instead of 'string.Contains(string)' when searching for a single character</source>
+        <target state="translated">Использовать "string.Contains(char)" вместо "string.Contains(string)" при поиске одного знака</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersTitle">
+        <source>Use char literal for a single character lookup</source>
+        <target state="translated">Использовать знаковый литерал для поиска одного знака</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">
@@ -3027,54 +3208,34 @@
         <target state="translated">Использовать "string.Equals"</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatCodeFixTitle">
-        <source>Use 'AsSpan' with 'string.Concat'</source>
-        <target state="translated">Использовать "AsSpan" с "string.Concat"</target>
+      <trans-unit id="UseStringMethodCharOverloadWithSingleCharactersDescription">
+        <source>The char overload is a better performing overload than a string with a single char.</source>
+        <target state="translated">Перегрузка символа эффективнее, чем строка с одним символом.</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatDescription">
-        <source>It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.</source>
-        <target state="translated">Использование "AsSpan" и "string.Concat" более эффективно, чем применение "Substring" и оператора объединения.</target>
+      <trans-unit id="UseStringMethodCharOverloadWithSingleCharactersMessage">
+        <source>Use 'string.{0}(char)' instead of 'string.{0}(string)' when you have a string with a single char</source>
+        <target state="translated">Используйте "string.{0}(char)" вместо "string.{0}(string)", когда у вас есть строка с одним символом</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatMessage">
-        <source>Use span-based 'string.Concat' and 'AsSpan' instead of 'Substring'</source>
-        <target state="translated">Использовать "string.Concat" и "AsSpan" на основе интервалов вместо "Substring"</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatTitle">
-        <source>Use span-based 'string.Concat'</source>
-        <target state="translated">Использовать "string.Concat" на основе интервалов</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersDescription">
-        <source>'string.Contains(char)' is available as a better performing overload for single char lookup.</source>
-        <target state="translated">"string.Contains(char)" доступен в качестве перегрузки с улучшенной производительностью для поиска одного знака.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersMessage">
-        <source>Use 'string.Contains(char)' instead of 'string.Contains(string)' when searching for a single character</source>
-        <target state="translated">Использовать "string.Contains(char)" вместо "string.Contains(string)" при поиске одного знака</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersTitle">
-        <source>Use char literal for a single character lookup</source>
-        <target state="translated">Использовать знаковый литерал для поиска одного знака</target>
+      <trans-unit id="UseStringMethodCharOverloadWithSingleCharactersTitle">
+        <source>Use char overload</source>
+        <target state="translated">Использовать перегрузку символов</target>
         <note />
       </trans-unit>
       <trans-unit id="UseThrowHelperDescription">
         <source>Throw helpers are simpler and more efficient than an if block constructing a new exception instance.</source>
-        <target state="new">Throw helpers are simpler and more efficient than an if block constructing a new exception instance.</target>
+        <target state="translated">Помощники по вызову являются более простыми и эффективными, чем блок if, создающий новый экземпляр исключения.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseThrowHelperFix">
         <source>Use '{0}.{1}'</source>
-        <target state="new">Use '{0}.{1}'</target>
+        <target state="translated">Использовать "{0}.{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="UseThrowHelperMessage">
         <source>Use '{0}.{1}' instead of explicitly throwing a new exception instance</source>
-        <target state="new">Use '{0}.{1}' instead of explicitly throwing a new exception instance</target>
+        <target state="translated">Используйте "{0}.{1}" вместо явного вызова нового экземпляра исключения</target>
         <note />
       </trans-unit>
       <trans-unit id="UseValidPlatformStringDescription">
@@ -3175,26 +3336,6 @@
       <trans-unit id="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder">
         <source>{3} '{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</source>
         <target state="translated">"{0}" {3} использует предварительную версию типа "{1}", поэтому требуется согласие на использование предварительных версий функций. Дополнительные сведения см. в разделе {2}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
-        <source>Use 'TryGetValue(TKey, out TValue)'</source>
-        <target state="translated">Использовать "TryGetValue(TKey, out TValue)"</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueTitle">
-        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
-        <target state="translated">Предпочитать метод "IDictionary.TryGetValue(TKey, out TValue)"</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueMessage">
-        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
-        <target state="translated">Предпочитать вызов TryGetValue доступу к индексатору словаря, защищенного проверкой ContainsKey, чтобы избежать двойного поиска</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueDescription">
-        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
-        <target state="translated">Предпочитать вызов TryGetValue"доступу к индексатору словаря, защищенного проверкой ContainsKey. Как ContainsKey, так и индексатор будут искать ключ в фоновом режиме, поэтому при использовании TryGetValue удаляется дополнительный поиск.</target>
         <note />
       </trans-unit>
     </body>

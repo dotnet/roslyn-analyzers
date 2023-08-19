@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="zh-Hans" original="../CodeAnalysisDiagnosticsResources.resx">
     <body>
+      <trans-unit id="AddCompilationEndCustomTagDescription">
+        <source>'DiagnosticDescriptor' assigned to field is used to report a compilation end diagnostic, but the 'DiagnosticDescriptor' constructor used to initialize it does not pass in the required custom tag "CompilationEnd". See documentation for 'WellKnownDiagnosticTags.CompilationEnd' for details.</source>
+        <target state="translated">分配给字段的 "DiagnosticDescriptor" 用于报告编译结束诊断，但用于初始化它的 "DiagnosticDescriptor" 构造函数未传入所需的自定义标记 "CompilationEnd"。有关详细信息，请参阅 "WellKnownDiagnosticTags.CompilationEnd" 的文档。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCompilationEndCustomTagMessage">
+        <source>Add "CompilationEnd" custom tag to the diagnostic descriptor used to initialize field '{0}' as it is used to report a compilation end diagnostic</source>
+        <target state="translated">将 "CompilationEnd" 自定义标记添加到用于初始化字段 "{0}" 的诊断描述符，因为它用于报告编译结束诊断</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCompilationEndCustomTagTitle">
+        <source>Add "CompilationEnd" custom tag to compilation end diagnostic descriptor</source>
+        <target state="translated">将 "CompilationEnd" 自定义标记添加到编译结束诊断描述符</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AddEntryForDiagnosticIdInAnalyzerReleaseCodeFixTitle">
         <source>Add rule entry to unshipped release file</source>
         <target state="translated">将规则项添加到未提供的版本文件</target>
@@ -100,6 +115,31 @@
       <trans-unit id="DefineDiagnosticTitleCorrectlyTitle">
         <source>Define diagnostic title correctly</source>
         <target state="translated">正确定义诊断标题</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDeclareCSharpCompilerFeatureInAssemblyWithVisualBasicReferenceMessage">
+        <source>This C# compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.VisualBasic. The Microsoft.CodeAnalysis.VisualBasic assembly is not always provided during C# compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</source>
+        <target state="translated">不应在包含对 Microsoft.CodeAnalysis.VisualBasic 的引用的程序集中实现此 C# 编译器扩展。在 C# 编译方案期间，不会始终提供 Microsoft.CodeAnalysis.VisualBasic 程序集，因此对它的引用可能导致编译器扩展的行为不可预测。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDeclareCompilerFeatureInAssemblyWithWorkspacesReferenceMessage">
+        <source>This compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.Workspaces. The Microsoft.CodeAnalysis.Workspaces assembly is not provided during command line compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</source>
+        <target state="translated">不应在包含对 Microsoft.CodeAnalysis.Workspaces 的引用的程序集中实现此编译器扩展。在命令行编译方案期间未提供 Microsoft.CodeAnalysis.Workspaces 程序集，因此对它的引用可能导致编译器扩展的行为不可预测。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDeclareVisualBasicCompilerFeatureInAssemblyWithCSharpReferenceMessage">
+        <source>This Visual Basic compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.CSharp. The Microsoft.CodeAnalysis.CSharp assembly is not always provided during Visual Basic compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</source>
+        <target state="translated">不应在包含对 Microsoft.CodeAnalysis.CSharp 的引用的程序集中实现此 Visual Basic 编译器扩展。Microsoft.CodeAnalysis.CSharp 程序集并非始终在 Visual Basic 编译方案中提供，因此对它的引用可能导致编译器扩展的行为不可预测。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotRegisterCompilerTypesWithBadAssemblyReferenceRuleDescription">
+        <source>Types which implement compiler extension points should not be declared in assemblies that contain references to assemblies which are not provided by all compilation scenarios. Doing so may cause the feature to behave unpredictably.</source>
+        <target state="translated">在包含对并非由所有编译方案提供的程序集的引用的程序集中，不应声明实现编译器扩展点的类型。这样做可能会导致该功能的行为不可预测。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotRegisterCompilerTypesWithBadAssemblyReferenceRuleTitle">
+        <source>Compiler extensions should be implemented in assemblies with compiler-provided references</source>
+        <target state="translated">应在具有编译器提供的引用的程序集中实现编译器扩展</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCompilationGetSemanticModelDescription">
@@ -571,8 +611,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationTitle">
-        <source>Do not ignore values returned by methods on immutable objects.</source>
-        <target state="translated">不要忽略通过不可变对象上的方法返回的值。</target>
+        <source>Do not ignore values returned by methods on immutable objects</source>
+        <target state="translated">不要忽略通过不可变对象上的方法返回的值</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetFixAllProviderTitle">

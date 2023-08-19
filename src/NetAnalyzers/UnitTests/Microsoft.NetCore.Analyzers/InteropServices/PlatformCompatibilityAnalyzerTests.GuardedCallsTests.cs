@@ -299,6 +299,56 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
             await VerifyAnalyzerCSAsync(source);
         }
 
+        [Fact, WorkItem(6833, "https://github.com/dotnet/roslyn-analyzers/issues/6833")]
+        public async Task GuardsAroundSupported_InsideTryBlockAsync()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
+{
+    class Caller
+    {
+        public static void TestWithGuardMethods(bool f1, bool f2)
+        {
+            try
+            {
+                [|Target.SupportedOnWindows()|];
+            }
+            catch (Exception e1) when (f1)
+            {
+            }
+            catch (Exception e2) when (f2)
+            {
+            }
+            finally
+            {
+                if (OperatingSystem.IsWindows())
+                    Target.SupportedOnWindowsAndBrowser();
+            }
+        }
+    }
+
+    class Target
+    {
+        [SupportedOSPlatform(""windows"")]
+        public static void SupportedOnWindows() { }
+
+        [SupportedOSPlatform(""windows10.0"")]
+        public static void SupportedOnWindows10() { }
+
+        [SupportedOSPlatform(""windows""), SupportedOSPlatform(""browser"")]
+        public static void SupportedOnWindowsAndBrowser() { }
+
+        [SupportedOSPlatform(""windows10.0""), SupportedOSPlatform(""browser"")]
+        public static void SupportedOnWindows10AndBrowser() { }
+    }
+}";
+
+            await VerifyAnalyzerCSAsync(source);
+        }
+
         [Fact]
         public async Task SupportedOnOsx_GuardedWithIsMacOSAsync()
         {
@@ -4962,6 +5012,39 @@ class Test
         {
             [|SupportedOnIos13()|];
         }
+    }
+}";
+
+            await VerifyAnalyzerCSAsync(source);
+        }
+
+        [Fact, WorkItem(4372, "https://github.com/dotnet/roslyn-analyzers/issues/6158")]
+        public async Task ChildApiNarrowedParentSupport_GuardingVersionShouldBeComparedWithChildVersion()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+
+[SupportedOSPlatform(""ios"")]
+[SupportedOSPlatform(""tvos"")]
+[SupportedOSPlatform(""maccatalyst"")]
+class Program
+{
+    [SupportedOSPlatform(""tvos10.2"")]
+    [SupportedOSPlatform(""ios10.3"")]
+    [SupportedOSPlatform(""maccatalyst10.3"")]
+    public static int P1 => 1;
+}
+class Test
+{
+    [SupportedOSPlatform(""ios10.0"")]
+    public void M1()
+    {
+        var rate = (OperatingSystem.IsIOSVersionAtLeast(10, 3) || OperatingSystem.IsMacCatalystVersionAtLeast(10, 3) || OperatingSystem.IsTvOSVersionAtLeast(10, 3))
+				    ? Program.P1 : 0; // guarded
+
+        if (OperatingSystem.IsIOSVersionAtLeast(10, 3) || OperatingSystem.IsMacCatalystVersionAtLeast(10, 3) || OperatingSystem.IsTvOSVersionAtLeast(10))
+            rate = [|Program.P1|]; // version of TvOS is not guarded
     }
 }";
 

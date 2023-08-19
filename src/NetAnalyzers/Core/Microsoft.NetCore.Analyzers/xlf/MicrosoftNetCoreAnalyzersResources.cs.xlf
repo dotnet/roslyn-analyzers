@@ -7,11 +7,6 @@
         <target state="translated">Přidejte k tomuto poli atribut NonSerialized</target>
         <note />
       </trans-unit>
-      <trans-unit id="AddPublicParameterlessConstructor">
-        <source>Add a public constructor that takes zero parameters</source>
-        <target state="translated">Přidat veřejný konstruktor, který přijímá nulové parametry</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AddSerializableAttributeCodeActionTitle">
         <source>Add Serializable attribute</source>
         <target state="translated">Přidat atribut Serializable</target>
@@ -50,6 +45,41 @@
       <trans-unit id="AttributeStringLiteralsShouldParseCorrectlyTitle">
         <source>Attribute string literals should parse correctly</source>
         <target state="translated">Literály řetězců atributů by se měly správně parsovat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysCodeFixTitle">
+        <source>Extract to static readonly field</source>
+        <target state="translated">Extrahovat do statického pole jen pro čtení</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysDescription">
+        <source>Constant arrays passed as arguments are not reused when called repeatedly, which implies a new array is created each time. Consider extracting them to 'static readonly' fields to improve performance if the passed array is not mutated within the called method.</source>
+        <target state="translated">Konstantní pole předaná jako argumenty se při opakovaném volání znovu nepoužívají, což znamená, že se pokaždé vytvoří nové pole. Zvažte možnost extrahovat je do polí static readonly, aby se zlepšil výkon, pokud předané pole není mutované v rámci volané metody.</target>
+        <note>{Locked="static readonly"}</note>
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysMessage">
+        <source>Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array</source>
+        <target state="translated">Upřednostňovat pole „static readonly“ před argumenty konstantního pole, pokud se volaná metoda volá opakovaně a nemutuje předané pole</target>
+        <note>{Locked="static readonly"}</note>
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysTitle">
+        <source>Avoid constant arrays as arguments</source>
+        <target state="translated">Vyhněte se konstantním polím jako argumentům</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsDescription">
+        <source>Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead. Single use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.</source>
+        <target state="new">Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead. Single use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsMessage">
+        <source>Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead.</source>
+        <target state="new">Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsTitle">
+        <source>Cache and reuse 'JsonSerializerOptions' instances</source>
+        <target state="new">Cache and reuse 'JsonSerializerOptions' instances</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidStringBuilderPInvokeParametersDescription">
@@ -170,11 +200,6 @@
       <trans-unit id="CallGCSuppressFinalizeCorrectlyTitle">
         <source>Dispose methods should call SuppressFinalize</source>
         <target state="translated">Metody Dispose by měly volat SuppressFinalize</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="CategoryReliability">
-        <source>Reliability</source>
-        <target state="translated">Spolehlivost</target>
         <note />
       </trans-unit>
       <trans-unit id="CommaSeparator">
@@ -547,34 +572,45 @@
         <target state="translated">Vždy nepřeskakovat ověření tokenu v delegátech</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCallDangerousMethodsInDeserialization">
-        <source>Do Not Call Dangerous Methods In Deserialization</source>
-        <target state="translated">Nevolejte nebezpečné metody při deserializaci</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserializationDescription">
         <source>Insecure Deserialization is a vulnerability which occurs when untrusted data is used to abuse the logic of an application, inflict a Denial-of-Service (DoS) attack, or even execute arbitrary code upon it being deserialized. It’s frequently possible for malicious users to abuse these deserialization features when the application is deserializing untrusted data which is under their control. Specifically, invoke dangerous methods in the process of deserialization. Successful insecure deserialization attacks could allow an attacker to carry out attacks such as DoS attacks, authentication bypasses, and remote code execution.</source>
         <target state="translated">Nezabezpečená deserializace je ohrožení zabezpečení, které nastane, když se nedůvěryhodná data použijí ke zneužití logiky aplikace, vyvolání útoku na dostupnost služby (DoS), nebo dokonce spuštění libovolného kódu při deserializaci. Možnost zneužití funkcí deserializace se pro kyberzločince často vyskytne, když aplikace deserializuje nedůvěryhodná data, která jsou pod jejich kontrolou. Konkrétně se stane to, že při deserializaci vyvoláte nebezpečné metody. Úspěšné útoky na nezabezpečenou deserializaci by mohly útočníkovi umožnit provedení útoků, jako jsou útoky DoS, obcházení ověřování a vzdálené spuštění kódu.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserializationMessage">
-        <source>When deserializing an instance of class {0}, method {1} can call dangerous method {2}. The potential method invocations are: {3}.</source>
-        <target state="translated">Při deserializaci instance třídy {0} může metoda {1} volat nebezpečnou metodu {2}. Možná volání metod: {3}</target>
+        <source>When deserializing an instance of class '{0}', method '{1}' can directly or indirectly call dangerous method '{2}'</source>
+        <target state="translated">Při deserializaci instance třídy{{0} může metoda{1} přímo nebo nepřímo volat nebezpečnou metodu {2}.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">
-        <source>When a constructor calls a virtual method, the constructor for the instance that invokes the method may not have executed.</source>
-        <target state="translated">Když konstruktor zavolá virtuální metodu, konstruktor dané instance, která metodu vyvolala, se nemusí spustit.</target>
+      <trans-unit id="DoNotCallDangerousMethodsInDeserializationTitle">
+        <source>Do Not Call Dangerous Methods In Deserialization</source>
+        <target state="translated">Nevolejte nebezpečné metody při deserializaci</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCallOverridableMethodsInConstructorsMessage">
-        <source>Do not call overridable methods in constructors</source>
-        <target state="translated">Nevolejte přepsatelné metody v konstruktorech</target>
+      <trans-unit id="DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesDescription">
+        <source>Enumerable.Cast&lt;T&gt; and Enumerable.OfType&lt;T&gt; require compatible types to function expectedly.  
+The generic cast (IL 'unbox.any') used by the sequence returned by Enumerable.Cast&lt;T&gt; will throw InvalidCastException at runtime on elements of the types specified.  
+The generic type check (C# 'is' operator/IL 'isinst') used by Enumerable.OfType&lt;T&gt; will never succeed with elements of types specified, resulting in an empty sequence.  
+Widening and user defined conversions are not supported with generic types.</source>
+        <target state="translated">Metody Enumerable.Cast&lt;T&gt; a Enumerable.OfType&lt;T&gt; vyžadují k očekávané funkci kompatibilní typy.  
+Obecné přetypování (IL unbox.any) používané sekvencí vrácenou metodou Enumerable.Cast&lt;T&gt; vyvolá výjimku InvalidCastException za běhu u prvků zadaných typů.  
+ Ověření obecného typu (operátor is v jazyce C# /isinst převodního jazyka IL) metodou Enumerable.OfType&lt;T&gt; nebude nikdy úspěšné s prvky zadaných typů a výsledkem bude prázdná sekvence.  
+ Rozšíření a uživatelem definované převody se u obecných typů nepodporují.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCallOverridableMethodsInConstructorsTitle">
-        <source>Do not call overridable methods in constructors</source>
-        <target state="translated">Nevolejte přepsatelné metody v konstruktorech</target>
+      <trans-unit id="DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesMessageCast">
+        <source>Type '{0}' is incompatible with type '{1}' and cast attempts will throw InvalidCastException at runtime</source>
+        <target state="translated">Typ {0} není kompatibilní s typem {1} a pokusy o přetypování vyvolají výjimku InvalidCastException za běhu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesMessageOfType">
+        <source>This call will always result in an empty sequence because type '{0}' is incompatible with type '{1}'</source>
+        <target state="translated">Výsledkem tohoto volání bude vždy prázdná sekvence, protože typ {0} není kompatibilní s typem {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastOrOfTypeWithIncompatibleTypesTitle">
+        <source>Do not call Enumerable.Cast&lt;T&gt; or Enumerable.OfType&lt;T&gt; with incompatible types</source>
+        <target state="translated">Nevolejte metodu Enumerable.Cast&lt;T&gt; nebo Enumerable.OfType&lt;T&gt; s nekompatibilními typy</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallToImmutableCollectionOnAnImmutableCollectionValueMessage">
@@ -585,21 +621,6 @@
       <trans-unit id="DoNotCallToImmutableCollectionOnAnImmutableCollectionValueTitle">
         <source>Do not call ToImmutableCollection on an ImmutableCollection value</source>
         <target state="translated">Nevolejte ToImmutableCollection pro hodnotu ImmutableCollection</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersDescription">
-        <source>Do not author general catch handlers in code that receives corrupted state exceptions.</source>
-        <target state="translated">Nevytvářejte v kódu obecné zachytávací bloky, které přijímají výjimky poškozující stav procesu.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersMessage">
-        <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="translated">Nezachytávejte v obecných obslužných rutinách výjimky poškozující stav procesu.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotCatchCorruptedStateExceptionsInGeneralHandlersTitle">
-        <source>Do not catch corrupted state exceptions in general handlers.</source>
-        <target state="translated">Nezachytávejte v obecných obslužných rutinách výjimky poškozující stav procesu.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCreateTaskCompletionSourceWithWrongArgumentsDescription">
@@ -667,11 +688,6 @@
         <target state="translated">Vlastnost ServerCertificateValidationCallback je nastavená na funkci, která přijímá libovolný certifikát serveru, protože vždy vrací hodnotu true. Dbejte na to, aby se certifikáty serverů ověřovaly a měli jste jistotu o identitě serveru přijímajícího požadavky.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
-        <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
-        <target state="translated">Použití třídy HttpClient bez poskytnutí obslužné rutiny specifické pro platformu (WinHttpHandler nebo CurlHandler nebo HttpClientHandler), kde je vlastnost CheckCertificateRevocationList nastavena na hodnotu true, umožní přijmout odvolané certifikáty třídou HttpClient jako platné.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderChecking">
         <source>Do Not Disable HTTP Header Checking</source>
         <target state="translated">Nezakazovat kontrolu hlaviček HTTP</target>
@@ -685,6 +701,11 @@
       <trans-unit id="DoNotDisableHTTPHeaderCheckingMessage">
         <source>Do not disable HTTP header checking</source>
         <target state="translated">Nezakazovat kontrolu hlaviček HTTP</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
+        <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
+        <target state="translated">Použití třídy HttpClient bez poskytnutí obslužné rutiny specifické pro platformu (WinHttpHandler nebo CurlHandler nebo HttpClientHandler), kde je vlastnost CheckCertificateRevocationList nastavena na hodnotu true, umožní přijmout odvolané certifikáty třídou HttpClient jako platné.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidation">
@@ -755,6 +776,21 @@
       <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyTitle">
         <source>Unnecessary call to 'Dictionary.ContainsKey(key)'</source>
         <target state="translated">Nepotřebné volání Dictionary.ContainsKey(key)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardSetAddOrRemoveByContainsDescription">
+        <source>Do not guard 'Add(item)' or 'Remove(item)' with 'Contains(item)' for the set. The former two already check whether the item exists and will return if it was added or removed.</source>
+        <target state="translated">Pro sadu nezaměňujte Add(item) ani Remove(item) s Contains(item). Předchozí dva už zkontrolují, jestli položka existuje, a vrátí se, pokud byla přidána nebo odebrána.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardSetAddOrRemoveByContainsMessage">
+        <source>Do not guard '{0}' with '{1}'</source>
+        <target state="translated">Nezachovat {0} pomocí {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardSetAddOrRemoveByContainsTitle">
+        <source>Unnecessary call to 'Contains(item)'</source>
+        <target state="translated">Nepotřebné volání Contains(item)</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeCertificate">
@@ -887,6 +923,21 @@
         <target state="translated">{0} používá prolomený kryptografický algoritmus {1}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseConfigureAwaitWithSuppressThrowingDescription">
+        <source>The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generic Task, not a Task&lt;TResult&gt;.  To use it with a Task&lt;TResult&gt;, first cast to the base Task.</source>
+        <target state="translated">ConfigureAwaitOptions.SuppressThrowing se podporuje pouze u neobecných úloh, nikoli u Task&lt;TResult&gt;. Pokud ho chcete použít s task&lt;TResult&gt;, nejprve ho přetypujte na základní úlohu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseConfigureAwaitWithSuppressThrowingMessage">
+        <source>The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generic Task</source>
+        <target state="translated">ConfigureAwaitOptions.SuppressThrowing se podporuje pouze s neobecnou úlohou.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseConfigureAwaitWithSuppressThrowingTitle">
+        <source>Do not use ConfigureAwaitOptions.SuppressThrowing with Task&lt;TResult&gt;</source>
+        <target state="translated">Nepoužívejte ConfigureAwaitOptions.SuppressThrowing s Task&lt;TResult&gt;</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
         <source>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
         <target state="translated">U neprázdných kolekcí CountAsync() a LongCountAsync() zobrazí výčet celé sekvence, zatímco AnyAsync() se zastaví u první položky nebo u první položky, která splňuje podmínku.</target>
@@ -922,21 +973,6 @@
         <target state="translated">Symetrické šifrování by mělo vždy používat inicializační vektor, který nelze opakovat, aby se zabránilo slovníkovým útokům.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
-        <source>Do Not Use Deprecated Security Protocols</source>
-        <target state="translated">Nepoužívejte zastaralé protokoly zabezpečení.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
-        <source>Using a deprecated security protocol rather than the system default is risky.</source>
-        <target state="translated">Používání zastaralých protokolů zabezpečení místo systémových výchozích protokolů představuje riziko.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
-        <source>Hard-coded use of deprecated security protocol {0}</source>
-        <target state="translated">Pevně zakódované použití zastaralého protokolu zabezpečení {0}</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotUseDSA">
         <source>Do Not Use Digital Signature Algorithm (DSA)</source>
         <target state="translated">Nepoužívejte algoritmus DSA (Digital Signature Algorithm)</target>
@@ -950,6 +986,21 @@
       <trans-unit id="DoNotUseDSAMessage">
         <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
         <target state="translated">Algoritmus asymetrického šifrování {0} je slabý. Použijte radši algoritmus RSA s velikostí klíče alespoň 2048, ECDH nebo ECDSA.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
+        <source>Do Not Use Deprecated Security Protocols</source>
+        <target state="translated">Nepoužívejte zastaralé protokoly zabezpečení.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
+        <source>Using a deprecated security protocol rather than the system default is risky.</source>
+        <target state="translated">Používání zastaralých protokolů zabezpečení místo systémových výchozích protokolů představuje riziko.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
+        <source>Hard-coded use of deprecated security protocol {0}</source>
+        <target state="translated">Pevně zakódované použití zastaralého protokolu zabezpečení {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyDescription">
@@ -980,16 +1031,6 @@
       <trans-unit id="DoNotUseInsecureRandomnessMessage">
         <source>{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security.</source>
         <target state="translated">{0} je nezabezpečený generátor náhodných čísel. Pokud se pro zabezpečení vyžaduje náhodnost, používejte kryptograficky zabezpečené generátory náhodných čísel.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseMD5">
-        <source>Do not use insecure cryptographic algorithm MD5.</source>
-        <target state="translated">Nepoužívejte nezabezpečený kryptografický algoritmus MD5</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseMD5Description">
-        <source>This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="translated">Tento typ implementuje MD5, což je kryptograficky nezabezpečená hashovací funkce. Kolize hashovací funkce jsou výpočetně schůdné u algoritmů MD5 a HMACMD5. Nahraďte toto použití hashovacím algoritmem z řady SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseObsoleteKDFAlgorithm">
@@ -1023,33 +1064,23 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReferenceEqualsWithValueTypesComparerMessage">
-        <source>Do not pass an argument with value type '{0}' to the 'Equals' method on 'ReferenceEqualityComparer'. Due to value boxing, this call to 'Equals' will always return 'false'.</source>
-        <target state="translated">Do metody Equals v ReferenceEqualityComparer nepředávejte argument s typem hodnoty {0}. Kvůli balení hodnot toto volání metody Equals vždy vrátí false.</target>
+        <source>Do not pass an argument with value type '{0}' to the 'Equals' method on 'ReferenceEqualityComparer'. Due to value boxing, this call to 'Equals' can return an unexpected result. Consider using 'EqualityComparer' instead, or pass reference type arguments if you intend to use 'ReferenceEqualityComparer'.</source>
+        <target state="translated">Nepředávejte argument s hodnotou {0} metodě Equals u třídy ReferenceEqualityComparer. Z důvodu zabalení hodnoty může toto volání Equals vrátit neočekávaný výsledek. Zvažte použití EqualityComparer nebo předejte argumenty odkazu, pokud chcete použít ReferenceEqualityComparer.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReferenceEqualsWithValueTypesDescription">
-        <source>Value type typed arguments are uniquely boxed for each call to this method, therefore the result is always false.</source>
-        <target state="translated">Typové argumenty s typy hodnot se jedinečně balí pro každé volání této metody, proto bude výsledek vždy false.</target>
+        <source>Value type typed arguments are uniquely boxed for each call to this method, therefore the result can be unexpected.</source>
+        <target state="translated">Argumenty typu hodnoty se jedinečně balí pro každé volání této metody, proto může být výsledek neočekávaný.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReferenceEqualsWithValueTypesMethodMessage">
-        <source>Do not pass an argument with value type '{0}' to 'ReferenceEquals'. Due to value boxing, this call to 'ReferenceEquals' will always return 'false'.</source>
-        <target state="translated">Do metody ReferenceEquals nepředávejte argument s typem hodnoty {0}. Kvůli balení hodnot toto volání metody ReferenceEquals vždy vrátí false.</target>
+        <source>Do not pass an argument with value type '{0}' to 'ReferenceEquals'. Due to value boxing, this call to 'ReferenceEquals' can return an unexpected result. Consider using 'Equals' instead, or pass reference type arguments if you intend to use 'ReferenceEquals'.</source>
+        <target state="translated">Nepředávejte argument s hodnotou {0} do metody ReferenceEquals. Z důvodu zabalení hodnoty může toto volání ReferenceEquals vrátit neočekávaný výsledek. Zvažte použití Equals nebo předejte argumenty odkazu, pokud chcete použít ReferenceEquals.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReferenceEqualsWithValueTypesTitle">
         <source>Do not use ReferenceEquals with value types</source>
         <target state="translated">Nepoužívejte ReferenceEquals s typy hodnot</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseSHA1">
-        <source>Do not use insecure cryptographic algorithm SHA1.</source>
-        <target state="translated">Nepoužívejte nezabezpečený kryptografický algoritmus SHA1</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseSHA1Description">
-        <source>This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</source>
-        <target state="translated">Tento typ implementuje SHA1, což je kryptograficky nezabezpečená hashovací funkce. Kolize hashovací funkce jsou výpočetně schůdné u algoritmů SHA-1 a SHA-0. Nahraďte toto použití hashovacím algoritmem z řady SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseStackallocInLoopsDescription">
@@ -1245,21 +1276,6 @@
       <trans-unit id="FieldIsPreviewTypeMessageWithCustomMessagePlaceholder">
         <source>{3} '{0}''s type contains the preview type '{1}' and requires opting into preview features. See {2} for more information.</source>
         <target state="translated">Typ {3}{0} obsahuje typ preview {1} a vyžaduje vyjádření výslovného souhlasu s funkcemi preview. Další informace najdete v {2}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="FinalizersShouldCallBaseClassFinalizerDescription">
-        <source>Finalization must be propagated through the inheritance hierarchy. To guarantee this, types must call their base class Finalize method in their own Finalize method.</source>
-        <target state="translated">Finalizace se musí rozšířit v hierarchii dědičnosti. Aby k tomu došlo, typy musí ve svých vlastních metodách Finalize volat metodu Finalize základní třídy.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="FinalizersShouldCallBaseClassFinalizerMessage">
-        <source>Finalizers should call base class finalizer</source>
-        <target state="translated">Finalizační metody by měly volat finalizační metodu základní třídy</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="FinalizersShouldCallBaseClassFinalizerTitle">
-        <source>Finalizers should call base class finalizer</source>
-        <target state="translated">Finalizační metody by měly volat finalizační metodu základní třídy</target>
         <note />
       </trans-unit>
       <trans-unit id="ForwardCancellationTokenToInvocationsDescription">
@@ -1872,26 +1888,6 @@
         <target state="translated">{3}{0} přepíše metodu preview {1} a proto vyžaduje vyjádření výslovného souhlasu s funkcemi preview. Další informace najdete v {2}.</target>
         <note />
       </trans-unit>
-      <trans-unit id="PInvokeDeclarationsShouldBePortableDescription">
-        <source>This rule evaluates the size of each parameter and the return value of a P/Invoke, and verifies that the size of the parameter is correct when marshaled to unmanaged code on 32-bit and 64-bit operating systems.</source>
-        <target state="translated">Toto pravidlo vyhodnotí velikost jednotlivých parametrů a vrátí hodnotu metody P/Invoke. Při zařazení do nespravovaného kódu v 32bitových a 64bitových operačních systémech ověří, zda je velikost parametru správná.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PInvokeDeclarationsShouldBePortableMessageParameter">
-        <source>As it is declared in your code, parameter {0} of P/Invoke {1} will be {2} bytes wide on {3} platforms. This is not correct, as the actual native declaration of this API indicates it should be {4} bytes wide on {3} platforms. Consult the MSDN Platform SDK documentation for help determining what data type should be used instead of {5}.</source>
-        <target state="translated">Podle deklarace ve vašem kódu bude mít parametr {0} metody P/Invoke {1} na platformách {3} šířku {2} bajtů. To není správné, protože skutečná nativní deklarace tohoto rozhraní API naznačuje, že na platformách {3} by měl mít šířku {4} bajtů. Nahlédněte do dokumentace k sadě MSDN Platform SDK. Pomůže vám určit datový typ, který byste měli použít místo {5}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PInvokeDeclarationsShouldBePortableMessageReturn">
-        <source>As it is declared in your code, the return type of P/Invoke {0} will be {1} bytes wide on {2} platforms. This is not correct, as the actual native declaration of this API indicates it should be {3} bytes wide on {2} platforms. Consult the MSDN Platform SDK documentation for help determining what data type should be used instead of {4}.</source>
-        <target state="translated">Podle deklarace ve vašem kódu bude mít návratový typ metody P/Invoke {0} na platformách {2} šířku {1} bajtů. To není správné, protože skutečná nativní deklarace tohoto rozhraní API naznačuje, že na platformách {2} by měl mít šířku {3} bajtů. Nahlédněte do dokumentace k sadě MSDN Platform SDK. Pomůže vám určit datový typ, který byste měli použít místo {4}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PInvokeDeclarationsShouldBePortableTitle">
-        <source>PInvoke declarations should be portable</source>
-        <target state="translated">Deklarace PInvoke by měly být přenosné</target>
-        <note />
-      </trans-unit>
       <trans-unit id="PInvokesShouldNotBeVisibleDescription">
         <source>A public or protected method in a public type has the System.Runtime.InteropServices.DllImportAttribute attribute (also implemented by the Declare keyword in Visual Basic). Such methods should not be exposed.</source>
         <target state="translated">Veřejná nebo chráněná metoda ve veřejném typu má atribut System.Runtime.InteropServices.DllImportAttribute (také implementovaný klíčovým slovem Declare ve Visual Basicu). Tyto metody by neměly být vystaveny.</target>
@@ -2027,6 +2023,31 @@
         <target state="translated">Preferovat AsSpan místo Substring</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
+        <source>'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.</source>
+        <target state="translated">Když je string jen jeden znak, je StringBuilder.Append(char) efektivnější než StringBuilder.Append(string). Při volání Append s konstantou dávejte přednost možnosti použít konstantní typ char namísto konstantního typu string, který bude obsahovat jen jeden znak.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
+        <source>Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string</source>
+        <target state="translated">Když je vstup konstantní jednotkový řetězec, použijte místo StringBuilder.Append(string) metodu StringBuilder.Append(char).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
+        <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
+        <target state="translated">Zvažte možnost použít metodu StringBuilder.Append(char) tam, kde je to možné</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferCountOverAnyCodeFixTitle">
+        <source>Use 'Count' check instead of 'Any()'</source>
+        <target state="translated">K ověření použijte metodu Count místo Any()</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferCountOverAnyMessage">
+        <source>Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance</source>
+        <target state="translated">Upřednostňujte porovnání vlastnosti Count s 0 místo použití metody Any(), a to jak pro přehlednost, tak pro výkon.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferDictionaryContainsKeyCodeFixTitle">
         <source>Use 'ContainsKey'</source>
         <target state="translated">Použít ContainsKey</target>
@@ -2062,6 +2083,46 @@
         <target state="translated">Pro typ slovníku{0} preferovat ContainsValue před Values.Contains</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferDictionaryTryAddDescription">
+        <source>Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add', except that when the specified key already exists, it returns 'false' instead of throwing an exception.</source>
+        <target state="translated">Upřednostňujte volání TryAdd před voláním Add, které je chráněné kontrolou ContainsKey. TryAdd se chová stejně jako Add s tím rozdílem, že pokud už zadaný klíč existuje, vrátí hodnotu false místo vyvolání výjimky.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryAddMessage">
+        <source>To avoid double lookup, call 'TryAdd' instead of calling 'Add' with a 'ContainsKey' guard</source>
+        <target state="translated">Pokud se chcete vyhnout dvojitému vyhledávání, zavolejte TryAdd místo volání Add s ochranou ContainsKey.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryAddTitle">
+        <source>Prefer the 'IDictionary.TryAdd(TKey, TValue)' method</source>
+        <target state="translated">Preferovat metodu IDictionary.TryAdd(TKey, TValue)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryAddValueCodeFixTitle">
+        <source>Use 'TryAdd(TKey, TValue)'</source>
+        <target state="translated">Použít TryAdd(TKey, TValue)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="translated">Použít TryGetValue(TKey, out TValue)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
+        <target state="translated">Upřednostňujte volání TryGetValue před přístupem indexeru slovníku chráněným kontrolou ContainsKey. ContainsKey i indexer by hledaly klíč na pozadí, takže použití TryGetValue odebere dodatečné vyhledávání.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
+        <target state="translated">Upřednostňovat volání TryGetValue před přístupem indexeru slovníku chráněným kontrolou ContainsKey, aby se zabránilo dvojitému vyhledávání</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
+        <target state="translated">Preferovat metodu IDictionary.TryGetValue(TKey, out TValue)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferHashDataCodefixTitle">
         <source>Replace with 'HashData' method</source>
         <target state="translated">Nahraďte metodou HashData.</target>
@@ -2082,9 +2143,14 @@
         <target state="translated">Preferovat statickou metodu .HashData před ComputeHash</target>
         <note />
       </trans-unit>
-      <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">
-        <source>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</source>
-        <target state="translated">Stream má přetížení ReadAsync, které jako první argument přijímá Memory&lt;Byte&gt;, a přetížení WriteAsync, které jako první argument přijímá ReadOnlyMemory&lt;Byte&gt;. Upřednostňujte volání přetížení založených na paměti, která jsou efektivnější.</target>
+      <trans-unit id="PreferIsEmptyOverAnyCodeFixTitle">
+        <source>Use 'IsEmpty' check instead of 'Any()'</source>
+        <target state="translated">K ověření použijte metodu IsEmpty místo Any()</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsEmptyOverAnyMessage">
+        <source>Prefer an 'IsEmpty' check rather than using 'Any()', both for clarity and for performance</source>
+        <target state="translated">Upřednostňujte k ověření metodu IsEmpty místo použití metody Any(), a to jak pro přehlednost, tak pro výkon.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsEmptyOverCountDescription">
@@ -2100,6 +2166,31 @@
       <trans-unit id="PreferIsEmptyOverCountTitle">
         <source>Prefer IsEmpty over Count</source>
         <target state="translated">Upřednostňovat IsEmpty před Count</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferLengthCountIsEmptyOverAnyDescription">
+        <source>Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rather than calling 'Enumerable.Any()'. The intent is clearer and it is more performant than using 'Enumerable.Any()' extension method.</source>
+        <target state="translated">Upřednostňujte použití vlastnosti IsEmpty, Count nebo Length podle toho, která je k dispozici, namísto volání metody Enumerable.Any(). Záměr je jasnější a je výkonnější než použití rozšiřující metody Enumerable.Any().</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferLengthCountIsEmptyOverAnyTitle">
+        <source>Avoid using 'Enumerable.Any()' extension method</source>
+        <target state="translated">Nepoužívejte rozšiřující metodu Enumerable.Any().</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferLengthOverAnyCodeFixTitle">
+        <source>Use 'Length' check instead of 'Any()'</source>
+        <target state="translated">K ověření použijte metodu Length místo Any()</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferLengthOverAnyMessage">
+        <source>Prefer comparing 'Length' to 0 rather than using 'Any()', both for clarity and for performance</source>
+        <target state="translated">Upřednostňujte porovnání vlastnosti Length s 0 místo použití metody Any(), a to jak pro přehlednost, tak pro výkon.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">
+        <source>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</source>
+        <target state="translated">Stream má přetížení ReadAsync, které jako první argument přijímá Memory&lt;Byte&gt;, a přetížení WriteAsync, které jako první argument přijímá ReadOnlyMemory&lt;Byte&gt;. Upřednostňujte volání přetížení založených na paměti, která jsou efektivnější.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsMessage">
@@ -2152,21 +2243,6 @@
         <target state="translated">Upřednostňovat pro StringBuilder přetížení metod Append a Insert silného typu</target>
         <note />
       </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
-        <source>'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.</source>
-        <target state="translated">Když je string jen jeden znak, je StringBuilder.Append(char) efektivnější než StringBuilder.Append(string). Při volání Append s konstantou dávejte přednost možnosti použít konstantní typ char namísto konstantního typu string, který bude obsahovat jen jeden znak.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
-        <source>Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string</source>
-        <target state="translated">Když je vstup konstantní jednotkový řetězec, použijte místo StringBuilder.Append(string) metodu StringBuilder.Append(char).</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
-        <source>Consider using 'StringBuilder.Append(char)' when applicable</source>
-        <target state="translated">Zvažte možnost použít metodu StringBuilder.Append(char) tam, kde je to možné</target>
-        <note />
-      </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage">
         <source>Starting with .NET 7 the explicit conversion '{0}' will not throw when overflowing in an unchecked context. Wrap the expression with a 'checked' statement to restore the .NET 6 behavior.</source>
         <target state="translated">Počínaje rozhraním .NET 7 se explicitní převod {0} při přetečení v nezaškrtnutém kontextu nevyvolá. Pokud chcete obnovit chování rozhraní .NET 6, zabalte výraz příkazem checked.</target>
@@ -2179,7 +2255,7 @@
       </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesDescription">
         <source>Some built-in operators added in .NET 7 behave differently when overflowing than did the corresponding user-defined operators in .NET 6 and earlier versions. Some operators that previously threw in an unchecked context now don't throw unless wrapped within a checked context. Also, some operators that did not previously throw in a checked context now throw unless wrapped in an unchecked context.</source>
-        <target state="new">Some built-in operators added in .NET 7 behave differently when overflowing than did the corresponding user-defined operators in .NET 6 and earlier versions. Some operators that previously threw in an unchecked context now don't throw unless wrapped within a checked context. Also, some operators that did not previously throw in a checked context now throw unless wrapped in an unchecked context.</target>
+        <target state="translated">Některé předdefinované operátory přidané v rozhraní .NET 7 se při přetečení chovají jinak než odpovídající uživatelem definované operátory v rozhraní .NET 6 a starších verzích. Některé operátory, které dříve vyvolaly nezkontrolovaný kontext, teď nevyvolají výjimku, pokud nejsou zabalené ve zkontrolovaném kontextu. Kromě toho některé operátory, které dříve nevyvolaly zkontrolovaný kontext, teď vyvolávají výjimku, pokud nejsou zabalené v nezkontrolovaném kontextu.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesOperatorThrowsMessage">
@@ -2189,7 +2265,7 @@
       </trans-unit>
       <trans-unit id="PreventNumericIntPtrUIntPtrBehavioralChangesTitle">
         <source>Prevent behavioral change</source>
-        <target state="new">Prevent behavioral change</target>
+        <target state="translated">Prevence změny chování</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentToEnumHasFlagDescription">
@@ -2272,6 +2348,51 @@
         <target state="translated">Poskytněte přepisování asynchronních metod na základě paměti při podtřídování Stream.</target>
         <note />
       </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo', because they lead to an allocation. Instead, use 'StringComparer' to perform case-insensitive comparisons.</source>
+        <target state="translated">Při použití CompareTo se vyhněte volání ToLower, ToUpper, ToLowerInvariant a ToUpperInvariant pro porovnávání řetězců bez rozlišení velikosti písmen, protože vedou k alokaci. Místo toho použijte StringComparer pro porovnávání bez ohledu na velikost písmen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerMessage">
+        <source>Prefer using 'StringComparer' to perform a case-insensitive comparison</source>
+        <target state="translated">Preferovat použití StringComparer pro porovnávání bez rozlišování velkých a malých písmen</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle">
+        <source>Use the 'string.{0}(string, StringComparison)' overload</source>
+        <target state="translated">Použijte přetížení string.{0}(string, StringComparison)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons because they lead to an allocation. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons.</source>
+        <target state="translated">Vyhněte se volání ToLower, ToUpper, ToLowerInvariant a ToUpperInvariant pro porovnávání řetězců bez ohledu na velikost písmen, protože vedou k alokaci. Místo toho raději volejte přetížení metod Contains, IndexOf a StartsWith, které přebírají hodnotu výčtu StringComparison, aby se provedlo porovnání bez ohledu na velikost písmen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonMessage">
+        <source>Prefer the string comparison method overload of '{0}' that takes a 'StringComparison' enum value to perform a case-insensitive comparison</source>
+        <target state="translated">Preferovat přetížení metody porovnání řetězců {0}, která přebírá hodnotu výčtu StringComparison a provádí porovnání bez rozlišení velkých a malých písmen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringComparisonTitle">
+        <source>Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons</source>
+        <target state="translated">Preferovat přetížení metody StringComparison pro porovnávání řetězců bez ohledu na velikost písmen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringEqualsCodeFixTitle">
+        <source>Use 'string.Equals(string, StringComparison)'</source>
+        <target state="translated">Použijte string.Equals(string, StringComparison)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringEqualsDescription">
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons, as in 'string.ToLower() == string.ToLower()', because they lead to an allocation. Instead, use 'string.Equals(string, StringComparison)' to perform case-insensitive comparisons.</source>
+        <target state="translated">Vyhněte se volání ToLower, ToUpper, ToLowerInvariant a ToUpperInvariant k provádění porovnávání řetězců bez rozlišování velkých a malých písmen, jako v string.ToLower() == string.ToLower(), protože vedou k přidělení. Místo toho použijte string.Equals(string, StringComparison) pro porovnání bez rozlišování malých a velkých písmen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RecommendCaseInsensitiveStringEqualsMessage">
+        <source>Prefer using 'string.Equals(string, StringComparison)' to perform a case-insensitive comparison</source>
+        <target state="translated">Preferujte použití string.Equals(string, StringComparison) pro porovnání bez rozlišování velkých a malých písmen</target>
+        <note />
+      </trans-unit>
       <trans-unit id="RemoveRedundantCall">
         <source>Remove redundant call</source>
         <target state="translated">Odebrat redundantní volání</target>
@@ -2285,21 +2406,6 @@
       <trans-unit id="ReplaceStringLiteralWithCharLiteralCodeActionTitle">
         <source>Replace string literal with char literal</source>
         <target state="translated">Nahradit řetězcový literál s literálem char</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RethrowToPreserveStackDetailsDescription">
-        <source>An exception is rethrown and the exception is explicitly specified in the throw statement. If an exception is rethrown by specifying the exception in the throw statement, the list of method calls between the original method that threw the exception and the current method is lost.</source>
-        <target state="translated">Výjimka se vyvolá znovu s tím, že se explicitně určí ve výrazu throw. Pokud se výjimka znovu vyvolá tak, že se určí ve výrazu throw, ztratí se seznam volání metod mezi původní metodou, která výjimku vyvolala, a aktuální metodou.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RethrowToPreserveStackDetailsMessage">
-        <source>Rethrow to preserve stack details</source>
-        <target state="translated">Vyvolat znovu, aby se zachovaly podrobnosti zásobníku</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="RethrowToPreserveStackDetailsTitle">
-        <source>Rethrow to preserve stack details</source>
-        <target state="translated">Vyvolat znovu, aby se zachovaly podrobnosti zásobníku</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForDllInjectionVulnerabilitiesMessage">
@@ -2382,6 +2488,16 @@
         <target state="translated">Zkontrolujte ohrožení zabezpečení injektáží SQL v kódu</target>
         <note />
       </trans-unit>
+      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
+        <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="translated">Našlo se potenciální ohrožení zabezpečení injektáží XPath, kde {0} v metodě {1} je možné poškodit uživatelem řízenými daty z {2} v metodě {3}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
+        <source>Review code for XPath injection vulnerabilities</source>
+        <target state="translated">Zkontrolujte ohrožení zabezpečení injektáží XPath v kódu</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReviewCodeForXamlInjectionVulnerabilitiesMessage">
         <source>Potential XAML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
         <target state="translated">Našlo se potenciální ohrožení zabezpečení injektáží XAML, kde {0} v metodě {1} je možné poškodit uživatelem řízenými daty z {2} v metodě {3}.</target>
@@ -2400,16 +2516,6 @@
       <trans-unit id="ReviewCodeForXmlInjectionVulnerabilitiesTitle">
         <source>Review code for XML injection vulnerabilities</source>
         <target state="translated">Zkontrolujte ohrožení zabezpečení injektáží XML v kódu</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
-        <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Našlo se potenciální ohrožení zabezpečení injektáží XPath, kde {0} v metodě {1} je možné poškodit uživatelem řízenými daty z {2} v metodě {3}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
-        <source>Review code for XPath injection vulnerabilities</source>
-        <target state="translated">Zkontrolujte ohrožení zabezpečení injektáží XPath v kódu</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXssVulnerabilitiesMessage">
@@ -2562,26 +2668,6 @@
         <target state="translated">Člen invoke platformy povoluje částečně důvěryhodné volající, má parametr řetězce a daný řetězec explicitně nezařazuje. To může potenciálně způsobit ohrožení zabezpečení.</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsMessageField">
-        <source>To reduce security risk, marshal field {0} as Unicode, by setting StructLayout.CharSet on {1} to CharSet.Unicode, or by explicitly marshaling the field as UnmanagedType.LPWStr. If you need to marshal this string as ANSI or system-dependent, use the BestFitMapping attribute to turn best-fit mapping off, and for added security, ensure ThrowOnUnmappableChar is on.</source>
-        <target state="translated">Pokud chcete zmenšit bezpečnostní riziko, zařaďte pole {0} jako Unicode tak, že StructLayout.CharSet na {1} nastavíte na CharSet.Unicode nebo explicitně zařadíte pole jako UnmanagedType.LPWStr. Pokud potřebujete tento řetězec zařadit jako ANSI nebo jako systémově závislý, vypněte pomocí atributu BestFitMapping přizpůsobené mapování. Pokud chcete zabezpečení ještě zvýšit, zapněte ThrowOnUnmappableChar.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsMessageFieldImplicitAnsi">
-        <source>To reduce security risk, marshal field {0} as Unicode, by setting StructLayout.CharSet on {1} to CharSet.Unicode, or by explicitly marshaling the field as UnmanagedType.LPWStr. If you need to marshal this string as ANSI or system-dependent, specify MarshalAs explicitly, use the BestFitMapping attribute to turn best-fit mapping off, and for added security, to turn ThrowOnUnmappableChar on.</source>
-        <target state="translated">Pokud chcete zmenšit bezpečnostní riziko, zařaďte pole {0} jako Unicode tak, že StructLayout.CharSet na {1} nastavíte na CharSet.Unicode nebo explicitně zařadíte pole jako UnmanagedType.LPWStr. Pokud potřebujete tento řetězec zařadit jako ANSI nebo jako systémově závislý, zadejte explicitně MarshalAs a pomocí atributu BestFitMapping vypněte přizpůsobené mapování. Zabezpečení můžete ještě zvýšit tak, že zapnete ThrowOnUnmappableChar.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsMessageParameter">
-        <source>To reduce security risk, marshal parameter {0} as Unicode, by setting DllImport.CharSet to CharSet.Unicode, or by explicitly marshaling the parameter as UnmanagedType.LPWStr. If you need to marshal this string as ANSI or system-dependent, set BestFitMapping=false; for added security, also set ThrowOnUnmappableChar=true.</source>
-        <target state="translated">Pokud chcete zmenšit bezpečnostní riziko, zařaďte parametr {0} jako Unicode tak, že DllImport.CharSet nastavíte na CharSet.Unicode nebo explicitně zařadíte parametr jako UnmanagedType.LPWStr. Pokud potřebujete tento řetězec zařadit jako ANSI nebo jako systémově závislý, nastavte BestFitMapping=false. Zabezpečení ještě zvýšíte nastavením ThrowOnUnmappableChar=true.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsMessageParameterImplicitAnsi">
-        <source>To reduce security risk, marshal parameter {0} as Unicode, by setting DllImport.CharSet to CharSet.Unicode, or by explicitly marshaling the parameter as UnmanagedType.LPWStr. If you need to marshal this string as ANSI or system-dependent, specify MarshalAs explicitly, and set BestFitMapping=false; for added security, also set ThrowOnUnmappableChar=true.</source>
-        <target state="translated">Pokud chcete zmenšit bezpečnostní riziko, zařaďte parametr {0} jako Unicode tak, že DllImport.CharSet nastavíte na CharSet.Unicode nebo explicitně zařadíte parametr jako UnmanagedType.LPWStr. Pokud potřebujete tento řetězec zařadit jako ANSI nebo jako systémově závislý, zadejte explicitně MarshalAs a nastavte BestFitMapping=false. Zabezpečení můžete ještě zvýšit, když nastavíte ThrowOnUnmappableChar=true.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsTitle">
         <source>Specify marshaling for P/Invoke string arguments</source>
         <target state="translated">Zadání zařazení pro argumenty řetězce P/Invoke</target>
@@ -2684,17 +2770,17 @@
       </trans-unit>
       <trans-unit id="UseArgumentExceptionThrowHelperTitle">
         <source>Use ArgumentException throw helper</source>
-        <target state="new">Use ArgumentException throw helper</target>
+        <target state="translated">Použití pomocné rutiny vyvolání ArgumentException</target>
         <note />
       </trans-unit>
       <trans-unit id="UseArgumentNullExceptionThrowHelperTitle">
         <source>Use ArgumentNullException throw helper</source>
-        <target state="new">Use ArgumentNullException throw helper</target>
+        <target state="translated">Použití pomocné rutiny vyvolání ArgumentNullException</target>
         <note />
       </trans-unit>
       <trans-unit id="UseArgumentOutOfRangeExceptionThrowHelperTitle">
         <source>Use ArgumentOutOfRangeException throw helper</source>
-        <target state="new">Use ArgumentOutOfRangeException throw helper</target>
+        <target state="translated">Použití pomocné rutiny vyvolání ArgumentOutOfRangeException</target>
         <note />
       </trans-unit>
       <trans-unit id="UseArrayEmpty">
@@ -2790,6 +2876,56 @@
       <trans-unit id="UseCancellationTokenThrowIfCancellationRequestedTitle">
         <source>Use 'ThrowIfCancellationRequested'</source>
         <target state="translated">Použijte ThrowIfCancellationRequested</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseCompositeFormatDescription">
+        <source>Cache and use a 'CompositeFormat' instance as the argument to this formatting operation, rather than passing in the original format string. This reduces the cost of the formatting operation.</source>
+        <target state="translated">Namísto předání původního řetězce formátu umožňuje zapsat a použít instanci CompositeFormat jako argument této operace formátování. Tím se sníží náklady na operaci formátování.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseCompositeFormatMessage">
+        <source>Cache a 'CompositeFormat' for repeated use in this formatting operation</source>
+        <target state="translated">Zapsat CompositeFormat do mezipaměti pro opakované použití v této operaci formátování</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseCompositeFormatTitle">
+        <source>Use 'CompositeFormat'</source>
+        <target state="translated">Použít CompositeFormat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeDescription">
+        <source>Using concrete types avoids virtual or interface call overhead and enables inlining.</source>
+        <target state="translated">Použití konkrétních typů zabraňuje režii virtuálního volání nebo volání rozhraní a umožňuje vkládání.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForFieldMessage">
+        <source>Change type of field '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Pokud chcete zlepšit výkon, změňte typ pole {0} z {1} na {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForLocalMessage">
+        <source>Change type of variable '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Pokud chcete zlepšit výkon, změňte typ proměnné {0} z {1} na {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForMethodReturnMessage">
+        <source>Change return type of method '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Pokud chcete zlepšit výkon, změňte návratový typ metody {0} z {1} na {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForParameterMessage">
+        <source>Change type of parameter '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Pokud chcete zlepšit výkon, změňte typ parametru {0} z {1} na {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeForPropertyMessage">
+        <source>Change type of property '{0}' from '{1}' to '{2}' for improved performance</source>
+        <target state="translated">Pro zlepšení výkonu změňte typ vlastnosti {0} z {1} na {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseConcreteTypeTitle">
+        <source>Use concrete types when possible for improved performance</source>
+        <target state="translated">Pokud je to možné, používejte konkrétní typy pro zvýšení výkonu.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">
@@ -2914,22 +3050,12 @@
       </trans-unit>
       <trans-unit id="UseObjectDisposedExceptionThrowHelperTitle">
         <source>Use ObjectDisposedException throw helper</source>
-        <target state="new">Use ObjectDisposedException throw helper</target>
+        <target state="translated">Použití pomocné rutiny vyvolání ObjectDisposedException</target>
         <note />
       </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonDescription">
         <source>A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.</source>
         <target state="translated">Operace porovnání řetězců, která není jazyková, nenastavuje parametr StringComparison na hodnotu Ordinal nebo OrdinalIgnoreCase. Explicitním nastavením parametru na hodnotu StringComparison.Ordinal nebo StringComparison.OrdinalIgnoreCase se kód často urychlí a bývá správnější a spolehlivější.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseOrdinalStringComparisonMessageStringComparer">
-        <source>{0} passes '{1}' as the 'StringComparer' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparer.Ordinal' or 'StringComparer.OrdinalIgnoreCase' instead.</source>
-        <target state="translated">{0} předává {1} jako parametr StringComparer do {2}. Pokud chcete provést jiné než jazykové porovnání, zadejte místo toho StringComparer.Ordinal StringComparer.OrdinalIgnoreCase.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseOrdinalStringComparisonMessageStringComparison">
-        <source>{0} passes '{1}' as the 'StringComparison' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparison.Ordinal' or 'StringComparison.OrdinalIgnoreCase' instead.</source>
-        <target state="translated">{0} předává {1} jako parametr StringComparison do {2}. Pokud chcete provést jiné než jazykové porovnání, zadejte místo toho StringComparison.Ordinal StringComparison.OrdinalIgnoreCase.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonTitle">
@@ -2987,6 +3113,26 @@
         <target state="translated">Pokud je to možné, zvažte použití řízení přístupu Azure na základě role namísto sdíleného přístupového podpisu (SAS). Pokud i přesto potřebujete používat sdílený přístupový podpis, zadejte SharedAccessProtocol.HttpsOnly.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatCodeFixTitle">
+        <source>Use 'AsSpan' with 'string.Concat'</source>
+        <target state="translated">Použít AsSpan se string.Concat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatDescription">
+        <source>It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.</source>
+        <target state="translated">Je efektivnější místo Subsrting a operátoru zřetězení používat AsSpan a String.Concat.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatMessage">
+        <source>Use span-based 'string.Concat' and 'AsSpan' instead of 'Substring'</source>
+        <target state="translated">Použijte výraz založený na rozsahu string.Concat a AsSpan místo Substring</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanBasedStringConcatTitle">
+        <source>Use span-based 'string.Concat'</source>
+        <target state="translated">Použít řetězec založený na rozsahu string.Concat</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseSpanClearInsteadOfFillCodeFixTitle">
         <source>Use 'Clear()'</source>
         <target state="translated">Použít Clear()</target>
@@ -3005,6 +3151,41 @@
       <trans-unit id="UseSpanClearInsteadOfFillTitle">
         <source>Prefer 'Clear' over 'Fill'</source>
         <target state="translated">Preferovat možnost Vymazat před možností Fill</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroCodeFixTitle">
+        <source>Use 'StartsWith'</source>
+        <target state="translated">Použít StartsWith</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroDescription">
+        <source>It is both clearer and faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.</source>
+        <target state="translated">Oproti porovnání výsledku IndexOf s hodnotou nula je použití startsWith srozumitelnější a rychlejší.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroMessage">
+        <source>Use 'StartsWith' instead of comparing the result of 'IndexOf' to 0</source>
+        <target state="translated">Místo porovnání výsledku IndexOf s hodnotou 0 použijte StartsWith.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStartsWithInsteadOfIndexOfComparisonWithZeroTitle">
+        <source>Use 'StartsWith' instead of 'IndexOf'</source>
+        <target state="translated">Namísto IndexOf použijte StartsWith</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersDescription">
+        <source>'string.Contains(char)' is available as a better performing overload for single char lookup.</source>
+        <target state="translated">string.Contains(char) je k dispozici jako výkonnější přetížení pro vyhledávání s jedním znakem.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersMessage">
+        <source>Use 'string.Contains(char)' instead of 'string.Contains(string)' when searching for a single character</source>
+        <target state="translated">Při hledání jednoho znaku použijte string.Contains(char) místo string.Contains(řetězec)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersTitle">
+        <source>Use char literal for a single character lookup</source>
+        <target state="translated">Použít znakový literál pro vyhledávání s jedním znakem</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">
@@ -3027,54 +3208,34 @@
         <target state="translated">Použít string.Equals</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatCodeFixTitle">
-        <source>Use 'AsSpan' with 'string.Concat'</source>
-        <target state="translated">Použít AsSpan se string.Concat</target>
+      <trans-unit id="UseStringMethodCharOverloadWithSingleCharactersDescription">
+        <source>The char overload is a better performing overload than a string with a single char.</source>
+        <target state="translated">Přetížení typu char je výkonnější přetížení než řetězec s jedním typem char.</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatDescription">
-        <source>It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.</source>
-        <target state="translated">Je efektivnější místo Subsrting a operátoru zřetězení používat AsSpan a String.Concat.</target>
+      <trans-unit id="UseStringMethodCharOverloadWithSingleCharactersMessage">
+        <source>Use 'string.{0}(char)' instead of 'string.{0}(string)' when you have a string with a single char</source>
+        <target state="translated">Použijte string.{0}(char) místo string.{0}(string), pokud máte řetězec s jedním znakem</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatMessage">
-        <source>Use span-based 'string.Concat' and 'AsSpan' instead of 'Substring'</source>
-        <target state="translated">Použijte výraz založený na rozsahu string.Concat a AsSpan místo Substring</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSpanBasedStringConcatTitle">
-        <source>Use span-based 'string.Concat'</source>
-        <target state="translated">Použít řetězec založený na rozsahu string.Concat</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersDescription">
-        <source>'string.Contains(char)' is available as a better performing overload for single char lookup.</source>
-        <target state="translated">string.Contains(char) je k dispozici jako výkonnější přetížení pro vyhledávání s jedním znakem.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersMessage">
-        <source>Use 'string.Contains(char)' instead of 'string.Contains(string)' when searching for a single character</source>
-        <target state="translated">Při hledání jednoho znaku použijte string.Contains(char) místo string.Contains(řetězec)</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersTitle">
-        <source>Use char literal for a single character lookup</source>
-        <target state="translated">Použít znakový literál pro vyhledávání s jedním znakem</target>
+      <trans-unit id="UseStringMethodCharOverloadWithSingleCharactersTitle">
+        <source>Use char overload</source>
+        <target state="translated">Použít přetížení typu char</target>
         <note />
       </trans-unit>
       <trans-unit id="UseThrowHelperDescription">
         <source>Throw helpers are simpler and more efficient than an if block constructing a new exception instance.</source>
-        <target state="new">Throw helpers are simpler and more efficient than an if block constructing a new exception instance.</target>
+        <target state="translated">Pomocné rutiny vyvolání jsou jednodušší a efektivnější než blok if vytvářející novou instanci výjimky.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseThrowHelperFix">
         <source>Use '{0}.{1}'</source>
-        <target state="new">Use '{0}.{1}'</target>
+        <target state="translated">Použít {0}.{1}</target>
         <note />
       </trans-unit>
       <trans-unit id="UseThrowHelperMessage">
         <source>Use '{0}.{1}' instead of explicitly throwing a new exception instance</source>
-        <target state="new">Use '{0}.{1}' instead of explicitly throwing a new exception instance</target>
+        <target state="translated">Místo explicitního vyvolání nové instance výjimky použijte {0}.{1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseValidPlatformStringDescription">
@@ -3175,26 +3336,6 @@
       <trans-unit id="UsesPreviewTypeParameterMessageWithCustomMessagePlaceholder">
         <source>{3} '{0}' uses the preview type '{1}' and needs to opt into preview features. See {2} for more information.</source>
         <target state="translated">{3}{0} používá typ preview {1} a vyžaduje vyjádření výslovného souhlasu s funkcemi preview. Další informace najdete v {2}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
-        <source>Use 'TryGetValue(TKey, out TValue)'</source>
-        <target state="translated">Použít TryGetValue(TKey, out TValue)</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueTitle">
-        <source>Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method</source>
-        <target state="translated">Preferovat metodu IDictionary.TryGetValue(TKey, out TValue)</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueMessage">
-        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check to avoid double lookup</source>
-        <target state="translated">Upřednostňovat volání TryGetValue před přístupem indexeru slovníku chráněným kontrolou ContainsKey, aby se zabránilo dvojitému vyhledávání</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PreferDictionaryTryGetValueDescription">
-        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check. 'ContainsKey' and the indexer both would lookup the key under the hood, so using 'TryGetValue' removes the extra lookup.</source>
-        <target state="translated">Upřednostňujte volání TryGetValue před přístupem indexeru slovníku chráněným kontrolou ContainsKey. ContainsKey i indexer by hledaly klíč na pozadí, takže použití TryGetValue odebere dodatečné vyhledávání.</target>
         <note />
       </trans-unit>
     </body>

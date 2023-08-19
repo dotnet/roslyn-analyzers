@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -952,25 +951,8 @@ End Class
         {
             await new VerifyCS.Test
             {
-                ReferenceAssemblies = new ReferenceAssemblies(""), // workaround for lack of .NET 7 Preview 4 reference assemblies
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
                 TestCode = @"
-namespace System
-{
-    public class Object { }
-    public abstract class ValueType { }
-    public struct Void { }
-    public class String { }
-    public interface IFormatProvider { }
-    public struct Guid
-    {
-        public static Guid Parse(string s) => default;
-        public static Guid Parse(string s, IFormatProvider provider) => default;
-    }
-}
-namespace System.Globalization
-{
-    public class CultureInfo : IFormatProvider { }
-}
 namespace Test
 {
     using System;
@@ -1560,9 +1542,12 @@ public class C
 }",
                 ExpectedDiagnostics =
                 {
-                    VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(0),
-                    VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(1),
-                    VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(2),
+                    VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(0)
+                        .WithArguments("decimal.Parse(ReadOnlySpan<char>, [NumberStyles], [IFormatProvider])"),
+                    VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(1)
+                        .WithArguments("DateTime.Parse(ReadOnlySpan<char>, [IFormatProvider], [DateTimeStyles])"),
+                    VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(2)
+                        .WithArguments("C.Parse(string, [IFormatProvider])"),
                     VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule).WithLocation(3)
                         .WithArguments("C.MyMethod(string)", "C.M(ReadOnlySpan<char>)", "C.MyMethod(string, [IFormatProvider])"),
                 },
@@ -1596,11 +1581,75 @@ End Class
 ",
                 ExpectedDiagnostics =
                 {
-                    VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(0),
+                    VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(0)
+                        .WithArguments("C.Parse(String, [IFormatProvider])"),
                     VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule).WithLocation(1)
                         .WithArguments("C.MyMethod(String)", "C.M()", "C.MyMethod(String, [IFormatProvider])"),
                 },
             }.RunAsync();
+        }
+
+        [Theory, WorkItem(6586, "https://github.com/dotnet/roslyn-analyzers/issues/6586")]
+        [InlineData("int")]
+        [InlineData("uint")]
+        [InlineData("long")]
+        [InlineData("ulong")]
+        [InlineData("short")]
+        [InlineData("ushort")]
+        [InlineData("double")]
+        [InlineData("float")]
+        [InlineData("decimal")]
+        public Task FormatProviderForNullableValueTypes(string valueType)
+        {
+            var code = $@"
+public class Test {{
+    public void M({valueType}? x) {{
+        var y = {{|#0:x.ToString()|}};
+    }}
+}}";
+
+            return VerifyCS.VerifyAnalyzerAsync(code, new DiagnosticResult(SpecifyIFormatProviderAnalyzer.IFormatProviderOptionalRule).WithLocation(0).WithArguments($"{valueType}?.ToString()"));
+        }
+
+        [Theory, WorkItem(6746, "https://github.com/dotnet/roslyn-analyzers/issues/6586")]
+        [InlineData("int")]
+        [InlineData("uint")]
+        [InlineData("long")]
+        [InlineData("ulong")]
+        [InlineData("short")]
+        [InlineData("ushort")]
+        [InlineData("double")]
+        [InlineData("float")]
+        [InlineData("decimal")]
+        public Task FormatProviderForNullableValueTypesAlreadyProvided_NoDiagnostic(string valueType)
+        {
+            var code = $@"
+using System.Globalization;
+
+public class Test {{
+    public void M({valueType}? x) {{
+        var y = x?.ToString(CultureInfo.CurrentCulture);
+    }}
+}}";
+
+            return VerifyCS.VerifyAnalyzerAsync(code);
+        }
+
+        [Theory, WorkItem(6746, "https://github.com/dotnet/roslyn-analyzers/issues/6746")]
+        [CombinatorialData]
+        public Task FormatProviderForNullableValueTypes_NoDiagnostic(
+            [CombinatorialValues("int", "uint", "long", "ulong", "short", "ushort", "double", "float", "decimal")] string valueType,
+            [CombinatorialValues("GetHashCode", "GetValueOrDefault")] string methodName
+        )
+        {
+            var code = $@"
+public class Test {{
+    public void M({valueType}? x) {{
+        var y = x.{methodName}();
+    }}
+}}";
+
+            return VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3) =>

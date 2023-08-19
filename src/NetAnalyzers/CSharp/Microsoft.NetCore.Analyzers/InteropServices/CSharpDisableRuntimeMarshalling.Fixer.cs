@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -32,7 +33,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 // We can't code fix if unsafe code isn't allowed.
                 return;
             }
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
+            SyntaxNode root = await context.Document.GetRequiredSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
             SyntaxNode enclosingNode = root.FindNode(context.Span);
 
@@ -64,6 +66,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     return i;
                 }
             }
+
             return 0;
         }
 
@@ -83,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static bool TryRewriteMethodCall(SyntaxNode node, DocumentEditor editor, IdentifierGenerator pointerIdentifierGenerator, bool addRenameAnnotation, CancellationToken ct)
         {
-            var operation = (IInvocationOperation)editor.SemanticModel.GetOperation(node, ct);
+            var operation = (IInvocationOperation)editor.SemanticModel.GetOperation(node, ct)!;
             InvocationExpressionSyntax syntax = (InvocationExpressionSyntax)operation.Syntax;
 
             if (operation.TargetMethod.Name == "SizeOf")
@@ -102,16 +105,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     return true;
                 }
             }
-            if (operation.TargetMethod.Name == "StructureToPtr" && operation.Arguments[0].Value.Type.IsUnmanagedType)
+
+            if (operation.TargetMethod.Name == "StructureToPtr" && operation.Arguments[0].Value.Type!.IsUnmanagedType)
             {
                 editor.ReplaceNode(syntax,
                     editor.Generator.AssignmentStatement(
                         SyntaxFactory.PrefixUnaryExpression(SyntaxKind.PointerIndirectionExpression,
-                            (ExpressionSyntax)editor.Generator.CastExpression(editor.SemanticModel.Compilation.CreatePointerTypeSymbol(operation.Arguments[0].Value.Type),
+                            (ExpressionSyntax)editor.Generator.CastExpression(editor.SemanticModel.Compilation.CreatePointerTypeSymbol(operation.Arguments[0].Value.Type!),
                                 operation.Arguments[1].Value.Syntax)),
                         operation.Arguments[0].Value.Syntax));
                 return true;
             }
+
             if (operation.TargetMethod.Name == "PtrToStructure")
             {
                 ITypeSymbol type;
@@ -178,6 +183,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     {
                         return false;
                     }
+
                     editor.ReplaceNode(syntax, replacementNode);
                     return true;
                 }

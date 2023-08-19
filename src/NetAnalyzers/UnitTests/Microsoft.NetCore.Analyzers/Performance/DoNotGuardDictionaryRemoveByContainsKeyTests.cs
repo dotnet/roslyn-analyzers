@@ -2,6 +2,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -105,6 +106,21 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        [WorkItem(6274, "https://github.com/dotnet/roslyn-analyzers/issues/6274")]
+        public async Task RemoveIsTheOnlyStatementInTernaryOperator_NoDiagnostic_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            bool test = MyDictionary.ContainsKey(""Key"") ? MyDictionary.Remove(""Key"") : false;
+        }" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact]
         public async Task HasElseBlock_OffersFixer_CS()
         {
             string source = CSUsings + CSNamespaceAndClassStart + @"
@@ -163,6 +179,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        [WorkItem(6274, "https://github.com/dotnet/roslyn-analyzers/issues/6274")]
         public async Task NegatedCondition_ReportsDiagnostic_CS()
         {
             string source = CSUsings + CSNamespaceAndClassStart + @"
@@ -174,7 +191,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 MyDictionary.Remove(""Key"");
         }" + CSNamespaceAndClassEnd;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyCS.VerifyCodeFixAsync(source, source);
         }
 
         [Fact]
@@ -241,6 +258,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        [WorkItem(6274, "https://github.com/dotnet/roslyn-analyzers/issues/6274")]
         public async Task AdditionalStatements_ReportsDiagnostic_CS()
         {
             string source = CSUsings + CSNamespaceAndClassStart + @"
@@ -256,7 +274,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
         " + CSNamespaceAndClassEnd;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyCS.VerifyCodeFixAsync(source, source);
         }
 
         [Fact]
@@ -296,6 +314,36 @@ Namespace Testopolis
         Public MyDictionary As New Dictionary(Of String, String)()
 
         Public Sub New()
+            If ([|MyDictionary.ContainsKey(""Key"")|]) Then MyDictionary.Remove(""Key"")
+        End Sub
+    End Class
+End Namespace";
+
+            string fixedSource = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MyDictionary As New Dictionary(Of String, String)()
+
+        Public Sub New()
+            MyDictionary.Remove(""Key"")
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task RemoveIsTheOnlyStatementInABlock_OffersFixer_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MyDictionary As New Dictionary(Of String, String)()
+
+        Public Sub New()
             If ([|MyDictionary.ContainsKey(""Key"")|]) Then
                 MyDictionary.Remove(""Key"")
             End If
@@ -316,6 +364,25 @@ Namespace Testopolis
 End Namespace";
 
             await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        [WorkItem(6274, "https://github.com/dotnet/roslyn-analyzers/issues/6274")]
+        public async Task RemoveIsTheOnlyStatementInTernaryOperator_NoDiagnostic_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MyDictionary As New Dictionary(Of String, String)()
+
+        Public Sub New()
+            Dim test As Boolean = If(MyDictionary.ContainsKey(""Key""), MyDictionary.Remove(""Key""), False)
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
         }
 
         [Fact]
@@ -353,6 +420,37 @@ End Namespace";
 
             await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
+
+        [Fact]
+        public async Task HasElseStatement_OffersFixer_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MyDictionary As New Dictionary(Of String, String)()
+
+        Public Sub New()
+            If [|MyDictionary.ContainsKey(""Key"")|] Then MyDictionary.Remove(""Key"") Else Throw new Exception(""Key doesn't exist"")
+        End Sub
+    End Class
+End Namespace";
+
+            string fixedSource = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MyDictionary As New Dictionary(Of String, String)()
+
+        Public Sub New()
+            If Not MyDictionary.Remove(""Key"") Then Throw new Exception(""Key doesn't exist"")
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
         [Fact]
         public async Task NegatedCondition_ReportsDiagnostic_VB()
         {
@@ -363,15 +461,18 @@ Namespace Testopolis
         Public MyDictionary As New Dictionary(Of String, String)()
 
         Public Sub New()
-            If Not [|MyDictionary.ContainsKey(""Key"")|] Then MyDictionary.Remove(""Key"")
+            If Not [|MyDictionary.ContainsKey(""Key"")|] Then
+                MyDictionary.Remove(""Key"")
+            End If
         End Sub
     End Class
 End Namespace";
 
-            await VerifyVB.VerifyAnalyzerAsync(source);
+            await VerifyVB.VerifyCodeFixAsync(source, source);
         }
 
         [Fact]
+        [WorkItem(6274, "https://github.com/dotnet/roslyn-analyzers/issues/6274")]
         public async Task AdditionalStatements_ReportsDiagnostic_VB()
         {
             string source = @"
@@ -389,8 +490,95 @@ Namespace Testopolis
     End Class
 End Namespace";
 
-            await VerifyVB.VerifyAnalyzerAsync(source);
+            await VerifyVB.VerifyCodeFixAsync(source, source);
         }
+
+        [Fact]
+        public async Task TriviaIsPreserved_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MyDictionary As New Dictionary(Of String, String)()
+
+        Public Sub New()
+            ' reticulates the splines
+            If ([|MyDictionary.ContainsKey(""Key"")|]) Then
+                MyDictionary.Remove(""Key"")
+            End If
+        End Sub
+    End Class
+End Namespace";
+
+            string fixedSource = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MyDictionary As New Dictionary(Of String, String)()
+
+        Public Sub New()
+            ' reticulates the splines
+            MyDictionary.Remove(""Key"")
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        [WorkItem(6377, "https://github.com/dotnet/roslyn-analyzers/issues/6377")]
+        public async Task ContainsKeyAndRemoveCalledOnDifferentInstances_NoDiagnostic_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly Dictionary<string, string> DictionaryField1 = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> DictionaryField2 = new Dictionary<string, string>();
+
+        public Dictionary<string, string> DictionaryProperty1 { get; } = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            if (DictionaryField2.ContainsKey(""Key""))
+                DictionaryField1.Remove(""Key"");
+
+            if (!DictionaryField1.ContainsKey(""Key""))
+            {
+                DictionaryField2.Remove(""Key"");
+            }
+
+            if (DictionaryProperty1.ContainsKey(""Key""))
+                DictionaryField1.Remove(""Key"");
+
+            if (!DictionaryField1.ContainsKey(""Key""))
+            {
+                DictionaryProperty1.Remove(""Key"");
+            }
+
+            var myDictionaryLocal4 = new Dictionary<string, string>();
+            if (myDictionaryLocal4.ContainsKey(""Key""))
+                DictionaryField1.Remove(""Key"");
+
+            if (!DictionaryField1.ContainsKey(""Key""))
+            {
+                myDictionaryLocal4.Remove(""Key"");
+            }
+        }
+
+        private void RemoveItem(Dictionary<string, string> dictionaryParam)
+        {
+            if (dictionaryParam.ContainsKey(""Key""))
+                DictionaryField1.Remove(""Key"");
+
+            if (!DictionaryField1.ContainsKey(""Key""))
+            {
+                dictionaryParam.Remove(""Key"");
+            }
+        }" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
         #endregion
 
         #region Helpers

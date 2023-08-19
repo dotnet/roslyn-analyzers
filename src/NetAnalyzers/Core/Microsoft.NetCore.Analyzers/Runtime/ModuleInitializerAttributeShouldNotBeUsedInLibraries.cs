@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -51,7 +50,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // Only validate libraries (which will still produce some false positives, but that is acceptable)
-                if (context.Compilation.Options.OutputKind != OutputKind.DynamicallyLinkedLibrary) return;
+                if (context.Compilation.Options.OutputKind != OutputKind.DynamicallyLinkedLibrary)
+                    return;
 
                 context.RegisterSymbolAction(context =>
                 {
@@ -69,7 +69,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             return;
                         }
 
-                        AttributeData? initializerAttribute = context.Symbol.GetAttributes(moduleInitializerAttribute).FirstOrDefault();
+                        AttributeData? initializerAttribute = context.Symbol.GetAttribute(moduleInitializerAttribute);
                         SyntaxReference? attributeReference = initializerAttribute?.ApplicationSyntaxReference;
 
                         if (attributeReference is not null)

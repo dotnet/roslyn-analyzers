@@ -60,7 +60,7 @@ namespace Analyzer.Utilities
 
                     var method = (IMethodSymbol)operationBlockAnalysisContext.OwningSymbol;
 
-                    if (RequiresAttributeOnMethod && !method.HasAttribute(requiredAttributeType))
+                    if (RequiresAttributeOnMethod && !method.HasAnyAttribute(requiredAttributeType))
                     {
                         return;
                     }
@@ -109,7 +109,7 @@ namespace Analyzer.Utilities
         /// <summary>
         /// Walks an IOperation tree to find catch blocks that handle general types without rethrowing them.
         /// </summary>
-        private class DisallowGeneralCatchUnlessRethrowWalker : OperationWalker
+        private sealed class DisallowGeneralCatchUnlessRethrowWalker : OperationWalker
         {
             private readonly Func<INamedTypeSymbol, bool> _isDisallowedCatchType;
             private readonly bool _checkAnonymousFunctions;

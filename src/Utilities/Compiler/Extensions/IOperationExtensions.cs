@@ -25,13 +25,13 @@ namespace Analyzer.Utilities.Extensions
         /// If the invocation actually involves a conversion from A to some other type, say 'C', on which B is invoked,
         /// then this method returns type A if <paramref name="beforeConversion"/> is true, and C if false.
         /// </summary>
-        public static INamedTypeSymbol? GetReceiverType(this IInvocationOperation invocation, Compilation compilation, bool beforeConversion, CancellationToken cancellationToken)
+        public static ITypeSymbol? GetReceiverType(this IInvocationOperation invocation, Compilation compilation, bool beforeConversion, CancellationToken cancellationToken)
         {
             if (invocation.Instance != null)
             {
                 return beforeConversion ?
                     GetReceiverType(invocation.Instance.Syntax, compilation, cancellationToken) :
-                    invocation.Instance.Type as INamedTypeSymbol;
+                    invocation.Instance.Type;
             }
             else if (invocation.TargetMethod.IsExtensionMethod && !invocation.TargetMethod.Parameters.IsEmpty)
             {
@@ -40,22 +40,22 @@ namespace Analyzer.Utilities.Extensions
                 {
                     return beforeConversion ?
                         GetReceiverType(firstArg.Value.Syntax, compilation, cancellationToken) :
-                        firstArg.Type as INamedTypeSymbol;
+                        firstArg.Value.Type;
                 }
                 else if (invocation.TargetMethod.Parameters[0].IsParams)
                 {
-                    return invocation.TargetMethod.Parameters[0].Type as INamedTypeSymbol;
+                    return invocation.TargetMethod.Parameters[0].Type;
                 }
             }
 
             return null;
         }
 
-        private static INamedTypeSymbol? GetReceiverType(SyntaxNode receiverSyntax, Compilation compilation, CancellationToken cancellationToken)
+        private static ITypeSymbol? GetReceiverType(SyntaxNode receiverSyntax, Compilation compilation, CancellationToken cancellationToken)
         {
             var model = compilation.GetSemanticModel(receiverSyntax.SyntaxTree);
             var typeInfo = model.GetTypeInfo(receiverSyntax, cancellationToken);
-            return typeInfo.Type as INamedTypeSymbol;
+            return typeInfo.Type;
         }
 
         public static bool HasNullConstantValue(this IOperation operation)
@@ -143,9 +143,9 @@ namespace Analyzer.Utilities.Extensions
                         builder.AddRange(operations, i);
                     }
                 }
-                else if (builder != null)
+                else
                 {
-                    builder.Add(operation);
+                    builder?.Add(operation);
                 }
             }
 
@@ -262,6 +262,7 @@ namespace Analyzer.Utilities.Extensions
                 {
                     return GetAncestor(ancestor, ancestorKind, predicate);
                 }
+
                 return (TOperation)ancestor;
             }
             else
@@ -295,6 +296,7 @@ namespace Analyzer.Utilities.Extensions
                 {
                     return GetAncestor(ancestor, ancestorKinds, predicate);
                 }
+
                 return ancestor;
             }
             else
@@ -420,6 +422,7 @@ namespace Analyzer.Utilities.Extensions
                 case BinaryOperatorKind.Subtract:
                     binaryOperator = '-'; return true;
             }
+
             return false;
         }
 
@@ -648,7 +651,7 @@ namespace Analyzer.Utilities.Extensions
             return instance?.WalkDownConversion().Type;
         }
 
-        public static ISymbol? GetReferencedMemberOrLocalOrParameter(this IOperation operation)
+        public static ISymbol? GetReferencedMemberOrLocalOrParameter(this IOperation? operation)
         {
             return operation switch
             {
@@ -681,7 +684,7 @@ namespace Analyzer.Utilities.Extensions
             return operation;
         }
 
-        [return: NotNullIfNotNull("operation")]
+        [return: NotNullIfNotNull(nameof(operation))]
         public static IOperation? WalkUpParentheses(this IOperation? operation)
         {
             if (operation is null)
@@ -727,7 +730,7 @@ namespace Analyzer.Utilities.Extensions
             return operation;
         }
 
-        [return: NotNullIfNotNull("operation")]
+        [return: NotNullIfNotNull(nameof(operation))]
         public static IOperation? WalkUpConversion(this IOperation? operation)
         {
             if (operation is null)
@@ -814,6 +817,7 @@ namespace Analyzer.Utilities.Extensions
                         {
                             return true;
                         }
+
                         stack.Add(current.Children.GetEnumerator());
                     }
                 }
@@ -843,9 +847,10 @@ namespace Analyzer.Utilities.Extensions
             };
         }
 
-        public static IArgumentOperation GetArgumentForParameterAtIndex(
+        public static bool TryGetArgumentForParameterAtIndex(
             this ImmutableArray<IArgumentOperation> arguments,
-            int parameterIndex)
+            int parameterIndex,
+            [NotNullWhen(true)] out IArgumentOperation? result)
         {
             Debug.Assert(parameterIndex >= 0);
             Debug.Assert(parameterIndex < arguments.Length);
@@ -854,8 +859,22 @@ namespace Analyzer.Utilities.Extensions
             {
                 if (argument.Parameter?.Ordinal == parameterIndex)
                 {
-                    return argument;
+                    result = argument;
+                    return true;
                 }
+            }
+
+            result = null;
+            return false;
+        }
+
+        public static IArgumentOperation GetArgumentForParameterAtIndex(
+            this ImmutableArray<IArgumentOperation> arguments,
+            int parameterIndex)
+        {
+            if (TryGetArgumentForParameterAtIndex(arguments, parameterIndex, out var result))
+            {
+                return result;
             }
 
             throw new InvalidOperationException();
@@ -1035,7 +1054,7 @@ namespace Analyzer.Utilities.Extensions
             else if (operation.Parent is IReDimClauseOperation reDimClauseOperation &&
                 reDimClauseOperation.Operand == operation)
             {
-                return (reDimClauseOperation.Parent as IReDimOperation)?.Preserve == true
+                return reDimClauseOperation.Parent is IReDimOperation { Preserve: true }
                     ? ValueUsageInfo.ReadWrite
                     : ValueUsageInfo.Write;
             }

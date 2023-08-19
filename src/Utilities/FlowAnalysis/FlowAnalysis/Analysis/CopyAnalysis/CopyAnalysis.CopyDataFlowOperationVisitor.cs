@@ -92,7 +92,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
 
             protected override CopyAbstractValue GetCopyAbstractValue(IOperation operation) => base.GetCachedAbstractValue(operation);
 
-            protected override CopyAbstractValue GetAbstractDefaultValue(ITypeSymbol type) => CopyAbstractValue.NotApplicable;
+            protected override CopyAbstractValue GetAbstractDefaultValue(ITypeSymbol? type) => CopyAbstractValue.NotApplicable;
 
             protected override void ResetAbstractValue(AnalysisEntity analysisEntity)
                 => SetAbstractValue(analysisEntity, GetResetValue(analysisEntity));
@@ -315,7 +315,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
 
             protected override CopyAbstractValue ComputeAnalysisValueForEscapedRefOrOutArgument(AnalysisEntity analysisEntity, IArgumentOperation operation, CopyAbstractValue defaultValue)
             {
-                Debug.Assert(operation.Parameter.RefKind is RefKind.Ref or RefKind.Out);
+                Debug.Assert(operation.Parameter?.RefKind is RefKind.Ref or RefKind.Out);
 
                 SetAbstractValue(analysisEntity, ValueDomain.UnknownOrMayBeValue);
                 return GetAbstractValue(analysisEntity);
@@ -397,9 +397,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
                         continue;
                     }
 
+                    var existingValue = targetAnalysisData[key];
                     if (CurrentAnalysisData.TryGetValue(key, out var newValue))
                     {
-                        var existingValue = targetAnalysisData[key];
                         if (newValue.AnalysisEntities.Count == 1)
                         {
                             if (existingValue.AnalysisEntities.Count == 1)
@@ -422,6 +422,23 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
                         }
 
                         processedEntities.AddRange(newValue.AnalysisEntities);
+                    }
+                    else
+                    {
+                        var entitiesToExclude = existingValue.AnalysisEntities.Where(e => !CurrentAnalysisData.HasAbstractValue(e));
+                        var excludedCount = 0;
+                        foreach (var entity in entitiesToExclude)
+                        {
+                            targetAnalysisData.RemoveEntries(entity);
+                            processedEntities.Add(entity);
+                            excludedCount++;
+                        }
+
+                        if (excludedCount < existingValue.AnalysisEntities.Count)
+                        {
+                            newValue = existingValue.WithEntitiesRemoved(entitiesToExclude);
+                            targetAnalysisData.SetAbstactValueForEntities(newValue, entityBeingAssigned: null);
+                        }
                     }
                 }
             }

@@ -1,0 +1,4 @@
+is_global = true
+
+# DoNotPassLiteralsAsLocalizedParameters - primarily useful for libraries where public APIs throw exceptions, and the messages need to be localized
+dotnet_diagnostic.CA1303.severity = none

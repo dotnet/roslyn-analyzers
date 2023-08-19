@@ -470,7 +470,7 @@ A method in a base type is hidden by an identically named method in a derived ty
 
 ## [CA1062](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062): Validate arguments of public methods
 
-An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.
+An externally visible method dereferences one of its reference arguments without verifying whether that argument is 'null' ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against 'null'. If appropriate, throw an 'ArgumentNullException' when the argument is 'null'. If the method is designed to be called only by known assemblies, you should make the method internal.
 
 |Item|Value|
 |-|-|
@@ -1082,7 +1082,7 @@ Use PascalCase for named placeholders in the logging message template.
 
 ## [CA1802](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1802): Use literals where appropriate
 
-A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.
+A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at runtime.
 
 |Item|Value|
 |-|-|
@@ -1656,6 +1656,150 @@ The parameter expects a constant for optimal performance.
 |CodeFix|False|
 ---
 
+## [CA1858](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858): Use 'StartsWith' instead of 'IndexOf'
+
+It is both clearer and faster to use 'StartsWith' instead of comparing the result of 'IndexOf' to zero.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1859](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859): Use concrete types when possible for improved performance
+
+Using concrete types avoids virtual or interface call overhead and enables inlining.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
+## [CA1860](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860): Avoid using 'Enumerable.Any()' extension method
+
+Prefer using 'IsEmpty', 'Count' or 'Length' properties whichever available, rather than calling 'Enumerable.Any()'. The intent is clearer and it is more performant than using 'Enumerable.Any()' extension method.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1861](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861): Avoid constant arrays as arguments
+
+Constant arrays passed as arguments are not reused when called repeatedly, which implies a new array is created each time. Consider extracting them to 'static readonly' fields to improve performance if the passed array is not mutated within the called method.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons
+
+Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons, as in 'string.ToLower() == string.ToLower()', because they lead to an allocation. Instead, use 'string.Equals(string, StringComparison)' to perform case-insensitive comparisons.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1863](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1863): Use 'CompositeFormat'
+
+Cache and use a 'CompositeFormat' instance as the argument to this formatting operation, rather than passing in the original format string. This reduces the cost of the formatting operation.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Hidden|
+|CodeFix|False|
+---
+
+## [CA1864](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1864): Prefer the 'IDictionary.TryAdd(TKey, TValue)' method
+
+Prefer a 'TryAdd' call over an 'Add' call guarded by a 'ContainsKey' check. 'TryAdd' behaves the same as 'Add', except that when the specified key already exists, it returns 'false' instead of throwing an exception.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1865](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865): Use char overload
+
+The char overload is a better performing overload than a string with a single char.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1866](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1866): Use char overload
+
+The char overload is a better performing overload than a string with a single char.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
+## [CA1867](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867): Use char overload
+
+The char overload is a better performing overload than a string with a single char.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|False|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA1868](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1868): Unnecessary call to 'Contains(item)'
+
+Do not guard 'Add(item)' or 'Remove(item)' with 'Contains(item)' for the set. The former two already check whether the item exists and will return if it was added or removed.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1869](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1869): Cache and reuse 'JsonSerializerOptions' instances
+
+Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead. Single use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
 ## [CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
 
 If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.
@@ -1742,7 +1886,7 @@ ValueTasks returned from member invocations are intended to be directly awaited.
 
 ## [CA2013](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2013): Do not use ReferenceEquals with value types
 
-Value type typed arguments are uniquely boxed for each call to this method, therefore the result is always false.
+Value type typed arguments are uniquely boxed for each call to this method, therefore the result can be unexpected.
 
 |Item|Value|
 |-|-|
@@ -1836,6 +1980,24 @@ Some built-in operators added in .NET 7 behave differently when overflowing than
 |CodeFix|False|
 ---
 
+## [CA2021](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021): Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types
+
+Enumerable.Cast\<T> and Enumerable.OfType\<T> require compatible types to function expectedly.  
+
+The generic cast (IL 'unbox.any') used by the sequence returned by Enumerable.Cast\<T> will throw InvalidCastException at runtime on elements of the types specified.  
+
+The generic type check (C# 'is' operator/IL 'isinst') used by Enumerable.OfType\<T> will never succeed with elements of types specified, resulting in an empty sequence.  
+
+Widening and user defined conversions are not supported with generic types.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
 ## [CA2100](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100): Review SQL queries for security vulnerabilities
 
 SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.
@@ -1858,18 +2020,6 @@ A platform invoke member allows partially trusted callers, has a string paramete
 |Enabled|True|
 |Severity|Info|
 |CodeFix|True|
----
-
-## [CA2109](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2109): Review visible event handlers
-
-A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary.
-
-|Item|Value|
-|-|-|
-|Category|Security|
-|Enabled|False|
-|Severity|Warning|
-|CodeFix|False|
 ---
 
 ## [CA2119](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119): Seal methods that satisfy private interfaces
@@ -2379,6 +2529,18 @@ Providing a functional 'DynamicInterfaceCastableImplementationAttribute'-attribu
 ## [CA2260](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2260): Use correct type parameter
 
 Generic math interfaces require the derived type itself to be used for the self recurring type parameter.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA2261](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2261): Do not use ConfigureAwaitOptions.SuppressThrowing with Task\<TResult>
+
+The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generic Task, not a Task\<TResult>.  To use it with a Task\<TResult>, first cast to the base Task.
 
 |Item|Value|
 |-|-|

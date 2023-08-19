@@ -234,7 +234,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                if (context.Compilation.Assembly.HasAttribute(previewFeaturesAttribute))
+                if (context.Compilation.Assembly.HasAnyAttribute(previewFeaturesAttribute))
                 {
                     // This assembly has enabled preview attributes.
                     return;
@@ -305,6 +305,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return previewSymbol;
                     }
                 }
+
                 if (SymbolIsAnnotatedAsPreview(typeParameter, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
                 {
                     return typeParameter;
@@ -577,7 +578,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 if (SymbolIsAnnotatedAsPreview(methodReturnType, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
                 {
-                    SyntaxNode? returnTypeNode = GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(method.IsPropertyGetter() ? method.AssociatedSymbol : method, methodReturnType);
+                    SyntaxNode? returnTypeNode = GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(method.IsPropertyGetter() ? method.AssociatedSymbol! : method, methodReturnType);
                     if (returnTypeNode != null)
                     {
                         ReportDiagnosticWithCustomMessageIfItExists(context, returnTypeNode, methodReturnType, requiresPreviewFeaturesSymbols, MethodReturnsPreviewTypeRule, MethodReturnsPreviewTypeRuleWithCustomMessage, propertyOrMethodSymbol.Name, methodReturnType.Name);
@@ -593,7 +594,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     ISymbol? innerPreviewSymbol = GetPreviewSymbolForGenericTypesFromTypeArguments(typeSymbol.TypeArguments, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol);
                     if (innerPreviewSymbol != null)
                     {
-                        SyntaxNode? returnTypeNode = GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(method.IsPropertyGetter() ? method.AssociatedSymbol : method, innerPreviewSymbol);
+                        SyntaxNode? returnTypeNode = GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(method.IsPropertyGetter() ? method.AssociatedSymbol! : method, innerPreviewSymbol);
                         if (returnTypeNode != null)
                         {
                             ReportDiagnosticWithCustomMessageIfItExists(context, returnTypeNode, innerPreviewSymbol, requiresPreviewFeaturesSymbols, MethodReturnsPreviewTypeRule, MethodReturnsPreviewTypeRuleWithCustomMessage, propertyOrMethodSymbol.Name, innerPreviewSymbol.Name);
@@ -680,7 +681,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 ProcessTypeSymbolAttributes(context, typeSymbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol);
             }
-            else if (symbol is IMethodSymbol || symbol is IPropertySymbol)
+            else if (symbol is IMethodSymbol or IPropertySymbol)
             {
                 ProcessPropertyOrMethodAttributes(context, symbol, requiresPreviewFeaturesSymbols, virtualStaticsInInterfaces, previewFeatureAttributeSymbol);
             }
@@ -701,9 +702,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             if (OperationUsesPreviewFeatures(context, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out ISymbol? symbol))
             {
                 IOperation operation = context.Operation;
-                if (operation is ICatchClauseOperation catchClauseOperation)
+                if (operation is ICatchClauseOperation catchClauseOperation &&
+                    catchClauseOperation.ExceptionDeclarationOrExpression is { } exceptionOperation)
                 {
-                    operation = catchClauseOperation.ExceptionDeclarationOrExpression;
+                    operation = exceptionOperation;
                 }
 
                 ReportDiagnosticWithCustomMessageIfItExists(context, operation, symbol, requiresPreviewFeaturesSymbols, GeneralPreviewFeatureAttributeRule, GeneralPreviewFeatureAttributeRuleWithCustomMessage, symbol.Name);
@@ -825,9 +827,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 _ => null,
             };
 
-        private static ISymbol SymbolFromArrayCreationOperation(IArrayCreationOperation operation)
+        private static ISymbol? SymbolFromArrayCreationOperation(IArrayCreationOperation operation)
         {
-            ISymbol ret = operation.Type;
+            ISymbol? ret = operation.Type;
             while (ret is IArrayTypeSymbol arrayTypeSymbol)
             {
                 ret = arrayTypeSymbol.ElementType;
@@ -879,14 +881,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 foreach (KeyValuePair<string, TypedConstant> namedArgument in namedArguments)
                 {
-                    if (namedArgument.Key == "Message")
+                    if (namedArgument.Key == "Message" &&
+                        namedArgument.Value.Value is string messageValue)
                     {
-                        message = (string)namedArgument.Value.Value;
+                        message = messageValue;
                     }
 
-                    if (namedArgument.Key == "Url")
+                    if (namedArgument.Key == "Url" &&
+                        namedArgument.Value.Value is string urlValue)
                     {
-                        url = (string)namedArgument.Value.Value;
+                        url = urlValue;
                     }
                 }
             }
@@ -985,15 +989,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (!requiresPreviewFeaturesSymbols.TryGetValue(symbol, out (bool isPreview, string? message, string? url) existing))
             {
-                ImmutableArray<AttributeData> attributes = symbol.GetAttributes();
-                foreach (var attribute in attributes)
+                if (symbol.GetAttribute(previewFeatureAttribute) is { } attribute)
                 {
-                    if (attribute.AttributeClass.Equals(previewFeatureAttribute))
-                    {
-                        string? message = GetMessageAndURLFromAttributeConstructor(attribute, out string? url);
-                        requiresPreviewFeaturesSymbols.GetOrAdd(symbol, new ValueTuple<bool, string?, string?>(true, message, url));
-                        return true;
-                    }
+                    string? message = GetMessageAndURLFromAttributeConstructor(attribute, out string? url);
+                    requiresPreviewFeaturesSymbols.GetOrAdd(symbol, new ValueTuple<bool, string?, string?>(true, message, url));
+                    return true;
                 }
 
                 ISymbol? parent = symbol.ContainingSymbol;

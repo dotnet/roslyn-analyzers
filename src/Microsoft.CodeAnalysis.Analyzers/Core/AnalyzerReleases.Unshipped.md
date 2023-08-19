@@ -4,5 +4,4 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-RS1035 | MicrosoftCodeAnalysisCorrectness | Error | SymbolIsBannedInAnalyzersAnalyzer
-RS1036 | MicrosoftCodeAnalysisCorrectness | Warning | SymbolIsBannedInAnalyzersAnalyzer
+RS1038 | MicrosoftCodeAnalysisCorrectness | Warning | CompilerExtensionStrictApiAnalyzer

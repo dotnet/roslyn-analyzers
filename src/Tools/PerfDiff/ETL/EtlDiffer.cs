@@ -97,6 +97,7 @@ namespace PerfDiff
 
                     total += node.ExclusiveMetric;
                 }
+
                 return total;
             }
 

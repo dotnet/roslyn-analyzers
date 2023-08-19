@@ -172,7 +172,7 @@ An analyzer start action enables performing stateful analysis over a given code 
 |CodeFix|False|
 ---
 
-## RS1014: Do not ignore values returned by methods on immutable objects.
+## RS1014: Do not ignore values returned by methods on immutable objects
 
 Many objects exposed by Roslyn are immutable. The return value from a method invocation on these objects should not be ignored.
 
@@ -268,7 +268,7 @@ Invalid entry in analyzer category and diagnostic ID range specification file.
 |CodeFix|False|
 ---
 
-## RS1022: Do not use types from Workspaces assembly in an analyzer
+## [RS1022](https://github.com/dotnet/roslyn-analyzers/blob/main/docs/rules/RS1022.md): Do not use types from Workspaces assembly in an analyzer
 
 Diagnostic analyzer types should not use types from Workspaces assemblies. Workspaces assemblies are only available when the analyzer executes in Visual Studio IDE live analysis, but are not available during command line build. Referencing types from Workspaces assemblies will lead to runtime exception during analyzer execution in command line build.
 
@@ -439,6 +439,30 @@ The symbol has been marked as banned for use in analyzers, and an alternate shou
 ## RS1036: Specify analyzer banned API enforcement setting
 
 A project containing analyzers or source generators should specify the property '\<EnforceExtendedAnalyzerRules>true\</EnforceExtendedAnalyzerRules>'.
+
+|Item|Value|
+|-|-|
+|Category|MicrosoftCodeAnalysisCorrectness|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## RS1037: Add "CompilationEnd" custom tag to compilation end diagnostic descriptor
+
+'DiagnosticDescriptor' assigned to field is used to report a compilation end diagnostic, but the 'DiagnosticDescriptor' constructor used to initialize it does not pass in the required custom tag "CompilationEnd". See documentation for 'WellKnownDiagnosticTags.CompilationEnd' for details.
+
+|Item|Value|
+|-|-|
+|Category|MicrosoftCodeAnalysisDesign|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [RS1038](https://github.com/dotnet/roslyn-analyzers/blob/main/docs/rules/RS1038.md): Compiler extensions should be implemented in assemblies with compiler-provided references
+
+Types which implement compiler extension points should not be declared in assemblies that contain references to assemblies which are not provided by all compilation scenarios. Doing so may cause the feature to behave unpredictably.
 
 |Item|Value|
 |-|-|

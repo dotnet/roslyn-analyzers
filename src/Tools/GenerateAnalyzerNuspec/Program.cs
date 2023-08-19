@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -60,9 +60,7 @@ foreach (string entry in metadataList)
         result.AppendLine($"    <{name}>{value}</{name}>");
     }
 
-#pragma warning disable CA1508 // Avoid dead conditional code - https://github.com/dotnet/roslyn-analyzers/issues/4520
     if (name == "version")
-#pragma warning restore CA1508
     {
         version = value;
     }
@@ -164,7 +162,7 @@ if (fileList.Length > 0 || assemblyList.Length > 0 || libraryList.Length > 0 || 
     foreach (string file in fileList)
     {
         var fileWithPath = Path.IsPathRooted(file) ? file : Path.Combine(projectDir, file);
-        result.AppendLine(FileElement(fileWithPath, "build"));
+        result.AppendLine(FileElement(fileWithPath, "buildTransitive"));
     }
 
     if (readmePackageLocation.Length > 0)
@@ -188,6 +186,9 @@ if (fileList.Length > 0 || assemblyList.Length > 0 || libraryList.Length > 0 || 
         }
     }
 
+    // Skip packaging certain well-known third-party assemblies that ship within Microsoft.CodeAnalysis.Features package.
+    var fileNamesToExclude = new List<string>() { "Humanizer.dll", "MessagePack.dll", "MessagePack.Annotations.dll" };
+
     foreach (string folder in folderList)
     {
         foreach (var tfm in tfms)
@@ -198,6 +199,10 @@ if (fileList.Length > 0 || assemblyList.Length > 0 || libraryList.Length > 0 || 
                 var fileExtension = Path.GetExtension(file);
                 if (fileExtension is ".exe" or ".dll" or ".config" or ".xml")
                 {
+                    var fileName = Path.GetFileName(file);
+                    if (fileNamesToExclude.Contains(fileName, StringComparer.OrdinalIgnoreCase))
+                        continue;
+
                     var fileWithPath = Path.Combine(folderPath, file);
                     var targetPath = tfms.Length > 1 ? Path.Combine(folder, tfm) : folder;
                     result.AppendLine(FileElement(fileWithPath, targetPath));
@@ -235,15 +240,15 @@ if (editorconfigsDir.Length > 0 && Directory.Exists(editorconfigsDir))
 
 if (globalAnalyzerConfigsDir.Length > 0 && Directory.Exists(globalAnalyzerConfigsDir))
 {
-    foreach (string editorconfig in Directory.EnumerateFiles(globalAnalyzerConfigsDir))
+    foreach (string globalconfig in Directory.EnumerateFiles(globalAnalyzerConfigsDir))
     {
-        if (Path.GetExtension(editorconfig) == ".editorconfig")
+        if (Path.GetExtension(globalconfig) == ".globalconfig")
         {
-            result.AppendLine(FileElement(Path.Combine(globalAnalyzerConfigsDir, editorconfig), $"build\\config"));
+            result.AppendLine(FileElement(Path.Combine(globalAnalyzerConfigsDir, globalconfig), $"buildTransitive\\config"));
         }
         else
         {
-            throw new InvalidDataException($"Encountered a file with unexpected extension: {editorconfig}");
+            throw new InvalidDataException($"Encountered a file with unexpected extension: {globalconfig}");
         }
     }
 }

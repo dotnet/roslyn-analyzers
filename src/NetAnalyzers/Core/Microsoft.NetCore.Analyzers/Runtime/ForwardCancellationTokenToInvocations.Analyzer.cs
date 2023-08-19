@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -68,14 +68,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingCancellationToken, out INamedTypeSymbol? cancellationTokenType))
+            var typeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
+            if (!typeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingCancellationToken, out INamedTypeSymbol? cancellationTokenType)
+                || !typeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute, out INamedTypeSymbol? obsoleteAttribute))
             {
                 return;
             }
 
             // We don't care if these symbols are not defined in our compilation. They are used to special case the Task<T> <-> ValueTask<T> logic
-            context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask1, out INamedTypeSymbol? genericTask);
-            context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksValueTask1, out INamedTypeSymbol? genericValueTask);
+            typeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask1, out INamedTypeSymbol? genericTask);
+            typeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksValueTask1, out INamedTypeSymbol? genericValueTask);
 
             context.RegisterOperationAction(context =>
             {
@@ -93,6 +95,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     cancellationTokenType,
                     genericTask,
                     genericValueTask,
+                    obsoleteAttribute,
                     out int shouldFix,
                     out string? cancellationTokenArgumentName,
                     out string? invocationTokenParameterName))
@@ -125,6 +128,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             INamedTypeSymbol cancellationTokenType,
             INamedTypeSymbol? genericTask,
             INamedTypeSymbol? genericValueTask,
+            INamedTypeSymbol obsoleteAttribute,
             out int shouldFix, [NotNullWhen(returnValue: true)] out string? ancestorTokenParameterName, out string? invocationTokenParameterName)
         {
             shouldFix = 1;
@@ -134,8 +138,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             IMethodSymbol method = invocation.TargetMethod;
 
             // Verify that the current invocation is not passing an explicit token already
-            if (AnyArgument(invocation.Arguments,
-                            a => cancellationTokenType.Equals(a.Parameter?.Type) && !a.IsImplicit))
+            if (AnyArgument(
+                invocation.Arguments,
+                static (a, cancellationTokenType) => cancellationTokenType.Equals(a.Parameter?.Type) && !a.IsImplicit,
+                cancellationTokenType))
             {
                 return false;
             }
@@ -150,7 +156,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
             // or an overload that takes a ct at the end
-            else if (MethodHasCancellationTokenOverload(compilation, method, cancellationTokenType, genericTask, genericValueTask, out overload))
+            else if (MethodHasCancellationTokenOverload(compilation, method, cancellationTokenType, genericTask, genericValueTask, obsoleteAttribute, out overload))
             {
                 if (ArgumentsImplicitOrNamed(cancellationTokenType, invocation.Arguments))
                 {
@@ -192,7 +198,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             [NotNullWhen(returnValue: true)] out string? cancellationTokenParameterName)
         {
             shouldFix = 1;
-            IOperation currentOperation = invocation.Parent;
+            IOperation? currentOperation = invocation.Parent;
             while (currentOperation != null)
             {
                 ancestor = null;
@@ -263,19 +269,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             INamedTypeSymbol cancellationTokenType)
         {
             return
-                !method.Parameters.IsEmpty &&
-                method.Parameters[^1] is IParameterSymbol lastParameter &&
+                method.Parameters is [.., IParameterSymbol lastParameter] &&
                 (InvocationIgnoresOptionalCancellationToken(lastParameter, arguments, cancellationTokenType) ||
                 InvocationIsUsingParamsCancellationToken(lastParameter, arguments, cancellationTokenType));
         }
 
         // Checks if the arguments enumerable has any elements that satisfy the provided condition,
         // starting the lookup with the last element since tokens tend to be added as the last argument.
-        private static bool AnyArgument(ImmutableArray<IArgumentOperation> arguments, Func<IArgumentOperation, bool> predicate)
+        private static bool AnyArgument<TArg>(ImmutableArray<IArgumentOperation> arguments, Func<IArgumentOperation, TArg, bool> predicate, TArg arg)
         {
             for (int i = arguments.Length - 1; i >= 0; i--)
             {
-                if (predicate(arguments[i]))
+                if (predicate(arguments[i], arg))
                 {
                     return true;
                 }
@@ -298,8 +303,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // Need to check among all arguments in case the user is passing them named and unordered (despite the ct being defined as the last parameter)
                 return AnyArgument(
                     arguments,
-                    a => a.Parameter.Type.Equals(cancellationTokenType) && a.ArgumentKind == ArgumentKind.DefaultValue);
+                    static (a, cancellationTokenType) => a.Parameter != null && a.Parameter.Type.Equals(cancellationTokenType) && a.ArgumentKind == ArgumentKind.DefaultValue,
+                    cancellationTokenType);
             }
+
             return false;
         }
 
@@ -317,7 +324,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (paramsArgument?.Value is IArrayCreationOperation arrayOperation)
                 {
                     // Do not offer a diagnostic if the user already passed a ct to the params
-                    return arrayOperation.Initializer.ElementValues.IsEmpty;
+                    return arrayOperation.Initializer!.ElementValues.IsEmpty;
                 }
             }
 
@@ -331,13 +338,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             ITypeSymbol cancellationTokenType,
             INamedTypeSymbol? genericTask,
             INamedTypeSymbol? genericValueTask,
+            INamedTypeSymbol obsoleteAttribute,
             [NotNullWhen(returnValue: true)] out IMethodSymbol? overload)
         {
             overload = method.ContainingType
-                                .GetMembers(method.Name)
-                                .OfType<IMethodSymbol>()
-                                .FirstOrDefault(methodToCompare =>
-                HasSameParametersPlusCancellationToken(compilation, cancellationTokenType, genericTask, genericValueTask, method, methodToCompare));
+                .GetMembers(method.Name)
+                .OfType<IMethodSymbol>()
+                .FirstOrDefault(methodToCompare => !methodToCompare.HasAnyAttribute(obsoleteAttribute)
+                                                   && HasSameParametersPlusCancellationToken(compilation, cancellationTokenType, genericTask, genericValueTask, method, methodToCompare));
 
             return overload != null;
 

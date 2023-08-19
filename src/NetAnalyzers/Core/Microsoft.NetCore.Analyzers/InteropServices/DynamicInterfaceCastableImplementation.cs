@@ -86,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
-            if (!targetType.HasAttribute(dynamicInterfaceCastableImplementationAttribute))
+            if (!targetType.HasAnyAttribute(dynamicInterfaceCastableImplementationAttribute))
             {
                 return;
             }
@@ -139,6 +139,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         {
                             propertyBag = propertyBag.Add(NonStaticMemberIsMethodKey, string.Empty);
                         }
+
                         context.ReportDiagnostic(member.CreateDiagnostic(MembersDeclaredOnImplementationTypeMustBeStatic, propertyBag, member.ToDisplayString(), targetType.ToDisplayString()));
                     }
                 }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -57,6 +57,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         // if (arg >= 42) throw new ArgumentOutOfRangeException(...); => ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(arg, 42);
         // if (arg < 42) throw new ArgumentOutOfRangeException(...); => ArgumentOutOfRangeException.ThrowIfLessThan(arg, 42);
         // if (arg <= 42) throw new ArgumentOutOfRangeException(...); => ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(arg, 42);
+        // if (arg == 42) throw new ArgumentOutOfRangeException(...); => ArgumentOutOfRangeException.ThrowIfEqual(arg, 42);
+        // if (arg != 42) throw new ArgumentOutOfRangeException(...); => ArgumentOutOfRangeException.ThrowIfNotEqual(arg, 42);
         internal static readonly DiagnosticDescriptor UseArgumentOutOfRangeExceptionThrowIfRule = DiagnosticDescriptorHelper.Create(UseArgumentOutOfRangeExceptionThrowIfRuleId,
             CreateLocalizableResourceString(nameof(UseArgumentOutOfRangeExceptionThrowHelperTitle)),
             CreateLocalizableResourceString(nameof(UseThrowHelperMessage)),
@@ -120,13 +122,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 ISymbol? aooreThrowIfNegative = aoore.GetMembers("ThrowIfNegative").FirstOrDefault();
                 ISymbol? aooreThrowIfNegativeOrZero = aoore.GetMembers("ThrowIfNegativeOrZero").FirstOrDefault();
                 ISymbol? aooreThrowIfGreaterThan = aoore.GetMembers("ThrowIfGreaterThan").FirstOrDefault();
-                ISymbol? aooreThrowIfGreaterThanOrEqual = aoore.GetMembers("aooreThrowIfGreaterThanOrEqual").FirstOrDefault();
+                ISymbol? aooreThrowIfGreaterThanOrEqual = aoore.GetMembers("ThrowIfGreaterThanOrEqual").FirstOrDefault();
                 ISymbol? aooreThrowIfLessThan = aoore.GetMembers("ThrowIfLessThan").FirstOrDefault();
                 ISymbol? aooreThrowIfLessThanOrEqual = aoore.GetMembers("ThrowIfLessThanOrEqual").FirstOrDefault();
+                ISymbol? aooreThrowIfEqual = aoore.GetMembers("ThrowIfEqual").FirstOrDefault();
+                ISymbol? aooreThrowIfNotEqual = aoore.GetMembers("ThrowIfNotEqual").FirstOrDefault();
                 if (aneThrowIfNull is null && aeThrowIfNullOrEmpty is null && odeThrowIf is null &&
                     aooreThrowIfZero is null && aooreThrowIfNegative is null && aooreThrowIfNegativeOrZero is null &&
                     aooreThrowIfGreaterThan is null && aooreThrowIfGreaterThanOrEqual is null &&
-                    aooreThrowIfLessThan is null && aooreThrowIfLessThanOrEqual is null)
+                    aooreThrowIfLessThan is null && aooreThrowIfLessThanOrEqual is null &&
+                    aooreThrowIfEqual is null && aooreThrowIfNotEqual is null)
                 {
                     return;
                 }
@@ -135,7 +140,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 bool hasAnyAooreThrow =
                     aooreThrowIfZero is not null || aooreThrowIfNegative is not null || aooreThrowIfNegativeOrZero is not null ||
                     aooreThrowIfGreaterThan is not null || aooreThrowIfGreaterThanOrEqual is not null ||
-                    aooreThrowIfLessThan is not null || aooreThrowIfLessThanOrEqual is not null;
+                    aooreThrowIfLessThan is not null || aooreThrowIfLessThanOrEqual is not null ||
+                    aooreThrowIfEqual is not null || aooreThrowIfNotEqual is not null;
 
                 // Look for throw operations.
                 context.RegisterOperationAction(context =>
@@ -181,7 +187,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         if (aneThrowIfNull is not null &&
                             IsParameterNullCheck(condition.Condition, out IParameterReferenceOperation? nullCheckParameter) &&
-                            nullCheckParameter.Type.IsReferenceType)
+                            nullCheckParameter.Type!.IsReferenceType &&
+                            HasReplaceableArgumentName(objectCreationOperation, 0))
                         {
                             context.ReportDiagnostic(condition.CreateDiagnostic(
                                 UseArgumentNullExceptionThrowIfNullRule,
@@ -189,6 +196,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 properties: null,
                                 args: new object[] { nameof(ArgumentNullException), "ThrowIfNull" }));
                         }
+
                         return;
                     }
 
@@ -196,7 +204,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (SymbolEqualityComparer.Default.Equals(objectCreationOperation.Type, ae))
                     {
                         if (aeThrowIfNullOrEmpty is not null &&
-                            IsNullOrEmptyCheck(stringIsNullOrEmpty, stringLength, stringEmpty, condition.Condition, out IParameterReferenceOperation? nullOrEmptyCheckParameter))
+                            IsNullOrEmptyCheck(stringIsNullOrEmpty, stringLength, stringEmpty, condition.Condition, out IParameterReferenceOperation? nullOrEmptyCheckParameter) &&
+                            HasReplaceableArgumentName(objectCreationOperation, 1))
                         {
                             context.ReportDiagnostic(condition.CreateDiagnostic(
                                 UseArgumentExceptionThrowIfNullOrEmptyRule,
@@ -204,6 +213,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 properties: null,
                                 args: new object[] { nameof(ArgumentException), "ThrowIfNullOrEmpty" }));
                         }
+
                         return;
                     }
 
@@ -214,9 +224,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     // Handle ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual
                     // Handle ArgumentOutOfRangeException.ThrowIfLessThan
                     // Handle ArgumentOutOfRangeException.ThrowIfLessThanOrEqual
+                    // Handle ArgumentOutOfRangeException.ThrowIfEqual
+                    // Handle ArgumentOutOfRangeException.ThrowIfNotEqual
                     if (SymbolEqualityComparer.Default.Equals(objectCreationOperation.Type, aoore))
                     {
-                        if (hasAnyAooreThrow)
+                        if (hasAnyAooreThrow &&
+                            HasReplaceableArgumentName(objectCreationOperation, 0))
                         {
                             ImmutableArray<Location> additionalLocations = ImmutableArray<Location>.Empty;
 
@@ -224,31 +237,50 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             {
                                 additionalLocations = ImmutableArray.Create(aooreParameter.Syntax.GetLocation());
                             }
-                            else if (IsGreaterLessThanComparison(condition.Condition, out aooreParameter, out methodName, out SyntaxNode? other))
+                            else if (IsGreaterLessEqualThanComparison(condition.Condition, out aooreParameter, out methodName, out SyntaxNode? other))
                             {
                                 additionalLocations = ImmutableArray.Create(aooreParameter.Syntax.GetLocation(), other.GetLocation());
                             }
 
                             if (additionalLocations.Length != 0 && !AvoidComparing(aooreParameter!))
                             {
-                                context.ReportDiagnostic(condition.CreateDiagnostic(
-                                    UseArgumentOutOfRangeExceptionThrowIfRule,
-                                    additionalLocations,
-                                    properties: ImmutableDictionary<string, string?>.Empty.Add(MethodNamePropertyKey, methodName),
-                                    args: new object[] { nameof(ArgumentOutOfRangeException), methodName! }));
+                                switch (methodName)
+                                {
+                                    case "ThrowIfZero" when aooreThrowIfZero is not null:
+                                    case "ThrowIfNegative" when aooreThrowIfNegative is not null:
+                                    case "ThrowIfNegativeOrZero" when aooreThrowIfNegativeOrZero is not null:
+                                    case "ThrowIfGreaterThan" when aooreThrowIfGreaterThan is not null:
+                                    case "ThrowIfGreaterThanOrEqual" when aooreThrowIfGreaterThanOrEqual is not null:
+                                    case "ThrowIfLessThan" when aooreThrowIfLessThan is not null:
+                                    case "ThrowIfLessThanOrEqual" when aooreThrowIfLessThanOrEqual is not null:
+                                    case "ThrowIfEqual" when aooreThrowIfEqual is not null:
+                                    case "ThrowIfNotEqual" when aooreThrowIfNotEqual is not null:
+                                        context.ReportDiagnostic(condition.CreateDiagnostic(
+                                            UseArgumentOutOfRangeExceptionThrowIfRule,
+                                            additionalLocations,
+                                            properties: ImmutableDictionary<string, string?>.Empty.Add(MethodNamePropertyKey, methodName),
+                                            args: new object[] { nameof(ArgumentOutOfRangeException), methodName! }));
+                                        break;
+                                }
                             }
 
                             static bool AvoidComparing(IParameterReferenceOperation p) =>
                                 p.Type.IsNullableValueType() ||
-                                p.Type.TypeKind == TypeKind.Enum;
+                                p.Type?.TypeKind == TypeKind.Enum;
                         }
+
                         return;
                     }
 
                     // Handle ObjectDisposedException.ThrowIf.
                     if (SymbolEqualityComparer.Default.Equals(objectCreationOperation.Type, ode))
                     {
-                        if (odeThrowIf is not null)
+                        // If we have ObjectDisposedException.ThrowIf and if this operation is in a reference type, issue a diagnostic.
+                        // We check whether the containing type is a reference type because we want to avoid passing `this` at the call
+                        // site to ThrowIf for a struct as that will box, and we want to avoid using `GetType()` at the call site as
+                        // that adds additional cost prior to the guard check.
+                        if (odeThrowIf is not null &&
+                            context.ContainingSymbol.ContainingType.IsReferenceType)
                         {
                             // We always report a diagnostic. However, the fixer is only currently provided in the case
                             // of the argument to the ObjectDisposedException constructor containing a call to {something.}GetType().{Full}Name,
@@ -265,7 +297,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 additionalLocations = additionalLocations.Add(
                                     getTypeCall.Instance is IInstanceReferenceOperation { IsImplicit: true } ?
                                         Location.None :
-                                        getTypeCall.Instance.Syntax.GetLocation());
+                                        getTypeCall.Instance!.Syntax.GetLocation());
                             }
 
                             context.ReportDiagnostic(condition.CreateDiagnostic(
@@ -274,9 +306,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 properties: null,
                                 args: new object[] { nameof(ObjectDisposedException), "ThrowIf" }));
                         }
+
                         return;
                     }
                 }, OperationKind.Throw);
+
+                // As a heuristic, we only want to replace throws with ThrowIfNull if either there isn't currently
+                // a specified parameter name, e.g. the parameterless constructor was used, or if it's specified as a
+                // constant, e.g. a nameof or a literal string.  This is primarily to avoid false positives
+                // with complicated expressions for computing the parameter name to use, which with ThrowIfNull would
+                // need to be done prior to the guard check, and thus something we want to avoid.
+                bool HasReplaceableArgumentName(IObjectCreationOperation creationOperation, int argumentIndex)
+                {
+                    ImmutableArray<IArgumentOperation> args = creationOperation.Arguments;
+                    return
+                        argumentIndex >= args.Length ||
+                        args.GetArgumentForParameterAtIndex(argumentIndex).Value.ConstantValue.HasValue;
+                }
 
                 // As a heuristic, we avoid issuing diagnostics if there are additional arguments (e.g. message)
                 // to the exception that could be useful.
@@ -388,7 +434,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static bool IsArgEqualStringEmpty(ISymbol stringEmpty, IParameterSymbol arg, IOperation left, IOperation right) =>
             left is IParameterReferenceOperation parameterReferenceOperation &&
             SymbolEqualityComparer.Default.Equals(parameterReferenceOperation.Parameter, arg) &&
-            parameterReferenceOperation.Type.SpecialType == SpecialType.System_String &&
+            parameterReferenceOperation.Type?.SpecialType == SpecialType.System_String &&
             right is IFieldReferenceOperation fieldReferenceOperation &&
             SymbolEqualityComparer.Default.Equals(stringEmpty, fieldReferenceOperation.Member);
 
@@ -441,6 +487,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             parameterReferenceOperation = binaryOperation.LeftOperand as IParameterReferenceOperation;
                             return parameterReferenceOperation is not null;
                         }
+
                         break;
 
                     case BinaryOperatorKind.LessThanOrEqual or BinaryOperatorKind.LessThan:
@@ -453,6 +500,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             parameterReferenceOperation = leftOperandParameterReference;
                             return true;
                         }
+
                         break;
 
                     case BinaryOperatorKind.GreaterThanOrEqual or BinaryOperatorKind.GreaterThan:
@@ -465,6 +513,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             parameterReferenceOperation = rightOperationParameterReference;
                             return true;
                         }
+
                         break;
                 }
             }
@@ -475,30 +524,36 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         /// <summary>Gets the <see cref="IParameterReferenceOperation"/> being compared to another expression.</summary>
-        private static bool IsGreaterLessThanComparison(IOperation condition, [NotNullWhen(true)] out IParameterReferenceOperation? parameterReferenceOperation, [NotNullWhen(true)] out string? methodName, [NotNullWhen(true)] out SyntaxNode? other)
+        private static bool IsGreaterLessEqualThanComparison(IOperation condition, [NotNullWhen(true)] out IParameterReferenceOperation? parameterReferenceOperation, [NotNullWhen(true)] out string? methodName, [NotNullWhen(true)] out SyntaxNode? other)
         {
             const string ThrowIfGreaterThan = nameof(ThrowIfGreaterThan);
             const string ThrowIfGreaterThanOrEqual = nameof(ThrowIfGreaterThanOrEqual);
             const string ThrowIfLessThan = nameof(ThrowIfLessThan);
             const string ThrowIfLessThanOrEqual = nameof(ThrowIfLessThanOrEqual);
+            const string ThrowIfEqual = nameof(ThrowIfEqual);
+            const string ThrowIfNotEqual = nameof(ThrowIfNotEqual);
 
             if (condition is IBinaryOperation binaryOperation)
             {
                 switch (binaryOperation.OperatorKind)
                 {
-                    case BinaryOperatorKind.GreaterThan or BinaryOperatorKind.GreaterThanOrEqual or BinaryOperatorKind.LessThan or BinaryOperatorKind.LessThanOrEqual:
+                    case BinaryOperatorKind.GreaterThan or BinaryOperatorKind.GreaterThanOrEqual or BinaryOperatorKind.LessThan or BinaryOperatorKind.LessThanOrEqual or BinaryOperatorKind.Equals or BinaryOperatorKind.NotEquals:
                         if (binaryOperation.LeftOperand is IParameterReferenceOperation leftParameter)
                         {
                             // arg > other
                             // arg >= other
                             // arg < other
                             // arg <= other
+                            // arg == other
+                            // arg != other
                             methodName = binaryOperation.OperatorKind switch
                             {
                                 BinaryOperatorKind.GreaterThan => ThrowIfGreaterThan,
                                 BinaryOperatorKind.GreaterThanOrEqual => ThrowIfGreaterThanOrEqual,
                                 BinaryOperatorKind.LessThan => ThrowIfLessThan,
-                                _ => ThrowIfLessThanOrEqual,
+                                BinaryOperatorKind.LessThanOrEqual => ThrowIfLessThanOrEqual,
+                                BinaryOperatorKind.Equals => ThrowIfEqual,
+                                _ => ThrowIfNotEqual
                             };
                             other = binaryOperation.RightOperand.Syntax;
                             parameterReferenceOperation = leftParameter;
@@ -511,17 +566,22 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             // other >= arg
                             // other < arg
                             // other <= arg
+                            // other == arg
+                            // other != arg
                             methodName = binaryOperation.OperatorKind switch
                             {
                                 BinaryOperatorKind.GreaterThan => ThrowIfLessThan,
                                 BinaryOperatorKind.GreaterThanOrEqual => ThrowIfLessThanOrEqual,
                                 BinaryOperatorKind.LessThan => ThrowIfGreaterThan,
-                                _ => ThrowIfGreaterThanOrEqual,
+                                BinaryOperatorKind.LessThanOrEqual => ThrowIfGreaterThanOrEqual,
+                                BinaryOperatorKind.Equals => ThrowIfEqual,
+                                _ => ThrowIfNotEqual
                             };
                             other = binaryOperation.LeftOperand.Syntax;
                             parameterReferenceOperation = rightParameter;
                             return true;
                         }
+
                         break;
                 }
             }

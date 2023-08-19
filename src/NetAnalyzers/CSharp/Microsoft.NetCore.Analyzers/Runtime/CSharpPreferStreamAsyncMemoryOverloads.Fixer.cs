@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
+using System.Composition;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -11,7 +11,7 @@ using Microsoft.NetCore.Analyzers.Runtime;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpPreferStreamAsyncMemoryOverloadsFixer : PreferStreamAsyncMemoryOverloadsFixer
     {
         protected override SyntaxNode? GetArgumentByPositionOrName(IInvocationOperation invocation, int index, string name, out bool isNamed)
@@ -29,7 +29,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 }
                 // The argument in the specified index does not have a name but is part of a nullable expression
                 else if (args[index].Syntax is IdentifierNameSyntax identifierNameNode &&
-                    identifierNameNode.Identifier.Value.Equals(name) &&
+                    identifierNameNode.Identifier.Value!.Equals(name) &&
                     identifierNameNode.Parent is PostfixUnaryExpressionSyntax nullableExpression)
                 {
                     return nullableExpression;
@@ -52,18 +52,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
 
             return null;
-        }
-
-        protected override bool IsSystemNamespaceImported(IReadOnlyList<SyntaxNode> importList)
-        {
-            foreach (SyntaxNode import in importList)
-            {
-                if (import is UsingDirectiveSyntax { Name: IdentifierNameSyntax { Identifier.Text: nameof(System) } })
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         protected override bool IsPassingZeroAndBufferLength(SemanticModel model, SyntaxNode bufferValueNode, SyntaxNode offsetValueNode, SyntaxNode countValueNode)
@@ -90,6 +78,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                     }
                 }
             }
+
             return false;
         }
 
@@ -102,7 +91,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 return postfixUnaryExpression;
             }
 
-            return invocation.Instance.Syntax;
+            return invocation.Instance!.Syntax;
         }
 
         protected override SyntaxNode GetNamedArgument(SyntaxGenerator generator, SyntaxNode node, bool isNamed, string newName)

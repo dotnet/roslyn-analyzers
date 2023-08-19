@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -106,13 +106,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             foreach (INamedTypeSymbol symbol in externallyVisibleNamedTypes)
                             {
                                 string symbolName = symbol.Name;
-                                if (WellKnownSystemNamespaceTable.ContainsKey(symbolName))
+                                if (WellKnownSystemNamespaceTable.TryGetValue(symbolName, out var wellKnownSystemNamespaceValue))
                                 {
-                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(SystemRule, symbolName, WellKnownSystemNamespaceTable[symbolName]));
+                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(SystemRule, symbolName, wellKnownSystemNamespaceValue));
                                 }
-                                else if (namespaceComponentToNamespaceNameDictionary.ContainsKey(symbolName))
+                                else if (namespaceComponentToNamespaceNameDictionary.TryGetValue(symbolName, out var namespaceNameValue))
                                 {
-                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(DefaultRule, symbolName, namespaceComponentToNamespaceNameDictionary[symbolName]));
+                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(DefaultRule, symbolName, namespaceNameValue));
                                 }
                             }
                         });
@@ -158,9 +158,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 lock (s_lock)
                 {
-#pragma warning disable CA1508 // Avoid dead conditional code - https://github.com/dotnet/roslyn-analyzers/issues/3861
                     if (s_wellKnownSystemNamespaceTable == null)
-#pragma warning restore CA1508 // Avoid dead conditional code
                     {
                         #region List of Well known System Namespaces
                         var wellKnownSystemNamespaces = new List<string>

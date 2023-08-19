@@ -1,0 +1,129 @@
+is_global = true
+
+# Default severity for all IDE code style rules with category 'Style'
+dotnet_analyzer_diagnostic.category-Style.severity = warning
+
+# Default severity for all IDE code quality rules with category 'CodeQuality'
+dotnet_analyzer_diagnostic.category-CodeQuality.severity = warning
+
+### Configuration for RSxxxx rules ###
+
+# RS1024: Compare symbols correctly
+# https://github.com/dotnet/roslyn-analyzers/issues/6381
+dotnet_diagnostic.RS1024.severity = none
+
+# Parts exported with MEFv2 must be marked with 'SharedAttribute', un-needed here
+dotnet_diagnostic.RS0023.severity = none
+
+# Exported parts should be marked with 'ImportingConstructorAttribute', un-needed here
+dotnet_diagnostic.RS0034.severity = none
+
+# Use 'null' instead of 'default' for nullable types
+dotnet_diagnostic.RS0038.severity = none
+
+# TODO: Remove this exclusion and fix related issues, tracked by https://github.com/dotnet/roslyn-analyzers/issues/3915
+#dotnet_diagnostic.RS0041.severity = none
+
+### Configuration for IDE code style by diagnostic IDs ###
+
+# IDE0066: Convert switch statement to expression
+dotnet_diagnostic.IDE0066.severity = suggestion
+
+# IDE0001: Name can be simplified
+dotnet_diagnostic.IDE0001.severity = silent
+
+# IDE0002: Name can be simplified
+dotnet_diagnostic.IDE0002.severity = silent
+
+# IDE0003: Name can be simplified
+dotnet_diagnostic.IDE0003.severity = silent
+
+# IDE0007: Use 'var' instead of explicit type
+dotnet_diagnostic.IDE0007.severity = silent
+
+# IDE0010: Add missing cases in switch statement
+dotnet_diagnostic.IDE0010.severity = silent
+
+# IDE0017: Object initialization can be simplified
+dotnet_diagnostic.IDE0017.severity = silent
+
+# IDE0031: Null check can be simplified
+dotnet_diagnostic.IDE0031.severity = silent
+
+# IDE0045: 'if' statement can be simplified
+dotnet_diagnostic.IDE0045.severity = silent
+
+# IDE0046: 'if' statement can be simplified
+dotnet_diagnostic.IDE0046.severity = silent
+
+# IDE0048: Parentheses should be added for clarity
+dotnet_diagnostic.IDE0048.severity = silent
+
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = silent
+
+# IDE0065: Using directives must be placed outside of a namespace declaration
+# Can remove the below entry and turn it into a warning once https://github.com/dotnet/roslyn/issues/43271 is resolved.
+dotnet_diagnostic.IDE0065.severity = silent
+
+# IDE0072: Populate switch
+dotnet_diagnostic.IDE0072.severity = silent
+
+# IDE0074: Use compound assignment
+dotnet_diagnostic.IDE0074.severity = silent
+
+# IDE0083: Use pattern matching
+dotnet_diagnostic.IDE0083.severity = silent
+
+# IDE0120: Simplify linq expression
+dotnet_diagnostic.IDE0120.severity = silent
+
+# IDE0130: Namespace does not match folder structure
+dotnet_diagnostic.IDE0130.severity = silent
+
+# IDE0150: Null check can be clarified
+dotnet_diagnostic.IDE0150.severity = silent
+
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = suggestion
+
+### Configuration for Microsoft.CodeAnalysis.NetAnalyzers analyzers executed on this repo ###
+
+# CA1002: Do not expose generic lists
+dotnet_diagnostic.CA1002.severity = suggestion
+
+# CA1024: Use properties where appropriate
+dotnet_diagnostic.CA1024.severity = suggestion
+
+# CA1033: Interface methods should be callable by child types
+dotnet_diagnostic.CA1033.severity = suggestion
+
+# ValidateArgumentsOfPublicMethods - only useful for libraries with supported public API surface, we don't have any
+dotnet_diagnostic.CA1062.severity = none
+
+# CA1307: Specify StringComparison for clarity
+dotnet_diagnostic.CA1307.severity = suggestion
+
+# CA1711: Identifiers should not have incorrect suffix
+dotnet_diagnostic.CA1711.severity = suggestion
+
+# CA1309: Use ordinal string comparison
+dotnet_diagnostic.CA1309.severity = suggestion
+
+# 🐢 Avoid dead conditional code: https://github.com/dotnet/roslyn-analyzers/issues/4914
+dotnet_diagnostic.CA1508.severity = none
+
+# 🐢 Dispose objects before losing scope: https://github.com/dotnet/roslyn-analyzers/issues/4915
+dotnet_diagnostic.CA2000.severity = none
+
+### Configuration for vs-threading analyzers executed on this repo ###
+
+# VSTHRD002: Avoid problematic synchronous waits
+dotnet_diagnostic.VSTHRD002.severity = none
+
+# VSTHRD011: Use AsyncLazy<T>
+dotnet_diagnostic.VSTHRD011.severity = none
+
+# RS1036: A project containing analyzers or source generators should specify the property '<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>'.
+# https://github.com/dotnet/roslyn-analyzers/issues/6443 tracks enabling RS1036 and fixing RS1035 violations
+dotnet_diagnostic.RS1036.severity = none

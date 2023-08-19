@@ -79,6 +79,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 foreach (var attribute in attributes)
                 {
+                    if (attribute.AttributeClass == null)
+                        continue;
+
                     if (attribute.AttributeClass.Name is SupportedOSPlatformGuardAttribute or UnsupportedOSPlatformGuardAttribute &&
                         TryParsePlatformNameAndVersion(attribute, out var platformName, out var version))
                     {
@@ -136,6 +139,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 {
                                     infosBuilder.RemoveAt(index);
                                 }
+
                                 v.SupportedFirst = null;
                                 v.UnsupportedFirst = null;
                             }
@@ -146,6 +150,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         }
                     }
                 }
+
                 return infosBuilder.Any();
             }
 
@@ -210,7 +215,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
                 else // Not a known guard method, check if annotated with guard attributes
                 {
-                    TryParseGuardAttributes(method, ref value, visitedArguments);
+                    _ = TryParseGuardAttributes(method, ref value, visitedArguments);
                 }
 
                 return value;
@@ -222,6 +227,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 foreach (var attribute in attributes)
                 {
+                    if (attribute.AttributeClass == null)
+                        continue;
+
                     if (attribute.AttributeClass.Name is SupportedOSPlatformGuardAttribute or UnsupportedOSPlatformGuardAttribute &&
                         TryParsePlatformNameAndVersion(attribute, out var platformName, out var _))
                     {

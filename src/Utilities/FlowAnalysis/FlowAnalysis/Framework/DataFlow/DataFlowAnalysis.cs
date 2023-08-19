@@ -86,7 +86,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             // i.e. for every '{key, value}' pair in the dictionary, 'key' is the destination of at least one back edge
             // and 'value' is the minimum ordinal such that there is no back edge to 'key' from any basic block with ordinal > 'value'.
             using var loopRangeMap = PooledDictionary<int, int>.GetInstance();
-            ComputeLoopRangeMap(cfg, loopRangeMap);
+            var hasAnyTryBlock = ComputeLoopRangeMap(cfg, loopRangeMap);
 
             TAnalysisData? normalPathsExitBlockData = null, exceptionPathsExitBlockData = null;
 
@@ -115,7 +115,13 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     blockToUniqueInputFlowMap, loopRangeMap, exceptionPathsAnalysisPostPass: false);
                 normalPathsExitBlockData = resultBuilder.ExitBlockOutputData;
 
-                if (analysisContext.ExceptionPathsAnalysis)
+                // If we are executing exception paths analysis OR have at least one try/catch/finally block
+                // in the method, execute an exception path analysis post pass.
+                // This post pass will handle all possible operations within the control flow graph that can
+                // throw an exception and merge analysis data after all such operation analyses into the
+                // catch blocks reachable from those operations.
+                if ((analysisContext.ExceptionPathsAnalysis || hasAnyTryBlock) &&
+                    !OperationVisitor.SkipExceptionPathsAnalysisPostPass)
                 {
                     RoslynDebug.Assert(normalPathsExitBlockData != null);
 
@@ -217,7 +223,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                 if (pendingBlocksNeedingAtLeastOnePass.Any())
                 {
                     var finallyRegion = block.GetInnermostRegionStartedByBlock(ControlFlowRegionKind.Finally);
-                    if (finallyRegion?.EnclosingRegion.Kind == ControlFlowRegionKind.TryAndFinally)
+                    if (finallyRegion?.EnclosingRegion!.Kind == ControlFlowRegionKind.TryAndFinally)
                     {
                         // Add all catch blocks in the try region corresponding to the finally.
                         var tryRegion = finallyRegion.EnclosingRegion.NestedRegions[0];
@@ -286,11 +292,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 
                 // Check if we are starting a try region which has one or more associated catch/filter regions.
                 // If so, we conservatively merge the input data for try region into the input data for the associated catch/filter regions.
-#pragma warning disable CA1508 // Avoid dead conditional code - https://github.com/dotnet/roslyn-analyzers/issues/4408
                 if (block.EnclosingRegion?.Kind == ControlFlowRegionKind.Try &&
                     block.EnclosingRegion.EnclosingRegion?.Kind == ControlFlowRegionKind.TryAndCatch &&
                     block.EnclosingRegion.EnclosingRegion.FirstBlockOrdinal == block.Ordinal)
-#pragma warning restore CA1508 // Avoid dead conditional code
                 {
                     MergeIntoCatchInputData(block.EnclosingRegion.EnclosingRegion, input, block);
                 }
@@ -589,18 +593,20 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     switch (block.EnclosingRegion.Kind)
                     {
                         case ControlFlowRegionKind.Catch:
-                            if (block.EnclosingRegion.EnclosingRegion.Kind == ControlFlowRegionKind.TryAndCatch)
+                            if (block.EnclosingRegion!.EnclosingRegion!.Kind == ControlFlowRegionKind.TryAndCatch)
                             {
                                 return block.EnclosingRegion.EnclosingRegion;
                             }
+
                             break;
 
                         case ControlFlowRegionKind.Filter:
-                            if (block.EnclosingRegion.EnclosingRegion.Kind == ControlFlowRegionKind.FilterAndHandler &&
+                            if (block.EnclosingRegion!.EnclosingRegion!.Kind == ControlFlowRegionKind.FilterAndHandler &&
                                 block.EnclosingRegion.EnclosingRegion.EnclosingRegion?.Kind == ControlFlowRegionKind.TryAndCatch)
                             {
                                 return block.EnclosingRegion.EnclosingRegion.EnclosingRegion;
                             }
+
                             break;
                     }
                 }
@@ -623,7 +629,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     }
                     else
                     {
-                        var preadjustSuccessorWithbranch = new BranchWithInfo(basicBlock.FallThroughSuccessor);
+                        var preadjustSuccessorWithbranch = new BranchWithInfo(basicBlock.FallThroughSuccessor!);
                         var adjustedSuccessorWithBranch = AdjustBranchIfFinalizing(preadjustSuccessorWithbranch);
                         yield return (successorWithBranch: adjustedSuccessorWithBranch, preadjustSuccessorWithBranch: preadjustSuccessorWithbranch);
 
@@ -789,18 +795,23 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             }
         }
 
-        private static void ComputeLoopRangeMap(ControlFlowGraph cfg, PooledDictionary<int, int> loopRangeMap)
+        private static bool ComputeLoopRangeMap(ControlFlowGraph cfg, PooledDictionary<int, int> loopRangeMap)
         {
+            var hasAnyTryBlock = false;
             for (int i = cfg.Blocks.Length - 1; i > 0; i--)
             {
                 var block = cfg.Blocks[i];
                 HandleBranch(block.FallThroughSuccessor);
                 HandleBranch(block.ConditionalSuccessor);
+
+                hasAnyTryBlock |= block.EnclosingRegion.Kind == ControlFlowRegionKind.Try;
             }
 
-            void HandleBranch(ControlFlowBranch branch)
+            return hasAnyTryBlock;
+
+            void HandleBranch(ControlFlowBranch? branch)
             {
-                if (branch.IsBackEdge() && !loopRangeMap.ContainsKey(branch.Destination.Ordinal))
+                if (branch?.Destination != null && branch.IsBackEdge() && !loopRangeMap.ContainsKey(branch.Destination.Ordinal))
                 {
                     var maxSuccessorOrdinal = Math.Max(branch.Destination.GetMaxSuccessorOrdinal(), branch.Source.Ordinal);
 

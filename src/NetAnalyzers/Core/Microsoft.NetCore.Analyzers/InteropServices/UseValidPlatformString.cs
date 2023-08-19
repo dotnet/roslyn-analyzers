@@ -27,6 +27,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private const string IsPrefix = "Is";
         private const string VersionSuffix = "VersionAtLeast";
         private const string macOS = nameof(macOS);
+        private const string Browser = nameof(Browser);
 
         private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(UseValidPlatformStringTitle));
         private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(UseValidPlatformStringDescription));
@@ -84,10 +85,22 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     knownPlatforms.Add("OSX", versions);
                 }
 
+                if (knownPlatforms.TryGetValue(Browser, out versions) && versions == 0)
+                {
+                    // Browser is a special case, we don't have a version guard method for it but we need to support a browser1.0 target platform
+                    knownPlatforms[Browser] = 2;
+                }
+
                 context.RegisterOperationAction(context => AnalyzeOperation(context.Operation, context, knownPlatforms), OperationKind.Invocation);
-                context.RegisterSymbolAction(context => AnalyzeSymbol(context.ReportDiagnostic, context.Symbol,
+                context.RegisterSymbolAction(context => AnalyzeSymbol(
+                    static (context, diagnostic) => context.ReportDiagnostic(diagnostic),
+                    context,
+                    context.Symbol,
                     supportedAttriubte, unsupportedAttribute, knownPlatforms, context.CancellationToken), s_symbols);
-                context.RegisterCompilationEndAction(context => AnalyzeSymbol(context.ReportDiagnostic, context.Compilation.Assembly,
+                context.RegisterCompilationEndAction(context => AnalyzeSymbol(
+                    static (context, diagnostic) => context.ReportDiagnostic(diagnostic),
+                    context,
+                    context.Compilation.Assembly,
                     supportedAttriubte, unsupportedAttribute, knownPlatforms, context.CancellationToken));
             });
 
@@ -151,20 +164,16 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
         }
 
-        private static void AnalyzeSymbol(Action<Diagnostic> reportDiagnostic, ISymbol symbol, INamedTypeSymbol supportedAttrbute,
+        private static void AnalyzeSymbol<TContext>(Action<TContext, Diagnostic> reportDiagnostic, TContext context, ISymbol symbol, INamedTypeSymbol supportedAttribute,
             INamedTypeSymbol unsupportedAttribute, PooledDictionary<string, int> knownPlatforms, CancellationToken token)
         {
-            foreach (var attribute in symbol.GetAttributes())
+            foreach (var attribute in symbol.GetAttributes(supportedAttribute, unsupportedAttribute))
             {
-                if (supportedAttrbute.Equals(attribute.AttributeClass.OriginalDefinition, SymbolEqualityComparer.Default) ||
-                    unsupportedAttribute.Equals(attribute.AttributeClass.OriginalDefinition, SymbolEqualityComparer.Default))
-                {
-                    AnalyzeAttribute(reportDiagnostic, attribute, knownPlatforms, token);
-                }
+                AnalyzeAttribute(reportDiagnostic, context, attribute, knownPlatforms, token);
             }
         }
 
-        private static void AnalyzeAttribute(Action<Diagnostic> reportDiagnostic, AttributeData attributeData, PooledDictionary<string, int> knownPlatforms, CancellationToken token)
+        private static void AnalyzeAttribute<TContext>(Action<TContext, Diagnostic> reportDiagnostic, TContext context, AttributeData attributeData, PooledDictionary<string, int> knownPlatforms, CancellationToken token)
         {
             var constructorArguments = attributeData.ConstructorArguments;
             var syntaxReference = attributeData.ApplicationSyntaxReference;
@@ -173,30 +182,30 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 if (constructorArguments[0].Value is string value)
                 {
-                    AnalyzeStringParameter(reportDiagnostic, syntaxReference.GetSyntax(token), knownPlatforms, value);
+                    AnalyzeStringParameter(reportDiagnostic, context, syntaxReference.GetSyntax(token), knownPlatforms, value);
                 }
                 else
                 {
-                    reportDiagnostic(syntaxReference.GetSyntax(token).CreateDiagnostic(UnknownPlatform, "null"));
+                    reportDiagnostic(context, syntaxReference.GetSyntax(token).CreateDiagnostic(UnknownPlatform, "null"));
                 }
             }
 
-            static void AnalyzeStringParameter(Action<Diagnostic> reportDiagnostic, SyntaxNode syntax, PooledDictionary<string, int> knownPlatforms, string value)
+            static void AnalyzeStringParameter(Action<TContext, Diagnostic> reportDiagnostic, TContext context, SyntaxNode syntax, PooledDictionary<string, int> knownPlatforms, string value)
             {
                 if (TryParsePlatformNameAndVersion(value, out var platformName, out var versionPart, out var versionCount))
                 {
                     if (!knownPlatforms.TryGetValue(platformName, out var count))
                     {
-                        reportDiagnostic(syntax.CreateDiagnostic(UnknownPlatform, platformName));
+                        reportDiagnostic(context, syntax.CreateDiagnostic(UnknownPlatform, platformName));
                     }
                     else if (count == 0 && versionCount != 0)
                     {
-                        reportDiagnostic(syntax.CreateDiagnostic(NoVersion, versionPart, platformName));
+                        reportDiagnostic(context, syntax.CreateDiagnostic(NoVersion, versionPart, platformName));
                     }
                     else if (count < versionCount)
                     {
                         var maxCount = count == 2 ? string.Empty : $"-{count}";
-                        reportDiagnostic(syntax.CreateDiagnostic(InvalidVersion, versionPart, platformName, maxCount));
+                        reportDiagnostic(context, syntax.CreateDiagnostic(InvalidVersion, versionPart, platformName, maxCount));
                     }
                 }
                 else
@@ -204,16 +213,16 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     // version were not parsable, check the platform name and version count
                     if (!knownPlatforms.TryGetValue(platformName, out var count))
                     {
-                        reportDiagnostic(syntax.CreateDiagnostic(UnknownPlatform, platformName));
+                        reportDiagnostic(context, syntax.CreateDiagnostic(UnknownPlatform, platformName));
                     }
                     else if (count == 0 && versionPart.Length != 0)
                     {
-                        reportDiagnostic(syntax.CreateDiagnostic(NoVersion, versionPart, platformName));
+                        reportDiagnostic(context, syntax.CreateDiagnostic(NoVersion, versionPart, platformName));
                     }
                     else
                     {
                         var maxCount = count == 2 ? string.Empty : $"-{count}";
-                        reportDiagnostic(syntax.CreateDiagnostic(InvalidVersion, versionPart, platformName, maxCount));
+                        reportDiagnostic(context, syntax.CreateDiagnostic(InvalidVersion, versionPart, platformName, maxCount));
                     }
                 }
             }

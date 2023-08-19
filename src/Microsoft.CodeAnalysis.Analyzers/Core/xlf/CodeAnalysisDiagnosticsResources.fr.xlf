@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="fr" original="../CodeAnalysisDiagnosticsResources.resx">
     <body>
+      <trans-unit id="AddCompilationEndCustomTagDescription">
+        <source>'DiagnosticDescriptor' assigned to field is used to report a compilation end diagnostic, but the 'DiagnosticDescriptor' constructor used to initialize it does not pass in the required custom tag "CompilationEnd". See documentation for 'WellKnownDiagnosticTags.CompilationEnd' for details.</source>
+        <target state="translated">'DiagnosticDescriptor' affecté au champ est utilisé pour signaler un diagnostic de fin de compilation, mais le constructeur 'DiagnosticDescriptor' utilisé pour l’initialiser ne passe pas la balise personnalisée requise « CompilationEnd ». Pour plus d’informations, consultez la documentation de « WellKnownDiagnosticTags.CompilationEnd ».</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCompilationEndCustomTagMessage">
+        <source>Add "CompilationEnd" custom tag to the diagnostic descriptor used to initialize field '{0}' as it is used to report a compilation end diagnostic</source>
+        <target state="translated">Ajouter la balise personnalisée « CompilationEnd » au descripteur de diagnostic utilisé pour initialiser le champ «{0}», car il est utilisé pour signaler un diagnostic de fin de compilation</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCompilationEndCustomTagTitle">
+        <source>Add "CompilationEnd" custom tag to compilation end diagnostic descriptor</source>
+        <target state="translated">Ajouter la balise personnalisée « CompilationEnd » au descripteur de diagnostic de fin de compilation</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AddEntryForDiagnosticIdInAnalyzerReleaseCodeFixTitle">
         <source>Add rule entry to unshipped release file</source>
         <target state="translated">Ajouter une entrée de règle au fichier de version non fourni</target>
@@ -100,6 +115,31 @@
       <trans-unit id="DefineDiagnosticTitleCorrectlyTitle">
         <source>Define diagnostic title correctly</source>
         <target state="translated">Définir correctement le titre de diagnostic</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDeclareCSharpCompilerFeatureInAssemblyWithVisualBasicReferenceMessage">
+        <source>This C# compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.VisualBasic. The Microsoft.CodeAnalysis.VisualBasic assembly is not always provided during C# compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</source>
+        <target state="translated">Cette extension de compilateur ne doit pas être implémentée dans un assembly contenant une référence à Microsoft.CodeAnalysis.Workspaces. L’assembly Microsoft.CodeAnalysis.Workspaces n’est pas fourni pendant les scénarios de compilation de ligne de commande. Par conséquent, les références à celui-ci peuvent entraîner un comportement imprévisible de l’extension du compilateur.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDeclareCompilerFeatureInAssemblyWithWorkspacesReferenceMessage">
+        <source>This compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.Workspaces. The Microsoft.CodeAnalysis.Workspaces assembly is not provided during command line compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</source>
+        <target state="translated">Cette extension de compilateur ne doit pas être implémentée dans un assembly contenant une référence à Microsoft.CodeAnalysis.Workspaces. L’assembly Microsoft.CodeAnalysis.Workspaces n’est pas fourni pendant les scénarios de compilation de ligne de commande. Par conséquent, les références à celui-ci peuvent entraîner un comportement imprévisible de l’extension du compilateur.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDeclareVisualBasicCompilerFeatureInAssemblyWithCSharpReferenceMessage">
+        <source>This Visual Basic compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.CSharp. The Microsoft.CodeAnalysis.CSharp assembly is not always provided during Visual Basic compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</source>
+        <target state="translated">Cette extension de compilateur Visual Basic ne doit pas être implémentée dans un assembly contenant une référence à Microsoft.CodeAnalysis.CSharp. L’assembly Microsoft.CodeAnalysis.CSharp n’étant pas toujours fourni pendant Visual Basic scénarios de compilation, les références à celui-ci peuvent entraîner le comportement imprévisible de l’extension du compilateur.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotRegisterCompilerTypesWithBadAssemblyReferenceRuleDescription">
+        <source>Types which implement compiler extension points should not be declared in assemblies that contain references to assemblies which are not provided by all compilation scenarios. Doing so may cause the feature to behave unpredictably.</source>
+        <target state="translated">Les types qui implémentent des points d’extension du compilateur ne doivent pas être déclarés dans les assemblys qui contiennent des références à des assemblys qui ne sont pas fournis par tous les scénarios de compilation. Cela peut entraîner un comportement imprévisible de la fonctionnalité.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotRegisterCompilerTypesWithBadAssemblyReferenceRuleTitle">
+        <source>Compiler extensions should be implemented in assemblies with compiler-provided references</source>
+        <target state="translated">Les extensions du compilateur doivent être implémentées dans les assemblys avec des références fournies par le compilateur</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCompilationGetSemanticModelDescription">
@@ -571,8 +611,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreReturnValueOnImmutableObjectMethodInvocationTitle">
-        <source>Do not ignore values returned by methods on immutable objects.</source>
-        <target state="translated">N'ignorez pas les valeurs retournées par les méthodes sur les objets non modifiables.</target>
+        <source>Do not ignore values returned by methods on immutable objects</source>
+        <target state="translated">Ne pas ignorer les valeurs retournées par les méthodes sur les objets immuables</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetFixAllProviderTitle">

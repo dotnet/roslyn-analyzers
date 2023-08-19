@@ -35,7 +35,11 @@ namespace PerfDiff
 
             if (!notSame.Any())
             {
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])' - https://github.com/dotnet/roslyn-analyzers/issues/6379
+#pragma warning disable CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])' - https://github.com/dotnet/roslyn-analyzers/issues/6379
                 logger.LogInformation($"No differences found between the benchmark results with threshold {testThreshold}.");
+#pragma warning restore CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])'
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])'
                 return (true, regressionDetected);
             }
 
@@ -52,22 +56,38 @@ namespace PerfDiff
             if (betterCount > 0)
             {
                 var betterGeoMean = Math.Pow(10, better.Skip(1).Aggregate(Math.Log10(GetRatio(better.First())), (x, y) => x + Math.Log10(GetRatio(y))) / better.Count());
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])' - https://github.com/dotnet/roslyn-analyzers/issues/6379
+#pragma warning disable CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])' - https://github.com/dotnet/roslyn-analyzers/issues/6379
                 logger.LogInformation($"better: {betterCount}, geomean: {betterGeoMean:F3}%");
+#pragma warning restore CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])'
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])'
                 foreach (var (betterId, betterBaseResult, betterDiffResult, conclusion) in worse)
                 {
                     var mean = GetRatio(conclusion, betterBaseResult, betterDiffResult);
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])' - https://github.com/dotnet/roslyn-analyzers/issues/6379
+#pragma warning disable CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])' - https://github.com/dotnet/roslyn-analyzers/issues/6379
                     logger.LogInformation($"' test: '{betterId}' tool '{mean:F3}' times less");
+#pragma warning restore CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])'
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])'
                 }
             }
 
             if (worseCount > 0)
             {
                 var worseGeoMean = Math.Pow(10, worse.Skip(1).Aggregate(Math.Log10(GetRatio(worse.First())), (x, y) => x + Math.Log10(GetRatio(y))) / worse.Count());
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])' - https://github.com/dotnet/roslyn-analyzers/issues/6379
+#pragma warning disable CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])' - https://github.com/dotnet/roslyn-analyzers/issues/6379
                 logger.LogInformation($"' worse: {worseCount}, geomean: {worseGeoMean:F3}%");
+#pragma warning restore CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])'
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])'
                 foreach (var (worseId, worseBaseResult, worseDiffResult, conclusion) in worse)
                 {
                     var mean = GetRatio(conclusion, worseBaseResult, worseDiffResult);
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])' - https://github.com/dotnet/roslyn-analyzers/issues/6379
+#pragma warning disable CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])' - https://github.com/dotnet/roslyn-analyzers/issues/6379
                     logger.LogInformation($"' test: '{worseId}' took '{mean:F3}' times longer");
+#pragma warning restore CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])'
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogInformation(ILogger, string?, params object?[])'
                 }
             }
 
@@ -93,19 +113,29 @@ namespace PerfDiff
         {
             if (!TryGetFilesToParse(baselineFolder, out var baseFiles))
             {
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
+#pragma warning disable CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
                 logger.LogError($"Provided path does NOT exist or does not contain perf results '{baselineFolder}'");
+#pragma warning restore CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
                 return null;
             }
 
             if (!TryGetFilesToParse(resultsFolder, out var resultsFiles))
             {
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
+#pragma warning disable CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
                 logger.LogError($"Provided path does NOT exist or does not contain perf results '{resultsFolder}'");
+#pragma warning restore CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
                 return null;
             }
 
             if (!baseFiles.Any() || !resultsFiles.Any())
             {
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
                 logger.LogError($"Provided paths contained no '{FullBdnJsonFileExtension}' files.");
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
                 return null;
             }
 
@@ -168,7 +198,11 @@ namespace PerfDiff
             }
             catch (JsonSerializationException)
             {
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
+#pragma warning disable CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
                 logger.LogError($"Exception while reading the {resultFilePath} file.");
+#pragma warning restore CA2254 // The logging message template should not vary between calls to 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
+#pragma warning restore CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogError(ILogger, string?, params object?[])'
                 return null;
             }
         }

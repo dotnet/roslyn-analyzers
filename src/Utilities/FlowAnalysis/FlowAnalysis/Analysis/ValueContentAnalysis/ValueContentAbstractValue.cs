@@ -154,7 +154,32 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
         protected override bool ComputeEqualsByHashCodeParts(CacheBasedEquatable<ValueContentAbstractValue> obj)
         {
             var other = (ValueContentAbstractValue)obj;
-            return HashUtilities.Combine(LiteralValues) == HashUtilities.Combine(other.LiteralValues)
+            if (LiteralValues.Count != other.LiteralValues.Count)
+            {
+                return false;
+            }
+
+            var hashCode1 = new RoslynHashCode();
+            int nullCount1 = 0;
+            foreach (var value1 in LiteralValues)
+            {
+                hashCode1.Add(value1);
+                if (value1 is null)
+                    nullCount1++;
+            }
+
+            var hashCode2 = new RoslynHashCode();
+            int nullCount2 = 0;
+            foreach (var value2 in other.LiteralValues)
+            {
+                hashCode2.Add(value2);
+                if (value2 is null)
+                    nullCount2++;
+            }
+
+            // null and false can easily cause hash collisions and cause incorrect behaviors.
+            // We count the nulls to workaround this collision.
+            return nullCount1 == nullCount2 && hashCode1.ToHashCode() == hashCode2.ToHashCode()
                 && NonLiteralState.GetHashCode() == other.NonLiteralState.GetHashCode();
         }
 

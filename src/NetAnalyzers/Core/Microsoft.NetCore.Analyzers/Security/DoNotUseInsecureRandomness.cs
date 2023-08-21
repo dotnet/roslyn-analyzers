@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5394: <inheritdoc cref="DoNotUseInsecureRandomness"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotUseInsecureRandomness : DiagnosticAnalyzer
+    public sealed class DoNotUseInsecureRandomnessAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5394";
 

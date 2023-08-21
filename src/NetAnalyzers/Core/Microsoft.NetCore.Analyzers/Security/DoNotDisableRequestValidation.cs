@@ -14,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5363: <inheritdoc cref="DoNotDisableRequestValidation"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotDisableRequestValidation : DiagnosticAnalyzer
+    public sealed class DoNotDisableRequestValidationAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5363";
 

@@ -9,9 +9,9 @@ using Xunit;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotAddArchiveItemPathToTheTargetFileSystemPathTests : TaintedDataAnalyzerTestBase<DoNotAddArchiveItemPathToTheTargetFileSystemPath, DoNotAddArchiveItemPathToTheTargetFileSystemPath>
+    public class DoNotAddArchiveItemPathToTheTargetFileSystemPathTests : TaintedDataAnalyzerTestBase<DoNotAddArchiveItemPathToTheTargetFileSystemPathAnalyzer, DoNotAddArchiveItemPathToTheTargetFileSystemPathAnalyzer>
     {
-        protected override DiagnosticDescriptor Rule => DoNotAddArchiveItemPathToTheTargetFileSystemPath.Rule;
+        protected override DiagnosticDescriptor Rule => DoNotAddArchiveItemPathToTheTargetFileSystemPathAnalyzer.Rule;
 
         protected override IEnumerable<string> AdditionalCSharpSources => new string[] { zipArchiveEntryAndZipFileExtensionsCSharpSourceCode };
 

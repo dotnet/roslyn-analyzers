@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Security.UseContainerLevelAccessPolicy,
+    Microsoft.NetCore.Analyzers.Security.UseContainerLevelAccessPolicyAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests

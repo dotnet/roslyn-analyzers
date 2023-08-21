@@ -20,7 +20,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5377: <inheritdoc cref="UseContainerLevelAccessPolicy"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class UseContainerLevelAccessPolicy : DiagnosticAnalyzer
+    public sealed class UseContainerLevelAccessPolicyAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5377";
 

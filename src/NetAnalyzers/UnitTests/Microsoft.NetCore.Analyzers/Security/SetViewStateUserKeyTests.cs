@@ -5,10 +5,10 @@ using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Security.SetViewStateUserKey,
+    Microsoft.NetCore.Analyzers.Security.SetViewStateUserKeyAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Security.SetViewStateUserKey,
+    Microsoft.NetCore.Analyzers.Security.SetViewStateUserKeyAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests

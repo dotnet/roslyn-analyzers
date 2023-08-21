@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5384: <inheritdoc cref="DoNotUseDSA"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotUseDSA : DiagnosticAnalyzer
+    public sealed class DoNotUseDSAAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5384";
 

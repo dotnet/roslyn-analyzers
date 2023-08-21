@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5373: <inheritdoc cref="DoNotUseObsoleteKDFAlgorithm"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotUseObsoleteKDFAlgorithm : DiagnosticAnalyzer
+    public sealed class DoNotUseObsoleteKDFAlgorithmAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5373";
 

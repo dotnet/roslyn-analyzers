@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Security.UseXmlReaderForXPathDocument,
+    Microsoft.NetCore.Analyzers.Security.UseXmlReaderForXPathDocumentAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests

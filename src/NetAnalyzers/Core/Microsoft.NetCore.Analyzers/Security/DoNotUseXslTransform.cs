@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5374: <inheritdoc cref="DoNotUseXslTransform"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotUseXslTransform : DiagnosticAnalyzer
+    public sealed class DoNotUseXslTransformAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5374";
 

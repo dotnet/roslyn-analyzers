@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5379: <inheritdoc cref="DoNotUseWeakKDFAlgorithm"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotUseWeakKDFAlgorithm : DiagnosticAnalyzer
+    public sealed class DoNotUseWeakKDFAlgorithmAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5379";
 

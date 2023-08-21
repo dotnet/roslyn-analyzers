@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Test.Utilities;
 using Xunit;
-using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<Microsoft.NetCore.Analyzers.Security.DoNotHardCodeCertificate, Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<Microsoft.NetCore.Analyzers.Security.DoNotHardCodeCertificateAnalyzer, Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotHardCodeCertificateTests : TaintedDataAnalyzerTestBase<DoNotHardCodeCertificate, DoNotHardCodeCertificate>
+    public class DoNotHardCodeCertificateTests : TaintedDataAnalyzerTestBase<DoNotHardCodeCertificateAnalyzer, DoNotHardCodeCertificateAnalyzer>
     {
-        protected override DiagnosticDescriptor Rule => DoNotHardCodeCertificate.Rule;
+        protected override DiagnosticDescriptor Rule => DoNotHardCodeCertificateAnalyzer.Rule;
 
         [Fact]
         public async Task Test_Source_ContantByteArray_DiagnosticAsync()

@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5386: <inheritdoc cref="HardCodedSecurityProtocolTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotUseDeprecatedSecurityProtocols : DiagnosticAnalyzer
+    public sealed class DoNotUseDeprecatedSecurityProtocolsAnalyzer : DiagnosticAnalyzer
     {
         internal static readonly DiagnosticDescriptor DeprecatedRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5364",

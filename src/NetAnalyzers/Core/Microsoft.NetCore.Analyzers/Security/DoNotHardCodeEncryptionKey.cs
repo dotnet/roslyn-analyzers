@@ -10,7 +10,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     using static MicrosoftNetCoreAnalyzersResources;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public class DoNotHardCodeEncryptionKey : SourceTriggeredTaintedDataAnalyzerBase
+    public class DoNotHardCodeEncryptionKeyAnalyzer : SourceTriggeredTaintedDataAnalyzerBase
     {
         internal static readonly DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5390",

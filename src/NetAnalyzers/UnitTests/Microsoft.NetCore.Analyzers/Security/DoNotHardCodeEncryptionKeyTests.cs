@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Test.Utilities;
 using Xunit;
-using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<Microsoft.NetCore.Analyzers.Security.DoNotHardCodeEncryptionKey, Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<Microsoft.NetCore.Analyzers.Security.DoNotHardCodeEncryptionKeyAnalyzer, Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotHardCodeEncryptionKeyTests : TaintedDataAnalyzerTestBase<DoNotHardCodeEncryptionKey, DoNotHardCodeEncryptionKey>
+    public class DoNotHardCodeEncryptionKeyTests : TaintedDataAnalyzerTestBase<DoNotHardCodeEncryptionKeyAnalyzer, DoNotHardCodeEncryptionKeyAnalyzer>
     {
-        protected override DiagnosticDescriptor Rule => DoNotHardCodeEncryptionKey.Rule;
+        protected override DiagnosticDescriptor Rule => DoNotHardCodeEncryptionKeyAnalyzer.Rule;
 
         protected override IEnumerable<string> AdditionalCSharpSources => new string[] { readOnlySpanAndAesGcmAndAesCcmCSharpSourceCode };
 

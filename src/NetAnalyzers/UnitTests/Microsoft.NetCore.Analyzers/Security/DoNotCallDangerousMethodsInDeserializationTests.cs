@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Security.DoNotCallDangerousMethodsInDeserialization,
+    Microsoft.NetCore.Analyzers.Security.DoNotCallDangerousMethodsInDeserializationAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Security.DoNotCallDangerousMethodsInDeserialization,
+    Microsoft.NetCore.Analyzers.Security.DoNotCallDangerousMethodsInDeserializationAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests

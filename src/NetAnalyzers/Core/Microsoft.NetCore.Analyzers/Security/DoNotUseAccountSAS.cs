@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5375: <inheritdoc cref="DoNotUseAccountSAS"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotUseAccountSAS : DiagnosticAnalyzer
+    public sealed class DoNotUseAccountSASAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5375";
 

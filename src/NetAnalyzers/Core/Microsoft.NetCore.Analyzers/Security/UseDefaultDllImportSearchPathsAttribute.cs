@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5393: <inheritdoc cref="DoNotUseUnsafeDllImportSearchPath"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class UseDefaultDllImportSearchPathsAttribute : DiagnosticAnalyzer
+    public sealed class UseDefaultDllImportSearchPathsAttributeAnalyzer : DiagnosticAnalyzer
     {
         internal static readonly DiagnosticDescriptor UseDefaultDllImportSearchPathsAttributeRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5392",

@@ -10,7 +10,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     using static MicrosoftNetCoreAnalyzersResources;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public class DoNotAddArchiveItemPathToTheTargetFileSystemPath : SourceTriggeredTaintedDataAnalyzerBase
+    public class DoNotAddArchiveItemPathToTheTargetFileSystemPathAnalyzer : SourceTriggeredTaintedDataAnalyzerBase
     {
         internal const string RuleId = "CA5389";
 

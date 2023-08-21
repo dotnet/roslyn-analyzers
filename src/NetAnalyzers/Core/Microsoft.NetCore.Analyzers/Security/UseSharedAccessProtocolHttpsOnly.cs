@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// CA5376: <inheritdoc cref="UseSharedAccessProtocolHttpsOnly"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class UseSharedAccessProtocolHttpsOnly : DiagnosticAnalyzer
+    public sealed class UseSharedAccessProtocolHttpsOnlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5376";
 

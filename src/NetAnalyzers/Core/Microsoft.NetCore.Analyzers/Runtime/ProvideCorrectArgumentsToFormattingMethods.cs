@@ -415,6 +415,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return false;
                 }
 
+                if (formatIndex == method.Parameters.Length - 1)
+                {
+                    // format specification is the last parameter (e.g. CompositeFormat.Parse)
+                    // this is therefore not a formatting method.
+                    return false;
+                }
+
                 int expectedArguments = GetExpectedNumberOfArguments(method.Parameters, formatIndex);
                 formatInfo = new Info(formatIndex, expectedArguments);
                 _map.TryAdd(method, formatInfo);

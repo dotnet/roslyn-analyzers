@@ -603,6 +603,40 @@ class Test
             await csharpTest.RunAsync();
         }
 
+        [Fact]
+        [WorkItem(90357, "https://github.com/dotnet/runtime/issues/90357")]
+        public async Task CA2241CSharpFailingMethodWithNoPossibleArgumentsButInValidFormat()
+        {
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System.Diagnostics.CodeAnalysis;
+
+class Test
+{
+    public static int Parse([StringSyntax(StringSyntaxAttribute.CompositeFormat)] string format) => -1;
+
+    void M1(string param)
+    {
+        var a = Parse(""{0 {1}"");
+    }
+}"
+                    },
+                    ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
+                }
+            };
+
+            csharpTest.ExpectedDiagnostics.Add(
+                // Test0.cs(10,17): warning CA2241: Provide correct arguments to formatting methods
+                GetBasicResultAt(10, 17));
+
+            await csharpTest.RunAsync();
+        }
+
         #endregion
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)

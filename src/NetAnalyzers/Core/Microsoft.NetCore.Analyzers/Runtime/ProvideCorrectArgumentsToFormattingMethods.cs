@@ -65,6 +65,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     int expectedStringFormatArgumentCount = GetFormattingArguments(stringFormat);
 
+                    if (expectedStringFormatArgumentCount < 0)
+                    {
+                        // Malformed format specification
+                        operationContext.ReportDiagnostic(operationContext.Operation.Syntax.CreateDiagnostic(Rule));
+                        return;
+                    }
+
                     // explicit parameter case
                     if (info.ExpectedStringFormatArgumentCount >= 0)
                     {
@@ -80,6 +87,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             operationContext.ReportDiagnostic(operationContext.Operation.Syntax.CreateDiagnostic(Rule));
                         }
 
+                        return;
+                    }
+                    else if (info.ExpectedStringFormatArgumentCount == -2)
+                    {
+                        // Not a formatting method, we only checked the format specification.
                         return;
                     }
 
@@ -415,13 +427,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return false;
                 }
 
-                if (formatIndex == method.Parameters.Length - 1)
-                {
-                    // format specification is the last parameter (e.g. CompositeFormat.Parse)
-                    // this is therefore not a formatting method.
-                    return false;
-                }
-
                 int expectedArguments = GetExpectedNumberOfArguments(method.Parameters, formatIndex);
                 formatInfo = new Info(formatIndex, expectedArguments);
                 _map.TryAdd(method, formatInfo);
@@ -431,6 +436,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             private static int GetExpectedNumberOfArguments(ImmutableArray<IParameterSymbol> parameters, int formatIndex)
             {
+                if (formatIndex == parameters.Length - 1)
+                {
+                    // format specification is the last parameter (e.g. CompositeFormat.Parse)
+                    // this is therefore not a formatting method.
+                    return -2;
+                }
+
                 // check params
                 IParameterSymbol nextParameter = parameters[formatIndex + 1];
                 if (nextParameter.IsParams)

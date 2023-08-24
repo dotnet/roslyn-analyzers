@@ -2988,6 +2988,16 @@ Les conversions étendues et définies par l’utilisateur ne sont pas prises en
         <target state="translated">La taille de clé de l'algorithme de chiffrement asymétrique {0} est inférieure à 2 048 bits. Passez plutôt à un algorithme RSA avec une taille de clé d'au moins 2 048 bits, à un algorithme ECDH ou à un algorithme ECDSA.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseSearchValuesDescription">
+        <source>Use a cached `SearchValues` instance in `IndexOfAny`/`ContainsAny` calls for improved searching performance.</source>
+        <target state="new">Use a cached `SearchValues` instance in `IndexOfAny`/`ContainsAny` calls for improved searching performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSearchValuesTitle">
+        <source>Use `SearchValues`</source>
+        <target state="new">Use `SearchValues`</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseSecureCookiesASPNetCoreDescription">
         <source>Applications available over HTTPS must use secure cookies.</source>
         <target state="translated">Les applications disponibles via HTTPS doivent utiliser des cookies sécurisés.</target>

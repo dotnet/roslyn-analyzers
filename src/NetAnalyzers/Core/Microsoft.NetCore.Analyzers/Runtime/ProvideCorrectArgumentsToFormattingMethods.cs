@@ -332,7 +332,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             } // end of main loop
 
-            return uniqueNumbers.Count;
+            return uniqueNumbers.Count == 0 ? 0 : uniqueNumbers.Max() + 1;
         }
 
         private class StringFormatInfo

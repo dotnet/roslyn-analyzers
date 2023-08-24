@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -135,6 +136,44 @@ public class C
     }
 }
 ");
+        }
+
+        [Fact]
+        public async Task CA2241CSharpDifferentDiagnosticsAsync()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class C
+{
+    void Method()
+    {
+        var a = String.Format(""{1}"", 1);
+        var b = String.Format(""{0} {1}"", 1, 2);
+        var c = String.Format(""{0} {1}"", 1, 2, 3);
+        var d = String.Format(""{0} {1} {2"", 1, 2, 3);
+
+        Console.Write(""{1}"", 1);
+        Console.Write(""{0} {1}"", 1, 2);
+        Console.Write(""{0} {1}"", 1, 2, 3);
+        Console.Write(""{0} {1} {2"", 1, 2, 3);
+
+        Console.WriteLine(""{1}"", 1);
+        Console.WriteLine(""{0} {1}"", 1, 2);
+        Console.WriteLine(""{0} {1}"", 1, 2, 3);
+        Console.WriteLine(""{0} {1} {2"", 1, 2, 3);
+    }
+}
+",
+            GetCSharpResultAt(8, 17, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.ArgumentCountRule),
+            GetCSharpResultAt(10, 17, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.ArgumentCountRule),
+            GetCSharpResultAt(11, 17, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.InvalidFormatRule),
+            GetCSharpResultAt(13, 9, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.ArgumentCountRule),
+            GetCSharpResultAt(15, 9, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.ArgumentCountRule),
+            GetCSharpResultAt(16, 9, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.InvalidFormatRule),
+            GetCSharpResultAt(18, 9, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.ArgumentCountRule),
+            GetCSharpResultAt(20, 9, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.ArgumentCountRule),
+            GetCSharpResultAt(21, 9, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.InvalidFormatRule));
         }
 
         [Fact]
@@ -575,7 +614,7 @@ End Class"
 
         [Fact]
         [WorkItem(90357, "https://github.com/dotnet/runtime/issues/90357")]
-        public async Task CA2241CSharpPassingMethodWithNoPossibleArguments()
+        public async Task CA2241CSharpMethodWithNoPossibleArgumentsOnlyChecksFormat()
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -593,36 +632,7 @@ class Test
     void M1(string param)
     {
         var a = Parse(""{0} {1}"");
-    }
-}"
-                    },
-                    ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
-                }
-            };
-
-            await csharpTest.RunAsync();
-        }
-
-        [Fact]
-        [WorkItem(90357, "https://github.com/dotnet/runtime/issues/90357")]
-        public async Task CA2241CSharpFailingMethodWithNoPossibleArgumentsButInValidFormat()
-        {
-            var csharpTest = new VerifyCS.Test
-            {
-                TestState =
-                {
-                    Sources =
-                    {
-                        @"
-using System.Diagnostics.CodeAnalysis;
-
-class Test
-{
-    public static int Parse([StringSyntax(StringSyntaxAttribute.CompositeFormat)] string format) => -1;
-
-    void M1(string param)
-    {
-        var a = Parse(""{0 {1}"");
+        var b = Parse(""{0 {1}"");
     }
 }"
                     },
@@ -631,8 +641,7 @@ class Test
             };
 
             csharpTest.ExpectedDiagnostics.Add(
-                // Test0.cs(10,17): warning CA2241: Provide correct arguments to formatting methods
-                GetBasicResultAt(10, 17));
+                GetCSharpResultAt(11, 17, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.InvalidFormatRule));
 
             await csharpTest.RunAsync();
         }
@@ -640,14 +649,17 @@ class Test
         #endregion
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
+            => GetCSharpResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.ArgumentCountRule);
+
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor descriptor)
 #pragma warning disable RS0030 // Do not use banned APIs
-            => VerifyCS.Diagnostic()
+            => VerifyCS.Diagnostic(descriptor)
                 .WithLocation(line, column);
 #pragma warning restore RS0030 // Do not use banned APIs
 
         private static DiagnosticResult GetBasicResultAt(int line, int column)
 #pragma warning disable RS0030 // Do not use banned APIs
-            => VerifyVB.Diagnostic()
+            => VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.ArgumentCountRule)
                 .WithLocation(line, column);
 #pragma warning restore RS0030 // Do not use banned APIs
     }

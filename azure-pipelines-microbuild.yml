@@ -24,10 +24,11 @@ stages:
 - stage: build
   displayName: Build
   jobs:
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/8.0.1xx') }}:
     - template: /eng/common/templates/job/onelocbuild.yml
       parameters:
         MirrorRepo: roslyn-analyzers
+        MirrorBranch: release/8.0.1xx
         LclSource: lclFilesfromPackage
         LclPackageId: 'LCL-JUNO-PROD-ROSANLZR'
   - template: /eng/common/templates/jobs/jobs.yml
@@ -95,7 +96,7 @@ stages:
       - name: Codeql.Cadence
         value: 0
       - name: Codeql.TSAEnabled
-        value: true 
+        value: true
       steps:
         - task: UseDotNet@2
           inputs:

@@ -290,12 +290,6 @@
   <data name="ProvideCorrectArgumentsToFormattingMethodsMessage" xml:space="preserve">
     <value>Provide correct arguments to formatting methods</value>
   </data>
-  <data name="ProvideCorrectArgumentsToFormattingMethodsInvalidFormatTitle" xml:space="preserve">
-    <value>Provide correct format specification to formatting methods</value>
-  </data>
-  <data name="ProvideCorrectArgumentsToFormattingMethodsInvalidFormatDescription" xml:space="preserve">
-    <value>The format argument that is passed to System.String.Format is not properly formatted.</value>
-  </data>
   <data name="ProvideCorrectArgumentsToFormattingMethodsInvalidFormatMessage" xml:space="preserve">
     <value>The format argument is not a valid format string</value>
   </data>

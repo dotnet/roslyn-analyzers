@@ -2288,19 +2288,9 @@ Ampliação e conversões definidas pelo usuário não são compatíveis com tip
         <target state="translated">O argumento de formato passado para System.String.Format não contém um item de formato correspondente a cada argumento de objeto ou vice-versa.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsInvalidFormatDescription">
-        <source>The format argument that is passed to System.String.Format is not properly formatted.</source>
-        <target state="new">The format argument that is passed to System.String.Format is not properly formatted.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsInvalidFormatMessage">
         <source>The format argument is not a valid format string</source>
         <target state="new">The format argument is not a valid format string</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsInvalidFormatTitle">
-        <source>Provide correct format specification to formatting methods</source>
-        <target state="new">Provide correct format specification to formatting methods</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessage">

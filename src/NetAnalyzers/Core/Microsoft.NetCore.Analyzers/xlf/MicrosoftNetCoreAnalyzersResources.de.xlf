@@ -2288,19 +2288,9 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <target state="translated">Das an "System.String.Format" übergebene Formatargument enthält kein Formatelement, das den einzelnen Objektargumenten entspricht bzw. umgekehrt.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsInvalidFormatDescription">
-        <source>The format argument that is passed to System.String.Format is not properly formatted.</source>
-        <target state="new">The format argument that is passed to System.String.Format is not properly formatted.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsInvalidFormatMessage">
         <source>The format argument is not a valid format string</source>
         <target state="new">The format argument is not a valid format string</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsInvalidFormatTitle">
-        <source>Provide correct format specification to formatting methods</source>
-        <target state="new">Provide correct format specification to formatting methods</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessage">

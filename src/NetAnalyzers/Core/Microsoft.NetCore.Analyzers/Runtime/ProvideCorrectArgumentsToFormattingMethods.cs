@@ -36,11 +36,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         internal static readonly DiagnosticDescriptor InvalidFormatRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(ProvideCorrectArgumentsToFormattingMethodsInvalidFormatTitle)),
+            CreateLocalizableResourceString(nameof(ProvideCorrectArgumentsToFormattingMethodsTitle)),
             CreateLocalizableResourceString(nameof(ProvideCorrectArgumentsToFormattingMethodsInvalidFormatMessage)),
             DiagnosticCategory.Usage,
             RuleLevel.BuildWarningCandidate,
-            description: CreateLocalizableResourceString(nameof(ProvideCorrectArgumentsToFormattingMethodsInvalidFormatDescription)),
+            description: CreateLocalizableResourceString(nameof(ProvideCorrectArgumentsToFormattingMethodsDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 

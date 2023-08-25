@@ -41,7 +41,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             DiagnosticCategory.Usage,
             RuleLevel.BuildWarningCandidate,
             description: CreateLocalizableResourceString(nameof(ProvideCorrectArgumentsToFormattingMethodsDescription)),
-            isPortedFxCopRule: false,
+            isPortedFxCopRule: true,
             isDataflowRule: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

@@ -86,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var stringType = compilation.GetSpecialType(SpecialType.System_String);
 
             // string.{Last}IndexOfAny(char[])
-            // Overloads that accept 'startOffset' or 'count' are excluded as they can't be trivially converted AsSpan.
+            // Overloads that accept 'startOffset' or 'count' are excluded as they can't be trivially converted to AsSpan.
             foreach (var method in stringType.GetMembers().OfType<IMethodSymbol>())
             {
                 if (method.Name is "IndexOfAny" or "LastIndexOfAny" &&

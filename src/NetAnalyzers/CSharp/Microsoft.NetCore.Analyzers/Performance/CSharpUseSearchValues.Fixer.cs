@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -19,7 +18,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     {
         protected override async ValueTask<(SyntaxNode TypeDeclaration, INamedTypeSymbol? TypeSymbol)> GetTypeSymbolAsync(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
-            SyntaxNode? typeDeclarationOrCompilationUnit = node.Ancestors().OfType<TypeDeclarationSyntax>().FirstOrDefault();
+            SyntaxNode? typeDeclarationOrCompilationUnit = node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
 
             typeDeclarationOrCompilationUnit ??= await node.SyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 

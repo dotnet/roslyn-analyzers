@@ -4,8 +4,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.NetCore.Analyzers.Performance;
 
-namespace Microsoft.NetCore.Analyzers.Performance
+namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 {
     /// <inheritdoc/>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]

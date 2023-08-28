@@ -109,6 +109,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             editor.InsertMembers(typeDeclaration, 0, new[] { newField });
 
+            // foo.IndexOfAny(argument) => foo.IndexOfAny(s_myValues)
             editor.ReplaceNode(argumentNode, generator.IdentifierName(fieldName));
 
             // If this was a string IndexOfAny call, we must also insert an AsSpan call.
@@ -116,26 +117,27 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 argumentOperation.Parent is IInvocationOperation indexOfAnyOperation &&
                 indexOfAnyOperation.Instance?.Syntax is { } stringInstance)
             {
+                // foo.IndexOfAny => foo.AsSpan().IndexOfAny
                 editor.ReplaceNode(stringInstance, generator.InvocationExpression(generator.MemberAccessExpression(stringInstance, "AsSpan")));
 
-                // Import System namespace if necessary.
-                if (!IsMemoryExtensionsInScope(semanticModel, memoryExtensions, stringInstance))
-                {
-                    SyntaxNode withoutSystemImport = editor.GetChangedRoot();
-                    SyntaxNode systemNamespaceImportStatement = editor.Generator.NamespaceImportDeclaration(nameof(System));
-                    SyntaxNode withSystemImport = editor.Generator.AddNamespaceImports(withoutSystemImport, systemNamespaceImportStatement);
-                    editor.ReplaceNode(editor.OriginalRoot, withSystemImport);
-                }
+                // We are now using the MemoryExtensions.AsSpan() extension method. Make sure it's in scope.
+                ImportSystemNamespaceIfNeeded(editor, memoryExtensions, stringInstance);
             }
 
             return editor.GetChangedDocument();
         }
 
-        private static bool IsMemoryExtensionsInScope(SemanticModel semanticModel, INamedTypeSymbol memoryExtensionsType, SyntaxNode node)
+        private static void ImportSystemNamespaceIfNeeded(DocumentEditor editor, INamedTypeSymbol memoryExtensions, SyntaxNode node)
         {
-            var symbols = semanticModel.LookupNamespacesAndTypes(node.SpanStart, name: nameof(MemoryExtensions));
+            var symbols = editor.SemanticModel.LookupNamespacesAndTypes(node.SpanStart, name: nameof(MemoryExtensions));
 
-            return symbols.Contains(memoryExtensionsType, SymbolEqualityComparer.Default);
+            if (!symbols.Contains(memoryExtensions, SymbolEqualityComparer.Default))
+            {
+                SyntaxNode withoutSystemImport = editor.GetChangedRoot();
+                SyntaxNode systemNamespaceImportStatement = editor.Generator.NamespaceImportDeclaration(nameof(System));
+                SyntaxNode withSystemImport = editor.Generator.AddNamespaceImports(withoutSystemImport, systemNamespaceImportStatement);
+                editor.ReplaceNode(editor.OriginalRoot, withSystemImport);
+            }
         }
 
         private static IEnumerable<string> GetAllMemberNamesInScope(ITypeSymbol? symbol)

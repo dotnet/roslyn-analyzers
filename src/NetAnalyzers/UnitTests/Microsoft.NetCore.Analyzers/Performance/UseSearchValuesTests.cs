@@ -43,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     private ReadOnlySpan<byte> ShortReadOnlySpanOfByteRVAProperty => new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u' };
                     private ReadOnlySpan<byte> LongReadOnlySpanOfByteRVAProperty => new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' };
 
-                    private void TestMethod(ReadOnlySpan<char> chars, ReadOnlySpan<byte> bytes)
+                    private void TestMethod(string str, ReadOnlySpan<char> chars, ReadOnlySpan<byte> bytes)
                     {
                         const string ShortConstStringLocal = "foo";
                         const string LongConstStringLocal = "aeiouA";
@@ -78,11 +78,29 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         _ = chars.IndexOfAny([|InstanceReadonlyCharArrayField|]);
                         _ = chars.IndexOfAny(InstanceSettableCharArrayField);
 
+                        _ = str.IndexOfAny(ShortStaticReadonlyCharArrayField);
+                        _ = str.IndexOfAny([|LongStaticReadonlyCharArrayField|]);
+                        _ = str.IndexOfAny([|LongStaticReadonlyExplicitCharArrayField|]);
+                        _ = str.IndexOfAny([|InstanceReadonlyCharArrayField|]);
+                        _ = str.IndexOfAny(InstanceSettableCharArrayField);
+
                         _ = chars.IndexOfAny(ShortReadOnlySpanOfCharRVAProperty);
                         _ = chars.IndexOfAny([|LongReadOnlySpanOfCharRVAProperty|]);
 
                         _ = bytes.IndexOfAny(ShortReadOnlySpanOfByteRVAProperty);
                         _ = bytes.IndexOfAny([|LongReadOnlySpanOfByteRVAProperty|]);
+
+
+                        // Uses of ToCharArray are flagged even for shorter values.
+                        _ = chars.IndexOfAny([|ShortConstStringTypeMember.ToCharArray()|]);
+                        _ = chars.IndexOfAny([|LongConstStringTypeMember.ToCharArray()|]);
+                        _ = chars.IndexOfAny([|"aeiou".ToCharArray()|]);
+                        _ = chars.IndexOfAny([|"aeiouA".ToCharArray()|]);
+
+                        _ = str.IndexOfAny([|ShortConstStringTypeMember.ToCharArray()|]);
+                        _ = str.IndexOfAny([|LongConstStringTypeMember.ToCharArray()|]);
+                        _ = str.IndexOfAny([|"aeiou".ToCharArray()|]);
+                        _ = str.IndexOfAny([|"aeiouA".ToCharArray()|]);
 
 
                         // For cases that we'd want to flag, a different analyzer should suggest making the field 'const' first.
@@ -138,7 +156,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 internal sealed class Test
                 {
-                    private void TestMethod(ReadOnlySpan<char> chars, ReadOnlySpan<byte> bytes, Span<char> writableChars)
+                    private void TestMethod(string str, ReadOnlySpan<char> chars, ReadOnlySpan<byte> bytes, Span<char> writableChars)
                     {
                         _ = chars.IndexOfAny([|"aeiouA"|]);
                         _ = chars.IndexOfAnyExcept([|"aeiouA"|]);
@@ -156,6 +174,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                         _ = writableChars.IndexOfAny([|"aeiouA"|]);
                         _ = writableChars.IndexOfAnyExcept([|"aeiouA"|]);
+
+                        _ = str.IndexOfAny([|"aeiouA".ToCharArray()|]);
+                        _ = str.LastIndexOfAny([|"aeiouA".ToCharArray()|]);
                     }
                 }
                 """);
@@ -225,6 +246,93 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyCodeFixAsync(languageVersion, source, expected);
         }
 
+        [Theory]
+        [InlineData("static readonly char[]", "new[] { 'a', 'e', 'i', 'o', 'u', 'A' }")]
+        [InlineData("readonly char[]", "new[] { 'a', 'e', 'i', 'o', 'u', 'A' }")]
+        [InlineData("readonly char[]", "new char[] { 'a', 'e', 'i', 'o', 'u', 'A' }")]
+        [InlineData("readonly char[]", "new char[]  { 'a', 'e', 'i', 'o', 'u',  'A' }")]
+        public async Task TestCodeFixerNamedArgumentsStringIndexOfAny(string modifiersAndType, string initializer)
+        {
+            const string OriginalValuesName = "MyValuesTypeMember";
+            const string SearchValuesFieldName = "s_myValuesTypeMemberSearchValues";
+
+            string memberDefinition = $"{modifiersAndType} {OriginalValuesName} = {initializer};";
+
+            string source =
+                $$"""
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    {{memberDefinition}}
+
+                    private void TestMethod(string text)
+                    {
+                        _ = text.IndexOfAny([|{{OriginalValuesName}}|]);
+                    }
+                }
+                """;
+
+            string expected =
+                $$"""
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private static readonly SearchValues<char> {{SearchValuesFieldName}} = SearchValues.Create({{initializer}});
+                    {{memberDefinition}}
+
+                    private void TestMethod(string text)
+                    {
+                        _ = text.AsSpan().IndexOfAny({{SearchValuesFieldName}});
+                    }
+                }
+                """;
+
+            await VerifyCodeFixAsync(LanguageVersion.CSharp7_3, source, expected);
+        }
+
+        [Fact]
+        public async Task TestCodeFixerConstStringMemberToCharArray()
+        {
+            string source =
+                """
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private const string MyValuesTypeMember = "aeiouA";
+
+                    private void TestMethod(string text)
+                    {
+                        _ = text.IndexOfAny([|MyValuesTypeMember.ToCharArray()|]);
+                    }
+                }
+                """;
+
+            string expected =
+                """
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private static readonly SearchValues<char> s_myValuesTypeMemberSearchValues = SearchValues.Create(MyValuesTypeMember);
+                    private const string MyValuesTypeMember = "aeiouA";
+
+                    private void TestMethod(string text)
+                    {
+                        _ = text.AsSpan().IndexOfAny(s_myValuesTypeMemberSearchValues);
+                    }
+                }
+                """;
+
+            await VerifyCodeFixAsync(LanguageVersion.CSharp7_3, source, expected);
+        }
+
         [Fact]
         public async Task TestCodeFixerLocalStringConst()
         {
@@ -266,7 +374,52 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task TestCodeFixerLocalStringConstToCharArray(bool spanInput)
+        {
+            string argumentType = spanInput ? "ReadOnlySpan<char>" : "string";
+
+            string source =
+                $$"""
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private void TestMethod({{argumentType}} text)
+                    {
+                        const string Values = "aeiouA";
+
+                        _ = text.IndexOfAny([|Values.ToCharArray()|]);
+                    }
+                }
+                """;
+
+            string expected =
+                $$"""
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private static readonly SearchValues<char> s_valuesSearchValues = SearchValues.Create("aeiouA");
+
+                    private void TestMethod({{argumentType}} text)
+                    {
+                        const string Values = "aeiouA";
+
+                        _ = text{{(spanInput ? "" : ".AsSpan()")}}.IndexOfAny(s_valuesSearchValues);
+                    }
+                }
+                """;
+
+            await VerifyCodeFixAsync(LanguageVersion.CSharp7_3, source, expected);
+        }
+
+        [Theory]
         [InlineData("\"aeiouA\"")]
+        [InlineData("@\"aeiouA\"")]
         [InlineData("\"aeiouA\"u8")]
         [InlineData("new[] { 'a', 'e', 'i', 'o', 'u', 'A' }")]
         [InlineData("new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' }")]
@@ -314,15 +467,84 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyCodeFixAsync(languageVersion, source, expected);
         }
 
+        [Fact]
+        public async Task TestCodeFixerInlineStringLiteralToCharArray()
+        {
+            string source =
+                """
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private void TestMethod(string text)
+                    {
+                        _ = text.IndexOfAny([|"aeiouA".ToCharArray()|]);
+                    }
+                }
+                """;
+
+            string expected =
+                """
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private static readonly SearchValues<char> s_myChars = SearchValues.Create("aeiouA");
+
+                    private void TestMethod(string text)
+                    {
+                        _ = text.AsSpan().IndexOfAny(s_myChars);
+                    }
+                }
+                """;
+
+            await VerifyCodeFixAsync(LanguageVersion.CSharp7_3, source, expected);
+        }
+
+        [Fact]
+        public async Task TestCodeFixerAddsSystemUsingIfNeeded()
+        {
+            string source =
+                """
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private void TestMethod(string text)
+                    {
+                        _ = text.IndexOfAny([|"aeiouA".ToCharArray()|]);
+                    }
+                }
+                """;
+
+            string expected =
+                """
+                using System.Buffers;
+                using System;
+
+                internal sealed class Test
+                {
+                    private static readonly SearchValues<char> s_myChars = SearchValues.Create("aeiouA");
+
+                    private void TestMethod(string text)
+                    {
+                        _ = text.AsSpan().IndexOfAny(s_myChars);
+                    }
+                }
+                """;
+
+            await VerifyCodeFixAsync(LanguageVersion.CSharp7_3, source, expected);
+        }
+
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public async Task TestCodeFixerAccountsForUsingStatements(bool sourceHasNamespaceUsing)
+        public async Task TestCodeFixerAccountsForUsingStatements(bool hasSystemBuffersUsing)
         {
-            const string Namespace = "System.Buffers";
-
-            string usingLine = sourceHasNamespaceUsing ? $"using {Namespace};" : "";
-            string namespacePrefix = sourceHasNamespaceUsing ? "" : $"{Namespace}.";
+            string usingLine = hasSystemBuffersUsing ? "using System.Buffers;" : "";
+            string systemBuffersPrefix = hasSystemBuffersUsing ? "" : "System.Buffers.";
 
             string source =
                 $$"""
@@ -331,9 +553,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 internal sealed class Test
                 {
-                    private void TestMethod(ReadOnlySpan<char> chars)
+                    private void TestMethod(string text)
                     {
-                        _ = chars.IndexOfAny([|"aeiouA"|]);
+                        _ = text.IndexOfAny([|"aeiouA".ToCharArray()|]);
                     }
                 }
                 """;
@@ -345,11 +567,11 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 internal sealed class Test
                 {
-                    private static readonly {{namespacePrefix}}SearchValues<char> s_myChars = {{namespacePrefix}}SearchValues.Create("aeiouA");
+                    private static readonly {{systemBuffersPrefix}}SearchValues<char> s_myChars = {{systemBuffersPrefix}}SearchValues.Create("aeiouA");
 
-                    private void TestMethod(ReadOnlySpan<char> chars)
+                    private void TestMethod(string text)
                     {
-                        _ = chars.IndexOfAny(s_myChars);
+                        _ = text.AsSpan().IndexOfAny(s_myChars);
                     }
                 }
                 """;

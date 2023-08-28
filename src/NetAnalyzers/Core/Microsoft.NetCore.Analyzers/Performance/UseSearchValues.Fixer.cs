@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,6 +66,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (semanticModel?.Compilation is not { } compilation ||
                 !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemBuffersSearchValues, out INamedTypeSymbol? searchValues) ||
                 !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemBuffersSearchValues1, out INamedTypeSymbol? searchValuesOfT) ||
+                !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemMemoryExtensions, out INamedTypeSymbol? memoryExtensions) ||
                 semanticModel.GetOperation(argumentNode, cancellationToken) is not { } argument)
             {
                 return document;
@@ -84,8 +86,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var argumentOperation = (IArgumentOperation)argument;
 
             bool isByte =
-                argumentOperation.Parameter?.Type is INamedTypeSymbol spanType &&
-                spanType.TypeArguments is [var typeArgument] &&
+                argumentOperation.Parameter?.Type is INamedTypeSymbol parameterType &&
+                parameterType.TypeArguments is [var typeArgument] &&
                 typeArgument.SpecialType == SpecialType.System_Byte;
 
             string defaultSearchValuesFieldName = GetSearchValuesFieldName(argumentOperation.Value, isByte);
@@ -96,9 +98,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             if (typeSymbol is not null)
             {
-                IEnumerable<ISymbol> members = GetAllMembers(typeSymbol);
+                var members = GetAllMemberNamesInScope(typeSymbol).ToArray();
                 int memberCount = 1;
-                while (members.Any(m => m.Name == fieldName))
+                while (members.Contains(fieldName, StringComparer.Ordinal))
                 {
                     fieldName = $"{defaultSearchValuesFieldName}{memberCount++}";
                 }
@@ -121,16 +123,40 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             editor.ReplaceNode(argumentNode, generator.IdentifierName(fieldName));
 
+            // If this was a string IndexOfAny call, we must also insert an AsSpan call.
+            if (!isByte &&
+                argumentOperation.Parent is IInvocationOperation indexOfAnyOperation &&
+                indexOfAnyOperation.Instance?.Syntax is { } stringInstance)
+            {
+                editor.ReplaceNode(stringInstance, generator.InvocationExpression(generator.MemberAccessExpression(stringInstance, "AsSpan")));
+
+                // Import System namespace if necessary.
+                if (!IsMemoryExtensionsInScope(semanticModel, memoryExtensions, stringInstance))
+                {
+                    SyntaxNode withoutSystemImport = editor.GetChangedRoot();
+                    SyntaxNode systemNamespaceImportStatement = editor.Generator.NamespaceImportDeclaration(nameof(System));
+                    SyntaxNode withSystemImport = editor.Generator.AddNamespaceImports(withoutSystemImport, systemNamespaceImportStatement);
+                    editor.ReplaceNode(editor.OriginalRoot, withSystemImport);
+                }
+            }
+
             return editor.GetChangedDocument();
         }
 
-        private static IEnumerable<ISymbol> GetAllMembers(ITypeSymbol? symbol)
+        private static bool IsMemoryExtensionsInScope(SemanticModel semanticModel, INamedTypeSymbol memoryExtensionsType, SyntaxNode node)
+        {
+            var symbols = semanticModel.LookupNamespacesAndTypes(node.SpanStart, name: nameof(MemoryExtensions));
+
+            return symbols.Contains(memoryExtensionsType, SymbolEqualityComparer.Default);
+        }
+
+        private static IEnumerable<string> GetAllMemberNamesInScope(ITypeSymbol? symbol)
         {
             while (symbol != null)
             {
                 foreach (ISymbol member in symbol.GetMembers())
                 {
-                    yield return member;
+                    yield return member.Name;
                 }
 
                 symbol = symbol.BaseType;
@@ -141,22 +167,52 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             if (argument is IConversionOperation conversion)
             {
-                if (conversion.Operand is ILocalReferenceOperation localReference)
+                if (TryGetNameFromLocalOrFieldReference(conversion.Operand, out string? name))
                 {
-                    return CreateFromExistingName(localReference.Local.Name);
+                    return name;
                 }
-
-                if (conversion.Operand is IFieldReferenceOperation fieldReference)
+                else if (conversion.Operand is IInvocationOperation invocation)
                 {
-                    return CreateFromExistingName(fieldReference.Field.Name);
+                    if (TryGetNameFromLocalOrFieldReference(invocation.Instance, out name))
+                    {
+                        return name;
+                    }
                 }
+            }
+            else if (TryGetNameFromLocalOrFieldReference(argument, out string? name))
+            {
+                return name;
             }
             else if (argument is IPropertyReferenceOperation propertyReference)
             {
                 return CreateFromExistingName(propertyReference.Property.Name);
             }
+            else if (argument is IInvocationOperation invocation)
+            {
+                if (TryGetNameFromLocalOrFieldReference(invocation.Instance, out name))
+                {
+                    return name;
+                }
+            }
 
             return isByte ? "s_myBytes" : "s_myChars";
+
+            static bool TryGetNameFromLocalOrFieldReference(IOperation? argument, [NotNullWhen(true)] out string? name)
+            {
+                if (argument is ILocalReferenceOperation localReference)
+                {
+                    name = CreateFromExistingName(localReference.Local.Name);
+                    return true;
+                }
+                else if (argument is IFieldReferenceOperation fieldReference)
+                {
+                    name = CreateFromExistingName(fieldReference.Field.Name);
+                    return true;
+                }
+
+                name = null;
+                return false;
+            }
 
             static string CreateFromExistingName(string name)
             {
@@ -180,21 +236,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             if (argument is IConversionOperation conversion)
             {
-                if (conversion.Operand is ILocalReferenceOperation localReference)
+                if (TryGetArgumentFromLocalOrFieldReference(conversion.Operand, out SyntaxNode? createArgument))
                 {
-                    Debug.Assert(localReference.Local.DeclaringSyntaxReferences.Length == 1);
-
-                    // Local string literal would be out of scope in the field declaration.
-                    return GetDeclaratorInitializer(localReference.Local);
+                    return createArgument;
                 }
-                else if (conversion.Operand is IFieldReferenceOperation fieldReference)
+                else if (TryGetArgumentFromStringToCharArray(conversion.Operand, out createArgument))
                 {
-                    if (!fieldReference.ConstantValue.HasValue)
-                    {
-                        // If we were to use the field reference directly, we risk initializing the SearchValues field to an empty
-                        // instance depending on field declaration order.
-                        return GetDeclaratorInitializer(fieldReference.Field);
-                    }
+                    return createArgument;
                 }
             }
             else if (argument is IPropertyReferenceOperation propertyReference)
@@ -205,9 +253,61 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return GetDeclaratorInitializer(propertyReference.Property);
                 }
             }
+            else if (TryGetArgumentFromLocalOrFieldReference(argument, out SyntaxNode? createArgument))
+            {
+                return createArgument;
+            }
+            else if (TryGetArgumentFromStringToCharArray(argument, out createArgument))
+            {
+                return createArgument;
+            }
 
             // Use the original syntax (e.g. string literal, static property reference ...)
             return originalSyntax;
+
+            bool TryGetArgumentFromStringToCharArray(IOperation operation, [NotNullWhen(true)] out SyntaxNode? createArgument)
+            {
+                if (operation is IInvocationOperation invocation &&
+                    invocation.Instance is { } stringInstance)
+                {
+                    if (!TryGetArgumentFromLocalOrFieldReference(stringInstance, out createArgument))
+                    {
+                        // This is a string.ToCharArray call, but the string instance is not something we can refer to by name.
+                        // e.g. for '"foo".ToCharArray()', we want to emit '"foo"'.
+                        createArgument = stringInstance.Syntax;
+                    }
+
+                    return true;
+                }
+
+                createArgument = null;
+                return false;
+            }
+
+            bool TryGetArgumentFromLocalOrFieldReference(IOperation operation, [NotNullWhen(true)] out SyntaxNode? createArgument)
+            {
+                if (operation is ILocalReferenceOperation localReference)
+                {
+                    Debug.Assert(localReference.Local.DeclaringSyntaxReferences.Length == 1);
+
+                    // Local string literal would be out of scope in the field declaration.
+                    createArgument = GetDeclaratorInitializer(localReference.Local);
+                    return true;
+                }
+                else if (operation is IFieldReferenceOperation fieldReference)
+                {
+                    if (!fieldReference.ConstantValue.HasValue)
+                    {
+                        // If we were to use the field reference directly, we risk initializing the SearchValues field to an empty
+                        // instance depending on field declaration order.
+                        createArgument = GetDeclaratorInitializer(fieldReference.Field);
+                        return true;
+                    }
+                }
+
+                createArgument = null;
+                return false;
+            }
 
             SyntaxNode GetDeclaratorInitializer(ISymbol symbol)
             {

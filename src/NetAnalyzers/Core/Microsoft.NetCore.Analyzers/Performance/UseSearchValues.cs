@@ -36,6 +36,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         protected abstract bool IsConstantByteOrCharReadOnlySpanPropertyDeclarationSyntax(SyntaxNode syntax, out int length);
 
+        protected abstract bool ArrayFieldUsesAreLikelyReadOnly(SyntaxNode syntax);
+
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
@@ -244,12 +246,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             if (fieldReference.Field is { } field &&
                 field.IsReadOnly &&
+                field.DeclaredAccessibility is Accessibility.NotApplicable or Accessibility.Private &&
                 IsByteOrCharSZArray(field.Type) &&
                 field.DeclaringSyntaxReferences is [var declaringSyntaxReference] &&
-                declaringSyntaxReference.GetSyntax() is { } syntax)
+                declaringSyntaxReference.GetSyntax() is { } syntax &&
+                IsConstantByteOrCharArrayVariableDeclaratorSyntax(syntax, out length) &&
+                ArrayFieldUsesAreLikelyReadOnly(syntax))
             {
-                // Possible false-negative: readonly array field is being modified intentionally
-                return IsConstantByteOrCharArrayVariableDeclaratorSyntax(syntax, out length);
+                return true;
             }
 
             length = 0;

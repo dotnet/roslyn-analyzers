@@ -33,6 +33,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         protected abstract bool IsConstantByteOrCharArrayVariableDeclaratorSyntax(SyntaxNode syntax, out int length);
+
         protected abstract bool IsConstantByteOrCharReadOnlySpanPropertyDeclarationSyntax(SyntaxNode syntax, out int length);
 
         public override void Initialize(AnalysisContext context)
@@ -78,7 +79,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             // Possible improvement: Add support for string {Last}IndexOfAny calls
 
-            // {ReadOnly}Span<T>.{Last}IndexOfAny{Except}(ReadOnlySpan<T>) and ContainsAny{Except}
+            // {ReadOnly}Span<T>.{Last}IndexOfAny{Except}(ReadOnlySpan<T>) and ContainsAny{Except}(ReadOnlySpan<T>)
             if (compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemMemoryExtensions, out var memoryExtensionsType) &&
                 compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSpan1, out var spanType) &&
                 compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1, out var readOnlySpanType))
@@ -182,14 +183,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // text.IndexOfAny("abc"u8)
                 return utf8String.Value.Length >= MinLengthWorthReplacing;
             }
-            else if (argument is IMemberReferenceOperation memberReference)
+            else if (argument is IPropertyReferenceOperation propertyReference)
             {
                 // ReadOnlySpan<byte> Values => "abc"u8;
                 // ReadOnlySpan<byte> Values => new byte[] { (byte)'a', (byte)'b', (byte)'c' };
                 // ReadOnlySpan<char> Values => new char[] { 'a', 'b', 'c' };
                 // text.IndexOfAny(Values)
                 return
-                    memberReference.Member is IPropertySymbol property &&
+                    propertyReference.Member is IPropertySymbol property &&
                     property.IsReadOnly &&
                     IsByteOrCharReadOnlySpan(property.Type, readOnlySpanType) &&
                     property.DeclaringSyntaxReferences is [var declaringSyntaxReference] &&

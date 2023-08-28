@@ -57,6 +57,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         protected abstract SyntaxNode GetDeclaratorInitializer(SyntaxNode syntax);
 
+        protected abstract SyntaxNode? TryReplaceArrayCreationWithInlineLiteralExpression(IOperation operation);
+
         private async Task<Document> ConvertToSearchValuesAsync(Document document, SyntaxNode argumentNode, CancellationToken cancellationToken)
         {
             SemanticModel? semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
@@ -68,7 +70,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemBuffersSearchValues1, out INamedTypeSymbol? searchValuesOfT) ||
                 !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemMemoryExtensions, out INamedTypeSymbol? memoryExtensions) ||
                 semanticModel.GetOperation(argumentNode, cancellationToken) is not { } argument ||
-                argument.GetAncestor<IArgumentOperation>(OperationKind.Argument) is not { } argumentOperation)
+                GetArgumentOperationAncestorOrSelf(argument) is not { } argumentOperation)
             {
                 return document;
             }
@@ -139,6 +141,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 editor.ReplaceNode(editor.OriginalRoot, withSystemImport);
             }
         }
+
+        private static IArgumentOperation? GetArgumentOperationAncestorOrSelf(IOperation operation) =>
+            (operation as IArgumentOperation) ??
+            operation.GetAncestor<IArgumentOperation>(OperationKind.Argument);
 
         private static IEnumerable<string> GetAllMemberNamesInScope(ITypeSymbol? symbol)
         {
@@ -224,18 +230,33 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private SyntaxNode CreateSearchValuesCreateArgument(SyntaxNode originalSyntax, IOperation argument, CancellationToken cancellationToken)
         {
-            if (argument is IConversionOperation conversion)
+            SyntaxNode createArgument = CreateSearchValuesCreateArgumentCore(originalSyntax, argument, cancellationToken);
+
+            // If the argument is an inline array creation, we can transform it into a string literal expression instead.
+            if (argument.SemanticModel?.GetOperation(createArgument, cancellationToken) is { } newOperation)
             {
-                if (TryGetArgumentFromLocalOrFieldReference(conversion.Operand, out SyntaxNode? createArgument))
+                if (newOperation is IArgumentOperation argumentOperation)
                 {
-                    return createArgument;
+                    newOperation = argumentOperation.Value;
                 }
-                else if (TryGetArgumentFromStringToCharArray(conversion.Operand, out createArgument))
+
+                if (TryReplaceArrayCreationWithInlineLiteralExpression(newOperation) is { } literalExpression)
                 {
-                    return createArgument;
+                    return literalExpression;
                 }
             }
-            else if (argument is IPropertyReferenceOperation propertyReference)
+
+            return createArgument;
+        }
+
+        private SyntaxNode CreateSearchValuesCreateArgumentCore(SyntaxNode originalSyntax, IOperation argument, CancellationToken cancellationToken)
+        {
+            if (argument is IConversionOperation conversion)
+            {
+                argument = conversion.Operand;
+            }
+
+            if (argument is IPropertyReferenceOperation propertyReference)
             {
                 if (!propertyReference.Property.IsStatic)
                 {
@@ -252,7 +273,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return createArgument;
             }
 
-            // Use the original syntax (e.g. string literal, static property reference ...)
+            // Use the original syntax (e.g. string literal, inline array creation, static property reference ...)
             return originalSyntax;
 
             bool TryGetArgumentFromStringToCharArray(IOperation operation, [NotNullWhen(true)] out SyntaxNode? createArgument)
@@ -260,6 +281,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 if (operation is IInvocationOperation invocation &&
                     invocation.Instance is { } stringInstance)
                 {
+                    Debug.Assert(invocation.TargetMethod.Name == nameof(string.ToCharArray));
+
                     if (!TryGetArgumentFromLocalOrFieldReference(stringInstance, out createArgument))
                     {
                         // This is a string.ToCharArray call, but the string instance is not something we can refer to by name.

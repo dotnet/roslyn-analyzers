@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -22,7 +23,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             return
                 syntax is VariableDeclaratorSyntax variableDeclarator &&
                 variableDeclarator.Initializer?.Value is { } initializer &&
-                IsConstantByteOrCharArrayCreationExpression(initializer, out length);
+                IsConstantByteOrCharArrayCreationExpression(initializer, values: null, out length);
         }
 
         // ReadOnlySpan<char> myProperty => new char[] { 'a', 'b', 'c' };
@@ -36,13 +37,13 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             return
                 syntax is PropertyDeclarationSyntax propertyDeclaration &&
                 propertyDeclaration.ExpressionBody?.Expression is { } expression &&
-                (IsConstantByteOrCharArrayCreationExpression(expression, out length) || IsUtf8StringLiteralExpression(expression, out length));
+                (IsConstantByteOrCharArrayCreationExpression(expression, values: null, out length) || IsUtf8StringLiteralExpression(expression, out length));
         }
 
         // new char[] { 'a', 'b', 'c' };
         // new[] { 'a', 'b', 'c' };
         // new[] { (byte)'a', (byte)'b', (byte)'c' };
-        private static bool IsConstantByteOrCharArrayCreationExpression(ExpressionSyntax expression, out int length)
+        internal static bool IsConstantByteOrCharArrayCreationExpression(ExpressionSyntax expression, List<char>? values, out int length)
         {
             length = 0;
 
@@ -57,39 +58,47 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 arrayInitializer = implicitArrayCreation.Initializer;
             }
 
-            if (arrayInitializer?.Expressions is { } values)
+            if (arrayInitializer?.Expressions is { } valueExpressions)
             {
-                foreach (var value in values)
+                foreach (var valueExpression in valueExpressions)
                 {
-                    if (!IsByteOrCharLiteral(value))
+                    if (!TryGetByteOrCharLiteral(valueExpression, out char value))
                     {
                         return false;
                     }
+
+                    values?.Add(value);
                 }
 
-                length = values.Count;
+                length = valueExpressions.Count;
                 return true;
             }
 
             return false;
 
-            static bool IsByteOrCharLiteral(ExpressionSyntax? value)
+            // 'a' or (byte)'a'
+            static bool TryGetByteOrCharLiteral(ExpressionSyntax? expression, out char value)
             {
-                if (value is null)
+                if (expression is not null)
                 {
-                    return false;
+                    if (expression is CastExpressionSyntax cast &&
+                        cast.Type is PredefinedTypeSyntax predefinedType &&
+                        predefinedType.Keyword.IsKind(SyntaxKind.ByteKeyword))
+                    {
+                        expression = cast.Expression;
+                    }
+
+                    if (expression.IsKind(SyntaxKind.CharacterLiteralExpression) &&
+                        expression is LiteralExpressionSyntax characterLiteral &&
+                        characterLiteral.Token.Value is char charValue)
+                    {
+                        value = charValue;
+                        return true;
+                    }
                 }
 
-                if (value.IsKind(SyntaxKind.CharacterLiteralExpression))
-                {
-                    return true;
-                }
-
-                return
-                    value is CastExpressionSyntax cast &&
-                    cast.Type is PredefinedTypeSyntax predefinedType &&
-                    predefinedType.Keyword.IsKind(SyntaxKind.ByteKeyword) &&
-                    cast.Expression.IsKind(SyntaxKind.CharacterLiteralExpression);
+                value = default;
+                return false;
             }
         }
 
@@ -97,9 +106,10 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         {
             if (expression.IsKind(SyntaxKind.Utf8StringLiteralExpression) &&
                 expression is LiteralExpressionSyntax literal &&
-                literal.Token.IsKind(SyntaxKind.Utf8StringLiteralToken))
+                literal.Token.IsKind(SyntaxKind.Utf8StringLiteralToken) &&
+                literal.Token.Value is string value)
             {
-                length = literal.Token.ValueText.Length;
+                length = value.Length;
                 return true;
             }
 
@@ -110,12 +120,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         protected override bool ArrayFieldUsesAreLikelyReadOnly(SyntaxNode syntax)
         {
             if (syntax is not VariableDeclaratorSyntax variableDeclarator ||
+                variableDeclarator.Identifier.Value is not string fieldName ||
                 syntax.FirstAncestorOrSelf<TypeDeclarationSyntax>() is not { } typeDeclaration)
             {
                 return false;
             }
-
-            string fieldName = variableDeclarator.Identifier.ValueText;
 
             // An optimistic implementation that only looks for simple assignments to the field or its array elements.
             foreach (var member in typeDeclaration.Members)
@@ -153,7 +162,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             static bool IsFieldReference(ExpressionSyntax expression, string fieldName) =>
                 expression.IsKind(SyntaxKind.IdentifierName) &&
                 expression is IdentifierNameSyntax identifierName &&
-                identifierName.Identifier.ValueText == fieldName;
+                identifierName.Identifier.Value is string value &&
+                value == fieldName;
         }
     }
 }

@@ -35,6 +35,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     private static byte NonConstByte => (byte)'A';
                     private static readonly char[] ShortStaticReadonlyCharArrayField = new[] { 'a', 'e', 'i', 'o', 'u' };
                     private static readonly char[] LongStaticReadonlyCharArrayField = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
+                    private static readonly char[] LongStaticReadonlyCharArrayFieldWithSimpleModification = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
+                    static readonly char[] LongStaticReadonlyCharArrayFieldWithoutAccessibility = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
+                    public static readonly char[] LongStaticReadonlyCharArrayFieldWithPublicAccessibility = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     private static readonly char[] LongStaticReadonlyExplicitCharArrayField = new char[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     private readonly char[] InstanceReadonlyCharArrayField = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     private char[] InstanceSettableCharArrayField = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
@@ -83,6 +86,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         _ = str.IndexOfAny([|LongStaticReadonlyExplicitCharArrayField|]);
                         _ = str.IndexOfAny([|InstanceReadonlyCharArrayField|]);
                         _ = str.IndexOfAny(InstanceSettableCharArrayField);
+
+                        LongStaticReadonlyCharArrayFieldWithSimpleModification[42] = 'a';
+                        _ = str.IndexOfAny(LongStaticReadonlyCharArrayFieldWithSimpleModification);
+
+                        _ = chars.IndexOfAny([|LongStaticReadonlyCharArrayFieldWithoutAccessibility|]);
+                        _ = chars.IndexOfAny(LongStaticReadonlyCharArrayFieldWithPublicAccessibility);
 
                         _ = chars.IndexOfAny(ShortReadOnlySpanOfCharRVAProperty);
                         _ = chars.IndexOfAny([|LongReadOnlySpanOfCharRVAProperty|]);

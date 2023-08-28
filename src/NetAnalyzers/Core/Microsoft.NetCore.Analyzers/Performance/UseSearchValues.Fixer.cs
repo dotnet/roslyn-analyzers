@@ -67,23 +67,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemBuffersSearchValues, out INamedTypeSymbol? searchValues) ||
                 !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemBuffersSearchValues1, out INamedTypeSymbol? searchValuesOfT) ||
                 !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemMemoryExtensions, out INamedTypeSymbol? memoryExtensions) ||
-                semanticModel.GetOperation(argumentNode, cancellationToken) is not { } argument)
+                semanticModel.GetOperation(argumentNode, cancellationToken) is not { } argument ||
+                argument.GetAncestor<IArgumentOperation>(OperationKind.Argument) is not { } argumentOperation)
             {
                 return document;
             }
-
-            // Walk up the operation tree to find the argument operation.
-            while (argument is not IArgumentOperation)
-            {
-                if (argument.Parent is null)
-                {
-                    return document;
-                }
-
-                argument = argument.Parent;
-            }
-
-            var argumentOperation = (IArgumentOperation)argument;
 
             bool isByte =
                 argumentOperation.Parameter?.Type is INamedTypeSymbol parameterType &&

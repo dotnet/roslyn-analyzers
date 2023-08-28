@@ -106,5 +106,34 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             length = 0;
             return false;
         }
+
+        protected override bool ArrayFieldUsesAreLikelyReadOnly(SyntaxNode syntax)
+        {
+            if (syntax is not VariableDeclaratorSyntax variableDeclarator ||
+                syntax.FirstAncestorOrSelf<TypeDeclarationSyntax>() is not { } typeDeclaration)
+            {
+                return false;
+            }
+
+            // An optimistic implementation that only looks for simple assignments to array elements.
+            foreach (var member in typeDeclaration.Members)
+            {
+                foreach (var node in member.DescendantNodes())
+                {
+                    if (node.IsKind(SyntaxKind.SimpleAssignmentExpression) &&
+                        node is AssignmentExpressionSyntax assignment &&
+                        assignment.Left.IsKind(SyntaxKind.ElementAccessExpression) &&
+                        assignment.Left is ElementAccessExpressionSyntax elementAccess &&
+                        elementAccess.Expression is IdentifierNameSyntax identifierName &&
+                        identifierName.Identifier.ValueText == variableDeclarator.Identifier.ValueText)
+                    {
+                        // s_array[42] = 'a';
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 }

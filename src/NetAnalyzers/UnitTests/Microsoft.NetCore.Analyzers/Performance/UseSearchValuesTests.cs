@@ -35,7 +35,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     private static byte NonConstByte => (byte)'A';
                     private static readonly char[] ShortStaticReadonlyCharArrayField = new[] { 'a', 'e', 'i', 'o', 'u' };
                     private static readonly char[] LongStaticReadonlyCharArrayField = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
-                    private static readonly char[] LongStaticReadonlyCharArrayFieldWithSimpleModification = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
+                    private readonly char[] LongReadonlyCharArrayFieldWithSimpleFieldModification = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
+                    private readonly char[] LongReadonlyCharArrayFieldWithSimpleElementModification = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     static readonly char[] LongStaticReadonlyCharArrayFieldWithoutAccessibility = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     public static readonly char[] LongStaticReadonlyCharArrayFieldWithPublicAccessibility = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     private static readonly char[] LongStaticReadonlyExplicitCharArrayField = new char[] { 'a', 'e', 'i', 'o', 'u', 'A' };
@@ -45,6 +46,18 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     private ReadOnlySpan<char> LongReadOnlySpanOfCharRVAProperty => new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     private ReadOnlySpan<byte> ShortReadOnlySpanOfByteRVAProperty => new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u' };
                     private ReadOnlySpan<byte> LongReadOnlySpanOfByteRVAProperty => new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' };
+
+                    public Test()
+                    {
+                        LongReadonlyCharArrayFieldWithSimpleFieldModification = new[] { 'a' };
+                        Console.WriteLine(InstanceReadonlyCharArrayField);
+                    }
+
+                    public void Dummy()
+                    {
+                        LongReadonlyCharArrayFieldWithSimpleElementModification[0] = 'a';
+                        Console.WriteLine(InstanceReadonlyCharArrayField[0]);
+                    }
 
                     private void TestMethod(string str, ReadOnlySpan<char> chars, ReadOnlySpan<byte> bytes)
                     {
@@ -87,9 +100,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         _ = str.IndexOfAny([|InstanceReadonlyCharArrayField|]);
                         _ = str.IndexOfAny(InstanceSettableCharArrayField);
 
-                        LongStaticReadonlyCharArrayFieldWithSimpleModification[42] = 'a';
-                        _ = str.IndexOfAny(LongStaticReadonlyCharArrayFieldWithSimpleModification);
-
                         _ = chars.IndexOfAny([|LongStaticReadonlyCharArrayFieldWithoutAccessibility|]);
                         _ = chars.IndexOfAny(LongStaticReadonlyCharArrayFieldWithPublicAccessibility);
 
@@ -98,6 +108,11 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                         _ = bytes.IndexOfAny(ShortReadOnlySpanOfByteRVAProperty);
                         _ = bytes.IndexOfAny([|LongReadOnlySpanOfByteRVAProperty|]);
+
+
+                        // We detect simple cases where the array may be modified
+                        _ = str.IndexOfAny(LongReadonlyCharArrayFieldWithSimpleFieldModification);
+                        _ = str.IndexOfAny(LongReadonlyCharArrayFieldWithSimpleElementModification);
 
 
                         // Uses of ToCharArray are flagged even for shorter values.
@@ -112,7 +127,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         _ = str.IndexOfAny([|"aeiouA".ToCharArray()|]);
 
 
-                        // For cases that we'd want to flag, a different analyzer should suggest making the field 'const' first.
+                        // For cases like this that we'd want to flag, a different analyzer should suggest making the field 'const' first.
                         _ = chars.IndexOfAny(NonConstStringInstanceField);
                         _ = chars.IndexOfAny(NonConstStringStaticField);
                         _ = chars.IndexOfAny(NonConstStringReadonlyInstanceField);

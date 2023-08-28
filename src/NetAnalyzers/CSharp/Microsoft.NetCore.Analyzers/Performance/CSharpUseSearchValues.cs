@@ -115,25 +115,45 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 return false;
             }
 
-            // An optimistic implementation that only looks for simple assignments to array elements.
+            string fieldName = variableDeclarator.Identifier.ValueText;
+
+            // An optimistic implementation that only looks for simple assignments to the field or its array elements.
             foreach (var member in typeDeclaration.Members)
             {
+                bool isCtor = member.IsKind(SyntaxKind.ConstructorDeclaration);
+
                 foreach (var node in member.DescendantNodes())
                 {
                     if (node.IsKind(SyntaxKind.SimpleAssignmentExpression) &&
-                        node is AssignmentExpressionSyntax assignment &&
-                        assignment.Left.IsKind(SyntaxKind.ElementAccessExpression) &&
-                        assignment.Left is ElementAccessExpressionSyntax elementAccess &&
-                        elementAccess.Expression is IdentifierNameSyntax identifierName &&
-                        identifierName.Identifier.ValueText == variableDeclarator.Identifier.ValueText)
+                        node is AssignmentExpressionSyntax assignment)
                     {
-                        // s_array[42] = 'a';
-                        return false;
+                        if (assignment.Left.IsKind(SyntaxKind.ElementAccessExpression))
+                        {
+                            if (assignment.Left is ElementAccessExpressionSyntax elementAccess &&
+                                IsFieldReference(elementAccess.Expression, fieldName))
+                            {
+                                // s_array[42] = foo;
+                                return false;
+                            }
+                        }
+                        else if (isCtor)
+                        {
+                            if (IsFieldReference(assignment.Left, fieldName))
+                            {
+                                // s_array = foo;
+                                return false;
+                            }
+                        }
                     }
                 }
             }
 
             return true;
+
+            static bool IsFieldReference(ExpressionSyntax expression, string fieldName) =>
+                expression.IsKind(SyntaxKind.IdentifierName) &&
+                expression is IdentifierNameSyntax identifierName &&
+                identifierName.Identifier.ValueText == fieldName;
         }
     }
 }

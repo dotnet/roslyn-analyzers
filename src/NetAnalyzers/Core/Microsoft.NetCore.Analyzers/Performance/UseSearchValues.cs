@@ -67,7 +67,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
             Debug.Assert(invocation.Arguments.Length is 1 or 2);
             IArgumentOperation valuesArgument = invocation.Arguments[^1];
 
-            if (AreConstantValuesWorthReplacing(valuesArgument.Value, readOnlySpanType))
+            bool isStringIndexOfAny = invocation.TargetMethod.ContainingType.SpecialType == SpecialType.System_String;
+
+            if (isStringIndexOfAny
+                ? AreConstantValuesWorthReplacingForStringIndexOfAny(valuesArgument.Value)
+                : AreConstantValuesWorthReplacing(valuesArgument.Value, readOnlySpanType))
             {
                 context.ReportDiagnostic(valuesArgument.CreateDiagnostic(Rule));
             }
@@ -77,7 +81,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             var methods = new HashSet<IMethodSymbol>();
 
-            // Possible improvement: Add support for string {Last}IndexOfAny calls
+            var stringType = compilation.GetSpecialType(SpecialType.System_String);
+
+            // string.{Last}IndexOfAny(char[])
+            // Overloads that accept 'startOffset' or 'count' are excluded as they can't be trivially converted AsSpan.
+            foreach (var method in stringType.GetMembers().OfType<IMethodSymbol>())
+            {
+                if (method.Name is "IndexOfAny" or "LastIndexOfAny" &&
+                    method.Parameters.Length == 1)
+                {
+                    methods.Add(method);
+                }
+            }
 
             // {ReadOnly}Span<T>.{Last}IndexOfAny{Except}(ReadOnlySpan<T>) and ContainsAny{Except}(ReadOnlySpan<T>)
             if (compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemMemoryExtensions, out var memoryExtensionsType) &&
@@ -119,63 +134,67 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return methods;
         }
 
+        // It's not always worth going through SearchValues if there are very few values used
+        // such that they will already be using dedicated vectorized paths.
+        private const int MinLengthWorthReplacing = 6;
+
+        private bool AreConstantValuesWorthReplacingForStringIndexOfAny(IOperation argument)
+        {
+            if (argument is IArrayCreationOperation arrayCreation)
+            {
+                // text.IndexOfAny(new[] { 'a', 'b', 'c' })
+                return IsConstantByteOrCharSZArrayCreation(arrayCreation, out _);
+            }
+            else if (argument is IFieldReferenceOperation fieldReference)
+            {
+                // readonly char[] Values = new char[] { 'a', 'b', 'c' };
+                // text.IndexOfAny(Values)
+                return
+                    IsConstantByteOrCharSZArrayFieldReference(fieldReference, out int length) &&
+                    length >= MinLengthWorthReplacing;
+            }
+            else if (argument is IInvocationOperation invocation)
+            {
+                // text.IndexOfAny("abc".ToCharArray())
+                // text.IndexOfAny(StringConst.ToCharArray())
+                return IsConstantStringToCharArrayInvocation(invocation);
+            }
+
+            return false;
+        }
+
         private bool AreConstantValuesWorthReplacing(IOperation argument, INamedTypeSymbol readOnlySpanType)
         {
-            // It's not always worth going through SearchValues if there are very few values used
-            // such that they will already be using dedicated vectorized paths.
-            const int MinLengthWorthReplacing = 6;
-
             if (argument is IConversionOperation conversion)
             {
-                if (conversion.Operand is ILiteralOperation literal)
+                if (IsConstantStringLiteralOrReference(conversion.Operand, out int length))
                 {
                     // text.IndexOfAny("abc")
-                    return
-                        literal.Type is { SpecialType: SpecialType.System_String } &&
-                        literal.ConstantValue.HasValue &&
-                        literal.ConstantValue.Value is string values &&
-                        values.Length >= MinLengthWorthReplacing;
+                    // or
+                    // const string ValuesLocalOrField = "abc";
+                    // text.IndexOfAny(ValuesLocalOrField)
+                    return length >= MinLengthWorthReplacing;
                 }
                 else if (conversion.Operand is IArrayCreationOperation arrayCreation)
                 {
                     // text.IndexOfAny(new[] { 'a', 'b', 'c' })
                     return
-                        IsConstantByteOrCharSZArrayCreation(arrayCreation, out int length) &&
+                        IsConstantByteOrCharSZArrayCreation(arrayCreation, out length) &&
                         length >= MinLengthWorthReplacing;
-                }
-                else if (conversion.Operand is ILocalReferenceOperation localReference)
-                {
-                    // const string ValuesLocal = "abc";
-                    // text.IndexOfAny(ValuesLocal)
-                    return
-                        localReference.Type is { SpecialType: SpecialType.System_String } &&
-                        localReference.ConstantValue.HasValue &&
-                        localReference.ConstantValue.Value is string values &&
-                        values.Length >= MinLengthWorthReplacing;
                 }
                 else if (conversion.Operand is IFieldReferenceOperation fieldReference)
                 {
-                    if (fieldReference.Type is { SpecialType: SpecialType.System_String })
-                    {
-                        // const string ValuesField = "abc";
-                        // text.IndexOfAny(ValuesField)
-                        return
-                            fieldReference.ConstantValue.HasValue &&
-                            fieldReference.ConstantValue.Value is string values &&
-                            values.Length >= MinLengthWorthReplacing;
-                    }
-
                     // readonly char[] Values = new char[] { 'a', 'b', 'c' };
                     // text.IndexOfAny(Values)
-                    // Possible false-negative: readonly array field is being modified intentionally
                     return
-                        fieldReference.Field is { } field &&
-                        field.IsReadOnly &&
-                        IsByteOrCharSZArray(field.Type) &&
-                        field.DeclaringSyntaxReferences is [var declaringSyntaxReference] &&
-                        declaringSyntaxReference.GetSyntax() is { } syntax &&
-                        IsConstantByteOrCharArrayVariableDeclaratorSyntax(syntax, out int length) &&
+                        IsConstantByteOrCharSZArrayFieldReference(fieldReference, out length) &&
                         length >= MinLengthWorthReplacing;
+                }
+                else if (conversion.Operand is IInvocationOperation invocation)
+                {
+                    // text.IndexOfAny("abc".ToCharArray())
+                    // text.IndexOfAny(StringConst.ToCharArray())
+                    return IsConstantStringToCharArrayInvocation(invocation);
                 }
             }
             else if (argument is IUtf8StringOperation utf8String)
@@ -213,6 +232,30 @@ namespace Microsoft.NetCore.Analyzers.Performance
             namedType.TypeArguments is [var typeArgument] &&
             typeArgument.SpecialType is SpecialType.System_Byte or SpecialType.System_Char;
 
+        // text.IndexOfAny("abc".ToCharArray())
+        // text.IndexOfAny(StringConst.ToCharArray())
+        private static bool IsConstantStringToCharArrayInvocation(IInvocationOperation invocation) =>
+            invocation.TargetMethod.ContainingType.SpecialType == SpecialType.System_String &&
+            invocation.TargetMethod.Name == nameof(string.ToCharArray) &&
+            invocation.Instance is { } stringInstance &&
+            IsConstantStringLiteralOrReference(stringInstance, out _);
+
+        private bool IsConstantByteOrCharSZArrayFieldReference(IFieldReferenceOperation fieldReference, out int length)
+        {
+            if (fieldReference.Field is { } field &&
+                field.IsReadOnly &&
+                IsByteOrCharSZArray(field.Type) &&
+                field.DeclaringSyntaxReferences is [var declaringSyntaxReference] &&
+                declaringSyntaxReference.GetSyntax() is { } syntax)
+            {
+                // Possible false-negative: readonly array field is being modified intentionally
+                return IsConstantByteOrCharArrayVariableDeclaratorSyntax(syntax, out length);
+            }
+
+            length = 0;
+            return false;
+        }
+
         private static bool IsConstantByteOrCharSZArrayCreation(IArrayCreationOperation arrayCreation, out int length)
         {
             length = 0;
@@ -234,6 +277,21 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return true;
             }
 
+            return false;
+        }
+
+        private static bool IsConstantStringLiteralOrReference(IOperation operation, out int length)
+        {
+            if (operation.Type is { SpecialType: SpecialType.System_String } &&
+                operation.ConstantValue.HasValue &&
+                operation is ILiteralOperation or IFieldReferenceOperation or ILocalReferenceOperation &&
+                operation.ConstantValue.Value is string values)
+            {
+                length = values.Length;
+                return true;
+            }
+
+            length = 0;
             return false;
         }
     }

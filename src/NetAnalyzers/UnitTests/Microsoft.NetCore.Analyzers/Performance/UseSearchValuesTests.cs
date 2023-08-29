@@ -791,15 +791,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyCodeFixAsync(LanguageVersion.CSharp7_3, source, expected);
         }
 
-        private static async Task VerifyAnalyzerAsync(LanguageVersion languageVersion, string source)
-        {
-            await new VerifyCS.Test
-            {
-                ReferenceAssemblies = Net80,
-                LanguageVersion = languageVersion,
-                TestCode = source,
-            }.RunAsync();
-        }
+        private static async Task VerifyAnalyzerAsync(LanguageVersion languageVersion, string source) =>
+            await VerifyCodeFixAsync(languageVersion, source, expected: null);
 
         private static async Task VerifyCodeFixAsync(LanguageVersion languageVersion, string source, string expected)
         {

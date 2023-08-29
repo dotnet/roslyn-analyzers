@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task TestIndexOfAnyAnalyzer()
         {
-            await VerifyAnalyzerAsync(LanguageVersion.CSharp7_3,
+            string source =
                 """
                 using System;
 
@@ -174,7 +174,10 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         _ = bytes.IndexOfAny(new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)ConstChar });
                     }
                 }
-                """);
+                """;
+
+            await VerifyAnalyzerAsync(LanguageVersion.CSharp7_3, source);
+            await VerifyAnalyzerAsync(LanguageVersion.CSharp11, source);
         }
 
         [Fact]
@@ -770,22 +773,23 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         // TEMP - need newer version of Microsoft.CodeAnalysis.Analyzer.Testing
+        // Replace with 'ReferenceAssemblies.Net.Net80'
         private static readonly Lazy<ReferenceAssemblies> _lazyNet80 =
-                new Lazy<ReferenceAssemblies>(() =>
+            new(() =>
+            {
+                if (!NuGet.Frameworks.NuGetFramework.Parse("net8.0").IsPackageBased)
                 {
-                    if (!NuGet.Frameworks.NuGetFramework.Parse("net8.0").IsPackageBased)
-                    {
-                        // The NuGet version provided at runtime does not recognize the 'net8.0' target framework
-                        throw new NotSupportedException("The 'net8.0' target framework is not supported by this version of NuGet.");
-                    }
+                    // The NuGet version provided at runtime does not recognize the 'net8.0' target framework
+                    throw new NotSupportedException("The 'net8.0' target framework is not supported by this version of NuGet.");
+                }
 
-                    return new ReferenceAssemblies(
-                        "net8.0",
-                        new PackageIdentity(
-                            "Microsoft.NETCore.App.Ref",
-                            "8.0.0-preview.7.23375.6"),
-                        System.IO.Path.Combine("ref", "net8.0"));
-                });
+                return new ReferenceAssemblies(
+                    "net8.0",
+                    new PackageIdentity(
+                        "Microsoft.NETCore.App.Ref",
+                        "8.0.0-preview.7.23375.6"),
+                    System.IO.Path.Combine("ref", "net8.0"));
+            });
 
         public static ReferenceAssemblies Net80 => _lazyNet80.Value;
     }

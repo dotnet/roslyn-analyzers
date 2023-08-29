@@ -35,6 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     private static byte NonConstByte => (byte)'A';
                     private static readonly char[] ShortStaticReadonlyCharArrayField = new[] { 'a', 'e', 'i', 'o', 'u' };
                     private static readonly char[] LongStaticReadonlyCharArrayField = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
+                    private static readonly char[] LongStaticReadonlyCharArrayFieldWithNonInlineLiteral = new[] { 'a', 'e', 'i', 'o', 'u', ConstChar };
                     private readonly char[] LongReadonlyCharArrayFieldWithSimpleFieldModification = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     private readonly char[] LongReadonlyCharArrayFieldWithSimpleElementModification = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     static readonly char[] LongStaticReadonlyCharArrayFieldWithoutAccessibility = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
@@ -179,6 +180,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         _ = chars.IndexOfAny(LongConstStringTypeMember + ShortConstStringTypeMember);
                         _ = bytes.IndexOfAny(new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', ConstByte });
                         _ = bytes.IndexOfAny(new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)ConstChar });
+                        _ = chars.IndexOfAny(LongStaticReadonlyCharArrayFieldWithNonInlineLiteral);
                     }
                 }
                 """;

@@ -199,11 +199,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return IsConstantStringToCharArrayInvocation(invocation);
                 }
             }
-            else if (argument is IUtf8StringOperation utf8String)
-            {
-                // text.IndexOfAny("abc"u8)
-                return utf8String.Value.Length >= MinLengthWorthReplacing;
-            }
             else if (argument is IPropertyReferenceOperation propertyReference)
             {
                 // ReadOnlySpan<byte> Values => "abc"u8;

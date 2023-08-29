@@ -46,7 +46,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
             if (syntax is PropertyDeclarationSyntax propertyDeclaration)
             {
-                return propertyDeclaration.ExpressionBody!.Expression;
+                return CSharpUseSearchValuesAnalyzer.TryGetPropertyGetterExpression(propertyDeclaration)!;
             }
 
             throw new InvalidOperationException($"Expected 'VariableDeclaratorSyntax' or 'PropertyDeclarationSyntax', got {syntax.GetType().Name}");

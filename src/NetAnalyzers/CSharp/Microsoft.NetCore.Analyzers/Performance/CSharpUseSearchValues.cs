@@ -30,14 +30,40 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         // ReadOnlySpan<char> myProperty => new[] { 'a', 'b', 'c' };
         // ReadOnlySpan<byte> myProperty => new[] { (byte)'a', (byte)'b', (byte)'c' };
         // ReadOnlySpan<byte> myProperty => "abc"u8;
+        // ReadOnlySpan<byte> myProperty { get => "abc"u8; }
+        // ReadOnlySpan<byte> myProperty { get { return "abc"u8; } }
         protected override bool IsConstantByteOrCharReadOnlySpanPropertyDeclarationSyntax(SyntaxNode syntax, out int length)
         {
-            length = 0;
+            if (syntax is PropertyDeclarationSyntax propertyDeclaration &&
+                TryGetPropertyGetterExpression(propertyDeclaration) is { } expression &&
+                (IsConstantByteOrCharArrayCreationExpression(expression, values: null, out length) || IsUtf8StringLiteralExpression(expression, out length)))
+            {
+                return true;
+            }
 
-            return
-                syntax is PropertyDeclarationSyntax propertyDeclaration &&
-                propertyDeclaration.ExpressionBody?.Expression is { } expression &&
-                (IsConstantByteOrCharArrayCreationExpression(expression, values: null, out length) || IsUtf8StringLiteralExpression(expression, out length));
+            length = 0;
+            return false;
+        }
+
+        internal static ExpressionSyntax? TryGetPropertyGetterExpression(PropertyDeclarationSyntax propertyDeclaration)
+        {
+            var expression = propertyDeclaration.ExpressionBody?.Expression;
+
+            if (expression is null &&
+                propertyDeclaration.AccessorList?.Accessors is [var accessor] &&
+                accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
+            {
+                expression = accessor.ExpressionBody?.Expression;
+
+                if (expression is null &&
+                    accessor.Body?.Statements is [var statement] &&
+                    statement is ReturnStatementSyntax returnStatement)
+                {
+                    expression = returnStatement.Expression;
+                }
+            }
+
+            return expression;
         }
 
         // new char[] { 'a', 'b', 'c' };

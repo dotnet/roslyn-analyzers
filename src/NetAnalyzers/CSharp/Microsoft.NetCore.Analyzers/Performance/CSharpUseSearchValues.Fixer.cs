@@ -53,7 +53,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         }
 
         // new[] { 'a', 'b', 'c' } => "abc"
-        // new[] { (byte)'a', (byte)'b', (byte)'c' } => "abc"u8
         protected override SyntaxNode? TryReplaceArrayCreationWithInlineLiteralExpression(IOperation operation)
         {
             if (operation is IConversionOperation conversion)
@@ -66,8 +65,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             {
                 bool isByte = elementType.SpecialType == SpecialType.System_Byte;
 
-                if (isByte &&
-                    operation.SemanticModel?.Compilation is CSharpCompilation { LanguageVersion: < LanguageVersion.CSharp11 })
+                if (isByte)
                 {
                     // Can't use Utf8StringLiterals
                     return null;
@@ -84,11 +82,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     string stringLiteral = SymbolDisplay.FormatLiteral(valuesString, quote: true);
 
                     return SyntaxFactory.LiteralExpression(
-                        isByte ? SyntaxKind.Utf8StringLiteralExpression : SyntaxKind.StringLiteralExpression,
+                        SyntaxKind.StringLiteralExpression,
                         SyntaxFactory.Token(
                             leading: default,
-                            kind: isByte ? SyntaxKind.Utf8StringLiteralToken : SyntaxKind.StringLiteralToken,
-                            text: isByte ? $"{stringLiteral}u8" : stringLiteral,
+                            kind: SyntaxKind.StringLiteralToken,
+                            text: stringLiteral,
                             valueText: valuesString,
                             trailing: default));
                 }

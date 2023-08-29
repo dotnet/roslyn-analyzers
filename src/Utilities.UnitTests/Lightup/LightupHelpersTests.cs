@@ -151,6 +151,11 @@ namespace Analyzer.Utilities.UnitTests.Lightup
 
             public bool Equals(ISymbol? other, SymbolEqualityComparer equalityComparer)
                 => throw new NotImplementedException();
+
+            public TResult Accept<TArgument, TResult>(SymbolVisitor<TArgument, TResult> visitor, TArgument argument) =>
+                throw new NotImplementedException();
+
+            public int MetadataToken => throw new NotImplementedException();
         }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     public sealed class DoNotDisableTokenValidationChecks : DiagnosticAnalyzer
     {
         // Set of properties on Microsoft.IdentityModel.Tokens.TokenValidationParameters which shouldn't be set to false.
-        private ImmutableArray<string> PropertiesWhichShouldNotBeFalse = ImmutableArray.Create(
+        private readonly ImmutableArray<string> PropertiesWhichShouldNotBeFalse = ImmutableArray.Create(
             "RequireExpirationTime",
             "ValidateAudience",
             "ValidateIssuer",

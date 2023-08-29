@@ -59,8 +59,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostics.First().Location.SourceSpan; // All the diagnostics are reported at the same location -- the name of the declared class -- so it doesn't matter which one we pick
             SyntaxNode node = root.FindNode(diagnosticSpan);
-            SyntaxNode targetNode = editor.Generator.GetDeclaration(node, DeclarationKind.Class);
-            if (model.GetDeclaredSymbol(targetNode, cancellationToken) is not INamedTypeSymbol typeSymbol)
+            SyntaxNode? targetNode = editor.Generator.GetDeclaration(node, DeclarationKind.Class);
+            if (targetNode is null || model.GetDeclaredSymbol(targetNode, cancellationToken) is not INamedTypeSymbol typeSymbol)
             {
                 return document;
             }
@@ -98,7 +98,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                     parameters: new[]
                                                     {
                                                     generator.ParameterDeclaration("message", generator.TypeExpression(editor.SemanticModel.Compilation.GetSpecialType(SpecialType.System_String))),
-                                                    generator.ParameterDeclaration("innerException", generator.TypeExpression(editor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException)))
+                                                    generator.ParameterDeclaration("innerException", generator.TypeExpression(editor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException)!))
                                                     },
                                                     accessibility: Accessibility.Public,
                                                     baseConstructorArguments: new[]

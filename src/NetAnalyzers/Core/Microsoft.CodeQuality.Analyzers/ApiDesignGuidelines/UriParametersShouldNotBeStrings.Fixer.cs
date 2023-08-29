@@ -100,7 +100,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var originalParameter = generator.ParameterDeclaration(methodSymbol.Parameters[parameterIndex]);
 
             // replace original parameter type to System.Uri
-            var newParameter = generator.ReplaceNode(originalParameter, generator.GetType(originalParameter), generator.TypeExpression(uriType));
+            var newParameter = generator.ReplaceNode(originalParameter, generator.GetType(originalParameter)!, generator.TypeExpression(uriType));
 
             // create original method decl
             var original = generator.MethodDeclaration(methodSymbol, generator.DefaultMethodBody(compilation));

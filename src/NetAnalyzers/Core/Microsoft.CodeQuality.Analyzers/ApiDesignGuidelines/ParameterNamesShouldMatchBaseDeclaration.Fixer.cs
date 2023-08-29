@@ -56,7 +56,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static async Task<Document> GetUpdatedDocumentForParameterRenameAsync(Document document, ISymbol parameter, string newName, CancellationToken cancellationToken)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             Solution newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, parameter, newName, document.Project.Solution.Options, cancellationToken).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
+
             return newSolution.GetDocument(document.Id)!;
         }
     }

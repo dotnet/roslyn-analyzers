@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5360";
 
-        private ImmutableArray<(string, string[])> DangerousCallable = ImmutableArray.Create<(string, string[])>
+        private readonly ImmutableArray<(string, string[])> DangerousCallable = ImmutableArray.Create<(string, string[])>
             (
                 (WellKnownTypeNames.SystemIOFile, new[] { "WriteAllBytes", "WriteAllLines", "WriteAllText", "Copy", "Move", "AppendAllLines", "AppendAllText", "AppendText", "Delete" }),
                 (WellKnownTypeNames.SystemIODirectory, new[] { "Delete" }),

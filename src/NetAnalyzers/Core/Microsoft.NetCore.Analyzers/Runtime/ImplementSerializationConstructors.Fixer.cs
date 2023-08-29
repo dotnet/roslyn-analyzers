@@ -72,8 +72,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     typeSymbol.Name,
                                     new[]
                                     {
-                                            generator.ParameterDeclaration("serializationInfo", generator.TypeExpression(docEditor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationSerializationInfo))),
-                                            generator.ParameterDeclaration("streamingContext", generator.TypeExpression(docEditor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationStreamingContext)))
+                                            generator.ParameterDeclaration("serializationInfo", generator.TypeExpression(docEditor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationSerializationInfo)!)),
+                                            generator.ParameterDeclaration("streamingContext", generator.TypeExpression(docEditor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationStreamingContext)!))
                                     },
                                     typeSymbol.IsSealed ? Accessibility.Private : Accessibility.Protected,
                                     statements: new[] { throwStatement });

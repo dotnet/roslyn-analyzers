@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
@@ -201,14 +202,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             var enclosingMethod = FindEnclosingMethod(syntax);
 
-            static BaseMethodDeclarationSyntax? FindEnclosingMethod(SyntaxNode syntax)
+            static BaseMethodDeclarationSyntax FindEnclosingMethod(SyntaxNode syntax)
             {
                 while (syntax.Parent is not (null or BaseMethodDeclarationSyntax))
                 {
                     syntax = syntax.Parent;
                 }
 
-                return (BaseMethodDeclarationSyntax?)syntax.Parent;
+                Debug.Assert(syntax.Parent is BaseMethodDeclarationSyntax);
+                return (BaseMethodDeclarationSyntax)syntax.Parent!;
             }
 
             editor.SetModifiers(enclosingMethod, editor.Generator.GetModifiers(enclosingMethod).WithIsUnsafe(true));

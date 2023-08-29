@@ -48,7 +48,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
                         {
                             generatedMembers.Add(generator.AsPrivateInterfaceImplementation(
                                 implementation,
-                                generator.NameExpression(member.ContainingType)));
+                                generator.NameExpression(member.ContainingType))!);
                         }
                     }
                 }
@@ -161,8 +161,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
                     SyntaxFactory.List(
                 new[]
                 {
-                        (AccessorDeclarationSyntax)generator.WithStatements(generator.GetAccessor(eventDeclaration, DeclarationKind.AddAccessor), defaultMethodBodyStatements),
-                        (AccessorDeclarationSyntax)generator.WithStatements(generator.GetAccessor(eventDeclaration, DeclarationKind.RemoveAccessor), defaultMethodBodyStatements),
+                        (AccessorDeclarationSyntax)generator.WithStatements(generator.GetAccessor(eventDeclaration, DeclarationKind.AddAccessor)!, defaultMethodBodyStatements),
+                        (AccessorDeclarationSyntax)generator.WithStatements(generator.GetAccessor(eventDeclaration, DeclarationKind.RemoveAccessor)!, defaultMethodBodyStatements),
                 })));
         }
 

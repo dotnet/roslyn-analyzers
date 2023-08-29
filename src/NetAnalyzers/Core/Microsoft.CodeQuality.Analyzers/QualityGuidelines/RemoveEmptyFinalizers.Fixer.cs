@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
@@ -43,8 +44,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
 
             // Get the declaration so that we step up to the methodblocksyntax and not the methodstatementsyntax for VB.
-            node = editor.Generator.GetDeclaration(node);
-            editor.RemoveNode(node);
+            node = editor.Generator.GetDeclaration(node)!;
+            Debug.Assert(node is not null);
+            editor.RemoveNode(node!);
             return editor.GetChangedDocument();
         }
 

@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -45,7 +46,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(context.Document);
-            SyntaxNode declaration = generator.GetDeclaration(nodeToFix);
+            SyntaxNode? declaration = generator.GetDeclaration(nodeToFix);
             if (declaration == null)
             {
                 return;
@@ -170,7 +171,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 foreach (ISymbol implementedMember in explicitImplementations)
                 {
                     SyntaxNode interfaceTypeNode = docEditor.Generator.TypeExpression(implementedMember.ContainingType);
-                    newDeclaration = docEditor.Generator.AsPublicInterfaceImplementation(newDeclaration, interfaceTypeNode);
+                    newDeclaration = docEditor.Generator.AsPublicInterfaceImplementation(newDeclaration!, interfaceTypeNode)!;
+                    Debug.Assert(newDeclaration is not null);
                 }
 
                 docEditor.ReplaceNode(declaration, newDeclaration);

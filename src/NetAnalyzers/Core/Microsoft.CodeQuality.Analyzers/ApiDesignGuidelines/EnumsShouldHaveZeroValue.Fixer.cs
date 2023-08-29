@@ -83,7 +83,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static SyntaxNode GetExplicitlyAssignedField(IFieldSymbol originalField, SyntaxNode declaration, SyntaxGenerator generator)
         {
-            SyntaxNode originalInitializer = generator.GetExpression(declaration);
+            SyntaxNode? originalInitializer = generator.GetExpression(declaration);
             if (originalInitializer != null || !originalField.HasConstantValue)
             {
                 return declaration;
@@ -94,7 +94,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static async Task<Document> GetUpdatedDocumentForRuleNameRenameAsync(Document document, IFieldSymbol field, CancellationToken cancellationToken)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             Solution newSolution = await CodeAnalysis.Rename.Renamer.RenameSymbolAsync(document.Project.Solution, field, "None", document.Project.Solution.Options, cancellationToken).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
             return newSolution.GetDocument(document.Id)!;
         }
 

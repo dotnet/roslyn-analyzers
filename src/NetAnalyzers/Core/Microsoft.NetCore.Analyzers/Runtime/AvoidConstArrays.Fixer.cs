@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
+using System.Diagnostics;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -52,6 +53,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxGenerator generator = editor.Generator;
             IArrayCreationOperation arrayArgument = GetArrayCreationOperation(node, model, cancellationToken, out bool isInvoked);
             INamedTypeSymbol containingType = model.GetEnclosingSymbol(node.SpanStart, cancellationToken)!.ContainingType;
+            Debug.Assert(arrayArgument.Type is not null);
 
             // Get a valid member name for the extracted constant
             string newMemberName = GetExtractedMemberName(containingType.MemberNames, properties["paramName"] ?? GetMemberNameFromType(arrayArgument));
@@ -63,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // Create the new member
             SyntaxNode newMember = generator.FieldDeclaration(
                 newMemberName,
-                generator.TypeExpression(arrayArgument.Type),
+                generator.TypeExpression(arrayArgument.Type!),
                 GetAccessibility(methodContext is null ? null : model.GetEnclosingSymbol(methodContext.Syntax.SpanStart, cancellationToken)),
                 DeclarationModifiers.Static | DeclarationModifiers.ReadOnly,
                 arrayArgument.Syntax.WithoutTrailingTrivia() // don't include extra trivia before the end of the declaration
@@ -83,7 +85,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     // Insert after fields or properties
                     SyntaxNode lastFieldOrPropertyNode = root.FindNode(span);
-                    editor.InsertAfter(generator.GetDeclaration(lastFieldOrPropertyNode), newMember);
+                    editor.InsertAfter(generator.GetDeclaration(lastFieldOrPropertyNode)!, newMember);
                 }
                 else if (methodContext != null)
                 {

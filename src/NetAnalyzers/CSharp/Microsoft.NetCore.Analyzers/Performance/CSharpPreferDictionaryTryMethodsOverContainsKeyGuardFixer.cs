@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -125,14 +126,15 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                         SingleVariableDesignation(Identifier(Value))
                     )
                 );
-                var tryGetValueInvocation = generator.InvocationExpression(tryGetValueAccess, keyArgument, outArgument);
+                Debug.Assert(keyArgument is not null);
+                var tryGetValueInvocation = generator.InvocationExpression(tryGetValueAccess, keyArgument!, outArgument);
                 editor.ReplaceNode(containsKeyInvocation, tryGetValueInvocation);
 
                 var identifierName = (IdentifierNameSyntax)generator.IdentifierName(Value);
                 if (addStatementNode != null)
                 {
                     editor.InsertBefore(addStatementNode,
-                        generator.ExpressionStatement(generator.AssignmentStatement(identifierName, changedValueNode)));
+                        generator.ExpressionStatement(generator.AssignmentStatement(identifierName, changedValueNode!)));
                     editor.ReplaceNode(changedValueNode!, identifierName);
                 }
 

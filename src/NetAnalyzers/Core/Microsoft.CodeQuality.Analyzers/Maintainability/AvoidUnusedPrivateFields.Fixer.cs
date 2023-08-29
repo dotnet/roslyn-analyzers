@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.CodeActions;
 using Analyzer.Utilities;
+using System.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
@@ -50,8 +51,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         private static async Task<Document> RemoveFieldAsync(Document document, SyntaxNode node, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            node = editor.Generator.GetDeclaration(node);
-            editor.RemoveNode(node);
+            node = editor.Generator.GetDeclaration(node)!;
+            Debug.Assert(node is not null);
+            editor.RemoveNode(node!);
             return editor.GetChangedDocument();
         }
     }

@@ -75,12 +75,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return;
                 }
 
-                if (conditionalOperation.WhenTrue.Children.Any())
+                if (conditionalOperation.WhenTrue.ChildOperations.Any())
                 {
                     using var additionalLocation = ArrayBuilder<Location>.GetInstance(2);
                     additionalLocation.Add(conditionalOperation.Syntax.GetLocation());
 
-                    switch (conditionalOperation.WhenTrue.Children.First())
+                    switch (conditionalOperation.WhenTrue.ChildOperations.First())
                     {
                         case IInvocationOperation childInvocationOperation:
                             if ((childInvocationOperation.TargetMethod.OriginalDefinition.Equals(remove1Param, SymbolEqualityComparer.Default) ||
@@ -98,7 +98,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                              * However, a fixer is only offered if there is a single method in the block.
                              */
 
-                            var nestedInvocationOperation = childStatementOperation.Children.OfType<IInvocationOperation>()
+                            var nestedInvocationOperation = childStatementOperation.ChildOperations.OfType<IInvocationOperation>()
                                                             .FirstOrDefault(op => op.TargetMethod.OriginalDefinition.Equals(remove1Param, SymbolEqualityComparer.Default) ||
                                                                                   op.TargetMethod.OriginalDefinition.Equals(remove2Param, SymbolEqualityComparer.Default));
 

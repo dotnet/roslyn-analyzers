@@ -73,6 +73,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static async Task<Document> SwapArgumentsOrderAsync(Document document, IObjectCreationOperation creation, int paramPosition, int argumentCount, CancellationToken token)
         {
+            Debug.Assert(creation.Type is not null);
+
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, token).ConfigureAwait(false);
             SyntaxNode parameter = AddNameOfIfLiteral(creation.Arguments[paramPosition].Value, editor.Generator);
             SyntaxNode newCreation;
@@ -80,11 +82,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 if (paramPosition == 0)
                 {
-                    newCreation = editor.Generator.ObjectCreationExpression(creation.Type, creation.Arguments[1].Syntax, parameter);
+                    newCreation = editor.Generator.ObjectCreationExpression(creation.Type!, creation.Arguments[1].Syntax, parameter);
                 }
                 else
                 {
-                    newCreation = editor.Generator.ObjectCreationExpression(creation.Type, parameter, creation.Arguments[0].Syntax);
+                    newCreation = editor.Generator.ObjectCreationExpression(creation.Type!, parameter, creation.Arguments[0].Syntax);
                 }
             }
             else
@@ -92,11 +94,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 Debug.Assert(argumentCount == 3);
                 if (paramPosition == 0)
                 {
-                    newCreation = editor.Generator.ObjectCreationExpression(creation.Type, creation.Arguments[1].Syntax, parameter, creation.Arguments[2].Syntax);
+                    newCreation = editor.Generator.ObjectCreationExpression(creation.Type!, creation.Arguments[1].Syntax, parameter, creation.Arguments[2].Syntax);
                 }
                 else
                 {
-                    newCreation = editor.Generator.ObjectCreationExpression(creation.Type, parameter, creation.Arguments[1].Syntax, creation.Arguments[0].Syntax);
+                    newCreation = editor.Generator.ObjectCreationExpression(creation.Type!, parameter, creation.Arguments[1].Syntax, creation.Arguments[0].Syntax);
                 }
             }
 
@@ -106,9 +108,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static async Task<Document> AddNullMessageToArgumentListAsync(Document document, IObjectCreationOperation creation, CancellationToken token)
         {
+            Debug.Assert(creation.Type is not null);
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, token).ConfigureAwait(false);
             SyntaxNode argument = AddNameOfIfLiteral(creation.Arguments[0].Value, editor.Generator);
-            SyntaxNode newCreation = editor.Generator.ObjectCreationExpression(creation.Type, editor.Generator.Argument(editor.Generator.NullLiteralExpression()), argument);
+            SyntaxNode newCreation = editor.Generator.ObjectCreationExpression(creation.Type!, editor.Generator.Argument(editor.Generator.NullLiteralExpression()), argument);
             editor.ReplaceNode(creation.Syntax, newCreation);
             return editor.GetChangedDocument();
         }

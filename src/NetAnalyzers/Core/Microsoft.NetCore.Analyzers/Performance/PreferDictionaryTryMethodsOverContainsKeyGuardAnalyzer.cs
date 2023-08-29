@@ -493,7 +493,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private static void FindUsageInOperationsAfterConditionBlock(IOperation sourceOperation, ref DictionaryUsageContext context, SearchContext searchContext)
         {
             var testOperation = false;
-            foreach (var operation in sourceOperation.Parent!.Children)
+            foreach (var operation in sourceOperation.Parent!.ChildOperations)
             {
                 if (!testOperation)
                 {

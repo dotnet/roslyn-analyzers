@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -130,7 +129,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             return;
                         }
 
-                        IEnumerator<IOperation> enumerator = operationContext.Operation.Children.GetEnumerator();
+                        var enumerator = operationContext.Operation.ChildOperations.GetEnumerator();
 
                         if (!enumerator.MoveNext())
                         {

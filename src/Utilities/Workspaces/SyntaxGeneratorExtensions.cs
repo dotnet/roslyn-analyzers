@@ -431,7 +431,7 @@ namespace Analyzer.Utilities
         {
             return generator.ThrowStatement(generator.ObjectCreationExpression(
                 generator.TypeExpression(
-                    compilation.GetOrCreateTypeByMetadataName(SystemNotImplementedExceptionTypeName))));
+                    compilation.GetOrCreateTypeByMetadataName(SystemNotImplementedExceptionTypeName)!)));
         }
 
         public static SyntaxNode? TryGetContainingDeclaration(this SyntaxGenerator generator, SyntaxNode? node, DeclarationKind kind)

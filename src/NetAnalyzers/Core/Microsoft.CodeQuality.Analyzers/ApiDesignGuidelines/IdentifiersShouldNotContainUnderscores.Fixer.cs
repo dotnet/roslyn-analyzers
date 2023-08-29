@@ -58,10 +58,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             string title = MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresCodeFixTitle;
+#pragma warning disable CS0618 // Type or member is obsolete
             context.RegisterCodeFix(CodeAction.Create(title,
                                         ct => Renamer.RenameSymbolAsync(context.Document.Project.Solution, symbol, newName, context.Document.Project.Solution.Options, ct),
                                         equivalenceKey: title),
                                     context.Diagnostics);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         protected static string RemoveUnderscores(string name)

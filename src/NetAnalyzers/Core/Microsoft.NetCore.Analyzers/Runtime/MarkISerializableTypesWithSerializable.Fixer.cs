@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(context.Document);
             SyntaxNode root = await context.Document.GetRequiredSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            SyntaxNode node = root.FindNode(context.Span);
+            SyntaxNode? node = root.FindNode(context.Span);
             node = generator.GetDeclaration(node);
             if (node == null)
             {
@@ -43,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxNode attr = editor.Generator.Attribute(editor.Generator.TypeExpression(
-                editor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute)));
+                editor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute)!));
             editor.AddAttribute(node, attr);
             return editor.GetChangedDocument();
         }

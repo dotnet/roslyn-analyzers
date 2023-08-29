@@ -53,7 +53,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         protected abstract ValueTask<(SyntaxNode TypeDeclaration, INamedTypeSymbol? TypeSymbol)> GetTypeSymbolAsync(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken);
 
-        protected abstract string ReplaceSearchValuesFieldName(string name);
+        protected abstract SyntaxNode ReplaceSearchValuesFieldName(SyntaxNode node);
 
         protected abstract SyntaxNode GetDeclaratorInitializer(SyntaxNode syntax);
 
@@ -96,9 +96,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
             }
 
-            // Allow the user to pick a different name for the method.
-            fieldName = ReplaceSearchValuesFieldName(fieldName);
-
             // private static readonly SearchValues<T> s_myValues = SearchValues.Create(argument);
             var newField = generator.FieldDeclaration(
                 fieldName,
@@ -108,6 +105,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 generator.InvocationExpression(
                     generator.MemberAccessExpression(generator.TypeExpressionForStaticMemberAccess(searchValues), "Create"),
                     CreateSearchValuesCreateArgument(argumentOperation.Syntax, argumentOperation.Value, cancellationToken)));
+
+            // Allow the user to pick a different name for the method.
+            newField = ReplaceSearchValuesFieldName(newField);
 
             editor.InsertMembers(typeDeclaration, 0, new[] { newField });
 

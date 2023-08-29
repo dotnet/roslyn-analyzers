@@ -32,9 +32,17 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             return (typeDeclarationOrCompilationUnit, typeSymbol);
         }
 
-        protected override string ReplaceSearchValuesFieldName(string name)
+        protected override SyntaxNode ReplaceSearchValuesFieldName(SyntaxNode node)
         {
-            return SyntaxFactory.Identifier(name).WithAdditionalAnnotations(RenameAnnotation.Create()).ValueText;
+            if (node is FieldDeclarationSyntax fieldDeclaration &&
+                fieldDeclaration.Declaration is { } declaration &&
+                declaration.Variables is [var declarator])
+            {
+                var newDeclarator = declarator.ReplaceToken(declarator.Identifier, declarator.Identifier.WithAdditionalAnnotations(RenameAnnotation.Create()));
+                return fieldDeclaration.WithDeclaration(declaration.WithVariables(new SeparatedSyntaxList<VariableDeclaratorSyntax>().Add(newDeclarator)));
+            }
+
+            return node;
         }
 
         protected override SyntaxNode GetDeclaratorInitializer(SyntaxNode syntax)

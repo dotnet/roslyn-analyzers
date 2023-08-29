@@ -71,6 +71,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             bool isStringIndexOfAny = invocation.TargetMethod.ContainingType.SpecialType == SpecialType.System_String;
 
+            if (isStringIndexOfAny && invocation.Parent is IConditionalAccessOperation)
+            {
+                // We don't flag uses like "string?.IndexOfAny(char[])"
+                // as it's not trivial to rewrite to the span-based variant.
+                return;
+            }
+
             if (isStringIndexOfAny
                 ? AreConstantValuesWorthReplacingForStringIndexOfAny(valuesArgument.Value)
                 : AreConstantValuesWorthReplacing(valuesArgument.Value, readOnlySpanType))

@@ -101,6 +101,13 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                             'a', 'e', 'i', 'o', 'u', 'A'
                         }|]);
 
+                        _ = str.IndexOfAny([|new char[] { }|]);
+                        _ = str.IndexOfAny([|new[] { 'a', 'e', 'i', 'o', 'u' }|]);
+                        _ = str.IndexOfAny([|new[] { 'a', 'e', 'i', 'o', 'u', 'A' }|]);
+                        _ = str.IndexOfAny([|new char[] { 'a', 'e', 'i', 'o', 'u', 'A' }|]);
+
+                        _ = str?.IndexOfAny(new[] { 'a', 'e', 'i', 'o', 'u', 'A' });
+
                         _ = bytes.IndexOfAny(new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u' });
                         _ = bytes.IndexOfAny([|new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' }|]);
                         _ = bytes.IndexOfAny([|new byte[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' }|]);

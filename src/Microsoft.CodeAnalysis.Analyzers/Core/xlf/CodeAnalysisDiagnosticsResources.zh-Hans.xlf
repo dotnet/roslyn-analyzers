@@ -207,6 +207,11 @@
         <target state="translated">启用并发执行</target>
         <note />
       </trans-unit>
+      <trans-unit id="EnabledConcurrentExecutionDescription">
+        <source>Call the 'AnalysisContext.EnableConcurrentExecution' method to enable concurrent execution of analyzer actions registered by this analyzer. An analyzer that registers for concurrent execution can have better performance than a non-concurrent analyzer. However, such an analyzer must ensure that its actions can execute correctly in parallel.</source>
+        <target state="new">Call the 'AnalysisContext.EnableConcurrentExecution' method to enable concurrent execution of analyzer actions registered by this analyzer. An analyzer that registers for concurrent execution can have better performance than a non-concurrent analyzer. However, such an analyzer must ensure that its actions can execute correctly in parallel.</target>
+        <note>Do not localize 'AnalysisContext.EnableConcurrentExecution'.</note>
+      </trans-unit>
       <trans-unit id="InvalidEntryInAnalyzerReleasesFileRuleDescription">
         <source>Invalid entry in analyzer release file.</source>
         <target state="translated">分析器版本文件中的条目无效。</target>

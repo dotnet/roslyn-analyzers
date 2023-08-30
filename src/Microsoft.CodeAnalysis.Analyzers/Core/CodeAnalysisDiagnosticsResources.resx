@@ -365,6 +365,10 @@
   <data name="EnableConcurrentExecutionTitle" xml:space="preserve">
     <value>Enable concurrent execution</value>
   </data>
+  <data name="EnabledConcurrentExecutionDescription" xml:space="preserve">
+    <value>Call the 'AnalysisContext.EnableConcurrentExecution' method to enable concurrent execution of analyzer actions registered by this analyzer. An analyzer that registers for concurrent execution can have better performance than a non-concurrent analyzer. However, such an analyzer must ensure that its actions can execute correctly in parallel.</value>
+    <comment>Do not localize 'AnalysisContext.EnableConcurrentExecution'.</comment>
+  </data>
   <data name="ConfigureGeneratedCodeAnalysisFix" xml:space="preserve">
     <value>Configure generated code analysis</value>
   </data>

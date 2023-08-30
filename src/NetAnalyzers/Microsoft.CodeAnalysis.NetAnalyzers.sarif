@@ -401,8 +401,8 @@
         },
         "CA1870": {
           "id": "CA1870",
-          "shortDescription": "Use `SearchValues`",
-          "fullDescription": "Use a cached `SearchValues` instance in `IndexOfAny`/`ContainsAny` calls for improved searching performance.",
+          "shortDescription": "Use a cached 'SearchValues' instance for repeated searching operations",
+          "fullDescription": "Using a cached 'SearchValues' instance is more efficient than passing values to 'IndexOfAny'/'ContainsAny' directly.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1870",
           "properties": {

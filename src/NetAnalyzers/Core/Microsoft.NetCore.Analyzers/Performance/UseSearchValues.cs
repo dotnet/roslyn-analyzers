@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             DiagnosticId,
             CreateLocalizableResourceString(nameof(UseSearchValuesTitle)),
-            CreateLocalizableResourceString(nameof(UseSearchValuesTitle)),
+            CreateLocalizableResourceString(nameof(UseSearchValuesMessage)),
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
             description: CreateLocalizableResourceString(nameof(UseSearchValuesDescription)),

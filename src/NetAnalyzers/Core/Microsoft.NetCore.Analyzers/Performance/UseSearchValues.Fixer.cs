@@ -45,9 +45,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    UseSearchValuesTitle,
+                    UseSearchValuesCodeFixTitle,
                     cancellationToken => ConvertToSearchValuesAsync(context.Document, node, cancellationToken),
-                    equivalenceKey: nameof(UseSearchValuesTitle)),
+                    equivalenceKey: nameof(UseSearchValuesCodeFixTitle)),
                 context.Diagnostics);
         }
 

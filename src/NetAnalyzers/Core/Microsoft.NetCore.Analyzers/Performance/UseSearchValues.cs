@@ -221,6 +221,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // ReadOnlySpan<byte> Values => "abc"u8;
                 // ReadOnlySpan<byte> Values => new byte[] { (byte)'a', (byte)'b', (byte)'c' };
                 // ReadOnlySpan<char> Values => new char[] { 'a', 'b', 'c' };
+                // ReadOnlySpan<char> Values => "abc".ToCharArray();
                 // text.IndexOfAny(Values)
                 return
                     propertyReference.Member is IPropertySymbol property &&

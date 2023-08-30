@@ -49,6 +49,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     private ReadOnlySpan<char> LongReadOnlySpanOfCharRVAProperty => new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     private ReadOnlySpan<byte> ShortReadOnlySpanOfByteRVAProperty => new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u' };
                     private ReadOnlySpan<byte> LongReadOnlySpanOfByteRVAProperty => new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' };
+                    private ReadOnlySpan<char> ShortReadOnlySpanOfCharFromToCharArrayProperty => "aeiou".ToCharArray();
+                    private ReadOnlySpan<char> LongReadOnlySpanOfCharFromToCharArrayProperty => "aeiouA".ToCharArray();
                     private ReadOnlySpan<char> LongReadOnlySpanOfCharRVAPropertyWithGetAccessor1
                     {
                         get => new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
@@ -145,6 +147,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                         _ = chars.IndexOfAny(ShortReadOnlySpanOfCharRVAProperty);
                         _ = chars.IndexOfAny([|LongReadOnlySpanOfCharRVAProperty|]);
+                        _ = chars.IndexOfAny(ShortReadOnlySpanOfCharFromToCharArrayProperty);
+                        _ = chars.IndexOfAny([|LongReadOnlySpanOfCharFromToCharArrayProperty|]);
 
                         _ = bytes.IndexOfAny(ShortReadOnlySpanOfByteRVAProperty);
                         _ = bytes.IndexOfAny([|LongReadOnlySpanOfByteRVAProperty|]);
@@ -281,6 +285,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [InlineData("static ReadOnlySpan<byte>", "{ get { return new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' }; } }", true)]
         [InlineData("readonly char[]", "= \"aeiouA\".ToCharArray();", false)]
         [InlineData("static readonly char[]", "= \"aeiouA\".ToCharArray();", false)]
+        [InlineData("ReadOnlySpan<char>", "=> \"aeiouA\".ToCharArray();", false)]
+        [InlineData("static ReadOnlySpan<char>", "=> \"aeiouA\".ToCharArray();", true)]
         public async Task TestCodeFixerNamedArguments(string modifiersAndType, string initializer, bool createWillUseMemberReference)
         {
             const string OriginalValuesName = "MyValuesTypeMember";

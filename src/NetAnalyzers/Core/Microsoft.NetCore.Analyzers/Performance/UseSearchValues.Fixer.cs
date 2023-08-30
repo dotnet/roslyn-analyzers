@@ -219,7 +219,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         name = $"{char.ToLowerInvariant(name[0])}{name[1..]}";
                     }
 
-                    name = $"s_{name}";
+                    name = $"s_{name.TrimStart('_')}";
                 }
 
                 return $"{name}SearchValues";

@@ -734,6 +734,51 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
+        [InlineData("MyValues", "s_myValuesSearchValues")]
+        [InlineData("myValues", "s_myValuesSearchValues")]
+        [InlineData("_myValues", "s_myValuesSearchValues")]
+        [InlineData("_MyValues", "s_MyValuesSearchValues")]
+        [InlineData("s_myValues", "s_myValuesSearchValues")]
+        [InlineData("s_MyValues", "s_MyValuesSearchValues")]
+        public async Task TestCodeFixerPicksFriendlyFieldNames(string memberName, string expectedFieldName)
+        {
+            string source =
+                $$"""
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private const string {{memberName}} = "aeiouA";
+
+                    private void TestMethod(ReadOnlySpan<char> text)
+                    {
+                        _ = text.IndexOfAny([|{{memberName}}|]);
+                    }
+                }
+                """;
+
+            string expected =
+                $$"""
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private static readonly SearchValues<char> {{expectedFieldName}} = SearchValues.Create({{memberName}});
+                    private const string {{memberName}} = "aeiouA";
+
+                    private void TestMethod(ReadOnlySpan<char> text)
+                    {
+                        _ = text.IndexOfAny({{expectedFieldName}});
+                    }
+                }
+                """;
+
+            await VerifyCodeFixAsync(LanguageVersion.CSharp7_3, source, expected);
+        }
+
+        [Theory]
         [InlineData(true)]
         [InlineData(false)]
         public async Task TestCodeFixerAccountsForUsingStatements(bool hasSystemBuffersUsing)

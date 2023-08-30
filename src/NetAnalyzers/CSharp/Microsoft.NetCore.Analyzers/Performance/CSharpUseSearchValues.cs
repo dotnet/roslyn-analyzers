@@ -29,13 +29,14 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         // ReadOnlySpan<char> myProperty => new char[] { 'a', 'b', 'c' };
         // ReadOnlySpan<char> myProperty => new[] { 'a', 'b', 'c' };
         // ReadOnlySpan<byte> myProperty => new[] { (byte)'a', (byte)'b', (byte)'c' };
-        // ReadOnlySpan<char> myProperty { get => new[] { 'a', 'b', 'c' }; }
-        // ReadOnlySpan<char> myProperty { get { return new[] { 'a', 'b', 'c' }; } }
+        // ReadOnlySpan<byte> myProperty => "abc"u8;
+        // ReadOnlySpan<byte> myProperty { get => "abc"u8; }
+        // ReadOnlySpan<byte> myProperty { get { return "abc"u8; } }
         protected override bool IsConstantByteOrCharReadOnlySpanPropertyDeclarationSyntax(SyntaxNode syntax, out int length)
         {
             if (syntax is PropertyDeclarationSyntax propertyDeclaration &&
                 TryGetPropertyGetterExpression(propertyDeclaration) is { } expression &&
-                IsConstantByteOrCharArrayCreationExpression(expression, values: null, out length))
+                (IsConstantByteOrCharArrayCreationExpression(expression, values: null, out length) || IsUtf8StringLiteralExpression(expression, out length)))
             {
                 return true;
             }
@@ -125,6 +126,24 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 value = default;
                 return false;
             }
+        }
+
+        private static bool IsUtf8StringLiteralExpression(ExpressionSyntax expression, out int length)
+        {
+            const SyntaxKind Utf8StringLiteralExpression = (SyntaxKind)8756;
+            const SyntaxKind Utf8StringLiteralToken = (SyntaxKind)8520;
+
+            if (expression.IsKind(Utf8StringLiteralExpression) &&
+                expression is LiteralExpressionSyntax literal &&
+                literal.Token.IsKind(Utf8StringLiteralToken) &&
+                literal.Token.Value is string value)
+            {
+                length = value.Length;
+                return true;
+            }
+
+            length = 0;
+            return false;
         }
 
         protected override bool ArrayFieldUsesAreLikelyReadOnly(SyntaxNode syntax)

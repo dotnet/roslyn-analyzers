@@ -58,9 +58,9 @@
         <note />
       </trans-unit>
       <trans-unit id="ConfigureGeneratedCodeAnalysisDescription">
-        <source>Call the 'AnalyzerContext.ConfigureGeneratedCodeAnalysis' method to configure the handling of generated code for this analyzer. Non-configured analyzers will default to an appropriate default mode for generated code.</source>
-        <target state="new">Call the 'AnalyzerContext.ConfigureGeneratedCodeAnalysis' method to configure the handling of generated code for this analyzer. Non-configured analyzers will default to an appropriate default mode for generated code.</target>
-        <note>Do not localize 'AnalyzerContext.ConfigureGeneratedCodeAnalysis'.</note>
+        <source>Call the 'AnalysisContext.ConfigureGeneratedCodeAnalysis' method to configure the handling of generated code for this analyzer. Non-configured analyzers will default to an appropriate default mode for generated code.</source>
+        <target state="new">Call the 'AnalysisContext.ConfigureGeneratedCodeAnalysis' method to configure the handling of generated code for this analyzer. Non-configured analyzers will default to an appropriate default mode for generated code.</target>
+        <note>Do not localize 'AnalysisContext.ConfigureGeneratedCodeAnalysis'.</note>
       </trans-unit>
       <trans-unit id="ConfigureGeneratedCodeAnalysisFix">
         <source>Configure generated code analysis</source>

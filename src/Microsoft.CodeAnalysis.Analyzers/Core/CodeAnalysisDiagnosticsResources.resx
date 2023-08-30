@@ -356,8 +356,8 @@
     <value>Configure generated code analysis</value>
   </data>
   <data name="ConfigureGeneratedCodeAnalysisDescription" xml:space="preserve">
-    <value>Call the 'AnalyzerContext.ConfigureGeneratedCodeAnalysis' method to configure the handling of generated code for this analyzer. Non-configured analyzers will default to an appropriate default mode for generated code.</value>
-    <comment>Do not localize 'AnalyzerContext.ConfigureGeneratedCodeAnalysis'.</comment>
+    <value>Call the 'AnalysisContext.ConfigureGeneratedCodeAnalysis' method to configure the handling of generated code for this analyzer. Non-configured analyzers will default to an appropriate default mode for generated code.</value>
+    <comment>Do not localize 'AnalysisContext.ConfigureGeneratedCodeAnalysis'.</comment>
   </data>
   <data name="EnableConcurrentExecutionMessage" xml:space="preserve">
     <value>Enable concurrent execution</value>

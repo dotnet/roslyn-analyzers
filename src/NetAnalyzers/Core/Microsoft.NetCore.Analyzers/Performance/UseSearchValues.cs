@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.Lightup;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -205,6 +206,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     // text.IndexOfAny(StringConst.ToCharArray())
                     return IsConstantStringToCharArrayInvocation(invocation);
                 }
+            }
+            else if (argument.Kind == OperationKindEx.Utf8String)
+            {
+                // text.IndexOfAny("abc"u8)
+                return
+                    IUtf8StringOperationWrapper.IsInstance(argument) &&
+                    IUtf8StringOperationWrapper.FromOperation(argument).Value.Length >= MinLengthWorthReplacing;
             }
             else if (argument is IPropertyReferenceOperation propertyReference)
             {

@@ -190,6 +190,30 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task TestUtf8StringLiteralsAnalyzer()
+        {
+            await VerifyAnalyzerAsync(LanguageVersion.CSharp11,
+                """
+                using System;
+
+                internal sealed class Test
+                {
+                    private ReadOnlySpan<byte> ShortReadOnlySpanOfByteRVAPropertyU8 => "aeiou"u8;
+                    private ReadOnlySpan<byte> LongReadOnlySpanOfByteRVAPropertyU8 => "aeiouA"u8;
+
+                    private void TestMethod(ReadOnlySpan<byte> bytes)
+                    {
+                        _ = bytes.IndexOfAny("aeiou"u8);
+                        _ = bytes.IndexOfAny([|"aeiouA"u8|]);
+
+                        _ = bytes.IndexOfAny(ShortReadOnlySpanOfByteRVAPropertyU8);
+                        _ = bytes.IndexOfAny([|LongReadOnlySpanOfByteRVAPropertyU8|]);
+                    }
+                }
+                """);
+        }
+
+        [Fact]
         public async Task TestAllIndexOfAnyAndContainsAnyOverloadsAnalyzer()
         {
             await VerifyAnalyzerAsync(LanguageVersion.CSharp7_3,
@@ -237,10 +261,16 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [InlineData("readonly char[]", "= new char[]  { 'a', 'e', 'i', 'o', 'u',  'A' };", false)]
         [InlineData("ReadOnlySpan<char>", "=> new[] { 'a', 'e', 'i', 'o', 'u', 'A' };", false)]
         [InlineData("ReadOnlySpan<byte>", "=> new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' };", false)]
+        [InlineData("ReadOnlySpan<byte>", "=> \"aeiouA\"u8;", false)]
         [InlineData("static ReadOnlySpan<char>", "=> new[] { 'a', 'e', 'i', 'o', 'u', 'A' };", true)]
         [InlineData("static ReadOnlySpan<byte>", "=> new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' };", true)]
+        [InlineData("static ReadOnlySpan<byte>", "=> \"aeiouA\"u8;", true)]
+        [InlineData("ReadOnlySpan<byte>", "{ get => \"aeiouA\"u8; }", false)]
+        [InlineData("ReadOnlySpan<byte>", "{ get { return \"aeiouA\"u8; } }", false)]
         [InlineData("ReadOnlySpan<char>", "{ get => new[] { 'a', 'e', 'i', 'o', 'u', 'A' }; }", false)]
         [InlineData("ReadOnlySpan<byte>", "{ get { return new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' }; } }", false)]
+        [InlineData("static ReadOnlySpan<byte>", "{ get => \"aeiouA\"u8; }", true)]
+        [InlineData("static ReadOnlySpan<byte>", "{ get { return \"aeiouA\"u8; } }", true)]
         [InlineData("static ReadOnlySpan<char>", "{ get => new[] { 'a', 'e', 'i', 'o', 'u', 'A' }; }", true)]
         [InlineData("static ReadOnlySpan<byte>", "{ get { return new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' }; } }", true)]
         public async Task TestCodeFixerNamedArguments(string modifiersAndType, string initializer, bool createWillUseMemberReference)
@@ -274,12 +304,19 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     }
 
                     await TestAsync(LanguageVersion.CSharp7_3, expression);
-                    await TestAsync(LanguageVersion.CSharp11, expression);
+                    await TestAsync(LanguageVersion.CSharp11, "\"aeiouA\"u8");
                 }
             }
 
             async Task TestAsync(LanguageVersion languageVersion, string expectedCreateExpression)
             {
+                if (languageVersion < LanguageVersion.CSharp11 &&
+                    (memberDefinition.Contains("u8", StringComparison.Ordinal) || expectedCreateExpression.Contains("u8", StringComparison.Ordinal)))
+                {
+                    // Need CSharp 11 or newer to use Utf8 string literals
+                    return;
+                }
+
                 string source =
                     $$"""
                     using System;
@@ -491,13 +528,15 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [InlineData(LanguageVersion.CSharp7_3, "\"aeiouA\"", "\"aeiouA\"")]
         [InlineData(LanguageVersion.CSharp7_3, "@\"aeiouA\"", "@\"aeiouA\"")]
+        [InlineData(LanguageVersion.CSharp11, "\"aeiouA\"u8", "\"aeiouA\"u8")]
         [InlineData(LanguageVersion.CSharp7_3, "new[] { 'a', 'e', 'i', 'o', 'u', 'A' }", "\"aeiouA\"")]
         [InlineData(LanguageVersion.CSharp7_3, "new char[] { 'a', 'e', 'i', 'o', 'u', 'A' }", "\"aeiouA\"")]
         [InlineData(LanguageVersion.CSharp7_3, "new char[]  { 'a', 'e', 'i', 'o',  'u', 'A' }", "\"aeiouA\"")]
         [InlineData(LanguageVersion.CSharp7_3, "new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' }", "new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' }")]
+        [InlineData(LanguageVersion.CSharp11, "new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' }", "\"aeiouA\"u8")]
         public async Task TestCodeFixerInlineArguments(LanguageVersion languageVersion, string values, string expectedCreateArgument)
         {
-            string byteOrChar = values.Contains("byte", StringComparison.Ordinal) ? "byte" : "char";
+            string byteOrChar = values.Contains("byte", StringComparison.Ordinal) || values.Contains("u8", StringComparison.Ordinal) ? "byte" : "char";
             string searchValuesFieldName = byteOrChar == "byte" ? "s_myBytes" : "s_myChars";
 
             string source =

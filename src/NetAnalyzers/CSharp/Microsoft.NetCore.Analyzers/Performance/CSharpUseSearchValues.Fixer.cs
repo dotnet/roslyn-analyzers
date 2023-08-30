@@ -61,6 +61,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         }
 
         // new[] { 'a', 'b', 'c' } => "abc"
+        // new[] { (byte)'a', (byte)'b', (byte)'c' } => "abc"u8
         protected override SyntaxNode? TryReplaceArrayCreationWithInlineLiteralExpression(IOperation operation)
         {
             if (operation is IConversionOperation conversion)
@@ -73,7 +74,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             {
                 bool isByte = elementType.SpecialType == SpecialType.System_Byte;
 
-                if (isByte)
+                if (isByte &&
+                    (operation.SemanticModel?.Compilation is not CSharpCompilation compilation ||
+                    compilation.LanguageVersion < (LanguageVersion)1100)) // LanguageVersion.CSharp11
                 {
                     // Can't use Utf8StringLiterals
                     return null;
@@ -89,12 +92,15 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     string valuesString = string.Concat(values);
                     string stringLiteral = SymbolDisplay.FormatLiteral(valuesString, quote: true);
 
+                    const SyntaxKind Utf8StringLiteralExpression = (SyntaxKind)8756;
+                    const SyntaxKind Utf8StringLiteralToken = (SyntaxKind)8520;
+
                     return SyntaxFactory.LiteralExpression(
-                        SyntaxKind.StringLiteralExpression,
+                        isByte ? Utf8StringLiteralExpression : SyntaxKind.StringLiteralExpression,
                         SyntaxFactory.Token(
                             leading: default,
-                            kind: SyntaxKind.StringLiteralToken,
-                            text: stringLiteral,
+                            kind: isByte ? Utf8StringLiteralToken : SyntaxKind.StringLiteralToken,
+                            text: isByte ? $"{stringLiteral}u8" : stringLiteral,
                             valueText: valuesString,
                             trailing: default));
                 }

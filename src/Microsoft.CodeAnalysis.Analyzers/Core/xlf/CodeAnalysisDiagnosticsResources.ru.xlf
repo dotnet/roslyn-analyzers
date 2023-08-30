@@ -308,8 +308,8 @@
         <note />
       </trans-unit>
       <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription">
-        <source>A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'.</source>
-        <target state="translated">Проект, содержащий анализаторы или исходные генераторы, должен указывать свойство "&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;"</target>
+        <source>A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'. This will flag the use of APIs that are problematic in analyzers/source generators and should be avoided.</source>
+        <target state="needs-review-translation">Проект, содержащий анализаторы или исходные генераторы, должен указывать свойство "&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;"</target>
         <note />
       </trans-unit>
       <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage">

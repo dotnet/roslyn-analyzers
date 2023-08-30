@@ -57,6 +57,11 @@
         <target state="translated">シンボルは等しいかどうかを比較する必要があります</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConfigureGeneratedCodeAnalysisDescription">
+        <source>Call the 'AnalyzerContext.ConfigureGeneratedCodeAnalysis' method to configure the handling of generated code for this analyzer. Non-configured analyzers will default to an appropriate default mode for generated code.</source>
+        <target state="new">Call the 'AnalyzerContext.ConfigureGeneratedCodeAnalysis' method to configure the handling of generated code for this analyzer. Non-configured analyzers will default to an appropriate default mode for generated code.</target>
+        <note>Do not localize 'AnalyzerContext.ConfigureGeneratedCodeAnalysis'.</note>
+      </trans-unit>
       <trans-unit id="ConfigureGeneratedCodeAnalysisFix">
         <source>Configure generated code analysis</source>
         <target state="translated">生成されたコード分析を構成します</target>

@@ -1800,9 +1800,9 @@ Avoid creating a new 'JsonSerializerOptions' instance for every serialization op
 |CodeFix|False|
 ---
 
-## [CA1870](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1870): Use `SearchValues`
+## [CA1870](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1870): Use a cached 'SearchValues' instance for repeated searching operations
 
-Use a cached `SearchValues` instance in `IndexOfAny`/`ContainsAny` calls for improved searching performance.
+Using a cached 'SearchValues' instance is more efficient than passing values to 'IndexOfAny'/'ContainsAny' directly.
 
 |Item|Value|
 |-|-|

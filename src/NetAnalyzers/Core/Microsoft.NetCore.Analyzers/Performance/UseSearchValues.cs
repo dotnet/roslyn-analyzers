@@ -158,6 +158,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             else if (argument is IFieldReferenceOperation fieldReference)
             {
                 // readonly char[] Values = new char[] { 'a', 'b', 'c' };
+                // readonly char[] Values = "abc".ToCharArray();
                 // text.IndexOfAny(Values)
                 return
                     IsConstantByteOrCharSZArrayFieldReference(fieldReference, out int length) &&
@@ -195,6 +196,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 else if (conversion.Operand is IFieldReferenceOperation fieldReference)
                 {
                     // readonly char[] Values = new char[] { 'a', 'b', 'c' };
+                    // readonly char[] Values = "abc".ToCharArray();
                     // text.IndexOfAny(Values)
                     return
                         IsConstantByteOrCharSZArrayFieldReference(fieldReference, out length) &&
@@ -246,7 +248,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         // text.IndexOfAny("abc".ToCharArray())
         // text.IndexOfAny(StringConst.ToCharArray())
-        private static bool IsConstantStringToCharArrayInvocation(IInvocationOperation invocation) =>
+        internal static bool IsConstantStringToCharArrayInvocation(IInvocationOperation invocation) =>
             invocation.TargetMethod.ContainingType.SpecialType == SpecialType.System_String &&
             invocation.TargetMethod.Name == nameof(string.ToCharArray) &&
             invocation.Instance is { } stringInstance &&

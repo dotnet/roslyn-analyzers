@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities.Extensions;
@@ -62,6 +63,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
         // new[] { 'a', 'b', 'c' } => "abc"
         // new[] { (byte)'a', (byte)'b', (byte)'c' } => "abc"u8
+        // "abc".ToCharArray() => "abc"
         protected override SyntaxNode? TryReplaceArrayCreationWithInlineLiteralExpression(IOperation operation)
         {
             if (operation is IConversionOperation conversion)
@@ -103,6 +105,14 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                             text: isByte ? $"{stringLiteral}u8" : stringLiteral,
                             valueText: valuesString,
                             trailing: default));
+                }
+            }
+            else if (operation is IInvocationOperation invocation)
+            {
+                if (UseSearchValuesAnalyzer.IsConstantStringToCharArrayInvocation(invocation))
+                {
+                    Debug.Assert(invocation.Instance is not null);
+                    return invocation.Instance!.Syntax;
                 }
             }
 

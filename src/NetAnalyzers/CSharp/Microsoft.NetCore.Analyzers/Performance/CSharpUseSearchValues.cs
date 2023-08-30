@@ -69,6 +69,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         // new char[] { 'a', 'b', 'c' };
         // new[] { 'a', 'b', 'c' };
         // new[] { (byte)'a', (byte)'b', (byte)'c' };
+        // "abc".ToCharArray()
         internal static bool IsConstantByteOrCharArrayCreationExpression(ExpressionSyntax expression, List<char>? values, out int length)
         {
             length = 0;
@@ -82,6 +83,20 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             else if (expression is ImplicitArrayCreationExpressionSyntax implicitArrayCreation)
             {
                 arrayInitializer = implicitArrayCreation.Initializer;
+            }
+            else if (expression is InvocationExpressionSyntax invocation)
+            {
+                if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                    memberAccess.Expression.IsKind(SyntaxKind.StringLiteralExpression) &&
+                    memberAccess.Expression is LiteralExpressionSyntax literal &&
+                    literal.Token.IsKind(SyntaxKind.StringLiteralToken) &&
+                    literal.Token.Value is string value &&
+                    memberAccess.Name.Identifier.ValueText == nameof(string.ToCharArray) &&
+                    invocation.ArgumentList.Arguments.Count == 0)
+                {
+                    length = value.Length;
+                    return true;
+                }
             }
 
             if (arrayInitializer?.Expressions is { } valueExpressions)

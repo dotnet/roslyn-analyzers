@@ -43,6 +43,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     private static readonly char[] LongStaticReadonlyExplicitCharArrayField = new char[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     private readonly char[] InstanceReadonlyCharArrayField = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     private char[] InstanceSettableCharArrayField = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
+                    private readonly char[] ShortReadonlyCharArrayFieldFromToCharArray = "aeiou".ToCharArray();
+                    private readonly char[] LongReadonlyCharArrayFieldFromToCharArray = "aeiouA".ToCharArray();
                     private ReadOnlySpan<char> ShortReadOnlySpanOfCharRVAProperty => new[] { 'a', 'e', 'i', 'o', 'u' };
                     private ReadOnlySpan<char> LongReadOnlySpanOfCharRVAProperty => new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     private ReadOnlySpan<byte> ShortReadOnlySpanOfByteRVAProperty => new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u' };
@@ -127,12 +129,16 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         _ = chars.IndexOfAny([|LongStaticReadonlyExplicitCharArrayField|]);
                         _ = chars.IndexOfAny([|InstanceReadonlyCharArrayField|]);
                         _ = chars.IndexOfAny(InstanceSettableCharArrayField);
+                        _ = chars.IndexOfAny(ShortReadonlyCharArrayFieldFromToCharArray);
+                        _ = chars.IndexOfAny([|LongReadonlyCharArrayFieldFromToCharArray|]);
 
                         _ = str.IndexOfAny(ShortStaticReadonlyCharArrayField);
                         _ = str.IndexOfAny([|LongStaticReadonlyCharArrayField|]);
                         _ = str.IndexOfAny([|LongStaticReadonlyExplicitCharArrayField|]);
                         _ = str.IndexOfAny([|InstanceReadonlyCharArrayField|]);
                         _ = str.IndexOfAny(InstanceSettableCharArrayField);
+                        _ = str.IndexOfAny(ShortReadonlyCharArrayFieldFromToCharArray);
+                        _ = str.IndexOfAny([|LongReadonlyCharArrayFieldFromToCharArray|]);
 
                         _ = chars.IndexOfAny([|LongStaticReadonlyCharArrayFieldWithoutAccessibility|]);
                         _ = chars.IndexOfAny(LongStaticReadonlyCharArrayFieldWithPublicAccessibility);
@@ -273,6 +279,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [InlineData("static ReadOnlySpan<byte>", "{ get { return \"aeiouA\"u8; } }", true)]
         [InlineData("static ReadOnlySpan<char>", "{ get => new[] { 'a', 'e', 'i', 'o', 'u', 'A' }; }", true)]
         [InlineData("static ReadOnlySpan<byte>", "{ get { return new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' }; } }", true)]
+        [InlineData("readonly char[]", "= \"aeiouA\".ToCharArray();", false)]
+        [InlineData("static readonly char[]", "= \"aeiouA\".ToCharArray();", false)]
         public async Task TestCodeFixerNamedArguments(string modifiersAndType, string initializer, bool createWillUseMemberReference)
         {
             const string OriginalValuesName = "MyValuesTypeMember";

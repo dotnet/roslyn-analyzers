@@ -15,6 +15,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     {
         // char[] myField = new char[] { 'a', 'b', 'c' };
         // char[] myField = new[] { 'a', 'b', 'c' };
+        // char[] myField = "abc".ToCharArray();
         // byte[] myField = new[] { (byte)'a', (byte)'b', (byte)'c' };
         protected override bool IsConstantByteOrCharArrayVariableDeclaratorSyntax(SyntaxNode syntax, out int length)
         {
@@ -28,6 +29,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
         // ReadOnlySpan<char> myProperty => new char[] { 'a', 'b', 'c' };
         // ReadOnlySpan<char> myProperty => new[] { 'a', 'b', 'c' };
+        // ReadOnlySpan<char> myProperty => "abc".ToCharArray();
         // ReadOnlySpan<byte> myProperty => new[] { (byte)'a', (byte)'b', (byte)'c' };
         // ReadOnlySpan<byte> myProperty => "abc"u8;
         // ReadOnlySpan<byte> myProperty { get => "abc"u8; }

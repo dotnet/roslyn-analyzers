@@ -45,12 +45,16 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     private char[] InstanceSettableCharArrayField = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     private readonly char[] ShortReadonlyCharArrayFieldFromToCharArray = "aeiou".ToCharArray();
                     private readonly char[] LongReadonlyCharArrayFieldFromToCharArray = "aeiouA".ToCharArray();
+                    private readonly char[] ShortReadonlyCharArrayFieldFromConstToCharArray = ShortConstStringTypeMember.ToCharArray();
+                    private readonly char[] LongReadonlyCharArrayFieldFromConstToCharArray = LongConstStringTypeMember.ToCharArray();
                     private ReadOnlySpan<char> ShortReadOnlySpanOfCharRVAProperty => new[] { 'a', 'e', 'i', 'o', 'u' };
                     private ReadOnlySpan<char> LongReadOnlySpanOfCharRVAProperty => new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
                     private ReadOnlySpan<byte> ShortReadOnlySpanOfByteRVAProperty => new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u' };
                     private ReadOnlySpan<byte> LongReadOnlySpanOfByteRVAProperty => new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' };
                     private ReadOnlySpan<char> ShortReadOnlySpanOfCharFromToCharArrayProperty => "aeiou".ToCharArray();
                     private ReadOnlySpan<char> LongReadOnlySpanOfCharFromToCharArrayProperty => "aeiouA".ToCharArray();
+                    private ReadOnlySpan<char> ShortReadOnlySpanOfCharFromConstToCharArrayProperty => ShortConstStringTypeMember.ToCharArray();
+                    private ReadOnlySpan<char> LongReadOnlySpanOfCharFromConstToCharArrayProperty => LongConstStringTypeMember.ToCharArray();
                     private ReadOnlySpan<char> LongReadOnlySpanOfCharRVAPropertyWithGetAccessor1
                     {
                         get => new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
@@ -133,6 +137,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         _ = chars.IndexOfAny(InstanceSettableCharArrayField);
                         _ = chars.IndexOfAny(ShortReadonlyCharArrayFieldFromToCharArray);
                         _ = chars.IndexOfAny([|LongReadonlyCharArrayFieldFromToCharArray|]);
+                        _ = chars.IndexOfAny(ShortReadonlyCharArrayFieldFromConstToCharArray);
+                        _ = chars.IndexOfAny([|LongReadonlyCharArrayFieldFromConstToCharArray|]);
 
                         _ = str.IndexOfAny(ShortStaticReadonlyCharArrayField);
                         _ = str.IndexOfAny([|LongStaticReadonlyCharArrayField|]);
@@ -141,6 +147,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         _ = str.IndexOfAny(InstanceSettableCharArrayField);
                         _ = str.IndexOfAny(ShortReadonlyCharArrayFieldFromToCharArray);
                         _ = str.IndexOfAny([|LongReadonlyCharArrayFieldFromToCharArray|]);
+                        _ = str.IndexOfAny(ShortReadonlyCharArrayFieldFromConstToCharArray);
+                        _ = str.IndexOfAny([|LongReadonlyCharArrayFieldFromConstToCharArray|]);
 
                         _ = chars.IndexOfAny([|LongStaticReadonlyCharArrayFieldWithoutAccessibility|]);
                         _ = chars.IndexOfAny(LongStaticReadonlyCharArrayFieldWithPublicAccessibility);
@@ -149,6 +157,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         _ = chars.IndexOfAny([|LongReadOnlySpanOfCharRVAProperty|]);
                         _ = chars.IndexOfAny(ShortReadOnlySpanOfCharFromToCharArrayProperty);
                         _ = chars.IndexOfAny([|LongReadOnlySpanOfCharFromToCharArrayProperty|]);
+                        _ = chars.IndexOfAny(ShortReadOnlySpanOfCharFromConstToCharArrayProperty);
+                        _ = chars.IndexOfAny([|LongReadOnlySpanOfCharFromConstToCharArrayProperty|]);
 
                         _ = bytes.IndexOfAny(ShortReadOnlySpanOfByteRVAProperty);
                         _ = bytes.IndexOfAny([|LongReadOnlySpanOfByteRVAProperty|]);
@@ -287,7 +297,11 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [InlineData("static readonly char[]", "= \"aeiouA\".ToCharArray();", false)]
         [InlineData("ReadOnlySpan<char>", "=> \"aeiouA\".ToCharArray();", false)]
         [InlineData("static ReadOnlySpan<char>", "=> \"aeiouA\".ToCharArray();", true)]
-        public async Task TestCodeFixerNamedArguments(string modifiersAndType, string initializer, bool createWillUseMemberReference)
+        [InlineData("readonly char[]", "= ConstStringTypeMember.ToCharArray();", false, "ConstStringTypeMember")]
+        [InlineData("static readonly char[]", "= ConstStringTypeMember.ToCharArray();", false, "ConstStringTypeMember")]
+        [InlineData("ReadOnlySpan<char>", "=> ConstStringTypeMember.ToCharArray();", false, "ConstStringTypeMember")]
+        [InlineData("static ReadOnlySpan<char>", "=> ConstStringTypeMember.ToCharArray();", true)]
+        public async Task TestCodeFixerNamedArguments(string modifiersAndType, string initializer, bool createWillUseMemberReference, string createExpression = null)
         {
             const string OriginalValuesName = "MyValuesTypeMember";
             const string SearchValuesFieldName = "s_myValuesTypeMemberSearchValues";
@@ -296,31 +310,37 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             string memberDefinition = $"{modifiersAndType} {OriginalValuesName} {initializer}";
             bool isProperty = initializer.Contains("=>", StringComparison.Ordinal) || initializer.Contains("get", StringComparison.Ordinal);
 
+            string cSharp11CreateExpression = null;
+
             if (createWillUseMemberReference)
             {
-                await TestAsync(LanguageVersion.CSharp7_3, OriginalValuesName);
-                await TestAsync(LanguageVersion.CSharp11, OriginalValuesName);
+                Assert.Null(createExpression);
+                createExpression = OriginalValuesName;
             }
             else
             {
                 if (byteOrChar == "char")
                 {
-                    await TestAsync(LanguageVersion.CSharp7_3, "\"aeiouA\"");
-                    await TestAsync(LanguageVersion.CSharp11, "\"aeiouA\"");
+                    createExpression ??= "\"aeiouA\"";
                 }
                 else
                 {
-                    string expression = initializer.TrimStart('{', ' ', '=', '>', 'g', 'e', 't').TrimEnd(' ', '}').TrimEnd(';');
-
-                    if (expression.StartsWith("return ", StringComparison.Ordinal))
+                    if (createExpression is null)
                     {
-                        expression = expression.Substring("return ".Length);
+                        createExpression = initializer.TrimStart('{', ' ', '=', '>', 'g', 'e', 't').TrimEnd(' ', '}').TrimEnd(';');
+
+                        if (createExpression.StartsWith("return ", StringComparison.Ordinal))
+                        {
+                            createExpression = createExpression.Substring("return ".Length);
+                        }
                     }
 
-                    await TestAsync(LanguageVersion.CSharp7_3, expression);
-                    await TestAsync(LanguageVersion.CSharp11, "\"aeiouA\"u8");
+                    cSharp11CreateExpression = "\"aeiouA\"u8";
                 }
             }
+
+            await TestAsync(LanguageVersion.CSharp7_3, createExpression);
+            await TestAsync(LanguageVersion.CSharp11, cSharp11CreateExpression ?? createExpression);
 
             async Task TestAsync(LanguageVersion languageVersion, string expectedCreateExpression)
             {
@@ -339,6 +359,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     internal sealed class Test
                     {
                         {{memberDefinition}}
+                        private const string ConstStringTypeMember = "aeiouA";
 
                         private void TestMethod(ReadOnlySpan<{{byteOrChar}}> span)
                         {
@@ -356,6 +377,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     {
                         private static readonly SearchValues<{{byteOrChar}}> {{SearchValuesFieldName}} = SearchValues.Create({{expectedCreateExpression}});{{(isProperty ? Environment.NewLine : "")}}
                         {{memberDefinition}}
+                        private const string ConstStringTypeMember = "aeiouA";
 
                         private void TestMethod(ReadOnlySpan<{{byteOrChar}}> span)
                         {

@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.Lightup;
@@ -33,9 +34,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        protected abstract bool IsConstantByteOrCharArrayVariableDeclaratorSyntax(SyntaxNode syntax, out int length);
+        protected abstract bool IsConstantByteOrCharArrayVariableDeclaratorSyntax(SemanticModel semanticModel, SyntaxNode syntax, out int length);
 
-        protected abstract bool IsConstantByteOrCharReadOnlySpanPropertyDeclarationSyntax(SyntaxNode syntax, out int length);
+        protected abstract bool IsConstantByteOrCharReadOnlySpanPropertyDeclarationSyntax(SemanticModel semanticModel, SyntaxNode syntax, out int length);
+
+        protected abstract bool IsConstantByteOrCharArrayCreationSyntax(SemanticModel semanticModel, SyntaxNode syntax, out int length);
 
         protected abstract bool ArrayFieldUsesAreLikelyReadOnly(SyntaxNode syntax);
 
@@ -159,6 +162,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 // readonly char[] Values = new char[] { 'a', 'b', 'c' };
                 // readonly char[] Values = "abc".ToCharArray();
+                // readonly char[] Values = ConstString.ToCharArray();
                 // text.IndexOfAny(Values)
                 return
                     IsConstantByteOrCharSZArrayFieldReference(fieldReference, out int length) &&
@@ -168,7 +172,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 // text.IndexOfAny("abc".ToCharArray())
                 // text.IndexOfAny(StringConst.ToCharArray())
-                return IsConstantStringToCharArrayInvocation(invocation);
+                return IsConstantStringToCharArrayInvocation(invocation, out _);
             }
 
             return false;
@@ -178,35 +182,36 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             if (argument is IConversionOperation conversion)
             {
-                if (IsConstantStringLiteralOrReference(conversion.Operand, out int length))
+                if (IsConstantStringLiteralOrReference(conversion.Operand, out string? value))
                 {
                     // text.IndexOfAny("abc")
                     // or
                     // const string ValuesLocalOrField = "abc";
                     // text.IndexOfAny(ValuesLocalOrField)
-                    return length >= MinLengthWorthReplacing;
+                    return value.Length >= MinLengthWorthReplacing;
                 }
                 else if (conversion.Operand is IArrayCreationOperation arrayCreation)
                 {
                     // text.IndexOfAny(new[] { 'a', 'b', 'c' })
                     return
-                        IsConstantByteOrCharSZArrayCreation(arrayCreation, out length) &&
+                        IsConstantByteOrCharSZArrayCreation(arrayCreation, out int length) &&
                         length >= MinLengthWorthReplacing;
                 }
                 else if (conversion.Operand is IFieldReferenceOperation fieldReference)
                 {
                     // readonly char[] Values = new char[] { 'a', 'b', 'c' };
                     // readonly char[] Values = "abc".ToCharArray();
+                    // readonly char[] Values = ConstString.ToCharArray();
                     // text.IndexOfAny(Values)
                     return
-                        IsConstantByteOrCharSZArrayFieldReference(fieldReference, out length) &&
+                        IsConstantByteOrCharSZArrayFieldReference(fieldReference, out int length) &&
                         length >= MinLengthWorthReplacing;
                 }
                 else if (conversion.Operand is IInvocationOperation invocation)
                 {
                     // text.IndexOfAny("abc".ToCharArray())
                     // text.IndexOfAny(StringConst.ToCharArray())
-                    return IsConstantStringToCharArrayInvocation(invocation);
+                    return IsConstantStringToCharArrayInvocation(invocation, out _);
                 }
             }
             else if (argument.Kind == OperationKindEx.Utf8String)
@@ -222,6 +227,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // ReadOnlySpan<byte> Values => new byte[] { (byte)'a', (byte)'b', (byte)'c' };
                 // ReadOnlySpan<char> Values => new char[] { 'a', 'b', 'c' };
                 // ReadOnlySpan<char> Values => "abc".ToCharArray();
+                // ReadOnlySpan<char> Values => ConstString.ToCharArray();
                 // text.IndexOfAny(Values)
                 return
                     propertyReference.Member is IPropertySymbol property &&
@@ -229,7 +235,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     IsByteOrCharReadOnlySpan(property.Type, readOnlySpanType) &&
                     property.DeclaringSyntaxReferences is [var declaringSyntaxReference] &&
                     declaringSyntaxReference.GetSyntax() is { } syntax &&
-                    IsConstantByteOrCharReadOnlySpanPropertyDeclarationSyntax(syntax, out int length) &&
+                    IsConstantByteOrCharReadOnlySpanPropertyDeclarationSyntax(propertyReference.SemanticModel!, syntax, out int length) &&
                     length >= MinLengthWorthReplacing;
             }
 
@@ -249,11 +255,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         // text.IndexOfAny("abc".ToCharArray())
         // text.IndexOfAny(StringConst.ToCharArray())
-        internal static bool IsConstantStringToCharArrayInvocation(IInvocationOperation invocation) =>
-            invocation.TargetMethod.ContainingType.SpecialType == SpecialType.System_String &&
-            invocation.TargetMethod.Name == nameof(string.ToCharArray) &&
-            invocation.Instance is { } stringInstance &&
-            IsConstantStringLiteralOrReference(stringInstance, out _);
+        internal static bool IsConstantStringToCharArrayInvocation(IInvocationOperation invocation, [NotNullWhen(true)] out string? value)
+        {
+            if (invocation.TargetMethod.ContainingType.SpecialType == SpecialType.System_String &&
+                invocation.TargetMethod.Name == nameof(string.ToCharArray) &&
+                invocation.Instance is { } stringInstance &&
+                IsConstantStringLiteralOrReference(stringInstance, out value))
+            {
+                return true;
+            }
+
+            value = null;
+            return false;
+        }
 
         private bool IsConstantByteOrCharSZArrayFieldReference(IFieldReferenceOperation fieldReference, out int length)
         {
@@ -263,7 +277,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 IsByteOrCharSZArray(field.Type) &&
                 field.DeclaringSyntaxReferences is [var declaringSyntaxReference] &&
                 declaringSyntaxReference.GetSyntax() is { } syntax &&
-                IsConstantByteOrCharArrayVariableDeclaratorSyntax(syntax, out length) &&
+                IsConstantByteOrCharArrayVariableDeclaratorSyntax(fieldReference.SemanticModel!, syntax, out length) &&
                 ArrayFieldUsesAreLikelyReadOnly(syntax))
             {
                 return true;
@@ -273,42 +287,27 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return false;
         }
 
-        private static bool IsConstantByteOrCharSZArrayCreation(IArrayCreationOperation arrayCreation, out int length)
+        private bool IsConstantByteOrCharSZArrayCreation(IArrayCreationOperation arrayCreation, out int length)
         {
             length = 0;
 
-            if (IsByteOrCharSZArray(arrayCreation.Type) &&
-                arrayCreation.Initializer?.ElementValues is { } elements)
-            {
-                foreach (var element in elements)
-                {
-                    var actualElement = (element as IConversionOperation)?.Operand ?? element;
-
-                    if (actualElement is not ILiteralOperation elementLiteral || !elementLiteral.ConstantValue.HasValue)
-                    {
-                        return false;
-                    }
-                }
-
-                length = elements.Length;
-                return true;
-            }
-
-            return false;
+            return
+                IsByteOrCharSZArray(arrayCreation.Type) &&
+                IsConstantByteOrCharArrayCreationSyntax(arrayCreation.SemanticModel!, arrayCreation.Syntax, out length);
         }
 
-        private static bool IsConstantStringLiteralOrReference(IOperation operation, out int length)
+        private static bool IsConstantStringLiteralOrReference(IOperation operation, [NotNullWhen(true)] out string? value)
         {
             if (operation.Type is { SpecialType: SpecialType.System_String } &&
                 operation.ConstantValue.HasValue &&
                 operation is ILiteralOperation or IFieldReferenceOperation or ILocalReferenceOperation &&
-                operation.ConstantValue.Value is string values)
+                operation.ConstantValue.Value is string stringValue)
             {
-                length = values.Length;
+                value = stringValue;
                 return true;
             }
 
-            length = 0;
+            value = null;
             return false;
         }
     }

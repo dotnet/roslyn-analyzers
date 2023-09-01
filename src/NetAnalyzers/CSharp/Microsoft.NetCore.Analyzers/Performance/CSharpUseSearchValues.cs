@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Performance;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Performance
@@ -16,35 +17,43 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         // char[] myField = new char[] { 'a', 'b', 'c' };
         // char[] myField = new[] { 'a', 'b', 'c' };
         // char[] myField = "abc".ToCharArray();
+        // char[] myField = ConstString.ToCharArray();
         // byte[] myField = new[] { (byte)'a', (byte)'b', (byte)'c' };
-        protected override bool IsConstantByteOrCharArrayVariableDeclaratorSyntax(SyntaxNode syntax, out int length)
+        protected override bool IsConstantByteOrCharArrayVariableDeclaratorSyntax(SemanticModel semanticModel, SyntaxNode syntax, out int length)
         {
             length = 0;
 
             return
                 syntax is VariableDeclaratorSyntax variableDeclarator &&
                 variableDeclarator.Initializer?.Value is { } initializer &&
-                IsConstantByteOrCharArrayCreationExpression(initializer, values: null, out length);
+                IsConstantByteOrCharArrayCreationExpression(semanticModel, initializer, values: null, out length);
         }
 
         // ReadOnlySpan<char> myProperty => new char[] { 'a', 'b', 'c' };
         // ReadOnlySpan<char> myProperty => new[] { 'a', 'b', 'c' };
         // ReadOnlySpan<char> myProperty => "abc".ToCharArray();
+        // ReadOnlySpan<char> myProperty => ConstString.ToCharArray();
         // ReadOnlySpan<byte> myProperty => new[] { (byte)'a', (byte)'b', (byte)'c' };
         // ReadOnlySpan<byte> myProperty => "abc"u8;
         // ReadOnlySpan<byte> myProperty { get => "abc"u8; }
         // ReadOnlySpan<byte> myProperty { get { return "abc"u8; } }
-        protected override bool IsConstantByteOrCharReadOnlySpanPropertyDeclarationSyntax(SyntaxNode syntax, out int length)
+        protected override bool IsConstantByteOrCharReadOnlySpanPropertyDeclarationSyntax(SemanticModel semanticModel, SyntaxNode syntax, out int length)
         {
-            if (syntax is PropertyDeclarationSyntax propertyDeclaration &&
-                TryGetPropertyGetterExpression(propertyDeclaration) is { } expression &&
-                (IsConstantByteOrCharArrayCreationExpression(expression, values: null, out length) || IsUtf8StringLiteralExpression(expression, out length)))
-            {
-                return true;
-            }
-
             length = 0;
-            return false;
+
+            return
+                syntax is PropertyDeclarationSyntax propertyDeclaration &&
+                TryGetPropertyGetterExpression(propertyDeclaration) is { } expression &&
+                (IsConstantByteOrCharArrayCreationExpression(semanticModel, expression, values: null, out length) || IsUtf8StringLiteralExpression(expression, out length));
+        }
+
+        protected override bool IsConstantByteOrCharArrayCreationSyntax(SemanticModel semanticModel, SyntaxNode syntax, out int length)
+        {
+            length = 0;
+
+            return
+                syntax is ExpressionSyntax expression &&
+                IsConstantByteOrCharArrayCreationExpression(semanticModel, expression, values: null, out length);
         }
 
         internal static ExpressionSyntax? TryGetPropertyGetterExpression(PropertyDeclarationSyntax propertyDeclaration)
@@ -72,7 +81,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         // new[] { 'a', 'b', 'c' };
         // new[] { (byte)'a', (byte)'b', (byte)'c' };
         // "abc".ToCharArray()
-        internal static bool IsConstantByteOrCharArrayCreationExpression(ExpressionSyntax expression, List<char>? values, out int length)
+        // ConstString.ToCharArray()
+        internal static bool IsConstantByteOrCharArrayCreationExpression(SemanticModel semanticModel, ExpressionSyntax expression, List<char>? values, out int length)
         {
             length = 0;
 
@@ -88,14 +98,10 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             }
             else if (expression is InvocationExpressionSyntax invocation)
             {
-                if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                    memberAccess.Expression.IsKind(SyntaxKind.StringLiteralExpression) &&
-                    memberAccess.Expression is LiteralExpressionSyntax literal &&
-                    literal.Token.IsKind(SyntaxKind.StringLiteralToken) &&
-                    literal.Token.Value is string value &&
-                    memberAccess.Name.Identifier.ValueText == nameof(string.ToCharArray) &&
-                    invocation.ArgumentList.Arguments.Count == 0)
+                if (semanticModel.GetOperation(invocation) is IInvocationOperation invocationOperation &&
+                    IsConstantStringToCharArrayInvocation(invocationOperation, out string? value))
                 {
+                    values?.AddRange(value);
                     length = value.Length;
                     return true;
                 }

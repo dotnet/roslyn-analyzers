@@ -87,7 +87,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 List<char> values = new();
 
                 if (arrayCreation.Syntax is ExpressionSyntax creationSyntax &&
-                    CSharpUseSearchValuesAnalyzer.IsConstantByteOrCharArrayCreationExpression(creationSyntax, values, out _) &&
+                    CSharpUseSearchValuesAnalyzer.IsConstantByteOrCharArrayCreationExpression(operation.SemanticModel!, creationSyntax, values, out _) &&
                     values.Count <= 128 &&                  // Arbitrary limit to avoid emitting huge literals
                     !ContainsAnyComments(creationSyntax))   // Avoid removing potentially valuable comments
                 {
@@ -109,7 +109,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             }
             else if (operation is IInvocationOperation invocation)
             {
-                if (UseSearchValuesAnalyzer.IsConstantStringToCharArrayInvocation(invocation))
+                if (UseSearchValuesAnalyzer.IsConstantStringToCharArrayInvocation(invocation, out _))
                 {
                     Debug.Assert(invocation.Instance is not null);
                     return invocation.Instance!.Syntax;

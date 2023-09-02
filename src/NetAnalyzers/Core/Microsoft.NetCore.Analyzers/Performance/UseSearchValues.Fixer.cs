@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Performance
@@ -51,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 context.Diagnostics);
         }
 
-        protected abstract ValueTask<(SyntaxNode TypeDeclaration, INamedTypeSymbol? TypeSymbol)> GetTypeSymbolAsync(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken);
+        protected abstract ValueTask<(SyntaxNode TypeDeclaration, INamedTypeSymbol? TypeSymbol, bool IsRealType)> GetTypeSymbolAsync(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken);
 
         protected abstract SyntaxNode ReplaceSearchValuesFieldName(SyntaxNode node);
 
@@ -80,13 +81,37 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 parameterType.TypeArguments is [var typeArgument] &&
                 typeArgument.SpecialType == SpecialType.System_Byte;
 
-            string defaultSearchValuesFieldName = GetSearchValuesFieldName(argumentOperation.Value, isByte);
+            SyntaxNode createArgument = CreateSearchValuesCreateArgument(argumentOperation.Syntax, argumentOperation.Value, out SyntaxNode? memberToRemove, cancellationToken);
+
+            string? removedMemberName = null;
+
+            // If the member we're relacing is not public, and the argument to IndexOfAny was its only use, remove it.
+            if (memberToRemove is not null &&
+                semanticModel.GetDeclaredSymbol(memberToRemove, cancellationToken) is { } symbolToRemove &&
+                symbolToRemove.DeclaredAccessibility is Accessibility.NotApplicable or Accessibility.Private &&
+                !symbolToRemove.IsImplementationOfAnyInterfaceMember() &&
+                symbolToRemove.Locations.Length == 1)
+            {
+                var refs = await SymbolFinder.FindReferencesAsync(symbolToRemove, document.Project.Solution, cancellationToken).ConfigureAwait(false);
+                var locations = refs.SelectMany(r => r.Locations);
+                var documentLocations = locations.Select(loc => (loc.Document.FilePath, loc.Location.SourceSpan));
+
+                if (documentLocations.Distinct().Count() == 1)
+                {
+                    // A single location in a single document.
+                    editor.RemoveNode(memberToRemove);
+                    removedMemberName = symbolToRemove.Name;
+                }
+            }
+
+            string defaultSearchValuesFieldName = GetSearchValuesFieldName(argumentOperation.Value, isByte, removedOriginalMember: removedMemberName is not null);
 
             string fieldName = defaultSearchValuesFieldName;
 
-            (var typeDeclaration, var typeSymbol) = await GetTypeSymbolAsync(semanticModel, argumentNode, cancellationToken).ConfigureAwait(false);
+            (var typeDeclaration, var typeSymbol, bool isRealType) = await GetTypeSymbolAsync(semanticModel, argumentNode, cancellationToken).ConfigureAwait(false);
 
-            if (typeSymbol is not null)
+            // Find a unique name for the field that does not conflict with other members in scope.
+            if (typeSymbol is not null && fieldName != removedMemberName)
             {
                 var members = GetAllMemberNamesInScope(typeSymbol).ToArray();
                 int memberCount = 1;
@@ -104,15 +129,25 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 DeclarationModifiers.Static.WithIsReadOnly(true),
                 generator.InvocationExpression(
                     generator.MemberAccessExpression(generator.TypeExpressionForStaticMemberAccess(searchValues), "Create"),
-                    CreateSearchValuesCreateArgument(argumentOperation.Syntax, argumentOperation.Value, cancellationToken)));
+                    createArgument));
 
             // Allow the user to pick a different name for the method.
             newField = ReplaceSearchValuesFieldName(newField);
 
-            editor.InsertMembers(typeDeclaration, 0, new[] { newField });
-
             // foo.IndexOfAny(argument) => foo.IndexOfAny(s_myValues)
             editor.ReplaceNode(argumentNode, generator.IdentifierName(fieldName));
+
+            if (isRealType)
+            {
+                // Insert the new field at the top of the parent type.
+                editor.InsertMembers(typeDeclaration, 0, new[] { newField });
+            }
+            else
+            {
+                // We are in the 'Program' class of a top-level statements file.
+                // Create a new partial Program class with the new field.
+                editor.AddMember(typeDeclaration, generator.ClassDeclaration("Program", modifiers: DeclarationModifiers.Partial, members: new[] { newField }));
+            }
 
             // If this was a string IndexOfAny call, we must also insert an AsSpan call.
             if (!isByte &&
@@ -159,7 +194,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
         }
 
-        private static string GetSearchValuesFieldName(IOperation argument, bool isByte)
+        private static string GetSearchValuesFieldName(IOperation argument, bool isByte, bool removedOriginalMember)
         {
             if (argument is IConversionOperation conversion)
             {
@@ -193,7 +228,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             return isByte ? "s_myBytes" : "s_myChars";
 
-            static bool TryGetNameFromLocalOrFieldReference(IOperation? argument, [NotNullWhen(true)] out string? name)
+            bool TryGetNameFromLocalOrFieldReference(IOperation? argument, [NotNullWhen(true)] out string? name)
             {
                 if (argument is ILocalReferenceOperation localReference)
                 {
@@ -210,7 +245,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return false;
             }
 
-            static string CreateFromExistingName(string name)
+            string CreateFromExistingName(string name)
             {
                 if (!name.StartsWith("s_", StringComparison.OrdinalIgnoreCase))
                 {
@@ -219,18 +254,20 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         name = $"{char.ToLowerInvariant(name[0])}{name[1..]}";
                     }
 
-                    name = $"s_{name.TrimStart('_')}";
+                    return $"s_{name.TrimStart('_')}";
                 }
 
-                return $"{name}SearchValues";
+                return removedOriginalMember
+                    ? name
+                    : $"{name}SearchValues";
 
                 static bool IsAsciiLetterUpper(char c) => c is >= 'A' and <= 'Z';
             }
         }
 
-        private SyntaxNode CreateSearchValuesCreateArgument(SyntaxNode originalSyntax, IOperation argument, CancellationToken cancellationToken)
+        private SyntaxNode CreateSearchValuesCreateArgument(SyntaxNode originalSyntax, IOperation argument, out SyntaxNode? memberToRemove, CancellationToken cancellationToken)
         {
-            SyntaxNode createArgument = CreateSearchValuesCreateArgumentCore(originalSyntax, argument, cancellationToken);
+            SyntaxNode createArgument = CreateSearchValuesCreateArgumentCore(originalSyntax, argument, out memberToRemove, cancellationToken);
 
             // If the argument is an inline array creation, we can transform it into a string literal expression instead.
             if (argument.SemanticModel?.GetOperation(createArgument, cancellationToken) is { } newOperation)
@@ -249,7 +286,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return createArgument;
         }
 
-        private SyntaxNode CreateSearchValuesCreateArgumentCore(SyntaxNode originalSyntax, IOperation argument, CancellationToken cancellationToken)
+        private SyntaxNode CreateSearchValuesCreateArgumentCore(SyntaxNode originalSyntax, IOperation argument, out SyntaxNode? memberToRemove, CancellationToken cancellationToken)
         {
             if (argument is IConversionOperation conversion)
             {
@@ -261,29 +298,31 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 if (!propertyReference.Property.IsStatic)
                 {
                     // Can't access an instance property from a field initializer.
-                    return GetDeclaratorInitializer(propertyReference.Property);
+                    memberToRemove = GetDeclarator(propertyReference.Property);
+                    return GetDeclaratorInitializer(memberToRemove);
                 }
             }
-            else if (TryGetArgumentFromLocalOrFieldReference(argument, out SyntaxNode? createArgument))
+            else if (TryGetArgumentFromLocalOrFieldReference(argument, out SyntaxNode? createArgument, out memberToRemove))
             {
                 return createArgument;
             }
-            else if (TryGetArgumentFromStringToCharArray(argument, out createArgument))
+            else if (TryGetArgumentFromStringToCharArray(argument, out createArgument, out memberToRemove))
             {
                 return createArgument;
             }
 
             // Use the original syntax (e.g. string literal, inline array creation, static property reference ...)
+            memberToRemove = null;
             return originalSyntax;
 
-            bool TryGetArgumentFromStringToCharArray(IOperation operation, [NotNullWhen(true)] out SyntaxNode? createArgument)
+            bool TryGetArgumentFromStringToCharArray(IOperation operation, [NotNullWhen(true)] out SyntaxNode? createArgument, out SyntaxNode? memberToRemove)
             {
                 if (operation is IInvocationOperation invocation &&
                     invocation.Instance is { } stringInstance)
                 {
                     Debug.Assert(invocation.TargetMethod.Name == nameof(string.ToCharArray));
 
-                    if (!TryGetArgumentFromLocalOrFieldReference(stringInstance, out createArgument))
+                    if (!TryGetArgumentFromLocalOrFieldReference(stringInstance, out createArgument, out memberToRemove))
                     {
                         // This is a string.ToCharArray call, but the string instance is not something we can refer to by name.
                         // e.g. for '"foo".ToCharArray()', we want to emit '"foo"'.
@@ -294,17 +333,17 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
 
                 createArgument = null;
+                memberToRemove = null;
                 return false;
             }
 
-            bool TryGetArgumentFromLocalOrFieldReference(IOperation operation, [NotNullWhen(true)] out SyntaxNode? createArgument)
+            bool TryGetArgumentFromLocalOrFieldReference(IOperation operation, [NotNullWhen(true)] out SyntaxNode? createArgument, out SyntaxNode? memberToRemove)
             {
                 if (operation is ILocalReferenceOperation localReference)
                 {
-                    Debug.Assert(localReference.Local.DeclaringSyntaxReferences.Length == 1);
-
                     // Local string literal would be out of scope in the field declaration.
-                    createArgument = GetDeclaratorInitializer(localReference.Local);
+                    memberToRemove = GetDeclarator(localReference.Local);
+                    createArgument = GetDeclaratorInitializer(memberToRemove);
                     return true;
                 }
                 else if (operation is IFieldReferenceOperation fieldReference)
@@ -313,20 +352,22 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         // If we were to use the field reference directly, we risk initializing the SearchValues field to an empty
                         // instance depending on field declaration order.
-                        createArgument = GetDeclaratorInitializer(fieldReference.Field);
+                        memberToRemove = GetDeclarator(fieldReference.Field);
+                        createArgument = GetDeclaratorInitializer(memberToRemove);
                         return true;
                     }
                 }
 
                 createArgument = null;
+                memberToRemove = null;
                 return false;
             }
 
-            SyntaxNode GetDeclaratorInitializer(ISymbol symbol)
+            SyntaxNode GetDeclarator(ISymbol symbol)
             {
                 Debug.Assert(symbol.DeclaringSyntaxReferences.Length == 1);
 
-                return this.GetDeclaratorInitializer(symbol.DeclaringSyntaxReferences[0].GetSyntax(cancellationToken));
+                return symbol.DeclaringSyntaxReferences[0].GetSyntax(cancellationToken);
             }
         }
     }

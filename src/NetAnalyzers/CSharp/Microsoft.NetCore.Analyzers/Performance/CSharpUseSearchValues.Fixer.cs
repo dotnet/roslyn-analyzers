@@ -20,17 +20,15 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     [ExportCodeFixProvider(LanguageNames.CSharp)]
     public sealed class CSharpUseSearchValuesFixer : UseSearchValuesFixer
     {
-        protected override async ValueTask<(SyntaxNode TypeDeclaration, INamedTypeSymbol? TypeSymbol)> GetTypeSymbolAsync(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
+        protected override async ValueTask<(SyntaxNode TypeDeclaration, INamedTypeSymbol? TypeSymbol, bool IsRealType)> GetTypeSymbolAsync(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
             SyntaxNode? typeDeclarationOrCompilationUnit = node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
 
             typeDeclarationOrCompilationUnit ??= await node.SyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var typeSymbol = typeDeclarationOrCompilationUnit is TypeDeclarationSyntax typeDeclaration ?
-                semanticModel.GetDeclaredSymbol(typeDeclaration, cancellationToken) :
-                semanticModel.GetDeclaredSymbol((CompilationUnitSyntax)typeDeclarationOrCompilationUnit, cancellationToken)?.ContainingType;
-
-            return (typeDeclarationOrCompilationUnit, typeSymbol);
+            return typeDeclarationOrCompilationUnit is TypeDeclarationSyntax typeDeclaration
+                ? (typeDeclaration, semanticModel.GetDeclaredSymbol(typeDeclaration, cancellationToken), IsRealType: true)
+                : (typeDeclarationOrCompilationUnit, semanticModel.GetDeclaredSymbol((CompilationUnitSyntax)typeDeclarationOrCompilationUnit, cancellationToken)?.ContainingType, IsRealType: false);
         }
 
         protected override SyntaxNode ReplaceSearchValuesFieldName(SyntaxNode node)

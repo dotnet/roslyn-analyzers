@@ -2,6 +2,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
@@ -304,7 +305,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         public async Task TestCodeFixerNamedArguments(string modifiersAndType, string initializer, bool createWillUseMemberReference, string createExpression = null)
         {
             const string OriginalValuesName = "MyValuesTypeMember";
-            const string SearchValuesFieldName = "s_myValuesTypeMemberSearchValues";
+            const string SearchValuesFieldName = "s_myValuesTypeMember";
 
             string byteOrChar = modifiersAndType.Contains("byte", StringComparison.Ordinal) ? "byte" : "char";
             string memberDefinition = $"{modifiersAndType} {OriginalValuesName} {initializer}";
@@ -368,6 +369,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     }
                     """;
 
+                string newLineAfterSearchValues = isProperty && createWillUseMemberReference ? Environment.NewLine : "";
+                string expectedMemberDefinition = createWillUseMemberReference ? $"{memberDefinition}{Environment.NewLine}    " : "";
+
                 string expected =
                     $$"""
                     using System;
@@ -375,9 +379,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                     internal sealed class Test
                     {
-                        private static readonly SearchValues<{{byteOrChar}}> {{SearchValuesFieldName}} = SearchValues.Create({{expectedCreateExpression}});{{(isProperty ? Environment.NewLine : "")}}
-                        {{memberDefinition}}
-                        private const string ConstStringTypeMember = "aeiouA";
+                        private static readonly SearchValues<{{byteOrChar}}> {{SearchValuesFieldName}} = SearchValues.Create({{expectedCreateExpression}});{{newLineAfterSearchValues}}
+                        {{expectedMemberDefinition}}private const string ConstStringTypeMember = "aeiouA";
 
                         private void TestMethod(ReadOnlySpan<{{byteOrChar}}> span)
                         {
@@ -398,7 +401,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         public async Task TestCodeFixerNamedArgumentsStringIndexOfAny(string modifiersAndType, string initializer)
         {
             const string OriginalValuesName = "MyValuesTypeMember";
-            const string SearchValuesFieldName = "s_myValuesTypeMemberSearchValues";
+            const string SearchValuesFieldName = "s_myValuesTypeMember";
 
             string memberDefinition = $"{modifiersAndType} {OriginalValuesName} = {initializer};";
 
@@ -426,7 +429,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 internal sealed class Test
                 {
                     private static readonly SearchValues<char> {{SearchValuesFieldName}} = SearchValues.Create("aeiouA");
-                    {{memberDefinition}}
 
                     private void TestMethod(string text)
                     {
@@ -464,12 +466,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 internal sealed class Test
                 {
-                    private static readonly SearchValues<char> s_myValuesTypeMemberSearchValues = SearchValues.Create(MyValuesTypeMember);
+                    private static readonly SearchValues<char> s_myValuesTypeMember = SearchValues.Create(MyValuesTypeMember);
                     private const string MyValuesTypeMember = "aeiouA";
 
                     private void TestMethod(string text)
                     {
-                        _ = text.AsSpan().IndexOfAny(s_myValuesTypeMemberSearchValues);
+                        _ = text.AsSpan().IndexOfAny(s_myValuesTypeMember);
                     }
                 }
                 """;
@@ -503,13 +505,11 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 internal sealed class Test
                 {
-                    private static readonly SearchValues<char> s_valuesSearchValues = SearchValues.Create("aeiouA");
+                    private static readonly SearchValues<char> s_values = SearchValues.Create("aeiouA");
 
                     private void TestMethod(ReadOnlySpan<char> chars)
                     {
-                        const string Values = "aeiouA";
-
-                        _ = chars.IndexOfAny(s_valuesSearchValues);
+                        _ = chars.IndexOfAny(s_values);
                     }
                 }
                 """;
@@ -547,13 +547,11 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 internal sealed class Test
                 {
-                    private static readonly SearchValues<char> s_valuesSearchValues = SearchValues.Create("aeiouA");
+                    private static readonly SearchValues<char> s_values = SearchValues.Create("aeiouA");
 
                     private void TestMethod({{argumentType}} text)
                     {
-                        const string Values = "aeiouA";
-
-                        _ = text{{(spanInput ? "" : ".AsSpan()")}}.IndexOfAny(s_valuesSearchValues);
+                        _ = text{{(spanInput ? "" : ".AsSpan()")}}.IndexOfAny(s_values);
                     }
                 }
                 """;
@@ -721,6 +719,42 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public static async Task TestCodeFixerDoesNotRemoveTheOriginalMemberIfPublic()
+        {
+            string source =
+                """
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    public ReadOnlySpan<char> InvalidChars => new[] { 'a', 'b', 'c', 'd', 'e', 'f' };
+
+                    public int IndexOfInvalidChar(ReadOnlySpan<char> input) =>
+                        input.IndexOfAny([|InvalidChars|]);
+                }
+                """;
+
+            string expected =
+                """
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private static readonly SearchValues<char> s_invalidChars = SearchValues.Create("abcdef");
+
+                    public ReadOnlySpan<char> InvalidChars => new[] { 'a', 'b', 'c', 'd', 'e', 'f' };
+
+                    public int IndexOfInvalidChar(ReadOnlySpan<char> input) =>
+                        input.IndexOfAny(s_invalidChars);
+                }
+                """;
+
+            await VerifyCodeFixAsync(LanguageVersion.CSharp7_3, source, expected);
+        }
+
+        [Fact]
         public async Task TestCodeFixerAddsSystemUsingIfNeeded()
         {
             string source =
@@ -756,14 +790,19 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [InlineData("MyValues", "s_myValuesSearchValues")]
-        [InlineData("myValues", "s_myValuesSearchValues")]
-        [InlineData("_myValues", "s_myValuesSearchValues")]
-        [InlineData("_MyValues", "s_MyValuesSearchValues")]
-        [InlineData("s_myValues", "s_myValuesSearchValues")]
-        [InlineData("s_MyValues", "s_MyValuesSearchValues")]
-        public async Task TestCodeFixerPicksFriendlyFieldNames(string memberName, string expectedFieldName)
+        [InlineData("MyValues", "s_myValues")]
+        [InlineData("myValues", "s_myValues")]
+        [InlineData("_myValues", "s_myValues")]
+        [InlineData("_MyValues", "s_MyValues")]
+        [InlineData("s_myValues", "s_myValues", false)]
+        [InlineData("s_MyValues", "s_MyValues", false)]
+        [InlineData("s_myValues", "s_myValuesSearchValues", true)]
+        [InlineData("s_MyValues", "s_MyValuesSearchValues", true)]
+        public async Task TestCodeFixerPicksFriendlyFieldNames(string memberName, string expectedFieldName, bool memberHasOtherUses = false)
         {
+            string memberDefinition = $"private readonly char[] {memberName} = \"aeiouA\".ToCharArray();";
+            string otherMemberUses = memberHasOtherUses ? $" _ = {memberName};" : "";
+
             string source =
                 $$"""
                 using System;
@@ -771,14 +810,16 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 internal sealed class Test
                 {
-                    private const string {{memberName}} = "aeiouA";
+                    {{memberDefinition}}
 
                     private void TestMethod(ReadOnlySpan<char> text)
                     {
-                        _ = text.IndexOfAny([|{{memberName}}|]);
+                        _ = text.IndexOfAny([|{{memberName}}|]);{{otherMemberUses}}
                     }
                 }
                 """;
+
+            string expectedMemberDefinition = memberHasOtherUses ? $"{Environment.NewLine}    {memberDefinition}" : "";
 
             string expected =
                 $$"""
@@ -787,12 +828,11 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 internal sealed class Test
                 {
-                    private static readonly SearchValues<char> {{expectedFieldName}} = SearchValues.Create({{memberName}});
-                    private const string {{memberName}} = "aeiouA";
+                    private static readonly SearchValues<char> {{expectedFieldName}} = SearchValues.Create("aeiouA");{{expectedMemberDefinition}}
 
                     private void TestMethod(ReadOnlySpan<char> text)
                     {
-                        _ = text.IndexOfAny({{expectedFieldName}});
+                        _ = text.IndexOfAny({{expectedFieldName}});{{otherMemberUses}}
                     }
                 }
                 """;
@@ -887,10 +927,67 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyCodeFixAsync(LanguageVersion.CSharp7_3, source, expected);
         }
 
+        [Fact]
+        public async Task TestCodeFixerWorksInTopLevelStatementsDocument()
+        {
+            string source =
+                """
+                using System.Buffers;
+
+                _ = "".IndexOfAny([|"aeiouA".ToCharArray()|]);
+                """;
+
+            string expected =
+                """
+                using System.Buffers;
+                using System;
+
+                _ = "".AsSpan().IndexOfAny(s_myChars);
+
+                partial class Program
+                {
+                    private static readonly SearchValues<char> s_myChars = SearchValues.Create("aeiouA");
+                }
+                """;
+
+            await VerifyCodeFixAsync(LanguageVersion.CSharp9, source, expected, topLevelStatements: true);
+
+            source =
+                """
+                using System.Buffers;
+
+                _ = "".IndexOfAny([|s_myValues|]);
+
+                partial class Program
+                {
+                    private static readonly char[] s_myValues  = new[] { 'a', 'e', 'i', 'o', 'u', 'A' };
+                }
+                """;
+
+            expected =
+                """
+                using System.Buffers;
+                using System;
+
+                _ = "".AsSpan().IndexOfAny(s_myValues);
+
+                partial class Program
+                {
+                }
+
+                partial class Program
+                {
+                    private static readonly SearchValues<char> s_myValues = SearchValues.Create("aeiouA");
+                }
+                """;
+
+            await VerifyCodeFixAsync(LanguageVersion.CSharp9, source, expected, topLevelStatements: true);
+        }
+
         private static async Task VerifyAnalyzerAsync(LanguageVersion languageVersion, string source) =>
             await VerifyCodeFixAsync(languageVersion, source, expected: null);
 
-        private static async Task VerifyCodeFixAsync(LanguageVersion languageVersion, string source, string expected)
+        private static async Task VerifyCodeFixAsync(LanguageVersion languageVersion, string source, string expected, bool topLevelStatements = false)
         {
             await new VerifyCS.Test
             {
@@ -898,6 +995,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 LanguageVersion = languageVersion,
                 TestCode = source,
                 FixedCode = expected,
+                TestState = { OutputKind = topLevelStatements ? OutputKind.ConsoleApplication : null },
             }.RunAsync();
         }
 

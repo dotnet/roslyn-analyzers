@@ -3004,8 +3004,8 @@ L'ampliamento e le conversioni definite dall'utente non sono supportate con tipi
         <note />
       </trans-unit>
       <trans-unit id="UseSearchValuesTitle">
-        <source>Use a cached 'SearchValues' instance for repeated searching operations</source>
-        <target state="new">Use a cached 'SearchValues' instance for repeated searching operations</target>
+        <source>Use a cached 'SearchValues' instance</source>
+        <target state="new">Use a cached 'SearchValues' instance</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSecureCookiesASPNetCoreDescription">

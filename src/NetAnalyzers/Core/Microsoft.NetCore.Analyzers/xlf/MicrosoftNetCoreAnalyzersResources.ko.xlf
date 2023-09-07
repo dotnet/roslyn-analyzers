@@ -3004,8 +3004,8 @@ Enumerable.OfType&lt;T&gt;에서 사용하는 제네릭 형식 검사(C# 'is' �
         <note />
       </trans-unit>
       <trans-unit id="UseSearchValuesTitle">
-        <source>Use a cached 'SearchValues' instance for repeated searching operations</source>
-        <target state="new">Use a cached 'SearchValues' instance for repeated searching operations</target>
+        <source>Use a cached 'SearchValues' instance</source>
+        <target state="new">Use a cached 'SearchValues' instance</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSecureCookiesASPNetCoreDescription">

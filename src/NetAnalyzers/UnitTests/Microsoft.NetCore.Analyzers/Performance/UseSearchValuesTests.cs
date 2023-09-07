@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -234,42 +236,93 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 """);
         }
 
-        [Fact]
-        public async Task TestAllIndexOfAnyAndContainsAnyOverloadsAnalyzer()
+        public static IEnumerable<object[]> TestAllIndexOfAnyAndContainsAnySpanOverloads_MemberData()
         {
-            await VerifyAnalyzerAsync(LanguageVersion.CSharp7_3,
-                """
+            return
+                from method in new[] { "IndexOfAny", "LastIndexOfAny", "IndexOfAnyExcept", "LastIndexOfAnyExcept", "ContainsAny", "ContainsAnyExcept" }
+                from bytes in new[] { true, false }
+                from readOnlySpan in new[] { true, false }
+                select new object[] { method, bytes, readOnlySpan };
+        }
+
+        [Theory]
+        [MemberData(nameof(TestAllIndexOfAnyAndContainsAnySpanOverloads_MemberData))]
+        public async Task TestAllIndexOfAnyAndContainsAnySpanOverloads(string method, bool bytes, bool readOnlySpan)
+        {
+            string type = bytes ? "byte" : "char";
+            string argumentType = $"{(readOnlySpan ? "ReadOnly" : "")}Span<{type}>";
+            string valuesExpression = bytes ? "\"aeiouA\"u8" : "\"aeiouA\"";
+            string searchValuesFieldName = bytes ? "s_myBytes" : "s_myChars";
+
+            string source =
+                $$"""
                 using System;
+                using System.Buffers;
 
                 internal sealed class Test
                 {
-                    private const string Values = "aeiouA";
-                    private static readonly byte[] ByteValues = new[] { (byte)'a', (byte)'e', (byte)'i', (byte)'o', (byte)'u', (byte)'A' };
-
-                    private void TestMethod(string str, ReadOnlySpan<char> chars, ReadOnlySpan<byte> bytes, Span<char> writableChars)
+                    private void TestMethod({{argumentType}} input)
                     {
-                        _ = chars.IndexOfAny([|Values|]);
-                        _ = chars.IndexOfAnyExcept([|Values|]);
-                        _ = chars.LastIndexOfAny([|Values|]);
-                        _ = chars.LastIndexOfAnyExcept([|Values|]);
-                        _ = chars.ContainsAny([|Values|]);
-                        _ = chars.ContainsAnyExcept([|Values|]);
-
-                        _ = bytes.IndexOfAny([|ByteValues|]);
-                        _ = bytes.IndexOfAnyExcept([|ByteValues|]);
-                        _ = bytes.LastIndexOfAny([|ByteValues|]);
-                        _ = bytes.LastIndexOfAnyExcept([|ByteValues|]);
-                        _ = bytes.ContainsAny([|ByteValues|]);
-                        _ = bytes.ContainsAnyExcept([|ByteValues|]);
-
-                        _ = writableChars.IndexOfAny([|Values|]);
-                        _ = writableChars.IndexOfAnyExcept([|Values|]);
-
-                        _ = str.IndexOfAny([|Values.ToCharArray()|]);
-                        _ = str.LastIndexOfAny([|Values.ToCharArray()|]);
+                        _ = input.{{method}}([|{{valuesExpression}}|]);
                     }
                 }
-                """);
+                """;
+
+            string expected =
+                $$"""
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private static readonly SearchValues<{{type}}> {{searchValuesFieldName}} = SearchValues.Create({{valuesExpression}});
+
+                    private void TestMethod({{argumentType}} input)
+                    {
+                        _ = input.{{method}}({{searchValuesFieldName}});
+                    }
+                }
+                """;
+
+            await VerifyCodeFixAsync(LanguageVersion.CSharp11, source, expected);
+        }
+
+        [Theory]
+        [InlineData("IndexOfAny")]
+        [InlineData("LastIndexOfAny")]
+        public async Task TestAllIndexOfAnyStringOverloads(string method)
+        {
+            string source =
+                $$"""
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private void TestMethod(string input)
+                    {
+                        _ = input.{{method}}([|"aeiouA".ToCharArray()|]);
+                    }
+                }
+                """;
+
+            string expected =
+                $$"""
+                using System;
+                using System.Buffers;
+
+                internal sealed class Test
+                {
+                    private static readonly SearchValues<char> s_myChars = SearchValues.Create("aeiouA");
+
+                    private void TestMethod(string input)
+                    {
+                        _ = input.AsSpan().{{method}}(s_myChars);
+                    }
+                }
+                """;
+
+            await VerifyCodeFixAsync(LanguageVersion.CSharp7_3, source, expected);
         }
 
         [Theory]

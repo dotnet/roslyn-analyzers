@@ -61,7 +61,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             });
         }
 
-        private void AnalyzeInvocation(OperationAnalysisContext context, HashSet<IMethodSymbol> indexOfAnyMethodsToDetect, INamedTypeSymbol readOnlySpanType)
+        private void AnalyzeInvocation(OperationAnalysisContext context, ImmutableHashSet<IMethodSymbol> indexOfAnyMethodsToDetect, INamedTypeSymbol readOnlySpanType)
         {
             var invocation = (IInvocationOperation)context.Operation;
 
@@ -90,17 +90,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
         }
 
-        private static HashSet<IMethodSymbol> GetIndexOfAnyMethods(Compilation compilation)
+        private static ImmutableHashSet<IMethodSymbol> GetIndexOfAnyMethods(Compilation compilation)
         {
-            var methods = new HashSet<IMethodSymbol>();
+            var methods = ImmutableHashSet.CreateBuilder<IMethodSymbol>();
 
             var stringType = compilation.GetSpecialType(SpecialType.System_String);
 
             // string.{Last}IndexOfAny(char[])
             // Overloads that accept 'startOffset' or 'count' are excluded as they can't be trivially converted to AsSpan.
-            foreach (var method in stringType.GetMembers().OfType<IMethodSymbol>())
+            foreach (var member in stringType.GetMembers())
             {
-                if (method.Name is "IndexOfAny" or "LastIndexOfAny" &&
+                if (member is IMethodSymbol method &&
+                    method.Name is "IndexOfAny" or "LastIndexOfAny" &&
                     method.Parameters.Length == 1)
                 {
                     methods.Add(method);
@@ -112,14 +113,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSpan1, out var spanType) &&
                 compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1, out var readOnlySpanType))
             {
-                foreach (var method in memoryExtensionsType.GetMembers().OfType<IMethodSymbol>())
+                foreach (var member in memoryExtensionsType.GetMembers())
                 {
-                    if (method.Parameters.Length != 2 || method.TypeParameters.Length != 1)
-                    {
-                        continue;
-                    }
-
-                    if (method.Name is not ("IndexOfAny" or "IndexOfAnyExcept" or "LastIndexOfAny" or "LastIndexOfAnyExcept" or "ContainsAny" or "ContainsAnyExcept"))
+                    if (member is not IMethodSymbol method ||
+                        method.Parameters.Length != 2 ||
+                        method.TypeParameters.Length != 1 ||
+                        method.Name is not ("IndexOfAny" or "IndexOfAnyExcept" or "LastIndexOfAny" or "LastIndexOfAnyExcept" or "ContainsAny" or "ContainsAnyExcept"))
                     {
                         continue;
                     }
@@ -144,7 +143,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
             }
 
-            return methods;
+            return methods.ToImmutable();
         }
 
         // It's not always worth going through SearchValues if there are very few values used

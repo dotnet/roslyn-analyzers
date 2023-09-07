@@ -3114,8 +3114,8 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
         <note />
       </trans-unit>
       <trans-unit id="UseSearchValuesTitle">
-        <source>Use a cached 'SearchValues' instance for repeated searching operations</source>
-        <target state="new">Use a cached 'SearchValues' instance for repeated searching operations</target>
+        <source>Use a cached 'SearchValues' instance</source>
+        <target state="new">Use a cached 'SearchValues' instance</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSecureCookiesASPNetCoreDescription">

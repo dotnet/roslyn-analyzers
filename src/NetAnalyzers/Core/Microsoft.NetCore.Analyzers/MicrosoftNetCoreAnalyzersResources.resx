@@ -1983,7 +1983,7 @@ Widening and user defined conversions are not supported with generic types.</val
     <value>Prefer 'Clear' over 'Fill'</value>
   </data>
   <data name="UseSearchValuesTitle" xml:space="preserve">
-    <value>Use a cached 'SearchValues' instance for repeated searching operations</value>
+    <value>Use a cached 'SearchValues' instance</value>
   </data>
   <data name="UseSearchValuesMessage" xml:space="preserve">
     <value>Use a cached 'SearchValues' instance for improved searching performance</value>

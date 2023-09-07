@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -152,26 +151,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private bool AreConstantValuesWorthReplacingForStringIndexOfAny(IOperation argument)
         {
-            if (argument is IArrayCreationOperation arrayCreation)
+            if (IsArrayCreationOrFieldReferenceOrToCharArrayInvocation(argument, out int length))
             {
-                // text.IndexOfAny(new[] { 'a', 'b', 'c' })
-                return IsConstantByteOrCharSZArrayCreation(arrayCreation, out _);
-            }
-            else if (argument is IFieldReferenceOperation fieldReference)
-            {
-                // readonly char[] Values = new char[] { 'a', 'b', 'c' };
-                // readonly char[] Values = "abc".ToCharArray();
-                // readonly char[] Values = ConstString.ToCharArray();
-                // text.IndexOfAny(Values)
+                // If the existing expression will allocate on every call ("abc".ToCharArray() or new[] { ... }),
+                // we may want to replace it even if there are very few values.
                 return
-                    IsConstantByteOrCharSZArrayFieldReference(fieldReference, out int length) &&
-                    length >= MinLengthWorthReplacing;
-            }
-            else if (argument is IInvocationOperation invocation)
-            {
-                // text.IndexOfAny("abc".ToCharArray())
-                // text.IndexOfAny(StringConst.ToCharArray())
-                return IsConstantStringToCharArrayInvocation(invocation, out _);
+                    length >= MinLengthWorthReplacing ||
+                    argument is not IFieldReferenceOperation;
             }
 
             return false;
@@ -189,28 +175,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     // text.IndexOfAny(ValuesLocalOrField)
                     return value.Length >= MinLengthWorthReplacing;
                 }
-                else if (conversion.Operand is IArrayCreationOperation arrayCreation)
+                else if (IsArrayCreationOrFieldReferenceOrToCharArrayInvocation(conversion.Operand, out int length))
                 {
-                    // text.IndexOfAny(new[] { 'a', 'b', 'c' })
+                    // If the existing expression will allocate on every call ("abc".ToCharArray()),
+                    // we may want to replace it even if there are very few values.
                     return
-                        IsConstantByteOrCharSZArrayCreation(arrayCreation, out int length) &&
-                        length >= MinLengthWorthReplacing;
-                }
-                else if (conversion.Operand is IFieldReferenceOperation fieldReference)
-                {
-                    // readonly char[] Values = new char[] { 'a', 'b', 'c' };
-                    // readonly char[] Values = "abc".ToCharArray();
-                    // readonly char[] Values = ConstString.ToCharArray();
-                    // text.IndexOfAny(Values)
-                    return
-                        IsConstantByteOrCharSZArrayFieldReference(fieldReference, out int length) &&
-                        length >= MinLengthWorthReplacing;
-                }
-                else if (conversion.Operand is IInvocationOperation invocation)
-                {
-                    // text.IndexOfAny("abc".ToCharArray())
-                    // text.IndexOfAny(StringConst.ToCharArray())
-                    return IsConstantStringToCharArrayInvocation(invocation, out _);
+                        length >= MinLengthWorthReplacing ||
+                        conversion.Operand is IInvocationOperation;
                 }
             }
             else if (argument.Kind == OperationKindEx.Utf8String)
@@ -238,6 +209,36 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     length >= MinLengthWorthReplacing;
             }
 
+            return false;
+        }
+
+        private bool IsArrayCreationOrFieldReferenceOrToCharArrayInvocation(IOperation argument, out int length)
+        {
+            if (argument is IArrayCreationOperation arrayCreation)
+            {
+                // text.IndexOfAny(new[] { 'a', 'b', 'c' })
+                return IsConstantByteOrCharSZArrayCreation(arrayCreation, out length);
+            }
+            else if (argument is IFieldReferenceOperation fieldReference)
+            {
+                // readonly char[] Values = new char[] { 'a', 'b', 'c' };
+                // readonly char[] Values = "abc".ToCharArray();
+                // readonly char[] Values = ConstString.ToCharArray();
+                // text.IndexOfAny(Values)
+                return IsConstantByteOrCharSZArrayFieldReference(fieldReference, out length);
+            }
+            else if (argument is IInvocationOperation invocation)
+            {
+                // text.IndexOfAny("abc".ToCharArray())
+                // text.IndexOfAny(StringConst.ToCharArray())
+                if (IsConstantStringToCharArrayInvocation(invocation, out string? value))
+                {
+                    length = value.Length;
+                    return true;
+                }
+            }
+
+            length = 0;
             return false;
         }
 

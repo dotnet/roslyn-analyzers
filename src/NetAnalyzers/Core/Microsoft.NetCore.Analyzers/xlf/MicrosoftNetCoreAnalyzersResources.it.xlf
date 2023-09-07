@@ -2200,7 +2200,7 @@ L'ampliamento e le conversioni definite dall'utente non sono supportate con tipi
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsInvalidFormatMessage">
         <source>The format argument is not a valid format string</source>
-        <target state="new">The format argument is not a valid format string</target>
+        <target state="translated">L'argomento di formato non è una stringa di formato valida</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessage">

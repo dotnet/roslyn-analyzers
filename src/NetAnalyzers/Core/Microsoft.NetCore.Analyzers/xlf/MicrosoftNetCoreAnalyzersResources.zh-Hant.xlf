@@ -2200,7 +2200,7 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsInvalidFormatMessage">
         <source>The format argument is not a valid format string</source>
-        <target state="new">The format argument is not a valid format string</target>
+        <target state="translated">格式引數不是有效的格式字串</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessage">

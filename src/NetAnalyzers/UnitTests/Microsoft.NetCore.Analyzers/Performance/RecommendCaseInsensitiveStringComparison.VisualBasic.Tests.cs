@@ -15,6 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [MemberData(nameof(DiagnosedAndFixedData))]
         [MemberData(nameof(DiagnosedAndFixedInvertedData))]
         [MemberData(nameof(VisualBasicDiagnosedAndFixedNamedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedInvertedNamedData))]
         public async Task Diagnostic_Assign(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -43,7 +44,7 @@ End Class
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
         [MemberData(nameof(DiagnosedAndFixedInvertedData))]
-        [MemberData(nameof(VisualBasicDiagnosedAndFixedNamedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedInvertedNamedData))]
         public async Task Diagnostic_Return(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -68,22 +69,19 @@ End Class
         }
 
         [Theory]
-        [MemberData(nameof(DiagnosedAndFixedWithEqualsToData))]
-        [MemberData(nameof(DiagnosedAndFixedWithEqualsToInvertedData))]
-        [MemberData(nameof(VisualBasicDiagnosedAndFixedWithEqualsToNamedData))]
-        public async Task Diagnostic_If(string diagnosedLine, string fixedLine, string equalsTo)
+        [MemberData(nameof(DiagnosedAndFixedImplicitBooleanData))]
+        [MemberData(nameof(DiagnosedAndFixedWithAppendedMethodData))]
+        [MemberData(nameof(DiagnosedAndFixedWithAppendedMethodInvertedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedWithAppendedMethodNamedData))]
+        public async Task Diagnostic_If(string diagnosedLine, string fixedLine, string appendedMethod)
         {
-            if (equalsTo == " == -1")
-            {
-                equalsTo = " = -1"; // VB syntax
-            }
-
             string originalCode = $@"Imports System
 Class C
     Private Function M() As Integer
         Dim a As String = ""aBc""
         Dim b As String = ""bc""
-        If [|{diagnosedLine}|]{equalsTo} Then
+        Dim myBoolean As Boolean = False
+        If [|{diagnosedLine}|]{appendedMethod} Then
             Return 5
         End If
         Return 4
@@ -95,7 +93,8 @@ Class C
     Private Function M() As Integer
         Dim a As String = ""aBc""
         Dim b As String = ""bc""
-        If {fixedLine}{equalsTo} Then
+        Dim myBoolean As Boolean = False
+        If {fixedLine}{appendedMethod} Then
             Return 5
         End If
         Return 4
@@ -108,7 +107,7 @@ End Class
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
         [MemberData(nameof(DiagnosedAndFixedInvertedData))]
-        [MemberData(nameof(VisualBasicDiagnosedAndFixedNamedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedInvertedNamedData))]
         public async Task Diagnostic_IgnoreResult(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -136,6 +135,7 @@ End Class
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsData))]
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsInvertedData))]
         [MemberData(nameof(VisualBasicDiagnosedAndFixedStringLiteralsNamedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedStringLiteralsInvertedNamedData))]
         public async Task Diagnostic_StringLiterals_Return(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -159,6 +159,7 @@ End Class
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsData))]
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsInvertedData))]
         [MemberData(nameof(VisualBasicDiagnosedAndFixedStringReturningMethodsNamedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedStringReturningMethodsInvertedNamedData))]
         public async Task Diagnostic_StringReturningMethods_Discard(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -313,6 +314,7 @@ End Class";
         [MemberData(nameof(DiagnosticNoFixCompareToData))]
         [MemberData(nameof(DiagnosticNoFixCompareToInvertedData))]
         [MemberData(nameof(VisualBasicDiagnosticNoFixCompareToNamedData))]
+        [MemberData(nameof(VisualBasicDiagnosticNoFixCompareToInvertedNamedData))]
         public async Task Diagnostic_NoFix_CompareTo(string diagnosedLine)
         {
             string originalCode = $@"Imports System

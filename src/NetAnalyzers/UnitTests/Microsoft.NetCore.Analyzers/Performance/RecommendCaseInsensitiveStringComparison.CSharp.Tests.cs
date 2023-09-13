@@ -15,6 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [MemberData(nameof(DiagnosedAndFixedData))]
         [MemberData(nameof(DiagnosedAndFixedInvertedData))]
         [MemberData(nameof(CSharpDiagnosedAndFixedNamedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedInvertedNamedData))]
         public async Task Diagnostic_Assign(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
@@ -44,6 +45,7 @@ class C
         [MemberData(nameof(DiagnosedAndFixedData))]
         [MemberData(nameof(DiagnosedAndFixedInvertedData))]
         [MemberData(nameof(CSharpDiagnosedAndFixedNamedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedInvertedNamedData))]
         public async Task Diagnostic_Return(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
@@ -70,10 +72,11 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(DiagnosedAndFixedWithEqualsToData))]
-        [MemberData(nameof(DiagnosedAndFixedWithEqualsToInvertedData))]
-        [MemberData(nameof(CSharpDiagnosedAndFixedWithEqualsToNamedData))]
-        public async Task Diagnostic_If(string diagnosedLine, string fixedLine, string equalsTo)
+        [MemberData(nameof(DiagnosedAndFixedImplicitBooleanData))]
+        [MemberData(nameof(DiagnosedAndFixedWithAppendedMethodData))]
+        [MemberData(nameof(DiagnosedAndFixedWithAppendedMethodInvertedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedWithAppendedMethodNamedData))]
+        public async Task Diagnostic_If(string diagnosedLine, string fixedLine, string appendedMethod)
         {
             string originalCode = $@"using System;
 class C
@@ -82,7 +85,8 @@ class C
     {{
         string a = ""aBc"";
         string b = ""bc"";
-        if ([|{diagnosedLine}|]{equalsTo})
+        bool myBoolean = false;
+        if ([|{diagnosedLine}|]{appendedMethod})
         {{
             return 5;
         }}
@@ -96,7 +100,8 @@ class C
     {{
         string a = ""aBc"";
         string b = ""bc"";
-        if ({fixedLine}{equalsTo})
+        bool myBoolean = false;
+        if ({fixedLine}{appendedMethod})
         {{
             return 5;
         }}
@@ -110,6 +115,7 @@ class C
         [MemberData(nameof(DiagnosedAndFixedData))]
         [MemberData(nameof(DiagnosedAndFixedInvertedData))]
         [MemberData(nameof(CSharpDiagnosedAndFixedNamedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedInvertedNamedData))]
         public async Task Diagnostic_IgnoreResult(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
@@ -139,6 +145,7 @@ class C
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsData))]
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsInvertedData))]
         [MemberData(nameof(CSharpDiagnosedAndFixedStringLiteralsNamedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedStringLiteralsInvertedNamedData))]
         public async Task Diagnostic_StringLiterals_ReturnExpressionBody(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
@@ -158,6 +165,7 @@ class C
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsData))]
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsInvertedData))]
         [MemberData(nameof(CSharpDiagnosedAndFixedStringReturningMethodsNamedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedStringReturningMethodsInvertedNamedData))]
         public async Task Diagnostic_StringReturningMethods_Discard(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
@@ -301,6 +309,8 @@ class C
         [MemberData(nameof(DiagnosticNoFixCompareToData))]
         [MemberData(nameof(DiagnosticNoFixCompareToInvertedData))]
         [MemberData(nameof(CSharpDiagnosticNoFixCompareToNamedData))]
+        [MemberData(nameof(CSharpDiagnosticNoFixCompareToInvertedNamedData))]
+        [MemberData(nameof(DiagnosticNoFixStartsWithContainsIndexOfData))]
         public async Task Diagnostic_NoFix_CompareTo(string diagnosedLine)
         {
             string originalCode = $@"using System;
@@ -308,7 +318,7 @@ class C
 {{
     string GetStringA() => ""aBc"";
     string GetStringB() => ""cDe"";
-    int M()
+    object M()
     {{
         string a = ""AbC"";
         string b = ""CdE"";

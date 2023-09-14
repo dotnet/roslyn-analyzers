@@ -2244,8 +2244,8 @@ Genel türlerde genişletme ve kullanıcı tanımlı dönüştürmeler desteklen
         <note />
       </trans-unit>
       <trans-unit id="RecommendCaseInsensitiveStringComparerDescription">
-        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo', because they lead to an allocation. Instead, use 'StringComparer' to perform case-insensitive comparisons.</source>
-        <target state="translated">Bir tahsise yol açtıkları için 'CompareTo' kullanırken büyük/küçük harfe duyarsız dize karşılaştırmaları gerçekleştirmek için 'ToLower', 'ToUpper', 'ToLowerInvariant' ve 'ToUpperInvariant' çağırmaktan kaçının. Bunun yerine, büyük/küçük harfe duyarsız karşılaştırmalar yapmak için 'StringComparer' kullanın.</target>
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons when using 'CompareTo', because they lead to an allocation. Instead, use 'StringComparer' to perform case-insensitive comparisons. Switching to using 'StringComparer' might cause subtle changes in behavior, so it's important to conduct thorough testing after applying the suggestion. Additionally, if a culturally sensitive comparison is not required, consider using 'StringComparer.OrdinalIgnoreCase'.</source>
+        <target state="needs-review-translation">Bir tahsise yol açtıkları için 'CompareTo' kullanırken büyük/küçük harfe duyarsız dize karşılaştırmaları gerçekleştirmek için 'ToLower', 'ToUpper', 'ToLowerInvariant' ve 'ToUpperInvariant' çağırmaktan kaçının. Bunun yerine, büyük/küçük harfe duyarsız karşılaştırmalar yapmak için 'StringComparer' kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="RecommendCaseInsensitiveStringComparerMessage">
@@ -2254,13 +2254,13 @@ Genel türlerde genişletme ve kullanıcı tanımlı dönüştürmeler desteklen
         <note />
       </trans-unit>
       <trans-unit id="RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle">
-        <source>Use the 'string.{0}(string, StringComparison)' overload</source>
-        <target state="translated">'string.{0}(string, StringComparison)' aşırı yüklemesini kullan</target>
+        <source>Consider using the 'string.{0}(string, StringComparison)' overload</source>
+        <target state="needs-review-translation">'string.{0}(string, StringComparison)' aşırı yüklemesini kullan</target>
         <note />
       </trans-unit>
       <trans-unit id="RecommendCaseInsensitiveStringComparisonDescription">
-        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons because they lead to an allocation. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons.</source>
-        <target state="translated">Bir ayırmaya yol açtıkları için büyük/küçük harfe duyarsız dize karşılaştırmaları gerçekleştirmek için 'ToLower', 'ToUpper', 'ToLowerInvariant' ve 'ToUpperInvariant' aramaktan kaçının. Bunun yerine, büyük/küçük harfe duyarsız karşılaştırmalar gerçekleştirmek için bir 'StringComparison' enum değeri alan 'Contains', 'IndexOf' ve 'StartsWith' yöntem aşırı yüklemelerini aramayı tercih edin.</target>
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons because they lead to an allocation. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons. Switching to using an overload that takes a 'StringComparison' might cause subtle changes in behavior, so it's important to conduct thorough testing after applying the suggestion. Additionally, if a culturally sensitive comparison is not required, consider using 'StringComparison.OrdinalIgnoreCase'.</source>
+        <target state="needs-review-translation">Bir ayırmaya yol açtıkları için büyük/küçük harfe duyarsız dize karşılaştırmaları gerçekleştirmek için 'ToLower', 'ToUpper', 'ToLowerInvariant' ve 'ToUpperInvariant' aramaktan kaçının. Bunun yerine, büyük/küçük harfe duyarsız karşılaştırmalar gerçekleştirmek için bir 'StringComparison' enum değeri alan 'Contains', 'IndexOf' ve 'StartsWith' yöntem aşırı yüklemelerini aramayı tercih edin.</target>
         <note />
       </trans-unit>
       <trans-unit id="RecommendCaseInsensitiveStringComparisonMessage">
@@ -2274,13 +2274,13 @@ Genel türlerde genişletme ve kullanıcı tanımlı dönüştürmeler desteklen
         <note />
       </trans-unit>
       <trans-unit id="RecommendCaseInsensitiveStringEqualsCodeFixTitle">
-        <source>Use 'string.Equals(string, StringComparison)'</source>
-        <target state="translated">'string.Equals(string, StringComparison)' parametresini kullanın</target>
+        <source>Consider using 'string.Equals(string, StringComparison)'</source>
+        <target state="needs-review-translation">'string.Equals(string, StringComparison)' parametresini kullanın</target>
         <note />
       </trans-unit>
       <trans-unit id="RecommendCaseInsensitiveStringEqualsDescription">
-        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons, as in 'string.ToLower() == string.ToLower()', because they lead to an allocation. Instead, use 'string.Equals(string, StringComparison)' to perform case-insensitive comparisons.</source>
-        <target state="translated">Bir ayrıma işlemine yol açtıkları için 'string.ToLower() == string.ToLower()' parametresinde olduğu gibi büyük/küçük harfe duyarsız dize karşılaştırmaları gerçekleştirmek için 'ToLower', 'ToUpper', 'ToLowerInvariant' ve 'ToUpperInvariant' parametrelerini çağırmaktan kaçının. Bunun yerine, büyük/küçük harfe duyarsız karşılaştırmalar yapmak için 'string.Equals(string, StringComparison)' parametresini kullanın.</target>
+        <source>Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons, as in 'string.ToLower() == string.ToLower()', because they lead to an allocation. Instead, use 'string.Equals(string, StringComparison)' to perform case-insensitive comparisons. Switching to using an overload that takes a 'StringComparison' might cause subtle changes in behavior, so it's important to conduct thorough testing after applying the suggestion. Additionally, if a culturally sensitive comparison is not required, consider using 'StringComparison.OrdinalIgnoreCase'.</source>
+        <target state="needs-review-translation">Bir ayrıma işlemine yol açtıkları için 'string.ToLower() == string.ToLower()' parametresinde olduğu gibi büyük/küçük harfe duyarsız dize karşılaştırmaları gerçekleştirmek için 'ToLower', 'ToUpper', 'ToLowerInvariant' ve 'ToUpperInvariant' parametrelerini çağırmaktan kaçının. Bunun yerine, büyük/küçük harfe duyarsız karşılaştırmalar yapmak için 'string.Equals(string, StringComparison)' parametresini kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="RecommendCaseInsensitiveStringEqualsMessage">

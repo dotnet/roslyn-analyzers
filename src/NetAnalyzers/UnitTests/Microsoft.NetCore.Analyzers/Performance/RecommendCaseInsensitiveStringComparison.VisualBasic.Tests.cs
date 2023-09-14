@@ -196,6 +196,7 @@ End Class
         [MemberData(nameof(DiagnosedAndFixedParenthesizedInvertedData))]
         [MemberData(nameof(VisualBasicDiagnosedAndFixedParenthesizedNamedData))]
         [MemberData(nameof(VisualBasicDiagnosedAndFixedParenthesizedNamedInvertedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedParenthesizedComplexCasesData))]
         public async Task Diagnostic_Parenthesized_ReturnCastedToString(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -204,6 +205,8 @@ Class C
         Return ""AbC""
     End Function
     Public Function M() As Object
+        Dim a As String = ""AbC""
+        Dim b As String = ""CdE""
         Return ([|{diagnosedLine}|]).ToString()
     End Function
 End Class";
@@ -213,6 +216,8 @@ Class C
         Return ""AbC""
     End Function
     Public Function M() As Object
+        Dim a As String = ""AbC""
+        Dim b As String = ""CdE""
         Return ({fixedLine}).ToString()
     End Function
 End Class";

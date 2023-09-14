@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 
 namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
@@ -41,11 +42,11 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         private const string CSharpSeparator = ": ";
         private const string VisualBasicSeparator = ":=";
 
-        private static string[] GetNamedArguments(string separator) => new string[] {
-            "",
-            $", startIndex{separator}1",
-            $", startIndex{separator}1, count{separator}1",
-            $", count{separator}1, startIndex{separator}1"
+        private static (string, string)[] GetNamedArguments(string separator) => new (string, string)[] {
+            ("", ""),
+            ($", startIndex{separator}1", $", startIndex{separator}1"),
+            ($", startIndex{separator}1, count{separator}1", $", startIndex{separator}1, count{separator}1"),
+            ($", count{separator}1, startIndex{separator}1", $", startIndex{separator}1, count{separator}1")
         };
 
         // Test cases for Contains, StartsWith and all overloads of IndexOf
@@ -101,9 +102,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
 
                 // IndexOf overloads
-                foreach (string arguments in GetNamedArguments(separator))
+                foreach ((string originalArguments, string expectedArguments) in GetNamedArguments(separator))
                 {
-                    yield return new object[] { $"a.{caseChanging}().IndexOf(value{separator}b{arguments})", $"a.IndexOf(value{separator}b{arguments}, comparisonType{separator}StringComparison.{replacement})" };
+                    yield return new object[] { $"a.{caseChanging}().IndexOf(value{separator}b{originalArguments})", $"a.IndexOf(value{separator}b{expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
             }
         }
@@ -123,9 +124,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
 
                 // IndexOf overloads
-                foreach (string arguments in GetNamedArguments(separator))
+                foreach ((string originalArguments, string expectedArguments) in GetNamedArguments(separator))
                 {
-                    yield return new object[] { $"a.IndexOf(value{separator}b.{caseChanging}(){arguments})", $"a.IndexOf(value{separator}b{arguments}, comparisonType{separator}StringComparison.{replacement})" };
+                    yield return new object[] { $"a.IndexOf(value{separator}b.{caseChanging}(){originalArguments})", $"a.IndexOf(value{separator}b{expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
             }
         }
@@ -186,9 +187,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
 
                 // IndexOf overloads
-                foreach (string arguments in GetNamedArguments(separator))
+                foreach ((string originalArguments, string expectedArguments) in GetNamedArguments(separator))
                 {
-                    yield return new object[] { $"a.{caseChanging}().IndexOf(value{separator}b{arguments})", $"a.IndexOf(value{separator}b{arguments}, comparisonType{separator}StringComparison.{replacement})", ".Equals(-1)" };
+                    yield return new object[] { $"a.{caseChanging}().IndexOf(value{separator}b{originalArguments})", $"a.IndexOf(value{separator}b{expectedArguments}, comparisonType{separator}StringComparison.{replacement})", ".Equals(-1)" };
                 }
             }
         }
@@ -266,9 +267,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
 
                 // IndexOf overloads
-                foreach (string arguments in GetNamedArguments(separator))
+                foreach ((string originalArguments, string expectedArguments) in GetNamedArguments(separator))
                 {
-                    yield return new object[] { $"\"aBc\".{caseChanging}().IndexOf(value{separator}\"CdE\"{arguments})", $"\"aBc\".IndexOf(value{separator}\"CdE\"{arguments}, comparisonType{separator}StringComparison.{replacement})" };
+                    yield return new object[] { $"\"aBc\".{caseChanging}().IndexOf(value{separator}\"CdE\"{originalArguments})", $"\"aBc\".IndexOf(value{separator}\"CdE\"{expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
             }
         }
@@ -288,9 +289,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
 
                 // IndexOf overloads
-                foreach (string arguments in GetNamedArguments(separator))
+                foreach ((string originalArguments, string expectedArguments) in GetNamedArguments(separator))
                 {
-                    yield return new object[] { $"\"aBc\".IndexOf(value{separator}\"CdE\".{caseChanging}(){arguments})", $"\"aBc\".IndexOf(value{separator}\"CdE\"{arguments}, comparisonType{separator}StringComparison.{replacement})" };
+                    yield return new object[] { $"\"aBc\".IndexOf(value{separator}\"CdE\".{caseChanging}(){originalArguments})", $"\"aBc\".IndexOf(value{separator}\"CdE\"{expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
             }
         }
@@ -348,9 +349,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
 
                 // IndexOf overloads
-                foreach (string arguments in GetNamedArguments(separator))
+                foreach ((string originalArguments, string expectedArguments) in GetNamedArguments(separator))
                 {
-                    yield return new object[] { $"GetStringA().{caseChanging}().IndexOf(value{separator}GetStringB(){arguments})", $"GetStringA().IndexOf(value{separator}GetStringB(){arguments}, comparisonType{separator}StringComparison.{replacement})" };
+                    yield return new object[] { $"GetStringA().{caseChanging}().IndexOf(value{separator}GetStringB(){originalArguments})", $"GetStringA().IndexOf(value{separator}GetStringB(){expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
             }
         }
@@ -370,9 +371,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
 
                 // IndexOf overloads
-                foreach (string arguments in GetNamedArguments(separator))
+                foreach ((string originalArguments, string expectedArguments) in GetNamedArguments(separator))
                 {
-                    yield return new object[] { $"GetStringA().IndexOf(value{separator}GetStringB().{caseChanging}(){arguments})", $"GetStringA().IndexOf(value{separator}GetStringB(){arguments}, comparisonType{separator}StringComparison.{replacement})" };
+                    yield return new object[] { $"GetStringA().IndexOf(value{separator}GetStringB().{caseChanging}(){originalArguments})", $"GetStringA().IndexOf(value{separator}GetStringB(){expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
             }
         }
@@ -427,12 +428,14 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 foreach (string method in ContainsStartsWith)
                 {
                     yield return new object[] { $"(\"aBc\".{caseChanging}()).{method}(value{separator}\"CdE\")", $"\"aBc\".{method}(value{separator}\"CdE\", comparisonType{separator}StringComparison.{replacement})" };
+                    yield return new object[] { $"(GetString().{caseChanging}()).{method}(value{separator}GetString())", $"GetString().{method}(value{separator}GetString(), comparisonType{separator}StringComparison.{replacement})" };
                 }
 
                 // IndexOf overloads
-                foreach (string arguments in GetNamedArguments(separator))
+                foreach ((string originalArguments, string expectedArguments) in GetNamedArguments(separator))
                 {
-                    yield return new object[] { $"(\"aBc\".{caseChanging}()).IndexOf(value{separator}\"CdE\"{arguments})", $"\"aBc\".IndexOf(value{separator}\"CdE\"{arguments}, comparisonType{separator}StringComparison.{replacement})" };
+                    yield return new object[] { $"(\"aBc\".{caseChanging}()).IndexOf(value{separator}\"CdE\"{originalArguments})", $"\"aBc\".IndexOf(value{separator}\"CdE\"{expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
+                    yield return new object[] { $"(GetString().{caseChanging}()).IndexOf(value{separator}GetString(){originalArguments})", $"GetString().IndexOf(value{separator}GetString(){expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
             }
         }
@@ -448,13 +451,38 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             {
                 foreach (string method in ContainsStartsWith)
                 {
+                    yield return new object[] { $"(\"aBc\").{method}(value{separator}(\"cDe\".{caseChanging}()))", $"(\"aBc\").{method}(value{separator}\"cDe\", comparisonType{separator}StringComparison.{replacement})" };
                     yield return new object[] { $"(GetString()).{method}(value{separator}(GetString().{caseChanging}()))", $"(GetString()).{method}(value{separator}GetString(), comparisonType{separator}StringComparison.{replacement})" };
                 }
 
                 // IndexOf overloads
-                foreach (string arguments in GetNamedArguments(separator))
+                foreach ((string originalArguments, string expectedArguments) in GetNamedArguments(separator))
                 {
-                    yield return new object[] { $"(GetString()).IndexOf(value{separator}(GetString().{caseChanging}()){arguments})", $"(GetString()).IndexOf(value{separator}GetString(){arguments}, comparisonType{separator}StringComparison.{replacement})" };
+                    yield return new object[] { $"(\"aBc\").IndexOf(value{separator}(\"cDe\".{caseChanging}()){originalArguments})", $"(\"aBc\").IndexOf(value{separator}\"cDe\"{expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
+                    yield return new object[] { $"(GetString()).IndexOf(value{separator}(GetString().{caseChanging}()){originalArguments})", $"(GetString()).IndexOf(value{separator}GetString(){expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
+                }
+            }
+        }
+
+        public static IEnumerable<object[]> CSharpDiagnosedAndFixedParenthesizedComplexCasesData() => DiagnosedAndFixedParenthesizedComplexCasesData(CSharpSeparator);
+        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedParenthesizedComplexCasesData() => DiagnosedAndFixedParenthesizedComplexCasesData(VisualBasicSeparator);
+
+        // Test cases for Contains, StartsWith and all overloads of IndexOf
+        // where the invocation and the argument are both enclosed in various combinations of parenthesis.
+        private static IEnumerable<object[]> DiagnosedAndFixedParenthesizedComplexCasesData(string separator)
+        {
+            foreach ((string caseChanging, string replacement) in Cultures)
+            {
+                foreach (string method in ContainsStartsWith)
+                {
+                    yield return new object[] { $"((GetString().{caseChanging}())).{method}(value{separator}((GetString().{caseChanging}())))", $"GetString().{method}(value{separator}GetString(), comparisonType{separator}StringComparison.{replacement})" };
+                    yield return new object[] { $"((a.{caseChanging}())).{method}(value{separator}((b.{caseChanging}())))", $"a.{method}(value{separator}b, comparisonType{separator}StringComparison.{replacement})" };
+                }
+
+                // IndexOf overloads
+                foreach ((string originalArguments, string expectedArguments) in GetNamedArguments(separator))
+                {
+                    yield return new object[] { $"((GetString().{caseChanging}())).IndexOf(value{separator}((GetString().{caseChanging}())){originalArguments})", $"GetString().IndexOf(value{separator}GetString(){expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
             }
         }

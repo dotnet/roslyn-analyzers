@@ -98,7 +98,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 caseChangingApproachValue = RCISCAnalyzer.StringComparisonInvariantCultureIgnoreCaseName;
             }
-            
+
             Debug.Assert(caseChangingApproachValue != null, "Unexpected offending methods");
 
             if (operation is IInvocationOperation invocation)

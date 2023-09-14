@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
 
 namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {

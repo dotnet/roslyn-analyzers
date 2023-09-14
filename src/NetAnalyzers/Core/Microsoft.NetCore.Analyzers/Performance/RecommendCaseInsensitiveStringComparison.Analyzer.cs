@@ -234,7 +234,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             IMethodSymbol indexOfStringMethod, IMethodSymbol indexOfStringInt32Method, IMethodSymbol indexOfStringInt32Int32Method)
         {
             IMethodSymbol diagnosableMethod = invocation.TargetMethod;
-            
+
             DiagnosticDescriptor? chosenRule;
             if (diagnosableMethod.Equals(containsStringMethod) ||
                 diagnosableMethod.Equals(startsWithStringMethod) ||

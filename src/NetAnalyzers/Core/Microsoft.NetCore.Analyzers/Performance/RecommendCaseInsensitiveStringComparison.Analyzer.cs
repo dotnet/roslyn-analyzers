@@ -330,15 +330,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             diagnosableInvocation = null;
 
-            IOperation? ancestor = operation?.WalkUpParentheses().WalkUpConversion().Parent;
-
-            if (ancestor is IInvocationOperation invocationAncestor)
+            IOperation? descendant = operation;
+            while (descendant is IParenthesizedOperation parenthesizedOperation)
             {
-                diagnosableInvocation = invocationAncestor;
+                descendant = parenthesizedOperation.Operand;
             }
-            else if (ancestor is IArgumentOperation argumentAncestor && argumentAncestor.Parent is IInvocationOperation argumentInvocationAncestor)
+
+            if (descendant is IInvocationOperation invocationDescendant)
             {
-                diagnosableInvocation = argumentInvocationAncestor;
+                diagnosableInvocation = invocationDescendant;
+            }
+            else if (descendant is IArgumentOperation argumentDescendant && argumentDescendant.Value is IInvocationOperation argumentInvocationDescendant)
+            {
+                diagnosableInvocation = argumentInvocationDescendant;
             }
 
             return diagnosableInvocation != null;

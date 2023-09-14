@@ -259,9 +259,9 @@ End Class";
 Class C
     Function M(a As String, b As String) As Boolean
         ' Trivia1
-        Dim result As Boolean = [|a.ToLower() = b.ToLowerInvariant()|] ' Trivia2
+        Dim result As Boolean = [|a.ToLowerInvariant() = b.ToLowerInvariant()|] ' Trivia2
         ' Trivia3
-        If [|a.ToLowerInvariant() <> b.ToLower()|] Then ' Trivia4
+        If [|a.ToLower() <> b.ToLower()|] Then ' Trivia4
             ' Trivia5
             Return [|b <> a.ToLowerInvariant()|] ' Trivia6
             ' Trivia7
@@ -275,7 +275,7 @@ End Class";
 Class C
     Function M(a As String, b As String) As Boolean
         ' Trivia1
-        Dim result As Boolean = a.Equals(b, StringComparison.CurrentCultureIgnoreCase) ' Trivia2
+        Dim result As Boolean = a.Equals(b, StringComparison.InvariantCultureIgnoreCase) ' Trivia2
         ' Trivia3
         If Not a.Equals(b, StringComparison.CurrentCultureIgnoreCase) Then ' Trivia4
             ' Trivia5
@@ -328,7 +328,7 @@ Class C
         Return [|{diagnosedLine}|]
     End Function
 End Class";
-            await VerifyDiagnosticOnlyVisualBasicAsync(originalCode);
+            await VerifyFixVisualBasicAsync(originalCode, originalCode);
         }
 
         [Theory]
@@ -352,7 +352,7 @@ Class C
         Return [|{diagnosedLine}|]
     End Function
 End Class";
-            await VerifyDiagnosticOnlyVisualBasicAsync(originalCode);
+            await VerifyFixVisualBasicAsync(originalCode, originalCode);
         }
 
         [Theory]
@@ -361,12 +361,17 @@ End Class";
         {
             string originalCode = $@"Imports System
 Class C
+    Public Function GetString() As String
+        Return String.Empty
+    End Function
     Public Function M() As Boolean
+        Dim a As String = ""aBc""
+        Dim b As String = ""dEf""
         Return [|{diagnosedLine}|]
     End Function
 End Class";
 
-            await VerifyDiagnosticOnlyVisualBasicAsync(originalCode);
+            await VerifyFixVisualBasicAsync(originalCode, originalCode);
         }
 
         private async Task VerifyNoDiagnosticVisualBasicAsync(string originalSource)
@@ -375,18 +380,6 @@ End Class";
             {
                 TestCode = originalSource,
                 FixedCode = originalSource
-            };
-
-            await test.RunAsync();
-        }
-
-        private async Task VerifyDiagnosticOnlyVisualBasicAsync(string originalSource)
-        {
-            VerifyVB.Test test = new()
-            {
-                TestCode = originalSource,
-                FixedCode = originalSource,
-                MarkupOptions = MarkupOptions.UseFirstDescriptor
             };
 
             await test.RunAsync();

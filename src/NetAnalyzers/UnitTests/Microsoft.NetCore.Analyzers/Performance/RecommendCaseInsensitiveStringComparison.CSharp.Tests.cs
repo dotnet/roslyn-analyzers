@@ -196,6 +196,7 @@ class C
         [MemberData(nameof(DiagnosedAndFixedParenthesizedInvertedData))]
         [MemberData(nameof(CSharpDiagnosedAndFixedParenthesizedNamedData))]
         [MemberData(nameof(CSharpDiagnosedAndFixedParenthesizedNamedInvertedData))]
+        [MemberData(nameof(CSharpDiagnosedAndFixedParenthesizedComplexCasesData))]
         public async Task Diagnostic_Parenthesized_ReturnCastedToString(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"using System;
@@ -204,6 +205,8 @@ class C
     string GetString() => ""aBc"";
     string M()
     {{
+        string a = ""aBc"";
+        string b = ""cDe"";
         return ([|{diagnosedLine}|]).ToString();
     }}
 }}";
@@ -213,6 +216,8 @@ class C
     string GetString() => ""aBc"";
     string M()
     {{
+        string a = ""aBc"";
+        string b = ""cDe"";
         return ({fixedLine}).ToString();
     }}
 }}";

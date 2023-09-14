@@ -306,12 +306,8 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(DiagnosticNoFixCompareToData))]
-        [MemberData(nameof(DiagnosticNoFixCompareToInvertedData))]
-        [MemberData(nameof(CSharpDiagnosticNoFixCompareToNamedData))]
-        [MemberData(nameof(CSharpDiagnosticNoFixCompareToInvertedNamedData))]
         [MemberData(nameof(DiagnosticNoFixStartsWithContainsIndexOfData))]
-        public async Task Diagnostic_NoFix_CompareTo(string diagnosedLine)
+        public async Task Diagnostic_NoFix_StartsWithContainsIndexOf(string diagnosedLine)
         {
             string originalCode = $@"using System;
 class C
@@ -319,6 +315,28 @@ class C
     string GetStringA() => ""aBc"";
     string GetStringB() => ""cDe"";
     object M()
+    {{
+        string a = ""AbC"";
+        string b = ""CdE"";
+        return [|{diagnosedLine}|];
+    }}
+}}";
+            await VerifyDiagnosticOnlyCSharpAsync(originalCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(DiagnosticNoFixCompareToData))]
+        [MemberData(nameof(DiagnosticNoFixCompareToInvertedData))]
+        [MemberData(nameof(CSharpDiagnosticNoFixCompareToNamedData))]
+        [MemberData(nameof(CSharpDiagnosticNoFixCompareToInvertedNamedData))]
+        public async Task Diagnostic_NoFix_CompareTo(string diagnosedLine)
+        {
+            string originalCode = $@"using System;
+class C
+{{
+    string GetStringA() => ""aBc"";
+    string GetStringB() => ""cDe"";
+    int M()
     {{
         string a = ""AbC"";
         string b = ""CdE"";
@@ -360,6 +378,7 @@ class C
             VerifyCS.Test test = new()
             {
                 TestCode = originalSource,
+                FixedCode = originalSource,
                 MarkupOptions = MarkupOptions.UseFirstDescriptor
             };
 

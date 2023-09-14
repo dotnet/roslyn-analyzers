@@ -311,6 +311,27 @@ End Class";
         }
 
         [Theory]
+        [MemberData(nameof(DiagnosticNoFixStartsWithContainsIndexOfData))]
+        public async Task Diagnostic_NoFix_StartsWithContainsIndexOf(string diagnosedLine)
+        {
+            string originalCode = $@"Imports System
+Class C
+    Public Function GetStringA() As String
+        Return ""aBc""
+    End Function
+    Public Function GetStringB() As String
+        Return ""cDe""
+    End Function
+    Public Function M() As Object
+        Dim a As String = ""AbC""
+        Dim b As String = ""CdE""
+        Return [|{diagnosedLine}|]
+    End Function
+End Class";
+            await VerifyDiagnosticOnlyVisualBasicAsync(originalCode);
+        }
+
+        [Theory]
         [MemberData(nameof(DiagnosticNoFixCompareToData))]
         [MemberData(nameof(DiagnosticNoFixCompareToInvertedData))]
         [MemberData(nameof(VisualBasicDiagnosticNoFixCompareToNamedData))]
@@ -364,6 +385,7 @@ End Class";
             VerifyVB.Test test = new()
             {
                 TestCode = originalSource,
+                FixedCode = originalSource,
                 MarkupOptions = MarkupOptions.UseFirstDescriptor
             };
 

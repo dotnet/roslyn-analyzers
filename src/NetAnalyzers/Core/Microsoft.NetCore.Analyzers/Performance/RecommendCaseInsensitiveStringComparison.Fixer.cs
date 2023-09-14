@@ -22,8 +22,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
     /// </summary>
     public abstract class RecommendCaseInsensitiveStringComparisonFixer : CodeFixProvider
     {
-        protected abstract IEnumerable<SyntaxNode> GetNewArgumentsForInvocation(SyntaxGenerator generator, string caseChangingApproachValue, IInvocationOperation mainInvocationOperation,
-            INamedTypeSymbol stringComparisonType, out SyntaxNode? mainInvocationInstance);
+        protected abstract IEnumerable<SyntaxNode> GetNewArgumentsForInvocation(SyntaxGenerator generator, string caseChangingApproachValue, IInvocationOperation mainInvocationOperation, INamedTypeSymbol stringType, INamedTypeSymbol stringComparisonType,
+          string? leftOffendingMethod, string? rightOffendingMethod, out SyntaxNode? mainInvocationInstance);
 
         protected abstract IEnumerable<SyntaxNode> GetNewArgumentsForBinary(SyntaxGenerator generator, SyntaxNode rightNode, SyntaxNode typeMemberAccess);
 
@@ -45,6 +45,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             SemanticModel model = await doc.GetRequiredSemanticModelAsync(ct).ConfigureAwait(false);
+
+            if (model.Compilation.GetSpecialType(SpecialType.System_String) is not INamedTypeSymbol stringType)
+            {
+                return;
+            }
 
             if (model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison)
                 is not INamedTypeSymbol stringComparisonType)
@@ -105,7 +110,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
 
                 Task<Document> createChangedDocument(CancellationToken _) => FixInvocationAsync(generator, doc, root,
-                invocation, stringComparisonType, invocation.TargetMethod.Name, caseChangingApproachValue!);
+                invocation, stringType, stringComparisonType, invocation.TargetMethod.Name,
+                caseChangingApproachValue!, leftOffendingMethod, rightOffendingMethod);
 
                 string title = string.Format(System.Globalization.CultureInfo.CurrentCulture,
                     MicrosoftNetCoreAnalyzersResources.RecommendCaseInsensitiveStringComparerStringComparisonCodeFixTitle, invocation.TargetMethod.Name);
@@ -134,7 +140,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
         }
 
         private Task<Document> FixInvocationAsync(SyntaxGenerator generator, Document doc, SyntaxNode root, IInvocationOperation mainInvocation,
-            INamedTypeSymbol stringComparisonType, string diagnosableMethodName, string caseChangingApproachValue)
+            INamedTypeSymbol stringType, INamedTypeSymbol stringComparisonType, string diagnosableMethodName,
+            string caseChangingApproachValue, string? leftOffendingMethod, string? rightOffendingMethod)
         {
             // Defensive check: The max number of arguments is held by IndexOf
             Debug.Assert(mainInvocation.Arguments.Length <= 3);
@@ -164,7 +171,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 RCISCAnalyzer.StringIndexOfMethodName or
                 RCISCAnalyzer.StringStartsWithMethodName);
 
-            IEnumerable<SyntaxNode> newArguments = GetNewArgumentsForInvocation(generator, caseChangingApproachValue, mainInvocation, stringComparisonType, out SyntaxNode? mainInvocationInstance);
+            IEnumerable<SyntaxNode> newArguments = GetNewArgumentsForInvocation(generator,
+                caseChangingApproachValue, mainInvocation, stringType, stringComparisonType,
+                leftOffendingMethod, rightOffendingMethod, out SyntaxNode? mainInvocationInstance);
 
             SyntaxNode stringMemberAccessExpression = generator.MemberAccessExpression(mainInvocationInstance, mainInvocation.TargetMethod.Name);
 

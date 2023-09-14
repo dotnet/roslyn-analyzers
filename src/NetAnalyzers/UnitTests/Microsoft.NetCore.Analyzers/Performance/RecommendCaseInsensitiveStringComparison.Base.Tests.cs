@@ -489,7 +489,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         public static IEnumerable<object[]> DiagnosticNoFixStartsWithContainsIndexOfData()
         {
-            foreach ((string left, string right ) in IncompatibleCaseChangingMethods)
+            foreach ((string left, string right) in IncompatibleCaseChangingMethods)
             {
                 yield return new object[] { $"a.{left}().StartsWith(b.{right}())" };
                 yield return new object[] { $"a.{left}().Contains(b.{right}())" };

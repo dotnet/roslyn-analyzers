@@ -14,6 +14,18 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             ("ToUpperInvariant", "InvariantCultureIgnoreCase")
         };
 
+        private static readonly (string, string)[] IncompatibleCaseChangingMethods = new[]
+        {
+            ("ToLower", "ToLowerInvariant"),
+            ("ToLower", "ToUpperInvariant"),
+            ("ToUpper", "ToLowerInvariant"),
+            ("ToUpper", "ToUpperInvariant"),
+            ("ToLowerInvariant", "ToLower"),
+            ("ToLowerInvariant", "ToUpper"),
+            ("ToUpperInvariant", "ToLower"),
+            ("ToUpperInvariant", "ToUpper"),
+        };
+
         private static readonly string[] ContainsStartsWith = new[] { "Contains", "StartsWith" };
         private static readonly string[] UnnamedArgs = new[] { "", ", 1", ", 1, 1" };
 
@@ -477,25 +489,25 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         public static IEnumerable<object[]> DiagnosticNoFixStartsWithContainsIndexOfData()
         {
-            foreach ((string caseChanging, _) in Cultures)
+            foreach ((string left, string right ) in IncompatibleCaseChangingMethods)
             {
-                yield return new object[] { $"a.{caseChanging}().StartsWith(b.{caseChanging}Invariant())" };
-                yield return new object[] { $"a.{caseChanging}().Contains(b.{caseChanging}Invariant())" };
-                yield return new object[] { $"\"aBc\".{caseChanging}().StartsWith(\"cDe\".{caseChanging}Invariant())" };
-                yield return new object[] { $"\"aBc\".{caseChanging}().Contains(\"cDe\".{caseChanging}Invariant())" };
-                yield return new object[] { $"GetStringA().{caseChanging}().StartsWith(GetStringB().{caseChanging}Invariant())" };
-                yield return new object[] { $"GetStringA().{caseChanging}().Contains(GetStringB().{caseChanging}Invariant())" };
+                yield return new object[] { $"a.{left}().StartsWith(b.{right}())" };
+                yield return new object[] { $"a.{left}().Contains(b.{right}())" };
+                yield return new object[] { $"\"aBc\".{left}().StartsWith(\"cDe\".{right}())" };
+                yield return new object[] { $"\"aBc\".{left}().Contains(\"cDe\".{right}())" };
+                yield return new object[] { $"GetStringA().{left}().StartsWith(GetStringB().{right}())" };
+                yield return new object[] { $"GetStringA().{left}().Contains(GetStringB().{right}())" };
 
-                yield return new object[] { $"a.{caseChanging}Invariant().StartsWith(b.{caseChanging}())" };
-                yield return new object[] { $"a.{caseChanging}Invariant().Contains(b.{caseChanging}())" };
-                yield return new object[] { $"\"aBc\".{caseChanging}Invariant().StartsWith(\"cDe\".{caseChanging}())" };
-                yield return new object[] { $"\"aBc\".{caseChanging}Invariant().Contains(\"cDe\".{caseChanging}())" };
+                yield return new object[] { $"a.{left}().StartsWith(b.{right}())" };
+                yield return new object[] { $"a.{left}().Contains(b.{right}())" };
+                yield return new object[] { $"\"aBc\".{left}().StartsWith(\"cDe\".{right}())" };
+                yield return new object[] { $"\"aBc\".{left}().Contains(\"cDe\".{right}())" };
 
                 // IndexOf overloads
                 foreach (string arguments in UnnamedArgs)
                 {
-                    yield return new object[] { $"a.{caseChanging}().IndexOf(b.{caseChanging}Invariant()){arguments})" };
-                    yield return new object[] { $"a.{caseChanging}Invariant().IndexOf(b.{caseChanging}()){arguments})" };
+                    yield return new object[] { $"a.{left}().IndexOf(b.{right}(){arguments})" };
+                    yield return new object[] { $"a.{left}().IndexOf(b.{right}(){arguments})" };
                 }
             }
         }

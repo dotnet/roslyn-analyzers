@@ -257,9 +257,9 @@ class C
     bool M(string a, string b)
     {{
         // Trivia
-        bool /* Trivia */ result = /* Trivia */ [|a.ToLower() // Trivia
+        bool /* Trivia */ result = /* Trivia */ [|a.ToLowerInvariant() // Trivia
             == /* Trivia */ b.ToLowerInvariant()|] /* Trivia */; // Trivia
-        if (/* Trivia */ [|a.ToLowerInvariant() /* Trivia */ != /* Trivia */ b.ToLower()|] /* Trivia */) // Trivia
+        if (/* Trivia */ [|a.ToLower() /* Trivia */ != /* Trivia */ b.ToLower()|] /* Trivia */) // Trivia
             return /* Trivia */ [|b /* Trivia */ != /* Trivia */ a.ToLowerInvariant()|] /* Trivia */; // Trivia
         return // Trivia
             [|""abc"" /* Trivia */ == /* Trivia */ a.ToUpperInvariant()|] /* Trivia */; // Trivia
@@ -272,7 +272,7 @@ class C
     bool M(string a, string b)
     {{
         // Trivia
-        bool /* Trivia */ result = /* Trivia */ a.Equals(b, StringComparison.CurrentCultureIgnoreCase) /* Trivia */; // Trivia
+        bool /* Trivia */ result = /* Trivia */ a.Equals(b, StringComparison.InvariantCultureIgnoreCase) /* Trivia */; // Trivia
         if (/* Trivia */ !a.Equals(b, StringComparison.CurrentCultureIgnoreCase) /* Trivia */) // Trivia
             return /* Trivia */ !b /* Trivia */ .Equals /* Trivia */ (a, StringComparison.InvariantCultureIgnoreCase) /* Trivia */; // Trivia
         return // Trivia
@@ -321,7 +321,7 @@ class C
         return [|{diagnosedLine}|];
     }}
 }}";
-            await VerifyDiagnosticOnlyCSharpAsync(originalCode);
+            await VerifyFixCSharpAsync(originalCode, originalCode);
         }
 
         [Theory]
@@ -343,7 +343,7 @@ class C
         return [|{diagnosedLine}|];
     }}
 }}";
-            await VerifyDiagnosticOnlyCSharpAsync(originalCode);
+            await VerifyFixCSharpAsync(originalCode, originalCode);
         }
 
         [Theory]
@@ -353,13 +353,16 @@ class C
             string originalCode = $@"using System;
 class C
 {{
+    string GetString() => string.Empty;
     bool M()
     {{
+        string a = ""aBc"";
+        string b = ""dEf"";
         return [|{diagnosedLine}|];
     }}
 }}";
 
-            await VerifyDiagnosticOnlyCSharpAsync(originalCode);
+            await VerifyFixCSharpAsync(originalCode, originalCode);
         }
 
         private async Task VerifyNoDiagnosticCSharpAsync(string originalSource)
@@ -368,18 +371,6 @@ class C
             {
                 TestCode = originalSource,
                 FixedCode = originalSource
-            };
-
-            await test.RunAsync();
-        }
-
-        private async Task VerifyDiagnosticOnlyCSharpAsync(string originalSource)
-        {
-            VerifyCS.Test test = new()
-            {
-                TestCode = originalSource,
-                FixedCode = originalSource,
-                MarkupOptions = MarkupOptions.UseFirstDescriptor
             };
 
             await test.RunAsync();

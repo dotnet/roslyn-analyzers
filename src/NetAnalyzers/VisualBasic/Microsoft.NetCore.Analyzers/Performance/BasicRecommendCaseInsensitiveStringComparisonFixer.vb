@@ -78,9 +78,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                    argumentSyntaxNode.NameColonEquals IsNot Nothing AndAlso
                    argumentSyntaxNode.NameColonEquals.Name IsNot Nothing AndAlso
                    argumentSyntaxNode.NameColonEquals.Name.Identifier.ValueText IsNot Nothing Then
-
-                   argumentName = argumentSyntaxNode.NameColonEquals.Name.Identifier.ValueText
-
+                    argumentName = argumentSyntaxNode.NameColonEquals.Name.Identifier.ValueText
                 End If
 
                 isAnyArgumentNamed = isAnyArgumentNamed Or argumentName IsNot Nothing

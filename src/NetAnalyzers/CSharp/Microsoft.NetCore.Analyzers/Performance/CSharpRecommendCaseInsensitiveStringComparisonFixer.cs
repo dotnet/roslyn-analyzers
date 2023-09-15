@@ -85,7 +85,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                         desiredExpression = argumentInvocationExpression;
                     }
 
-                    if (desiredExpression is InvocationExpressionSyntax invocation && 
+                    if (desiredExpression is InvocationExpressionSyntax invocation &&
                         invocation.Expression is MemberAccessExpressionSyntax argumentMemberAccessExpression)
                     {
                         newArgumentNode = argumentName == RCISCAnalyzer.StringParameterName ?

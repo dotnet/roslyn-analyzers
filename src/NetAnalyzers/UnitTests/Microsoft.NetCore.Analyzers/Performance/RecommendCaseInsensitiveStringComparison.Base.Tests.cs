@@ -44,9 +44,17 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         private static (string, string)[] GetNamedArguments(string separator) => new (string, string)[] {
             ("", ""),
             ($", startIndex{separator}1", $", startIndex{separator}1"),
-            ($", startIndex{separator}1, count{separator}1", $", startIndex{separator}1, count{separator}1"),
-            ($", count{separator}1, startIndex{separator}1", $", startIndex{separator}1, count{separator}1")
+            ($", startIndex{separator}1, count{separator}1", $", startIndex{separator}1, count{separator}1")
         };
+
+        // In C#, when the user names the arguments and passes them in a different order than the original, the fixer will
+        // be able to get the arguments from IInvocationOperation.Arguments in the order the user passed.
+        private static (string, string) CSharpIndexOfNamedArguments = new($", count: 1, startIndex: 1", $", count: 1, startIndex: 1");
+
+        // In VB, when the user names the arguments and passes them in a different order than the original, the fixer will
+        // not be able to get the arguments from IINvocation.Arguments in the order the user passed, and instead will
+        // get them in the original order as defined in the method signature.
+        private static (string, string) VisualBasicIndexOfNamedArguments = new($", count:=1, startIndex:=1", $", startIndex:=1, count:=1");
 
         // Test cases for Contains, StartsWith and all overloads of IndexOf
         // where the instance string is case-changed and the string argument is passed unmodified.
@@ -86,12 +94,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             }
         }
 
-        public static IEnumerable<object[]> CSharpDiagnosedAndFixedNamedData() => DiagnosedAndFixedNamedData(CSharpSeparator);
-        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedNamedData() => DiagnosedAndFixedNamedData(VisualBasicSeparator);
+        public static IEnumerable<object[]> CSharpDiagnosedAndFixedNamedData() => DiagnosedAndFixedNamedData(CSharpSeparator, CSharpIndexOfNamedArguments);
+        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedNamedData() => DiagnosedAndFixedNamedData(VisualBasicSeparator, VisualBasicIndexOfNamedArguments);
 
         // Test cases for Contains, StartsWith and all overloads of IndexOf
         // where the instance string is case-changed and the string argument is passed unmodified and explicitly named.
-        private static IEnumerable<object[]> DiagnosedAndFixedNamedData(string separator)
+        private static IEnumerable<object[]> DiagnosedAndFixedNamedData(string separator, (string, string) langSpecificOrderedNamedArgs)
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
@@ -105,15 +113,17 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"a.{caseChanging}().IndexOf(value{separator}b{originalArguments})", $"a.IndexOf(value{separator}b{expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
+
+                yield return new object[] { $"a.{caseChanging}().IndexOf(value{separator}b{langSpecificOrderedNamedArgs.Item1})", $"a.IndexOf(value{separator}b{langSpecificOrderedNamedArgs.Item2}, comparisonType{separator}StringComparison.{replacement})" };
             }
         }
 
-        public static IEnumerable<object[]> CSharpDiagnosedAndFixedInvertedNamedData() => DiagnosedAndFixedInvertedNamedData(CSharpSeparator);
-        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedInvertedNamedData() => DiagnosedAndFixedInvertedNamedData(VisualBasicSeparator);
+        public static IEnumerable<object[]> CSharpDiagnosedAndFixedInvertedNamedData() => DiagnosedAndFixedInvertedNamedData(CSharpSeparator, CSharpIndexOfNamedArguments);
+        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedInvertedNamedData() => DiagnosedAndFixedInvertedNamedData(VisualBasicSeparator, VisualBasicIndexOfNamedArguments);
 
         // Test cases for Contains, StartsWith and all overloads of IndexOf
         // where the instance string is unmodified and the string argument is passed case-changed and explicitly named.
-        private static IEnumerable<object[]> DiagnosedAndFixedInvertedNamedData(string separator)
+        private static IEnumerable<object[]> DiagnosedAndFixedInvertedNamedData(string separator, (string, string) langSpecificOrderedNamedArgs)
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
@@ -127,6 +137,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"a.IndexOf(value{separator}b.{caseChanging}(){originalArguments})", $"a.IndexOf(value{separator}b{expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
+
+                yield return new object[] { $"a.{caseChanging}().IndexOf(value{separator}b{langSpecificOrderedNamedArgs.Item1})", $"a.IndexOf(value{separator}b{langSpecificOrderedNamedArgs.Item2}, comparisonType{separator}StringComparison.{replacement})" };
             }
         }
 
@@ -170,13 +182,13 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             }
         }
 
-        public static IEnumerable<object[]> CSharpDiagnosedAndFixedWithAppendedMethodNamedData() => DiagnosedAndFixedWithAppendedMethodNamedData(CSharpSeparator);
-        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedWithAppendedMethodNamedData() => DiagnosedAndFixedWithAppendedMethodNamedData(VisualBasicSeparator);
+        public static IEnumerable<object[]> CSharpDiagnosedAndFixedWithAppendedMethodNamedData() => DiagnosedAndFixedWithAppendedMethodNamedData(CSharpSeparator, CSharpIndexOfNamedArguments);
+        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedWithAppendedMethodNamedData() => DiagnosedAndFixedWithAppendedMethodNamedData(VisualBasicSeparator, VisualBasicIndexOfNamedArguments);
 
         // Test cases for Contains, StartsWith and all overloads of IndexOf
         // where the instance string is case-changed and the string argument is unmodified and explicitly named
         // and the result of the method then calls another method.
-        private static IEnumerable<object[]> DiagnosedAndFixedWithAppendedMethodNamedData(string separator)
+        private static IEnumerable<object[]> DiagnosedAndFixedWithAppendedMethodNamedData(string separator, (string, string) langSpecificOrderedNamedArgs)
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
@@ -190,6 +202,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"a.{caseChanging}().IndexOf(value{separator}b{originalArguments})", $"a.IndexOf(value{separator}b{expectedArguments}, comparisonType{separator}StringComparison.{replacement})", ".Equals(-1)" };
                 }
+
+                yield return new object[] { $"a.{caseChanging}().IndexOf(value{separator}b{langSpecificOrderedNamedArgs.Item1})", $"a.IndexOf(value{separator}b{langSpecificOrderedNamedArgs.Item2}, comparisonType{separator}StringComparison.{replacement})", ".Equals(-1)" };
             }
         }
 
@@ -251,12 +265,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             }
         }
 
-        public static IEnumerable<object[]> CSharpDiagnosedAndFixedStringLiteralsNamedData() => DiagnosedAndFixedStringLiteralsNamedData(CSharpSeparator);
-        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedStringLiteralsNamedData() => DiagnosedAndFixedStringLiteralsNamedData(VisualBasicSeparator);
+        public static IEnumerable<object[]> CSharpDiagnosedAndFixedStringLiteralsNamedData() => DiagnosedAndFixedStringLiteralsNamedData(CSharpSeparator, CSharpIndexOfNamedArguments);
+        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedStringLiteralsNamedData() => DiagnosedAndFixedStringLiteralsNamedData(VisualBasicSeparator, VisualBasicIndexOfNamedArguments);
 
         // Test cases for Contains, StartsWith and all overloads of IndexOf
         // where the instance string is a case-changed literal and the string argument is an unmodified, explicitly named string literal.
-        private static IEnumerable<object[]> DiagnosedAndFixedStringLiteralsNamedData(string separator)
+        private static IEnumerable<object[]> DiagnosedAndFixedStringLiteralsNamedData(string separator, (string, string) langSpecificOrderedNamedArgs)
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
@@ -270,15 +284,17 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"\"aBc\".{caseChanging}().IndexOf(value{separator}\"CdE\"{originalArguments})", $"\"aBc\".IndexOf(value{separator}\"CdE\"{expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
+
+                yield return new object[] { $"\"aBc\".{caseChanging}().IndexOf(value{separator}\"CdE\"{langSpecificOrderedNamedArgs.Item1})", $"\"aBc\".IndexOf(value{separator}\"CdE\"{langSpecificOrderedNamedArgs.Item2}, comparisonType{separator}StringComparison.{replacement})" };
             }
         }
 
-        public static IEnumerable<object[]> CSharpDiagnosedAndFixedStringLiteralsInvertedNamedData() => DiagnosedAndFixedStringLiteralsInvertedNamedData(CSharpSeparator);
-        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedStringLiteralsInvertedNamedData() => DiagnosedAndFixedStringLiteralsInvertedNamedData(VisualBasicSeparator);
+        public static IEnumerable<object[]> CSharpDiagnosedAndFixedStringLiteralsInvertedNamedData() => DiagnosedAndFixedStringLiteralsInvertedNamedData(CSharpSeparator, CSharpIndexOfNamedArguments);
+        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedStringLiteralsInvertedNamedData() => DiagnosedAndFixedStringLiteralsInvertedNamedData(VisualBasicSeparator, VisualBasicIndexOfNamedArguments);
 
         // Test cases for Contains, StartsWith and all overloads of IndexOf
         // where the instance string is an unmodified literal and the string argument is a case-changed, explicitly named string literal.
-        private static IEnumerable<object[]> DiagnosedAndFixedStringLiteralsInvertedNamedData(string separator)
+        private static IEnumerable<object[]> DiagnosedAndFixedStringLiteralsInvertedNamedData(string separator, (string, string) langSpecificOrderedNamedArgs)
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
@@ -292,6 +308,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"\"aBc\".IndexOf(value{separator}\"CdE\".{caseChanging}(){originalArguments})", $"\"aBc\".IndexOf(value{separator}\"CdE\"{expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
+
+                yield return new object[] { $"\"aBc\".{caseChanging}().IndexOf(value{separator}\"CdE\"{langSpecificOrderedNamedArgs.Item1})", $"\"aBc\".IndexOf(value{separator}\"CdE\"{langSpecificOrderedNamedArgs.Item2}, comparisonType{separator}StringComparison.{replacement})" };
             }
         }
 
@@ -333,12 +351,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             }
         }
 
-        public static IEnumerable<object[]> CSharpDiagnosedAndFixedStringReturningMethodsNamedData() => DiagnosedAndFixedStringReturningMethodsNamedData(CSharpSeparator);
-        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedStringReturningMethodsNamedData() => DiagnosedAndFixedStringReturningMethodsNamedData(VisualBasicSeparator);
+        public static IEnumerable<object[]> CSharpDiagnosedAndFixedStringReturningMethodsNamedData() => DiagnosedAndFixedStringReturningMethodsNamedData(CSharpSeparator, CSharpIndexOfNamedArguments);
+        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedStringReturningMethodsNamedData() => DiagnosedAndFixedStringReturningMethodsNamedData(VisualBasicSeparator, VisualBasicIndexOfNamedArguments);
 
         // Test cases for Contains, StartsWith and all overloads of IndexOf
         // where the instance string is a method invocation that is case-changed, and the string argument is unmodified, comes from another method invocation, and is explicitly named.
-        private static IEnumerable<object[]> DiagnosedAndFixedStringReturningMethodsNamedData(string separator)
+        private static IEnumerable<object[]> DiagnosedAndFixedStringReturningMethodsNamedData(string separator, (string, string) langSpecificOrderedNamedArgs)
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
@@ -352,15 +370,17 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"GetStringA().{caseChanging}().IndexOf(value{separator}GetStringB(){originalArguments})", $"GetStringA().IndexOf(value{separator}GetStringB(){expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
+
+                yield return new object[] { $"GetStringA().{caseChanging}().IndexOf(value{separator}GetStringB(){langSpecificOrderedNamedArgs.Item1})", $"GetStringA().IndexOf(value{separator}GetStringB(){langSpecificOrderedNamedArgs.Item2}, comparisonType{separator}StringComparison.{replacement})" };
             }
         }
 
-        public static IEnumerable<object[]> CSharpDiagnosedAndFixedStringReturningMethodsInvertedNamedData() => DiagnosedAndFixedStringReturningMethodsInvertedNamedData(CSharpSeparator);
-        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedStringReturningMethodsInvertedNamedData() => DiagnosedAndFixedStringReturningMethodsInvertedNamedData(VisualBasicSeparator);
+        public static IEnumerable<object[]> CSharpDiagnosedAndFixedStringReturningMethodsInvertedNamedData() => DiagnosedAndFixedStringReturningMethodsInvertedNamedData(CSharpSeparator, CSharpIndexOfNamedArguments);
+        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedStringReturningMethodsInvertedNamedData() => DiagnosedAndFixedStringReturningMethodsInvertedNamedData(VisualBasicSeparator, VisualBasicIndexOfNamedArguments);
 
         // Test cases for Contains, StartsWith and all overloads of IndexOf
         // where the instance string is unmodified and comes from a method invocation, and the string argument is case-changed, comes from another method invocation, and is explicitly named.
-        private static IEnumerable<object[]> DiagnosedAndFixedStringReturningMethodsInvertedNamedData(string separator)
+        private static IEnumerable<object[]> DiagnosedAndFixedStringReturningMethodsInvertedNamedData(string separator, (string, string) langSpecificOrderedNamedArgs)
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
@@ -374,6 +394,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"GetStringA().IndexOf(value{separator}GetStringB().{caseChanging}(){originalArguments})", $"GetStringA().IndexOf(value{separator}GetStringB(){expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
+
+                yield return new object[] { $"GetStringA().{caseChanging}().IndexOf(value{separator}GetStringB(){langSpecificOrderedNamedArgs.Item1})", $"GetStringA().IndexOf(value{separator}GetStringB(){langSpecificOrderedNamedArgs.Item2}, comparisonType{separator}StringComparison.{replacement})" };
             }
         }
 
@@ -415,12 +437,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             }
         }
 
-        public static IEnumerable<object[]> CSharpDiagnosedAndFixedParenthesizedNamedData() => DiagnosedAndFixedParenthesizedNamedData(CSharpSeparator);
-        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedParenthesizedNamedData() => DiagnosedAndFixedParenthesizedNamedData(VisualBasicSeparator);
+        public static IEnumerable<object[]> CSharpDiagnosedAndFixedParenthesizedNamedData() => DiagnosedAndFixedParenthesizedNamedData(CSharpSeparator, CSharpIndexOfNamedArguments);
+        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedParenthesizedNamedData() => DiagnosedAndFixedParenthesizedNamedData(VisualBasicSeparator, VisualBasicIndexOfNamedArguments);
 
         // Test cases for Contains, StartsWith and all overloads of IndexOf
         // where the case-changed invocation string literal is enclosed in parenthesis, and the argument is another string literal, explicitly named.
-        private static IEnumerable<object[]> DiagnosedAndFixedParenthesizedNamedData(string separator)
+        private static IEnumerable<object[]> DiagnosedAndFixedParenthesizedNamedData(string separator, (string, string) langSpecificOrderedNamedArgs)
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
@@ -436,15 +458,17 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     yield return new object[] { $"(\"aBc\".{caseChanging}()).IndexOf(value{separator}\"CdE\"{originalArguments})", $"\"aBc\".IndexOf(value{separator}\"CdE\"{expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                     yield return new object[] { $"(GetString().{caseChanging}()).IndexOf(value{separator}GetString(){originalArguments})", $"GetString().IndexOf(value{separator}GetString(){expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
+
+                yield return new object[] { $"a.{caseChanging}().IndexOf(value{separator}b{langSpecificOrderedNamedArgs.Item1})", $"a.IndexOf(value{separator}b{langSpecificOrderedNamedArgs.Item2}, comparisonType{separator}StringComparison.{replacement})" };
             }
         }
 
-        public static IEnumerable<object[]> CSharpDiagnosedAndFixedParenthesizedNamedInvertedData() => DiagnosedAndFixedParenthesizedNamedInvertedData(CSharpSeparator);
-        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedParenthesizedNamedInvertedData() => DiagnosedAndFixedParenthesizedNamedInvertedData(VisualBasicSeparator);
+        public static IEnumerable<object[]> CSharpDiagnosedAndFixedParenthesizedNamedInvertedData() => DiagnosedAndFixedParenthesizedNamedInvertedData(CSharpSeparator, CSharpIndexOfNamedArguments);
+        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedParenthesizedNamedInvertedData() => DiagnosedAndFixedParenthesizedNamedInvertedData(VisualBasicSeparator, VisualBasicIndexOfNamedArguments);
 
         // Test cases for Contains, StartsWith and all overloads of IndexOf
         // where the invocation is a string literal and the argument is a case-changed string literal enclosed in parenthesis and explicitly named.
-        private static IEnumerable<object[]> DiagnosedAndFixedParenthesizedNamedInvertedData(string separator)
+        private static IEnumerable<object[]> DiagnosedAndFixedParenthesizedNamedInvertedData(string separator, (string, string) langSpecificOrderedNamedArgs)
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
@@ -460,15 +484,17 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     yield return new object[] { $"(\"aBc\").IndexOf(value{separator}(\"cDe\".{caseChanging}()){originalArguments})", $"(\"aBc\").IndexOf(value{separator}\"cDe\"{expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                     yield return new object[] { $"(GetString()).IndexOf(value{separator}(GetString().{caseChanging}()){originalArguments})", $"(GetString()).IndexOf(value{separator}GetString(){expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
+
+                yield return new object[] { $"a.{caseChanging}().IndexOf(value{separator}b{langSpecificOrderedNamedArgs.Item1})", $"a.IndexOf(value{separator}b{langSpecificOrderedNamedArgs.Item2}, comparisonType{separator}StringComparison.{replacement})" };
             }
         }
 
-        public static IEnumerable<object[]> CSharpDiagnosedAndFixedParenthesizedComplexCasesData() => DiagnosedAndFixedParenthesizedComplexCasesData(CSharpSeparator);
-        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedParenthesizedComplexCasesData() => DiagnosedAndFixedParenthesizedComplexCasesData(VisualBasicSeparator);
+        public static IEnumerable<object[]> CSharpDiagnosedAndFixedParenthesizedComplexCasesData() => DiagnosedAndFixedParenthesizedComplexCasesData(CSharpSeparator, CSharpIndexOfNamedArguments);
+        public static IEnumerable<object[]> VisualBasicDiagnosedAndFixedParenthesizedComplexCasesData() => DiagnosedAndFixedParenthesizedComplexCasesData(VisualBasicSeparator, VisualBasicIndexOfNamedArguments);
 
         // Test cases for Contains, StartsWith and all overloads of IndexOf
         // where the invocation and the argument are both enclosed in various combinations of parenthesis.
-        private static IEnumerable<object[]> DiagnosedAndFixedParenthesizedComplexCasesData(string separator)
+        private static IEnumerable<object[]> DiagnosedAndFixedParenthesizedComplexCasesData(string separator, (string, string) langSpecificOrderedNamedArgs)
         {
             foreach ((string caseChanging, string replacement) in Cultures)
             {
@@ -483,6 +509,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     yield return new object[] { $"((GetString().{caseChanging}())).IndexOf(value{separator}((GetString().{caseChanging}())){originalArguments})", $"GetString().IndexOf(value{separator}GetString(){expectedArguments}, comparisonType{separator}StringComparison.{replacement})" };
                 }
+
+                yield return new object[] { $"a.{caseChanging}().IndexOf(value{separator}b{langSpecificOrderedNamedArgs.Item1})", $"a.IndexOf(value{separator}b{langSpecificOrderedNamedArgs.Item2}, comparisonType{separator}StringComparison.{replacement})" };
             }
         }
 

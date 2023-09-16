@@ -18,8 +18,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     public sealed class CSharpRecommendCaseInsensitiveStringComparisonFixer : RecommendCaseInsensitiveStringComparisonFixer
     {
         protected override IEnumerable<SyntaxNode> GetNewArgumentsForInvocation(SyntaxGenerator generator,
-            string caseChangingApproachValue, IInvocationOperation mainInvocationOperation,
-            INamedTypeSymbol stringType, INamedTypeSymbol stringComparisonType,
+            string caseChangingApproachValue, IInvocationOperation mainInvocationOperation, INamedTypeSymbol stringComparisonType,
             string? leftOffendingMethod, string? rightOffendingMethod, out SyntaxNode? mainInvocationInstance)
         {
             InvocationExpressionSyntax invocationExpression = (InvocationExpressionSyntax)mainInvocationOperation.Syntax;
@@ -69,7 +68,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
                 // The arguments could be named and out of order, so we need to detect the string parameter
                 // and remove the offending invocation if there is one
-                if (rightOffendingMethod != null && arg.Parameter?.Type?.Name == stringType.Name)
+                if (rightOffendingMethod != null && arg.Parameter?.Type?.Name == StringTypeName)
                 {
                     ExpressionSyntax? desiredExpression = null;
                     if (arg.Syntax is ArgumentSyntax argumentExpression)

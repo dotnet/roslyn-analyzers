@@ -15,10 +15,8 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
         Inherits RecommendCaseInsensitiveStringComparisonFixer
 
         Protected Overrides Function GetNewArgumentsForInvocation(generator As SyntaxGenerator,
-                caseChangingApproachValue As String, mainInvocationOperation As IInvocationOperation,
-                stringType As INamedTypeSymbol, stringComparisonType As INamedTypeSymbol,
-                leftOffendingMethod As String, rightOffendingMethod As String,
-                ByRef mainInvocationInstance As SyntaxNode) As IEnumerable(Of SyntaxNode)
+                caseChangingApproachValue As String, mainInvocationOperation As IInvocationOperation, stringComparisonType As INamedTypeSymbol,
+                leftOffendingMethod As String, rightOffendingMethod As String, ByRef mainInvocationInstance As SyntaxNode) As IEnumerable(Of SyntaxNode)
 
             Dim invocationExpression As InvocationExpressionSyntax = TryCast(mainInvocationOperation.Syntax, InvocationExpressionSyntax)
 
@@ -83,7 +81,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
                 isAnyArgumentNamed = isAnyArgumentNamed Or argumentName IsNot Nothing
 
-                If rightOffendingMethod IsNot Nothing And arg.Parameter.Type.Name = stringType.Name Then
+                If rightOffendingMethod IsNot Nothing And arg.Parameter.Type.Name = StringTypeName Then
                     Dim desiredExpression As ExpressionSyntax = Nothing
 
                     Dim argumentExpression As SimpleArgumentSyntax = TryCast(arg.Syntax, SimpleArgumentSyntax)

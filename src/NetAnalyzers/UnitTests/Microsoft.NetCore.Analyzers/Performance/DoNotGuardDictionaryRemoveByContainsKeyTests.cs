@@ -2063,12 +2063,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                     private void RemoveItem(Dictionary<string, string> dictionaryParam)
                     {
-                        if (setParam.ContainsKey("Item"))
+                        if (dictionaryParam.ContainsKey("Item"))
                             DictionaryField1.Remove("Item");
 
                         if (!DictionaryField1.ContainsKey("Item"))
                         {
-                            setParam.Remove("Item");
+                            dictionaryParam.Remove("Item");
                         }
                     }
                 }

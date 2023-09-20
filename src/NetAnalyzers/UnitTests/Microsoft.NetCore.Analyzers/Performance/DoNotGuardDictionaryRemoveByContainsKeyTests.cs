@@ -2061,7 +2061,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         }
                     }
 
-                    private void RemoveItem(Dictionary<string, string> setParam)
+                    private void RemoveItem(Dictionary<string, string> dictionaryParam)
                     {
                         if (setParam.ContainsKey("Item"))
                             DictionaryField1.Remove("Item");
@@ -2232,17 +2232,17 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [InlineData("Dictionary<string, string>", "Remove", 1)]
-        [InlineData("Dictionary<string, string>", "Remove", 2)]
-        [InlineData("SortedDictionary<string, string>", "Remove", 1)]
-        [InlineData("SortedDictionary<string, string>", "Remove", 2)]
-        [InlineData("ImmutableDictionary<string, string>.Builder", "Remove", 1)]
-        [InlineData("ImmutableDictionary<string, string>.Builder", "Remove", 2)]
-        [InlineData("ImmutableSortedDictionary<string, string>.Builder", "Remove", 1)]
-        [InlineData("ImmutableSortedDictionary<string, string>.Builder", "Remove", 2)]
-        [InlineData("ImmutableDictionary<string, string>", "Remove", 2)]
-        [InlineData("ImmutableSortedDictionary<string, string>", "Remove", 2)]
-        public async Task SupportsDictionariesWithRemoveReturningBool_OffersFixer_CS(string dictionaryType, string method, int argumentCount)
+        [InlineData("Dictionary<string, string>", 1)]
+        [InlineData("Dictionary<string, string>", 2)]
+        [InlineData("SortedDictionary<string, string>", 1)]
+        [InlineData("SortedDictionary<string, string>", 2)]
+        [InlineData("ImmutableDictionary<string, string>.Builder", 1)]
+        [InlineData("ImmutableDictionary<string, string>.Builder", 2)]
+        [InlineData("ImmutableSortedDictionary<string, string>.Builder", 1)]
+        [InlineData("ImmutableSortedDictionary<string, string>.Builder", 2)]
+        [InlineData("ImmutableDictionary<string, string>", 2)]
+        [InlineData("ImmutableSortedDictionary<string, string>", 2)]
+        public async Task SupportsDictionariesWithRemoveReturningBool_OffersFixer_CS(string dictionaryType, int argumentCount)
         {
             string source = $$"""
                 using System.Collections.Generic;
@@ -2255,7 +2255,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     void M()
                     {
                         if ({|CA1853:MyDictionary.ContainsKey("Item")|})
-                            MyDictionary.{{method}}{{GetArguments(argumentCount)}};
+                            MyDictionary.Remove{{GetArguments(argumentCount)}};
                     }
                 }
                 """;
@@ -2270,7 +2270,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                     void M()
                     {
-                        MyDictionary.{{method}}{{GetArguments(argumentCount)}};
+                        MyDictionary.Remove{{GetArguments(argumentCount)}};
                     }
                 }
                 """;
@@ -2279,17 +2279,17 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [InlineData("IDictionary<string, string>", "Dictionary<string, string>", "Remove", 1)]
-        [InlineData("IDictionary<string, string>", "Dictionary<string, string>", "Remove", 2)]
-        [InlineData("IDictionary<string, string>", "SortedDictionary<string, string>", "Remove", 1)]
-        [InlineData("IDictionary<string, string>", "SortedDictionary<string, string>", "Remove", 2)]
-        [InlineData("IDictionary<string, string>", "ImmutableDictionary<string, string>.Builder", "Remove", 1)]
-        [InlineData("IDictionary<string, string>", "ImmutableDictionary<string, string>.Builder", "Remove", 2)]
-        [InlineData("IDictionary<string, string>", "ImmutableSortedDictionary<string, string>.Builder", "Remove", 1)]
-        [InlineData("IDictionary<string, string>", "ImmutableSortedDictionary<string, string>.Builder", "Remove", 2)]
-        [InlineData("IDictionary<string, string>", "ImmutableDictionary<string, string>", "Remove", 2)]
-        [InlineData("IDictionary<string, string>", "ImmutableSortedDictionary<string, string>", "Remove", 2)]
-        public async Task SupportsDictionariesWithRemoveReturningBoolWithInterfaceType_OffersFixer_CS(string interfaceType, string concreteType, string method, int argumentCount)
+        [InlineData("IDictionary<string, string>", "Dictionary<string, string>", 1)]
+        [InlineData("IDictionary<string, string>", "Dictionary<string, string>", 2)]
+        [InlineData("IDictionary<string, string>", "SortedDictionary<string, string>", 1)]
+        [InlineData("IDictionary<string, string>", "SortedDictionary<string, string>", 2)]
+        [InlineData("IDictionary<string, string>", "ImmutableDictionary<string, string>.Builder", 1)]
+        [InlineData("IDictionary<string, string>", "ImmutableDictionary<string, string>.Builder", 2)]
+        [InlineData("IDictionary<string, string>", "ImmutableSortedDictionary<string, string>.Builder", 1)]
+        [InlineData("IDictionary<string, string>", "ImmutableSortedDictionary<string, string>.Builder", 2)]
+        [InlineData("IDictionary<string, string>", "ImmutableDictionary<string, string>", 2)]
+        [InlineData("IDictionary<string, string>", "ImmutableSortedDictionary<string, string>", 2)]
+        public async Task SupportsDictionariesWithRemoveReturningBoolWithInterfaceType_OffersFixer_CS(string interfaceType, string concreteType, int argumentCount)
         {
             string source = $$"""
                 using System.Collections.Generic;
@@ -2302,7 +2302,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     void M()
                     {
                         if ({|CA1853:MyDictionary.ContainsKey("Item")|})
-                            MyDictionary.{{method}}{{GetArguments(argumentCount)}};
+                            MyDictionary.Remove{{GetArguments(argumentCount)}};
                     }
                 }
                 """;
@@ -2317,7 +2317,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                     void M()
                     {
-                        MyDictionary.{{method}}{{GetArguments(argumentCount)}};
+                        MyDictionary.Remove{{GetArguments(argumentCount)}};
                     }
                 }
                 """;
@@ -2326,9 +2326,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [InlineData("ImmutableDictionary<string, string>", "Remove", 1)]
-        [InlineData("ImmutableSortedDictionary<string, string>", "Remove", 1)]
-        public async Task SupportsDictionariesWithRemoveReturningGenericType_ReportsDiagnostic_CS(string dictionaryType, string method, int argumentCount)
+        [InlineData("ImmutableDictionary<string, string>")]
+        [InlineData("ImmutableSortedDictionary<string, string>")]
+        public async Task SupportsDictionariesWithRemoveReturningGenericType_ReportsDiagnostic_CS(string dictionaryType)
         {
             string source = $$"""
                 using System.Collections.Generic;
@@ -2341,7 +2341,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     void M()
                     {
                         if ({|CA1853:MyDictionary.ContainsKey("Item")|})
-                           MyDictionary = MyDictionary.{{method}}{{GetArguments(argumentCount)}};
+                           MyDictionary = MyDictionary.Remove("Item");
                     }
                 }
                 """;
@@ -2350,9 +2350,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Theory]
-        [InlineData("IImmutableDictionary<string, string>", "ImmutableDictionary<string, string>", "Remove", 1)]
-        [InlineData("IImmutableDictionary<string, string>", "ImmutableSortedDictionary<string, string>", "Remove", 1)]
-        public async Task SupportsDictionaryWithRemoveReturningGenericTypeWithInterfaceType_ReportsDiagnostic_CS(string interfaceType, string concreteType, string method, int argumentCount)
+        [InlineData("IImmutableDictionary<string, string>", "ImmutableDictionary<string, string>")]
+        [InlineData("IImmutableDictionary<string, string>", "ImmutableSortedDictionary<string, string>")]
+        public async Task SupportsDictionaryWithRemoveReturningGenericTypeWithInterfaceType_ReportsDiagnostic_CS(string interfaceType, string concreteType)
         {
             string source = $$"""
                 using System.Collections.Generic;
@@ -2365,7 +2365,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     void M()
                     {
                         if ({|CA1853:MyDictionary.ContainsKey("Item")|})
-                           MyDictionary = MyDictionary.{{method}}{{GetArguments(argumentCount)}};
+                           MyDictionary = MyDictionary.Remove("Item");
                     }
                 }
                 """;

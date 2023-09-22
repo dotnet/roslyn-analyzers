@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
@@ -10,10 +9,15 @@ using Microsoft.CodeAnalysis.CodeFixes;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
-    public abstract class DoNotGuardDictionaryRemoveByContainsKeyFixer : CodeFixProvider
+    /// <summary>
+    /// CA1853: <inheritdoc cref="MicrosoftNetCoreAnalyzersResources.DoNotGuardDictionaryRemoveByContainsKeyTitle"/>
+    /// CA1868: <inheritdoc cref="MicrosoftNetCoreAnalyzersResources.DoNotGuardSetAddOrRemoveByContainsTitle"/>
+    /// </summary>
+    public abstract class DoNotGuardCallFixer : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(DoNotGuardDictionaryRemoveByContainsKey.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            DoNotGuardCallAnalyzer.DoNotGuardDictionaryRemoveByContainsKeyRuleId,
+            DoNotGuardCallAnalyzer.DoNotGuardSetAddOrRemoveByContainsRuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
@@ -30,25 +34,30 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            var diagnostic = context.Diagnostics.First();
-            var conditionalOperationSpan = diagnostic.AdditionalLocations[0];
+            var diagnostic = context.Diagnostics[0];
+            var conditionalLocation = diagnostic.AdditionalLocations[0];
             var childLocation = diagnostic.AdditionalLocations[1];
-            if (root.FindNode(conditionalOperationSpan.SourceSpan) is not SyntaxNode conditionalSyntax ||
+
+            if (root.FindNode(conditionalLocation.SourceSpan) is not SyntaxNode conditionalSyntax ||
                 root.FindNode(childLocation.SourceSpan) is not SyntaxNode childStatementSyntax)
             {
                 return;
             }
 
-            // we only offer a fixer if 'Remove' is the _only_ statement
-            if (!SyntaxSupportedByFixer(conditionalSyntax))
+            if (!SyntaxSupportedByFixer(conditionalSyntax, childStatementSyntax))
+            {
                 return;
+            }
 
-            context.RegisterCodeFix(CodeAction.Create(MicrosoftNetCoreAnalyzersResources.RemoveRedundantGuardCallCodeFixTitle, ct =>
-                    Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalSyntax, childStatementSyntax)), MicrosoftNetCoreAnalyzersResources.RemoveRedundantGuardCallCodeFixTitle),
-                diagnostic);
+            var codeAction = CodeAction.Create(
+                MicrosoftNetCoreAnalyzersResources.RemoveRedundantGuardCallCodeFixTitle,
+                ct => Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalSyntax, childStatementSyntax)),
+                diagnostic.Descriptor.Id);
+
+            context.RegisterCodeFix(codeAction, diagnostic);
         }
 
-        protected abstract bool SyntaxSupportedByFixer(SyntaxNode conditionalSyntax);
+        protected abstract bool SyntaxSupportedByFixer(SyntaxNode conditionalSyntax, SyntaxNode childStatementSyntax);
 
         protected abstract Document ReplaceConditionWithChild(Document document, SyntaxNode root,
                                                               SyntaxNode conditionalOperationNode,

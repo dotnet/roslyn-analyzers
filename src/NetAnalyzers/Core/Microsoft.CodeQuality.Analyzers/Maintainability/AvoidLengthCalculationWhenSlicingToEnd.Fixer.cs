@@ -15,12 +15,12 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
-    /// CA1514: <inheritdoc cref="MicrosoftCodeQualityAnalyzersResources.AvoidLengthCheckWhenSlicingToEndTitle"/>
+    /// CA1514: <inheritdoc cref="MicrosoftCodeQualityAnalyzersResources.AvoidLengthCalculationWhenSlicingToEndTitle"/>
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
-    public sealed class AvoidLengthCheckWhenSlicingToEndFixer : CodeFixProvider
+    public sealed class AvoidLengthCalculationWhenSlicingToEndFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(AvoidLengthCheckWhenSlicingToEndAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(AvoidLengthCalculationWhenSlicingToEndAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
@@ -48,14 +48,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             var codeAction = CodeAction.Create(
-                MicrosoftCodeQualityAnalyzersResources.AvoidLengthCheckWhenSlicingToEndTitle,
+                MicrosoftCodeQualityAnalyzersResources.AvoidLengthCalculationWhenSlicingToEndCodeFixTitle,
                 ct => ReplaceWithStartOnlyCall(
                     context.Document,
                     invocationOperation.Instance.Syntax,
                     invocationOperation.TargetMethod.Name,
                     invocationOperation.Arguments.GetArgumentsInParameterOrder()[0],
                     ct),
-                nameof(MicrosoftCodeQualityAnalyzersResources.AvoidLengthCheckWhenSlicingToEndTitle));
+                nameof(MicrosoftCodeQualityAnalyzersResources.AvoidLengthCalculationWhenSlicingToEndCodeFixTitle));
 
             context.RegisterCodeFix(codeAction, context.Diagnostics);
 

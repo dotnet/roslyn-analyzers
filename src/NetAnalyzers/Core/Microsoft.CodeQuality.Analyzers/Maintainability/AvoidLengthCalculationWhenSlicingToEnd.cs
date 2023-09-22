@@ -15,10 +15,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1514: <inheritdoc cref="AvoidLengthCheckWhenSlicingToEndTitle"/>
+    /// CA1514: <inheritdoc cref="AvoidLengthCalculationWhenSlicingToEndTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class AvoidLengthCheckWhenSlicingToEndAnalyzer : DiagnosticAnalyzer
+    public sealed class AvoidLengthCalculationWhenSlicingToEndAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1514";
 
@@ -26,11 +26,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(AvoidLengthCheckWhenSlicingToEndTitle)),
-            CreateLocalizableResourceString(nameof(AvoidLengthCheckWhenSlicingToEndMessage)),
+            CreateLocalizableResourceString(nameof(AvoidLengthCalculationWhenSlicingToEndTitle)),
+            CreateLocalizableResourceString(nameof(AvoidLengthCalculationWhenSlicingToEndMessage)),
             DiagnosticCategory.Maintainability,
             RuleLevel.IdeSuggestion,
-            CreateLocalizableResourceString(nameof(AvoidLengthCheckWhenSlicingToEndDescription)),
+            CreateLocalizableResourceString(nameof(AvoidLengthCalculationWhenSlicingToEndDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 

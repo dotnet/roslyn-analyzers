@@ -4,15 +4,15 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidLengthCheckWhenSlicingToEndAnalyzer,
-    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidLengthCheckWhenSlicingToEndFixer>;
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidLengthCalculationWhenSlicingToEndAnalyzer,
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidLengthCalculationWhenSlicingToEndFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidLengthCheckWhenSlicingToEndAnalyzer,
-    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidLengthCheckWhenSlicingToEndFixer>;
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidLengthCalculationWhenSlicingToEndAnalyzer,
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidLengthCalculationWhenSlicingToEndFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
-    public class AvoidLengthCheckWhenSlicingToEndTests
+    public class AvoidLengthCalculationWhenSlicingToEndTests
     {
         [Theory]
         [InlineData("string")]

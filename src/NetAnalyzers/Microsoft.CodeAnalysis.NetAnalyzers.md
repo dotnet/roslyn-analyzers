@@ -912,9 +912,9 @@ Throw helpers are simpler and more efficient than an if block constructing a new
 |CodeFix|True|
 ---
 
-## [CA1514](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514): Remove redundant length argument
+## [CA1514](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514): Avoid redundant length argument
 
-An explicit length check can be error-prone and can be avoided when slicing to end of the buffer.
+An explicit length calculation can be error-prone and can be avoided when slicing to end of the buffer.
 
 |Item|Value|
 |-|-|

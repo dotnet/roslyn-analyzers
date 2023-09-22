@@ -10,7 +10,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.Maintainability.AvoidLengthCheckWhenSlicingToEndAnalyzer,
     Microsoft.CodeQuality.Analyzers.Maintainability.AvoidLengthCheckWhenSlicingToEndFixer>;
 
-namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.CodeQuality.Analyzers.Maintainability
+namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     public class AvoidLengthCheckWhenSlicingToEndTests
     {

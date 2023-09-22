@@ -15,7 +15,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1514: <inheritdoc cref="@AvoidLengthCheckWhenSlicingToEndTitle"/>
+    /// CA1514: <inheritdoc cref="AvoidLengthCheckWhenSlicingToEndTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AvoidLengthCheckWhenSlicingToEndAnalyzer : DiagnosticAnalyzer

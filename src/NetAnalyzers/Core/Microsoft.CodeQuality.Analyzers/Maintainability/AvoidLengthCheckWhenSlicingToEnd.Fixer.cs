@@ -15,7 +15,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
-    /// CA1514: <inheritdoc cref="MicrosoftCodeQualityAnalyzersResources.@AvoidLengthCheckWhenSlicingToEndTitle"/>
+    /// CA1514: <inheritdoc cref="MicrosoftCodeQualityAnalyzersResources.AvoidLengthCheckWhenSlicingToEndTitle"/>
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class AvoidLengthCheckWhenSlicingToEndFixer : CodeFixProvider

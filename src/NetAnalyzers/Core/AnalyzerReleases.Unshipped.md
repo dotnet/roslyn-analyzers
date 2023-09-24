@@ -5,3 +5,5 @@
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 CA1514 | Maintainability | Info | AvoidLengthCheckWhenSlicingToEndAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514)
+CA1871 | Performance | Info | DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1871)
+CA2262 | Usage | Warning | DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262)

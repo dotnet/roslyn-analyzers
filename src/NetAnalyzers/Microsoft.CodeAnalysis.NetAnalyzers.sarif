@@ -3351,12 +3351,12 @@
             ]
           }
         },
-        "CA1869": {
-          "id": "CA1869",
+        "CA1871": {
+          "id": "CA1871",
           "shortDescription": "Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'",
           "fullDescription": "'ArgumentNullException.ThrowIfNull' accepts an 'object', so passing a nullable struct may cause the value to be boxed.",
           "defaultLevel": "note",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1869",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1871",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,

@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
     public sealed class DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull : DiagnosticAnalyzer
     {
         internal const string NonNullableValueRuleId = "CA2262";
-        internal const string NullableStructRuleId = "CA1869";
+        internal const string NullableStructRuleId = "CA1871";
 
         internal static readonly DiagnosticDescriptor DoNotPassNonNullableValueDiagnostic = DiagnosticDescriptorHelper.Create(
             NonNullableValueRuleId,

@@ -924,38 +924,15 @@ An explicit length calculation can be error-prone and can be avoided when slicin
 |CodeFix|True|
 ---
 
-## [CA1515](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515): Make all public types internal
+## [CA1515](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515): Consider making public types internal
 
-Different than libraries, applications aren't referenced and thus all types can be made internal.
+Different than libraries, applications' members aren't typically referenced publicly, therefore types could be made internal.
 
 |Item|Value|
 |-|-|
 |Category|Maintainability|
 |Enabled|False|
 |Severity|Warning|
-|CodeFix|True|
----
-
-<<<<<<< HEAD
-## [CA1514](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514): Make all public types internal
-
-Different than libraries, applications aren't referenced and thus all types can be made internal.
-=======
-## [CA1514](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514): Avoid redundant length argument
-
-An explicit length calculation can be error-prone and can be avoided when slicing to end of the buffer.
->>>>>>> master
-
-|Item|Value|
-|-|-|
-|Category|Maintainability|
-<<<<<<< HEAD
-|Enabled|False|
-|Severity|Warning|
-=======
-|Enabled|True|
-|Severity|Info|
->>>>>>> master
 |CodeFix|True|
 ---
 
@@ -2295,30 +2272,6 @@ A writable collection property allows a user to replace the collection with a di
 |Enabled|False|
 |Severity|Warning|
 |CodeFix|False|
-## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Use the 'StringComparison' method overloads to perform case-insensitive string comparisons
-Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons, as in 'string.ToLower() == string.ToLower()', because they lead to an allocation. Instead, use 'string.Equals(string, StringComparison)' to perform case-insensitive comparisons. Switching to using an overload that takes a 'StringComparison' might cause subtle changes in behavior, so it's important to conduct thorough testing after applying the suggestion. Additionally, if a culturally sensitive comparison is not required, consider using 'StringComparison.OrdinalIgnoreCase'.
-## [CA1869](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1869): Cache and reuse 'JsonSerializerOptions' instances
-
-Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead. Single use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.
-
-|Item|Value|
-|-|-|
-|Category|Performance|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|False|
----
-
-## [CA1870](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1870): Use a cached 'SearchValues' instance
-
-Using a cached 'SearchValues' instance is more efficient than passing values to 'IndexOfAny'/'ContainsAny' directly.
-
-|Item|Value|
-|-|-|
-|Category|Performance|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|True|
 ---
 
 ## [CA2231](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2231): Overload operator equals on overriding value type Equals

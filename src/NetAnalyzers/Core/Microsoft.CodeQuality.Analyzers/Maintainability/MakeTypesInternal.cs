@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -13,7 +14,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     public abstract class MakeTypesInternal<TSyntaxKind> : DiagnosticAnalyzer
         where TSyntaxKind : struct, Enum
     {
-        internal const string RuleId = "CA1514";
+        internal const string RuleId = "CA1515";
 
         protected static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
@@ -32,7 +33,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             context.RegisterCompilationStartAction(context =>
             {
                 var compilation = context.Compilation;
-                if (compilation.Options.OutputKind is not (OutputKind.ConsoleApplication or OutputKind.WindowsApplication or OutputKind.WindowsRuntimeApplication))
+                SyntaxTree? firstSyntaxTree;
+                if (compilation.Options.OutputKind is not (OutputKind.ConsoleApplication or OutputKind.WindowsApplication or OutputKind.WindowsRuntimeApplication)
+                    || (firstSyntaxTree = context.Compilation.SyntaxTrees.FirstOrDefault()) is null
+                    || !context.Options.GetOutputKindsOption(Rule, firstSyntaxTree, compilation).Contains(compilation.Options.OutputKind))
                 {
                     return;
                 }

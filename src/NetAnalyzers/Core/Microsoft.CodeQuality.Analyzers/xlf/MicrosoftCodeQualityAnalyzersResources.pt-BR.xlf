@@ -358,23 +358,23 @@
         <note />
       </trans-unit>
       <trans-unit id="MakeTypesInternalCodeFixTitle">
-        <source>Make all public types internal</source>
-        <target state="new">Make all public types internal</target>
+        <source>Make the public type internal</source>
+        <target state="new">Make the public type internal</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeTypesInternalDescription">
-        <source>Different than libraries, applications aren't referenced and thus all types can be made internal.</source>
-        <target state="new">Different than libraries, applications aren't referenced and thus all types can be made internal.</target>
+        <source>Different than libraries, applications' members aren't typically referenced publicly, therefore types could be made internal.</source>
+        <target state="new">Different than libraries, applications' members aren't typically referenced publicly, therefore types could be made internal.</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeTypesInternalMessage">
-        <source>Since applications' code isn't referenced, all types can be made internal</source>
-        <target state="new">Since applications' code isn't referenced, all types can be made internal</target>
+        <source>Since an application's code is typically not referenced publicly, types can be made internal</source>
+        <target state="new">Since an application's code is typically not referenced publicly, types can be made internal</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeTypesInternalTitle">
-        <source>Make all public types internal</source>
-        <target state="new">Make all public types internal</target>
+        <source>Consider making public types internal</source>
+        <target state="new">Consider making public types internal</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageCodeFix">

@@ -37,7 +37,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability
                 Return delegateStatement.WithModifiers(modifiers)
             End If
 
-            Return Nothing
+            Throw New NotSupportedException()
         End Function
     End Class
 End Namespace

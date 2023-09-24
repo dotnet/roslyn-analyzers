@@ -126,12 +126,12 @@
             ]
           }
         },
-        "CA1514": {
-          "id": "CA1514",
-          "shortDescription": "Make all public types internal",
-          "fullDescription": "Different than libraries, applications aren't referenced and thus all types can be made internal.",
+        "CA1515": {
+          "id": "CA1515",
+          "shortDescription": "Consider making public types internal",
+          "fullDescription": "Different than libraries, applications' members aren't typically referenced publicly, therefore types could be made internal.",
           "defaultLevel": "warning",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515",
           "properties": {
             "category": "Maintainability",
             "isEnabledByDefault": false,
@@ -6347,12 +6347,12 @@
             ]
           }
         },
-        "CA1514": {
-          "id": "CA1514",
-          "shortDescription": "Make all public types internal",
-          "fullDescription": "Different than libraries, applications aren't referenced and thus all types can be made internal.",
+        "CA1515": {
+          "id": "CA1515",
+          "shortDescription": "Consider making public types internal",
+          "fullDescription": "Different than libraries, applications' members aren't typically referenced publicly, therefore types could be made internal.",
           "defaultLevel": "warning",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515",
           "properties": {
             "category": "Maintainability",
             "isEnabledByDefault": false,

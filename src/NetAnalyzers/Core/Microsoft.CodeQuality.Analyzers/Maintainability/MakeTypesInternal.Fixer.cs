@@ -21,11 +21,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 _ =>
                 {
                     var newNode = MakeInternal(node);
-                    if (newNode is null)
-                    {
-                        return Task.FromResult(context.Document);
-                    }
-
                     var newRoot = root.ReplaceNode(node, newNode.WithTriviaFrom(node));
 
                     return Task.FromResult(context.Document.WithSyntaxRoot(newRoot));
@@ -36,7 +31,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
-        protected abstract SyntaxNode? MakeInternal(SyntaxNode node);
+        protected abstract SyntaxNode MakeInternal(SyntaxNode node);
 
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(MakeTypesInternal<SymbolKind>.RuleId);
     }

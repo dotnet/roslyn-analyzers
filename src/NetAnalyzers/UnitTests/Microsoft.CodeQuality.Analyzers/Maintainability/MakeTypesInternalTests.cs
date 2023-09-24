@@ -507,6 +507,171 @@ Class Program
 End Class");
         }
 
+        [Theory]
+        [InlineData("ConsoleApplication", OutputKind.ConsoleApplication)]
+        [InlineData("WindowsApplication", OutputKind.WindowsApplication)]
+        [InlineData("WindowsRuntimeApplication", OutputKind.WindowsRuntimeApplication)]
+        [InlineData("ConsoleApplication,WindowsApplication", OutputKind.WindowsApplication)]
+        [InlineData("ConsoleApplication,WindowsApplication,WindowsRuntimeApplication", OutputKind.WindowsRuntimeApplication)]
+        public async Task CompilationOptions_Diagnostic(string optionsText, OutputKind outputKind)
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = """
+                           public class [|Program|]
+                           {
+                               public static void Main() {}
+                           }
+                           """,
+                FixedCode = """
+                            internal class Program
+                            {
+                                public static void Main() {}
+                            }
+                            """,
+                TestState =
+                {
+                    OutputKind = outputKind,
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig",
+                            $"""
+                             root = true
+
+                             [*]
+                             dotnet_code_quality.CA1515.output_kind = {optionsText}
+                             """)
+                    }
+                },
+                LanguageVersion = LanguageVersion.CSharp10
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                TestCode = """
+                           Public Class [|Program|]
+                               Public Shared Sub Main()
+                               End Sub
+                           End Class
+                           """,
+                FixedCode = """
+                            Friend Class Program
+                                Public Shared Sub Main()
+                                End Sub
+                            End Class
+                            """,
+                TestState =
+                {
+                    OutputKind = outputKind,
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig",
+                            $"""
+                             root = true
+
+                             [*]
+                             dotnet_code_quality.CA1515.output_kind = {optionsText}
+                             """)
+                    }
+                },
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("ConsoleApplication", OutputKind.DynamicallyLinkedLibrary)]
+        [InlineData("WindowsApplication", OutputKind.ConsoleApplication)]
+        [InlineData("WindowsRuntimeApplication", OutputKind.ConsoleApplication)]
+        [InlineData("ConsoleApplication,WindowsApplication", OutputKind.WindowsRuntimeApplication)]
+        [InlineData("ConsoleApplication,WindowsApplication,WindowsRuntimeApplication", OutputKind.DynamicallyLinkedLibrary)]
+        public async Task CompilationOptions_NoDiagnostic(string optionsText, OutputKind outputKind)
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = """
+                           public class Program
+                           {
+                               public static void Main() {}
+                           }
+                           """,
+                TestState =
+                {
+                    OutputKind = outputKind,
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig",
+                            $"""
+                             root = true
+
+                             [*]
+                             dotnet_code_quality.CA1515.output_kind = {optionsText}
+                             """)
+                    }
+                },
+                LanguageVersion = LanguageVersion.CSharp10
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                TestCode = """
+                           Public Class Program
+                               Public Shared Sub Main()
+                               End Sub
+                           End Class
+                           """,
+                TestState =
+                {
+                    OutputKind = outputKind,
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig",
+                            $"""
+                             root = true
+
+                             [*]
+                             dotnet_code_quality.CA1515.output_kind = {optionsText}
+                             """)
+                    }
+                },
+            }.RunAsync();
+        }
+
+        [Theory]
+        [MemberData(nameof(DiagnosticTriggeringOutputKinds))]
+        public async Task Trivia(OutputKind outputKind)
+        {
+            await VerifyCsAsync(outputKind,
+                """
+                // This is the entry point class.
+                public class [|Program|]
+                {
+                    public static void Main() {}
+                }
+                """,
+                """
+                // This is the entry point class.
+                internal class Program
+                {
+                    public static void Main() {}
+                }
+                """);
+
+            await VerifyVbAsync(outputKind,
+                """
+                ' This is the entry point class.
+                Public Class [|Program|]
+                    Public Shared Sub Main()
+                    End Sub
+                End Class
+                """,
+                """
+                ' This is the entry point class.
+                Friend Class Program
+                    Public Shared Sub Main()
+                    End Sub
+                End Class
+                """);
+        }
+
         private Task VerifyCsAsync(OutputKind outputKind, string testCode, string fixedCode = null)
         {
             return new VerifyCS.Test

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Composition;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -13,33 +14,21 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpMakeTypesInternalFixer : MakeTypesInternalFixer
     {
-        protected override SyntaxNode? MakeInternal(SyntaxNode node)
+        protected override SyntaxNode MakeInternal(SyntaxNode node) =>
+            node switch
+            {
+                TypeDeclarationSyntax type => MakeMemberInternal(type),
+                EnumDeclarationSyntax @enum => MakeMemberInternal(@enum),
+                DelegateDeclarationSyntax @delegate => MakeMemberInternal(@delegate),
+                _ => throw new NotSupportedException()
+            };
+
+        private static SyntaxNode MakeMemberInternal(MemberDeclarationSyntax type)
         {
-            if (node is TypeDeclarationSyntax type)
-            {
-                var publicKeyword = type.Modifiers.First(m => m.IsKind(SyntaxKind.PublicKeyword));
-                var modifiers = type.Modifiers.Replace(publicKeyword, SyntaxFactory.Token(SyntaxKind.InternalKeyword));
+            var publicKeyword = type.Modifiers.First(m => m.IsKind(SyntaxKind.PublicKeyword));
+            var modifiers = type.Modifiers.Replace(publicKeyword, SyntaxFactory.Token(SyntaxKind.InternalKeyword));
 
-                return type.WithModifiers(modifiers);
-            }
-
-            if (node is EnumDeclarationSyntax @enum)
-            {
-                var publicKeyword = @enum.Modifiers.First(m => m.IsKind(SyntaxKind.PublicKeyword));
-                var modifiers = @enum.Modifiers.Replace(publicKeyword, SyntaxFactory.Token(SyntaxKind.InternalKeyword));
-
-                return @enum.WithModifiers(modifiers);
-            }
-
-            if (node is DelegateDeclarationSyntax @delegate)
-            {
-                var publicKeyword = @delegate.Modifiers.First(m => m.IsKind(SyntaxKind.PublicKeyword));
-                var modifiers = @delegate.Modifiers.Replace(publicKeyword, SyntaxFactory.Token(SyntaxKind.InternalKeyword));
-
-                return @delegate.WithModifiers(modifiers);
-            }
-
-            return null;
+            return type.WithModifiers(modifiers);
         }
     }
 }

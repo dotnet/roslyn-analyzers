@@ -363,13 +363,13 @@
         <note />
       </trans-unit>
       <trans-unit id="MakeTypesInternalDescription">
-        <source>Different than libraries, applications' members aren't typically referenced publicly, therefore types could be made internal.</source>
-        <target state="new">Different than libraries, applications' members aren't typically referenced publicly, therefore types could be made internal.</target>
+        <source>Unlike a class library, an application's API isn't typically referenced publicly, so types can be marked internal.</source>
+        <target state="new">Unlike a class library, an application's API isn't typically referenced publicly, so types can be marked internal.</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeTypesInternalMessage">
-        <source>Since an application's code is typically not referenced publicly, types can be made internal</source>
-        <target state="new">Since an application's code is typically not referenced publicly, types can be made internal</target>
+        <source>Because an application's API isn't typically referenced from outside the assembly, types can be made internal</source>
+        <target state="new">Because an application's API isn't typically referenced from outside the assembly, types can be made internal</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeTypesInternalTitle">

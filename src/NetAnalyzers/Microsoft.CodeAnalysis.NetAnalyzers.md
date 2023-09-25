@@ -926,7 +926,7 @@ An explicit length calculation can be error-prone and can be avoided when slicin
 
 ## [CA1515](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515): Consider making public types internal
 
-Different than libraries, applications' members aren't typically referenced publicly, therefore types could be made internal.
+Unlike a class library, an application's API isn't typically referenced publicly, so types can be marked internal.
 
 |Item|Value|
 |-|-|

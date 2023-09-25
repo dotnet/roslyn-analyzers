@@ -26,6 +26,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
+        private static readonly ImmutableHashSet<OutputKind> DefaultOutputKinds =
+            ImmutableHashSet.Create(OutputKind.ConsoleApplication, OutputKind.WindowsApplication, OutputKind.WindowsRuntimeApplication);
+
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
@@ -33,10 +36,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             context.RegisterCompilationStartAction(context =>
             {
                 var compilation = context.Compilation;
-                SyntaxTree? firstSyntaxTree;
-                if (compilation.Options.OutputKind is not (OutputKind.ConsoleApplication or OutputKind.WindowsApplication or OutputKind.WindowsRuntimeApplication)
-                    || (firstSyntaxTree = context.Compilation.SyntaxTrees.FirstOrDefault()) is null
-                    || !context.Options.GetOutputKindsOption(Rule, firstSyntaxTree, compilation).Contains(compilation.Options.OutputKind))
+                if (context.Compilation.SyntaxTrees.FirstOrDefault() is not { } firstSyntaxTree
+                    || !context.Options.GetOutputKindsOption(Rule, firstSyntaxTree, compilation, DefaultOutputKinds).Contains(compilation.Options.OutputKind))
                 {
                     return;
                 }

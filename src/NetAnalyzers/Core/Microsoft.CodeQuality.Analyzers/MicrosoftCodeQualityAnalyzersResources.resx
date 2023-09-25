@@ -1297,10 +1297,10 @@
     <value>Make the public type internal</value>
   </data>
   <data name="MakeTypesInternalDescription" xml:space="preserve">
-    <value>Different than libraries, applications' members aren't typically referenced publicly, therefore types could be made internal.</value>
+    <value>Unlike a class library, an application's API isn't typically referenced publicly, so types can be marked internal.</value>
   </data>
   <data name="MakeTypesInternalMessage" xml:space="preserve">
-    <value>Since an application's code is typically not referenced publicly, types can be made internal</value>
+    <value>Because an application's API isn't typically referenced from outside the assembly, types can be made internal</value>
   </data>
   <data name="MakeTypesInternalTitle" xml:space="preserve">
   <value>Consider making public types internal</value>

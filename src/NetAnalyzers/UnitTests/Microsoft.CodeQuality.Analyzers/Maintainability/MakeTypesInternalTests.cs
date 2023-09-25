@@ -508,7 +508,9 @@ End Class");
         }
 
         [Theory]
+        [InlineData("DynamicallyLinkedLibrary", OutputKind.DynamicallyLinkedLibrary)]
         [InlineData("ConsoleApplication", OutputKind.ConsoleApplication)]
+        [InlineData("ConsoleApplication,DynamicallyLinkedLibrary", OutputKind.DynamicallyLinkedLibrary)]
         [InlineData("WindowsApplication", OutputKind.WindowsApplication)]
         [InlineData("WindowsRuntimeApplication", OutputKind.WindowsRuntimeApplication)]
         [InlineData("ConsoleApplication,WindowsApplication", OutputKind.WindowsApplication)]
@@ -579,6 +581,7 @@ End Class");
 
         [Theory]
         [InlineData("ConsoleApplication", OutputKind.DynamicallyLinkedLibrary)]
+        [InlineData("DynamicallyLinkedLibrary", OutputKind.ConsoleApplication)]
         [InlineData("WindowsApplication", OutputKind.ConsoleApplication)]
         [InlineData("WindowsRuntimeApplication", OutputKind.ConsoleApplication)]
         [InlineData("ConsoleApplication,WindowsApplication", OutputKind.WindowsRuntimeApplication)]

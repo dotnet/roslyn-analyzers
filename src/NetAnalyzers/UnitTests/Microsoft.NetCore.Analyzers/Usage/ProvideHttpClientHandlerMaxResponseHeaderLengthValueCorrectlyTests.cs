@@ -34,35 +34,41 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
 
                         HttpClientHandler handler2 = new HttpClientHandler()
                         {
-                            {|#0:MaxResponseHeadersLength = val|}
+                            {|#0:MaxResponseHeadersLength = 2 * 121213|}
                         };
 
                         HttpClientHandler handler3 = new HttpClientHandler()
                         {
-                            {|#1:MaxResponseHeadersLength = 1414|}
+                            {|#1:MaxResponseHeadersLength = val|}
                         };
 
                         HttpClientHandler handler4 = new HttpClientHandler()
                         {
+                            {|#2:MaxResponseHeadersLength = 1414|}
+                        };
+
+                        HttpClientHandler handler5 = new HttpClientHandler()
+                        {
                             MaxResponseHeadersLength  = int.MaxValue
                         };
       
-                        SocketsHttpHandler handler5 = new SocketsHttpHandler() 
+                        SocketsHttpHandler handler6 = new SocketsHttpHandler() 
                         {
                             MaxResponseHeadersLength  = int.MaxValue
                         };
 
-                        SocketsHttpHandler handler6 = new SocketsHttpHandler() 
+                        SocketsHttpHandler handler7 = new SocketsHttpHandler() 
                         {
-                            {|#2:MaxResponseHeadersLength = 1000|}
+                            {|#3:MaxResponseHeadersLength = 1000|}
                         };
                     }
                 }
                         
                 ",
-            VerifyCS.Diagnostic(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly.RuleId).WithLocation(0).WithArguments(242424),
-            VerifyCS.Diagnostic(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly.RuleId).WithLocation(1).WithArguments(1414),
-            VerifyCS.Diagnostic(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly.RuleId).WithLocation(2).WithArguments(1000)
+            VerifyCS.Diagnostic(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly.RuleId).WithLocation(0).WithArguments(242426),
+            VerifyCS.Diagnostic(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly.RuleId).WithLocation(1).WithArguments(242424),
+            VerifyCS.Diagnostic(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly.RuleId).WithLocation(2).WithArguments(1414),
+            VerifyCS.Diagnostic(ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly.RuleId).WithLocation(3).WithArguments(1000)
             );
 
             await VerifyVB.VerifyAnalyzerAsync(@"

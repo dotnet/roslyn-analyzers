@@ -2574,9 +2574,9 @@ The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generi
 |CodeFix|False|
 ---
 
-## [CA2262](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262): This value is measured in KB
+## [CA2262](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262): Set `MaxResponseHeadersLength` properly
 
-The property 'MaxResponseHeadersLength' is measured in KB, not in bytes. Note that the provided value will automatically be multiplied by 1024 in the background.
+The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. That mean the provided value will be multiplied by 1024, the result might be too high than your intended value.
 
 |Item|Value|
 |-|-|

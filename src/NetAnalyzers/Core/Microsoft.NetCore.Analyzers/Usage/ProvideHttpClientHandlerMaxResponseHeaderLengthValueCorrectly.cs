@@ -94,7 +94,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 return false;
             }
 
-            return operation.Value is IFieldReferenceOperation or ILiteralOperation;
+            return operation.Value is IFieldReferenceOperation or ILiteralOperation or IBinaryOperation;
         }
     }
 }

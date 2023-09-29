@@ -2574,6 +2574,18 @@ The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generi
 |CodeFix|False|
 ---
 
+## [CA2262](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262): This value is measured in KB
+
+The property 'MaxResponseHeadersLength' is measured in KB, not in bytes. Note that the provided value will automatically be multiplied by 1024 in the background.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
 ## [CA2300](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2300): Do not use insecure deserializer BinaryFormatter
 
 The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rule CA2300, and enable rules CA2301 and CA2302.

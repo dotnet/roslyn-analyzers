@@ -195,6 +195,18 @@
   <data name="DoNotUseCountWhenAnyCanBeUsedTitle" xml:space="preserve">
     <value>Do not use Count() or LongCount() when Any() can be used</value>
   </data>
+  <data name="PreferConvertToHexStringOverBitConverterTitle" xml:space="preserve">
+    <value>Prefer 'Convert.ToHexString' over 'BitConverter.ToString'</value>
+  </data>
+  <data name="PreferConvertToHexStringOverBitConverterDescription" xml:space="preserve">
+    <value>'Convert.ToHexString' is more efficient and allocation-friendly than 'BitConverter.ToString' in combination with 'string.Replace'.</value>
+  </data>
+  <data name="PreferConvertToHexStringOverBitConverterMessage" xml:space="preserve">
+    <value>Prefer '{0}' over '{1}'</value>
+  </data>
+  <data name="PreferConvertToHexStringOverBitConverterCodeFixTitle" xml:space="preserve">
+    <value>Replace with 'Convert.ToHexString'</value>
+  </data>
   <data name="DoNotUseTimersThatPreventPowerStateChangesTitle" xml:space="preserve">
     <value>Do not use timers that prevent power state changes</value>
   </data>

@@ -1948,6 +1948,26 @@ Obecné přetypování (IL unbox.any) používané sekvencí vrácenou metodou E
         <target state="translated">Zvažte možnost použít metodu StringBuilder.Append(char) tam, kde je to možné</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferConvertToHexStringOverBitConverterCodeFixTitle">
+        <source>Replace with 'Convert.ToHexString'</source>
+        <target state="new">Replace with 'Convert.ToHexString'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConvertToHexStringOverBitConverterDescription">
+        <source>'Convert.ToHexString' is more efficient and allocation-friendly than 'BitConverter.ToString' in combination with 'string.Replace'.</source>
+        <target state="new">'Convert.ToHexString' is more efficient and allocation-friendly than 'BitConverter.ToString' in combination with 'string.Replace'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConvertToHexStringOverBitConverterMessage">
+        <source>Prefer '{0}' over '{1}'</source>
+        <target state="new">Prefer '{0}' over '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConvertToHexStringOverBitConverterTitle">
+        <source>Prefer 'Convert.ToHexString' over 'BitConverter.ToString'</source>
+        <target state="new">Prefer 'Convert.ToHexString' over 'BitConverter.ToString'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferCountOverAnyCodeFixTitle">
         <source>Use 'Count' check instead of 'Any()'</source>
         <target state="translated">K ověření použijte metodu Count místo Any()</target>

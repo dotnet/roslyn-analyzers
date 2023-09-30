@@ -6,3 +6,4 @@ Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 CA1514 | Maintainability | Info | AvoidLengthCheckWhenSlicingToEndAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514)
 CA1515 | Maintainability | Disabled | MakeTypesInternal, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515)
+CA1872 | Performance | Info | PreferConvertToHexStringOverBitConverterAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1872)

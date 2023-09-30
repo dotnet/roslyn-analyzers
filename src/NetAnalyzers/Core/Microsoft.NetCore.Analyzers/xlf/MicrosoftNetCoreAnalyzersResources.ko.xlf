@@ -1948,6 +1948,26 @@ Enumerable.OfType&lt;T&gt;에서 사용하는 제네릭 형식 검사(C# 'is' �
         <target state="translated">해당하는 경우 'StringBuilder.Append(char)'를 사용하는 것이 좋음</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferConvertToHexStringOverBitConverterCodeFixTitle">
+        <source>Replace with 'Convert.ToHexString'</source>
+        <target state="new">Replace with 'Convert.ToHexString'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConvertToHexStringOverBitConverterDescription">
+        <source>'Convert.ToHexString' is more efficient and allocation-friendly than 'BitConverter.ToString' in combination with 'string.Replace'.</source>
+        <target state="new">'Convert.ToHexString' is more efficient and allocation-friendly than 'BitConverter.ToString' in combination with 'string.Replace'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConvertToHexStringOverBitConverterMessage">
+        <source>Prefer '{0}' over '{1}'</source>
+        <target state="new">Prefer '{0}' over '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConvertToHexStringOverBitConverterTitle">
+        <source>Prefer 'Convert.ToHexString' over 'BitConverter.ToString'</source>
+        <target state="new">Prefer 'Convert.ToHexString' over 'BitConverter.ToString'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferCountOverAnyCodeFixTitle">
         <source>Use 'Count' check instead of 'Any()'</source>
         <target state="translated">'Any()' 대신 'Count' 확인 사용</target>

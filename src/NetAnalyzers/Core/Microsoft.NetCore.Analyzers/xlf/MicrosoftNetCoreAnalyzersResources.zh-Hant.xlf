@@ -2224,8 +2224,8 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
         <note />
       </trans-unit>
       <trans-unit id="ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectlyTitle">
-        <source>Set `MaxResponseHeadersLength` properly</source>
-        <target state="new">Set `MaxResponseHeadersLength` properly</target>
+        <source>Set 'MaxResponseHeadersLength' properly</source>
+        <target state="new">Set 'MaxResponseHeadersLength' properly</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvidePublicParameterlessSafeHandleConstructorDescription">

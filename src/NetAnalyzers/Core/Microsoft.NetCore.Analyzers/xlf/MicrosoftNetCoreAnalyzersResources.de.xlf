@@ -2224,8 +2224,8 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <note />
       </trans-unit>
       <trans-unit id="ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectlyTitle">
-        <source>Set `MaxResponseHeadersLength` properly</source>
-        <target state="new">Set `MaxResponseHeadersLength` properly</target>
+        <source>Set 'MaxResponseHeadersLength' properly</source>
+        <target state="new">Set 'MaxResponseHeadersLength' properly</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvidePublicParameterlessSafeHandleConstructorDescription">

@@ -2224,8 +2224,8 @@ La ampliación y las conversiones definidas por el usuario no se admiten con tip
         <note />
       </trans-unit>
       <trans-unit id="ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectlyTitle">
-        <source>Set `MaxResponseHeadersLength` properly</source>
-        <target state="new">Set `MaxResponseHeadersLength` properly</target>
+        <source>Set 'MaxResponseHeadersLength' properly</source>
+        <target state="new">Set 'MaxResponseHeadersLength' properly</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvidePublicParameterlessSafeHandleConstructorDescription">

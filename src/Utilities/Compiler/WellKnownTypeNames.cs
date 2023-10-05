@@ -65,6 +65,7 @@ namespace Analyzer.Utilities
         public const string MicrosoftCodeAnalysisVisualBasicVisualBasicCompilation = "Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilation";
         public const string MicrosoftCodeAnalysisVisualBasicVisualBasicExtensions = "Microsoft.CodeAnalysis.VisualBasic.VisualBasicExtensions";
         public const string MicrosoftEntityFrameworkCoreDbContext = "Microsoft.EntityFrameworkCore.DbContext";
+        public const string MicrosoftEntityFrameworkCoreDbSet1 = "Microsoft.EntityFrameworkCore.DbSet`1";
         public const string MicrosoftEntityFrameworkCoreEntityFrameworkQueryableExtensions = "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions";
         public const string MicrosoftEntityFrameworkCoreRelationalQueryableExtensions = "Microsoft.EntityFrameworkCore.RelationalQueryableExtensions";
         public const string MicrosoftExtensionsLoggingILogger = "Microsoft.Extensions.Logging.ILogger";
@@ -114,6 +115,8 @@ namespace Analyzer.Utilities
         public const string SystemBoolean = "System.Boolean";
         public const string SystemBuffer = "System.Buffer";
         public const string SystemBuffersMemoryManager1 = "System.Buffers.MemoryManager`1";
+        public const string SystemBuffersSearchValues = "System.Buffers.SearchValues";
+        public const string SystemBuffersSearchValues1 = "System.Buffers.SearchValues`1";
         public const string SystemByte = "System.Byte";
         public const string SystemChar = "System.Char";
         public const string SystemCLSCompliantAttribute = "System.CLSCompliantAttribute";
@@ -266,6 +269,7 @@ namespace Analyzer.Utilities
         public const string SystemMemoryExtensions = "System.MemoryExtensions";
         public const string SystemNetHttpHttpClient = "System.Net.Http.HttpClient";
         public const string SystemNetHttpHttpClientHandler = "System.Net.Http.HttpClientHandler";
+        public const string SystemNetHttpSocketsHttpHandler = "System.Net.Http.SocketsHttpHandler";
         public const string SystemNetHttpWinHttpHandler = "System.Net.Http.WinHttpHandler";
         public const string SystemNetSecurityProtocolType = "System.Net.SecurityProtocolType";
         public const string SystemNetSecurityRemoteCertificateValidationCallback = "System.Net.Security.RemoteCertificateValidationCallback";

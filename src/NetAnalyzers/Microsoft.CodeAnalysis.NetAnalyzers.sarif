@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.CSharp.NetAnalyzers",
-        "version": "8.0.0",
+        "version": "9.0.0",
         "language": "en-US"
       },
       "rules": {
@@ -121,6 +121,25 @@
             ],
             "tags": [
               "Dataflow",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1515": {
+          "id": "CA1515",
+          "shortDescription": "Consider making public types internal",
+          "fullDescription": "Unlike a class library, an application's API isn't typically referenced publicly, so types can be marked internal.",
+          "defaultLevel": "warning",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpMakeTypesInternal",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]
@@ -399,6 +418,25 @@
             ]
           }
         },
+        "CA1870": {
+          "id": "CA1870",
+          "shortDescription": "Use a cached 'SearchValues' instance",
+          "fullDescription": "Using a cached 'SearchValues' instance is more efficient than passing values to 'IndexOfAny'/'ContainsAny' directly.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1870",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpUseSearchValuesAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2014": {
           "id": "CA2014",
           "shortDescription": "Do not use stackalloc in loops",
@@ -652,7 +690,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.NetAnalyzers",
-        "version": "8.0.0",
+        "version": "9.0.0",
         "language": "en-US"
       },
       "rules": {
@@ -2106,6 +2144,26 @@
             ]
           }
         },
+        "CA1514": {
+          "id": "CA1514",
+          "shortDescription": "Avoid redundant length argument",
+          "fullDescription": "An explicit length calculation can be error-prone and can be avoided when slicing to end of the buffer.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidLengthCalculationWhenSlicingToEndAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1700": {
           "id": "CA1700",
           "shortDescription": "Do not name enum values 'Reserved'",
@@ -2993,7 +3051,7 @@
         "CA1846": {
           "id": "CA1846",
           "shortDescription": "Prefer 'AsSpan' over 'Substring'",
-          "fullDescription": "'AsSpan' is more efficient then 'Substring'. 'Substring' performs an O(n) string copy, while 'AsSpan' does not and has a constant cost.",
+          "fullDescription": "'AsSpan' is more efficient than 'Substring'. 'Substring' performs an O(n) string copy, while 'AsSpan' does not and has a constant cost.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1846",
           "properties": {
@@ -3120,7 +3178,7 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "DoNotGuardDictionaryRemoveByContainsKey",
+            "typeName": "DoNotGuardCallAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -3233,8 +3291,8 @@
         },
         "CA1862": {
           "id": "CA1862",
-          "shortDescription": "Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons",
-          "fullDescription": "Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons, as in 'string.ToLower() == string.ToLower()', because they lead to an allocation. Instead, use 'string.Equals(string, StringComparison)' to perform case-insensitive comparisons.",
+          "shortDescription": "Use the 'StringComparison' method overloads to perform case-insensitive string comparisons",
+          "fullDescription": "Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons, as in 'string.ToLower() == string.ToLower()', because they lead to an allocation. Instead, use 'string.Equals(string, StringComparison)' to perform case-insensitive comparisons. Switching to using an overload that takes a 'StringComparison' might cause subtle changes in behavior, so it's important to conduct thorough testing after applying the suggestion. Additionally, if a culturally sensitive comparison is not required, consider using 'StringComparison.OrdinalIgnoreCase'.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862",
           "properties": {
@@ -3300,7 +3358,7 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "DoNotGuardSetAddOrRemoveByContains",
+            "typeName": "DoNotGuardCallAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -3973,27 +4031,6 @@
             ]
           }
         },
-        "CA2229": {
-          "id": "CA2229",
-          "shortDescription": "Implement serialization constructors",
-          "fullDescription": "To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.",
-          "defaultLevel": "hidden",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2229",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "typeName": "SerializationRulesDiagnosticAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
         "CA2231": {
           "id": "CA2231",
           "shortDescription": "Overload operator equals on overriding value type Equals",
@@ -4427,6 +4464,26 @@
             "category": "Usage",
             "isEnabledByDefault": true,
             "typeName": "DoNotUseConfigureAwaitWithSuppressThrowing",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2262": {
+          "id": "CA2262",
+          "shortDescription": "Set 'MaxResponseHeadersLength' properly",
+          "fullDescription": "The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. That mean the provided value will be multiplied by 1024, the result might be too high than your intended value.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly",
             "languages": [
               "C#",
               "Visual Basic"
@@ -6208,7 +6265,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers",
-        "version": "8.0.0",
+        "version": "9.0.0",
         "language": "en-US"
       },
       "rules": {
@@ -6324,6 +6381,25 @@
             ],
             "tags": [
               "Dataflow",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1515": {
+          "id": "CA1515",
+          "shortDescription": "Consider making public types internal",
+          "fullDescription": "Unlike a class library, an application's API isn't typically referenced publicly, so types can be marked internal.",
+          "defaultLevel": "warning",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "BasicMakeTypesInternal",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
               "Telemetry",
               "EnabledRuleInAggressiveMode"
             ]

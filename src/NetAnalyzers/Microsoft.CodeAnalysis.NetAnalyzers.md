@@ -912,6 +912,30 @@ Throw helpers are simpler and more efficient than an if block constructing a new
 |CodeFix|True|
 ---
 
+## [CA1514](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514): Avoid redundant length argument
+
+An explicit length calculation can be error-prone and can be avoided when slicing to end of the buffer.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1515](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515): Consider making public types internal
+
+Unlike a class library, an application's API isn't typically referenced publicly, so types can be marked internal.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|False|
+|Severity|Warning|
+|CodeFix|True|
+---
+
 ## [CA1700](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1700): Do not name enum values 'Reserved'
 
 This rule assumes that an enumeration member that has a name that contains "reserved" is not currently used but is a placeholder to be renamed or removed in a future version. Renaming or removing a member is a breaking change.
@@ -1514,7 +1538,7 @@ It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring'
 
 ## [CA1846](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1846): Prefer 'AsSpan' over 'Substring'
 
-'AsSpan' is more efficient then 'Substring'. 'Substring' performs an O(n) string copy, while 'AsSpan' does not and has a constant cost.
+'AsSpan' is more efficient than 'Substring'. 'Substring' performs an O(n) string copy, while 'AsSpan' does not and has a constant cost.
 
 |Item|Value|
 |-|-|
@@ -1704,9 +1728,9 @@ Constant arrays passed as arguments are not reused when called repeatedly, which
 |CodeFix|True|
 ---
 
-## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Prefer the 'StringComparison' method overloads to perform case-insensitive string comparisons
+## [CA1862](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862): Use the 'StringComparison' method overloads to perform case-insensitive string comparisons
 
-Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons, as in 'string.ToLower() == string.ToLower()', because they lead to an allocation. Instead, use 'string.Equals(string, StringComparison)' to perform case-insensitive comparisons.
+Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons, as in 'string.ToLower() == string.ToLower()', because they lead to an allocation. Instead, use 'string.Equals(string, StringComparison)' to perform case-insensitive comparisons. Switching to using an overload that takes a 'StringComparison' might cause subtle changes in behavior, so it's important to conduct thorough testing after applying the suggestion. Additionally, if a culturally sensitive comparison is not required, consider using 'StringComparison.OrdinalIgnoreCase'.
 
 |Item|Value|
 |-|-|
@@ -1798,6 +1822,18 @@ Avoid creating a new 'JsonSerializerOptions' instance for every serialization op
 |Enabled|True|
 |Severity|Info|
 |CodeFix|False|
+---
+
+## [CA1870](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1870): Use a cached 'SearchValues' instance
+
+Using a cached 'SearchValues' instance is more efficient than passing values to 'IndexOfAny'/'ContainsAny' directly.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
 ---
 
 ## [CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
@@ -2238,18 +2274,6 @@ A writable collection property allows a user to replace the collection with a di
 |CodeFix|False|
 ---
 
-## [CA2229](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2229): Implement serialization constructors
-
-To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.
-
-|Item|Value|
-|-|-|
-|Category|Usage|
-|Enabled|True|
-|Severity|Hidden|
-|CodeFix|True|
----
-
 ## [CA2231](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2231): Overload operator equals on overriding value type Equals
 
 In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.
@@ -2547,6 +2571,18 @@ The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generi
 |Category|Usage|
 |Enabled|True|
 |Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA2262](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262): Set 'MaxResponseHeadersLength' properly
+
+The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. That mean the provided value will be multiplied by 1024, the result might be too high than your intended value.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
 |CodeFix|False|
 ---
 

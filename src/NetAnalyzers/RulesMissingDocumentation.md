@@ -18,3 +18,4 @@ CA1867 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1872 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1872> | Prefer 'Convert.ToHexString' over 'BitConverter.ToString' |
 CA2021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |
 CA2261 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2261> | Do not use ConfigureAwaitOptions.SuppressThrowing with Task\<TResult> |
+CA2262 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262> | Set 'MaxResponseHeadersLength' properly |

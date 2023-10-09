@@ -301,6 +301,18 @@ namespace Analyzer.Utilities.Extensions
         }
 
         /// <summary>
+        /// Checks if the given method has the signature "virtual ValueTask DisposeCoreAsync()".
+        /// </summary>
+        private static bool HasVirtualDisposeCoreAsyncMethodSignature(this IMethodSymbol method, [NotNullWhen(returnValue: true)] INamedTypeSymbol? task)
+        {
+            return method.Name == "DisposeCoreAsync" &&
+                method.MethodKind == MethodKind.Ordinary &&
+                method.IsVirtual &&
+                SymbolEqualityComparer.Default.Equals(method.ReturnType, task) &&
+                method.Parameters.Length == 0;
+        }
+
+        /// <summary>
         /// Gets the <see cref="DisposeMethodKind"/> for the given method.
         /// </summary>
         public static DisposeMethodKind GetDisposeMethodKind(this IMethodSymbol method, Compilation compilation)
@@ -348,6 +360,10 @@ namespace Analyzer.Utilities.Extensions
                     return DisposeMethodKind.DisposeAsync;
                 }
                 else if (method.HasOverriddenDisposeCoreAsyncMethodSignature(task))
+                {
+                    return DisposeMethodKind.DisposeCoreAsync;
+                }
+                else if (method.HasVirtualDisposeCoreAsyncMethodSignature(valueTask))
                 {
                     return DisposeMethodKind.DisposeCoreAsync;
                 }

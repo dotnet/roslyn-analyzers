@@ -3650,6 +3650,64 @@ End Class"
             }.RunAsync();
         }
 
+        [Fact]
+        public async Task DisposeCoreAsync_NoDiagnosticAsync()
+        {
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+using System;
+using System.Threading.Tasks;
+
+class A : IAsyncDisposable
+{
+    public ValueTask DisposeAsync()
+    {
+        return default(ValueTask);
+    }
+}
+
+class B : IAsyncDisposable
+{
+    private readonly object disposedValueLock = new object();
+    private bool disposedValue;
+    private readonly A a;
+
+    public B() 
+    {
+        a = new A();
+    }
+
+    protected virtual async ValueTask DisposeCoreAsync()
+    {
+        lock (this.disposedValueLock)
+        {
+            if (this.disposedValue)
+            {
+                return;
+            }
+
+            this.disposedValue = true;
+        }
+
+        await a.DisposeAsync().ConfigureAwait(false);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await this.DisposeCoreAsync().ConfigureAwait(false);
+        GC.SuppressFinalize(this);
+    }
+}
+"
+            }.RunAsync();
+
+            /*
+            TODO: VB test.
+            */
+        }
+
         [Fact, WorkItem(5099, "https://github.com/dotnet/roslyn-analyzers/issues/5099")]
         public async Task OwnDisposableButDoesNotOverrideDisposableMember_Dispose()
         {

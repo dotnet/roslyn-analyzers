@@ -303,12 +303,12 @@ namespace Analyzer.Utilities.Extensions
         /// <summary>
         /// Checks if the given method has the signature "virtual ValueTask DisposeCoreAsync()".
         /// </summary>
-        private static bool HasVirtualDisposeCoreAsyncMethodSignature(this IMethodSymbol method, [NotNullWhen(returnValue: true)] INamedTypeSymbol? task)
+        private static bool HasVirtualDisposeCoreAsyncMethodSignature(this IMethodSymbol method, [NotNullWhen(returnValue: true)] INamedTypeSymbol? valueTask)
         {
             return method.Name == "DisposeCoreAsync" &&
                 method.MethodKind == MethodKind.Ordinary &&
                 method.IsVirtual &&
-                SymbolEqualityComparer.Default.Equals(method.ReturnType, task) &&
+                SymbolEqualityComparer.Default.Equals(method.ReturnType, valueTask) &&
                 method.Parameters.Length == 0;
         }
 

@@ -60,7 +60,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     if (SymbolEqualityComparer.Default.Equals(typeSymbol, jsonSerializerOptionsSymbol))
                     {
                         if (IsCtorUsedAsArgumentForJsonSerializer(operation, jsonSerializerSymbol) ||
-                            IsLocalUsedAsArgumentForJsonSerializerOnly(operation, jsonSerializerSymbol))
+                            IsLocalUsedAsArgumentForJsonSerializerOnly(operation, jsonSerializerSymbol, jsonSerializerOptionsSymbol))
                         {
                             context.ReportDiagnostic(operation.CreateDiagnostic(s_Rule));
                         }
@@ -83,11 +83,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 SymbolEqualityComparer.Default.Equals(invocationOperation.TargetMethod.ContainingType, jsonSerializerSymbol);
         }
 
-        private static bool IsLocalUsedAsArgumentForJsonSerializerOnly(IObjectCreationOperation objCreation, INamedTypeSymbol jsonSerializerSymbol)
+        private static bool IsLocalUsedAsArgumentForJsonSerializerOnly(IObjectCreationOperation objCreation, INamedTypeSymbol jsonSerializerSymbol, INamedTypeSymbol jsonSerializerOptionsSymbol)
         {
             IOperation operation = WalkUpConditional(objCreation);
-
-            if (!IsLocalAssignment(operation, out List<ILocalSymbol>? localSymbols))
+            if (!IsLocalAssignment(operation, jsonSerializerOptionsSymbol, out List<ILocalSymbol>? localSymbols))
             {
                 return false;
             }
@@ -254,13 +253,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return block != localBlock;
         }
 
-        private static bool IsLocalAssignment(IOperation operation, [NotNullWhen(true)] out List<ILocalSymbol>? localSymbols)
+        private static bool IsLocalAssignment(IOperation operation, INamedTypeSymbol jsonSerializerOptionsSymbol, [NotNullWhen(true)] out List<ILocalSymbol>? localSymbols)
         {
             localSymbols = null;
             IOperation? currentOperation = operation.Parent;
 
             while (currentOperation is not null)
             {
+                // ignore cases where the object creation or one of its parents is used as argument.
+                if (currentOperation is IArgumentOperation)
+                {
+                    return false;
+                }
+
                 // for cases like:
                 // var options;
                 // options = new JsonSerializerOptions();
@@ -273,7 +278,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         {
                             return false;
                         }
-                        else if (assignment.Target is ILocalReferenceOperation localRef)
+                        else if (assignment.Target is ILocalReferenceOperation localRef &&
+                            SymbolEqualityComparer.Default.Equals(localRef.Local.Type, jsonSerializerOptionsSymbol))
                         {
                             localSymbols ??= new List<ILocalSymbol>();
                             localSymbols.Add(localRef.Local);
@@ -300,12 +306,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
 
                     var local = GetLocalSymbolFromDeclaration(declaration);
-                    if (local != null)
+                    if (local != null && SymbolEqualityComparer.Default.Equals(local.Type, jsonSerializerOptionsSymbol))
                     {
                         localSymbols = new List<ILocalSymbol> { local };
                     }
 
-                    return local != null;
+                    return localSymbols != null;
                 }
 
                 currentOperation = currentOperation.Parent;

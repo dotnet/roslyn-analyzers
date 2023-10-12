@@ -275,6 +275,88 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """);
 
+
+        [Fact]
+        public Task CS_UseNewOptionsAsArgument_InterlockedCompareExchange_NoWarn()
+            => VerifyCS.VerifyAnalyzerAsync("""
+                using System.Text.Json;
+                using System.Threading;
+
+                class Program
+                {
+                    static JsonSerializerOptions s_options;
+                    static string Serialize<T>(T value)
+                    {
+                        return JsonSerializer.Serialize(value,
+                            s_options ??
+                            Interlocked.CompareExchange(ref s_options, new JsonSerializerOptions() {WriteIndented = true}, null) ??
+                            s_options);
+                    }
+                }
+                """);
+
+        [Fact]
+        public Task CS_UseNewLocalOptionsAsArgument_MethodWithJsonOptionsArgument_NoWarn()
+            => VerifyCS.VerifyAnalyzerAsync("""
+                using System.Text.Json;
+
+                class Program
+                {
+                    static string Serialize<T>(T value)
+                    {
+                        JsonSerializerOptions options = TweakOptions(new JsonSerializerOptions());
+                        return JsonSerializer.Serialize(value, options);
+                    }
+
+                    static JsonSerializerOptions TweakOptions(JsonSerializerOptions options)
+                    {
+                        options.WriteIndented = true;
+                        return options;
+                    }
+                }
+                """);
+
+        [Fact]
+        public Task CS_UseNewLocalOptionsAsArgument_MethodWithJsonOptionsArgument_VarDeclaration_ReturnsNonOptions_NoWarn()
+            => VerifyCS.VerifyAnalyzerAsync("""
+                using System.Text.Json;
+
+                class Program
+                {
+                    static string Serialize<T>(T value)
+                    {
+                        T newValue = ProcessOptions<T>(new JsonSerializerOptions());
+                        return JsonSerializer.Serialize(newValue);
+                    }
+
+                    static T ProcessOptions<T>(JsonSerializerOptions options)
+                    {
+                        return default;
+                    }
+                }
+                """);
+
+        [Fact]
+        public Task CS_UseNewLocalOptionsAsArgument_MethodWithJsonOptionsArgument_ExprStatement_ReturnsNonOptions_NoWarn()
+            => VerifyCS.VerifyAnalyzerAsync("""
+                using System.Text.Json;
+
+                class Program
+                {
+                    static string Serialize<T>(T value)
+                    {
+                        T newValue;
+                        newValue = ProcessOptions<T>(new JsonSerializerOptions());
+                        return JsonSerializer.Serialize(newValue);
+                    }
+
+                    static T ProcessOptions<T>(JsonSerializerOptions options)
+                    {
+                        return default;
+                    }
+                }
+                """);
+
         [Fact]
         public Task CS_UseNewLocalOptionsAsArgument_EscapeCurrentScope_NonSerializerMethod_NoWarn()
             => VerifyCS.VerifyAnalyzerAsync("""
@@ -304,6 +386,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             test.TestCode = $$"""
                 using System;
                 using System.Text.Json;
+                using System.Threading;
 
                 class Program
                 {
@@ -358,27 +441,49 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         {
             string target = useField ? "s_options" : "Options";
 
-            return new List<string>()
+            var l = new List<string>()
             {
-                $@"JsonSerializerOptions opt = new JsonSerializerOptions();
-                    {target} = opt;",
+                $"""
+                JsonSerializerOptions opt = new JsonSerializerOptions();
+                {target} = opt;
+                """,
 
-                $@"JsonSerializerOptions opt;
-                    {target} = opt = new JsonSerializerOptions();",
+                $"""
+                JsonSerializerOptions opt;
+                {target} = opt = new JsonSerializerOptions();
+                """,
 
-                $@"JsonSerializerOptions opt = {target} = new JsonSerializerOptions();",
+                $"JsonSerializerOptions opt = {target} = new JsonSerializerOptions();",
 
-                $@"JsonSerializerOptions opt = {target} ??= new JsonSerializerOptions();",
+                $"JsonSerializerOptions opt = {target} ??= new JsonSerializerOptions();",
 
-                $@"JsonSerializerOptions opt = new JsonSerializerOptions();
-                    {target} ??= opt;",
+                $"""
+                JsonSerializerOptions opt = new JsonSerializerOptions();
+                {target} ??= opt;
+                """,
 
-                $@"JsonSerializerOptions opt = new JsonSerializerOptions();
-                    ({target}, _) = (opt, 42);",
+                $"""
+                JsonSerializerOptions opt = new JsonSerializerOptions();
+                ({target}, _) = (opt, 42);
+                """,
 
-                $@"JsonSerializerOptions opt = new JsonSerializerOptions();
-                    (({target}, _), _) = ((opt, 42), 42);"
+                $"""
+                JsonSerializerOptions opt = new JsonSerializerOptions();
+                (({target}, _), _) = ((opt, 42), 42);
+                """
             };
+
+            if (useField)
+            {
+                l.Add("""
+                JsonSerializerOptions opt = 
+                    s_options ?? 
+                    Interlocked.CompareExchange(ref s_options, new JsonSerializerOptions() {WriteIndented = true}, null) ??
+                    s_options;
+                """);
+            }
+
+            return l;
         }
 
         [Fact]

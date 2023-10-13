@@ -237,6 +237,101 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """);
 
+        [Theory]
+        [InlineData("""
+            for (int i = 0; i < values.Length; i++)
+            {
+                JsonSerializerOptions opt = {|CA1869:new JsonSerializerOptions()|};
+                concatJson += JsonSerializer.Serialize(values[i], opt);
+            }
+            """)]
+        [InlineData("""
+            foreach (T value in values)
+            {
+                JsonSerializerOptions opt = {|CA1869:new JsonSerializerOptions()|};
+                concatJson += JsonSerializer.Serialize(value, opt);
+            }
+            """)]
+        [InlineData("""
+            if (values.Length == 0) 
+                return concatJson;
+
+            int i = 0;
+            do
+            {
+                JsonSerializerOptions opt = {|CA1869:new JsonSerializerOptions()|};
+                concatJson += JsonSerializer.Serialize(values[i++], opt);
+            }
+            while (i < values.Length);
+            """)]
+        [InlineData("""
+            int i = 0;
+            while (i < values.Length)
+            {
+                JsonSerializerOptions opt = {|CA1869:new JsonSerializerOptions()|};
+                concatJson += JsonSerializer.Serialize(values[i++], opt);
+            }
+            """)]
+        public Task CS_UseNewLocalOptionsAsArgument_JsonSerializerOptions_OnLoop(string loop)
+            => VerifyCS.VerifyAnalyzerAsync($$"""
+                using System.Text.Json;
+
+                class Program
+                {
+                    static string Serialize<T>(T[] values)
+                    {
+                        string concatJson = "";
+
+                        {{loop}}
+
+                        return concatJson;
+                    }
+                }
+                """);
+
+        [Theory]
+        [InlineData("""
+            For i = 0 To values.Length
+                Dim opt = {|CA1869:New JsonSerializerOptions()|}
+                concatJson += JsonSerializer.Serialize(values(i), opt)
+            Next
+            """)]
+        [InlineData("""
+            For Each value In values
+                Dim opt = {|CA1869:New JsonSerializerOptions()|}
+                concatJson += JsonSerializer.Serialize(value, opt)
+            Next
+            """)]
+        [InlineData("""
+            Dim i = 0
+            Do While i < values.Length
+                Dim opt = {|CA1869:New JsonSerializerOptions()|}
+                concatJson += JsonSerializer.Serialize(values(i), opt)
+                i = i + 1
+            Loop
+            """)]
+        [InlineData("""
+            Dim i = 0
+            Do
+                Dim opt = {|CA1869:New JsonSerializerOptions()|}
+                concatJson += JsonSerializer.Serialize(values(i), opt)
+                i = i + 1
+            Loop While i < values.Length
+            """)]
+        public Task VB_UseNewLocalOptionsAsArgument_JsonSerializerOptions_OnLoop(string loop)
+            => VerifyVB.VerifyAnalyzerAsync($$"""
+                Imports System.Text.Json
+
+                Class Program
+                    Shared Function Serialize(Of T)(values As T()) As String
+                        Dim concatJson = ""
+
+                        {{loop}}
+
+                        return concatJson
+                    End Function
+                End Class
+                """);
         #endregion
 
         #region No Diagnostic Tests
@@ -635,6 +730,96 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         }
                     }
                 }
+                """);
+
+        [Theory]
+        [InlineData("""
+            for (int i = 0; i < values.Length; i++)
+            {
+                concatJson += JsonSerializer.Serialize(values[i], opt);
+            }
+            """)]
+        [InlineData("""
+            foreach (T value in values)
+            {
+                concatJson += JsonSerializer.Serialize(value, opt);
+            }
+            """)]
+        [InlineData("""
+            if (values.Length == 0) 
+                return concatJson;
+
+            int i = 0;
+            do
+            {
+                concatJson += JsonSerializer.Serialize(values[i++], opt);
+            }
+            while (i < values.Length);
+            """)]
+        [InlineData("""
+            int i = 0;
+            while (i < values.Length)
+            {
+                concatJson += JsonSerializer.Serialize(values[i++], opt);
+            }
+            """)]
+        public Task CS_UseNewLocalOptionsAsArgument_JsonSerializerOptions_BeforeLoop_NoWarn(string loop)
+            => VerifyCS.VerifyAnalyzerAsync($$"""
+                using System.Text.Json;
+
+                class Program
+                {
+                    static string Serialize<T>(T[] values)
+                    {
+                        JsonSerializerOptions opt = new JsonSerializerOptions();
+                        string concatJson = "";
+
+                        {{loop}}
+
+                        return concatJson;
+                    }
+                }
+                """);
+
+        [Theory]
+        [InlineData("""
+            For i = 0 To values.Length
+                concatJson += JsonSerializer.Serialize(values(i), opt)
+            Next
+            """)]
+        [InlineData("""
+            For Each value In values
+                concatJson += JsonSerializer.Serialize(value, opt)
+            Next
+            """)]
+        [InlineData("""
+            Dim i = 0
+            Do While i < values.Length
+                concatJson += JsonSerializer.Serialize(values(i), opt)
+                i = i + 1
+            Loop
+            """)]
+        [InlineData("""
+            Dim i = 0
+            Do
+                concatJson += JsonSerializer.Serialize(values(i), opt)
+                i = i + 1
+            Loop While i < values.Length
+            """)]
+        public Task VB_UseNewLocalOptionsAsArgument_JsonSerializerOptions_BeforeLoop_NoWarn(string loop)
+            => VerifyVB.VerifyAnalyzerAsync($$"""
+                Imports System.Text.Json
+
+                Class Program
+                    Shared Function Serialize(Of T)(values As T()) As String
+                        Dim opt = New JsonSerializerOptions()
+                        Dim concatJson = ""
+
+                        {{loop}}
+
+                        return concatJson
+                    End Function
+                End Class
                 """);
         #endregion
     }

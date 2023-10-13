@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.Operations;
 using System.Diagnostics.CodeAnalysis;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
@@ -102,6 +103,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     continue;
                 }
 
+                // Symbol is declared in a parent scope, so this implies that options are re-used.
+                if (IsLocalReferenceInsideChildLoop(localRefOperation, localBlock!))
+                {
+                    return false;
+                }
+
                 // Avoid cases that would potentially make the local escape current block scope.
                 if (IsArgumentOfJsonSerializer(descendant, jsonSerializerSymbol, out bool isArgumentOfInvocation))
                 {
@@ -153,6 +160,26 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             return operation;
+        }
+
+        private static bool IsLocalReferenceInsideChildLoop(ILocalReferenceOperation localRef, IBlockOperation symbolBlock)
+        {
+            IOperation? current = localRef;
+            while ((current = current?.Parent) is not null)
+            {
+                if (current is ILoopOperation loop)
+                {
+                    Debug.Assert(loop.Body is IBlockOperation);
+                    return loop.Body != symbolBlock;
+                }
+
+                if (current == symbolBlock)
+                {
+                    return false;
+                }
+            }
+
+            return false;
         }
 
         private static bool IsArgumentOfJsonSerializer(IOperation operation, INamedTypeSymbol jsonSerializerSymbol, out bool isArgumentOfInvocation)

@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     static void Main(string[] args)
                     {
                         JsonSerializerOptions options = {|CA1869:new JsonSerializerOptions()|};
-                        options.AllowTrailingCommas = true;        
+                        options.AllowTrailingCommas = true;
 
                         string json = JsonSerializer.Serialize(args, options);
                         Console.WriteLine(json);
@@ -370,7 +370,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """);
 
-
         [Fact]
         public Task CS_UseNewOptionsAsArgument_InterlockedCompareExchange_NoWarn()
             => VerifyCS.VerifyAnalyzerAsync("""
@@ -633,7 +632,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 class Program
                 {
-                    static JsonSerializerOptions s_options;    
+                    static JsonSerializerOptions s_options;
 
                     static string Serialize<T>(T value)
                     {
@@ -642,7 +641,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                         s_options = {{expression}};
 
-                        return JsonSerializer.Serialize(value, opt1);   
+                        return JsonSerializer.Serialize(value, opt1);
                     }
                 }
                 """);
@@ -657,14 +656,14 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 class Program
                 {
-                    static JsonSerializerOptions s_options;    
+                    static JsonSerializerOptions s_options;
 
                     static string Serialize<T>(T value)
                     {
                         JsonSerializerOptions opt1, opt2;
                         {{expression}} = new JsonSerializerOptions();
 
-                        return JsonSerializer.Serialize(value, opt1);   
+                        return JsonSerializer.Serialize(value, opt1);
                     }
                 }
                 """);

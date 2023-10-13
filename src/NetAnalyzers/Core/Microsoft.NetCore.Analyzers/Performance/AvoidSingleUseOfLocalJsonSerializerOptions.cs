@@ -103,7 +103,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     continue;
                 }
 
-                // Symbol is declared in a parent scope, so this implies that options are re-used.
+                // Symbol is declared in a parent scope and referenced inside a loop,
+                // this implies that options are used more than once.
                 if (IsLocalReferenceInsideChildLoop(localRefOperation, localBlock!))
                 {
                     return false;

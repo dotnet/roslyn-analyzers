@@ -65,7 +65,6 @@
     <MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>1.2.1</MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>
     <MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>
     <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>
-    <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzersTests>3.11.0</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzersTests>
     <MicrosoftCodeAnalysisVersionForResxSourceGenerators>4.0.1</MicrosoftCodeAnalysisVersionForResxSourceGenerators>
     <MicrosoftCodeAnalysisVersionForNetAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForNetAnalyzers>
     <MicrosoftCodeAnalysisVersionForTextAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForTextAnalyzers>

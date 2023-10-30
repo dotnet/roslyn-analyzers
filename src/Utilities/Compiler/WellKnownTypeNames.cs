@@ -36,6 +36,7 @@ namespace Analyzer.Utilities
         public const string MicrosoftCodeAnalysisCSharpCSharpCompilation = "Microsoft.CodeAnalysis.CSharp.CSharpCompilation";
         public const string MicrosoftCodeAnalysisCSharpCSharpExtensions = "Microsoft.CodeAnalysis.CSharp.CSharpExtensions";
         public const string MicrosoftCodeAnalysisCSharpExtensions = "Microsoft.CodeAnalysis.CSharpExtensions";
+        public const string MicrosoftCodeAnalysisCSharpSyntaxBaseFieldDeclarationSyntax = "Microsoft.CodeAnalysis.CSharp.Syntax.BaseFieldDeclarationSyntax";
         public const string MicrosoftCodeAnalysisDiagnostic = "Microsoft.CodeAnalysis.Diagnostic";
         public const string MicrosoftCodeAnalysisDiagnosticDescriptor = "Microsoft.CodeAnalysis.DiagnosticDescriptor";
         public const string MicrosoftCodeAnalysisDiagnosticsAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.AnalysisContext";
@@ -59,8 +60,10 @@ namespace Analyzer.Utilities
         public const string MicrosoftCodeAnalysisISourceGenerator = "Microsoft.CodeAnalysis.ISourceGenerator";
         public const string MicrosoftCodeAnalysisLocalizableResourceString = "Microsoft.CodeAnalysis.LocalizableResourceString";
         public const string MicrosoftCodeAnalysisLocalizableString = "Microsoft.CodeAnalysis.LocalizableString";
+        public const string MicrosoftCodeAnalysisModelExtensions = "Microsoft.CodeAnalysis.ModelExtensions";
         public const string MicrosoftCodeAnalysisSharedCollectionsTemporaryArrayExtensions = "Microsoft.CodeAnalysis.Shared.Collections.TemporaryArrayExtensions";
         public const string MicrosoftCodeAnalysisSymbolKind = "Microsoft.CodeAnalysis.SymbolKind";
+        public const string MicrosoftCodeAnalysisSyntaxNode = "Microsoft.CodeAnalysis.SyntaxNode";
         public const string MicrosoftCodeAnalysisVisualBasicExtensions = "Microsoft.CodeAnalysis.VisualBasicExtensions";
         public const string MicrosoftCodeAnalysisVisualBasicVisualBasicCompilation = "Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilation";
         public const string MicrosoftCodeAnalysisVisualBasicVisualBasicExtensions = "Microsoft.CodeAnalysis.VisualBasic.VisualBasicExtensions";
@@ -306,6 +309,7 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeCompilerServicesCallerArgumentExpressionAttribute = "System.Runtime.CompilerServices.CallerArgumentExpressionAttribute";
         public const string SystemRuntimeCompilerServicesCompilerGeneratedAttribute = "System.Runtime.CompilerServices.CompilerGeneratedAttribute";
         public const string SystemRuntimeCompilerServicesConfiguredAsyncDisposable = "System.Runtime.CompilerServices.ConfiguredAsyncDisposable";
+        public const string SystemRuntimeCompilerServicesConfiguredCancelableAsyncEnumerable = "System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1";
         public const string SystemRuntimeCompilerServicesConfiguredValueTaskAwaitable = "System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable";
         public const string SystemRuntimeCompilerServicesConfiguredValueTaskAwaitable1 = "System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable`1";
         public const string SystemRuntimeCompilerServicesDisableRuntimeMarshallingAttribute = "System.Runtime.CompilerServices.DisableRuntimeMarshallingAttribute";

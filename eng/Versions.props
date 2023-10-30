@@ -64,9 +64,7 @@
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.11.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
     <MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>1.2.1</MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>
     <MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>
-    <MicrosoftCodeAnalysisVersionForBannedApiAnalyzersTests>3.11.0</MicrosoftCodeAnalysisVersionForBannedApiAnalyzersTests>
     <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>
-    <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzersTests>3.11.0</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzersTests>
     <MicrosoftCodeAnalysisVersionForResxSourceGenerators>4.0.1</MicrosoftCodeAnalysisVersionForResxSourceGenerators>
     <MicrosoftCodeAnalysisVersionForNetAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForNetAnalyzers>
     <MicrosoftCodeAnalysisVersionForTextAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForTextAnalyzers>
@@ -90,7 +88,7 @@
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
     <MicrosoftVisualStudioThreadingAnalyzersVersion>17.0.26-alpha</MicrosoftVisualStudioThreadingAnalyzersVersion>
     <!-- Roslyn Testing -->
-    <MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.23357.1</MicrosoftCodeAnalysisTestingVersion>
+    <MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.23509.1</MicrosoftCodeAnalysisTestingVersion>
     <!-- Libs -->
     <BenchmarkDotNetVersion>0.13.0</BenchmarkDotNetVersion>
     <HumanizerVersion>2.14.1</HumanizerVersion>

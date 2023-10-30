@@ -1,10 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -63,9 +61,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                var typeProvider = WellKnownTypeProvider.GetOrCreate(compilationContext.Compilation);
-                var debugAssert = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsDebug);
-                var debugAssertMethods = debugAssert?.GetMembers(nameof(Debug.Assert)).OfType<IMethodSymbol>().ToArray() ?? Array.Empty<IMethodSymbol>();
                 compilationContext.RegisterOperationBlockAction(operationBlockContext =>
                 {
                     var owningSymbol = operationBlockContext.OwningSymbol;
@@ -78,15 +73,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                     foreach (var operationRoot in operationBlockContext.OperationBlocks)
                     {
-                        bool ShouldAnalyze(IOperation op) =>
-                                ((op as IBinaryOperation)?.IsComparisonOperator() == true ||
+                        static bool ShouldAnalyze(IOperation op) =>
+                                (op as IBinaryOperation)?.IsComparisonOperator() == true ||
                                 op is IInvocationOperation { TargetMethod.ReturnType.SpecialType: SpecialType.System_Boolean } ||
                                 op.Kind == OperationKind.Coalesce ||
                                 op.Kind == OperationKind.ConditionalAccess ||
                                 op.Kind == OperationKind.IsNull ||
-                                op.Kind == OperationKind.IsPattern)
-                                && (op.Parent is not IArgumentOperation { Parent: IInvocationOperation invocation } ||
-                                    !debugAssertMethods.Contains(invocation.TargetMethod, SymbolEqualityComparer.Default));
+                                op.Kind == OperationKind.IsPattern;
 
                         if (operationRoot.HasAnyOperationDescendant(ShouldAnalyze))
                         {

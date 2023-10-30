@@ -27,10 +27,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>84a3d0e37e8f22b0b55f8bf932cb788b2bdd728f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23525.5" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
-      <Uri>https://github.com/dotnet/xliff-tasks</Uri>
-      <Sha>0140d3d4a520d602a0721422eb656b78f16b5fba</Sha>
-      <SourceBuild RepoName="xliff-tasks" ManagedOnly="true" />
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.23528.1">
+      <Uri>https://github.com/dotnet/arcade</Uri>
+      <Sha>a4d49646dbac90883d3672f1c08134d84cca5707</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.5.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>

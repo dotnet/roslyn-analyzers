@@ -3668,6 +3668,7 @@ class A : IAsyncDisposable
     }
 }
 
+// No diagnostic for DisposeCoreAsync.
 class B : IAsyncDisposable
 {
     private readonly object disposedValueLock = new object();
@@ -3681,14 +3682,14 @@ class B : IAsyncDisposable
 
     protected virtual async ValueTask DisposeCoreAsync()
     {
-        lock (this.disposedValueLock)
+        lock (disposedValueLock)
         {
-            if (this.disposedValue)
+            if (disposedValue)
             {
                 return;
             }
 
-            this.disposedValue = true;
+            disposedValue = true;
         }
 
         await a.DisposeAsync().ConfigureAwait(false);
@@ -3696,15 +3697,127 @@ class B : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        await this.DisposeCoreAsync().ConfigureAwait(false);
+        await DisposeCoreAsync().ConfigureAwait(false);
+        GC.SuppressFinalize(this);
+    }
+}
+
+// No diagnostic for DisposeAsyncCore.
+class C : IAsyncDisposable
+{
+    private readonly object disposedValueLock = new object();
+    private bool disposedValue;
+    private readonly A a;
+
+    public C() 
+    {
+        a = new A();
+    }
+
+    protected virtual async ValueTask DisposeAsyncCore()
+    {
+        lock (disposedValueLock)
+        {
+            if (disposedValue)
+            {
+                return;
+            }
+
+            disposedValue = true;
+        }
+
+        await a.DisposeAsync().ConfigureAwait(false);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await DisposeAsyncCore().ConfigureAwait(false);
         GC.SuppressFinalize(this);
     }
 }
 "
             }.RunAsync();
 
+            // How to fix: "error BC36945: The 'Async' modifier can only be used on Subs, or on Functions that return Task or Task(Of T)."?
             /*
-            TODO: VB test.
+ 
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+Imports System
+Imports System.Threading.Tasks
+
+Class A
+    Implements IAsyncDisposable
+
+    Public Function DisposeAsync() As ValueTask Implements IAsyncDisposable.DisposeAsync
+        Return Nothing
+    End Function
+End Class
+
+' No diagnostic for DisposeCoreAsync.
+Class B
+    Implements IAsyncDisposable
+
+    Private ReadOnly disposedValueLock As Object = New Object()
+    Private disposedValue As Boolean
+    Private ReadOnly a As A
+
+    Public Sub New()
+        a = New A()
+    End Sub
+
+    Protected Overridable Async Function DisposeCoreAsync() As ValueTask
+        SyncLock disposedValueLock
+
+            If disposedValue Then
+                Return
+            End If
+
+            disposedValue = True
+        End SyncLock
+
+        Await a.DisposeAsync().ConfigureAwait(False)
+    End Function
+
+    Public Async Function DisposeAsync() As ValueTask Implements IAsyncDisposable.DisposeAsync
+        Await DisposeCoreAsync.ConfigureAwait(false)
+        GC.SuppressFinalize(Me)
+    End Function
+End Class
+
+' No diagnostic for DisposeAsyncCore.
+Class C
+    Implements IAsyncDisposable
+
+    Private ReadOnly disposedValueLock As Object = New Object()
+    Private disposedValue As Boolean
+    Private ReadOnly a As A
+
+    Public Sub New()
+        a = New A()
+    End Sub
+
+    Protected Overridable Async Function DisposeAsyncCore() As ValueTask
+        SyncLock disposedValueLock
+
+            If disposedValue Then
+                Return
+            End If
+
+            disposedValue = True
+        End SyncLock
+
+        Await a.DisposeAsync().ConfigureAwait(False)
+    End Function
+
+    Public Function DisposeAsync() As ValueTask Implements IAsyncDisposable.DisposeAsync
+        Await DisposeAsyncCore.ConfigureAwait(false)
+        GC.SuppressFinalize(Me)
+    End Function
+End Class"
+            }.RunAsync();
             */
         }
 

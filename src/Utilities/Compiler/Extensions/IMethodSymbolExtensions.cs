@@ -288,11 +288,11 @@ namespace Analyzer.Utilities.Extensions
         }
 
         /// <summary>
-        /// Checks if the given method has the signature "override Task DisposeCoreAsync(bool)".
+        /// Checks if the given method has the signature "override Task DisposeCoreAsync(bool)" or "override Task DisposeAsyncCore(bool)".
         /// </summary>
         private static bool HasOverriddenDisposeCoreAsyncMethodSignature(this IMethodSymbol method, [NotNullWhen(returnValue: true)] INamedTypeSymbol? task)
         {
-            return method.Name == "DisposeCoreAsync" &&
+            return (method.Name == "DisposeCoreAsync" || method.Name == "DisposeAsyncCore") &&
                 method.MethodKind == MethodKind.Ordinary &&
                 method.IsOverride &&
                 SymbolEqualityComparer.Default.Equals(method.ReturnType, task) &&
@@ -301,11 +301,11 @@ namespace Analyzer.Utilities.Extensions
         }
 
         /// <summary>
-        /// Checks if the given method has the signature "virtual ValueTask DisposeCoreAsync()".
+        /// Checks if the given method has the signature "virtual ValueTask DisposeCoreAsync()" or "virtual ValueTask DisposeAsyncCore()".
         /// </summary>
         private static bool HasVirtualDisposeCoreAsyncMethodSignature(this IMethodSymbol method, [NotNullWhen(returnValue: true)] INamedTypeSymbol? valueTask)
         {
-            return method.Name == "DisposeCoreAsync" &&
+            return (method.Name == "DisposeCoreAsync" || method.Name == "DisposeAsyncCore") &&
                 method.MethodKind == MethodKind.Ordinary &&
                 method.IsVirtual &&
                 SymbolEqualityComparer.Default.Equals(method.ReturnType, valueTask) &&

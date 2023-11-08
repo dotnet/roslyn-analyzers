@@ -305,7 +305,7 @@ namespace Analyzer.Utilities.Extensions
         /// </summary>
         private static bool HasVirtualDisposeCoreAsyncMethodSignature(this IMethodSymbol method, [NotNullWhen(returnValue: true)] INamedTypeSymbol? valueTask)
         {
-            return (method.Name == "DisposeCoreAsync" || method.Name == "DisposeAsyncCore") &&
+            return (method.Name == "DisposeAsyncCore" || method.Name == "DisposeCoreAsync") &&
                 method.MethodKind == MethodKind.Ordinary &&
                 method.IsVirtual &&
                 SymbolEqualityComparer.Default.Equals(method.ReturnType, valueTask) &&

@@ -881,6 +881,26 @@ End Class
             await vbtest.RunAsync();
         }
 
+        [Fact]
+        [WorkItem(7030, "https://github.com/dotnet/roslyn-analyzers/issues/7030")]
+        public Task QueryableTake()
+        {
+            const string code = """
+                                using System.Collections.Generic;
+                                using System.Linq;
+                                
+                                class Test
+                                {
+                                    void M()
+                                    {
+                                        IQueryable<int> queryable = (new int[] { 0, 1 }).AsQueryable();
+                                        {|CA1806:queryable.Take(1)|};
+                                    }
+                                }
+                                """;
+            return VerifyCS.VerifyAnalyzerAsync(code);
+        }
+
         #endregion
 
         #region Helpers

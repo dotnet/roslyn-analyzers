@@ -3223,6 +3223,36 @@ Enumerable.OfType&lt;T&gt; で使用されるジェネリック型チェック (
         <target state="translated">ValueTask を正しく使用する必要があります</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseVolatileReadDescription">
+        <source>'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</source>
+        <target state="new">'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileReadMessage">
+        <source>Use 'Volatile.Read' instead of 'Thread.VolatileRead'</source>
+        <target state="new">Use 'Volatile.Read' instead of 'Thread.VolatileRead'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileReadTitle">
+        <source>Use 'Volatile.Read'</source>
+        <target state="new">Use 'Volatile.Read'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileWriteDescription">
+        <source>'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</source>
+        <target state="new">'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileWriteMessage">
+        <source>Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</source>
+        <target state="new">Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileWriteTitle">
+        <source>Use 'Volatile.Write'</source>
+        <target state="new">Use 'Volatile.Write'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseXmlReaderDescription">
         <source>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>
         <target state="translated">信頼されていないデータから XML を処理すると、危険な外部参照を読み込む可能性があります。XmlReader を安全なリゾルバーと共に使用するか、DTD 処理を無効にして使用することにより、この処理を制限する必要があります。</target>

@@ -3223,6 +3223,36 @@ L'ampliamento e le conversioni definite dall'utente non sono supportate con tipi
         <target state="translated">Usare correttamente gli elementi ValueTask</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseVolatileReadDescription">
+        <source>'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</source>
+        <target state="new">'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileReadMessage">
+        <source>Use 'Volatile.Read' instead of 'Thread.VolatileRead'</source>
+        <target state="new">Use 'Volatile.Read' instead of 'Thread.VolatileRead'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileReadTitle">
+        <source>Use 'Volatile.Read'</source>
+        <target state="new">Use 'Volatile.Read'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileWriteDescription">
+        <source>'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</source>
+        <target state="new">'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileWriteMessage">
+        <source>Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</source>
+        <target state="new">Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileWriteTitle">
+        <source>Use 'Volatile.Write'</source>
+        <target state="new">Use 'Volatile.Write'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseXmlReaderDescription">
         <source>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>
         <target state="translated">Quando si carica codice XML da dati non attendibili, potrebbero essere caricati riferimenti esterni pericolosi, che devono essere limitati usando un elemento XmlReader con un resolver sicuro oppure disabilitando l'elaborazione DTD.</target>

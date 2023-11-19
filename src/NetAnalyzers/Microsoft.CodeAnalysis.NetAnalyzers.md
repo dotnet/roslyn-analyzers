@@ -2586,6 +2586,18 @@ The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. 
 |CodeFix|False|
 ---
 
+## [CA2263](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263): Use 'Volatile.Write'
+
+'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|True|
+---
+
 ## [CA2300](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2300): Do not use insecure deserializer BinaryFormatter
 
 The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rule CA2300, and enable rules CA2301 and CA2302.

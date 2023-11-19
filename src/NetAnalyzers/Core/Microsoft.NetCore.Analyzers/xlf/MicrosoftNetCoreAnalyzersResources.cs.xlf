@@ -3223,6 +3223,36 @@ Obecné přetypování (IL unbox.any) používané sekvencí vrácenou metodou E
         <target state="translated">Správně použít hodnot ValueTask</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseVolatileReadDescription">
+        <source>'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</source>
+        <target state="new">'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileReadMessage">
+        <source>Use 'Volatile.Read' instead of 'Thread.VolatileRead'</source>
+        <target state="new">Use 'Volatile.Read' instead of 'Thread.VolatileRead'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileReadTitle">
+        <source>Use 'Volatile.Read'</source>
+        <target state="new">Use 'Volatile.Read'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileWriteDescription">
+        <source>'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</source>
+        <target state="new">'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileWriteMessage">
+        <source>Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</source>
+        <target state="new">Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileWriteTitle">
+        <source>Use 'Volatile.Write'</source>
+        <target state="new">Use 'Volatile.Write'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseXmlReaderDescription">
         <source>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>
         <target state="translated">Zpracování kódu XML z nedůvěryhodných dat může načíst nebezpečné externí odkazy, což by se mělo omezit tím, že se použije XmlReader se zabezpečeným překladačem nebo se zakázaným zpracováním DTD.</target>

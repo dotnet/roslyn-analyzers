@@ -3223,6 +3223,36 @@ Enumerable.OfType&lt;T&gt;에서 사용하는 제네릭 형식 검사(C# 'is' �
         <target state="translated">올바르게 ValueTasks 사용</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseVolatileReadDescription">
+        <source>'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</source>
+        <target state="new">'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileReadMessage">
+        <source>Use 'Volatile.Read' instead of 'Thread.VolatileRead'</source>
+        <target state="new">Use 'Volatile.Read' instead of 'Thread.VolatileRead'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileReadTitle">
+        <source>Use 'Volatile.Read'</source>
+        <target state="new">Use 'Volatile.Read'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileWriteDescription">
+        <source>'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</source>
+        <target state="new">'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileWriteMessage">
+        <source>Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</source>
+        <target state="new">Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseVolatileWriteTitle">
+        <source>Use 'Volatile.Write'</source>
+        <target state="new">Use 'Volatile.Write'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseXmlReaderDescription">
         <source>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>
         <target state="translated">신뢰할 수 없는 데이터의 XML을 처리하면 위험한 외부 참조가 로드될 수 있습니다. 위험한 외부 참조는 안전한 확인자와 함께 또는 DTD 처리를 사용하지 않도록 설정한 상태로 XmlReader를 사용하여 제한해야 합니다.</target>

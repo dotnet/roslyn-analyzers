@@ -8,19 +8,18 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.NetCore.Analyzers.Usage
+namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
+    // This analyzer can be removed as soon as the Thread.VolatileRead and Thread.VolatileWrite APIs are made obsolete.
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class UseVolatileReadWriteAnalyzer : DiagnosticAnalyzer
+    internal sealed class UseVolatileReadWriteAnalyzer : DiagnosticAnalyzer
     {
-        private const string RuleId = "CA2263";
+        private const string RuleId = "SYSLIB0054";
 
-        internal const string ThreadVolatileReadMethodName = nameof(Thread.VolatileRead);
-        internal const string ThreadVolatileWriteMethodName = nameof(Thread.VolatileWrite);
-        internal const string VolatileReadMethodName = nameof(Volatile.Read);
-        internal const string VolatileWriteMethodName = nameof(Volatile.Write);
+        private const string ThreadVolatileReadMethodName = nameof(Thread.VolatileRead);
+        private const string ThreadVolatileWriteMethodName = nameof(Thread.VolatileWrite);
 
         internal static readonly DiagnosticDescriptor ReadDescriptor = DiagnosticDescriptorHelper.Create(
             RuleId,

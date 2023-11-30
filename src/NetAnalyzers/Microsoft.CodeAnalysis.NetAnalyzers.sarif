@@ -4474,26 +4474,6 @@
             ]
           }
         },
-        "CA2263": {
-          "id": "CA2263",
-          "shortDescription": "Use 'Volatile.Write'",
-          "fullDescription": "'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.",
-          "defaultLevel": "warning",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "typeName": "UseVolatileReadWriteAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
         "CA2300": {
           "id": "CA2300",
           "shortDescription": "Do not use insecure deserializer BinaryFormatter",

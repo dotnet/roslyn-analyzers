@@ -5,10 +5,10 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Usage.UseVolatileReadWriteAnalyzer,
+    Microsoft.NetCore.Analyzers.Usage.UnitTests.UseVolatileReadWriteAnalyzer,
     Microsoft.NetCore.CSharp.Analyzers.Usage.CSharpUseVolatileReadWriteFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Usage.UseVolatileReadWriteAnalyzer,
+    Microsoft.NetCore.Analyzers.Usage.UnitTests.UseVolatileReadWriteAnalyzer,
     Microsoft.NetCore.VisualBasic.Analyzers.Usage.BasicUseVolatileReadWriteFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Usage.UnitTests

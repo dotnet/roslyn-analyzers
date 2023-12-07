@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Globalization;
@@ -461,6 +461,41 @@ namespace Test
                 key = data[key];
             }
 
+            return 0;";
+
+        private const string GuardedInlineVariable = @"
+            string key = ""key"";
+            var data = new Dictionary<string, string>();
+            if ({|#0:data.ContainsKey(key)|})
+            {
+                {|#1:var a = data[key];|}
+            }
+            return 0;";
+
+        private const string GuardedInlineVariableFixed = @"
+            string key = ""key"";
+            var data = new Dictionary<string, string>();
+            if (data.TryGetValue(key, out string a))
+            {
+            }
+            return 0;";
+
+        private const string GuardedInlineVariable2 = @"
+            string key = ""key"";
+            var data = new Dictionary<string, string>();
+            if ({|#0:data.ContainsKey(key)|})
+            {
+                string {|#1:a = data[key]|}, b = """";
+            }
+            return 0;";
+
+        private const string GuardedInlineVariable2Fixed = @"
+            string key = ""key"";
+            var data = new Dictionary<string, string>();
+            if (data.TryGetValue(key, out string a))
+            {
+                string b = """";
+            }
             return 0;";
 
         #region NoDiagnostic
@@ -1225,6 +1260,8 @@ End Namespace";
         [InlineData(GuardedIndexerInSimpleAssignment, GuardedIndexerInSimpleAssignmentFixed)]
         [InlineData(GuardedIndexerInCompoundAssignment, GuardedIndexerInCompoundAssignmentFixed)]
         [InlineData(GuardedKeyInSimpleAssignment, GuardedKeyInSimpleAssignmentFixed)]
+        [InlineData(GuardedInlineVariable, GuardedInlineVariableFixed)]
+        [InlineData(GuardedInlineVariable2, GuardedInlineVariable2Fixed)]
         public Task ShouldReportDiagnostic(string codeSnippet, string fixedCodeSnippet, int additionalLocations = 1)
         {
             string testCode = CreateCSharpCode(codeSnippet);

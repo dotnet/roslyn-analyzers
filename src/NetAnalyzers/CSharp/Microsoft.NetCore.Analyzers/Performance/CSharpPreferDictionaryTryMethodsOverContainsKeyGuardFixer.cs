@@ -58,6 +58,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             var dictionaryAccessors = new List<SyntaxNode>();
             ExpressionStatementSyntax? addStatementNode = null;
             SyntaxNode? changedValueNode = null;
+            string? valueName = null;
+            LocalDeclarationStatementSyntax? localDeclarationStatement = null;
+            VariableDeclaratorSyntax? variableDeclarator = null;
+            var additionalNodes = 0;
+            SyntaxNode? typeNode = null;
             foreach (var location in diagnostic.AdditionalLocations)
             {
                 var node = root.FindNode(location.SourceSpan, getInnermostNodeForTie: true);
@@ -65,12 +70,14 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 {
                     case ElementAccessExpressionSyntax:
                         dictionaryAccessors.Add(node);
+                        typeNode ??= node;
                         break;
                     case ExpressionStatementSyntax exp:
                         if (addStatementNode != null)
                             return null;
 
                         addStatementNode = exp;
+                        additionalNodes++;
                         switch (addStatementNode.Expression)
                         {
                             case AssignmentExpressionSyntax assign:
@@ -84,14 +91,33 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                         }
 
                         break;
+                    case LocalDeclarationStatementSyntax local:
+                        localDeclarationStatement = local;
+                        valueName = local.Declaration.Variables[0].Identifier.ValueText;
+                        additionalNodes++;
+                        typeNode ??= local.Declaration.Type;
+                        break;
+                    case VariableDeclaratorSyntax
+                    {
+                        Parent: VariableDeclarationSyntax
+                        {
+                            Parent: LocalDeclarationStatementSyntax local
+                        }
+                    } declarator:
+                        variableDeclarator = declarator;
+                        localDeclarationStatement = local;
+                        valueName = declarator.Identifier.ValueText;
+                        additionalNodes++;
+                        typeNode ??= local.Declaration.Type;
+                        break;
                 }
             }
 
-            if (diagnostic.AdditionalLocations.Count != dictionaryAccessors.Count + (addStatementNode != null ? 1 : 0))
+            if (diagnostic.AdditionalLocations.Count != dictionaryAccessors.Count + additionalNodes)
                 return null;
 
             var model = await document.GetRequiredSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            var type = model.GetTypeInfo(dictionaryAccessors[0], cancellationToken).Type;
+            var type = model.GetTypeInfo(typeNode!, cancellationToken).Type;
 
             return CodeAction.Create(PreferDictionaryTryGetValueCodeFixTitle, async ct =>
             {
@@ -122,13 +148,13 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 var outArgument = generator.Argument(RefKind.Out,
                     DeclarationExpression(
                         typeSyntax,
-                        SingleVariableDesignation(Identifier(Value))
+                        SingleVariableDesignation(Identifier(valueName ?? Value))
                     )
                 );
                 var tryGetValueInvocation = generator.InvocationExpression(tryGetValueAccess, keyArgument, outArgument);
                 editor.ReplaceNode(containsKeyInvocation, tryGetValueInvocation);
 
-                var identifierName = (IdentifierNameSyntax)generator.IdentifierName(Value);
+                var identifierName = (IdentifierNameSyntax)generator.IdentifierName(valueName ?? Value);
                 if (addStatementNode != null)
                 {
                     editor.InsertBefore(addStatementNode,
@@ -157,6 +183,18 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                         default:
                             editor.ReplaceNode(dictionaryAccess, identifierName);
                             break;
+                    }
+                }
+
+                if (localDeclarationStatement is not null)
+                {
+                    if (variableDeclarator is null)
+                    {
+                        editor.RemoveNode(localDeclarationStatement);
+                    }
+                    else
+                    {
+                        editor.RemoveNode(variableDeclarator);
                     }
                 }
 

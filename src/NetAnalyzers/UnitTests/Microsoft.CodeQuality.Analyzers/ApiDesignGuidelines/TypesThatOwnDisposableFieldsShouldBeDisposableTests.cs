@@ -1177,7 +1177,7 @@ End Class
 using System;
 using System.IO;
 
-internal struct Invalid : IDisposable
+public struct Invalid : IDisposable
 {
     private readonly Stream stream;
 
@@ -1196,7 +1196,7 @@ internal struct Invalid : IDisposable
 Imports System
 Imports System.IO
 
-Friend Structure Invalid
+Public Structure Invalid
     Implements IDisposable
 
     Dim stream as Stream

@@ -41,41 +41,52 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 var resourceFileNames = context.Options.AdditionalFiles
                     .Where(f => Path.GetExtension(f.Path).Equals(".resx", StringComparison.Ordinal)).Select(f => Path.GetFileNameWithoutExtension(f.Path)).ToImmutableHashSet();
 
-                var resourceTypes = context.Compilation.GetSymbolsWithName(n => resourceFileNames.Contains(n), SymbolFilter.Type, context.CancellationToken)
-                    .Where(s => s.ContainingType is null).OfType<INamedTypeSymbol>();
+                var resourceTypes = new ConcurrentBag<INamedTypeSymbol>();
+                var usedProperties = new ConcurrentBag<IPropertySymbol>();
 
-                var propertyToIsUsedMap = new ConcurrentDictionary<IPropertySymbol, bool>(SymbolEqualityComparer.Default);
-                foreach (var resourceType in resourceTypes)
+                context.RegisterSymbolAction(context =>
                 {
-                    foreach (var property in resourceType.GetMembers().OfType<IPropertySymbol>())
+                    if (IsResourceType(context.Symbol, resourceFileNames))
                     {
-                        if (property.IsStatic && property.Type.SpecialType == SpecialType.System_String)
-                        {
-                            propertyToIsUsedMap.TryAdd(property, false);
-                        }
+                        resourceTypes.Add((INamedTypeSymbol)context.Symbol);
                     }
-                }
+                }, SymbolKind.NamedType);
 
                 context.RegisterOperationAction(context =>
                 {
                     var operation = (IPropertyReferenceOperation)context.Operation;
-                    if (propertyToIsUsedMap.ContainsKey(operation.Property))
+                    var property = operation.Property;
+                    if (IsResourceType(property.ContainingType, resourceFileNames) && IsCandidateProperty(property))
                     {
-                        propertyToIsUsedMap.TryUpdate(operation.Property, newValue: true, comparisonValue: false);
+                        usedProperties.Add(property);
                     }
                 }, OperationKind.PropertyReference);
 
                 context.RegisterCompilationEndAction(context =>
                 {
-                    foreach (var keyValuePair in propertyToIsUsedMap)
+                    foreach (var resourceType in resourceTypes)
                     {
-                        if (!keyValuePair.Value)
+                        foreach (var member in resourceType.GetMembers())
                         {
-                            context.ReportDiagnostic(keyValuePair.Key.CreateDiagnostic(Rule, keyValuePair.Key.Name));
+                            if (member is not IPropertySymbol property || !IsCandidateProperty(property))
+                            {
+                                continue;
+                            }
+
+                            if (!usedProperties.Contains(property))
+                            {
+                                context.ReportDiagnostic(property.CreateDiagnostic(Rule, property.Name));
+                            }
                         }
                     }
                 });
             });
         }
+
+        private static bool IsResourceType(ISymbol type, ImmutableHashSet<string> resourceFileNames)
+            => resourceFileNames.Contains(type.Name) && type.ContainingType is null;
+
+        private static bool IsCandidateProperty(IPropertySymbol property)
+            => property.IsStatic && property.Type.SpecialType == SpecialType.System_String;
     }
 }

@@ -24,7 +24,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             CreateLocalizableResourceString(nameof(AvoidUnusedResourcesTitle)),
             CreateLocalizableResourceString(nameof(AvoidUnusedResourceMessage)),
             DiagnosticCategory.Maintainability,
-            RuleLevel.Disabled,
+            RuleLevel.IdeSuggestion,
             description: null,
             isPortedFxCopRule: false,
             isDataflowRule: false,

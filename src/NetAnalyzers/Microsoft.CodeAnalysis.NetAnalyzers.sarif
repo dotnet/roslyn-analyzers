@@ -2148,11 +2148,11 @@
           "id": "CA1516",
           "shortDescription": "Remove unused resource",
           "fullDescription": "Remove unused resources '{0}'",
-          "defaultLevel": "warning",
+          "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1516",
           "properties": {
             "category": "Maintainability",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "AvoidUnusedResources",
             "languages": [
               "C#",

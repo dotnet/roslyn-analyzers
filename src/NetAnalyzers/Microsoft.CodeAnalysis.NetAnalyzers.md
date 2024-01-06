@@ -943,8 +943,8 @@ Remove unused resources '{0}'
 |Item|Value|
 |-|-|
 |Category|Maintainability|
-|Enabled|False|
-|Severity|Warning|
+|Enabled|True|
+|Severity|Info|
 |CodeFix|False|
 ---
 

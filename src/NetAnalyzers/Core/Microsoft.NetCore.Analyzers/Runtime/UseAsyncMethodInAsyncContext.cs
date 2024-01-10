@@ -137,7 +137,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                         else
                         {
-                            InspectAndReportBlockingMemberAccess(context, ((IPropertyReferenceOperation)context.Operation).Property, syncBlockingSymbols, SymbolKind.Property);
+                            var propertyReferenceOperation = (IPropertyReferenceOperation)context.Operation;
+                            if (propertyReferenceOperation.Parent is not INameOfOperation)
+                            {
+                                InspectAndReportBlockingMemberAccess(context, propertyReferenceOperation.Property, syncBlockingSymbols, SymbolKind.Property);
+                            }
                         }
                     }
                 }, OperationKind.Invocation, OperationKind.PropertyReference);
@@ -207,6 +211,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             methodsBuilder.Add(method);
                         }
                     }
+                }
+            }
+
+            if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftEntityFrameworkCoreDbContextFactory, out INamedTypeSymbol? dbContextFactoryType))
+            {
+                foreach (var method in dbContextFactoryType.GetMembers("CreateDbContext").OfType<IMethodSymbol>())
+                {
+                    methodsBuilder.Add(method);
                 }
             }
 

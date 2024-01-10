@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
@@ -24,6 +23,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class AvoidConstArraysFixer : CodeFixProvider
     {
+        private const int GlobalStatementKind = 8841;
+
         public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(AvoidConstArraysAnalyzer.RuleId);
 
         private static readonly ImmutableArray<string> s_collectionMemberEndings = ImmutableArray.Create("array", "collection", "enumerable", "list");
@@ -51,10 +52,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
             IArrayCreationOperation arrayArgument = GetArrayCreationOperation(node, model, cancellationToken, out bool isInvoked);
-            INamedTypeSymbol containingType = model.GetEnclosingSymbol(node.SpanStart, cancellationToken)!.ContainingType;
+            ISymbol enclosingSymbol = model.GetEnclosingSymbol(node.SpanStart, cancellationToken)!;
+            INamedTypeSymbol containingType = enclosingSymbol.ContainingType;
+            HashSet<string> identifiers = new(containingType.MemberNames);
+            bool isTopLevelStatements = false;
+            if (enclosingSymbol is IMethodSymbol method)
+            {
+                identifiers.AddRange(method.Parameters.Select(p => p.Name));
+                isTopLevelStatements = method.IsTopLevelStatementsEntryPointMethod();
+            }
+
+            IMethodBodyOperation? containingMethod = arrayArgument.GetAncestor<IMethodBodyOperation>(OperationKind.MethodBody);
+            if (containingMethod?.BlockBody is not null)
+            {
+                identifiers.AddRange(containingMethod.BlockBody.Locals.Select(l => l.Name));
+            }
 
             // Get a valid member name for the extracted constant
-            string newMemberName = GetExtractedMemberName(containingType.MemberNames, properties["paramName"] ?? GetMemberNameFromType(arrayArgument));
+            string newMemberName = GetExtractedMemberName(identifiers, properties["paramName"] ?? GetMemberNameFromType(arrayArgument));
 
             // Get method containing the symbol that is being diagnosed
             IOperation? methodContext = arrayArgument.GetAncestor<IMethodBodyOperation>(OperationKind.MethodBody);
@@ -75,26 +90,39 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 newMember = newMember.FormatForExtraction(methodContext.Syntax);
             }
 
-            ISymbol? lastFieldOrPropertySymbol = containingType.GetMembers().LastOrDefault(x => x is IFieldSymbol or IPropertySymbol);
-            if (lastFieldOrPropertySymbol is not null)
+            if (isTopLevelStatements)
             {
-                var span = lastFieldOrPropertySymbol.Locations.First().SourceSpan;
-                if (root.FullSpan.Contains(span))
+                SyntaxNode partialClass = generator.ClassDeclaration(
+                    "Program",
+                    modifiers: DeclarationModifiers.Partial,
+                    members: new[] { newMember });
+
+                var globalStatement = root.DescendantNodes().First(n => n.RawKind == GlobalStatementKind);
+                editor.InsertAfter(globalStatement, partialClass);
+            }
+            else
+            {
+                ISymbol? lastFieldOrPropertySymbol = containingType.GetMembers().LastOrDefault(x => x is IFieldSymbol or IPropertySymbol);
+                if (lastFieldOrPropertySymbol is not null)
                 {
-                    // Insert after fields or properties
-                    SyntaxNode lastFieldOrPropertyNode = root.FindNode(span);
-                    editor.InsertAfter(generator.GetDeclaration(lastFieldOrPropertyNode), newMember);
+                    var span = lastFieldOrPropertySymbol.Locations.First().SourceSpan;
+                    if (root.FullSpan.Contains(span))
+                    {
+                        // Insert after fields or properties
+                        SyntaxNode lastFieldOrPropertyNode = root.FindNode(span);
+                        editor.InsertAfter(generator.GetDeclaration(lastFieldOrPropertyNode), newMember);
+                    }
+                    else if (methodContext != null)
+                    {
+                        // Span not found
+                        editor.InsertBefore(methodContext.Syntax, newMember);
+                    }
                 }
                 else if (methodContext != null)
                 {
-                    // Span not found
+                    // No fields or properties, insert right before the containing method for simplicity
                     editor.InsertBefore(methodContext.Syntax, newMember);
                 }
-            }
-            else if (methodContext != null)
-            {
-                // No fields or properties, insert right before the containing method for simplicity
-                editor.InsertBefore(methodContext.Syntax, newMember);
             }
 
             // Replace argument with a reference to our new member
@@ -131,20 +159,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return (IArrayCreationOperation)model.GetOperation(node.ChildNodes().First(), cancellationToken)!;
         }
 
-        private static string GetExtractedMemberName(IEnumerable<string> memberNames, string parameterName)
+        private static string GetExtractedMemberName(ISet<string> identifierNames, string parameterName)
         {
             bool hasCollectionEnding = s_collectionMemberEndings.Any(x => parameterName.EndsWith(x, true, CultureInfo.InvariantCulture));
 
             if (parameterName == "source" // for LINQ, "sourceArray" is clearer than "source"
-                || (memberNames.Contains(parameterName) && !hasCollectionEnding))
+                || (identifierNames.Contains(parameterName) && !hasCollectionEnding))
             {
                 parameterName += "Array";
             }
 
-            if (memberNames.Contains(parameterName))
+            if (identifierNames.Contains(parameterName))
             {
                 int suffix = 0;
-                while (memberNames.Contains(parameterName + suffix))
+                while (identifierNames.Contains(parameterName + suffix))
                 {
                     suffix++;
                 }

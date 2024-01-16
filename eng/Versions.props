@@ -24,10 +24,6 @@
     <CodecovVersion>1.12.3</CodecovVersion>
     <CoverletVersion>3.1.2</CoverletVersion>
     <ReportGeneratorVersion>4.3.6</ReportGeneratorVersion>
-    <!-- Use the correct compiler version -->
-    <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
-    <!-- Dependencies from https://github.com/dotnet/roslyn -->
-    <MicrosoftNetCompilersToolsetVersion>4.6.0</MicrosoftNetCompilersToolsetVersion>
     <!-- Microsoft.CodeAnalysis.* versions. Read this!
          This repo uses a wide variety of M.CA.* package versions. This is an atypical pattern in
          .NET's repositories but a necessary one for roslyn-analyzers.

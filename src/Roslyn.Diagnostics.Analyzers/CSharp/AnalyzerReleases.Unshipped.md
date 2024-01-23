@@ -3,4 +3,4 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-RS0103 | Usage | Disabled | DoNotCapturePrimaryConstructorParametersAnalyzer
+RS0062 | RoslynDiagnosticsMaintainability | Disabled | DoNotCapturePrimaryConstructorParametersAnalyzer

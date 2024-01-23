@@ -1,22 +1,27 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using Roslyn.Diagnostics.Analyzers;
 using System.Collections.Immutable;
 
 namespace Roslyn.Diagnostics.CSharp.Analyzers
 {
+    using static RoslynDiagnosticsAnalyzersResources;
+
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class DoNotCapturePrimaryConstructorParametersAnalyzer : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "RS0103";
-        private static readonly LocalizableString Title = "Do not capture primary constructor parameters";
-        private static readonly LocalizableString MessageFormat = "Primary constructor parameter '{0}' should not be implicitly captured";
-        private static readonly LocalizableString Description = "Primary constructor parameters should not be implicitly captured. Manually assign them to fields at the start of the type.";
-        private const string Category = "Usage";
-
-        private static readonly DiagnosticDescriptor Rule = new(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Error, isEnabledByDefault: false, description: Description);
+        private static readonly DiagnosticDescriptor Rule = new(
+            RoslynDiagnosticIds.DoNotCapturePrimaryConstructorParametersRuleId,
+            CreateLocalizableResourceString(nameof(DoNotCapturePrimaryConstructorParametersTitle)),
+            CreateLocalizableResourceString(nameof(DoNotCapturePrimaryConstructorParametersMessage)),
+            DiagnosticCategory.RoslynDiagnosticsMaintainability,
+            DiagnosticSeverity.Error,
+            isEnabledByDefault: false,
+            description: CreateLocalizableResourceString(nameof(DoNotCapturePrimaryConstructorParametersDescription)));
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -31,7 +36,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
         {
             var operation = (IParameterReferenceOperation)context.Operation;
 
-            if (operation.Parameter.ContainingSymbol == context.ContainingSymbol)
+            if (operation.Parameter.ContainingSymbol == context.ContainingSymbol || operation.Parameter.ContainingSymbol is not IMethodSymbol { MethodKind: MethodKind.Constructor })
             {
                 // We're in the primary constructor itself, so no capture.
                 // Or, this isn't a primary constructor parameter at all.

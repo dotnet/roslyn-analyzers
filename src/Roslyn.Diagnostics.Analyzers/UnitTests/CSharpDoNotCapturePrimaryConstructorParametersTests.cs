@@ -165,5 +165,49 @@ namespace Roslyn.Diagnostics.Analyzers.UnitTests
                 LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp12,
             }.RunAsync();
         }
+
+        [Fact]
+        public async Task NoError_CapturedInLambda()
+        {
+            var source = """
+                using System;
+                public class Base(Action action);
+                public class Derived(int i) : Base(() => Console.WriteLine(i));
+                """;
+
+            await new VerifyCS.Test
+            {
+                TestCode = source,
+                LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp12,
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task NoError_LocalFunctionParameterReference()
+        {
+            var source = """
+                using System;
+                class C
+                {
+                    void M()
+                    {
+                        Nested1(1);
+
+                        void Nested1(int i)
+                        {
+                            Nested2();
+
+                            void Nested2() => Console.WriteLine(i);
+                        }
+                    }
+                }
+                """;
+
+            await new VerifyCS.Test
+            {
+                TestCode = source,
+                LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp12,
+            }.RunAsync();
+        }
     }
 }

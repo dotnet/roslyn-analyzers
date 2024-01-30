@@ -28,6 +28,7 @@ namespace Test.Utilities
             var test = new Test
             {
                 TestCode = source,
+                FixedCode = source,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);

@@ -17,9 +17,9 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24080.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24080.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>dd50030a0278e8c82f45624446fbec120b83c26b</Sha>
+      <Sha>b4e9225c6c2f9da42fbb611a5e8942a08476fe89</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <!-- Used in repo tooling. Not updated automatically -->
@@ -27,9 +27,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>84a3d0e37e8f22b0b55f8bf932cb788b2bdd728f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24080.1">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24080.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>dd50030a0278e8c82f45624446fbec120b83c26b</Sha>
+      <Sha>b4e9225c6c2f9da42fbb611a5e8942a08476fe89</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.5.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>

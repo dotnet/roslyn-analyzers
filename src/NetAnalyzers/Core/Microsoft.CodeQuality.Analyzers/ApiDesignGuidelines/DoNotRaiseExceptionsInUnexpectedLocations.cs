@@ -84,7 +84,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     // Find out if this given method is one of the interesting categories of methods.
                     // For example, certain Equals methods or certain accessors etc.
-                    MethodCategory methodCategory = methodCategories.FirstOrDefault(l => l.IsMatch(methodSymbol, compilation));
+                    MethodCategory? methodCategory = methodCategories.FirstOrDefault(l => l.IsMatch(methodSymbol, compilation));
                     if (methodCategory == null)
                     {
                         return;
@@ -94,8 +94,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // Throw statements.
                     operationBlockContext.RegisterOperationAction(operationContext =>
                     {
+                        var throwOperation = (IThrowOperation)operationContext.Operation;
+                        if (throwOperation.TryGetContainingAnonymousFunctionOrLocalFunction() is not null)
+                        {
+                            return;
+                        }
+
                         // Get ThrowOperation's ExceptionType
-                        if (((IThrowOperation)operationContext.Operation).GetThrownExceptionType() is INamedTypeSymbol thrownExceptionType && thrownExceptionType.DerivesFrom(exceptionType))
+                        if (throwOperation.GetThrownExceptionType() is INamedTypeSymbol thrownExceptionType && thrownExceptionType.DerivesFrom(exceptionType))
                         {
                             // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
                             if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Any(n => thrownExceptionType.IsAssignableTo(n, compilation)))
@@ -180,11 +186,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotSupportedException),
                     compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentException)),
 
-                new MethodCategory(IsGetHashCodeInterfaceImplementation, true,
+                new MethodCategory(IsGetHashCodeInterfaceImplementation, false,
                     HasAllowedExceptionsRule,
                     compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentException)),
 
-                new MethodCategory(IsEqualsOverrideOrInterfaceImplementation, true,
+                new MethodCategory(IsEqualsOverrideOrInterfaceImplementation, false,
                     NoAllowedExceptionsRule),
 
                 new MethodCategory(IsComparisonOperator, true,
@@ -237,7 +243,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         /// </summary>
         private static bool IsEqualsInterfaceImplementation(IMethodSymbol method, Compilation compilation)
         {
-            if (method.Name != WellKnownMemberNames.ObjectEquals)
+            if (method.Name != WellKnownMemberNames.ObjectEquals &&
+                method.ExplicitInterfaceImplementations.Length == 0)
             {
                 return false;
             }
@@ -274,7 +281,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         /// <returns></returns>
         private static bool IsGetHashCodeInterfaceImplementation(IMethodSymbol method, Compilation compilation)
         {
-            if (method.Name != WellKnownMemberNames.ObjectGetHashCode)
+            if (method.Name != WellKnownMemberNames.ObjectGetHashCode &&
+                method.ExplicitInterfaceImplementations.Length == 0)
             {
                 return false;
             }

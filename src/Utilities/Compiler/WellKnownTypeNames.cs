@@ -32,10 +32,15 @@ namespace Analyzer.Utilities
         public const string MicrosoftAspNetCoreMvcRouteAttribute = "Microsoft.AspNetCore.Mvc.RouteAttribute";
         public const string MicrosoftAspNetCoreMvcRoutingHttpMethodAttribute = "Microsoft.AspNetCore.Mvc.Routing.HttpMethodAttribute";
         public const string MicrosoftAspNetCoreRazorHostingRazorCompiledItemAttribute = "Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemAttribute";
+        public const string MicrosoftCodeAnalysisCodeActionsCodeAction = "Microsoft.CodeAnalysis.CodeActions.CodeAction";
+        public const string MicrosoftCodeAnalysisCodeFixesCodeFixProvider = "Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider";
+        public const string MicrosoftCodeAnalysisCodeFixesExportCodeFixProviderAttribute = "Microsoft.CodeAnalysis.CodeFixes.ExportCodeFixProviderAttribute";
         public const string MicrosoftCodeAnalysisCompilation = "Microsoft.CodeAnalysis.Compilation";
         public const string MicrosoftCodeAnalysisCSharpCSharpCompilation = "Microsoft.CodeAnalysis.CSharp.CSharpCompilation";
         public const string MicrosoftCodeAnalysisCSharpCSharpExtensions = "Microsoft.CodeAnalysis.CSharp.CSharpExtensions";
         public const string MicrosoftCodeAnalysisCSharpExtensions = "Microsoft.CodeAnalysis.CSharpExtensions";
+        public const string MicrosoftCodeAnalysisCSharpSyntaxBaseFieldDeclarationSyntax = "Microsoft.CodeAnalysis.CSharp.Syntax.BaseFieldDeclarationSyntax";
+        public const string MicrosoftCodeAnalysisCSharpSyntaxLocalFunctionStatementSyntax = "Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax";
         public const string MicrosoftCodeAnalysisDiagnostic = "Microsoft.CodeAnalysis.Diagnostic";
         public const string MicrosoftCodeAnalysisDiagnosticDescriptor = "Microsoft.CodeAnalysis.DiagnosticDescriptor";
         public const string MicrosoftCodeAnalysisDiagnosticsAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.AnalysisContext";
@@ -59,12 +64,15 @@ namespace Analyzer.Utilities
         public const string MicrosoftCodeAnalysisISourceGenerator = "Microsoft.CodeAnalysis.ISourceGenerator";
         public const string MicrosoftCodeAnalysisLocalizableResourceString = "Microsoft.CodeAnalysis.LocalizableResourceString";
         public const string MicrosoftCodeAnalysisLocalizableString = "Microsoft.CodeAnalysis.LocalizableString";
+        public const string MicrosoftCodeAnalysisModelExtensions = "Microsoft.CodeAnalysis.ModelExtensions";
         public const string MicrosoftCodeAnalysisSharedCollectionsTemporaryArrayExtensions = "Microsoft.CodeAnalysis.Shared.Collections.TemporaryArrayExtensions";
         public const string MicrosoftCodeAnalysisSymbolKind = "Microsoft.CodeAnalysis.SymbolKind";
+        public const string MicrosoftCodeAnalysisSyntaxNode = "Microsoft.CodeAnalysis.SyntaxNode";
         public const string MicrosoftCodeAnalysisVisualBasicExtensions = "Microsoft.CodeAnalysis.VisualBasicExtensions";
         public const string MicrosoftCodeAnalysisVisualBasicVisualBasicCompilation = "Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilation";
         public const string MicrosoftCodeAnalysisVisualBasicVisualBasicExtensions = "Microsoft.CodeAnalysis.VisualBasic.VisualBasicExtensions";
         public const string MicrosoftEntityFrameworkCoreDbContext = "Microsoft.EntityFrameworkCore.DbContext";
+        public const string MicrosoftEntityFrameworkCoreDbContextFactory = "Microsoft.EntityFrameworkCore.IDbContextFactory`1";
         public const string MicrosoftEntityFrameworkCoreDbSet1 = "Microsoft.EntityFrameworkCore.DbSet`1";
         public const string MicrosoftEntityFrameworkCoreEntityFrameworkQueryableExtensions = "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions";
         public const string MicrosoftEntityFrameworkCoreRelationalQueryableExtensions = "Microsoft.EntityFrameworkCore.RelationalQueryableExtensions";
@@ -269,6 +277,7 @@ namespace Analyzer.Utilities
         public const string SystemMemoryExtensions = "System.MemoryExtensions";
         public const string SystemNetHttpHttpClient = "System.Net.Http.HttpClient";
         public const string SystemNetHttpHttpClientHandler = "System.Net.Http.HttpClientHandler";
+        public const string SystemNetHttpSocketsHttpHandler = "System.Net.Http.SocketsHttpHandler";
         public const string SystemNetHttpWinHttpHandler = "System.Net.Http.WinHttpHandler";
         public const string SystemNetSecurityProtocolType = "System.Net.SecurityProtocolType";
         public const string SystemNetSecurityRemoteCertificateValidationCallback = "System.Net.Security.RemoteCertificateValidationCallback";
@@ -305,6 +314,7 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeCompilerServicesCallerArgumentExpressionAttribute = "System.Runtime.CompilerServices.CallerArgumentExpressionAttribute";
         public const string SystemRuntimeCompilerServicesCompilerGeneratedAttribute = "System.Runtime.CompilerServices.CompilerGeneratedAttribute";
         public const string SystemRuntimeCompilerServicesConfiguredAsyncDisposable = "System.Runtime.CompilerServices.ConfiguredAsyncDisposable";
+        public const string SystemRuntimeCompilerServicesConfiguredCancelableAsyncEnumerable = "System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1";
         public const string SystemRuntimeCompilerServicesConfiguredValueTaskAwaitable = "System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable";
         public const string SystemRuntimeCompilerServicesConfiguredValueTaskAwaitable1 = "System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable`1";
         public const string SystemRuntimeCompilerServicesDisableRuntimeMarshallingAttribute = "System.Runtime.CompilerServices.DisableRuntimeMarshallingAttribute";
@@ -361,6 +371,7 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeSerializationStreamingContext = "System.Runtime.Serialization.StreamingContext";
         public const string SystemRuntimeVersioningRequiresPreviewFeaturesAttribute = "System.Runtime.Versioning.RequiresPreviewFeaturesAttribute";
         public const string SystemRuntimeVersioningSupportedOSPlatformAttribute = "System.Runtime.Versioning.SupportedOSPlatformAttribute";
+        public const string SystemRuntimeVersioningTargetFrameworkAttribute = "System.Runtime.Versioning.TargetFrameworkAttribute";
         public const string SystemRuntimeVersioningUnsupportedOSPlatformAttribute = "System.Runtime.Versioning.UnsupportedOSPlatformAttribute";
         public const string SystemSecurityAuthenticationSslProtocols = "System.Security.Authentication.SslProtocols";
         public const string SystemSecurityCryptographyAesCcm = "System.Security.Cryptography.AesCcm";

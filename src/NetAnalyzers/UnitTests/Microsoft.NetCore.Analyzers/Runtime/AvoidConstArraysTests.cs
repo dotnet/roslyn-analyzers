@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Test.Utilities;
 using Xunit;
@@ -834,6 +835,223 @@ public class MyClass
          M1(new Type[length]);
     }
 }");
+        }
+
+        [Fact, WorkItem(6981, "https://github.com/dotnet/roslyn-analyzers/issues/6981")]
+        public Task UseUniqueIdentifier_Parameter()
+        {
+            const string source = """
+                                  class Sample
+                                  {
+                                      void A(char separator, char separatorArray)
+                                      {
+                                          "".Split([|new char[] { 'a', 'b' }|]);
+                                      }
+                                  }
+                                  """;
+            const string fixedSource = """
+                                       class Sample
+                                       {
+                                           internal static readonly char[] separatorArray0 = new char[] { 'a', 'b' };
+                                       
+                                           void A(char separator, char separatorArray)
+                                           {
+                                               "".Split(separatorArray0);
+                                           }
+                                       }
+                                       """;
+
+            return VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact, WorkItem(6981, "https://github.com/dotnet/roslyn-analyzers/issues/6981")]
+        public Task UseUniqueIdentifier_Local()
+        {
+            const string source = """
+                                  class Sample
+                                  {
+                                      void A()
+                                      {
+                                          object separator = null;
+                                          object separatorArray = null;
+                                          "".Split([|new char[] { 'a', 'b' }|]);
+                                      }
+                                  }
+                                  """;
+            const string fixedSource = """
+                                       class Sample
+                                       {
+                                           internal static readonly char[] separatorArray0 = new char[] { 'a', 'b' };
+                                       
+                                           void A()
+                                           {
+                                               object separator = null;
+                                               object separatorArray = null;
+                                               "".Split(separatorArray0);
+                                           }
+                                       }
+                                       """;
+
+            return VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact, WorkItem(6981, "https://github.com/dotnet/roslyn-analyzers/issues/6981")]
+        public Task UseUniqueIdentifier_Field()
+        {
+            const string source = """
+                                  class Sample
+                                  {
+                                      private string separator;
+                                      private string separatorArray;
+
+                                      void A()
+                                      {
+                                          "".Split([|new char[] { 'a', 'b' }|]);
+                                      }
+                                  }
+                                  """;
+            const string fixedSource = """
+                                       class Sample
+                                       {
+                                           private string separator;
+                                           private string separatorArray;
+                                           internal static readonly char[] separatorArray0 = new char[] { 'a', 'b' };
+
+                                           void A()
+                                           {
+                                               "".Split(separatorArray0);
+                                           }
+                                       }
+                                       """;
+
+            return VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact, WorkItem(6981, "https://github.com/dotnet/roslyn-analyzers/issues/6981")]
+        public Task UseUniqueIdentifier_FieldAndParameter()
+        {
+            const string source = """
+                                  class Sample
+                                  {
+                                      private string separator;
+                                      private string separatorArray;
+
+                                      void A(char separatorArray0)
+                                      {
+                                          "".Split([|new char[] { 'a', 'b' }|]);
+                                      }
+                                  }
+                                  """;
+            const string fixedSource = """
+                                       class Sample
+                                       {
+                                           private string separator;
+                                           private string separatorArray;
+                                           internal static readonly char[] separatorArray1 = new char[] { 'a', 'b' };
+                                       
+                                           void A(char separatorArray0)
+                                           {
+                                               "".Split(separatorArray1);
+                                           }
+                                       }
+                                       """;
+
+            return VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact, WorkItem(7033, "https://github.com/dotnet/roslyn-analyzers/issues/7033")]
+        public Task ArrayAsAttributeParameter_NoDiagnostic()
+        {
+            const string source = """
+                                  using System;
+                                  
+                                  class Sample
+                                  {
+                                      [MyAttribute(new[] {"a", "b", "c"})]
+                                      void M()
+                                      {
+                                      }
+                                  }
+                                  
+                                  class MyAttribute : Attribute
+                                  {
+                                      public MyAttribute(string[] array) {}
+                                  }
+                                  """;
+
+            return VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact, WorkItem(7033, "https://github.com/dotnet/roslyn-analyzers/issues/7033")]
+        public Task ArrayAsNamedAttributeParameter_NoDiagnostic()
+        {
+            const string source = """
+                                  using System;
+                                  
+                                  class Sample
+                                  {
+                                      [MyAttribute(Values = new[] {"a", "b", "c"})]
+                                      void M()
+                                      {
+                                      }
+                                  }
+                                  
+                                  class MyAttribute : Attribute
+                                  {
+                                      public string[] Values { get; set; }
+                                  }
+                                  """;
+
+            return VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact, WorkItem(7033, "https://github.com/dotnet/roslyn-analyzers/issues/7033")]
+        public Task ArrayAsAttributeParameter_Xunit_NoDiagnostic()
+        {
+            const string source = """
+                                  public class Test
+                                  {
+                                      [Xunit.Theory]
+                                      [Xunit.InlineData("a", new[] { "b" })]
+                                      public void Method(string a, string[] b) { }
+                                  }
+                                  """;
+
+            return new VerifyCS.Test
+            {
+                TestCode = source,
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithXUnit
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(7111, "https://github.com/dotnet/roslyn-analyzers/issues/7111")]
+        public Task TopLevelStatements_Diagnostic()
+        {
+            const string source = """
+                                  using System;
+
+                                  _ = "a".Split([|new[] { "1", "2" }|], StringSplitOptions.None);
+                                  """;
+            const string fixedSource = """
+                                       using System;
+                                       
+                                       _ = "a".Split(separator, StringSplitOptions.None);
+
+                                       partial class Program
+                                       {
+                                           private static readonly string[] separator = new[] { "1", "2" };
+                                       }
+                                       """;
+            return new VerifyCS.Test
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                LanguageVersion = LanguageVersion.CSharp9,
+                TestState =
+                {
+                    OutputKind = OutputKind.ConsoleApplication
+                }
+            }.RunAsync();
         }
     }
 }

@@ -126,6 +126,25 @@
             ]
           }
         },
+        "CA1515": {
+          "id": "CA1515",
+          "shortDescription": "Consider making public types internal",
+          "fullDescription": "Unlike a class library, an application's API isn't typically referenced publicly, so types can be marked internal.",
+          "defaultLevel": "warning",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpMakeTypesInternal",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1802": {
           "id": "CA1802",
           "shortDescription": "Use literals where appropriate",
@@ -203,8 +222,7 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode",
-              "CompilationEnd"
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3013,7 +3031,7 @@
         "CA1846": {
           "id": "CA1846",
           "shortDescription": "Prefer 'AsSpan' over 'Substring'",
-          "fullDescription": "'AsSpan' is more efficient then 'Substring'. 'Substring' performs an O(n) string copy, while 'AsSpan' does not and has a constant cost.",
+          "fullDescription": "'AsSpan' is more efficient than 'Substring'. 'Substring' performs an O(n) string copy, while 'AsSpan' does not and has a constant cost.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1846",
           "properties": {
@@ -4439,7 +4457,7 @@
         "CA2261": {
           "id": "CA2261",
           "shortDescription": "Do not use ConfigureAwaitOptions.SuppressThrowing with Task<TResult>",
-          "fullDescription": "The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generic Task, not a Task<TResult>.  To use it with a Task<TResult>, first cast to the base Task.",
+          "fullDescription": "The ConfigureAwaitOptions.SuppressThrowing option is only supported with the non-generic Task, not a Task<TResult>.  To use it with a Task<TResult>, first cast to the base Task.",
           "defaultLevel": "warning",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2261",
           "properties": {
@@ -4458,14 +4476,14 @@
         },
         "CA2262": {
           "id": "CA2262",
-          "shortDescription": "Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'",
-          "fullDescription": "'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.",
-          "defaultLevel": "warning",
+          "shortDescription": "Set 'MaxResponseHeadersLength' properly",
+          "fullDescription": "The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. The provided value is multiplied by 1024, which might be greater than your intended maximum length.",
+          "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
-            "typeName": "DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull",
+            "typeName": "ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly",
             "languages": [
               "C#",
               "Visual Basic"
@@ -6161,7 +6179,7 @@
         },
         "CA5402": {
           "id": "CA5402",
-          "shortDescription": "Use CreateEncryptor with the default IV ",
+          "shortDescription": "Use CreateEncryptor with the default IV",
           "fullDescription": "Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.",
           "defaultLevel": "warning",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5402",
@@ -6368,6 +6386,25 @@
             ]
           }
         },
+        "CA1515": {
+          "id": "CA1515",
+          "shortDescription": "Consider making public types internal",
+          "fullDescription": "Unlike a class library, an application's API isn't typically referenced publicly, so types can be marked internal.",
+          "defaultLevel": "warning",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "BasicMakeTypesInternal",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1802": {
           "id": "CA1802",
           "shortDescription": "Use literals where appropriate",
@@ -6445,8 +6482,7 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode",
-              "CompilationEnd"
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },

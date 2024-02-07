@@ -494,6 +494,25 @@
             ]
           }
         },
+        "RS1041": {
+          "id": "RS1041",
+          "shortDescription": "Compiler extensions should be implemented in assemblies targeting netstandard2.0",
+          "fullDescription": "Types which implement compiler extension points should only be declared in assemblies targeting netstandard2.0. More specific target frameworks are only available in a subset of supported compilation scenarios, so targeting them may cause the feature to behave unpredictably.",
+          "defaultLevel": "warning",
+          "helpUri": "https://github.com/dotnet/roslyn-analyzers/blob/main/docs/rules/RS1041.md",
+          "properties": {
+            "category": "MicrosoftCodeAnalysisCorrectness",
+            "isEnabledByDefault": true,
+            "typeName": "CompilerExtensionTargetFrameworkAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "RS2000": {
           "id": "RS2000",
           "shortDescription": "Add analyzer diagnostic IDs to analyzer release",
@@ -861,6 +880,40 @@
             "category": "MicrosoftCodeAnalysisCorrectness",
             "isEnabledByDefault": true,
             "typeName": "CSharpSymbolIsBannedInAnalyzersAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "RS1039": {
+          "id": "RS1039",
+          "shortDescription": "This call to 'SemanticModel.GetDeclaredSymbol()' will always return 'null'",
+          "fullDescription": "Calling 'SemanticModel.GetDeclaredSymbol' with on certain types inheriting from 'SyntaxNode', for example 'GlobalStatementSyntax' and 'IncompleteMemberSyntax' will always return 'null'.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "MicrosoftCodeAnalysisCorrectness",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpSemanticModelGetDeclaredSymbolAlwaysReturnsNullAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "RS1040": {
+          "id": "RS1040",
+          "shortDescription": "This call to 'SemanticModel.GetDeclaredSymbol()' will always return 'null'",
+          "fullDescription": "Calling 'SemanticModel.GetDeclaredSymbol' with an argument of type 'FieldDeclarationSyntax' or 'EventFieldDeclarationSyntax' will always return 'null'. Call 'GetDeclaredSymbol' with the variable declarators from the field instead.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "MicrosoftCodeAnalysisCorrectness",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpSemanticModelGetDeclaredSymbolAlwaysReturnsNullAnalyzer",
             "languages": [
               "C#"
             ],

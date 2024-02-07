@@ -2564,7 +2564,7 @@ Generic math interfaces require the derived type itself to be used for the self 
 
 ## [CA2261](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2261): Do not use ConfigureAwaitOptions.SuppressThrowing with Task\<TResult>
 
-The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generic Task, not a Task\<TResult>.  To use it with a Task\<TResult>, first cast to the base Task.
+The ConfigureAwaitOptions.SuppressThrowing option is only supported with the non-generic Task, not a Task\<TResult>.  To use it with a Task\<TResult>, first cast to the base Task.
 
 |Item|Value|
 |-|-|
@@ -2576,7 +2576,7 @@ The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generi
 
 ## [CA2262](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262): Set 'MaxResponseHeadersLength' properly
 
-The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. That mean the provided value will be multiplied by 1024, the result might be too high than your intended value.
+The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. The provided value is multiplied by 1024, which might be greater than your intended maximum length.
 
 |Item|Value|
 |-|-|

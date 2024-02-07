@@ -2,4 +2,5 @@
 
 Rule ID | Missing Help Link | Title |
 --------|-------------------|-------|
-CA2262 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262> | Set 'MaxResponseHeadersLength' properly |
+CA1871 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1871> | Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull' |
+CA2263 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263> | Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull' |

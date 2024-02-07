@@ -2598,7 +2598,7 @@ The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. 
 |CodeFix|False|
 ---
 
-## [CA2262](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262): Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'
+## [CA2263](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263): Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'
 
 'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.
 

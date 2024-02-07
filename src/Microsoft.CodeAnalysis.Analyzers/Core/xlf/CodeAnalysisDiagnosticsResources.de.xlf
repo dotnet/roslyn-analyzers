@@ -119,27 +119,42 @@
       </trans-unit>
       <trans-unit id="DoNotDeclareCSharpCompilerFeatureInAssemblyWithVisualBasicReferenceMessage">
         <source>This C# compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.VisualBasic. The Microsoft.CodeAnalysis.VisualBasic assembly is not always provided during C# compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</source>
-        <target state="new">This C# compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.VisualBasic. The Microsoft.CodeAnalysis.VisualBasic assembly is not always provided during C# compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</target>
+        <target state="translated">Diese C#-Compilererweiterung sollte nicht in einer Assembly implementiert werden, die einen Verweis auf "Microsoft.CodeAnalysis.VisualBasic" enthält. Die Assembly "Microsoft.CodeAnalysis.VisualBasic" wird nicht immer in C#-Kompilierungsszenarien bereitgestellt. Verweise darauf können daher ein unvorhersehbares Verhalten der Compilererweiterung verursachen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDeclareCompilerFeatureInAssemblyWithUnsupportedTargetFrameworkMessage">
+        <source>This compiler extension should not be implemented in an assembly with target framework '{0}'. References to other target frameworks will cause the compiler to behave unpredictably.</source>
+        <target state="translated">Diese Compilererweiterung sollte nicht in einer Assembly mit dem Zielframework "{0}" implementiert werden. Verweise auf andere Zielframeworks führen dazu, dass sich der Compiler unvorhersehbar verhält.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDeclareCompilerFeatureInAssemblyWithUnsupportedTargetFrameworkRuleDescription">
+        <source>Types which implement compiler extension points should only be declared in assemblies targeting netstandard2.0. More specific target frameworks are only available in a subset of supported compilation scenarios, so targeting them may cause the feature to behave unpredictably.</source>
+        <target state="translated">Typen, die Compilererweiterungspunkte implementieren, dürfen nur in Assemblys für netstandard2.0 deklariert werden. Spezifischere Zielframeworks sind nur in einer Teilmenge der unterstützten Kompilierungsszenarien verfügbar, weshalb das Festlegen der Zielframeworks dazu führen kann, dass sich das Feature unvorhersehbar verhält.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDeclareCompilerFeatureInAssemblyWithUnsupportedTargetFrameworkRuleTitle">
+        <source>Compiler extensions should be implemented in assemblies targeting netstandard2.0</source>
+        <target state="translated">Compilererweiterungen sollten in Assemblys implementiert werden, die netstandard2.0 als Ziel verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDeclareCompilerFeatureInAssemblyWithWorkspacesReferenceMessage">
         <source>This compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.Workspaces. The Microsoft.CodeAnalysis.Workspaces assembly is not provided during command line compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</source>
-        <target state="new">This compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.Workspaces. The Microsoft.CodeAnalysis.Workspaces assembly is not provided during command line compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</target>
+        <target state="translated">Diese Compilererweiterung sollte nicht in einer Assembly implementiert werden, die einen Verweis auf "Microsoft.CodeAnalysis.Workspaces" enthält. Die Assembly "Microsoft.CodeAnalysis.Workspaces" wird in Befehlszeilen-Kompilierungsszenarien nicht bereitgestellt. Verweise darauf können daher ein unvorhersehbares Verhalten der Compilererweiterung verursachen.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDeclareVisualBasicCompilerFeatureInAssemblyWithCSharpReferenceMessage">
         <source>This Visual Basic compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.CSharp. The Microsoft.CodeAnalysis.CSharp assembly is not always provided during Visual Basic compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</source>
-        <target state="new">This Visual Basic compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.CSharp. The Microsoft.CodeAnalysis.CSharp assembly is not always provided during Visual Basic compilation scenarios, so references to it could cause the compiler extension to behave unpredictably.</target>
+        <target state="translated">Diese Visual Basic-Compilererweiterung sollte nicht in einer Assembly implementiert werden, die einen Verweis auf "Microsoft.CodeAnalysis.CSharp" enthält. Die Assembly "Microsoft.CodeAnalysis.CSharp" wird nicht immer in Visual Basic-Kompilierungsszenarien bereitgestellt. Verweise darauf können daher ein unvorhersehbares Verhalten der Compilererweiterung verursachen.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRegisterCompilerTypesWithBadAssemblyReferenceRuleDescription">
         <source>Types which implement compiler extension points should not be declared in assemblies that contain references to assemblies which are not provided by all compilation scenarios. Doing so may cause the feature to behave unpredictably.</source>
-        <target state="new">Types which implement compiler extension points should not be declared in assemblies that contain references to assemblies which are not provided by all compilation scenarios. Doing so may cause the feature to behave unpredictably.</target>
+        <target state="translated">Typen, die Compilererweiterungspunkte implementieren, sollten nicht in Assemblys deklariert werden, die Verweise auf Assemblys enthalten, die nicht von allen Kompilierungsszenarien bereitgestellt werden. Andernfalls kann sich das Feature unvorhersehbar verhalten.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRegisterCompilerTypesWithBadAssemblyReferenceRuleTitle">
         <source>Compiler extensions should be implemented in assemblies with compiler-provided references</source>
-        <target state="new">Compiler extensions should be implemented in assemblies with compiler-provided references</target>
+        <target state="translated">Compilererweiterungen sollten in Assemblys mit vom Compiler bereitgestellten Verweisen implementiert werden</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCompilationGetSemanticModelDescription">
@@ -409,27 +424,27 @@
       </trans-unit>
       <trans-unit id="SemanticModelGetDeclaredSymbolAlwaysReturnsNullDescription">
         <source>Calling 'SemanticModel.GetDeclaredSymbol' with on certain types inheriting from 'SyntaxNode', for example 'GlobalStatementSyntax' and 'IncompleteMemberSyntax' will always return 'null'.</source>
-        <target state="new">Calling 'SemanticModel.GetDeclaredSymbol' with on certain types inheriting from 'SyntaxNode', for example 'GlobalStatementSyntax' and 'IncompleteMemberSyntax' will always return 'null'.</target>
+        <target state="translated">Beim Aufruf von "SemanticModel.GetDeclaredSymbol" für bestimmte Typen, die von "SyntaxNode" erben, geben beispielsweise "GlobalStatementSyntax" und "IncompleteMemberSyntax" immer "null" zurück.</target>
         <note />
       </trans-unit>
       <trans-unit id="SemanticModelGetDeclaredSymbolAlwaysReturnsNullForFieldDescription">
         <source>Calling 'SemanticModel.GetDeclaredSymbol' with an argument of type 'FieldDeclarationSyntax' or 'EventFieldDeclarationSyntax' will always return 'null'. Call 'GetDeclaredSymbol' with the variable declarators from the field instead.</source>
-        <target state="new">Calling 'SemanticModel.GetDeclaredSymbol' with an argument of type 'FieldDeclarationSyntax' or 'EventFieldDeclarationSyntax' will always return 'null'. Call 'GetDeclaredSymbol' with the variable declarators from the field instead.</target>
+        <target state="translated">Beim Aufrufen von "SemanticModel.GetDeclaredSymbol" mit einem Argument vom Typ "FieldDeclarationSyntax" oder "EventFieldDeclarationSyntax" wird immer "null" zurückgegeben. Rufen Sie stattdessen "GetDeclaredSymbol" mit den Variablendeklaratoren aus dem Feld auf.</target>
         <note />
       </trans-unit>
       <trans-unit id="SemanticModelGetDeclaredSymbolAlwaysReturnsNullForFieldMessage">
         <source>A call to 'SemanticModel.GetDeclaredSymbol({0})' will always return 'null'</source>
-        <target state="new">A call to 'SemanticModel.GetDeclaredSymbol({0})' will always return 'null'</target>
+        <target state="translated">Ein Aufruf von "SemanticModel.GetDeclaredSymbol({0})" gibt immer "null" zurück.</target>
         <note />
       </trans-unit>
       <trans-unit id="SemanticModelGetDeclaredSymbolAlwaysReturnsNullMessage">
         <source>A call to 'SemanticModel.GetDeclaredSymbol({0})' will always return 'null'</source>
-        <target state="new">A call to 'SemanticModel.GetDeclaredSymbol({0})' will always return 'null'</target>
+        <target state="translated">Ein Aufruf von "SemanticModel.GetDeclaredSymbol({0})" gibt immer "null" zurück.</target>
         <note />
       </trans-unit>
       <trans-unit id="SemanticModelGetDeclaredSymbolAlwaysReturnsNullTitle">
         <source>This call to 'SemanticModel.GetDeclaredSymbol()' will always return 'null'</source>
-        <target state="new">This call to 'SemanticModel.GetDeclaredSymbol()' will always return 'null'</target>
+        <target state="translated">Dieser Aufruf von "SemanticModel.GetDeclaredSymbol()" gibt immer "null" zurück.</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolIsBannedInAnalyzersDescription">

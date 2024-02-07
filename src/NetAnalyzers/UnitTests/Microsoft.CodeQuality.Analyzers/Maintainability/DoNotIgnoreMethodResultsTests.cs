@@ -894,11 +894,14 @@ End Class
                                     void M()
                                     {
                                         IQueryable<int> queryable = (new int[] { 0, 1 }).AsQueryable();
-                                        {|CA1806:queryable.Take(1)|};
+                                        {|#0:queryable.Take(1)|};
                                     }
                                 }
                                 """;
-            return VerifyCS.VerifyAnalyzerAsync(code);
+            DiagnosticResult diagnosticResult = new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.LinqMethodRule)
+                .WithLocation(0)
+                .WithArguments("M", "Take");
+            return VerifyCS.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         #endregion

@@ -53,7 +53,7 @@
 
            Example of executable usage:
 
-          <MicrosoftCodeAnalysisVersion Condition="'$(DotNetBuildFromSource)' != 'true' or '$(DotNetBuildFromSourceFlavor)' != 'Product'">$(MicrosoftCodeAnalysisVersionForExecution)</MicrosoftCodeAnalysisVersion>
+          <MicrosoftCodeAnalysisVersion Condition="'$(DotNetBuildSourceOnly)' != 'true' or '$(DotNetBuildOrchestrator)' != 'true'">$(MicrosoftCodeAnalysisVersionForExecution)</MicrosoftCodeAnalysisVersion>
     -->
     <!-- Microsoft.CodeAnalysis versions for different purposes. -->
     <!-- Surface area that various projects compile against. These should have source-build reference packages -->

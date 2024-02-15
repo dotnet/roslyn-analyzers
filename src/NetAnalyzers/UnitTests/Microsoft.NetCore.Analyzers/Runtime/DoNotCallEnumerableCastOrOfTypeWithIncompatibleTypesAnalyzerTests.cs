@@ -826,7 +826,7 @@ class C : IInterface
             }.RunAsync();
         }
 
-        [Fact]
+        [Fact, WorkItem(7153, "https://github.com/dotnet/roslyn-analyzers/issues/7153")]
         public async Task GenericRecordsAndInterfaces()
         {
             var test = new VerifyCS.Test

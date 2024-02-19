@@ -97,6 +97,16 @@
         <target state="translated">out パラメーターを使用しません</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidUnusedResourceMessage">
+        <source>Remove unused resources '{0}'</source>
+        <target state="new">Remove unused resources '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidUnusedResourcesTitle">
+        <source>Remove unused resource</source>
+        <target state="new">Remove unused resource</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMultipleMessage">
         <source>Type '{0}' directly or indirectly inherits '{1}' without implementing any of '{2}'. Publicly-visible types should implement the generic version to broaden usability.</source>
         <target state="translated">型 '{0}' は、'{2}' のいずれも実装することなく '{1}' を直接または間接的に継承します。公開されている型は、操作性の拡充のためジェネリック バージョンを実装する必要があります。</target>

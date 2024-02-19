@@ -1303,6 +1303,12 @@
     <value>Because an application's API isn't typically referenced from outside the assembly, types can be made internal</value>
   </data>
   <data name="MakeTypesInternalTitle" xml:space="preserve">
-  <value>Consider making public types internal</value>
+    <value>Consider making public types internal</value>
+  </data>
+  <data name="AvoidUnusedResourceMessage" xml:space="preserve">
+    <value>Remove unused resources '{0}'</value>
+  </data>
+  <data name="AvoidUnusedResourcesTitle" xml:space="preserve">
+    <value>Remove unused resource</value>
   </data>
 </root>

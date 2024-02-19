@@ -6,5 +6,6 @@ Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 CA1514 | Maintainability | Info | AvoidLengthCheckWhenSlicingToEndAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1514)
 CA1515 | Maintainability | Disabled | MakeTypesInternal, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515)
+CA1516 | Maintainability | Info | AvoidUnusedResources, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1516)
 CA2262 | Usage | Info | ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262)
 CA2263 | Usage | Info | PreferGenericOverloadsAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263)

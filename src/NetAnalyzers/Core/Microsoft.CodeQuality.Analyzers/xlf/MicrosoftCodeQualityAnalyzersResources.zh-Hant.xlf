@@ -97,6 +97,16 @@
         <target state="translated">避免使用 out 參數</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidUnusedResourceMessage">
+        <source>Remove unused resources '{0}'</source>
+        <target state="new">Remove unused resources '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidUnusedResourcesTitle">
+        <source>Remove unused resource</source>
+        <target state="new">Remove unused resource</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CollectionsShouldImplementGenericInterfaceMultipleMessage">
         <source>Type '{0}' directly or indirectly inherits '{1}' without implementing any of '{2}'. Publicly-visible types should implement the generic version to broaden usability.</source>
         <target state="translated">類型 '{0}' 未實作任何 '{2}' 便直接或間接繼承 '{1}'。公開顯示的類型應實作一般版本以擴大可用性。</target>

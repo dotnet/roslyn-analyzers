@@ -859,8 +859,8 @@ Genel türlerde genişletme ve kullanıcı tanımlı dönüştürmeler desteklen
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullCodeFixTitle">
-        <source>Do not call 'ArgumentNullException.ThrowIfNull' with a non-nullable value</source>
-        <target state="new">Do not call 'ArgumentNullException.ThrowIfNull' with a non-nullable value</target>
+        <source>Remove superfluous 'ArgumentNullException.ThrowIfNull' call</source>
+        <target state="new">Remove superfluous 'ArgumentNullException.ThrowIfNull' call</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullDescription">
@@ -869,8 +869,8 @@ Genel türlerde genişletme ve kullanıcı tanımlı dönüştürmeler desteklen
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullMessage">
-        <source>Calling 'ArgumentNullException.ThrowIfNull' and passing a non-nullable value does nothing</source>
-        <target state="new">Calling 'ArgumentNullException.ThrowIfNull' and passing a non-nullable value does nothing</target>
+        <source>Calling 'ArgumentNullException.ThrowIfNull' and passing a non-nullable value is a no-op</source>
+        <target state="new">Calling 'ArgumentNullException.ThrowIfNull' and passing a non-nullable value is a no-op</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullTitle">
@@ -879,8 +879,8 @@ Genel türlerde genişletme ve kullanıcı tanımlı dönüştürmeler desteklen
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullCodeFixTitle">
-        <source>Do not call 'ArgumentNullException.ThrowIfNull' with a struct</source>
-        <target state="new">Do not call 'ArgumentNullException.ThrowIfNull' with a struct</target>
+        <source>Replace the 'ArgumentNullException.ThrowIfNull' call with a conditional</source>
+        <target state="new">Replace the 'ArgumentNullException.ThrowIfNull' call with a conditional</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullDescription">

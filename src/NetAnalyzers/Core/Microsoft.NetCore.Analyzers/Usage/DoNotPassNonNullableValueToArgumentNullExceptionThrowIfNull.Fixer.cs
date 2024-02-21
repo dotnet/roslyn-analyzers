@@ -40,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                             }
 
                             return Task.FromResult(context.Document.WithSyntaxRoot(newRoot));
-                        }, diagnostic.Id);
+                        }, MicrosoftNetCoreAnalyzersResources.DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullCodeFixTitle);
                     context.RegisterCodeFix(codeAction, diagnostic);
                 }
                 else if (diagnostic.Id == DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull.NullableStructRuleId)
@@ -56,7 +56,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                             }
 
                             return context.Document.WithSyntaxRoot(newRoot);
-                        }, diagnostic.Id);
+                        }, MicrosoftNetCoreAnalyzersResources.DoNotPassNullableStructToArgumentNullExceptionThrowIfNullCodeFixTitle);
                     context.RegisterCodeFix(codeAction, diagnostic);
                 }
             }

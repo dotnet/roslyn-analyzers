@@ -14,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull : DiagnosticAnalyzer
     {
-        internal const string NonNullableValueRuleId = "CA2263";
+        internal const string NonNullableValueRuleId = "CA2264";
         internal const string NullableStructRuleId = "CA1871";
 
         internal static readonly DiagnosticDescriptor DoNotPassNonNullableValueDiagnostic = DiagnosticDescriptorHelper.Create(
@@ -46,13 +46,14 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 var typeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
                 var throwIfNullMethod = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentNullException)
                     ?.GetMembers("ThrowIfNull")
-                    .FirstOrDefault(m => m is IMethodSymbol { Parameters: [{ Type.SpecialType: SpecialType.System_Object }, _] });
+                    .OfType<IMethodSymbol>()
+                    .FirstOrDefault(m => m.Parameters is [{ Type.SpecialType: SpecialType.System_Object }, _]);
                 if (throwIfNullMethod is null)
                 {
                     return;
                 }
 
-                context.RegisterOperationAction(ctx => AnalyzeInvocation(ctx, (IMethodSymbol)throwIfNullMethod), OperationKind.Invocation);
+                context.RegisterOperationAction(ctx => AnalyzeInvocation(ctx, throwIfNullMethod), OperationKind.Invocation);
             });
         }
 

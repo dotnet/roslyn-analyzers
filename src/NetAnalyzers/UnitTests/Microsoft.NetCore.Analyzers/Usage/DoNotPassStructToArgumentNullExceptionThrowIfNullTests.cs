@@ -51,7 +51,7 @@ public class Test
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -93,7 +93,7 @@ public class Test
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NullableDiagnosticResult() },
+                ExpectedDiagnostics = { NullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -132,7 +132,7 @@ public class Test
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -176,7 +176,7 @@ public class Test
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NullableDiagnosticResult() },
+                ExpectedDiagnostics = { NullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -214,7 +214,7 @@ public struct MyStruct {}";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -257,7 +257,7 @@ public struct MyStruct {}";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NullableDiagnosticResult() },
+                ExpectedDiagnostics = { NullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -289,7 +289,7 @@ public class Test
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -330,7 +330,7 @@ public class Test
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NullableDiagnosticResult() },
+                ExpectedDiagnostics = { NullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -372,7 +372,7 @@ public record MyRecord({type} X);";
                 TestCode = code,
                 FixedCode = fixedCode,
                 LanguageVersion = LanguageVersion.CSharp9,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -419,7 +419,7 @@ public record MyRecord({type}? X);";
                 TestCode = code,
                 FixedCode = fixedCode,
                 LanguageVersion = LanguageVersion.CSharp9,
-                ExpectedDiagnostics = { NullableDiagnosticResult() },
+                ExpectedDiagnostics = { NullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -458,7 +458,7 @@ class MyType {}";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -496,7 +496,7 @@ class MyType {}";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -538,7 +538,7 @@ class MyType
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -572,7 +572,7 @@ class Test
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -612,7 +612,7 @@ class MyType {{}}";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -644,7 +644,114 @@ class Test
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net60
+            }.RunAsync();
+        }
+
+        [Fact]
+        public Task TriviaIsNotPreserved_Diagnostic()
+        {
+            const string code = @"
+using System;
+
+class Test
+{
+    public void M(int x)
+    {
+        // Throw if null
+        {|#0:ArgumentNullException.ThrowIfNull(x)|};
+        Console.WriteLine(x);
+    }
+}";
+            const string fixedCode = @"
+using System;
+
+class Test
+{
+    public void M(int x)
+    {
+        Console.WriteLine(x);
+    }
+}";
+
+            return new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net60
+            }.RunAsync();
+        }
+
+        [Fact]
+        public Task TriviaIsPreserved_Diagnostic()
+        {
+            const string code = @"
+using System;
+
+class Test
+{
+    // This is a method.
+    public void M(int x)
+    {
+        {|#0:ArgumentNullException.ThrowIfNull(x)|};
+        // Print x
+        Console.WriteLine(x);
+    }
+}";
+            const string fixedCode = @"
+using System;
+
+class Test
+{
+    // This is a method.
+    public void M(int x)
+    {
+        // Print x
+        Console.WriteLine(x);
+    }
+}";
+
+            return new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net60
+            }.RunAsync();
+        }
+
+        [Fact]
+        public Task TwoArguments_Diagnostic()
+        {
+            const string code = @"
+using System;
+
+class Test
+{
+    public void M(int x)
+    {
+        {|#0:ArgumentNullException.ThrowIfNull(x, nameof(x))|};
+        Console.WriteLine(x);
+    }
+}";
+            const string fixedCode = @"
+using System;
+
+class Test
+{
+    public void M(int x)
+    {
+        Console.WriteLine(x);
+    }
+}";
+
+            return new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -670,7 +777,7 @@ public class Test
 {{
     public Test({type} x)
     {{
-        {{|#0:ArgumentNullException.ThrowIfNull(x)|}};
+        ArgumentNullException.ThrowIfNull(x);
         System.Console.WriteLine(x);
     }}
 }}
@@ -708,7 +815,7 @@ public class Test
 {{
     public Test({type} x)
     {{
-        {{|#0:ArgumentNullException.ThrowIfNull(x)|}};
+        ArgumentNullException.ThrowIfNull(x);
         Console.WriteLine(x);
     }}
 }}";
@@ -731,7 +838,7 @@ public class Test
 {
     public Test(MyRecord x)
     {
-        {|#0:global::System.ArgumentNullException.ThrowIfNull(x)|};
+        global::System.ArgumentNullException.ThrowIfNull(x);
         Console.WriteLine(x);
     }
 }
@@ -809,7 +916,7 @@ End Class
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -846,7 +953,7 @@ End Class";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NullableDiagnosticResult() },
+                ExpectedDiagnostics = { NullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -881,7 +988,7 @@ End Class";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -921,7 +1028,7 @@ End Class";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NullableDiagnosticResult() },
+                ExpectedDiagnostics = { NullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -957,7 +1064,7 @@ End Structure";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -997,7 +1104,7 @@ End Structure";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NullableDiagnosticResult() },
+                ExpectedDiagnostics = { NullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -1025,7 +1132,7 @@ End Class";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -1061,7 +1168,7 @@ End Class";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NullableDiagnosticResult() },
+                ExpectedDiagnostics = { NullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -1102,7 +1209,7 @@ End Class";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -1147,7 +1254,7 @@ End Class";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NullableDiagnosticResult() },
+                ExpectedDiagnostics = { NullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -1184,7 +1291,7 @@ End Class";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -1222,7 +1329,7 @@ End Class";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -1250,7 +1357,7 @@ End Class";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -1286,7 +1393,7 @@ End Class";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -1316,7 +1423,7 @@ End Class";
             {
                 TestCode = code,
                 FixedCode = fixedCode,
-                ExpectedDiagnostics = { NonNullableDiagnosticResult() },
+                ExpectedDiagnostics = { NonNullableDiagnosticResult },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60
             }.RunAsync();
         }
@@ -1339,7 +1446,7 @@ End Class";
             var code = $@"
 Public Class Test
     Public Sub Test(x As {type})
-       {{|#0:ArgumentNullException.ThrowIfNull(x)|}}
+        ArgumentNullException.ThrowIfNull(x)
         System.Console.WriteLine(x)
     End Sub
 End Class
@@ -1372,7 +1479,7 @@ Imports System
 
 Public Class Test
     Public Sub Test(x As {type})
-       {{|#0:ArgumentNullException.ThrowIfNull(x)|}}
+        ArgumentNullException.ThrowIfNull(x)
         Console.WriteLine(x)
     End Sub
 End Class";
@@ -1409,10 +1516,10 @@ End Class";
 
         #endregion
 
-        private static DiagnosticResult NonNullableDiagnosticResult() => new DiagnosticResult(DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull.DoNotPassNonNullableValueDiagnostic)
+        private static readonly DiagnosticResult NonNullableDiagnosticResult = new DiagnosticResult(DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull.DoNotPassNonNullableValueDiagnostic)
             .WithLocation(0);
 
-        private static DiagnosticResult NullableDiagnosticResult() => new DiagnosticResult(DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull.DoNotPassNullableStructDiagnostic)
+        private static readonly DiagnosticResult NullableDiagnosticResult = new DiagnosticResult(DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull.DoNotPassNullableStructDiagnostic)
             .WithLocation(0);
     }
 }

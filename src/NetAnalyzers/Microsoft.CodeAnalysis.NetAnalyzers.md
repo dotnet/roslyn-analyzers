@@ -2598,7 +2598,19 @@ The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. 
 |CodeFix|False|
 ---
 
-## [CA2263](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263): Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'
+## [CA2263](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263): Prefer generic overload when type is known
+
+Using a generic overload is preferable to the 'System.Type' overload when the type is known, promoting cleaner and more type-safe code with improved compile-time checks.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA2264](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2264): Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'
 
 'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.
 

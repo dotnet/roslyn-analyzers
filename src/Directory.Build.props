@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <Choose>
-    <When Condition="'$(DotNetBuildFromSource)' == 'true'">
+    <When Condition="'$(DotNetBuildSourceOnly)' == 'true'">
       <!-- Disable code analysis for source build -->
       <PropertyGroup>
         <EnableNETAnalyzers>false</EnableNETAnalyzers>

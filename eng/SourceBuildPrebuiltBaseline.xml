@@ -3,8 +3,6 @@
 
 <UsageData>
   <IgnorePatterns>
-    <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*" />
-
     <!-- This packages contain functionality that is executed in the build -->
     <UsagePattern IdentityGlob="Microsoft.Net.Compilers.Toolset/*" />
     <UsagePattern IdentityGlob="System.Composition*/*" />

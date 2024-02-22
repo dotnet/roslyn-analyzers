@@ -1681,6 +1681,55 @@ namespace UnitTests {
             return VerifyCS.VerifyCodeFixAsync(code, diagnostic, fixedCode);
         }
 
+        [Fact]
+        [WorkItem(7098, "https://github.com/dotnet/roslyn-analyzers/issues/7098")]
+        public async Task CodeFixPreservesStyle()
+        {
+            const string code =
+                """
+                using System.Collections.Generic;
+
+                namespace UnitTests {
+                    class Program {
+                        Dictionary<int, string> dictionary = new();
+                        public void Test(int key, string text) {
+                            if({|#0:this.dictionary.ContainsKey(key)|} && !string.IsNullOrEmpty(text)) {
+                                text = {|#1:dictionary[key]|};
+                            }          
+                        } 
+                    }
+                }
+                """;
+            const string fixedCode =
+                """
+                using System.Collections.Generic;
+
+                namespace UnitTests {
+                    class Program {
+                        Dictionary<int, string> dictionary = new();
+                        public void Test(int key, string text) {
+                            if(this.dictionary.TryGetValue(key, out string value) && !string.IsNullOrEmpty(text)) {
+                                text = value;
+                            }          
+                        } 
+                    }
+                }
+                """;
+
+            await new VerifyCS.Test
+            {
+                LanguageVersion = LanguageVersion.CSharp9,
+                TestCode = code,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics =
+                {
+                    VerifyCS.Diagnostic(PreferDictionaryTryMethodsOverContainsKeyGuardAnalyzer.PreferTryGetValueDiagnostic)
+                        .WithLocation(0)
+                        .WithLocation(1),
+                },
+            }.RunAsync();
+        }
+
         private static string CreateCSharpCode(string content)
         {
             return string.Format(CultureInfo.InvariantCulture, CSharpTemplate, content);

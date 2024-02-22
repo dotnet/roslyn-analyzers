@@ -58,7 +58,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             var dictionaryAccessors = new List<SyntaxNode>();
             ExpressionStatementSyntax? addStatementNode = null;
             SyntaxNode? changedValueNode = null;
-            string? valueName = null;
+            string? variableName = null;
             LocalDeclarationStatementSyntax? localDeclarationStatement = null;
             VariableDeclaratorSyntax? variableDeclarator = null;
             var additionalNodes = 0;
@@ -93,7 +93,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                         break;
                     case LocalDeclarationStatementSyntax local:
                         localDeclarationStatement = local;
-                        valueName = local.Declaration.Variables[0].Identifier.ValueText;
+                        variableName = local.Declaration.Variables[0].Identifier.ValueText;
                         additionalNodes++;
                         typeNode ??= local.Declaration.Type;
                         break;
@@ -106,7 +106,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     } declarator:
                         variableDeclarator = declarator;
                         localDeclarationStatement = local;
-                        valueName = declarator.Identifier.ValueText;
+                        variableName = declarator.Identifier.ValueText;
                         additionalNodes++;
                         typeNode ??= local.Declaration.Type;
                         break;
@@ -148,13 +148,13 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 var outArgument = generator.Argument(RefKind.Out,
                     DeclarationExpression(
                         typeSyntax,
-                        SingleVariableDesignation(Identifier(valueName ?? Value))
+                        SingleVariableDesignation(Identifier(variableName ?? Value))
                     )
                 );
                 var tryGetValueInvocation = generator.InvocationExpression(tryGetValueAccess, keyArgument, outArgument);
                 editor.ReplaceNode(containsKeyInvocation, tryGetValueInvocation);
 
-                var identifierName = (IdentifierNameSyntax)generator.IdentifierName(valueName ?? Value);
+                var identifierName = (IdentifierNameSyntax)generator.IdentifierName(variableName ?? Value);
                 if (addStatementNode != null)
                 {
                     editor.InsertBefore(addStatementNode,

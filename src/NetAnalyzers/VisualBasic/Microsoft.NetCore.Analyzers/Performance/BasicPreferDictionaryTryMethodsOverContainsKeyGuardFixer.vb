@@ -122,7 +122,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                         Dim valueAssignment =
                                 generator.LocalDeclarationStatement(dictionaryValueType,
                                                                     variableName,
-                        generator.DefaultExpression(dictionaryValueType)).
+                                                                    generator.DefaultExpression(dictionaryValueType)).
                                 WithLeadingTrivia(SyntaxFactory.ElasticCarriageReturnLineFeed).
                                 WithoutTrailingTrivia()
                         Dim identifierName As SyntaxNode = generator.IdentifierName(variableName)

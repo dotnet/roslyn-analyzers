@@ -14,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotCompareSpanToNullAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA2263";
+        internal const string RuleId = "CA2265";
 
         private static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,

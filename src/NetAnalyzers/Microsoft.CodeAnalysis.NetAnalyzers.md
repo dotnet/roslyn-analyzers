@@ -2622,7 +2622,7 @@ Using a generic overload is preferable to the 'System.Type' overload when the ty
 |CodeFix|True|
 ---
 
-## [CA2263](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263): Do not compare Span\<T> to 'null'
+## [CA2265](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2265): Do not compare Span\<T> to 'null'
 
 Comparing a Span\<T> to 'null' will not perform an actual null check, so it is more explicit to compare to 'default' or to use 'IsEmpty'.
 

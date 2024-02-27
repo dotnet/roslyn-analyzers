@@ -629,8 +629,8 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullDescription">
-        <source>Comparing a Span&lt;T&gt; to 'null' will not perform an actual null check, so it is more explicit to compare to 'default' or to use 'IsEmpty'.</source>
-        <target state="new">Comparing a Span&lt;T&gt; to 'null' will not perform an actual null check, so it is more explicit to compare to 'default' or to use 'IsEmpty'.</target>
+        <source>Because the 'null' literal will be implicitly converted to a span, comparing a span to 'null' might not do what you intended to check. Make it more explicit by comparing to 'default' or by using 'IsEmpty'.</source>
+        <target state="new">Because the 'null' literal will be implicitly converted to a span, comparing a span to 'null' might not do what you intended to check. Make it more explicit by comparing to 'default' or by using 'IsEmpty'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullIsEmptyCodeFixTitle">
@@ -639,8 +639,8 @@ Erweiterungen und benutzerdefinierte Konvertierungen werden bei generischen Type
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullMessage">
-        <source>Compare a Span&lt;T&gt; to 'default' or use 'IsEmpty' instead of comparing to 'null'</source>
-        <target state="new">Compare a Span&lt;T&gt; to 'default' or use 'IsEmpty' instead of comparing to 'null'</target>
+        <source>Do not compare Span&lt;T&gt; to 'null', use 'default' or check 'IsEmpty' instead</source>
+        <target state="new">Do not compare Span&lt;T&gt; to 'null', use 'default' or check 'IsEmpty' instead</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullTitle">

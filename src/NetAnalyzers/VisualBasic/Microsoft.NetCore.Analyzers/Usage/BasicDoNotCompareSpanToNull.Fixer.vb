@@ -17,7 +17,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Tasks
 
         Public Overrides Async Function RegisterCodeFixesAsync(context As CodeFixContext) As Task
             Dim root = Await context.Document.GetRequiredSyntaxRootAsync(context.CancellationToken).ConfigureAwait(False)
-            Dim condition = root.FindNode(context.Span)
+            Dim condition = root.FindNode(context.Span, getInnermostNodeForTie:=True)
             Dim binaryExpression = TryCast(condition, BinaryExpressionSyntax)
             If binaryExpression Is Nothing Then
                 Return

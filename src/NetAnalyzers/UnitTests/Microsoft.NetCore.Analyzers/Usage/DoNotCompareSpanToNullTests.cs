@@ -17,6 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
     {
         private const string CSharpClass = """
                                            using System;
+                                           using System.Diagnostics;
 
                                            public class Test
                                            {{
@@ -29,6 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
 
         private const string VbClass = """
                                        Imports System
+                                       Imports System.Diagnostics
 
                                        Public Class Test
                                            <Obsolete>
@@ -60,6 +62,16 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
             await VerifyCsharpAsync("var x = [|span == null|];", "var x = span == default;", "var x = span.IsEmpty;");
 
             await VerifyVisualBasicAsync("Dim x = [|span = Nothing|]", "Dim x = span.IsEmpty");
+        }
+
+        [Fact]
+        public async Task WhenComparisonIsUsedAsArgument_Diagnostic()
+        {
+            await VerifyCsharpAsync("Debug.Assert([|span == null|]);", "Debug.Assert(span == default);", "Debug.Assert(span.IsEmpty);");
+            await VerifyCsharpAsync("Debug.Assert([|span != null|]);", "Debug.Assert(span != default);", "Debug.Assert(!span.IsEmpty);");
+
+            await VerifyVisualBasicAsync("Debug.Assert([|span = Nothing|])", "Debug.Assert(span.IsEmpty)");
+            await VerifyVisualBasicAsync("Debug.Assert([|span <> Nothing|])", "Debug.Assert(Not span.IsEmpty)");
         }
 
         [Fact]

@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetRequiredSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var condition = root.FindNode(context.Span);
+            var condition = root.FindNode(context.Span, getInnermostNodeForTie: true);
             if (condition is not BinaryExpressionSyntax binaryExpression)
             {
                 return;

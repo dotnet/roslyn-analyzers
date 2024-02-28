@@ -25,27 +25,12 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
                 return;
             }
 
-            var compareToDefaultCodeAction = CodeAction.Create(
-                MicrosoftNetCoreAnalyzersResources.DoNotCompareSpanToNullDefaultCodeFixTitle,
-                _ => Task.FromResult(context.Document.WithSyntaxRoot(root.ReplaceNode(binaryExpression, MakeDefaultComparison(binaryExpression)))),
-                MicrosoftNetCoreAnalyzersResources.DoNotCompareSpanToNullDefaultCodeFixTitle
-            );
             var useIsEmptyCodeAction = CodeAction.Create(
                 MicrosoftNetCoreAnalyzersResources.DoNotCompareSpanToNullIsEmptyCodeFixTitle,
                 _ => Task.FromResult(context.Document.WithSyntaxRoot(root.ReplaceNode(binaryExpression, MakeIsEmptyCheck(binaryExpression)))),
                 MicrosoftNetCoreAnalyzersResources.DoNotCompareSpanToNullIsEmptyCodeFixTitle
             );
-            context.RegisterCodeFix(compareToDefaultCodeAction, context.Diagnostics);
             context.RegisterCodeFix(useIsEmptyCodeAction, context.Diagnostics);
-        }
-
-        private static SyntaxNode MakeDefaultComparison(BinaryExpressionSyntax binaryExpression)
-        {
-            return SyntaxFactory.BinaryExpression(
-                binaryExpression.Kind(),
-                GetComparatorExpression(binaryExpression),
-                SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression)
-            );
         }
 
         private static SyntaxNode MakeIsEmptyCheck(BinaryExpressionSyntax binaryExpression)

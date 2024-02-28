@@ -47,8 +47,10 @@ namespace Microsoft.NetCore.Analyzers.Usage
         private static void AnalyzeComparison(OperationAnalysisContext context, INamedTypeSymbol spanType, INamedTypeSymbol readOnlySpanType)
         {
             var binaryOperation = (IBinaryOperation)context.Operation;
-            if (binaryOperation.RightOperand.WalkDownConversion().HasNullConstantValue() && binaryOperation.LeftOperand.Type is not null && IsSpan(binaryOperation.LeftOperand.Type)
-                || binaryOperation.LeftOperand.WalkDownConversion().HasNullConstantValue() && binaryOperation.RightOperand.Type is not null && IsSpan(binaryOperation.RightOperand.Type))
+            var leftOperand = binaryOperation.LeftOperand.WalkDownConversion();
+            var rightOperand = binaryOperation.RightOperand.WalkDownConversion();
+            if ((rightOperand.HasNullConstantValue() || rightOperand is IDefaultValueOperation) && binaryOperation.LeftOperand.Type is not null && IsSpan(binaryOperation.LeftOperand.Type)
+                || (leftOperand.HasNullConstantValue() || leftOperand is IDefaultValueOperation) && binaryOperation.RightOperand.Type is not null && IsSpan(binaryOperation.RightOperand.Type))
             {
                 context.ReportDiagnostic(binaryOperation.CreateDiagnostic(Rule));
             }

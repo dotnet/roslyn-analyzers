@@ -629,8 +629,8 @@ Widening and user defined conversions are not supported with generic types.</sou
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullDescription">
-        <source>Because the 'null' literal will be implicitly converted to a span, comparing a span to 'null' might not do what you intended to check. Make it more explicit by comparing to 'default' or by using 'IsEmpty'.</source>
-        <target state="new">Because the 'null' literal will be implicitly converted to a span, comparing a span to 'null' might not do what you intended to check. Make it more explicit by comparing to 'default' or by using 'IsEmpty'.</target>
+        <source>Comparing a span to 'null' might not do what you intended because the 'null' literal will be implicitly converted to a span. Remove the comparison as a struct will never be 'null' or explicitly use 'IsEmpty' if that was the intention.</source>
+        <target state="new">Comparing a span to 'null' might not do what you intended because the 'null' literal will be implicitly converted to a span. Remove the comparison as a struct will never be 'null' or explicitly use 'IsEmpty' if that was the intention.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullIsEmptyCodeFixTitle">
@@ -639,8 +639,8 @@ Widening and user defined conversions are not supported with generic types.</sou
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullMessage">
-        <source>Do not compare Span&lt;T&gt; to 'null', use 'default' or check 'IsEmpty' instead</source>
-        <target state="new">Do not compare Span&lt;T&gt; to 'null', use 'default' or check 'IsEmpty' instead</target>
+        <source>Do not compare Span&lt;T&gt; to 'null'; remove the comparison as a struct will never be 'null' or check 'IsEmpty' if that was the intention</source>
+        <target state="new">Do not compare Span&lt;T&gt; to 'null'; remove the comparison as a struct will never be 'null' or check 'IsEmpty' if that was the intention</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullTitle">

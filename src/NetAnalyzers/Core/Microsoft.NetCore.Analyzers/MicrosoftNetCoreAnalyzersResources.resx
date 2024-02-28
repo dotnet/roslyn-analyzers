@@ -2133,10 +2133,10 @@ Widening and user defined conversions are not supported with generic types.</val
     <value>Replace the 'ArgumentNullException.ThrowIfNull' call with a conditional</value>
   </data>
   <data name="DoNotCompareSpanToNullDescription" xml:space="preserve">
-    <value>Because the 'null' literal will be implicitly converted to a span, comparing a span to 'null' might not do what you intended to check. Make it more explicit by comparing to 'default' or by using 'IsEmpty'.</value>
+    <value>Comparing a span to 'null' might not do what you intended because the 'null' literal will be implicitly converted to a span. Remove the comparison as a struct will never be 'null' or explicitly use 'IsEmpty' if that was the intention.</value>
   </data>
   <data name="DoNotCompareSpanToNullMessage" xml:space="preserve">
-    <value>Do not compare Span&lt;T&gt; to 'null', use 'default' or check 'IsEmpty' instead</value>
+    <value>Do not compare Span&lt;T&gt; to 'null'; remove the comparison as a struct will never be 'null' or check 'IsEmpty' if that was the intention</value>
   </data>
   <data name="DoNotCompareSpanToNullTitle" xml:space="preserve">
     <value>Do not compare Span&lt;T&gt; to 'null'</value>

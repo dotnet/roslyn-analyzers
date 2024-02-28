@@ -4536,7 +4536,7 @@
         "CA2265": {
           "id": "CA2265",
           "shortDescription": "Do not compare Span<T> to 'null'",
-          "fullDescription": "Because the 'null' literal will be implicitly converted to a span, comparing a span to 'null' might not do what you intended to check. Make it more explicit by comparing to 'default' or by using 'IsEmpty'.",
+          "fullDescription": "Comparing a span to 'null' might not do what you intended because the 'null' literal will be implicitly converted to a span. Remove the comparison as a struct will never be 'null' or explicitly use 'IsEmpty' if that was the intention.",
           "defaultLevel": "warning",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2265",
           "properties": {

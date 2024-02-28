@@ -43,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
         [Fact]
         public async Task NullCheckInIf_Diagnostic()
         {
-            await VerifyCsharpAsync("if ([|span == null|]) {}", "if (span == default) {}", "if (span.IsEmpty) {}");
+            await VerifyCsharpAsync("if ([|span == null|]) {}", "if (span.IsEmpty) {}");
 
             await VerifyVisualBasicAsync("If [|span = Nothing|] Then\nEnd If", "If span.IsEmpty Then\nEnd If");
         }
@@ -51,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
         [Fact]
         public async Task NegatedNullCheckInIf_Diagnostic()
         {
-            await VerifyCsharpAsync("if ([|span != null|]) {}", "if (span != default) {}", "if (!span.IsEmpty) {}");
+            await VerifyCsharpAsync("if ([|span != null|]) {}", "if (!span.IsEmpty) {}");
 
             await VerifyVisualBasicAsync("If [|span <> Nothing|] Then\nEnd If", "If Not span.IsEmpty Then\nEnd If");
         }
@@ -59,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
         [Fact]
         public async Task BooleanDeclaration_Diagnostic()
         {
-            await VerifyCsharpAsync("var x = [|span == null|];", "var x = span == default;", "var x = span.IsEmpty;");
+            await VerifyCsharpAsync("var x = [|span == null|];", "var x = span.IsEmpty;");
 
             await VerifyVisualBasicAsync("Dim x = [|span = Nothing|]", "Dim x = span.IsEmpty");
         }
@@ -67,17 +67,18 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
         [Fact]
         public async Task WhenComparisonIsUsedAsArgument_Diagnostic()
         {
-            await VerifyCsharpAsync("Debug.Assert([|span == null|]);", "Debug.Assert(span == default);", "Debug.Assert(span.IsEmpty);");
-            await VerifyCsharpAsync("Debug.Assert([|span != null|]);", "Debug.Assert(span != default);", "Debug.Assert(!span.IsEmpty);");
+            await VerifyCsharpAsync("Debug.Assert([|span == null|]);", "Debug.Assert(span.IsEmpty);");
+            await VerifyCsharpAsync("Debug.Assert([|span != null|]);", "Debug.Assert(!span.IsEmpty);");
 
             await VerifyVisualBasicAsync("Debug.Assert([|span = Nothing|])", "Debug.Assert(span.IsEmpty)");
             await VerifyVisualBasicAsync("Debug.Assert([|span <> Nothing|])", "Debug.Assert(Not span.IsEmpty)");
         }
 
         [Fact]
-        public Task CompareWithDefault_NoDiagnostic()
+        public async Task CompareWithDefault_Diagnostic()
         {
-            return VerifyNoDiagnosticCsharpAsync("var x = span == default;");
+            await VerifyCsharpAsync("var x = [|span == default|];", "var x = span.IsEmpty;");
+            await VerifyCsharpAsync("var x = [|span == default(Span<int>)|];", "var x = span.IsEmpty;");
         }
 
         [Fact]
@@ -108,7 +109,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
         [Fact]
         public async Task NullCheckOnLeftSide_Diagnostic()
         {
-            await VerifyCsharpAsync("var x = [|null == span|];", "var x = span == default;", "var x = span.IsEmpty;");
+            await VerifyCsharpAsync("var x = [|null == span|];", "var x = span.IsEmpty;");
 
             await VerifyVisualBasicAsync("Dim x = [|Nothing = span|]", "Dim x = span.IsEmpty");
         }
@@ -116,7 +117,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
         [Fact]
         public async Task NegatedNullCheckOnLeftSide_Diagnostic()
         {
-            await VerifyCsharpAsync("var x = [|null != span|];", "var x = span != default;", "var x = !span.IsEmpty;");
+            await VerifyCsharpAsync("var x = [|null != span|];", "var x = !span.IsEmpty;");
 
             await VerifyVisualBasicAsync("Dim x = [|Nothing <> span|]", "Dim x = Not span.IsEmpty");
         }
@@ -173,47 +174,16 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
             await VerifyCS.VerifyAnalyzerAsync(rosCode);
         }
 
-        private static async Task VerifyCsharpAsync(string code, string fixedCode1, string fixedCode2)
+        private static async Task VerifyCsharpAsync(string code, string fixedCode)
         {
             var spanCode = string.Format(CultureInfo.InvariantCulture, CSharpClass, "Span<int>", code);
-            var fixedSpanCode1 = string.Format(CultureInfo.InvariantCulture, CSharpClass, "Span<int>", fixedCode1);
-            var fixedSpanCode2 = string.Format(CultureInfo.InvariantCulture, CSharpClass, "Span<int>", fixedCode2);
+            var fixedSpanCode = string.Format(CultureInfo.InvariantCulture, CSharpClass, "Span<int>", fixedCode);
 
             var rosCode = string.Format(CultureInfo.InvariantCulture, CSharpClass, "ReadOnlySpan<int>", code);
-            var fixedRosCode1 = string.Format(CultureInfo.InvariantCulture, CSharpClass, "ReadOnlySpan<int>", fixedCode1);
-            var fixedRosCode2 = string.Format(CultureInfo.InvariantCulture, CSharpClass, "ReadOnlySpan<int>", fixedCode2);
+            var fixedRosCode = string.Format(CultureInfo.InvariantCulture, CSharpClass, "ReadOnlySpan<int>", fixedCode);
 
-            await new VerifyCS.Test
-            {
-                TestCode = spanCode,
-                FixedCode = fixedSpanCode1,
-                CodeActionIndex = 0,
-                CodeActionEquivalenceKey = MicrosoftNetCoreAnalyzersResources.DoNotCompareSpanToNullDefaultCodeFixTitle
-            }.RunAsync();
-
-            await new VerifyCS.Test
-            {
-                TestCode = spanCode,
-                FixedCode = fixedSpanCode2,
-                CodeActionIndex = 1,
-                CodeActionEquivalenceKey = MicrosoftNetCoreAnalyzersResources.DoNotCompareSpanToNullIsEmptyCodeFixTitle
-            }.RunAsync();
-
-            await new VerifyCS.Test
-            {
-                TestCode = rosCode,
-                FixedCode = fixedRosCode1,
-                CodeActionIndex = 0,
-                CodeActionEquivalenceKey = MicrosoftNetCoreAnalyzersResources.DoNotCompareSpanToNullDefaultCodeFixTitle
-            }.RunAsync();
-
-            await new VerifyCS.Test
-            {
-                TestCode = rosCode,
-                FixedCode = fixedRosCode2,
-                CodeActionIndex = 1,
-                CodeActionEquivalenceKey = MicrosoftNetCoreAnalyzersResources.DoNotCompareSpanToNullIsEmptyCodeFixTitle
-            }.RunAsync();
+            await VerifyCS.VerifyCodeFixAsync(spanCode, fixedSpanCode);
+            await VerifyCS.VerifyCodeFixAsync(rosCode, fixedRosCode);
         }
 
         private static async Task VerifyNoDiagnosticVisualBasicAsync(string code)

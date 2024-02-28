@@ -2624,7 +2624,7 @@ Using a generic overload is preferable to the 'System.Type' overload when the ty
 
 ## [CA2265](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2265): Do not compare Span\<T> to 'null'
 
-Because the 'null' literal will be implicitly converted to a span, comparing a span to 'null' might not do what you intended to check. Make it more explicit by comparing to 'default' or by using 'IsEmpty'.
+Comparing a span to 'null' might not do what you intended because the 'null' literal will be implicitly converted to a span. Remove the comparison as a struct will never be 'null' or explicitly use 'IsEmpty' if that was the intention.
 
 |Item|Value|
 |-|-|

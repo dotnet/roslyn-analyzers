@@ -17,7 +17,6 @@
     <UseVSTestRunner>true</UseVSTestRunner>
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
-    <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
     <!-- Toolset -->
     <MicrosoftVSSDKBuildToolsVersion>17.0.1056-Dev17PIAs-g9dffd635</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftVSSDKVSDConfigToolVersion>16.0.2032702</MicrosoftVSSDKVSDConfigToolVersion>

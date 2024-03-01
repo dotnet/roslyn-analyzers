@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.Lightup;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis;
@@ -571,7 +572,7 @@ namespace Roslyn.Diagnostics.Analyzers
                     switch (Acquire(operation.Operand))
                     {
                         case RefKind.None:
-                        case RefKind.Ref or RefKind.RefReadOnly when operation.Conversion.IsIdentity:
+                        case RefKind.Ref or RefKind.RefReadOnly or RefKindEx.RefReadOnlyParameter when operation.Conversion.IsIdentity:
                             return true;
 
                         default:
@@ -859,7 +860,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 if (instance is object
                     && Cache.IsNonCopyableType(operation.TargetMethod.ReceiverType)
                     && !operation.TargetMethod.IsReadOnly
-                    && Acquire(instance) == RefKind.In)
+                    && Acquire(instance) is RefKind.In or RefKindEx.RefReadOnlyParameter)
                 {
                     // mark the instance as not checked by this method
                     instance = null;
@@ -1026,7 +1027,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 var instance = operation.Instance;
                 if (instance is object
                     && Cache.IsNonCopyableType(operation.Property.ContainingType)
-                    && Acquire(instance) == RefKind.In)
+                    && Acquire(instance) is RefKind.In or RefKindEx.RefReadOnlyParameter)
                 {
                     if (operation.IsSetMethodInvocation())
                     {
@@ -1351,8 +1352,8 @@ namespace Roslyn.Diagnostics.Analyzers
                 {
                     (RefKind.None, _) => true,
                     (RefKind.Ref, RefKind.Ref) => true,
-                    (RefKind.Ref, RefKind.RefReadOnly) => true,
-                    (RefKind.RefReadOnly, RefKind.RefReadOnly) => true,
+                    (RefKind.Ref, RefKind.RefReadOnly or RefKindEx.RefReadOnlyParameter) => true,
+                    (RefKind.RefReadOnly, RefKind.RefReadOnly or RefKindEx.RefReadOnlyParameter) => true,
                     _ => false,
                 };
             }
@@ -1420,7 +1421,7 @@ namespace Roslyn.Diagnostics.Analyzers
 
                     case OperationKind.ParameterReference:
                         var parameter = ((IParameterReferenceOperation)operation).Parameter;
-                        return parameter.RefKind == RefKind.In ? RefKind.RefReadOnly : RefKind.Ref;
+                        return parameter.RefKind is RefKind.In or RefKindEx.RefReadOnlyParameter ? parameter.RefKind : RefKind.Ref;
 
                     case OperationKind.Parenthesized:
                         return Acquire(((IParenthesizedOperation)operation).Operand);
@@ -1437,6 +1438,9 @@ namespace Roslyn.Diagnostics.Analyzers
                     case OperationKind.Throw:
                         return RefKind.None;
 
+                    case OperationKindEx.CollectionExpression:
+                        return RefKind.None;
+
                     default:
                         return RefKind.RefReadOnly;
                 }
@@ -1446,8 +1450,8 @@ namespace Roslyn.Diagnostics.Analyzers
                 {
                     return (first, second) switch
                     {
-                        (RefKind.RefReadOnly, _) => RefKind.RefReadOnly,
-                        (_, RefKind.RefReadOnly) => RefKind.RefReadOnly,
+                        (RefKind.RefReadOnly or RefKindEx.RefReadOnlyParameter, _) => RefKind.RefReadOnly,
+                        (_, RefKind.RefReadOnly or RefKindEx.RefReadOnlyParameter) => RefKind.RefReadOnly,
                         (RefKind.Out, _) => RefKind.Out,
                         (_, RefKind.Out) => RefKind.Out,
                         (RefKind.None, RefKind.None) => RefKind.None,

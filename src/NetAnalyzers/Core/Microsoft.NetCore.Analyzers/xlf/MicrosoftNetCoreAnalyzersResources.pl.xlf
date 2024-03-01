@@ -858,6 +858,46 @@ Konwersje poszerzane i zdefiniowane przez użytkownika nie są obsługiwane w pr
         <target state="translated">Nie przekazuj literałów jako zlokalizowanych parametrów</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullCodeFixTitle">
+        <source>Remove superfluous 'ArgumentNullException.ThrowIfNull' call</source>
+        <target state="new">Remove superfluous 'ArgumentNullException.ThrowIfNull' call</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullDescription">
+        <source>'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.</source>
+        <target state="new">'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullMessage">
+        <source>Calling 'ArgumentNullException.ThrowIfNull' and passing a non-nullable value is a no-op</source>
+        <target state="new">Calling 'ArgumentNullException.ThrowIfNull' and passing a non-nullable value is a no-op</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullTitle">
+        <source>Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'</source>
+        <target state="new">Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullCodeFixTitle">
+        <source>Replace the 'ArgumentNullException.ThrowIfNull' call with a conditional</source>
+        <target state="new">Replace the 'ArgumentNullException.ThrowIfNull' call with a conditional</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullDescription">
+        <source>'ArgumentNullException.ThrowIfNull' accepts an 'object', so passing a nullable struct may cause the value to be boxed.</source>
+        <target state="new">'ArgumentNullException.ThrowIfNull' accepts an 'object', so passing a nullable struct may cause the value to be boxed.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullMessage">
+        <source>Passing a nullable struct to 'ArgumentNullException.ThrowIfNull' may cause boxing</source>
+        <target state="new">Passing a nullable struct to 'ArgumentNullException.ThrowIfNull' may cause boxing</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullTitle">
+        <source>Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'</source>
+        <target state="new">Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesDescription">
         <source>An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.</source>
         <target state="translated">Wyjątek typu, który nie jest wystarczająco specyficzny lub został zastrzeżony przez środowisko uruchomieniowe, nie powinien być nigdy zgłaszany przez kod użytkownika. Utrudnia to wykrycie i zdebugowanie pierwotnego błędu. Jeśli to wystąpienie wyjątku może zostać zgłoszone, użyj innego typu wyjątku.</target>
@@ -2053,6 +2093,26 @@ Konwersje poszerzane i zdefiniowane przez użytkownika nie są obsługiwane w pr
         <target state="translated">Preferuj metodę „IDictionary.TryGetValue(TKey, out TValue)”</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferGenericOverloadsCodeFixTitle">
+        <source>Use generic overload</source>
+        <target state="new">Use generic overload</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferGenericOverloadsDescription">
+        <source>Using a generic overload is preferable to the 'System.Type' overload when the type is known, promoting cleaner and more type-safe code with improved compile-time checks.</source>
+        <target state="new">Using a generic overload is preferable to the 'System.Type' overload when the type is known, promoting cleaner and more type-safe code with improved compile-time checks.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferGenericOverloadsMessage">
+        <source>Prefer the generic overload '{0}' instead of '{1}'</source>
+        <target state="new">Prefer the generic overload '{0}' instead of '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferGenericOverloadsTitle">
+        <source>Prefer generic overload when type is known</source>
+        <target state="new">Prefer generic overload when type is known</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferHashDataCodefixTitle">
         <source>Replace with 'HashData' method</source>
         <target state="translated">Zamień na metodę „HashData”</target>
@@ -2234,13 +2294,13 @@ Konwersje poszerzane i zdefiniowane przez użytkownika nie są obsługiwane w pr
         <note />
       </trans-unit>
       <trans-unit id="ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectlyDescription">
-        <source>The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. That mean the provided value will be multiplied by 1024, the result might be too high than your intended value.</source>
-        <target state="translated">Właściwość „MaxResponseHeadersLength” jest mierzona w kilobajtach, a nie w bajtach. Oznacza to, że podana wartość zostanie pomnożona przez 1024, a wynik może być zbyt wysoki niż zamierzona wartość.</target>
+        <source>The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. The provided value is multiplied by 1024, which might be greater than your intended maximum length.</source>
+        <target state="new">The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. The provided value is multiplied by 1024, which might be greater than your intended maximum length.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectlyMessage">
-        <source>Make sure the value '{0}' is provided correctly. This value is measured in kilobytes not bytes.</source>
-        <target state="translated">Upewnij się, że wartość „{0}” jest podana poprawnie. Ta wartość jest mierzona w kilobajtach, a nie w bajtach.</target>
+        <source>Make sure the value '{0}' is correct. This value is measured in kilobytes, not bytes.</source>
+        <target state="new">Make sure the value '{0}' is correct. This value is measured in kilobytes, not bytes.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectlyTitle">

@@ -26,7 +26,7 @@ _OR_
 
 **NuGet Package**: [Microsoft.CodeAnalysis.NetAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)
 
-**Version**: 5.0.3 (Latest)
+**Version**: 8.0.0
 
 <!--
 NOTE: `Microsoft.CodeAnalysis.FxCopAnalyzers` package has been deprecated in favor of 'Microsoft.CodeAnalysis.NetAnalyzers', that ships with the .NET SDK.

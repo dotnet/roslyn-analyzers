@@ -551,6 +551,25 @@
             ]
           }
         },
+        "CA2263": {
+          "id": "CA2263",
+          "shortDescription": "Prefer generic overload when type is known",
+          "fullDescription": "Using a generic overload is preferable to the 'System.Type' overload when the type is known, promoting cleaner and more type-safe code with improved compile-time checks.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpPreferGenericOverloadsAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2352": {
           "id": "CA2352",
           "shortDescription": "Unsafe DataSet or DataTable in serializable type can be vulnerable to remote code execution attacks",
@@ -3369,6 +3388,26 @@
             ]
           }
         },
+        "CA1871": {
+          "id": "CA1871",
+          "shortDescription": "Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'",
+          "fullDescription": "'ArgumentNullException.ThrowIfNull' accepts an 'object', so passing a nullable struct may cause the value to be boxed.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1871",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1872": {
           "id": "CA1872",
           "shortDescription": "Prefer 'Convert.ToHexString' over 'BitConverter.ToString'",
@@ -4477,13 +4516,33 @@
         "CA2262": {
           "id": "CA2262",
           "shortDescription": "Set 'MaxResponseHeadersLength' properly",
-          "fullDescription": "The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. That mean the provided value will be multiplied by 1024, the result might be too high than your intended value.",
+          "fullDescription": "The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. The provided value is multiplied by 1024, which might be greater than your intended maximum length.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
             "typeName": "ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2264": {
+          "id": "CA2264",
+          "shortDescription": "Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'",
+          "fullDescription": "'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.",
+          "defaultLevel": "warning",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2264",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull",
             "languages": [
               "C#",
               "Visual Basic"
@@ -6709,6 +6768,25 @@
             "category": "Usage",
             "isEnabledByDefault": true,
             "typeName": "BasicDetectPreviewFeatureAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2263": {
+          "id": "CA2263",
+          "shortDescription": "Prefer generic overload when type is known",
+          "fullDescription": "Using a generic overload is preferable to the 'System.Type' overload when the type is known, promoting cleaner and more type-safe code with improved compile-time checks.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "BasicPreferGenericOverloadsAnalyzer",
             "languages": [
               "Visual Basic"
             ],

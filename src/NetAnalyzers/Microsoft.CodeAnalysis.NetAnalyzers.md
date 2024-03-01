@@ -1836,6 +1836,18 @@ Using a cached 'SearchValues' instance is more efficient than passing values to 
 |CodeFix|True|
 ---
 
+## [CA1871](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1871): Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'
+
+'ArgumentNullException.ThrowIfNull' accepts an 'object', so passing a nullable struct may cause the value to be boxed.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA1872](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1872): Prefer 'Convert.ToHexString' over 'BitConverter.ToString'
 
 'Convert.ToHexString' is more efficient and allocation-friendly than 'BitConverter.ToString' in combination with 'string.Replace'.
@@ -2588,7 +2600,7 @@ The ConfigureAwaitOptions.SuppressThrowing option is only supported with the non
 
 ## [CA2262](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262): Set 'MaxResponseHeadersLength' properly
 
-The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. That mean the provided value will be multiplied by 1024, the result might be too high than your intended value.
+The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. The provided value is multiplied by 1024, which might be greater than your intended maximum length.
 
 |Item|Value|
 |-|-|
@@ -2596,6 +2608,30 @@ The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. 
 |Enabled|True|
 |Severity|Info|
 |CodeFix|False|
+---
+
+## [CA2263](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263): Prefer generic overload when type is known
+
+Using a generic overload is preferable to the 'System.Type' overload when the type is known, promoting cleaner and more type-safe code with improved compile-time checks.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA2264](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2264): Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'
+
+'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|True|
 ---
 
 ## [CA2300](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2300): Do not use insecure deserializer BinaryFormatter

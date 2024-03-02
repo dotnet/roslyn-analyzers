@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -321,7 +322,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static bool FindUsages(IOperation operation, ref DictionaryUsageContext usageContext, SearchContext searchContext)
         {
-            foreach (var descendant in operation.DescendantsAndSelf())
+            // We don't want to step into multiple layers of if statements.
+            var descendants = GetDescendantNodesAndSelf(operation, static op => op is not IConditionalOperation).ToList();
+            foreach (var descendant in descendants)
             {
                 if (IsSameReferenceOperation(descendant, usageContext.DictionaryReference))
                 {
@@ -589,6 +592,21 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             return false;
+        }
+
+        private static IEnumerable<IOperation> GetDescendantNodesAndSelf(IOperation operation, Func<IOperation, bool> descendIntoChildren)
+        {
+            var childOperations = operation.Children.SelectMany(c =>
+            {
+                if(descendIntoChildren(c))
+                {
+                    return GetDescendantNodesAndSelf(c, descendIntoChildren);
+                }
+
+                return Enumerable.Empty<IOperation>();
+            });
+
+            return[operation, ..childOperations];
         }
 
         private enum SearchContext

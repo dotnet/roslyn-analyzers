@@ -623,14 +623,9 @@ Konwersje poszerzane i zdefiniowane przez użytkownika nie są obsługiwane w pr
         <target state="translated">Nie wywołuj elementu ToImmutableCollection dla wartości ImmutableCollection</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCompareSpanToNullDefaultCodeFixTitle">
-        <source>Compare to 'default'</source>
-        <target state="new">Compare to 'default'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotCompareSpanToNullDescription">
-        <source>Comparing a span to 'null' might not do what you intended because the 'null' literal will be implicitly converted to a span. Remove the comparison as a struct will never be 'null' or explicitly use 'IsEmpty' if that was the intention.</source>
-        <target state="new">Comparing a span to 'null' might not do what you intended because the 'null' literal will be implicitly converted to a span. Remove the comparison as a struct will never be 'null' or explicitly use 'IsEmpty' if that was the intention.</target>
+      <trans-unit id="DoNotCompareSpanToDefaultMessage">
+        <source>Comparing a span to 'default' might not do what you intended, make the code more explicit by checking 'IsEmpty'</source>
+        <target state="new">Comparing a span to 'default' might not do what you intended, make the code more explicit by checking 'IsEmpty'</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullIsEmptyCodeFixTitle">
@@ -639,13 +634,18 @@ Konwersje poszerzane i zdefiniowane przez użytkownika nie są obsługiwane w pr
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullMessage">
-        <source>Do not compare Span&lt;T&gt; to 'null'; remove the comparison as a struct will never be 'null' or check 'IsEmpty' if that was the intention</source>
-        <target state="new">Do not compare Span&lt;T&gt; to 'null'; remove the comparison as a struct will never be 'null' or check 'IsEmpty' if that was the intention</target>
+        <source>Comparing a span to 'null' might be redundant, the 'null' literal will be implicitly converted to a 'Span&lt;T&gt;.Empty'</source>
+        <target state="new">Comparing a span to 'null' might be redundant, the 'null' literal will be implicitly converted to a 'Span&lt;T&gt;.Empty'</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCompareSpanToNullTitle">
-        <source>Do not compare Span&lt;T&gt; to 'null'</source>
-        <target state="new">Do not compare Span&lt;T&gt; to 'null'</target>
+      <trans-unit id="DoNotCompareSpanToNullOrDefaultDescription">
+        <source>Comparing a span to 'null' or 'default' might not do what you intended. 'default' and the 'null' literal are implicitly converted to 'Span&lt;T&gt;.Empty'. Remove the redundant comparison or make the code more explicit by using 'IsEmpty'.</source>
+        <target state="new">Comparing a span to 'null' or 'default' might not do what you intended. 'default' and the 'null' literal are implicitly converted to 'Span&lt;T&gt;.Empty'. Remove the redundant comparison or make the code more explicit by using 'IsEmpty'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCompareSpanToNullOrDefaultTitle">
+        <source>Do not compare Span&lt;T&gt; to 'null' or 'default'</source>
+        <target state="new">Do not compare Span&lt;T&gt; to 'null' or 'default'</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCreateTaskCompletionSourceWithWrongArgumentsDescription">

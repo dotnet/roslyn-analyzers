@@ -3,6 +3,7 @@
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.NetCore.CSharp.Analyzers.Usage;
 using Microsoft.NetCore.VisualBasic.Analyzers.Tasks;
 using Test.Utilities;
@@ -40,45 +41,53 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
                                        End Class
                                        """;
 
-        [Fact]
-        public async Task NullCheckInIf_Diagnostic()
-        {
-            await VerifyCsharpAsync("if ([|span == null|]) {}", "if (span.IsEmpty) {}");
+        private static readonly DiagnosticResult DoNotCompareToNullResult = new DiagnosticResult(DoNotCompareSpanToNullAnalyzer.DoNotCompareSpanToNullRule).WithLocation(0);
+        private static readonly DiagnosticResult DoNotCompareToDefaultResult = new DiagnosticResult(DoNotCompareSpanToNullAnalyzer.DoNotCompareSpanToDefaultRule).WithLocation(0);
 
-            await VerifyVisualBasicAsync("If [|span = Nothing|] Then\nEnd If", "If span.IsEmpty Then\nEnd If");
+        [Fact]
+        public async Task CheckInIf_Diagnostic()
+        {
+            await VerifyCsharpCompareToNullAsync("if ({|#0:span == null|}) {}", "if (span.IsEmpty) {}");
+            await VerifyCsharpCompareToDefaultAsync("if ({|#0:span == default|}) {}", "if (span.IsEmpty) {}");
+
+            await VerifyVisualBasicAsync("If {|#0:span = Nothing|} Then\nEnd If", "If span.IsEmpty Then\nEnd If");
         }
 
         [Fact]
-        public async Task NegatedNullCheckInIf_Diagnostic()
+        public async Task NegatedCheckInIf_Diagnostic()
         {
-            await VerifyCsharpAsync("if ([|span != null|]) {}", "if (!span.IsEmpty) {}");
+            await VerifyCsharpCompareToNullAsync("if ({|#0:span != null|}) {}", "if (!span.IsEmpty) {}");
+            await VerifyCsharpCompareToDefaultAsync("if ({|#0:span != default|}) {}", "if (!span.IsEmpty) {}");
 
-            await VerifyVisualBasicAsync("If [|span <> Nothing|] Then\nEnd If", "If Not span.IsEmpty Then\nEnd If");
+            await VerifyVisualBasicAsync("If {|#0:span <> Nothing|} Then\nEnd If", "If Not span.IsEmpty Then\nEnd If");
         }
 
         [Fact]
         public async Task BooleanDeclaration_Diagnostic()
         {
-            await VerifyCsharpAsync("var x = [|span == null|];", "var x = span.IsEmpty;");
+            await VerifyCsharpCompareToNullAsync("var x = {|#0:span == null|};", "var x = span.IsEmpty;");
+            await VerifyCsharpCompareToDefaultAsync("var x = {|#0:span == default|};", "var x = span.IsEmpty;");
 
-            await VerifyVisualBasicAsync("Dim x = [|span = Nothing|]", "Dim x = span.IsEmpty");
+            await VerifyVisualBasicAsync("Dim x = {|#0:span = Nothing|}", "Dim x = span.IsEmpty");
         }
 
         [Fact]
         public async Task WhenComparisonIsUsedAsArgument_Diagnostic()
         {
-            await VerifyCsharpAsync("Debug.Assert([|span == null|]);", "Debug.Assert(span.IsEmpty);");
-            await VerifyCsharpAsync("Debug.Assert([|span != null|]);", "Debug.Assert(!span.IsEmpty);");
+            await VerifyCsharpCompareToNullAsync("Debug.Assert({|#0:span == null|});", "Debug.Assert(span.IsEmpty);");
+            await VerifyCsharpCompareToDefaultAsync("Debug.Assert({|#0:span == default|});", "Debug.Assert(span.IsEmpty);");
+            await VerifyCsharpCompareToNullAsync("Debug.Assert({|#0:span != null|});", "Debug.Assert(!span.IsEmpty);");
+            await VerifyCsharpCompareToDefaultAsync("Debug.Assert({|#0:span != default|});", "Debug.Assert(!span.IsEmpty);");
 
-            await VerifyVisualBasicAsync("Debug.Assert([|span = Nothing|])", "Debug.Assert(span.IsEmpty)");
-            await VerifyVisualBasicAsync("Debug.Assert([|span <> Nothing|])", "Debug.Assert(Not span.IsEmpty)");
+            await VerifyVisualBasicAsync("Debug.Assert({|#0:span = Nothing|})", "Debug.Assert(span.IsEmpty)");
+            await VerifyVisualBasicAsync("Debug.Assert({|#0:span <> Nothing|})", "Debug.Assert(Not span.IsEmpty)");
         }
 
         [Fact]
         public async Task CompareWithDefault_Diagnostic()
         {
-            await VerifyCsharpAsync("var x = [|span == default|];", "var x = span.IsEmpty;");
-            await VerifyCsharpAsync("var x = [|span == default(Span<int>)|];", "var x = span.IsEmpty;");
+            await VerifyCsharpCompareToDefaultAsync("var x = {|#0:span == default|};", "var x = span.IsEmpty;");
+            await VerifyCsharpCompareToDefaultAsync("var x = {|#0:span == default(Span<int>)|};", "var x = span.IsEmpty;");
         }
 
         [Fact]
@@ -107,19 +116,23 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
         }
 
         [Fact]
-        public async Task NullCheckOnLeftSide_Diagnostic()
+        public async Task CheckOnLeftSide_Diagnostic()
         {
-            await VerifyCsharpAsync("var x = [|null == span|];", "var x = span.IsEmpty;");
+            await VerifyCsharpCompareToNullAsync("var x = {|#0:null == span|};", "var x = span.IsEmpty;");
+            await VerifyCsharpCompareToDefaultAsync("var x = {|#0:default == span|};", "var x = span.IsEmpty;");
+            await VerifyCsharpCompareToDefaultAsync("var x = {|#0:default(Span<int>) == span|};", "var x = span.IsEmpty;");
 
-            await VerifyVisualBasicAsync("Dim x = [|Nothing = span|]", "Dim x = span.IsEmpty");
+            await VerifyVisualBasicAsync("Dim x = {|#0:Nothing = span|}", "Dim x = span.IsEmpty");
         }
 
         [Fact]
-        public async Task NegatedNullCheckOnLeftSide_Diagnostic()
+        public async Task NegatedCheckOnLeftSide_Diagnostic()
         {
-            await VerifyCsharpAsync("var x = [|null != span|];", "var x = !span.IsEmpty;");
+            await VerifyCsharpCompareToNullAsync("var x = {|#0:null != span|};", "var x = !span.IsEmpty;");
+            await VerifyCsharpCompareToDefaultAsync("var x = {|#0:default != span|};", "var x = !span.IsEmpty;");
+            await VerifyCsharpCompareToDefaultAsync("var x = {|#0:default(Span<int>) != span|};", "var x = !span.IsEmpty;");
 
-            await VerifyVisualBasicAsync("Dim x = [|Nothing <> span|]", "Dim x = Not span.IsEmpty");
+            await VerifyVisualBasicAsync("Dim x = {|#0:Nothing <> span|}", "Dim x = Not span.IsEmpty");
         }
 
         [Theory]
@@ -174,7 +187,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
             await VerifyCS.VerifyAnalyzerAsync(rosCode);
         }
 
-        private static async Task VerifyCsharpAsync(string code, string fixedCode)
+        private static async Task VerifyCsharpCompareToNullAsync(string code, string fixedCode)
         {
             var spanCode = string.Format(CultureInfo.InvariantCulture, CSharpClass, "Span<int>", code);
             var fixedSpanCode = string.Format(CultureInfo.InvariantCulture, CSharpClass, "Span<int>", fixedCode);
@@ -182,8 +195,42 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
             var rosCode = string.Format(CultureInfo.InvariantCulture, CSharpClass, "ReadOnlySpan<int>", code);
             var fixedRosCode = string.Format(CultureInfo.InvariantCulture, CSharpClass, "ReadOnlySpan<int>", fixedCode);
 
-            await VerifyCS.VerifyCodeFixAsync(spanCode, fixedSpanCode);
-            await VerifyCS.VerifyCodeFixAsync(rosCode, fixedRosCode);
+            await new VerifyCS.Test
+            {
+                TestCode = spanCode,
+                FixedCode = fixedSpanCode,
+                ExpectedDiagnostics = { DoNotCompareToNullResult }
+            }.RunAsync();
+
+            await new VerifyCS.Test
+            {
+                TestCode = rosCode,
+                FixedCode = fixedRosCode,
+                ExpectedDiagnostics = { DoNotCompareToNullResult }
+            }.RunAsync();
+        }
+
+        private static async Task VerifyCsharpCompareToDefaultAsync(string code, string fixedCode)
+        {
+            var spanCode = string.Format(CultureInfo.InvariantCulture, CSharpClass, "Span<int>", code);
+            var fixedSpanCode = string.Format(CultureInfo.InvariantCulture, CSharpClass, "Span<int>", fixedCode);
+
+            var rosCode = string.Format(CultureInfo.InvariantCulture, CSharpClass, "ReadOnlySpan<int>", code);
+            var fixedRosCode = string.Format(CultureInfo.InvariantCulture, CSharpClass, "ReadOnlySpan<int>", fixedCode);
+
+            await new VerifyCS.Test
+            {
+                TestCode = spanCode,
+                FixedCode = fixedSpanCode,
+                ExpectedDiagnostics = { DoNotCompareToDefaultResult }
+            }.RunAsync();
+
+            await new VerifyCS.Test
+            {
+                TestCode = rosCode,
+                FixedCode = fixedRosCode,
+                ExpectedDiagnostics = { DoNotCompareToDefaultResult }
+            }.RunAsync();
         }
 
         private static async Task VerifyNoDiagnosticVisualBasicAsync(string code)
@@ -203,8 +250,19 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
             var rosCode = string.Format(CultureInfo.InvariantCulture, VbClass, "ReadOnlySpan(Of Int32)", code);
             var fixedRosCode = string.Format(CultureInfo.InvariantCulture, VbClass, "ReadOnlySpan(Of Int32)", fixedCode);
 
-            await VerifyVB.VerifyCodeFixAsync(spanCode, fixedSpanCode);
-            await VerifyVB.VerifyCodeFixAsync(rosCode, fixedRosCode);
+            await new VerifyVB.Test
+            {
+                TestCode = spanCode,
+                FixedCode = fixedSpanCode,
+                ExpectedDiagnostics = { DoNotCompareToNullResult }
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                TestCode = rosCode,
+                FixedCode = fixedRosCode,
+                ExpectedDiagnostics = { DoNotCompareToNullResult }
+            }.RunAsync();
         }
     }
 }

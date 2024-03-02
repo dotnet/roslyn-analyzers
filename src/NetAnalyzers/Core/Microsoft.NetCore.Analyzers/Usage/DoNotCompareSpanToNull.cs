@@ -16,13 +16,23 @@ namespace Microsoft.NetCore.Analyzers.Usage
     {
         internal const string RuleId = "CA2265";
 
-        private static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+        internal static readonly DiagnosticDescriptor DoNotCompareSpanToNullRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            CreateLocalizableResourceString(nameof(DoNotCompareSpanToNullTitle)),
+            CreateLocalizableResourceString(nameof(DoNotCompareSpanToNullOrDefaultTitle)),
             CreateLocalizableResourceString(nameof(DoNotCompareSpanToNullMessage)),
             DiagnosticCategory.Usage,
             RuleLevel.BuildWarning,
-            description: CreateLocalizableResourceString(nameof(DoNotCompareSpanToNullDescription)),
+            description: CreateLocalizableResourceString(nameof(DoNotCompareSpanToNullOrDefaultDescription)),
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
+
+        internal static readonly DiagnosticDescriptor DoNotCompareSpanToDefaultRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(DoNotCompareSpanToNullOrDefaultTitle)),
+            CreateLocalizableResourceString(nameof(DoNotCompareSpanToDefaultMessage)),
+            DiagnosticCategory.Usage,
+            RuleLevel.BuildWarning,
+            description: CreateLocalizableResourceString(nameof(DoNotCompareSpanToNullOrDefaultDescription)),
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
@@ -49,10 +59,16 @@ namespace Microsoft.NetCore.Analyzers.Usage
             var binaryOperation = (IBinaryOperation)context.Operation;
             var leftOperand = binaryOperation.LeftOperand.WalkDownConversion();
             var rightOperand = binaryOperation.RightOperand.WalkDownConversion();
-            if ((rightOperand.HasNullConstantValue() || rightOperand is IDefaultValueOperation) && binaryOperation.LeftOperand.Type is not null && IsSpan(binaryOperation.LeftOperand.Type)
-                || (leftOperand.HasNullConstantValue() || leftOperand is IDefaultValueOperation) && binaryOperation.RightOperand.Type is not null && IsSpan(binaryOperation.RightOperand.Type))
+            if (rightOperand.HasNullConstantValue() && binaryOperation.LeftOperand.Type is not null && IsSpan(binaryOperation.LeftOperand.Type)
+                || leftOperand.HasNullConstantValue() && binaryOperation.RightOperand.Type is not null && IsSpan(binaryOperation.RightOperand.Type))
             {
-                context.ReportDiagnostic(binaryOperation.CreateDiagnostic(Rule));
+                context.ReportDiagnostic(binaryOperation.CreateDiagnostic(DoNotCompareSpanToNullRule));
+            }
+
+            if (rightOperand is IDefaultValueOperation && binaryOperation.LeftOperand.Type is not null && IsSpan(binaryOperation.LeftOperand.Type)
+                || leftOperand is IDefaultValueOperation && binaryOperation.RightOperand.Type is not null && IsSpan(binaryOperation.RightOperand.Type))
+            {
+                context.ReportDiagnostic(binaryOperation.CreateDiagnostic(DoNotCompareSpanToDefaultRule));
             }
 
             bool IsSpan(ITypeSymbol typeSymbol)
@@ -64,6 +80,6 @@ namespace Microsoft.NetCore.Analyzers.Usage
             }
         }
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DoNotCompareSpanToNullRule, DoNotCompareSpanToDefaultRule);
     }
 }

@@ -47,6 +47,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
         private static ExpressionSyntax GetComparatorExpression(BinaryExpressionSyntax binaryExpression)
         {
             return binaryExpression.Left.IsKind(SyntaxKind.NullLiteralExpression)
+                   || binaryExpression.Left.IsKind(SyntaxKind.DefaultLiteralExpression)
+                   || binaryExpression.Left.IsKind(SyntaxKind.DefaultExpression)
                 ? binaryExpression.Right
                 : binaryExpression.Left;
         }

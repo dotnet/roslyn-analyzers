@@ -598,7 +598,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             var childOperations = operation.Children.SelectMany(c =>
             {
-                if(descendIntoChildren(c))
+                if (descendIntoChildren(c))
                 {
                     return GetDescendantNodesAndSelf(c, descendIntoChildren);
                 }
@@ -606,7 +606,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return Enumerable.Empty<IOperation>();
             });
 
-            return[operation, ..childOperations];
+            return [operation, ..childOperations];
         }
 
         private enum SearchContext

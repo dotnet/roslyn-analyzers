@@ -606,7 +606,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return Enumerable.Empty<IOperation>();
             });
 
-            return [operation, ..childOperations];
+            return[operation, .. childOperations];
         }
 
         private enum SearchContext

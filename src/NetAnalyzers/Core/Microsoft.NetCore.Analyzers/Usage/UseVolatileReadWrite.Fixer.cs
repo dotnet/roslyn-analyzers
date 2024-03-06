@@ -26,18 +26,18 @@ namespace Microsoft.NetCore.Analyzers.Usage
             if (TryGetThreadVolatileReadWriteMemberAccess(node, ThreadVolatileReadMethodName, out var readAccess))
             {
                 var codeAction = CodeAction.Create(
-                    MicrosoftNetCoreAnalyzersResources.UseVolatileReadTitle,
+                    MicrosoftNetCoreAnalyzersResources.DoNotUseThreadVolatileReadWriteCodeFixTitle,
                     _ => Task.FromResult(context.Document.WithSyntaxRoot(root.ReplaceNode(readAccess, CreateVolatileMemberAccess(context.Document, VolatileReadMethodName)))),
-                    MicrosoftNetCoreAnalyzersResources.UseVolatileReadTitle
+                    nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseThreadVolatileReadWriteCodeFixTitle)
                 );
                 context.RegisterCodeFix(codeAction, context.Diagnostics);
             }
             else if (TryGetThreadVolatileReadWriteMemberAccess(node, ThreadVolatileWriteMethodName, out var writeAccess))
             {
                 var codeAction = CodeAction.Create(
-                    MicrosoftNetCoreAnalyzersResources.UseVolatileWriteTitle,
+                    MicrosoftNetCoreAnalyzersResources.DoNotUseThreadVolatileReadWriteCodeFixTitle,
                     _ => Task.FromResult(context.Document.WithSyntaxRoot(root.ReplaceNode(writeAccess, CreateVolatileMemberAccess(context.Document, VolatileWriteMethodName)))),
-                    MicrosoftNetCoreAnalyzersResources.UseVolatileWriteTitle
+                    nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseThreadVolatileReadWriteCodeFixTitle)
                 );
                 context.RegisterCodeFix(codeAction, context.Diagnostics);
             }

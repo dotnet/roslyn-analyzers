@@ -1138,6 +1138,11 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
         <target state="translated">請勿在迴圈中使用 stackalloc</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseThreadVolatileReadWriteCodeFixTitle">
+        <source>Replace obsolete call</source>
+        <target state="new">Replace obsolete call</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseTimersThatPreventPowerStateChangesDescription">
         <source>Higher-frequency periodic activity will keep the CPU busy and interfere with power-saving idle timers that turn off the display and hard disks.</source>
         <target state="translated">更高頻率的週期性活動，會讓 CPU 一直處於忙碌狀態，且會干擾關閉顯示器與硬碟的省電閒置計時器。</target>
@@ -3281,36 +3286,6 @@ Enumerable.OfType&lt;T&gt; 使用的一般型別檢查 (C# 'is' operator/IL 'isi
       <trans-unit id="UseValueTasksCorrectlyTitle">
         <source>Use ValueTasks correctly</source>
         <target state="translated">正確使用 ValueTasks</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseVolatileReadDescription">
-        <source>'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</source>
-        <target state="new">'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseVolatileReadMessage">
-        <source>Use 'Volatile.Read' instead of 'Thread.VolatileRead'</source>
-        <target state="new">Use 'Volatile.Read' instead of 'Thread.VolatileRead'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseVolatileReadTitle">
-        <source>Use 'Volatile.Read'</source>
-        <target state="new">Use 'Volatile.Read'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseVolatileWriteDescription">
-        <source>'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</source>
-        <target state="new">'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseVolatileWriteMessage">
-        <source>Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</source>
-        <target state="new">Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseVolatileWriteTitle">
-        <source>Use 'Volatile.Write'</source>
-        <target state="new">Use 'Volatile.Write'</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">

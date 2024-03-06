@@ -1138,6 +1138,11 @@ Widening and user defined conversions are not supported with generic types.</sou
         <target state="translated">Запрет использования stackalloc в циклах</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseThreadVolatileReadWriteCodeFixTitle">
+        <source>Replace obsolete call</source>
+        <target state="new">Replace obsolete call</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseTimersThatPreventPowerStateChangesDescription">
         <source>Higher-frequency periodic activity will keep the CPU busy and interfere with power-saving idle timers that turn off the display and hard disks.</source>
         <target state="translated">Периодическая активность с более высокой частотой заставит ЦП переключаться в активный режим и помешает работе энергосберегающих таймеров простоя, которые отключают дисплей и жесткие диски.</target>
@@ -3281,36 +3286,6 @@ Widening and user defined conversions are not supported with generic types.</sou
       <trans-unit id="UseValueTasksCorrectlyTitle">
         <source>Use ValueTasks correctly</source>
         <target state="translated">Используйте ValueTasks правильно</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseVolatileReadDescription">
-        <source>'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</source>
-        <target state="new">'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseVolatileReadMessage">
-        <source>Use 'Volatile.Read' instead of 'Thread.VolatileRead'</source>
-        <target state="new">Use 'Volatile.Read' instead of 'Thread.VolatileRead'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseVolatileReadTitle">
-        <source>Use 'Volatile.Read'</source>
-        <target state="new">Use 'Volatile.Read'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseVolatileWriteDescription">
-        <source>'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</source>
-        <target state="new">'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseVolatileWriteMessage">
-        <source>Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</source>
-        <target state="new">Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseVolatileWriteTitle">
-        <source>Use 'Volatile.Write'</source>
-        <target state="new">Use 'Volatile.Write'</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">

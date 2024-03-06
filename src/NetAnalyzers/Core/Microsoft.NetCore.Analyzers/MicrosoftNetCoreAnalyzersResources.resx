@@ -2132,22 +2132,7 @@ Widening and user defined conversions are not supported with generic types.</val
   <data name="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullCodeFixTitle" xml:space="preserve">
     <value>Replace the 'ArgumentNullException.ThrowIfNull' call with a conditional</value>
   </data>
-  <data name="UseVolatileReadDescription" xml:space="preserve">
-    <value>'Thread.VolatileRead' is considered obsolete. Use 'Volatile.Read' instead.</value>
-  </data>
-  <data name="UseVolatileReadMessage" xml:space="preserve">
-    <value>Use 'Volatile.Read' instead of 'Thread.VolatileRead'</value>
-  </data>
-  <data name="UseVolatileReadTitle" xml:space="preserve">
-    <value>Use 'Volatile.Read'</value>
-  </data>
-  <data name="UseVolatileWriteDescription" xml:space="preserve">
-    <value>'Thread.VolatileWrite' is considered obsolete. Use 'Volatile.Write' instead.</value>
-  </data>
-  <data name="UseVolatileWriteMessage" xml:space="preserve">
-    <value>Use 'Volatile.Write' instead of 'Thread.VolatileWrite'</value>
-  </data>
-  <data name="UseVolatileWriteTitle" xml:space="preserve">
-    <value>Use 'Volatile.Write'</value>
+  <data name="DoNotUseThreadVolatileReadWriteCodeFixTitle" xml:space="preserve">
+    <value>Replace obsolete call</value>
   </data>
 </root>

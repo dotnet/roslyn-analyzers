@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -23,39 +24,41 @@ namespace Microsoft.NetCore.Analyzers.Usage
         {
             var root = await context.Document.GetRequiredSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var node = root.FindNode(context.Span, getInnermostNodeForTie: true);
-            if (TryGetThreadVolatileReadWriteMemberAccess(node, ThreadVolatileReadMethodName, out var readAccess))
+            if (TryGetThreadVolatileReadWriteArguments(node, ThreadVolatileReadMethodName, out var arguments))
             {
                 var codeAction = CodeAction.Create(
                     MicrosoftNetCoreAnalyzersResources.DoNotUseThreadVolatileReadWriteCodeFixTitle,
-                    _ => Task.FromResult(context.Document.WithSyntaxRoot(root.ReplaceNode(readAccess, CreateVolatileMemberAccess(context.Document, VolatileReadMethodName)))),
+                    _ => Task.FromResult(context.Document.WithSyntaxRoot(root.ReplaceNode(node, CreateVolatileMemberAccess(context.Document, VolatileReadMethodName, arguments).WithTriviaFrom(node)))),
                     nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseThreadVolatileReadWriteCodeFixTitle)
                 );
                 context.RegisterCodeFix(codeAction, context.Diagnostics);
             }
-            else if (TryGetThreadVolatileReadWriteMemberAccess(node, ThreadVolatileWriteMethodName, out var writeAccess))
+            else if (TryGetThreadVolatileReadWriteArguments(node, ThreadVolatileWriteMethodName, out arguments))
             {
                 var codeAction = CodeAction.Create(
                     MicrosoftNetCoreAnalyzersResources.DoNotUseThreadVolatileReadWriteCodeFixTitle,
-                    _ => Task.FromResult(context.Document.WithSyntaxRoot(root.ReplaceNode(writeAccess, CreateVolatileMemberAccess(context.Document, VolatileWriteMethodName)))),
+                    _ => Task.FromResult(context.Document.WithSyntaxRoot(root.ReplaceNode(node, CreateVolatileMemberAccess(context.Document, VolatileWriteMethodName, arguments).WithTriviaFrom(node)))),
                     nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseThreadVolatileReadWriteCodeFixTitle)
                 );
                 context.RegisterCodeFix(codeAction, context.Diagnostics);
             }
         }
 
-        private static SyntaxNode CreateVolatileMemberAccess(Document document, string methodName)
+        private static SyntaxNode CreateVolatileMemberAccess(Document document, string methodName, IEnumerable<SyntaxNode> arguments)
         {
             var generator = SyntaxGenerator.GetGenerator(document);
-            return generator.MemberAccessExpression(
+            var memberAccess = generator.MemberAccessExpression(
                 generator.IdentifierName(nameof(Volatile)),
                 generator.IdentifierName(methodName)
             );
+
+            return generator.InvocationExpression(memberAccess, arguments);
         }
 
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+        public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
-        protected abstract bool TryGetThreadVolatileReadWriteMemberAccess(SyntaxNode invocation, string methodName, [NotNullWhen(true)] out SyntaxNode? memberAccess);
+        protected abstract bool TryGetThreadVolatileReadWriteArguments(SyntaxNode invocation, string methodName, [NotNullWhen(true)] out IEnumerable<SyntaxNode>? arguments);
 
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create("SYSLIB0054");
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create("SYSLIB0054");
     }
 }

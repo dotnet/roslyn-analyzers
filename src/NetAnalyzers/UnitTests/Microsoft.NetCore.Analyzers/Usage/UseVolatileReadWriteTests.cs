@@ -88,127 +88,102 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
                                                                         Public Shared Function VolatileRead(ByRef address As Byte) As Byte
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Function VolatileRead(ByRef address As Double) As Double
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Function VolatileRead(ByRef address As Short) As Short
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Function VolatileRead(ByRef address As Int32) As Int32
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Function VolatileRead(ByRef address As Int64) As Int64
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Function VolatileRead(ByRef address As IntPtr) As IntPtr
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Function VolatileRead(ByRef address As Object) As Object
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Function VolatileRead(ByRef address As SByte) As SByte
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Function VolatileRead(ByRef address As Single) As Single
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Function VolatileRead(ByRef address As UInt16) As UInt16
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Function VolatileRead(ByRef address As UInt32) As UInt32
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Function VolatileRead(ByRef address As UInt64) As UInt64
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Function VolatileRead(ByRef address As UIntPtr) As UIntPtr
                                                                             Volatile.Read(address)
                                                                         End Function
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As Byte, value As Byte)
                                                                             Volatile.Write(address, value)
                                                                         End Sub
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As Double, value As Double)
                                                                             Volatile.Write(address, value)
                                                                         End Sub
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As Int16, value As Int16)
                                                                             Volatile.Write(address, value)
                                                                         End Sub
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As Int32, value As Int32)
                                                                             Volatile.Write(address, value)
                                                                         End Sub
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As Int64, value As Int64)
                                                                             Volatile.Write(address, value)
                                                                         End Sub
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As IntPtr, value As IntPtr)
                                                                             Volatile.Write(address, value)
                                                                         End Sub
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As Object, value As Object)
                                                                             Volatile.Write(address, value)
                                                                         End Sub
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As SByte, value As SByte)
                                                                             Volatile.Write(address, value)
                                                                         End Sub
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As Single, value As Single)
                                                                             Volatile.Write(address, value)
                                                                         End Sub
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As UInt16, value As UInt16)
                                                                             Volatile.Write(address, value)
                                                                         End Sub
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As UInt32, value As UInt32)
                                                                             Volatile.Write(address, value)
                                                                         End Sub
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As Uint64, value As Uint64)
                                                                             Volatile.Write(address, value)
                                                                         End Sub
-                                                                
                                                                         <Obsolete(DiagnosticId := ObsoletionDiagnosticId)>
                                                                         Public Shared Sub VolatileWrite(ByRef address As UIntPtr, value As UIntPtr)
                                                                             Volatile.Write(address, value)
@@ -217,19 +192,41 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
                                                                 End Namespace
                                                                 """;
 
+        public static readonly TheoryData<string> CSharpTypes = new()
+        {
+            "IntPtr",
+            "UIntPtr",
+            "byte",
+            "double",
+            "float",
+            "int",
+            "long",
+            "sbyte",
+            "short",
+            "uint",
+            "ulong",
+            "ushort"
+        };
+
+        public static readonly TheoryData<string> VisualBasicTypes = new()
+        {
+            "IntPtr",
+            "UIntPtr",
+            "Byte",
+            "Double",
+            "Single",
+            "Integer",
+            "Long",
+            "Object",
+            "Sbyte",
+            "Short",
+            "UInteger",
+            "ULong",
+            "UShort"
+        };
+
         [Theory]
-        [InlineData("IntPtr")]
-        [InlineData("UIntPtr")]
-        [InlineData("byte")]
-        [InlineData("double")]
-        [InlineData("float")]
-        [InlineData("int")]
-        [InlineData("long")]
-        [InlineData("sbyte")]
-        [InlineData("short")]
-        [InlineData("uint")]
-        [InlineData("ulong")]
-        [InlineData("ushort")]
+        [MemberData(nameof(CSharpTypes))]
         public Task CS_UseVolatileRead(string type)
         {
             var code = $$"""
@@ -255,6 +252,78 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
                                   void M({{type}} arg)
                                   {
                                       Volatile.Read(ref arg);
+                                  }
+                              }
+                              """;
+
+            return VerifyCsharpAsync(code, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(CSharpTypes))]
+        public Task CS_UseVolatileRead_WithNamedArguments(string type)
+        {
+            var code = $$"""
+                         using System;
+                         using System.Threading;
+
+                         #nullable enable
+                         class Test
+                         {
+                             void M({{type}} arg)
+                             {
+                                 {|#0:Thread.VolatileRead(address: ref arg)|};
+                             }
+                         }
+                         """;
+            var fixedCode = $$"""
+                              using System;
+                              using System.Threading;
+
+                              #nullable enable
+                              class Test
+                              {
+                                  void M({{type}} arg)
+                                  {
+                                      Volatile.Read(ref arg);
+                                  }
+                              }
+                              """;
+
+            return VerifyCsharpAsync(code, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(CSharpTypes))]
+        public Task CS_UseVolatileRead_WithTrivia(string type)
+        {
+            var code = $$"""
+                         using System;
+                         using System.Threading;
+
+                         #nullable enable
+                         class Test
+                         {
+                             void M({{type}} arg)
+                             {
+                                 // Trivia prefix
+                                 {|#0:Thread.VolatileRead(ref arg)|}; // Trivia infix
+                                 // Trivia suffix
+                             }
+                         }
+                         """;
+            var fixedCode = $$"""
+                              using System;
+                              using System.Threading;
+
+                              #nullable enable
+                              class Test
+                              {
+                                  void M({{type}} arg)
+                                  {
+                                      // Trivia prefix
+                                      Volatile.Read(ref arg); // Trivia infix
+                                      // Trivia suffix
                                   }
                               }
                               """;
@@ -327,18 +396,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
         }
 
         [Theory]
-        [InlineData("IntPtr")]
-        [InlineData("UIntPtr")]
-        [InlineData("byte")]
-        [InlineData("double")]
-        [InlineData("float")]
-        [InlineData("int")]
-        [InlineData("long")]
-        [InlineData("sbyte")]
-        [InlineData("short")]
-        [InlineData("uint")]
-        [InlineData("ulong")]
-        [InlineData("ushort")]
+        [MemberData(nameof(CSharpTypes))]
         public Task CS_UseVolatileWrite(string type)
         {
             var code = $$"""
@@ -364,6 +422,78 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
                                   void M({{type}} arg, {{type}} value)
                                   {
                                       Volatile.Write(ref arg, value);
+                                  }
+                              }
+                              """;
+
+            return VerifyCsharpAsync(code, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(CSharpTypes))]
+        public Task CS_UseVolatileWrite_WithNamedArguments(string type)
+        {
+            var code = $$"""
+                         using System;
+                         using System.Threading;
+
+                         #nullable enable
+                         class Test
+                         {
+                             void M({{type}} arg, {{type}} value)
+                             {
+                                 {|#0:Thread.VolatileWrite(address: ref arg, value: value)|};
+                             }
+                         }
+                         """;
+            var fixedCode = $$"""
+                              using System;
+                              using System.Threading;
+
+                              #nullable enable
+                              class Test
+                              {
+                                  void M({{type}} arg, {{type}} value)
+                                  {
+                                      Volatile.Write(ref arg, value);
+                                  }
+                              }
+                              """;
+
+            return VerifyCsharpAsync(code, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(CSharpTypes))]
+        public Task CS_UseVolatileWrite_WithWrivia(string type)
+        {
+            var code = $$"""
+                         using System;
+                         using System.Threading;
+
+                         #nullable enable
+                         class Test
+                         {
+                             void M({{type}} arg, {{type}} value)
+                             {
+                                 // Trivia prefix
+                                 {|#0:Thread.VolatileWrite(ref arg, value)|}; // Trivia infix
+                                 // Trivia suffix
+                             }
+                         }
+                         """;
+            var fixedCode = $$"""
+                              using System;
+                              using System.Threading;
+
+                              #nullable enable
+                              class Test
+                              {
+                                  void M({{type}} arg, {{type}} value)
+                                  {
+                                      // Trivia prefix
+                                      Volatile.Write(ref arg, value); // Trivia infix
+                                      // Trivia suffix
                                   }
                               }
                               """;
@@ -436,19 +566,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
         }
 
         [Theory]
-        [InlineData("IntPtr")]
-        [InlineData("UIntPtr")]
-        [InlineData("Byte")]
-        [InlineData("Double")]
-        [InlineData("Single")]
-        [InlineData("Integer")]
-        [InlineData("Long")]
-        [InlineData("Object")]
-        [InlineData("Sbyte")]
-        [InlineData("Short")]
-        [InlineData("UInteger")]
-        [InlineData("ULong")]
-        [InlineData("UShort")]
+        [MemberData(nameof(VisualBasicTypes))]
         public Task VB_UseVolatileRead(string type)
         {
             var code = $$"""
@@ -476,19 +594,67 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
         }
 
         [Theory]
-        [InlineData("IntPtr")]
-        [InlineData("UIntPtr")]
-        [InlineData("Byte")]
-        [InlineData("Double")]
-        [InlineData("Single")]
-        [InlineData("Integer")]
-        [InlineData("Long")]
-        [InlineData("Object")]
-        [InlineData("Sbyte")]
-        [InlineData("Short")]
-        [InlineData("UInteger")]
-        [InlineData("ULong")]
-        [InlineData("UShort")]
+        [MemberData(nameof(VisualBasicTypes))]
+        public Task VB_UseVolatileRead_WithNamedArguments(string type)
+        {
+            var code = $$"""
+                         Imports System
+                         Imports System.Threading
+
+                         Class Test
+                             Sub M(arg As {{type}})
+                                 {|#0:Thread.VolatileRead(address:=arg)|}
+                             End Sub
+                         End Class
+                         """;
+            var fixedCode = $"""
+                             Imports System
+                             Imports System.Threading
+
+                             Class Test
+                                 Sub M(arg As {type})
+                                     Volatile.Read(arg)
+                                 End Sub
+                             End Class
+                             """;
+
+            return VerifyVisualBasicAsync(code, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(VisualBasicTypes))]
+        public Task VB_UseVolatileRead_WithTrivia(string type)
+        {
+            var code = $$"""
+                         Imports System
+                         Imports System.Threading
+
+                         Class Test
+                             Sub M(arg As {{type}})
+                                 ' Trivia prefix
+                                 {|#0:Thread.VolatileRead(arg)|} ' Trivia infix
+                                 ' Trivia suffix
+                             End Sub
+                         End Class
+                         """;
+            var fixedCode = $"""
+                             Imports System
+                             Imports System.Threading
+
+                             Class Test
+                                 Sub M(arg As {type})
+                                     ' Trivia prefix
+                                     Volatile.Read(arg) ' Trivia infix
+                                     ' Trivia suffix
+                                 End Sub
+                             End Class
+                             """;
+
+            return VerifyVisualBasicAsync(code, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(VisualBasicTypes))]
         public Task VB_UseVolatileWrite(string type)
         {
             var code = $$"""
@@ -515,6 +681,66 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
             return VerifyVisualBasicAsync(code, fixedCode);
         }
 
+        [Theory]
+        [MemberData(nameof(VisualBasicTypes))]
+        public Task VB_UseVolatileWrite_WithNamedArguments(string type)
+        {
+            var code = $$"""
+                         Imports System
+                         Imports System.Threading
+
+                         Class Test
+                             Sub M(arg As {{type}}, value As {{type}})
+                                 {|#0:Thread.VolatileWrite(address:=arg, value:=value)|}
+                             End Sub
+                         End Class
+                         """;
+            var fixedCode = $"""
+                             Imports System
+                             Imports System.Threading
+
+                             Class Test
+                                 Sub M(arg As {type}, value As {type})
+                                     Volatile.Write(arg, value)
+                                 End Sub
+                             End Class
+                             """;
+
+            return VerifyVisualBasicAsync(code, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(VisualBasicTypes))]
+        public Task VB_UseVolatileWrite_WithTrivia(string type)
+        {
+            var code = $$"""
+                         Imports System
+                         Imports System.Threading
+
+                         Class Test
+                             Sub M(arg As {{type}}, value As {{type}})
+                                 ' Trivia prefix
+                                 {|#0:Thread.VolatileWrite(arg, value)|} ' Trivia infix
+                                 ' Trivia suffix
+                             End Sub
+                         End Class
+                         """;
+            var fixedCode = $"""
+                             Imports System
+                             Imports System.Threading
+
+                             Class Test
+                                 Sub M(arg As {type}, value As {type})
+                                     ' Trivia prefix
+                                     Volatile.Write(arg, value) ' Trivia infix
+                                     ' Trivia suffix
+                                 End Sub
+                             End Class
+                             """;
+
+            return VerifyVisualBasicAsync(code, fixedCode);
+        }
+
         private static Task VerifyCsharpAsync(string code, string fixedCode)
         {
             return new VerifyCS.Test
@@ -527,7 +753,10 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
                 {
                     Sources = { fixedCode, CsharpSystemThreadingThread }
                 },
-                ExpectedDiagnostics = { new DiagnosticResult("SYSLIB0054", DiagnosticSeverity.Warning).WithLocation(0) },
+                ExpectedDiagnostics =
+                {
+                    new DiagnosticResult("SYSLIB0054", DiagnosticSeverity.Warning).WithLocation(0)
+                },
                 LanguageVersion = LanguageVersion.CSharp8,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50
             }.RunAsync();
@@ -545,7 +774,10 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
                 {
                     Sources = { fixedCode, VisualBasicSystemThreadingThread }
                 },
-                ExpectedDiagnostics = { new DiagnosticResult("SYSLIB0054", DiagnosticSeverity.Warning).WithLocation(0) },
+                ExpectedDiagnostics =
+                {
+                    new DiagnosticResult("SYSLIB0054", DiagnosticSeverity.Warning).WithLocation(0)
+                },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50
             }.RunAsync();
         }

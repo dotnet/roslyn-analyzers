@@ -285,7 +285,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
                               {
                                   void M({{type}} arg)
                                   {
-                                      Volatile.Read(ref arg);
+                                      Volatile.Read(location: ref arg);
                                   }
                               }
                               """;
@@ -455,7 +455,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
                               {
                                   void M({{type}} arg, {{type}} value)
                                   {
-                                      Volatile.Write(ref arg, value);
+                                      Volatile.Write(location: ref arg, value: value);
                                   }
                               }
                               """;
@@ -465,7 +465,75 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
 
         [Theory]
         [MemberData(nameof(CSharpTypes))]
-        public Task CS_UseVolatileWrite_WithWrivia(string type)
+        public Task CS_UseVolatileWrite_WithReversedArguments(string type)
+        {
+            var code = $$"""
+                         using System;
+                         using System.Threading;
+
+                         #nullable enable
+                         class Test
+                         {
+                             void M({{type}} arg, {{type}} value)
+                             {
+                                 {|#0:Thread.VolatileWrite(value: value, address: ref arg)|};
+                             }
+                         }
+                         """;
+            var fixedCode = $$"""
+                              using System;
+                              using System.Threading;
+
+                              #nullable enable
+                              class Test
+                              {
+                                  void M({{type}} arg, {{type}} value)
+                                  {
+                                      Volatile.Write(value: value, location: ref arg);
+                                  }
+                              }
+                              """;
+
+            return VerifyCsharpAsync(code, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(CSharpTypes))]
+        public Task CS_UseVolatileWrite_WithSingleNamedArgument(string type)
+        {
+            var code = $$"""
+                         using System;
+                         using System.Threading;
+
+                         #nullable enable
+                         class Test
+                         {
+                             void M({{type}} arg, {{type}} value)
+                             {
+                                 {|#0:Thread.VolatileWrite(address: ref arg, value)|};
+                             }
+                         }
+                         """;
+            var fixedCode = $$"""
+                              using System;
+                              using System.Threading;
+
+                              #nullable enable
+                              class Test
+                              {
+                                  void M({{type}} arg, {{type}} value)
+                                  {
+                                      Volatile.Write(location: ref arg, value);
+                                  }
+                              }
+                              """;
+
+            return VerifyCsharpAsync(code, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(CSharpTypes))]
+        public Task CS_UseVolatileWrite_WithTrivia(string type)
         {
             var code = $$"""
                          using System;
@@ -613,7 +681,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
 
                              Class Test
                                  Sub M(arg As {type})
-                                     Volatile.Read(arg)
+                                     Volatile.Read(location:=arg)
                                  End Sub
                              End Class
                              """;
@@ -701,7 +769,63 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
 
                              Class Test
                                  Sub M(arg As {type}, value As {type})
-                                     Volatile.Write(arg, value)
+                                     Volatile.Write(location:=arg, value:=value)
+                                 End Sub
+                             End Class
+                             """;
+
+            return VerifyVisualBasicAsync(code, fixedCode);
+        }
+
+        [Theory(Skip = "Visual Basic's method arguments are not passed to the fixer in the order they are passed in code, so this does currently not work.")]
+        [MemberData(nameof(VisualBasicTypes))]
+        public Task VB_UseVolatileWrite_WithReversedArguments(string type)
+        {
+            var code = $$"""
+                         Imports System
+                         Imports System.Threading
+
+                         Class Test
+                             Sub M(arg As {{type}}, value As {{type}})
+                                 {|#0:Thread.VolatileWrite(value:=value, address:=arg)|}
+                             End Sub
+                         End Class
+                         """;
+            var fixedCode = $"""
+                             Imports System
+                             Imports System.Threading
+
+                             Class Test
+                                 Sub M(arg As {type}, value As {type})
+                                     Volatile.Write(value:=value, location:=arg)
+                                 End Sub
+                             End Class
+                             """;
+
+            return VerifyVisualBasicAsync(code, fixedCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(VisualBasicTypes))]
+        public Task VB_UseVolatileWrite_WithSingleNamedArgument(string type)
+        {
+            var code = $$"""
+                         Imports System
+                         Imports System.Threading
+
+                         Class Test
+                             Sub M(arg As {{type}}, value As {{type}})
+                                 {|#0:Thread.VolatileWrite(address:=arg, value)|}
+                             End Sub
+                         End Class
+                         """;
+            var fixedCode = $"""
+                             Imports System
+                             Imports System.Threading
+
+                             Class Test
+                                 Sub M(arg As {type}, value As {type})
+                                     Volatile.Write(location:=arg, value)
                                  End Sub
                              End Class
                              """;

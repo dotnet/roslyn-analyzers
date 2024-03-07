@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Composition;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Usage;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Usage
@@ -14,17 +15,32 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     internal sealed class CSharpUseVolatileReadWriteFixer : UseVolatileReadWriteFixer
     {
-        protected override bool TryGetThreadVolatileReadWriteArguments(SyntaxNode invocation, string methodName, [NotNullWhen(true)] out IEnumerable<SyntaxNode>? arguments)
+        protected override SyntaxNode GetArgumentForVolatileReadCall(IArgumentOperation argument, IParameterSymbol volatileReadParameter)
         {
-            arguments = null;
-            if (invocation is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax m } i && m.Name.Identifier.Text == methodName)
+            var argumentSyntax = (ArgumentSyntax)argument.Syntax;
+            if (argumentSyntax.NameColon is null)
             {
-                arguments = i.ArgumentList.Arguments.Select(a => a.WithNameColon(null));
-
-                return true;
+                return argumentSyntax;
             }
 
-            return false;
+            return argumentSyntax.WithNameColon(SyntaxFactory.NameColon(volatileReadParameter.Name));
+        }
+
+        protected override IEnumerable<SyntaxNode> GetArgumentForVolatileWriteCall(ImmutableArray<IArgumentOperation> arguments, ImmutableArray<IParameterSymbol> volatileWriteParameters)
+        {
+            foreach (var argument in arguments)
+            {
+                var argumentSyntax = (ArgumentSyntax)argument.Syntax;
+                if (argumentSyntax.NameColon is null)
+                {
+                    yield return argumentSyntax;
+                }
+                else
+                {
+                    var parameterName = volatileWriteParameters[argument.Parameter!.Ordinal].Name;
+                    yield return argumentSyntax.WithNameColon(SyntaxFactory.NameColon(parameterName));
+                }
+            }
         }
     }
 }

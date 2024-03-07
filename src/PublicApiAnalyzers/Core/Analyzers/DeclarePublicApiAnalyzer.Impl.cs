@@ -599,7 +599,13 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 {
                     for (var current = symbol; current is not null; current = current.ContainingSymbol)
                     {
-                        foreach (var attribute in current.GetAttributes())
+                        var attributes = current.GetAttributes();
+                        if (attributes.IsEmpty && current is IMethodSymbol { AssociatedSymbol: IPropertySymbol property })
+                        {
+                            attributes = property.GetAttributes();
+                        }
+
+                        foreach (var attribute in attributes)
                         {
                             if (attribute.AttributeClass is { Name: "ExperimentalAttribute", ContainingSymbol: INamespaceSymbol { Name: nameof(System.Diagnostics.CodeAnalysis), ContainingNamespace: { Name: nameof(System.Diagnostics), ContainingNamespace: { Name: nameof(System), ContainingNamespace.IsGlobalNamespace: true } } } })
                             {

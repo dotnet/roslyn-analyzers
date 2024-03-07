@@ -3302,7 +3302,7 @@ C.C() -> void";
             var source = $$"""
                            using System.Diagnostics.CodeAnalysis;
 
-                           class C
+                           {{EnabledModifierCSharp}} class C
                            {
                                [Experimental("RSEXPERIMENTAL001")]
                                {{EnabledModifierCSharp}} bool DisableNullableAnalysis { {|{{AddNewApiId}}:get|}; }
@@ -3352,7 +3352,7 @@ C.C() -> void";
             var source = $$"""
                            using System.Diagnostics.CodeAnalysis;
 
-                           class C
+                           {{EnabledModifierCSharp}} class C
                            {
                                [Experimental("RSEXPERIMENTAL001")]
                                {{EnabledModifierCSharp}} abstract bool DisableNullableAnalysis { {|{{AddNewApiId}}:get|}; }

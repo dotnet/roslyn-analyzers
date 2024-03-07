@@ -80,6 +80,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             private readonly ConcurrentDictionary<SyntaxTree, ImmutableArray<string>> _skippedNamespacesCache = new();
             private readonly Lazy<IReadOnlyDictionary<string, ApiLine>> _apiMap;
             private readonly AnalyzerOptions _analyzerOptions;
+            private readonly INamedTypeSymbol? _experimentalAttributeType;
 
             internal Impl(Compilation compilation, ImmutableDictionary<AdditionalText, SourceText> additionalFiles, ApiData shippedData, ApiData unshippedData, bool isPublic, AnalyzerOptions analyzerOptions)
             {
@@ -91,6 +92,9 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 _apiMap = new Lazy<IReadOnlyDictionary<string, ApiLine>>(() => CreateApiMap(shippedData, unshippedData));
                 _isPublic = isPublic;
                 _analyzerOptions = analyzerOptions;
+
+                var typeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
+                _experimentalAttributeType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsCodeAnalysisExperimentalAttribute);
 
                 static IReadOnlyDictionary<string, ApiLine> CreateApiMap(ApiData shippedData, ApiData unshippedData)
                 {
@@ -589,25 +593,40 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             private ApiName GetApiName(ISymbol symbol)
             {
-                var experimentName = getExperimentName(symbol);
+                var experimentName = getExperimentName(symbol, _experimentalAttributeType);
 
                 return new ApiName(
                     getApiString(_compilation, symbol, experimentName, s_publicApiFormat),
                     getApiString(_compilation, symbol, experimentName, s_publicApiFormatWithNullability));
 
-                static string? getExperimentName(ISymbol symbol)
+                static string? getExperimentName(ISymbol symbol, INamedTypeSymbol? experimentalAttribute)
                 {
+                    if (experimentalAttribute is null)
+                    {
+                        return null;
+                    }
+
                     for (var current = symbol; current is not null; current = current.ContainingSymbol)
                     {
-                        var attributes = current.GetAttributes();
-                        if (attributes.IsEmpty && current is IMethodSymbol { AssociatedSymbol: IPropertySymbol property })
+                        string? diagnosticId = GetDiagnosticIdFromExperimentalAttribute(current.GetAttributes(), experimentalAttribute);
+                        if (diagnosticId is null && current is IMethodSymbol { AssociatedSymbol: IPropertySymbol property })
                         {
-                            attributes = property.GetAttributes();
+                            diagnosticId = GetDiagnosticIdFromExperimentalAttribute(property.GetAttributes(), experimentalAttribute);
                         }
 
+                        if (diagnosticId is not null)
+                        {
+                            return diagnosticId;
+                        }
+                    }
+
+                    return null;
+
+                    static string? GetDiagnosticIdFromExperimentalAttribute(ImmutableArray<AttributeData> attributes, INamedTypeSymbol experimentalAttribute)
+                    {
                         foreach (var attribute in attributes)
                         {
-                            if (attribute.AttributeClass is { Name: "ExperimentalAttribute", ContainingSymbol: INamespaceSymbol { Name: nameof(System.Diagnostics.CodeAnalysis), ContainingNamespace: { Name: nameof(System.Diagnostics), ContainingNamespace: { Name: nameof(System), ContainingNamespace.IsGlobalNamespace: true } } } })
+                            if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, experimentalAttribute))
                             {
                                 if (attribute.ConstructorArguments is not [{ Kind: TypedConstantKind.Primitive, Type.SpecialType: SpecialType.System_String, Value: string diagnosticId }])
                                     return "???";
@@ -616,9 +635,9 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                             }
                         }
-                    }
 
-                    return null;
+                        return null;
+                    }
                 }
 
                 static string getApiString(Compilation compilation, ISymbol symbol, string? experimentName, SymbolDisplayFormat format)

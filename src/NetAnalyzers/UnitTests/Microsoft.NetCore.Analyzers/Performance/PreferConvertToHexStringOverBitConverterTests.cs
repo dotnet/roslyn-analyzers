@@ -149,9 +149,37 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(string s, byte[] data, int start)
                     {
-                        s = Convert.ToHexString(data, start, data.Length - start);
-                        s = Convert.ToHexString(data, start, data.Length - start);
-                        s = Convert.ToHexString(data, start, data.Length - start);
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task DataWithStartNoSystemImport_OffersFixer_CS()
+        {
+            string source = """
+                class C
+                {
+                    void M(string s, byte[] data, int start)
+                    {
+                        s = [|System.BitConverter.ToString(data, start).Replace("-", "")|];
+                    }
+                }
+                """;
+
+            string fixedSource = """
+                using System;
+
+                class C
+                {
+                    void M(string s, byte[] data, int start)
+                    {
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
                     }
                 }
                 """;
@@ -184,9 +212,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(string s, byte[] data, int start)
                     {
-                        s = Convert.ToHexString(data, start, data.Length - start);
-                        s = Convert.ToHexString(data, start, data.Length - start);
-                        s = Convert.ToHexString(data, start, data.Length - start);
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
                     }
                 }
                 """;
@@ -221,12 +249,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(string s, byte[] data, int start)
                     {
-                        s = Convert.ToHexString(data, start, data.Length - start);
-                        s = Convert.ToHexString(data, start, data.Length - start);
-                        s = Convert.ToHexString(data, start, data.Length - start);
-                        s = Convert.ToHexString(data, start, data.Length - start);
-                        s = Convert.ToHexString(data, start, data.Length - start);
-                        s = Convert.ToHexString(data, start, data.Length - start);
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
                     }
                 }
                 """;
@@ -436,7 +464,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     void M(string s, byte[] data, int start, int length)
                     {
                         s = Convert.ToHexString(data);
-                        s = Convert.ToHexString(data, start, data.Length - start);
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
                         s = Convert.ToHexString(data, start, length);
                     }
                 }
@@ -472,7 +500,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(string s, byte[] data, int start, int length)
                     {
-                        s = Convert.ToHexString(data, start, data.Length - start);
+                        s = Convert.ToHexString(data.AsSpan().Slice(start));
                         s = Convert.ToHexString(data, start, length);
                         s = Convert.ToHexString(data, start, length);
                         s = Convert.ToHexString(data, start, length);
@@ -781,9 +809,33 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 Class C
                     Sub M(s As String, data As Byte(), start as Integer)
-                        s = Convert.ToHexString(data, start, data.Length - start)
-                        s = Convert.ToHexString(data, start, data.Length - start)
-                        s = Convert.ToHexString(data, start, data.Length - start)
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task DataWithStartNoSystemImport_OffersFixer_VB()
+        {
+            string source = """
+                Class C
+                    Sub M(s As String, data As Byte(), start As Integer)
+                        s = [|System.BitConverter.ToString(data, start).Replace("-", "")|]
+                    End Sub
+                End Class
+                """;
+
+            string fixedSource = """
+                Imports System
+
+                Class C
+                    Sub M(s As String, data As Byte(), start As Integer)
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
                     End Sub
                 End Class
                 """;
@@ -812,9 +864,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 Class C
                     Sub M(s As String, data As Byte(), start as Integer)
-                        s = Convert.ToHexString(data, start, data.Length - start)
-                        s = Convert.ToHexString(data, start, data.Length - start)
-                        s = Convert.ToHexString(data, start, data.Length - start)
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
                     End Sub
                 End Class
                 """;
@@ -845,12 +897,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 Class C
                     Sub M(s As String, data As Byte(), start as Integer)
-                        s = Convert.ToHexString(data, start, data.Length - start)
-                        s = Convert.ToHexString(data, start, data.Length - start)
-                        s = Convert.ToHexString(data, start, data.Length - start)
-                        s = Convert.ToHexString(data, start, data.Length - start)
-                        s = Convert.ToHexString(data, start, data.Length - start)
-                        s = Convert.ToHexString(data, start, data.Length - start)
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
                     End Sub
                 End Class
                 """;
@@ -1036,7 +1088,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 Class C
                     Sub M(s As String, data As Byte(), start as Integer, length as Integer)
                         s = Convert.ToHexString(data)
-                        s = Convert.ToHexString(data, start, data.Length - start)
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
                         s = Convert.ToHexString(data, start, length)
                     End Sub
                 End Class
@@ -1068,7 +1120,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 Class C
                     Sub M(s As String, data As Byte(), start as Integer, length as Integer)
-                        s = Convert.ToHexString(data, start, data.Length - start)
+                        s = Convert.ToHexString(data.AsSpan().Slice(start))
                         s = Convert.ToHexString(data, start, length)
                         s = Convert.ToHexString(data, start, length)
                         s = Convert.ToHexString(data, start, length)

@@ -128,6 +128,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 var byteArrayType = compilation.CreateArrayTypeSymbol(compilation.GetSpecialType(SpecialType.System_Byte));
                 var int32Type = compilation.GetSpecialType(SpecialType.System_Int32);
                 var stringType = compilation.GetSpecialType(SpecialType.System_String);
+                var rosType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1);
 
                 var stringReplaceMethods = stringType.GetMembers(Replace)
                     .OfType<IMethodSymbol>()
@@ -149,18 +150,20 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 var convertToHexStringMethods = convertType.GetMembers(ToHexString).OfType<IMethodSymbol>();
                 var convertToHexString = convertToHexStringMethods.GetFirstOrDefaultMemberWithParameterTypes(byteArrayType);
+                var convertToHexStringRos = rosType is not null ? convertToHexStringMethods.GetFirstOrDefaultMemberWithParameterTypes(rosType) : null;
                 var convertToHexStringStartLength = convertToHexStringMethods.GetFirstOrDefaultMemberWithParameterTypes(byteArrayType, int32Type, int32Type);
 
                 // BitConverter.ToString(data) needs Convert.ToHexString(data)
                 bool hasMatchingMethodsNoAdditionalParams = bitConverterToString is not null && convertToHexString is not null;
 
-                // BitConverter.ToString(data, start) and BitConverter.ToString(data, start, length) need Convert.ToHexString(data, start, length)
-                bool hasMatchingMethodsStartLength =
-                    (bitConverterToStringStart is not null || bitConverterToStringStartLength is not null) &&
-                    convertToHexStringStartLength is not null;
+                // BitConverter.ToString(data, start) needs ROS overload Convert.ToHexString(bytes)
+                bool hasMatchingMethodsStart = bitConverterToStringStart is not null && convertToHexStringRos is not null;
+
+                // BitConverter.ToString(data, start, length) needs Convert.ToHexString(data, start, length)
+                bool hasMatchingMethodsStartLength = bitConverterToStringStartLength is not null && convertToHexStringStartLength is not null;
 
                 // Bail out if we do not have a matching pair of BitConverter.ToString and Convert.ToHexString methods or no string.Replace method.
-                if ((!hasMatchingMethodsNoAdditionalParams && !hasMatchingMethodsStartLength) ||
+                if ((!hasMatchingMethodsNoAdditionalParams && !hasMatchingMethodsStart && !hasMatchingMethodsStartLength) ||
                     stringReplaceMethods.IsEmpty)
                 {
                     return false;

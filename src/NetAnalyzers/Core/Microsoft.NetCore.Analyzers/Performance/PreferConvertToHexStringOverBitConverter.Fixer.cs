@@ -42,10 +42,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var semanticModel = await context.Document.GetRequiredSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             var operation = semanticModel.GetOperation(node, context.CancellationToken);
 
-            if (operation is not IInvocationOperation replaceInvocation ||
-                replaceInvocation.Instance is not IInvocationOperation instanceInvocation ||
+            if (operation is not IInvocationOperation invocation ||
                 !PreferConvertToHexStringOverBitConverterAnalyzer.RequiredSymbols.TryGetSymbols(semanticModel.Compilation, out var symbols) ||
-                !symbols.TryGetBitConverterToStringInvocation(instanceInvocation, out var bitConverterInvocation, out var toLowerInvocation))
+                !symbols.TryGetBitConverterToStringInvocationAndReplacement(invocation, out var bitConverterInvocation, out var convertToHexStringMethod, out var toLowerInvocation))
             {
                 return;
             }
@@ -63,11 +62,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 var generator = editor.Generator;
                 var bitConverterArgumentsInParameterOrder = bitConverterInvocation.Arguments.GetArgumentsInParameterOrder();
 
-                var convertToHexStringSymbol = bitConverterArgumentsInParameterOrder.Length == 1
-                    ? symbols.ConvertToHexString!
-                    : symbols.ConvertToHexStringStartLength!;
-                var typeExpression = generator.TypeExpressionForStaticMemberAccess(convertToHexStringSymbol.ContainingType);
-                var methodExpression = generator.MemberAccessExpression(typeExpression, convertToHexStringSymbol.Name);
+                var typeExpression = generator.TypeExpressionForStaticMemberAccess(convertToHexStringMethod.ContainingType);
+                var methodExpression = generator.MemberAccessExpression(typeExpression, convertToHexStringMethod.Name);
                 var methodInvocation = bitConverterArgumentsInParameterOrder.Length switch
                 {
                     // BitConverter.ToString(data).Replace("-", "") => Convert.ToHexString(data)
@@ -88,7 +84,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     _ => throw new NotImplementedException()
                 };
 
-                // BitConverter.ToString(data).ToLower().Replace("-", "") => Convert.ToHexString(data).ToLower()
+                // This branch is hit when string.ToLower* is used and Convert.ToHexStringLower is not available.
                 if (toLowerInvocation is not null)
                 {
                     methodInvocation = generator.InvocationExpression(
@@ -96,7 +92,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         toLowerInvocation.Arguments.Select(a => a.Value.Syntax).ToArray());
                 }
 
-                editor.ReplaceNode(replaceInvocation.Syntax, methodInvocation.WithTriviaFrom(replaceInvocation.Syntax));
+                editor.ReplaceNode(invocation.Syntax, methodInvocation.WithTriviaFrom(invocation.Syntax));
 
                 return context.Document.WithSyntaxRoot(editor.GetChangedRoot());
             }

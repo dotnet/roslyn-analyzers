@@ -372,7 +372,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task ToLowerAfterReplaceIsPreserved_OffersFixer_CS()
+        public async Task ToLowerAfterReplaceIsPreservedWhenToHexStringLowerIsNotAvailable_OffersFixer_CS()
         {
             string source = """
                 using System;
@@ -381,9 +381,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(string s, byte[] data)
                     {
-                        s = [|BitConverter.ToString(data).Replace("-", "")|].ToLower();
-                        s = [|BitConverter.ToString(data).Replace("-", "")|].ToLower(null);
-                        s = [|BitConverter.ToString(data).Replace("-", "")|].ToLowerInvariant();
+                        s = [|BitConverter.ToString(data).Replace("-", "").ToLower()|];
+                        s = [|BitConverter.ToString(data).Replace("-", "").ToLower(null)|];
+                        s = [|BitConverter.ToString(data).Replace("-", "").ToLowerInvariant()|];
                     }
                 }
                 """;
@@ -406,7 +406,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task ToLowerBeforeReplaceIsPreserved_OffersFixer_CS()
+        public async Task ToLowerBeforeReplaceIsPreservedWhenToHexStringLowerIsNotAvailable_OffersFixer_CS()
         {
             string source = """
                 using System;
@@ -437,6 +437,98 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 """;
 
             await VerifyCSharpCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task ToLowerAfterReplaceIsReplacedWithToHexStringLower_OffersFixer_CS()
+        {
+            string source = """
+                using System;
+
+                class C
+                {
+                    void M(string s, byte[] data, int start, int length)
+                    {
+                        s = [|BitConverter.ToString(data).Replace("-", "").ToLower()|];
+                        s = [|BitConverter.ToString(data).Replace("-", "").ToLower(null)|];
+                        s = [|BitConverter.ToString(data).Replace("-", "").ToLowerInvariant()|];
+                        s = [|BitConverter.ToString(data, start).Replace("-", "").ToLower()|];
+                        s = [|BitConverter.ToString(data, start).Replace("-", "").ToLower(null)|];
+                        s = [|BitConverter.ToString(data, start).Replace("-", "").ToLowerInvariant()|];
+                        s = [|BitConverter.ToString(data, start, length).Replace("-", "").ToLower()|];
+                        s = [|BitConverter.ToString(data, start, length).Replace("-", "").ToLower(null)|];
+                        s = [|BitConverter.ToString(data, start, length).Replace("-", "").ToLowerInvariant()|];
+                    }
+                }
+                """;
+
+            string fixedSource = """
+                using System;
+
+                class C
+                {
+                    void M(string s, byte[] data, int start, int length)
+                    {
+                        s = Convert.ToHexStringLower(data);
+                        s = Convert.ToHexStringLower(data);
+                        s = Convert.ToHexStringLower(data);
+                        s = Convert.ToHexStringLower(data.AsSpan().Slice(start));
+                        s = Convert.ToHexStringLower(data.AsSpan().Slice(start));
+                        s = Convert.ToHexStringLower(data.AsSpan().Slice(start));
+                        s = Convert.ToHexStringLower(data, start, length);
+                        s = Convert.ToHexStringLower(data, start, length);
+                        s = Convert.ToHexStringLower(data, start, length);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, fixedSource, Net90);
+        }
+
+        [Fact]
+        public async Task ToLowerBeforeReplaceIsReplacedWithToHexStringLower_OffersFixer_CS()
+        {
+            string source = """
+                using System;
+
+                class C
+                {
+                    void M(string s, byte[] data, int start, int length)
+                    {
+                        s = [|BitConverter.ToString(data).ToLower().Replace("-", "")|];
+                        s = [|BitConverter.ToString(data).ToLower(null).Replace("-", "")|];
+                        s = [|BitConverter.ToString(data).ToLowerInvariant().Replace("-", "")|];
+                        s = [|BitConverter.ToString(data, start).ToLower().Replace("-", "")|];
+                        s = [|BitConverter.ToString(data, start).ToLower(null).Replace("-", "")|];
+                        s = [|BitConverter.ToString(data, start).ToLowerInvariant().Replace("-", "")|];
+                        s = [|BitConverter.ToString(data, start, length).ToLower().Replace("-", "")|];
+                        s = [|BitConverter.ToString(data, start, length).ToLower(null).Replace("-", "")|];
+                        s = [|BitConverter.ToString(data, start, length).ToLowerInvariant().Replace("-", "")|];
+                    }
+                }
+                """;
+
+            string fixedSource = """
+                using System;
+
+                class C
+                {
+                    void M(string s, byte[] data, int start, int length)
+                    {
+                        s = Convert.ToHexStringLower(data);
+                        s = Convert.ToHexStringLower(data);
+                        s = Convert.ToHexStringLower(data);
+                        s = Convert.ToHexStringLower(data.AsSpan().Slice(start));
+                        s = Convert.ToHexStringLower(data.AsSpan().Slice(start));
+                        s = Convert.ToHexStringLower(data.AsSpan().Slice(start));
+                        s = Convert.ToHexStringLower(data, start, length);
+                        s = Convert.ToHexStringLower(data, start, length);
+                        s = Convert.ToHexStringLower(data, start, length);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, fixedSource, Net90);
         }
 
         [Fact]
@@ -683,13 +775,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await new VerifyCS.Test
-            {
-                TestCode = source,
-                FixedCode = source,
-                // .NET Core 3.1 does not have access to Convert.ToHexString
-                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31
-            }.RunAsync();
+            // .NET Core 3.1 does not have access to Convert.ToHexString
+            await VerifyCSharpCodeFixAsync(source, source, ReferenceAssemblies.NetCore.NetCoreApp31);
         }
 
         [Fact]
@@ -1008,16 +1095,16 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task ToLowerAfterReplaceIsPreserved_OffersFixer_VB()
+        public async Task ToLowerAfterReplaceIsPreservedWhenToHexStringLowerIsNotAvailable_OffersFixer_VB()
         {
             string source = """
                 Imports System
 
                 Class C
                     Sub M(s As String, data As Byte())
-                        s = [|BitConverter.ToString(data).Replace("-", "")|].ToLower()
-                        s = [|BitConverter.ToString(data).Replace("-", "")|].ToLower(Nothing)
-                        s = [|BitConverter.ToString(data).Replace("-", "")|].ToLowerInvariant()
+                        s = [|BitConverter.ToString(data).Replace("-", "").ToLower()|]
+                        s = [|BitConverter.ToString(data).Replace("-", "").ToLower(Nothing)|]
+                        s = [|BitConverter.ToString(data).Replace("-", "").ToLowerInvariant()|]
                     End Sub
                 End Class
                 """;
@@ -1038,7 +1125,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task ToLowerBeforeReplaceIsPreserved_OffersFixer_VB()
+        public async Task ToLowerBeforeReplaceIsPreservedWhenToHexStringLowerIsNotAvailable_OffersFixer_VB()
         {
             string source = """
                 Imports System
@@ -1065,6 +1152,90 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 """;
 
             await VerifyBasicCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task ToLowerAfterReplaceIsReplacedWithToHexStringLower_OffersFixer_VB()
+        {
+            string source = """
+                Imports System
+
+                Class C
+                    Sub M(s As String, data As Byte(), start as Integer, length as Integer)
+                        s = [|BitConverter.ToString(data).Replace("-", "").ToLower()|]
+                        s = [|BitConverter.ToString(data).Replace("-", "").ToLower(Nothing)|]
+                        s = [|BitConverter.ToString(data).Replace("-", "").ToLowerInvariant()|]
+                        s = [|BitConverter.ToString(data, start).Replace("-", "").ToLower()|]
+                        s = [|BitConverter.ToString(data, start).Replace("-", "").ToLower(Nothing)|]
+                        s = [|BitConverter.ToString(data, start).Replace("-", "").ToLowerInvariant()|]
+                        s = [|BitConverter.ToString(data, start, length).Replace("-", "").ToLower()|]
+                        s = [|BitConverter.ToString(data, start, length).Replace("-", "").ToLower(Nothing)|]
+                        s = [|BitConverter.ToString(data, start, length).Replace("-", "").ToLowerInvariant()|]
+                    End Sub
+                End Class
+                """;
+
+            string fixedSource = """
+                Imports System
+
+                Class C
+                    Sub M(s As String, data As Byte(), start as Integer, length as Integer)
+                        s = Convert.ToHexStringLower(data)
+                        s = Convert.ToHexStringLower(data)
+                        s = Convert.ToHexStringLower(data)
+                        s = Convert.ToHexStringLower(data.AsSpan().Slice(start))
+                        s = Convert.ToHexStringLower(data.AsSpan().Slice(start))
+                        s = Convert.ToHexStringLower(data.AsSpan().Slice(start))
+                        s = Convert.ToHexStringLower(data, start, length)
+                        s = Convert.ToHexStringLower(data, start, length)
+                        s = Convert.ToHexStringLower(data, start, length)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, fixedSource, Net90);
+        }
+
+        [Fact]
+        public async Task ToLowerBeforeReplaceIsReplacedWithToHexStringLower_OffersFixer_VB()
+        {
+            string source = """
+                Imports System
+
+                Class C
+                    Sub M(s As String, data As Byte(), start as Integer, length as Integer)
+                        s = [|BitConverter.ToString(data).ToLower().Replace("-", "")|]
+                        s = [|BitConverter.ToString(data).ToLower(Nothing).Replace("-", "")|]
+                        s = [|BitConverter.ToString(data).ToLowerInvariant().Replace("-", "")|]
+                        s = [|BitConverter.ToString(data, start).ToLower().Replace("-", "")|]
+                        s = [|BitConverter.ToString(data, start).ToLower(Nothing).Replace("-", "")|]
+                        s = [|BitConverter.ToString(data, start).ToLowerInvariant().Replace("-", "")|]
+                        s = [|BitConverter.ToString(data, start, length).ToLower().Replace("-", "")|]
+                        s = [|BitConverter.ToString(data, start, length).ToLower(Nothing).Replace("-", "")|]
+                        s = [|BitConverter.ToString(data, start, length).ToLowerInvariant().Replace("-", "")|]
+                    End Sub
+                End Class
+                """;
+
+            string fixedSource = """
+                Imports System
+
+                Class C
+                    Sub M(s As String, data As Byte(), start as Integer, length as Integer)
+                        s = Convert.ToHexStringLower(data)
+                        s = Convert.ToHexStringLower(data)
+                        s = Convert.ToHexStringLower(data)
+                        s = Convert.ToHexStringLower(data.AsSpan().Slice(start))
+                        s = Convert.ToHexStringLower(data.AsSpan().Slice(start))
+                        s = Convert.ToHexStringLower(data.AsSpan().Slice(start))
+                        s = Convert.ToHexStringLower(data, start, length)
+                        s = Convert.ToHexStringLower(data, start, length)
+                        s = Convert.ToHexStringLower(data, start, length)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, fixedSource, Net90);
         }
 
         [Fact]
@@ -1283,33 +1454,47 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await new VerifyVB.Test
-            {
-                TestCode = source,
-                FixedCode = source,
-                // .NET Core 3.1 does not have access to Convert.ToHexString
-                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31
-            }.RunAsync();
+            // .NET Core 3.1 does not have access to Convert.ToHexString
+            await VerifyBasicCodeFixAsync(source, source, ReferenceAssemblies.NetCore.NetCoreApp31);
         }
 
-        private static async Task VerifyCSharpCodeFixAsync(string source, string fixedSource)
+        private static async Task VerifyCSharpCodeFixAsync(string source, string fixedSource, ReferenceAssemblies referenceAssemblies = null)
         {
             await new VerifyCS.Test
             {
                 TestCode = source,
                 FixedCode = fixedSource,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                ReferenceAssemblies = referenceAssemblies ?? ReferenceAssemblies.Net.Net50
             }.RunAsync();
         }
 
-        private static async Task VerifyBasicCodeFixAsync(string source, string fixedSource)
+        private static async Task VerifyBasicCodeFixAsync(string source, string fixedSource, ReferenceAssemblies referenceAssemblies = null)
         {
             await new VerifyVB.Test
             {
                 TestCode = source,
                 FixedCode = fixedSource,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50
+                ReferenceAssemblies = referenceAssemblies ?? ReferenceAssemblies.Net.Net50
             }.RunAsync();
         }
+
+        // Replace with 'ReferenceAssemblies.Net.Net90' once https://github.com/dotnet/roslyn-sdk/pull/1149 is merged.
+        private static readonly Lazy<ReferenceAssemblies> _lazyNet90 =
+            new(() =>
+            {
+                if (!NuGet.Frameworks.NuGetFramework.Parse("net9.0").IsPackageBased)
+                {
+                    // The NuGet version provided at runtime does not recognize the 'net9.0' target framework
+                    throw new NotSupportedException("The 'net9.0' target framework is not supported by this version of NuGet.");
+                }
+                return new ReferenceAssemblies(
+                    "net9.0",
+                    new PackageIdentity(
+                        "Microsoft.NETCore.App.Ref",
+                        "9.0.0-preview.1.24080.9"),
+                    System.IO.Path.Combine("ref", "net9.0"));
+            });
+
+        public static ReferenceAssemblies Net90 => _lazyNet90.Value;
     }
 }

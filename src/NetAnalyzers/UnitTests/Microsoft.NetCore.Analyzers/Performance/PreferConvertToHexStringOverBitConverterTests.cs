@@ -1487,6 +1487,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     // The NuGet version provided at runtime does not recognize the 'net9.0' target framework
                     throw new NotSupportedException("The 'net9.0' target framework is not supported by this version of NuGet.");
                 }
+
                 return new ReferenceAssemblies(
                     "net9.0",
                     new PackageIdentity(

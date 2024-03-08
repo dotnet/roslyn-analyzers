@@ -1848,9 +1848,9 @@ Using a cached 'SearchValues' instance is more efficient than passing values to 
 |CodeFix|True|
 ---
 
-## [CA1872](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1872): Prefer 'Convert.ToHexString' over 'BitConverter.ToString'
+## [CA1872](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1872): Prefer 'Convert.ToHexString' and 'Convert.ToHexStringLower' over call chains based on 'BitConverter.ToString'
 
-'Convert.ToHexString' is more efficient and allocation-friendly than 'BitConverter.ToString' in combination with 'string.Replace'.
+Use 'Convert.ToHexString' or 'Convert.ToHexStringLower' when encoding bytes to a hexadecimal string representation, as they are more efficient and allocation-friendly than using 'BitConverter.ToString' in combination with 'string.Replace' to replace dashes and 'string.ToLower'.
 
 |Item|Value|
 |-|-|

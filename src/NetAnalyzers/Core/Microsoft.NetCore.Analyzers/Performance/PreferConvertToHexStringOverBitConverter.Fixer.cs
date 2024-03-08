@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             var codeAction = CodeAction.Create(
-                MicrosoftNetCoreAnalyzersResources.PreferConvertToHexStringOverBitConverterCodeFixTitle,
+                string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.PreferConvertToHexStringOverBitConverterCodeFixTitle, convertToHexStringMethod.Name),
                 ReplaceWithConvertToHexStringCall,
                 nameof(MicrosoftNetCoreAnalyzersResources.PreferConvertToHexStringOverBitConverterCodeFixTitle));
 

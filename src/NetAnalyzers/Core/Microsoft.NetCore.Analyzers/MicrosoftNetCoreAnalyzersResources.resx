@@ -196,16 +196,16 @@
     <value>Do not use Count() or LongCount() when Any() can be used</value>
   </data>
   <data name="PreferConvertToHexStringOverBitConverterTitle" xml:space="preserve">
-    <value>Prefer 'Convert.ToHexString' over 'BitConverter.ToString'</value>
+    <value>Prefer 'Convert.ToHexString' and 'Convert.ToHexStringLower' over call chains based on 'BitConverter.ToString'</value>
   </data>
   <data name="PreferConvertToHexStringOverBitConverterDescription" xml:space="preserve">
-    <value>'Convert.ToHexString' is more efficient and allocation-friendly than 'BitConverter.ToString' in combination with 'string.Replace'.</value>
+    <value>Use 'Convert.ToHexString' or 'Convert.ToHexStringLower' when encoding bytes to a hexadecimal string representation, as they are more efficient and allocation-friendly than using 'BitConverter.ToString' in combination with 'string.Replace' to replace dashes and 'string.ToLower'.</value>
   </data>
   <data name="PreferConvertToHexStringOverBitConverterMessage" xml:space="preserve">
-    <value>Prefer '{0}' over '{1}'</value>
+    <value>Prefer '{0}' over call chains based on '{1}'</value>
   </data>
   <data name="PreferConvertToHexStringOverBitConverterCodeFixTitle" xml:space="preserve">
-    <value>Replace with 'Convert.ToHexString'</value>
+    <value>Replace with 'Convert.{0}'</value>
   </data>
   <data name="DoNotUseTimersThatPreventPowerStateChangesTitle" xml:space="preserve">
     <value>Do not use timers that prevent power state changes</value>

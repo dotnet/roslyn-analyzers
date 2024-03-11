@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -777,7 +777,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
             return VerifyVisualBasicAsync(code, fixedCode);
         }
 
-        [Theory(Skip = "Visual Basic's method arguments are not passed to the fixer in the order they are passed in code, so this does currently not work.")]
+        [Theory]
         [MemberData(nameof(VisualBasicTypes))]
         public Task VB_UseVolatileWrite_WithReversedArguments(string type)
         {
@@ -797,7 +797,7 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
 
                              Class Test
                                  Sub M(arg As {type}, value As {type})
-                                     Volatile.Write(value:=value, location:=arg)
+                                     Volatile.Write(location:=arg, value:=value)
                                  End Sub
                              End Class
                              """;

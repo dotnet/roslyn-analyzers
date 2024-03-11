@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -76,7 +77,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 else
                 {
                     methodName = VolatileWriteMethodName;
-                    arguments = GetArgumentForVolatileWriteCall(invocationOperation.Arguments, volatileWriteMethod.Parameters);
+                    arguments = GetArgumentForVolatileWriteCall(invocationOperation.Arguments.GetArgumentsInParameterOrder(), volatileWriteMethod.Parameters);
                 }
 
                 var methodExpression = generator.MemberAccessExpression(

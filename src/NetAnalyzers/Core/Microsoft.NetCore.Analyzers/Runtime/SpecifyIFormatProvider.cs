@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -147,8 +148,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                           GetParameterInfo(stringType),
                                                                                           GetParameterInfo(objectType, isArray: true, arrayRank: 1, isParams: true));
 
-            var currentCultureProperty = cultureInfoType.GetMembers("CurrentCulture").OfType<IPropertySymbol>().FirstOrDefault();
-            var invariantCultureProperty = cultureInfoType.GetMembers("InvariantCulture").OfType<IPropertySymbol>().FirstOrDefault();
             var currentUICultureProperty = cultureInfoType.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().FirstOrDefault();
             var installedUICultureProperty = cultureInfoType.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
@@ -164,6 +163,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var obsoleteAttributeType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
 
             var guidParseMethods = guidType?.GetMembers("Parse") ?? ImmutableArray<ISymbol>.Empty;
+
+            var convertType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConvert);
+            var superfluousConvertToStringFormatProviderOverloads = convertType?.GetMembers(nameof(Convert.ToString))
+                .OfType<IMethodSymbol>()
+                .Where(m => m.IsStatic
+                            && m.Parameters is [{ Type.SpecialType: SpecialType.System_String or SpecialType.System_Boolean or SpecialType.System_Char }, var possibleFormatProvider]
+                            && possibleFormatProvider.Type.Equals(iformatProviderType, SymbolEqualityComparer.Default)) ?? [];
+            var superfluousConvertToToCharFormatProviderOverloads = convertType?.GetMembers(nameof(Convert.ToChar))
+                .OfType<IMethodSymbol>()
+                .Where(m => m.IsStatic
+                            && m.Parameters is [{ Type.SpecialType: SpecialType.System_String }, var possibleFormatProvider]
+                            && possibleFormatProvider.Type.Equals(iformatProviderType, SymbolEqualityComparer.Default)) ?? [];
+            var superfluousConvertToBooleanFormatProviderOverloads = convertType?.GetMembers(nameof(Convert.ToBoolean))
+                .OfType<IMethodSymbol>()
+                .Where(m => m.IsStatic
+                            && m.Parameters is [{ Type.SpecialType: SpecialType.System_String }, var possibleFormatProvider]
+                            && possibleFormatProvider.Type.Equals(iformatProviderType, SymbolEqualityComparer.Default)) ?? [];
+            ImmutableHashSet<IMethodSymbol> superfluousFormatProviderOverloads = superfluousConvertToStringFormatProviderOverloads
+                .Concat(superfluousConvertToToCharFormatProviderOverloads)
+                .Concat(superfluousConvertToBooleanFormatProviderOverloads)
+                .ToImmutableHashSet<IMethodSymbol>(SymbolEqualityComparer.Default);
 
             #endregion
 
@@ -224,7 +244,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                         // Sample message for IFormatProviderAlternateRule: Because the behavior of Convert.ToInt64(string) could vary based on the current user's locale settings,
                         // replace this call in IFormatProviderStringTest.TestMethod() with a call to Convert.ToInt64(string, IFormatProvider).
-                        if (correctOverload != null)
+                        if (correctOverload != null && !superfluousFormatProviderOverloads.Contains(correctOverload))
                         {
                             oaContext.ReportDiagnostic(
                                 invocationExpression.Syntax.CreateDiagnostic(

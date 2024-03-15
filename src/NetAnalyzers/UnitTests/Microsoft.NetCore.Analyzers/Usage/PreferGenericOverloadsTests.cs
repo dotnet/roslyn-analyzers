@@ -2,6 +2,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.CSharp.Analyzers.Usage.CSharpPreferGenericOverloadsAnalyzer,
@@ -476,6 +477,62 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
                 """;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact, WorkItem(7245, "https://github.com/dotnet/roslyn-analyzers/issues/7245")]
+        public async Task ViolatesNullabilityConstraint_NoDiagnostic_CS()
+        {
+            string source = """
+                #nullable enable
+
+                class C
+                {
+                    void M(System.Type type) {}
+                    void M<T>() where T : notnull {}
+
+                    void Test<T>()
+                    {
+                        M(typeof(T));
+                    }
+                }
+                """;
+
+            var test = new VerifyCS.Test
+            {
+                TestCode = source,
+                FixedCode = source,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9
+            };
+
+            await test.RunAsync();
+        }
+
+        [Fact, WorkItem(7245, "https://github.com/dotnet/roslyn-analyzers/issues/7245")]
+        public async Task ViolatesNullabilityConstraintNullableDisabled_NoDiagnostic_CS()
+        {
+            string source = """
+                #nullable disable
+
+                class C
+                {
+                    void M(System.Type type) {}
+                    void M<T>() where T : notnull {}
+
+                    void Test<T>()
+                    {
+                        M(typeof(T));
+                    }
+                }
+                """;
+
+            var test = new VerifyCS.Test
+            {
+                TestCode = source,
+                FixedCode = source,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9
+            };
+
+            await test.RunAsync();
         }
 
         [Fact]

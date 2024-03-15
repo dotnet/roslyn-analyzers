@@ -128,8 +128,8 @@ namespace Microsoft.NetCore.Analyzers.Usage
                             method.TypeArguments[i].CanHoldNullValue())
                         {
                             return true;
-            }
-        }
+                        }
+                    }
 
                     return false;
                 }
@@ -169,6 +169,13 @@ namespace Microsoft.NetCore.Analyzers.Usage
                     .Select(t => t.TypeOperand)
                     .Where(t => t is not INamedTypeSymbol { IsUnboundGenericType: true })
                     .ToImmutableArray();
+
+                // Bail out if there are no type arguments left after filtering out unbound generic types.
+                if (typeArguments.Length == 0)
+                {
+                    return false;
+                }
+
                 var otherArguments = argumentsInParameterOrder.RemoveRange(typeOfArguments);
 
                 invocationContext = new RuntimeTypeInvocationContext(invocation, typeArguments, otherArguments);

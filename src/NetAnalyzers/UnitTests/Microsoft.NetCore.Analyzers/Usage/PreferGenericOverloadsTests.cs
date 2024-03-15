@@ -93,6 +93,28 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
             await VerifyCS.VerifyCodeFixAsync(source, source);
         }
 
+        [Fact, WorkItem(7246, "https://github.com/dotnet/roslyn-analyzers/issues/7246")]
+        public async Task UnboundGenericTypeArgumentWithMatchingOtherArguments_NoDiagnostic_CS()
+        {
+            string source = """
+                class ViolatingType<T> {}
+
+                class C
+                {
+                    void M(System.Type type, object other) {}
+                    void M<T>() {}
+                    void M(object other) {}
+
+                    void Test()
+                    {
+                        M(typeof(ViolatingType<>), null);
+                    }
+                }
+                """;
+
+            await VerifyCS.VerifyCodeFixAsync(source, source);
+        }
+
         [Fact]
         public async Task WrongArity_NoDiagnostic_CS()
         {
@@ -1453,6 +1475,26 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
                 Class C
                     Sub M(type as System.Type) : End Sub
                     Sub M(Of T)() : End Sub
+
+                    Sub Test()
+                        M(GetType(ViolatingType(Of )))
+                    End Sub
+                End Class
+                """;
+
+            await VerifyVB.VerifyCodeFixAsync(source, source);
+        }
+
+        [Fact, WorkItem(7246, "https://github.com/dotnet/roslyn-analyzers/issues/7246")]
+        public async Task UnboundGenericTypeArgumentWithMatchingOtherArguments_NoDiagnostic_VB()
+        {
+            string source = """
+                Class ViolatingType(Of T) : End Class
+                
+                Class C
+                    Sub M(type as System.Type, other as Object) : End Sub
+                    Sub M(Of T)() : End Sub
+                    Sub M(other as Object) : End Sub
 
                     Sub Test()
                         M(GetType(ViolatingType(Of )))

@@ -14,10 +14,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
 {
     using static MicrosoftNetCoreAnalyzersResources;
 
+    /// <summary>
+    /// CA1872: <inheritdoc cref="PreferConvertToHexStringOverBitConverterTitle"/>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PreferConvertToHexStringOverBitConverterAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1872";
+        internal const string ReplacementPropertiesKey = nameof(ReplacementPropertiesKey);
 
         private const string Empty = nameof(Empty);
         private const string Replace = nameof(Replace);
@@ -58,20 +62,33 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 var invocation = (IInvocationOperation)context.Operation;
 
-                if (!symbols.TryGetBitConverterToStringInvocationAndReplacement(invocation, out var bitConverterInvocation, out var convertToHexStringMethod, out var _))
+                if (!symbols.TryGetBitConverterInvocationChain(
+                        invocation,
+                        out var bitConverterInvocation,
+                        out var outerInvocation,
+                        out var toLowerInvocation,
+                        out var convertToHexStringReplacementMethod))
                 {
                     return;
                 }
 
-                context.ReportDiagnostic(invocation.CreateDiagnostic(
+                var additionalLocationsBuilder = ImmutableArray.CreateBuilder<Location>();
+                additionalLocationsBuilder.Add(bitConverterInvocation.Syntax.GetLocation());
+
+                if (toLowerInvocation is not null)
+                {
+                    additionalLocationsBuilder.Add(toLowerInvocation.Syntax.GetLocation());
+                }
+
+                context.ReportDiagnostic(outerInvocation.CreateDiagnostic(
                     Rule,
-                    convertToHexStringMethod.ToDisplayString(),
-                    bitConverterInvocation.TargetMethod.ToDisplayString()));
+                    additionalLocations: additionalLocationsBuilder.ToImmutable(),
+                    properties: ImmutableDictionary<string, string?>.Empty.Add(ReplacementPropertiesKey, convertToHexStringReplacementMethod.Name),
+                    args:[convertToHexStringReplacementMethod.ToDisplayString(), bitConverterInvocation.TargetMethod.ToDisplayString()]));
             }
         }
 
-        // Internal as this is also used by the fixer.
-        internal sealed class RequiredSymbols
+        private sealed class RequiredSymbols
         {
             private RequiredSymbols(
                 ImmutableArray<IMethodSymbol> stringReplaceMethods,
@@ -147,7 +164,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 bitConverterReplacementsBuilder.AddKeyValueIfNotNull(bitConverterToStringStartLength, convertToHexStringStartLength);
                 var bitConverterReplacements = bitConverterReplacementsBuilder.ToImmutableDictionary();
 
-                // Bail out if we have no valid replacement pair from BitConverter to Convert.ToHexString.
+                // Bail out if we have no valid replacement pair from BitConverter.ToString to Convert.ToHexString.
                 if (bitConverterReplacements.IsEmpty)
                 {
                     return false;
@@ -185,90 +202,115 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             /// <summary>
-            /// Attempts to get a BitConverter.ToString invocation, its appropriate replacement method and optionally a string.ToLower* invocation:
-            ///   1. Check if invocation is a string.ToLower* invocation. If so, continue the next steps with its instance.
-            ///   2. Check if invocation is a string.Replace("-", "") invocation. Abort if not. Continue the next steps with its instance.
-            ///   3. Check if invocation is a string.ToLower* invocation. If so, continue the next steps with its instance.
-            ///   4. Check if invocation is a BitConverter.ToString invocation. If not, abort.
-            /// Note that <paramref name="toLowerInvocation"/> is only set if a string.ToLower invocation is found AND the method Convert.ToHexStringLower is not available.
+            /// Attempts to obtain a complete BitConverter.ToString invocation chain that can be replaced with a call to Convert.ToHexString*.
+            /// To do this, the following steps are performed:
+            ///   1. Check if invocation is a BitConverter.ToString invocation and abort if it is not.
+            ///   2. Continue with the parent invocation or abort if none exists.
+            ///   3. Check if invocation is a string.ToLower* invocation.
+            ///      If so, continue with the parent invocation or abort if none exists.
+            ///   4. Check if invocation is a string.Replace("-", "") invocation and abort if it is not.
+            ///      If so, continue with the parent invocation or skip the next step if none exists.
+            ///   5. Check if invocation is a string.ToLower* invocation.
+            ///   6. Get the appropriate replacement method (from BitConverter.ToString to Convert.ToHexString or Convert.ToHexStringLower) or abort if none exists.
+            /// Note that <paramref name="toLowerInvocation"/> is only set if a string.ToLower* invocation is found and Convert.ToHexStringLower is not available.
             /// </summary>
-            /// <param name="invocation">The starting invocation</param>
-            /// <param name="bitConverterToStringInvocation">The extracted BitConverter.ToString invocation, or null if unsuccessful</param>
+            /// <param name="invocation">The starting invocation to analyze (must be BitConverter.ToString for this method to return true)</param>
+            /// <param name="bitConverterInvocation">The extracted BitConverter.ToString invocation, or null if unsuccessful</param>
+            /// <param name="outerInvocation">The outer invocation that is used for creating the diagnostic (and that will be replaced in the fixer)</param>
+            /// <param name="toLowerInvocation">The extracted string.ToLower* invocation, or null if none exists or Convert.ToHexStringLower is used as a replacement</param>
             /// <param name="replacementMethod">The Convert.ToHexString* method to use as a replacement</param>
-            /// <param name="toLowerInvocation">The optionally extracted string.ToLower* invocation</param>
-            /// <returns>true if a BitConverter.ToString invocation and its replacement could be extracted</returns>
-            public bool TryGetBitConverterToStringInvocationAndReplacement(
+            /// <returns></returns>
+            public bool TryGetBitConverterInvocationChain(
                 IInvocationOperation invocation,
-                [NotNullWhen(true)] out IInvocationOperation? bitConverterToStringInvocation,
-                [NotNullWhen(true)] out IMethodSymbol? replacementMethod,
-                out IInvocationOperation? toLowerInvocation)
+                [NotNullWhen(true)] out IInvocationOperation? bitConverterInvocation,
+                [NotNullWhen(true)] out IInvocationOperation? outerInvocation,
+                out IInvocationOperation? toLowerInvocation,
+                [NotNullWhen(true)] out IMethodSymbol? replacementMethod)
             {
-                bitConverterToStringInvocation = default;
-                replacementMethod = default;
+                bitConverterInvocation = default;
+                outerInvocation = default;
                 toLowerInvocation = default;
+                replacementMethod = default;
 
-                // This check is to prevent two diagnostics when encountering: BitConverter.ToString(data).Replace("-", "").ToLower();
-                // Without this check, this case would report one diagnostic when analyzing Replace and one when analyzing ToLower.
-                if (invocation.Parent is IInvocationOperation parentInvocation &&
-                    IsAnyStringToLowerMethod(parentInvocation.TargetMethod))
+                // Bail out if the invocation is not a BitConverter.ToString invocation.
+                if (!IsAnyBitConverterMethod(invocation.TargetMethod))
                 {
                     return false;
                 }
 
+                bitConverterInvocation = invocation;
+
+                // Bail out if there is no parent invocation.
+                if (!TryGetParentInvocation(invocation, out invocation!))
+                {
+                    return false;
+                }
+
+                // Check for an optional string.ToLower invocation, e.g. in the case of
+                // BitConverter.ToString(data).ToLower().Replace("-", "")
                 if (IsAnyStringToLowerMethod(invocation.TargetMethod))
                 {
                     toLowerInvocation = invocation;
 
-                    if (!TryGetInstanceInvocation(invocation, out invocation!))
+                    // Bail out if there is no parent invocation as we still need the string.Replace invocation.
+                    if (!TryGetParentInvocation(invocation, out invocation!))
                     {
                         return false;
                     }
                 }
 
+                // Bail out if there is no appropriate string.Replace invocation.
                 if (!IsAnyStringReplaceMethod(invocation.TargetMethod) ||
-                    !HasStringReplaceArgumentsToRemoveHyphen(invocation.Arguments) ||
-                    !TryGetInstanceInvocation(invocation, out invocation!))
+                    !HasStringReplaceArgumentsToRemoveHyphen(invocation.Arguments))
                 {
                     return false;
                 }
 
-                if (IsAnyStringToLowerMethod(invocation.TargetMethod))
-                {
-                    toLowerInvocation = invocation;
+                outerInvocation = invocation;
 
-                    if (!TryGetInstanceInvocation(invocation, out invocation!))
+                // Check for an optional string.ToLower invocation, e.g. in the case of
+                // BitConverter.ToString(data).Replace("-", "").ToLower()
+                if (TryGetParentInvocation(invocation, out invocation!))
+                {
+                    if (IsAnyStringToLowerMethod(invocation.TargetMethod))
                     {
-                        return false;
+                        toLowerInvocation = invocation;
+                        outerInvocation = invocation;
                     }
                 }
 
-                // Check if there is a valid replacement that uses Convert.ToHexStringLower or Convert.ToHexString.
+                // At this point we have a complete BitConverter.ToString invocation chain.
+                // Get the appropriate replacement method from BitConverter.ToString to Convert.ToHexStringLower or Convert.ToHexString.
                 if (toLowerInvocation is not null &&
-                    _bitConverterReplacementsToLower.TryGetValue(invocation.TargetMethod, out var replacementToLower))
+                    _bitConverterReplacementsToLower.TryGetValue(bitConverterInvocation.TargetMethod, out var replacementToLower))
                 {
-                    bitConverterToStringInvocation = invocation;
                     replacementMethod = replacementToLower;
-                    // Reset toLowerInvocation as we no longer need a ToLower after using ToHexStringLower
+                    // Reset toLowerInvocation as we no longer need a string.ToLower after using Convert.ToHexStringLower.
                     toLowerInvocation = default;
 
                     return true;
                 }
-                else if (_bitConverterReplacements.TryGetValue(invocation.TargetMethod, out var replacement))
+                else if (_bitConverterReplacements.TryGetValue(bitConverterInvocation.TargetMethod, out var replacement))
                 {
-                    bitConverterToStringInvocation = invocation;
                     replacementMethod = replacement;
 
                     return true;
                 }
 
+                // No replacement was found.
                 return false;
 
-                static bool TryGetInstanceInvocation(IInvocationOperation invocation, [NotNullWhen(true)] out IInvocationOperation? instanceInvocation)
+                static bool TryGetParentInvocation(IInvocationOperation invocation, [NotNullWhen(true)] out IInvocationOperation? parentInvocation)
                 {
-                    instanceInvocation = invocation.GetInstance() as IInvocationOperation;
+                    parentInvocation = invocation.Parent as IInvocationOperation;
 
-                    return instanceInvocation is not null;
+                    return parentInvocation is not null;
                 }
+            }
+
+            private bool IsAnyBitConverterMethod(IMethodSymbol method)
+            {
+                return _bitConverterReplacements.ContainsKey(method) || _bitConverterReplacementsToLower.ContainsKey(method);
             }
 
             private bool IsAnyStringReplaceMethod(IMethodSymbol? method)

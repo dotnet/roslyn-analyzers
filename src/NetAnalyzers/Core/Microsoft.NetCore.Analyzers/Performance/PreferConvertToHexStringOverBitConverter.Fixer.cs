@@ -14,9 +14,15 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
+    using static MicrosoftNetCoreAnalyzersResources;
+
+    /// <summary>
+    /// CA1872: <inheritdoc cref="PreferConvertToHexStringOverBitConverterTitle"/>
+    /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class PreferConvertToHexStringOverBitConverterFixer : CodeFixProvider
     {
@@ -32,30 +38,48 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var diagnostic = context.Diagnostics.FirstOrDefault();
+
+            if (diagnostic is not { AdditionalLocations.Count: > 0, Properties.Count: 1 } ||
+                !diagnostic.Properties.TryGetValue(PreferConvertToHexStringOverBitConverterAnalyzer.ReplacementPropertiesKey, out var convertToHexStringName) ||
+                convertToHexStringName is null)
+            {
+                return;
+            }
+
             var root = await context.Document.GetRequiredSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span, getInnermostNodeForTie: true);
-
-            if (node is null)
-            {
-                return;
-            }
-
             var semanticModel = await context.Document.GetRequiredSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var operation = semanticModel.GetOperation(node, context.CancellationToken);
 
-            if (operation is not IInvocationOperation invocation ||
-                !PreferConvertToHexStringOverBitConverterAnalyzer.RequiredSymbols.TryGetSymbols(semanticModel.Compilation, out var symbols) ||
-                !symbols.TryGetBitConverterToStringInvocationAndReplacement(invocation, out var bitConverterInvocation, out var convertToHexStringMethod, out var toLowerInvocation))
+            var bitConverterInvocation = GetInvocationFromTextSpan(diagnostic.AdditionalLocations[0].SourceSpan);
+            var outerInvocation = GetInvocationFromTextSpan(context.Span);
+
+            if (bitConverterInvocation is null || outerInvocation is null)
             {
                 return;
             }
+
+            var toLowerInvocation = diagnostic.AdditionalLocations.Count == 2
+                ? GetInvocationFromTextSpan(diagnostic.AdditionalLocations[1].SourceSpan)
+                : null;
 
             var codeAction = CodeAction.Create(
-                string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.PreferConvertToHexStringOverBitConverterCodeFixTitle, convertToHexStringMethod.Name),
+                string.Format(CultureInfo.CurrentCulture, PreferConvertToHexStringOverBitConverterCodeFixTitle, convertToHexStringName),
                 ReplaceWithConvertToHexStringCall,
-                nameof(MicrosoftNetCoreAnalyzersResources.PreferConvertToHexStringOverBitConverterCodeFixTitle));
+                nameof(PreferConvertToHexStringOverBitConverterCodeFixTitle));
 
             context.RegisterCodeFix(codeAction, context.Diagnostics);
+
+            IInvocationOperation? GetInvocationFromTextSpan(TextSpan span)
+            {
+                var node = root.FindNode(span, getInnermostNodeForTie: true);
+
+                if (node is null)
+                {
+                    return null;
+                }
+
+                return semanticModel.GetOperation(node, context.CancellationToken) as IInvocationOperation;
+            }
 
             async Task<Document> ReplaceWithConvertToHexStringCall(CancellationToken cancellationToken)
             {
@@ -63,8 +87,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 var generator = editor.Generator;
                 var bitConverterArgumentsInParameterOrder = bitConverterInvocation.Arguments.GetArgumentsInParameterOrder();
 
-                var typeExpression = generator.TypeExpressionForStaticMemberAccess(convertToHexStringMethod.ContainingType);
-                var methodExpression = generator.MemberAccessExpression(typeExpression, convertToHexStringMethod.Name);
+                var typeExpression = generator.DottedName(WellKnownTypeNames.SystemConvert);
+                var methodExpression = generator.MemberAccessExpression(typeExpression, convertToHexStringName);
                 var methodInvocation = bitConverterArgumentsInParameterOrder.Length switch
                 {
                     // BitConverter.ToString(data).Replace("-", "") => Convert.ToHexString(data)
@@ -93,7 +117,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         toLowerInvocation.Arguments.Select(a => a.Value.Syntax).ToArray());
                 }
 
-                editor.ReplaceNode(invocation.Syntax, methodInvocation.WithTriviaFrom(invocation.Syntax));
+                editor.ReplaceNode(outerInvocation.Syntax, methodInvocation.WithTriviaFrom(outerInvocation.Syntax));
 
                 return context.Document.WithSyntaxRoot(editor.GetChangedRoot());
             }

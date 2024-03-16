@@ -244,7 +244,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 // Check if there is a valid replacement that uses Convert.ToHexStringLower or Convert.ToHexString.
                 if (toLowerInvocation is not null &&
-                    TryGetBitConverterReplacementToLower(invocation.TargetMethod, out var replacementToLower))
+                    _bitConverterReplacementsToLower.TryGetValue(invocation.TargetMethod, out var replacementToLower))
                 {
                     bitConverterToStringInvocation = invocation;
                     replacementMethod = replacementToLower;
@@ -253,7 +253,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                     return true;
                 }
-                else if (TryGetBitConverterReplacement(invocation.TargetMethod, out var replacement))
+                else if (_bitConverterReplacements.TryGetValue(invocation.TargetMethod, out var replacement))
                 {
                     bitConverterToStringInvocation = invocation;
                     replacementMethod = replacement;
@@ -303,20 +303,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 return oldValueIsConstantHyphenString &&
                     (newValueIsConstantNullOrEmptyString || newValue.HasNullConstantValue() || IsStringEmptyField(newValue));
-            }
-
-            private bool TryGetBitConverterReplacement(IMethodSymbol method, [NotNullWhen(true)] out IMethodSymbol? replacement)
-            {
-                replacement = _bitConverterReplacements.GetValueOrDefault(method);
-
-                return replacement is not null;
-            }
-
-            private bool TryGetBitConverterReplacementToLower(IMethodSymbol method, [NotNullWhen(true)] out IMethodSymbol? replacement)
-            {
-                replacement = _bitConverterReplacementsToLower.GetValueOrDefault(method);
-
-                return replacement is not null;
             }
 
             private readonly ImmutableArray<IMethodSymbol> _stringReplaceMethods;

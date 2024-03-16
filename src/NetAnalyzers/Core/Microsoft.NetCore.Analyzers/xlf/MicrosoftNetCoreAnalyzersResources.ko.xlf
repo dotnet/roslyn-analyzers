@@ -2019,8 +2019,8 @@ Enumerable.OfType&lt;T&gt;에서 사용하는 제네릭 형식 검사(C# 'is' �
         <note />
       </trans-unit>
       <trans-unit id="PreferConvertToHexStringOverBitConverterDescription">
-        <source>Use 'Convert.ToHexString' or 'Convert.ToHexStringLower' when encoding bytes to a hexadecimal string representation, as they are more efficient and allocation-friendly than using 'BitConverter.ToString' in combination with 'string.Replace' to replace dashes and 'string.ToLower'.</source>
-        <target state="new">Use 'Convert.ToHexString' or 'Convert.ToHexStringLower' when encoding bytes to a hexadecimal string representation, as they are more efficient and allocation-friendly than using 'BitConverter.ToString' in combination with 'string.Replace' to replace dashes and 'string.ToLower'.</target>
+        <source>Use 'Convert.ToHexString' or 'Convert.ToHexStringLower' when encoding bytes to a hexadecimal string representation. These methods are more efficient and allocation-friendly than using 'BitConverter.ToString' in combination with 'String.Replace' to replace dashes and 'String.ToLower'.</source>
+        <target state="new">Use 'Convert.ToHexString' or 'Convert.ToHexStringLower' when encoding bytes to a hexadecimal string representation. These methods are more efficient and allocation-friendly than using 'BitConverter.ToString' in combination with 'String.Replace' to replace dashes and 'String.ToLower'.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferConvertToHexStringOverBitConverterMessage">

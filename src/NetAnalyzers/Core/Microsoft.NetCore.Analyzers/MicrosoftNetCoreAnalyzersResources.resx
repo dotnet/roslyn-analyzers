@@ -199,7 +199,7 @@
     <value>Prefer 'Convert.ToHexString' and 'Convert.ToHexStringLower' over call chains based on 'BitConverter.ToString'</value>
   </data>
   <data name="PreferConvertToHexStringOverBitConverterDescription" xml:space="preserve">
-    <value>Use 'Convert.ToHexString' or 'Convert.ToHexStringLower' when encoding bytes to a hexadecimal string representation, as they are more efficient and allocation-friendly than using 'BitConverter.ToString' in combination with 'string.Replace' to replace dashes and 'string.ToLower'.</value>
+    <value>Use 'Convert.ToHexString' or 'Convert.ToHexStringLower' when encoding bytes to a hexadecimal string representation. These methods are more efficient and allocation-friendly than using 'BitConverter.ToString' in combination with 'String.Replace' to replace dashes and 'String.ToLower'.</value>
   </data>
   <data name="PreferConvertToHexStringOverBitConverterMessage" xml:space="preserve">
     <value>Prefer '{0}' over call chains based on '{1}'</value>

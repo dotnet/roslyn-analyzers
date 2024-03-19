@@ -62,6 +62,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         // new[] { 'a', 'b', 'c' } => "abc"
         // new[] { (byte)'a', (byte)'b', (byte)'c' } => "abc"u8
         // "abc".ToCharArray() => "abc"
+        // ['a', 'b', 'c'] => "abc"
+        // [(byte)'a', (byte)'b', (byte)'c'] => "abc"u8
         protected override SyntaxNode? TryReplaceArrayCreationWithInlineLiteralExpression(IOperation operation)
         {
             if (operation is IConversionOperation conversion)
@@ -69,8 +71,34 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 operation = conversion.Operand;
             }
 
-            if (operation is IArrayCreationOperation arrayCreation &&
-                arrayCreation.GetElementType() is { } elementType)
+            if (operation is IInvocationOperation invocation)
+            {
+                if (UseSearchValuesAnalyzer.IsConstantStringToCharArrayInvocation(invocation, out _))
+                {
+                    Debug.Assert(invocation.Instance is not null);
+                    return invocation.Instance!.Syntax;
+                }
+
+                return null;
+            }
+
+            ITypeSymbol? elementType = null;
+
+            if (operation.Type is IArrayTypeSymbol arrayType)
+            {
+                elementType = arrayType.ElementType;
+            }
+            else if (operation.Type is INamedTypeSymbol namedType)
+            {
+                if (namedType.TypeArguments is [var typeArgument])
+                {
+                    Debug.Assert(namedType.Name.Contains("Span", StringComparison.Ordinal), namedType.Name);
+
+                    elementType = typeArgument;
+                }
+            }
+
+            if (elementType is not null)
             {
                 bool isByte = elementType.SpecialType == SpecialType.System_Byte;
 
@@ -84,7 +112,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
                 List<char> values = new();
 
-                if (arrayCreation.Syntax is ExpressionSyntax creationSyntax &&
+                if (operation.Syntax is ExpressionSyntax creationSyntax &&
                     CSharpUseSearchValuesAnalyzer.IsConstantByteOrCharArrayCreationExpression(operation.SemanticModel!, creationSyntax, values, out _) &&
                     values.Count <= 128 &&                  // Arbitrary limit to avoid emitting huge literals
                     !ContainsAnyComments(creationSyntax))   // Avoid removing potentially valuable comments
@@ -116,14 +144,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                             text: isByte ? $"{stringLiteral}u8" : stringLiteral,
                             valueText: valuesString,
                             trailing: default));
-                }
-            }
-            else if (operation is IInvocationOperation invocation)
-            {
-                if (UseSearchValuesAnalyzer.IsConstantStringToCharArrayInvocation(invocation, out _))
-                {
-                    Debug.Assert(invocation.Instance is not null);
-                    return invocation.Instance!.Syntax;
                 }
             }
 

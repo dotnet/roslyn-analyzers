@@ -482,7 +482,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, fixedSource, Net90);
+            await VerifyCSharpCodeFixAsync(source, fixedSource, ReferenceAssemblies.Net.Net90);
         }
 
         [Fact]
@@ -528,7 +528,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, fixedSource, Net90);
+            await VerifyCSharpCodeFixAsync(source, fixedSource, ReferenceAssemblies.Net.Net90);
         }
 
         [Fact]
@@ -1193,7 +1193,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, fixedSource, Net90);
+            await VerifyBasicCodeFixAsync(source, fixedSource, ReferenceAssemblies.Net.Net90);
         }
 
         [Fact]
@@ -1235,7 +1235,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, fixedSource, Net90);
+            await VerifyBasicCodeFixAsync(source, fixedSource, ReferenceAssemblies.Net.Net90);
         }
 
         [Fact]
@@ -1477,25 +1477,5 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 ReferenceAssemblies = referenceAssemblies ?? ReferenceAssemblies.Net.Net50
             }.RunAsync();
         }
-
-        // Replace with 'ReferenceAssemblies.Net.Net90' once https://github.com/dotnet/roslyn-sdk/pull/1149 is merged.
-        private static readonly Lazy<ReferenceAssemblies> _lazyNet90 =
-            new(() =>
-            {
-                if (!NuGet.Frameworks.NuGetFramework.Parse("net9.0").IsPackageBased)
-                {
-                    // The NuGet version provided at runtime does not recognize the 'net9.0' target framework
-                    throw new NotSupportedException("The 'net9.0' target framework is not supported by this version of NuGet.");
-                }
-
-                return new ReferenceAssemblies(
-                    "net9.0",
-                    new PackageIdentity(
-                        "Microsoft.NETCore.App.Ref",
-                        "9.0.0-preview.1.24080.9"),
-                    System.IO.Path.Combine("ref", "net9.0"));
-            });
-
-        public static ReferenceAssemblies Net90 => _lazyNet90.Value;
     }
 }

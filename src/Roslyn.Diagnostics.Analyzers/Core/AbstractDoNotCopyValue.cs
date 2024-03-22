@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.Lightup;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis;
@@ -1350,9 +1351,8 @@ namespace Roslyn.Diagnostics.Analyzers
                 return (sourceRefKind, targetRefKind) switch
                 {
                     (RefKind.None, _) => true,
-                    (RefKind.Ref, RefKind.Ref) => true,
-                    (RefKind.Ref, RefKind.RefReadOnly or RefKindEx.RefReadOnlyParameter) => true,
-                    (RefKind.RefReadOnly, RefKind.RefReadOnly or RefKindEx.RefReadOnlyParameter) => true,
+                    (RefKind.Ref, RefKind.Ref or RefKind.RefReadOnly or RefKindEx.RefReadOnlyParameter) => true,
+                    (RefKind.RefReadOnly or RefKindEx.RefReadOnlyParameter, RefKind.RefReadOnly or RefKindEx.RefReadOnlyParameter) => true,
                     _ => false,
                 };
             }
@@ -1435,6 +1435,9 @@ namespace Roslyn.Diagnostics.Analyzers
                         };
 
                     case OperationKind.Throw:
+                        return RefKind.None;
+
+                    case OperationKindEx.CollectionExpression:
                         return RefKind.None;
 
                     default:

@@ -36,7 +36,7 @@
       <_GeneratedRulesetsDir>$(IntermediateOutputPath)Rulesets</_GeneratedRulesetsDir>
       <_GeneratedEditorconfigsDir>$(IntermediateOutputPath)Editorconfig</_GeneratedEditorconfigsDir>
       <_GeneratedGlobalAnalyzerConfigsDir>$(IntermediateOutputPath)GlobalAnalyzerConfigs</_GeneratedGlobalAnalyzerConfigsDir>
-      <_ValidateOffline Condition="'$(DotNetBuildSourceOnly)' == 'true'">true</_ValidateOffline>
+      <_ValidateOffline Condition="'$(DotNetBuildSourceOnly)' == 'true' or '$(DotNetBuild)' == 'true'">true</_ValidateOffline>
       <_ValidateOffline Condition="'$(_ValidateOffline)' == ''">false</_ValidateOffline>
       <ContainsPortedFxCopRules Condition="'$(ContainsPortedFxCopRules)' == ''">false</ContainsPortedFxCopRules>
       <GeneratePackagePropsFile Condition="'$(GeneratePackagePropsFile)' == ''">true</GeneratePackagePropsFile>

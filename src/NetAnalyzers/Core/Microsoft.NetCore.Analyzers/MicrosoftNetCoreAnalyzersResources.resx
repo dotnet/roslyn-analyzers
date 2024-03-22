@@ -195,6 +195,18 @@
   <data name="DoNotUseCountWhenAnyCanBeUsedTitle" xml:space="preserve">
     <value>Do not use Count() or LongCount() when Any() can be used</value>
   </data>
+  <data name="PreferConvertToHexStringOverBitConverterTitle" xml:space="preserve">
+    <value>Prefer 'Convert.ToHexString' and 'Convert.ToHexStringLower' over call chains based on 'BitConverter.ToString'</value>
+  </data>
+  <data name="PreferConvertToHexStringOverBitConverterDescription" xml:space="preserve">
+    <value>Use 'Convert.ToHexString' or 'Convert.ToHexStringLower' when encoding bytes to a hexadecimal string representation. These methods are more efficient and allocation-friendly than using 'BitConverter.ToString' in combination with 'String.Replace' to replace dashes and 'String.ToLower'.</value>
+  </data>
+  <data name="PreferConvertToHexStringOverBitConverterMessage" xml:space="preserve">
+    <value>Prefer '{0}' over call chains based on '{1}'</value>
+  </data>
+  <data name="PreferConvertToHexStringOverBitConverterCodeFixTitle" xml:space="preserve">
+    <value>Replace with 'Convert.{0}'</value>
+  </data>
   <data name="DoNotUseTimersThatPreventPowerStateChangesTitle" xml:space="preserve">
     <value>Do not use timers that prevent power state changes</value>
   </data>
@@ -2143,5 +2155,23 @@ Widening and user defined conversions are not supported with generic types.</val
   </data>
   <data name="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullCodeFixTitle" xml:space="preserve">
     <value>Replace the 'ArgumentNullException.ThrowIfNull' call with a conditional</value>
+  </data>
+  <data name="DoNotCompareSpanToNullOrDefaultDescription" xml:space="preserve">
+    <value>Comparing a span to 'null' or 'default' might not do what you intended. 'default' and the 'null' literal are implicitly converted to 'Span&lt;T&gt;.Empty'. Remove the redundant comparison or make the code more explicit by using 'IsEmpty'.</value>
+  </data>
+  <data name="DoNotCompareSpanToNullMessage" xml:space="preserve">
+    <value>Comparing a span to 'null' might be redundant, the 'null' literal will be implicitly converted to a 'Span&lt;T&gt;.Empty'</value>
+  </data>
+  <data name="DoNotCompareSpanToDefaultMessage" xml:space="preserve">
+    <value>Comparing a span to 'default' might not do what you intended, make the code more explicit by checking 'IsEmpty'</value>
+  </data>
+  <data name="DoNotCompareSpanToNullOrDefaultTitle" xml:space="preserve">
+    <value>Do not compare Span&lt;T&gt; to 'null' or 'default'</value>
+  </data>
+  <data name="DoNotCompareSpanToNullIsEmptyCodeFixTitle" xml:space="preserve">
+    <value>Use 'IsEmpty'</value>
+  </data>
+  <data name="DoNotUseThreadVolatileReadWriteCodeFixTitle" xml:space="preserve">
+    <value>Replace obsolete call</value>
   </data>
 </root>

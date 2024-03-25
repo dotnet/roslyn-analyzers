@@ -108,13 +108,13 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnreliableStreamReadMessage">
-        <source>Avoid unreliable call to '{0}'</source>
-        <target state="new">Avoid unreliable call to '{0}'</target>
+        <source>Avoid inexact read with '{0}'</source>
+        <target state="new">Avoid inexact read with '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnreliableStreamReadTitle">
-        <source>Avoid unreliable call to 'Stream.Read'</source>
-        <target state="new">Avoid unreliable call to 'Stream.Read'</target>
+        <source>Avoid inexact read with 'Stream.Read'</source>
+        <target state="new">Avoid inexact read with 'Stream.Read'</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesDescription">

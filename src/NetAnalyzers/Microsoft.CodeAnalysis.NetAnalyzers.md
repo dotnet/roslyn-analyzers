@@ -2058,7 +2058,7 @@ Widening and user defined conversions are not supported with generic types.
 |CodeFix|False|
 ---
 
-## [CA2022](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022): Avoid unreliable call to 'Stream.Read'
+## [CA2022](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022): Avoid inexact read with 'Stream.Read'
 
 A call to 'Stream.Read' may return fewer bytes than requested, resulting in unreliable code if the return value is not checked.
 

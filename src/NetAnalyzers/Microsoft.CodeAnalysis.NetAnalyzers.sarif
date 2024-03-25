@@ -3693,7 +3693,7 @@
         },
         "CA2022": {
           "id": "CA2022",
-          "shortDescription": "Avoid unreliable call to 'Stream.Read'",
+          "shortDescription": "Avoid inexact read with 'Stream.Read'",
           "fullDescription": "A call to 'Stream.Read' may return fewer bytes than requested, resulting in unreliable code if the return value is not checked.",
           "defaultLevel": "warning",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022",

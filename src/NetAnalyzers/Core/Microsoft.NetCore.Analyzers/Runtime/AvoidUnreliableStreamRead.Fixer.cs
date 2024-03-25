@@ -63,8 +63,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            var isAsyncInvocation = invocation.TargetMethod.Name.EndsWith(Async, StringComparison.Ordinal);
-            var readExactlyMethods = streamType.GetMembers(isAsyncInvocation ? ReadExactlyAsync : ReadExactly)
+            var readExactlyMethods = streamType.GetMembers(ReadExactly)
                 .OfType<IMethodSymbol>()
                 .ToImmutableArray();
 
@@ -86,6 +85,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var generator = editor.Generator;
                 var arguments = invocation.Arguments.GetArgumentsInParameterOrder();
 
+                var isAsyncInvocation = invocation.TargetMethod.Name.EndsWith(Async, StringComparison.Ordinal);
                 var methodExpression = generator.MemberAccessExpression(
                     invocation.Instance.Syntax,
                     isAsyncInvocation ? ReadExactlyAsync : ReadExactly);

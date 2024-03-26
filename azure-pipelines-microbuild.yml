@@ -108,11 +108,8 @@ extends:
         - name: Codeql.TSAEnabled
           value: true
         steps:
-        - task: CodeQL3000Init@0
-          displayName: CodeQL Initialize
         - script: eng\common\cibuild.cmd -configuration Release -prepareMachine /p:Test=false
           displayName: Windows Build
-        - task: CodeQL3000Finalize@0
     - template: eng/common/templates-official/post-build/post-build.yml
       parameters:
         publishingInfraVersion: 3

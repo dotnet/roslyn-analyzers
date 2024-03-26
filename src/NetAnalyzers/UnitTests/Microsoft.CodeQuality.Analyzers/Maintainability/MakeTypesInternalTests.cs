@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -16,6 +18,16 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     public sealed class MakeTypesInternalTests
     {
+        private static readonly IEnumerable<OutputKind> OutputKinds =
+        [
+            OutputKind.ConsoleApplication,
+            OutputKind.WindowsRuntimeApplication,
+            OutputKind.WindowsApplication
+        ];
+
+        public static readonly TheoryData<OutputKind> DiagnosticTriggeringOutputKinds = new(OutputKinds);
+        public static readonly TheoryData<OutputKind> NonDiagnosticTriggeringOutputKinds = new(Enum.GetValues<OutputKind>().Except(OutputKinds));
+
         [Theory]
         [MemberData(nameof(NonDiagnosticTriggeringOutputKinds))]
         public async Task LibraryCode_NoDiagnostic(OutputKind outputKind)
@@ -675,6 +687,98 @@ End Class");
                 """);
         }
 
+        [Theory]
+        [MemberData(nameof(DiagnosticTriggeringOutputKinds))]
+        public async Task ExceptionDerivatives(OutputKind outputKind)
+        {
+            await VerifyCsAsync(outputKind,
+                """
+                using System;
+                
+                internal class Program
+                {
+                    public static void Main() {}
+                }
+                
+                public class MyException : Exception {}
+                
+                public class MyBaseException : Exception {}
+                
+                public class MyInheritedException : MyBaseException {}
+                
+                public class MyArgumentException : ArgumentException {}
+                """);
+
+            await VerifyVbAsync(outputKind,
+                """
+                Imports System
+                
+                Friend Class Program
+                    Public Shared Sub Main()
+                    End Sub
+                End Class
+                
+                Public Class MyException
+                    Inherits Exception
+                End Class
+                
+                Public Class MyBaseException
+                    Inherits Exception
+                End Class
+                
+                Public Class MyInheritedException
+                    Inherits MyBaseException
+                End Class
+                
+                Public Class MyArgumentException
+                    Inherits ArgumentException
+                End Class
+                """);
+        }
+
+        [Theory]
+        [MemberData(nameof(DiagnosticTriggeringOutputKinds))]
+        public async Task FakeExceptions(OutputKind outputKind)
+        {
+            await VerifyCsAsync(outputKind,
+                """
+                internal class Program
+                {
+                    public static void Main() {}
+                }
+                
+                public class [|MyException|] {}
+                """,
+                """
+                internal class Program
+                {
+                    public static void Main() {}
+                }
+
+                internal class MyException {}
+                """);
+
+            await VerifyVbAsync(outputKind,
+                """
+                Friend Class Program
+                    Public Shared Sub Main()
+                    End Sub
+                End Class
+                
+                Public Class [|MyException|]
+                End Class
+                """,
+                """
+                Friend Class Program
+                    Public Shared Sub Main()
+                    End Sub
+                End Class
+
+                Friend Class MyException
+                End Class
+                """);
+        }
+
         private Task VerifyCsAsync(OutputKind outputKind, string testCode, string fixedCode = null)
         {
             return new VerifyCS.Test
@@ -694,20 +798,6 @@ End Class");
                 FixedCode = fixedCode!,
                 TestState = { OutputKind = outputKind }
             }.RunAsync();
-        }
-
-        public static IEnumerable<object[]> DiagnosticTriggeringOutputKinds()
-        {
-            yield return new object[] { OutputKind.ConsoleApplication };
-            yield return new object[] { OutputKind.WindowsRuntimeApplication };
-            yield return new object[] { OutputKind.WindowsApplication };
-        }
-
-        public static IEnumerable<object[]> NonDiagnosticTriggeringOutputKinds()
-        {
-            yield return new object[] { OutputKind.NetModule };
-            yield return new object[] { OutputKind.DynamicallyLinkedLibrary };
-            yield return new object[] { OutputKind.WindowsRuntimeMetadata };
         }
     }
 }

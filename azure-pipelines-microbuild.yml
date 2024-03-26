@@ -80,11 +80,11 @@ extends:
               outputs:
               # Archive NuGet packages to DevOps.
               - output: pipelineArtifact
-                path: $(Build.ArtifactStagingDirectory)/packages/$(BuildConfig)
+                path: artifacts/packages/$(_BuildConfig)
                 artifact: Packages
               # Archive VSIX packages to DevOps.
               - output: pipelineArtifact
-                path: $(Build.ArtifactStagingDirectory)/VSSetup/$(BuildConfig)
+                path: artifacts/VSSetup/$(_BuildConfig)
                 artifact: VSIXes
     - stage: analysis
       displayName: Code analysis

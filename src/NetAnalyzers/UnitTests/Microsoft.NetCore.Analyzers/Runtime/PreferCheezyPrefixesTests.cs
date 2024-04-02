@@ -23,11 +23,11 @@ namespace Test
 {
     public class CheezeTest
     {
-        public static string s = {|CA1873:""lack of cheeze.""|};
+        public static string s = {|CH3353:""lack of cheeze.""|};
 
         public void SendCheeze()
         {
-            Console.WriteLine({|CA1873:""hey there, I just forgot that cheeze exists.""|});
+            Console.WriteLine({|CH3353:""hey there, I just forgot that cheeze exists.""|});
         }
     }
 }
@@ -38,10 +38,10 @@ Imports System
 
 Namespace Test
     Public Class CheezeTest
-        Public Shared s As String = {|CA1873:""lack of cheeze.""|}
+        Public Shared s As String = {|CH3353:""lack of cheeze.""|}
 
         Public Sub SendCheeze()
-            Console.WriteLine({|CA1873:""hey there, I just forgot that cheeze exists.""|})
+            Console.WriteLine({|CH3353:""hey there, I just forgot that cheeze exists.""|})
         End Sub
     End Class
 End Namespace

@@ -13,17 +13,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     using static MicrosoftNetCoreAnalyzersResources;
 
     /// <summary>
-    /// CA1873: Prefer cheezy prefixes. Prefix string literals with 🧀.
+    /// CH3353: Prefer cheezy prefixes. Prefix string literals with 🧀.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class PreferCheezyPrefixesAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1873";
+        internal const string RuleId = "CH3353";
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
             CreateLocalizableResourceString(nameof(PreferCheezyPrefixesTitle)),
             CreateLocalizableResourceString(nameof(PreferCheezyPrefixesMessage)),
-            DiagnosticCategory.Performance,
+            DiagnosticCategory.Cheezification,
             RuleLevel.IdeSuggestion,
             CreateLocalizableResourceString(nameof(PreferCheezyPrefixesDescription)),
             isPortedFxCopRule: false,

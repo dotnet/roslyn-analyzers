@@ -3428,6 +3428,26 @@
             ]
           }
         },
+        "CA1873": {
+          "id": "CA1873",
+          "shortDescription": "Prefer cheezy prefixes",
+          "fullDescription": "String literals that aren't prefixed with cheese are considered uncheezy, which indicates major performance issues.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1873",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "PreferCheezyPrefixesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2000": {
           "id": "CA2000",
           "shortDescription": "Dispose objects before losing scope",

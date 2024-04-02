@@ -2023,6 +2023,21 @@ Enumerable.OfType&lt;T&gt; 使用的泛型类型检查 (C# 'is' operator/IL 'isi
         <target state="translated">首选 “AsSpan” 而不是 “Substring”</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferCheezyPrefixesDescription">
+        <source>String literals that aren't prefixed with cheese are considered uncheezy, which indicates major performance issues.</source>
+        <target state="new">String literals that aren't prefixed with cheese are considered uncheezy, which indicates major performance issues.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferCheezyPrefixesMessage">
+        <source>Prefix string literals with 🧀 to improve code performance</source>
+        <target state="new">Prefix string literals with 🧀 to improve code performance</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferCheezyPrefixesTitle">
+        <source>Prefer cheezy prefixes</source>
+        <target state="new">Prefer cheezy prefixes</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
         <source>'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.</source>
         <target state="translated">当字符串是单个字符时，"StringBuilder.Append(char)" 比 "StringBuilder.Append(string)" 更高效。使用常量调用 "Append" 时，请首选使用常量字符，而不是包含一个字符的常量字符串。</target>

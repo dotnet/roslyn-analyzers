@@ -925,12 +925,12 @@ Obecné přetypování (IL unbox.any) používané sekvencí vrácenou metodou E
       </trans-unit>
       <trans-unit id="DoNotUseConfigureAwaitWithSuppressThrowingDescription">
         <source>The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generic Task, not a Task&lt;TResult&gt;.  To use it with a Task&lt;TResult&gt;, first cast to the base Task.</source>
-        <target state="translated">ConfigureAwaitOptions.SuppressThrowing se podporuje pouze u neobecných úloh, nikoli u Task&lt;TResult&gt;. Pokud ho chcete použít s task&lt;TResult&gt;, nejprve ho přetypujte na základní úlohu.</target>
+        <target state="new">The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generic Task, not a Task&lt;TResult&gt;.  To use it with a Task&lt;TResult&gt;, first cast to the base Task.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseConfigureAwaitWithSuppressThrowingMessage">
         <source>The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generic Task</source>
-        <target state="translated">ConfigureAwaitOptions.SuppressThrowing se podporuje pouze s neobecnou úlohou.</target>
+        <target state="new">The ConfigureAwaitOptions.SuppressThrowing is only supported with the non-generic Task</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseConfigureAwaitWithSuppressThrowingTitle">
@@ -1620,7 +1620,7 @@ Obecné přetypování (IL unbox.any) používané sekvencí vrácenou metodou E
       </trans-unit>
       <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIV">
         <source>Use CreateEncryptor with the default IV </source>
-        <target state="translated">Použít CreateEncryptor s výchozím inicializačním vektorem </target>
+        <target state="new">Use CreateEncryptor with the default IV </target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIVMessage">
@@ -1920,7 +1920,7 @@ Obecné přetypování (IL unbox.any) používané sekvencí vrácenou metodou E
       </trans-unit>
       <trans-unit id="PreferAsSpanOverSubstringDescription">
         <source>'AsSpan' is more efficient then 'Substring'. 'Substring' performs an O(n) string copy, while 'AsSpan' does not and has a constant cost.</source>
-        <target state="translated">AsSpan je efektivnější než Substring. Substring provádí kopírování řetězce O(n), zatímco AsSpan ho neprovádí a má konstantní náklady.</target>
+        <target state="new">'AsSpan' is more efficient then 'Substring'. 'Substring' performs an O(n) string copy, while 'AsSpan' does not and has a constant cost.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferAsSpanOverSubstringMessage">

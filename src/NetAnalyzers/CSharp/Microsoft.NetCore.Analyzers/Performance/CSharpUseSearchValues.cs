@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using Analyzer.Utilities.Lightup;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,12 +15,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpUseSearchValuesAnalyzer : UseSearchValuesAnalyzer
     {
-        // The referenced SDK version doesn't yet contain these SyntaxKind values
-        // https://github.com/dotnet/roslyn/blob/main/src/Compilers/CSharp/Portable/Syntax/SyntaxKind.cs
-        private const SyntaxKind Utf8StringLiteralToken = (SyntaxKind)8520;
-        private const SyntaxKind Utf8StringLiteralExpression = (SyntaxKind)8756;
-        private const SyntaxKind CollectionExpression = (SyntaxKind)9076;
-
         // char[] myField = new char[] { 'a', 'b', 'c' };
         // char[] myField = new[] { 'a', 'b', 'c' };
         // char[] myField = "abc".ToCharArray();
@@ -118,7 +113,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     return true;
                 }
             }
-            else if (expression.IsKind(CollectionExpression))
+            else if (expression.IsKind(SyntaxKindEx.CollectionExpression))
             {
                 return
                     semanticModel.GetOperation(expression) is { } operation &&
@@ -171,9 +166,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
         private static bool IsUtf8StringLiteralExpression(ExpressionSyntax expression, out int length)
         {
-            if (expression.IsKind(Utf8StringLiteralExpression) &&
+            if (expression.IsKind(SyntaxKindEx.Utf8StringLiteralExpression) &&
                 expression is LiteralExpressionSyntax literal &&
-                literal.Token.IsKind(Utf8StringLiteralToken) &&
+                literal.Token.IsKind(SyntaxKindEx.Utf8StringLiteralToken) &&
                 literal.Token.Value is string value)
             {
                 length = value.Length;

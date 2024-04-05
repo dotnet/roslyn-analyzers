@@ -3,11 +3,4 @@
     <ProducesDotNetReleaseShippingAssets>true</ProducesDotNetReleaseShippingAssets>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ItemsToPushToBlobFeed Include="$(ArtifactsPackagesDir)Release\*.nupkg"
-                           IsShipping="true"
-                           UploadPathSegment="Roslyn-analyzers"
-                           Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
-  </ItemGroup>
-
 </Project>

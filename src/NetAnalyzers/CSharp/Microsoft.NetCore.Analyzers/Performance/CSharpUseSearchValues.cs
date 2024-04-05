@@ -90,6 +90,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         // ConstString.ToCharArray()
         internal static bool IsConstantByteOrCharArrayCreationExpression(SemanticModel semanticModel, ExpressionSyntax expression, List<char>? values, out int length)
         {
+            const SyntaxKind CollectionExpressionSyntaxKind = (SyntaxKind)9076;
+
             length = 0;
 
             InitializerExpressionSyntax? arrayInitializer = null;
@@ -112,7 +114,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     return true;
                 }
             }
-            else
+            else if (expression.IsKind(CollectionExpressionSyntaxKind))
             {
                 return
                     semanticModel.GetOperation(expression) is { } operation &&

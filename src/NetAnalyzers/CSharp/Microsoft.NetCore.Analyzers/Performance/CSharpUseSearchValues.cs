@@ -14,6 +14,12 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpUseSearchValuesAnalyzer : UseSearchValuesAnalyzer
     {
+        // The referenced SDK version doesn't yet contain these SyntaxKind values
+        // https://github.com/dotnet/roslyn/blob/main/src/Compilers/CSharp/Portable/Syntax/SyntaxKind.cs
+        private const SyntaxKind Utf8StringLiteralToken = (SyntaxKind)8520;
+        private const SyntaxKind Utf8StringLiteralExpression = (SyntaxKind)8756;
+        private const SyntaxKind CollectionExpression = (SyntaxKind)9076;
+
         // char[] myField = new char[] { 'a', 'b', 'c' };
         // char[] myField = new[] { 'a', 'b', 'c' };
         // char[] myField = "abc".ToCharArray();
@@ -90,8 +96,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         // ConstString.ToCharArray()
         internal static bool IsConstantByteOrCharArrayCreationExpression(SemanticModel semanticModel, ExpressionSyntax expression, List<char>? values, out int length)
         {
-            const SyntaxKind CollectionExpressionSyntaxKind = (SyntaxKind)9076;
-
             length = 0;
 
             InitializerExpressionSyntax? arrayInitializer = null;
@@ -114,7 +118,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     return true;
                 }
             }
-            else if (expression.IsKind(CollectionExpressionSyntaxKind))
+            else if (expression.IsKind(CollectionExpression))
             {
                 return
                     semanticModel.GetOperation(expression) is { } operation &&
@@ -167,9 +171,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
         private static bool IsUtf8StringLiteralExpression(ExpressionSyntax expression, out int length)
         {
-            const SyntaxKind Utf8StringLiteralExpression = (SyntaxKind)8756;
-            const SyntaxKind Utf8StringLiteralToken = (SyntaxKind)8520;
-
             if (expression.IsKind(Utf8StringLiteralExpression) &&
                 expression is LiteralExpressionSyntax literal &&
                 literal.Token.IsKind(Utf8StringLiteralToken) &&

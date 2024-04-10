@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -192,6 +193,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
+            if (!IsValidBrackets(text))
+            {
+                context.ReportDiagnostic(formatExpression.CreateDiagnostic(CA2017Rule));
+                return;
+            }
+
             LogValuesFormatter formatter;
             try
             {
@@ -249,6 +256,46 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 default:
                     return null;
             }
+        }
+
+        /// <summary>
+        /// Does the text have valid brackets?
+        /// </summary>
+        /// <param name="text">The text to check.</param>
+        /// <returns>When true brackets are valid, false otherwise.</returns>
+        private static bool IsValidBrackets(string text)
+        {
+            var relevantBracketPairs = new Dictionary<char, char>()
+            {
+                {'}', '{'},
+            };
+
+            var stack = new Stack<char>();
+
+            for (var i = 0; i < text.Length; i++)
+            {
+                // If we're on a closing bracket...
+                if (relevantBracketPairs.ContainsKey(text[i]))
+                {
+                    // and nothing in the stack, invalid
+                    if (stack.Count == 0)
+                        return false;
+
+                    // Check the "opening" of this type of bracket from the stack matches expectations
+                    var pop = stack.Pop();
+                    if (relevantBracketPairs[text[i]] != pop)
+                        return false;
+                }
+
+                // If we're on a bracket, push onto stack for tracking
+                if (relevantBracketPairs.ContainsValue(text[i]))
+                {
+                    stack.Push(text[i]);
+                }
+            }
+
+            // Entire text has been evaluated and no issues found
+            return true;
         }
 
         private static bool FindLogParameters(IMethodSymbol methodSymbol, [NotNullWhen(true)] out IParameterSymbol? message, out IParameterSymbol? arguments)

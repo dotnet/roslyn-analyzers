@@ -107,7 +107,6 @@ namespace Microsoft.Extensions.Logging.Analyzer
             await TriggerCodeAsync(expression);
         }
 
-
         /// <summary>
         /// <para>
         /// https://github.com/dotnet/roslyn-analyzers/issues/7285

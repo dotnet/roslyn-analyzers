@@ -189,6 +189,15 @@
   <data name="LoggerMessageDiagnosticFormatParameterCountMismatchDescription" xml:space="preserve">
     <value>Number of parameters supplied in the logging message template do not match the number of named placeholders.</value>
   </data>
+  <data name="LoggerMessageDiagnosticMessageTemplateBracesMismatchTitle" xml:space="preserve">
+    <value>Invalid braces in message template</value>
+  </data>
+  <data name="LoggerMessageDiagnosticMessageTemplateBracesMismatchMessage" xml:space="preserve">
+    <value>Invalid braces supplied in the logging message template</value>
+  </data>
+  <data name="LoggerMessageDiagnosticMessageTemplateBracesMismatchDescription" xml:space="preserve">
+    <value>Invalid braces supplied in the logging message template.</value>
+  </data>
   <data name="LoggerMessageDiagnosticUseCompiledLogMessagesTitle" xml:space="preserve">
     <value>Use the LoggerMessage delegates</value>
   </data>

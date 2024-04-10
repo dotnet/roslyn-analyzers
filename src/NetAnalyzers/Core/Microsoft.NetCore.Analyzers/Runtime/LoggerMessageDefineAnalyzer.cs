@@ -265,30 +265,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         /// <returns>When true brackets are valid, false otherwise.</returns>
         private static bool IsValidBrackets(string text)
         {
-            var relevantBracketPairs = new Dictionary<char, char>()
-            {
-                {'}', '{'},
-            };
-
             var stack = new Stack<char>();
 
             for (var i = 0; i < text.Length; i++)
             {
                 // If we're on a closing bracket...
-                if (relevantBracketPairs.ContainsKey(text[i]))
+                if (text[i].Equals('}'))
                 {
                     // and nothing in the stack, invalid
                     if (stack.Count == 0)
                         return false;
 
-                    // Check the "opening" of this type of bracket from the stack matches expectations
-                    var pop = stack.Pop();
-                    if (relevantBracketPairs[text[i]] != pop)
-                        return false;
+                    // pop from the stack as this should be the opening bracket to this closing one
+                    stack.Pop();
                 }
 
-                // If we're on a bracket, push onto stack for tracking
-                if (relevantBracketPairs.ContainsValue(text[i]))
+                // If we're on an opening bracket, push onto stack for tracking
+                if (text[i].Equals('{'))
                 {
                     stack.Push(text[i]);
                 }

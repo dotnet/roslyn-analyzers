@@ -23,6 +23,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// CA2253: <inheritdoc cref="LoggerMessageDiagnosticNumericsInFormatStringTitle"/>
     /// CA2254: <inheritdoc cref="LoggerMessageDiagnosticConcatenationInFormatStringTitle"/>
     /// CA2017: <inheritdoc cref="LoggerMessageDiagnosticFormatParameterCountMismatchTitle"/>
+    /// CA2017: <inheritdoc cref="LoggerMessageDiagnosticMessageTemplateBracesMismatchTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class LoggerMessageDefineAnalyzer : DiagnosticAnalyzer
@@ -73,7 +74,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);
 
-        internal static readonly DiagnosticDescriptor CA2017Rule = DiagnosticDescriptorHelper.Create(CA2017RuleId,
+        internal static readonly DiagnosticDescriptor CA2017DefaultRule = DiagnosticDescriptorHelper.Create(CA2017RuleId,
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountMismatchTitle)),
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountMismatchMessage)),
                                                                          DiagnosticCategory.Reliability,
@@ -83,7 +84,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(CA1727Rule, CA1848Rule, CA2253Rule, CA2254Rule, CA2017Rule);
+        internal static readonly DiagnosticDescriptor CA2017BracesMismatchRule = DiagnosticDescriptorHelper.Create(CA2017RuleId,
+                                                                         CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchTitle)),
+                                                                         CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchMessage)),
+                                                                         DiagnosticCategory.Reliability,
+                                                                         RuleLevel.BuildWarning,
+                                                                         description: CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchDescription)),
+                                                                         isPortedFxCopRule: false,
+                                                                         isDataflowRule: false,
+                                                                         isReportedAtCompilationEnd: false);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(CA1727Rule, CA1848Rule, CA2253Rule, CA2254Rule, CA2017DefaultRule, CA2017BracesMismatchRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -193,9 +204,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            if (!IsValidBrackets(text))
+            if (!IsValidBraces(text))
             {
-                context.ReportDiagnostic(formatExpression.CreateDiagnostic(CA2017Rule));
+                context.ReportDiagnostic(formatExpression.CreateDiagnostic(CA2017BracesMismatchRule));
                 return;
             }
 
@@ -226,7 +237,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var argsPassedDirectly = argsIsArray && paramsCount == 1;
             if (!argsPassedDirectly && paramsCount != formatter.ValueNames.Count)
             {
-                context.ReportDiagnostic(formatExpression.CreateDiagnostic(CA2017Rule));
+                context.ReportDiagnostic(formatExpression.CreateDiagnostic(CA2017DefaultRule));
             }
         }
 
@@ -259,11 +270,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         /// <summary>
-        /// Does the text have valid brackets?
+        /// Does the text have valid braces? (no unclosed braces, or braces without an opening)
         /// </summary>
         /// <param name="text">The text to check.</param>
         /// <returns>When true brackets are valid, false otherwise.</returns>
-        private static bool IsValidBrackets(string text)
+        private static bool IsValidBraces(string text)
         {
             var stack = new Stack<char>();
 
@@ -285,6 +296,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     stack.Push(text[i]);
                 }
+            }
+
+            // If anything exists in the stack, that means we have an opening without a close
+            if (stack.Count != 0)
+            {
+                return false;
             }
 
             // Entire text has been evaluated and no issues found

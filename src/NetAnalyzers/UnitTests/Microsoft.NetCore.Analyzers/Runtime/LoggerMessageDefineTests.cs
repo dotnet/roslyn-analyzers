@@ -119,6 +119,7 @@ namespace Microsoft.Extensions.Logging.Analyzer
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""{One}}""|});")]
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""{{One}""|});")]
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""}{One}""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""}{One}""|{);")]
         public async Task Fix7285_CA2017(string format)
         {
             await TriggerCodeAsync(format);

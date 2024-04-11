@@ -1992,9 +1992,9 @@ Forward the 'CancellationToken' parameter to methods to ensure the operation can
 |CodeFix|True|
 ---
 
-## [CA2017](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017): Parameter count mismatch
+## [CA2017](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017): Message templates should have the correct number of parameters and braces
 
-Number of parameters supplied in the logging message template do not match the number of named placeholders.
+The number of parameters supplied in the logging message template do not match the number of named placeholders or the braces supplied are invalid.
 
 |Item|Value|
 |-|-|

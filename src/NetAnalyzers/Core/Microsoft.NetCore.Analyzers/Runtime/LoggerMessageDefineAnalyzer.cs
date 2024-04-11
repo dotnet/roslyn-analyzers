@@ -22,8 +22,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// CA1848: <inheritdoc cref="LoggerMessageDiagnosticUseCompiledLogMessagesTitle"/>
     /// CA2253: <inheritdoc cref="LoggerMessageDiagnosticNumericsInFormatStringTitle"/>
     /// CA2254: <inheritdoc cref="LoggerMessageDiagnosticConcatenationInFormatStringTitle"/>
-    /// CA2017: <inheritdoc cref="LoggerMessageDiagnosticFormatParameterCountMismatchTitle"/>
-    /// CA2017: <inheritdoc cref="LoggerMessageDiagnosticMessageTemplateBracesMismatchTitle"/>
+    /// CA2017: <inheritdoc cref="LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class LoggerMessageDefineAnalyzer : DiagnosticAnalyzer
@@ -75,21 +74,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          isReportedAtCompilationEnd: false);
 
         internal static readonly DiagnosticDescriptor CA2017DefaultRule = DiagnosticDescriptorHelper.Create(CA2017RuleId,
-                                                                         CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountMismatchTitle)),
+                                                                         CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchTitle)),
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountMismatchMessage)),
                                                                          DiagnosticCategory.Reliability,
                                                                          RuleLevel.BuildWarning,
-                                                                         description: CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountMismatchDescription)),
+                                                                         description: CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchDescription)),
                                                                          isPortedFxCopRule: false,
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);
 
         internal static readonly DiagnosticDescriptor CA2017BracesMismatchRule = DiagnosticDescriptorHelper.Create(CA2017RuleId,
-                                                                         CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchTitle)),
+                                                                         CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchTitle)),
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchMessage)),
                                                                          DiagnosticCategory.Reliability,
                                                                          RuleLevel.BuildWarning,
-                                                                         description: CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchDescription)),
+                                                                         description: CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchDescription)),
                                                                          isPortedFxCopRule: false,
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);

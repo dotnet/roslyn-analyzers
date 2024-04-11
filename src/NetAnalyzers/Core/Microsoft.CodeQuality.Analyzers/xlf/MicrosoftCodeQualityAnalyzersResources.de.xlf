@@ -297,34 +297,24 @@
         <target state="translated">Vorlage muss ein statischer Ausdruck sein</target>
         <note />
       </trans-unit>
-      <trans-unit id="LoggerMessageDiagnosticFormatParameterCountMismatchDescription">
-        <source>Number of parameters supplied in the logging message template do not match the number of named placeholders.</source>
-        <target state="translated">Die Anzahl der in der Vorlage für Protokollierungsnachrichten angegebenen Parameter stimmt nicht mit der Anzahl benannter Platzhalter überein.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticFormatParameterCountMismatchMessage">
         <source>Number of parameters supplied in the logging message template do not match the number of named placeholders</source>
         <target state="translated">Die Anzahl der in der Protokollierungsmeldungsvorlage angegebenen Parameter stimmt nicht mit der Anzahl der benannten Platzhalter überein</target>
         <note />
       </trans-unit>
-      <trans-unit id="LoggerMessageDiagnosticFormatParameterCountMismatchTitle">
-        <source>Parameter count mismatch</source>
-        <target state="translated">Konflikt bei der Parameteranzahl</target>
+      <trans-unit id="LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchDescription">
+        <source>Number of parameters supplied in the logging message template do not match the number of named placeholders or the braces present are invalid.</source>
+        <target state="new">Number of parameters supplied in the logging message template do not match the number of named placeholders or the braces present are invalid.</target>
         <note />
       </trans-unit>
-      <trans-unit id="LoggerMessageDiagnosticMessageTemplateBracesMismatchDescription">
-        <source>Invalid braces supplied in the logging message template.</source>
-        <target state="new">Invalid braces supplied in the logging message template.</target>
+      <trans-unit id="LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchTitle">
+        <source>Parameter count mismatch or invalid braces in message template</source>
+        <target state="new">Parameter count mismatch or invalid braces in message template</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticMessageTemplateBracesMismatchMessage">
         <source>Invalid braces supplied in the logging message template</source>
         <target state="new">Invalid braces supplied in the logging message template</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="LoggerMessageDiagnosticMessageTemplateBracesMismatchTitle">
-        <source>Invalid braces in message template</source>
-        <target state="new">Invalid braces in message template</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticNumericsInFormatStringDescription">

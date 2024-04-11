@@ -107,20 +107,13 @@ namespace Microsoft.Extensions.Logging.Analyzer
             await TriggerCodeAsync(expression);
         }
 
-        /// <summary>
-        /// <para>
-        /// https://github.com/dotnet/roslyn-analyzers/issues/7285
-        /// </para>
-        /// <para>
-        /// Unmatched brackets cause runtime exceptions in a message template, should flag CA2017
-        /// </para>
-        /// </summary>
         [Theory]
+        [WorkItem(7285, "https://github.com/dotnet/roslyn-analyzers/issues/7285")]
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""{One}}""|});")]
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""{{One}""|});")]
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""}{One}""|});")]
-        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""}{One}""|{);")]
-        public async Task Fix7285_CA2017(string format)
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""}{One}{""|});")]
+        public async Task CA2017IsProducedWhenBracesAreInvalid(string format)
         {
             await TriggerCodeAsync(format);
         }
@@ -253,6 +246,7 @@ public class Program
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
                 TestCode = code,
                 ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithMELogging,
+                MarkupOptions = MarkupOptions.UseFirstDescriptor
             }.RunAsync();
         }
     }

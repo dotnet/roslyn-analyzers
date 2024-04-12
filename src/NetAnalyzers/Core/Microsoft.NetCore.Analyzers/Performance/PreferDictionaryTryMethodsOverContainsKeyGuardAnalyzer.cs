@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -322,9 +321,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static bool FindUsages(IOperation operation, ref DictionaryUsageContext usageContext, SearchContext searchContext)
         {
-            // We don't want to step into multiple layers of if statements.
-            var descendants = GetDescendantNodesAndSelf(operation, static op => op is not IConditionalOperation).ToList();
-            foreach (var descendant in descendants)
+            // We don't want to step into multiple layers of conditional statements.
+            foreach (var descendant in GetNonConditionalDescendantsAndSelf(operation))
             {
                 if (IsSameReferenceOperation(descendant, usageContext.DictionaryReference))
                 {
@@ -594,13 +592,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return false;
         }
 
-        private static IEnumerable<IOperation> GetDescendantNodesAndSelf(IOperation operation, Func<IOperation, bool> descendIntoChildren)
+        private static IEnumerable<IOperation> GetNonConditionalDescendantsAndSelf(IOperation operation)
         {
             var childOperations = operation.Children.SelectMany(c =>
             {
-                if (descendIntoChildren(c))
+                if (c is not IConditionalOperation)
                 {
-                    return GetDescendantNodesAndSelf(c, descendIntoChildren);
+                    return GetNonConditionalDescendantsAndSelf(c);
                 }
 
                 return Enumerable.Empty<IOperation>();

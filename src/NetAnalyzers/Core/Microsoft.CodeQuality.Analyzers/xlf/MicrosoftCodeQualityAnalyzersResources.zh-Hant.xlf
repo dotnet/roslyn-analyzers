@@ -307,16 +307,6 @@
         <target state="new">Number of parameters supplied in the logging message template do not match the number of named placeholders or the braces present are invalid.</target>
         <note />
       </trans-unit>
-      <trans-unit id="LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchTitle">
-        <source>Parameter count mismatch or invalid braces in message template</source>
-        <target state="new">Parameter count mismatch or invalid braces in message template</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="LoggerMessageDiagnosticMessageTemplateBracesMismatchMessage">
-        <source>Invalid braces supplied in the logging message template</source>
-        <target state="new">Invalid braces supplied in the logging message template</target>
-        <note />
-      </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticNumericsInFormatStringDescription">
         <source>Named placeholders in the logging message template should not be comprised of only numeric characters.</source>
         <target state="translated">記錄訊息範本中命名的預留位置不能只包含數值字元。</target>

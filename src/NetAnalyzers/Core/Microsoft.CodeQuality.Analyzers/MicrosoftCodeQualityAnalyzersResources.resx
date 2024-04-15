@@ -181,7 +181,7 @@
     <value>Named placeholders in the logging message template should not be comprised of only numeric characters.</value>
   </data>
   <data name="LoggerMessageDiagnosticFormatParameterCountMismatchTitle" xml:space="preserve">
-    <value>Parameter count mismatch in message template</value>
+    <value>Parameter count mismatch</value>
   </data>
   <data name="LoggerMessageDiagnosticFormatParameterCountMismatchMessage" xml:space="preserve">
     <value>Number of parameters supplied in the logging message template do not match the number of named placeholders</value>

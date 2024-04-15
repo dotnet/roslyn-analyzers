@@ -299,7 +299,7 @@
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticFormatParameterCountMismatchDescription">
         <source>Number of parameters supplied in the logging message template do not match the number of named placeholders.</source>
-        <target state="new">Number of parameters supplied in the logging message template do not match the number of named placeholders.</target>
+        <target state="translated">Il numero di parametri specificati nel modello di messaggio di registrazione non corrisponde al numero di segnaposto denominati.</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticFormatParameterCountMismatchMessage">
@@ -308,8 +308,8 @@
         <note />
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticFormatParameterCountMismatchTitle">
-        <source>Parameter count mismatch in message template</source>
-        <target state="new">Parameter count mismatch in message template</target>
+        <source>Parameter count mismatch</source>
+        <target state="translated">Numero di parametri non corrispondente</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticMessageTemplateBracesMismatchDescription">

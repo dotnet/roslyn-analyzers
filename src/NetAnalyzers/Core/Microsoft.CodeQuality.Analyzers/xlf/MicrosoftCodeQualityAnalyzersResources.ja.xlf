@@ -299,7 +299,7 @@
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticFormatParameterCountMismatchDescription">
         <source>Number of parameters supplied in the logging message template do not match the number of named placeholders.</source>
-        <target state="new">Number of parameters supplied in the logging message template do not match the number of named placeholders.</target>
+        <target state="translated">ログ メッセージ テンプレートで指定されたパラメーターの数が、名前付きプレースホルダーの数と一致しません。</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticFormatParameterCountMismatchMessage">
@@ -308,8 +308,8 @@
         <note />
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticFormatParameterCountMismatchTitle">
-        <source>Parameter count mismatch in message template</source>
-        <target state="new">Parameter count mismatch in message template</target>
+        <source>Parameter count mismatch</source>
+        <target state="translated">パラメーター カウントが不一致</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticMessageTemplateBracesMismatchDescription">

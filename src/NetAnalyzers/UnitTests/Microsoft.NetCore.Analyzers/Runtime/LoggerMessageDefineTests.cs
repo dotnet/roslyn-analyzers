@@ -109,11 +109,15 @@ namespace Microsoft.Extensions.Logging.Analyzer
 
         [Theory]
         [WorkItem(7285, "https://github.com/dotnet/roslyn-analyzers/issues/7285")]
-        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{One}}""|});")]
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{{One}""|});")]
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""}{One}""|});")]
-        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""}{One}{""|});")]
-        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""}{One} {Two}{{""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{One}{""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{One}}""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{{{One}}""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""}}{One}}""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{{{One}{""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""}}{One}{""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int, int>({|CA2023:""}}{One} {Two}{""|});")]
         public async Task CA2023IsProducedWhenBracesAreInvalid(string format)
         {
             await TriggerCodeAsync(format);
@@ -122,8 +126,8 @@ namespace Microsoft.Extensions.Logging.Analyzer
         [Theory]
         [WorkItem(7285, "https://github.com/dotnet/roslyn-analyzers/issues/7285")]
         [InlineData(@"LoggerMessage.DefineScope<int>(""Some logged value: {One}}} with an escaped brace"");")]
-        [InlineData(@"LoggerMessage.DefineScope<int, int>(""Some logged value: {One}}} with an {Two}{{ escaped brace"");")]
-        [InlineData(@"LoggerMessage.DefineScope<int, int>(""Some logged {{value: {One}}} with an {Two}{{{{ escaped brace"");")]
+        [InlineData(@"LoggerMessage.DefineScope<int, int>(""}}Some logged value: {One}}} with an {Two}{{ escaped brace"");")]
+        [InlineData(@"LoggerMessage.DefineScope<int, int>(""{{Some logged {{value: {One}}} with an {Two}{{{{ escaped brace{{}}"");")]
         public async Task CA2023IsNotProducedWhenBracesAreEscapedAndOtherwiseValid(string format)
         {
             await TriggerCodeAsync(format);

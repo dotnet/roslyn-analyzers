@@ -286,18 +286,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             for (var i = 0; i < textWithEscapedBracesRemoved.Length; i++)
             {
-                // If we're on a closing bracket...
+                // If we're on a closing brace...
                 if (textWithEscapedBracesRemoved[i].Equals('}'))
                 {
                     // and nothing in the stack, invalid
                     if (stack.Count == 0)
                         return false;
 
-                    // pop from the stack as this should be the opening bracket to this closing one
+                    // pop from the stack as this should be the opening brace to this closing one
                     stack.Pop();
                 }
 
-                // If we're on an opening bracket, push onto stack for tracking
+                // If we're on an opening brace, push onto stack for tracking
                 if (textWithEscapedBracesRemoved[i].Equals('{'))
                 {
                     stack.Push(textWithEscapedBracesRemoved[i]);

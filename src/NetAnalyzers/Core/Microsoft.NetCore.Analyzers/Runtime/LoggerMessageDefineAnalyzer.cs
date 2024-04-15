@@ -23,7 +23,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// CA1848: <inheritdoc cref="LoggerMessageDiagnosticUseCompiledLogMessagesTitle"/>
     /// CA2253: <inheritdoc cref="LoggerMessageDiagnosticNumericsInFormatStringTitle"/>
     /// CA2254: <inheritdoc cref="LoggerMessageDiagnosticConcatenationInFormatStringTitle"/>
-    /// CA2017: <inheritdoc cref="LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchTitle"/>
+    /// CA2017: <inheritdoc cref="LoggerMessageDiagnosticFormatParameterCountMismatchTitle"/>
+    /// CA2023: <inheritdoc cref="LoggerMessageDiagnosticMessageTemplateBracesMismatchTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class LoggerMessageDefineAnalyzer : DiagnosticAnalyzer
@@ -33,6 +34,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string CA2253RuleId = "CA2253";
         internal const string CA2254RuleId = "CA2254";
         internal const string CA2017RuleId = "CA2017";
+        internal const string CA2023RuleId = "CA2023";
 
         internal static readonly DiagnosticDescriptor CA1727Rule = DiagnosticDescriptorHelper.Create(CA1727RuleId,
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticUsePascalCasedLogMessageTokensTitle)),
@@ -74,27 +76,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);
 
-        internal static readonly DiagnosticDescriptor CA2017DefaultRule = DiagnosticDescriptorHelper.Create(CA2017RuleId,
-                                                                         CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchTitle)),
+        internal static readonly DiagnosticDescriptor CA2017Rule = DiagnosticDescriptorHelper.Create(CA2017RuleId,
+                                                                         CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountMismatchTitle)),
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountMismatchMessage)),
                                                                          DiagnosticCategory.Reliability,
                                                                          RuleLevel.BuildWarning,
-                                                                         description: CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchDescription)),
+                                                                         description: CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountMismatchDescription)),
                                                                          isPortedFxCopRule: false,
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);
 
-        internal static readonly DiagnosticDescriptor CA2017BracesMismatchRule = DiagnosticDescriptorHelper.Create(CA2017RuleId,
-                                                                         CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchTitle)),
+        internal static readonly DiagnosticDescriptor CA2023Rule = DiagnosticDescriptorHelper.Create(CA2023RuleId,
+                                                                         CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchTitle)),
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchMessage)),
                                                                          DiagnosticCategory.Reliability,
-                                                                         RuleLevel.BuildWarning,
-                                                                         description: CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchDescription)),
+                                                                         RuleLevel.BuildError,
+                                                                         description: CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchDescription)),
                                                                          isPortedFxCopRule: false,
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(CA1727Rule, CA1848Rule, CA2253Rule, CA2254Rule, CA2017DefaultRule, CA2017BracesMismatchRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(CA1727Rule, CA1848Rule, CA2253Rule, CA2254Rule, CA2017Rule, CA2023Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -218,7 +220,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (!IsValidBraces(formatter))
             {
-                context.ReportDiagnostic(formatExpression.CreateDiagnostic(CA2017BracesMismatchRule));
+                context.ReportDiagnostic(formatExpression.CreateDiagnostic(CA2023Rule));
                 return;
             }
 
@@ -237,7 +239,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var argsPassedDirectly = argsIsArray && paramsCount == 1;
             if (!argsPassedDirectly && paramsCount != formatter.ValueNames.Count)
             {
-                context.ReportDiagnostic(formatExpression.CreateDiagnostic(CA2017DefaultRule));
+                context.ReportDiagnostic(formatExpression.CreateDiagnostic(CA2017Rule));
             }
         }
 

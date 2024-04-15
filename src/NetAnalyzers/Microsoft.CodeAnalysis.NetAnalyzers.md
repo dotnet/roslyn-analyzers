@@ -1992,9 +1992,9 @@ Forward the 'CancellationToken' parameter to methods to ensure the operation can
 |CodeFix|True|
 ---
 
-## [CA2017](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017): Parameter count mismatch or invalid braces in message template
+## [CA2017](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017): 
 
-Number of parameters supplied in the logging message template do not match the number of named placeholders or the braces present are invalid.
+Number of parameters supplied in the logging message template do not match the number of named placeholders
 
 |Item|Value|
 |-|-|
@@ -2068,6 +2068,18 @@ A call to 'Stream.Read' may return fewer bytes than requested, resulting in unre
 |Enabled|True|
 |Severity|Warning|
 |CodeFix|True|
+---
+
+## [CA2023](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2023): 
+
+Invalid braces supplied in the logging message template
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Error|
+|CodeFix|False|
 ---
 
 ## [CA2100](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100): Review SQL queries for security vulnerabilities

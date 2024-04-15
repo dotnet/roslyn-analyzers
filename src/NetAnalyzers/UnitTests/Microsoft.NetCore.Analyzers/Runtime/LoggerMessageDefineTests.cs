@@ -109,12 +109,12 @@ namespace Microsoft.Extensions.Logging.Analyzer
 
         [Theory]
         [WorkItem(7285, "https://github.com/dotnet/roslyn-analyzers/issues/7285")]
-        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""{One}}""|});")]
-        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""{{One}""|});")]
-        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""}{One}""|});")]
-        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""}{One}{""|});")]
-        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2017:""}{One} {Two}{{""|});")]
-        public async Task CA2017IsProducedWhenBracesAreInvalid(string format)
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{One}}""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{{One}""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""}{One}""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""}{One}{""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""}{One} {Two}{{""|});")]
+        public async Task CA2023IsProducedWhenBracesAreInvalid(string format)
         {
             await TriggerCodeAsync(format);
         }
@@ -124,7 +124,7 @@ namespace Microsoft.Extensions.Logging.Analyzer
         [InlineData(@"LoggerMessage.DefineScope<int>(""Some logged value: {One}}} with an escaped brace"");")]
         [InlineData(@"LoggerMessage.DefineScope<int, int>(""Some logged value: {One}}} with an {Two}{{ escaped brace"");")]
         [InlineData(@"LoggerMessage.DefineScope<int, int>(""Some logged {{value: {One}}} with an {Two}{{{{ escaped brace"");")]
-        public async Task CA2017IsNotProducedWhenBracesAreEscapedAndOtherwiseValid(string format)
+        public async Task CA2023IsNotProducedWhenBracesAreEscapedAndOtherwiseValid(string format)
         {
             await TriggerCodeAsync(format);
         }
@@ -257,7 +257,6 @@ public class Program
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
                 TestCode = code,
                 ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithMELogging,
-                MarkupOptions = MarkupOptions.UseFirstDescriptor
             }.RunAsync();
         }
     }

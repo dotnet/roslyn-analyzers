@@ -3613,8 +3613,8 @@
         },
         "CA2017": {
           "id": "CA2017",
-          "shortDescription": "",
-          "fullDescription": "Number of parameters supplied in the logging message template do not match the number of named placeholders",
+          "shortDescription": "Parameter count mismatch in message template",
+          "fullDescription": "Number of parameters supplied in the logging message template do not match the number of named placeholders.",
           "defaultLevel": "warning",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017",
           "properties": {
@@ -3713,8 +3713,8 @@
         },
         "CA2023": {
           "id": "CA2023",
-          "shortDescription": "",
-          "fullDescription": "Invalid braces supplied in the logging message template",
+          "shortDescription": "Invalid braces in message template",
+          "fullDescription": "The braces present in the message template are invalid.  Ensure any braces in the message template are valid opening/closing braces, or are escaped.",
           "defaultLevel": "error",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2023",
           "properties": {

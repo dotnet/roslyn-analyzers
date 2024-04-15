@@ -1992,9 +1992,9 @@ Forward the 'CancellationToken' parameter to methods to ensure the operation can
 |CodeFix|True|
 ---
 
-## [CA2017](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017): 
+## [CA2017](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017): Parameter count mismatch in message template
 
-Number of parameters supplied in the logging message template do not match the number of named placeholders
+Number of parameters supplied in the logging message template do not match the number of named placeholders.
 
 |Item|Value|
 |-|-|
@@ -2070,9 +2070,9 @@ A call to 'Stream.Read' may return fewer bytes than requested, resulting in unre
 |CodeFix|True|
 ---
 
-## [CA2023](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2023): 
+## [CA2023](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2023): Invalid braces in message template
 
-Invalid braces supplied in the logging message template
+The braces present in the message template are invalid.  Ensure any braces in the message template are valid opening/closing braces, or are escaped.
 
 |Item|Value|
 |-|-|

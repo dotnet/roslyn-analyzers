@@ -297,14 +297,34 @@
         <target state="translated">La plantilla debe ser una expresión estática</target>
         <note />
       </trans-unit>
+      <trans-unit id="LoggerMessageDiagnosticFormatParameterCountMismatchDescription">
+        <source>Number of parameters supplied in the logging message template do not match the number of named placeholders.</source>
+        <target state="new">Number of parameters supplied in the logging message template do not match the number of named placeholders.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticFormatParameterCountMismatchMessage">
         <source>Number of parameters supplied in the logging message template do not match the number of named placeholders</source>
         <target state="translated">El número de parámetros proporcionados en la plantilla de mensaje de registro no coincide con el número de marcadores de posición con nombre</target>
         <note />
       </trans-unit>
-      <trans-unit id="LoggerMessageDiagnosticFormatParameterCountOrBracesMismatchDescription">
-        <source>Number of parameters supplied in the logging message template do not match the number of named placeholders or the braces present are invalid.</source>
-        <target state="new">Number of parameters supplied in the logging message template do not match the number of named placeholders or the braces present are invalid.</target>
+      <trans-unit id="LoggerMessageDiagnosticFormatParameterCountMismatchTitle">
+        <source>Parameter count mismatch in message template</source>
+        <target state="new">Parameter count mismatch in message template</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoggerMessageDiagnosticMessageTemplateBracesMismatchDescription">
+        <source>The braces present in the message template are invalid.  Ensure any braces in the message template are valid opening/closing braces, or are escaped.</source>
+        <target state="new">The braces present in the message template are invalid.  Ensure any braces in the message template are valid opening/closing braces, or are escaped.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoggerMessageDiagnosticMessageTemplateBracesMismatchMessage">
+        <source>The braces present in the message template are invalid</source>
+        <target state="new">The braces present in the message template are invalid</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoggerMessageDiagnosticMessageTemplateBracesMismatchTitle">
+        <source>Invalid braces in message template</source>
+        <target state="new">Invalid braces in message template</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticNumericsInFormatStringDescription">

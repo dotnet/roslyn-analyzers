@@ -88,25 +88,31 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     return;
                 }
 
-                var hasAccessToTypeFromWorkspaceAssemblies = false;
-                var namedTypesToAccessedTypesMap = new ConcurrentDictionary<INamedTypeSymbol, ImmutableHashSet<INamedTypeSymbol>>();
+                var namedTypesToAccessedTypesMap = new ConcurrentDictionary<INamedTypeSymbol, ImmutableHashSet<INamedTypeSymbol>?>();
                 var diagnosticAnalyzerTypes = new ConcurrentBag<INamedTypeSymbol>();
                 compilationStartContext.RegisterSymbolAction(symbolContext =>
                 {
                     var namedType = (INamedTypeSymbol)symbolContext.Symbol;
+                    ImmutableHashSet<INamedTypeSymbol>? usedTypes = null;
                     if (namedType.DerivesFrom(diagnosticAnalyzer, baseTypesOnly: true))
                     {
                         diagnosticAnalyzerTypes.Add(namedType);
+                        usedTypes = GetUsedNamedTypes(namedType, symbolContext.Compilation, symbolContext.CancellationToken);
                     }
 
-                    var usedTypes = GetUsedNamedTypes(namedType, symbolContext.Compilation, symbolContext.CancellationToken, ref hasAccessToTypeFromWorkspaceAssemblies);
                     var added = namedTypesToAccessedTypesMap.TryAdd(namedType, usedTypes);
                     Debug.Assert(added);
                 }, SymbolKind.NamedType);
 
                 compilationStartContext.RegisterCompilationEndAction(compilationEndContext =>
                 {
-                    if (diagnosticAnalyzerTypes.IsEmpty || !hasAccessToTypeFromWorkspaceAssemblies)
+                    if (diagnosticAnalyzerTypes.IsEmpty)
+                    {
+                        return;
+                    }
+
+                    var referencedAssemblies = compilationEndContext.Compilation.ReferencedAssemblyNames;
+                    if (referencedAssemblies.All(r => !s_WorkspaceAssemblyNames.Contains(r.Name)))
                     {
                         return;
                     }
@@ -115,13 +121,8 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     var processedTypes = new HashSet<INamedTypeSymbol>();
                     var violatingTypeNamesBuilder = new SortedSet<string>();
                     var violatingUsedTypeNamesBuilder = new SortedSet<string>();
-                    foreach (INamedTypeSymbol declaredType in namedTypesToAccessedTypesMap.Keys)
+                    foreach (INamedTypeSymbol declaredType in diagnosticAnalyzerTypes)
                     {
-                        if (!diagnosticAnalyzerTypes.Contains(declaredType))
-                        {
-                            continue;
-                        }
-
                         typesToProcess.Clear();
                         processedTypes.Clear();
                         violatingTypeNamesBuilder.Clear();
@@ -133,7 +134,10 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                             Debug.Assert(SymbolEqualityComparer.Default.Equals(typeToProcess.ContainingAssembly, declaredType.ContainingAssembly));
                             Debug.Assert(namedTypesToAccessedTypesMap.ContainsKey(typeToProcess));
 
-                            foreach (INamedTypeSymbol usedType in namedTypesToAccessedTypesMap[typeToProcess])
+                            var usedTypes = namedTypesToAccessedTypesMap[typeToProcess]
+                                ?? GetUsedNamedTypes(typeToProcess, compilationEndContext.Compilation, compilationEndContext.CancellationToken);
+
+                            foreach (INamedTypeSymbol usedType in usedTypes)
                             {
                                 if (usedType.ContainingAssembly != null &&
                                     s_WorkspaceAssemblyNames.Contains(usedType.ContainingAssembly.Name))
@@ -185,7 +189,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             });
         }
 
-        private ImmutableHashSet<INamedTypeSymbol> GetUsedNamedTypes(INamedTypeSymbol namedType, Compilation compilation, CancellationToken cancellationToken, ref bool hasAccessToTypeFromWorkspaceAssemblies)
+        private ImmutableHashSet<INamedTypeSymbol> GetUsedNamedTypes(INamedTypeSymbol namedType, Compilation compilation, CancellationToken cancellationToken)
         {
             var builder = PooledHashSet<INamedTypeSymbol>.GetInstance();
             foreach (var decl in namedType.DeclaringSyntaxReferences)
@@ -215,7 +219,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     if (node is TTypeSyntax typeSyntax)
                     {
                         var typeInfo = semanticModel.GetTypeInfo(typeSyntax, cancellationToken);
-                        AddUsedNamedTypeCore(typeInfo.Type, builder, ref hasAccessToTypeFromWorkspaceAssemblies);
+                        AddUsedNamedTypeCore(typeInfo.Type, builder);
                     }
 
                     if (!inExecutableCode)
@@ -227,18 +231,18 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                             inExecutableCode = true;
                             foreach (var operation in operationBlock.DescendantsAndSelf())
                             {
-                                AddUsedNamedTypeCore(operation.Type, builder, ref hasAccessToTypeFromWorkspaceAssemblies);
+                                AddUsedNamedTypeCore(operation.Type, builder);
 
                                 // Handle static member accesses specially as there is no operation for static type off which the member is accessed.
                                 if (operation is IMemberReferenceOperation memberReference &&
                                     memberReference.Member.IsStatic)
                                 {
-                                    AddUsedNamedTypeCore(memberReference.Member.ContainingType, builder, ref hasAccessToTypeFromWorkspaceAssemblies);
+                                    AddUsedNamedTypeCore(memberReference.Member.ContainingType, builder);
                                 }
                                 else if (operation is IInvocationOperation invocation &&
                                     (invocation.TargetMethod.IsStatic || invocation.TargetMethod.IsExtensionMethod))
                                 {
-                                    AddUsedNamedTypeCore(invocation.TargetMethod.ContainingType, builder, ref hasAccessToTypeFromWorkspaceAssemblies);
+                                    AddUsedNamedTypeCore(invocation.TargetMethod.ContainingType, builder);
                                 }
                             }
                         }
@@ -254,25 +258,18 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             return builder.ToImmutableAndFree();
         }
 
-        private static void AddUsedNamedTypeCore(ITypeSymbol? type, PooledHashSet<INamedTypeSymbol> builder, ref bool hasAccessToTypeFromWorkspaceAssemblies)
+        private static void AddUsedNamedTypeCore(ITypeSymbol? type, PooledHashSet<INamedTypeSymbol> builder)
         {
             if (type is INamedTypeSymbol usedType &&
                 usedType.TypeKind != TypeKind.Error)
             {
                 builder.Add(usedType);
 
-                if (!hasAccessToTypeFromWorkspaceAssemblies &&
-                    usedType.ContainingAssembly != null &&
-                    s_WorkspaceAssemblyNames.Contains(usedType.ContainingAssembly.Name))
-                {
-                    hasAccessToTypeFromWorkspaceAssemblies = true;
-                }
-
                 if (usedType.IsGenericType)
                 {
                     foreach (var typeArgument in usedType.TypeArguments)
                     {
-                        AddUsedNamedTypeCore(typeArgument, builder, ref hasAccessToTypeFromWorkspaceAssemblies);
+                        AddUsedNamedTypeCore(typeArgument, builder);
                     }
                 }
             }

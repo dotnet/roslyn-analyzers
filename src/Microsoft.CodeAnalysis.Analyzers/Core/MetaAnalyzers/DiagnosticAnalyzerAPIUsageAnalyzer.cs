@@ -127,8 +127,12 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                             Debug.Assert(SymbolEqualityComparer.Default.Equals(typeToProcess.ContainingAssembly, declaredType.ContainingAssembly));
                             Debug.Assert(namedTypesToAccessedTypesMap.ContainsKey(typeToProcess));
 
-                            var usedTypes = namedTypesToAccessedTypesMap[typeToProcess]
-                                ?? GetUsedNamedTypes(typeToProcess, compilationEndContext.Compilation, compilationEndContext.CancellationToken);
+                            var usedTypes = namedTypesToAccessedTypesMap[typeToProcess];
+                            if (usedTypes is null)
+                            {
+                                usedTypes = GetUsedNamedTypes(typeToProcess, compilationEndContext.Compilation, compilationEndContext.CancellationToken);
+                                namedTypesToAccessedTypesMap[typeToProcess] = usedTypes;
+                            }
 
                             foreach (INamedTypeSymbol usedType in usedTypes)
                             {

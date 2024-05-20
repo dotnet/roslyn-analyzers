@@ -18,6 +18,6 @@
     "rollForward": "patch"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.24204.3"
+    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.24266.3"
   }
 }

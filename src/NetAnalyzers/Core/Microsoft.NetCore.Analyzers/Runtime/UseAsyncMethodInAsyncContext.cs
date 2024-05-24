@@ -235,7 +235,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         /// </returns>
         private static bool HasSupersetOfParameterTypes(IMethodSymbol candidateMethod, IMethodSymbol baselineMethod)
         {
-            return candidateMethod.Parameters.All(candidateParameter => candidateParameter.HasExplicitDefaultValue || baselineMethod.Parameters.Any(baselineParameter => baselineParameter.Type?.Equals(candidateParameter.Type) ?? false));
+            var baselineMethodTypeCount = GetTypeCount(baselineMethod);
+            var candidateMethodTypeCount = GetTypeCount(candidateMethod);
+            foreach (var (type, baselineCount) in baselineMethodTypeCount)
+            {
+                if(!candidateMethodTypeCount.TryGetValue(type, out var candidateCount) || baselineCount > candidateCount)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+
+            // Returns a dictionary of a count of the method's non-optional parameters by type.
+            // For a method with the signature:
+            // void M(string s, string s2, bool b, char c = 'c')
+            // the dictionary would contain the following key value pairs:
+            // - (string, 2)
+            // - (bool, 1)
+            static IDictionary<ITypeSymbol, int> GetTypeCount(IMethodSymbol methodSymbol)
+            {
+                return methodSymbol.Parameters
+                    .Where(p => !p.HasExplicitDefaultValue)
+                    .GroupBy<IParameterSymbol, ITypeSymbol>(p => p.Type, SymbolEqualityComparer.Default)
+                    .ToDictionary<IGrouping<ITypeSymbol, IParameterSymbol>, ITypeSymbol, int>(g => g.Key, g => g.Count(), SymbolEqualityComparer.Default);
+            }
         }
 
         private static bool HasAsyncCompatibleReturnType(IMethodSymbol methodSymbol, ConcurrentDictionary<string, INamedTypeSymbol> syncBlockingTypes)

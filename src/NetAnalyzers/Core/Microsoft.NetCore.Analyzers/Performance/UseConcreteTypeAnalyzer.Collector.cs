@@ -442,6 +442,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                         }
 
+                    case OperationKind.Binary:
+                        {
+                            var binaryOperation = (IBinaryOperation)op;
+                            GetValueTypes(values, binaryOperation.LeftOperand);
+                            GetValueTypes(values, binaryOperation.RightOperand);
+                            return;
+                        }
+
                     case OperationKind.Literal:
                         {
                             if (op.HasNullConstantValue())

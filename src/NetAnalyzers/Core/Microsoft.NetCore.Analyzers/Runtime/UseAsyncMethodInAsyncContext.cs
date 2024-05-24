@@ -239,7 +239,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var candidateMethodTypeCount = GetTypeCount(candidateMethod);
             foreach (var (type, baselineCount) in baselineMethodTypeCount)
             {
-                if(!candidateMethodTypeCount.TryGetValue(type, out var candidateCount) || baselineCount > candidateCount)
+                if (!candidateMethodTypeCount.TryGetValue(type, out var candidateCount) || baselineCount > candidateCount)
                 {
                     return false;
                 }

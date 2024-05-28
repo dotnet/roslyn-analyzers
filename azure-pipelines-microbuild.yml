@@ -13,7 +13,7 @@ trigger:
 - 2.9.x
 
 schedules:
-  - cron: "0 8 22-28 * 0"
+  - cron: "0 8 23-29 * 0"
     displayName: "Monthly smoke test"
     branches:
       include: 

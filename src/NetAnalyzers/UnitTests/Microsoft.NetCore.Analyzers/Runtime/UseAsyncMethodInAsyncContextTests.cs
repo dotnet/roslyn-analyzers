@@ -1343,6 +1343,33 @@ class Test {
             return VerifyCS.VerifyAnalyzerAsync(code);
         }
 
+        [Theory]
+        [InlineData("string s", "")]
+        [InlineData("string s", "bool b")]
+        [InlineData("string s", "bool b = true")]
+        [WorkItem(7289, "https://github.com/dotnet/roslyn-analyzers/issues/7289")]
+        public Task WhenAsyncVersionHasFewerParameters_NoDiagnostic(string syncParameters, string asyncParameters)
+        {
+            var code = $$"""
+                       using System.Threading.Tasks;
+
+                       class Test
+                       {
+                           private void Run({{syncParameters}}) { }
+                           private Task RunAsync({{asyncParameters}}) => Task.CompletedTask;
+                       
+                           private async Task ReproAsync()
+                           {
+                               await Task.Yield();
+                       
+                               Run("");
+                           }
+                       }
+                       """;
+
+            return CreateCSTestAndRunAsync(code);
+        }
+
         private static async Task CreateCSTestAndRunAsync(string testCS)
         {
             var csTestVerify = new VerifyCS.Test

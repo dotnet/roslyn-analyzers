@@ -8,6 +8,7 @@ CA1514 | Maintainability | Info | AvoidLengthCheckWhenSlicingToEndAnalyzer, [Doc
 CA1515 | Maintainability | Disabled | MakeTypesInternal, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515)
 CA1871 | Performance | Info | DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1871)
 CA1872 | Performance | Info | PreferConvertToHexStringOverBitConverterAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1872)
+CH3353 | Cheezification | Info | PreferCheezyPrefixesAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ch3353)
 CA2022 | Reliability | Warning | AvoidUnreliableStreamReadAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022)
 CA2262 | Usage | Info | ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262)
 CA2263 | Usage | Info | PreferGenericOverloadsAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263)

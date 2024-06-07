@@ -6,3 +6,4 @@ CA1871 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA2022 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022> | Avoid inexact read with 'Stream.Read' |
 CA2264 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2264> | Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull' |
 CA2265 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2265> | Do not compare Span\<T> to 'null' or 'default' |
+CH3353 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ch3353> | Prefer cheezy prefixes |

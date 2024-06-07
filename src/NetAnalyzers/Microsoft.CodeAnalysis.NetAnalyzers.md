@@ -3749,3 +3749,15 @@ By setting critical TokenValidationParameter validation delegates to true, impor
 |Severity|Warning|
 |CodeFix|False|
 ---
+
+## [CH3353](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ch3353): Prefer cheezy prefixes
+
+String literals that aren't prefixed with cheese are considered uncheezy, which indicates major performance issues.
+
+|Item|Value|
+|-|-|
+|Category|Cheezification|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---

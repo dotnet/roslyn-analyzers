@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -22,6 +24,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// CA2253: <inheritdoc cref="LoggerMessageDiagnosticNumericsInFormatStringTitle"/>
     /// CA2254: <inheritdoc cref="LoggerMessageDiagnosticConcatenationInFormatStringTitle"/>
     /// CA2017: <inheritdoc cref="LoggerMessageDiagnosticFormatParameterCountMismatchTitle"/>
+    /// CA2023: <inheritdoc cref="LoggerMessageDiagnosticMessageTemplateBracesMismatchTitle"/>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class LoggerMessageDefineAnalyzer : DiagnosticAnalyzer
@@ -31,6 +34,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string CA2253RuleId = "CA2253";
         internal const string CA2254RuleId = "CA2254";
         internal const string CA2017RuleId = "CA2017";
+        internal const string CA2023RuleId = "CA2023";
 
         internal static readonly DiagnosticDescriptor CA1727Rule = DiagnosticDescriptorHelper.Create(CA1727RuleId,
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticUsePascalCasedLogMessageTokensTitle)),
@@ -82,7 +86,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(CA1727Rule, CA1848Rule, CA2253Rule, CA2254Rule, CA2017Rule);
+        internal static readonly DiagnosticDescriptor CA2023Rule = DiagnosticDescriptorHelper.Create(CA2023RuleId,
+                                                                         CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchTitle)),
+                                                                         CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchMessage)),
+                                                                         DiagnosticCategory.Reliability,
+                                                                         RuleLevel.BuildError,
+                                                                         description: CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchDescription)),
+                                                                         isPortedFxCopRule: false,
+                                                                         isDataflowRule: false,
+                                                                         isReportedAtCompilationEnd: false);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(CA1727Rule, CA1848Rule, CA2253Rule, CA2254Rule, CA2017Rule, CA2023Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -204,6 +218,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
+            if (!IsValidBraces(formatter))
+            {
+                context.ReportDiagnostic(formatExpression.CreateDiagnostic(CA2023Rule));
+                return;
+            }
+
             foreach (var valueName in formatter.ValueNames)
             {
                 if (int.TryParse(valueName, out _))
@@ -249,6 +269,135 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 default:
                     return null;
             }
+        }
+
+        /// <summary>
+        /// Does the text have valid braces? (no unclosed braces, no braces without an opening, and no unescaped braces)
+        /// </summary>
+        /// <param name="formatter">The text to check.</param>
+        /// <returns>When true braces are valid, false otherwise.</returns>
+        private static bool IsValidBraces(LogValuesFormatter formatter)
+        {
+            var textWithNumericPlaceholders = formatter.Format(); // an easily parsable representation of the template string like "{0}" instead of "{MyTemplateVar}"
+            var textWithValuePlaceHoldersRemoved = GetTextWithValuePlaceholdersRemoved(textWithNumericPlaceholders, formatter.ValueNames.Count);
+            var textWithEscapedBracesRemoved = GetTextWithEscapedBracesRemoved(textWithValuePlaceHoldersRemoved);
+
+            var stack = new Stack<char>();
+
+            for (var i = 0; i < textWithEscapedBracesRemoved.Length; i++)
+            {
+                // If we're on a closing brace...
+                if (textWithEscapedBracesRemoved[i].Equals('}'))
+                {
+                    // and nothing in the stack, invalid
+                    if (stack.Count == 0)
+                        return false;
+
+                    // pop from the stack as this should be the opening brace to this closing one
+                    stack.Pop();
+                }
+
+                // If we're on an opening brace, push onto stack for tracking
+                if (textWithEscapedBracesRemoved[i].Equals('{'))
+                {
+                    stack.Push(textWithEscapedBracesRemoved[i]);
+                }
+            }
+
+            // If anything exists in the stack, that means we have an opening without a close
+            if (stack.Count != 0)
+            {
+                return false;
+            }
+
+            // Entire text has been evaluated and no issues found
+            return true;
+        }
+
+        /// <summary>
+        /// Get the template message with the numeral variables substituted for placeholders
+        /// </summary>
+        /// <example>
+        /// "My log {0}" -> "My log ___"
+        /// </example>
+        private static string GetTextWithValuePlaceholdersRemoved(string text, int count)
+        {
+            // no items to swap to placeholders
+            if (count == 0)
+            {
+                return text;
+            }
+
+            const char placeholder = '_';
+            var queueOfPlaceholders = new Queue<string>();
+            for (var i = 0; i < count; i++)
+            {
+                queueOfPlaceholders.Enqueue($"{{{i}}}");
+            }
+
+            var textWithPlaceholdersRemoved = new StringBuilder();
+            var currentSearchString = queueOfPlaceholders.Dequeue();
+            for (var i = 0; i < text.Length; i++)
+            {
+                // look forward to see if this is one of the variable placeholders
+                if (text.Substring(i, currentSearchString.Length) == currentSearchString)
+                {
+                    textWithPlaceholdersRemoved.Append(placeholder, currentSearchString.Length);
+
+                    i += currentSearchString.Length - 1;
+
+                    if (queueOfPlaceholders.Count > 0)
+                    {
+                        currentSearchString = queueOfPlaceholders.Dequeue();
+                    }
+                    else
+                    {
+                        currentSearchString = placeholder.ToString();
+                    }
+
+                    continue;
+                }
+
+                textWithPlaceholdersRemoved.Append(text[i]);
+            }
+
+            return textWithPlaceholdersRemoved.ToString();
+        }
+
+        /// <summary>
+        /// Get the template message with escaped braces (either opening or closing) substituted with placeholders.
+        /// </summary>
+        /// <example>
+        /// "My log ___}} }} {{" -> "My log _____ __ __"
+        /// </example>
+        private static string GetTextWithEscapedBracesRemoved(string text)
+        {
+            var escapableBraces = new HashSet<char>() { '{', '}' };
+            const char placeholder = '_';
+            var textWithEscapedBracesRemoved = new StringBuilder();
+            for (var i = 0; i < text.Length; i++)
+            {
+                var evalChar = text[i];
+                // the current character is a brace, and another character exists in the loop that is the same character
+                if (IsCurrentAndNextCharSameEscapableBrace(text, escapableBraces, i, evalChar))
+                {
+                    // replace the current character and next with the placeholder text
+                    textWithEscapedBracesRemoved.Append(placeholder, 2);
+
+                    // skip the next char, since we know it's the end to this pair
+                    i++;
+                    continue;
+                }
+
+                textWithEscapedBracesRemoved.Append(evalChar);
+            }
+
+            return textWithEscapedBracesRemoved.ToString();
+        }
+
+        private static bool IsCurrentAndNextCharSameEscapableBrace(string text, HashSet<char> escapableBraces, int i, char evalChar)
+        {
+            return escapableBraces.Contains(evalChar) && i + 1 < text.Length && text[i + 1] == evalChar;
         }
 
         private static bool FindLogParameters(IMethodSymbol methodSymbol, [NotNullWhen(true)] out IParameterSymbol? message, out IParameterSymbol? arguments)

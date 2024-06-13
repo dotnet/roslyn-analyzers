@@ -1223,9 +1223,15 @@ public class Test
             string csDependencyCode = @"
 public class Library
 {
+    static bool s_isWindowsOrLinux = false;
+
     [System.Runtime.Versioning.SupportedOSPlatformGuard(""windows"")]
     [System.Runtime.Versioning.SupportedOSPlatformGuard(""linux"")]
-    public static bool IsSupported => false;
+    public static bool IsSupported => s_isWindowsOrLinux;
+
+    [System.Runtime.Versioning.UnsupportedOSPlatformGuard(""windows"")]
+    [System.Runtime.Versioning.UnsupportedOSPlatformGuard(""linux"")]
+    public static bool IsNotSupported => false;
 
     public static void AMethod() { }
 }";
@@ -1244,6 +1250,15 @@ public class Program
         if (Library.IsSupported)
         {
              Library.AMethod();
+        }
+
+        if (Library.IsNotSupported)
+        {
+             [|Library.AMethod()|]; // warn because guarded by unsupported
+        }
+        else
+        {
+             Library.AMethod(); // guarded
         }
     }
 }";
@@ -1275,7 +1290,7 @@ build_property.TargetFramework = net5
                         {
                             Sources =
                             {
-                                ("/PreviewAssembly/AssemblyInfo.g.cs", csDependencyCode)
+                                ("/PreviewAssembly/AssemblyInfo.cs", csDependencyCode)
                             },
                         },
                     },

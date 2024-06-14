@@ -1822,7 +1822,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 var pAttributes = parentAttributes.Platforms;
                 if (pAttributes != null && !pAttributes.IsEmpty)
                 {
-                    var notFoundPlatforms = PooledHashSet<string>.GetInstance();
+                    using var notFoundPlatforms = PooledHashSet<string>.GetInstance();
                     bool supportFound = false;
                     foreach (var (platform, attributes) in pAttributes)
                     {

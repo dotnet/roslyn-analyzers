@@ -41,24 +41,15 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     return;
                 }
 
-                var typeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
-                INamedTypeSymbol? exceptionType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException);
-                if (exceptionType is null)
-                {
-                    return;
-                }
-
-                context.RegisterSymbolAction(ctx => AnalyzeType(ctx, exceptionType), SymbolKind.NamedType);
+                context.RegisterSymbolAction(AnalyzeType, SymbolKind.NamedType);
             });
         }
 
-        // Don't warn for exception types, since that may conflict with CA1064.
         /// <see cref="Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ExceptionsShouldBePublicAnalyzer"/>
-        private void AnalyzeType(SymbolAnalysisContext context, INamedTypeSymbol exceptionType)
+        private void AnalyzeType(SymbolAnalysisContext context)
         {
             INamedTypeSymbol namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
             if (namedTypeSymbol.IsPublic()
-                && !namedTypeSymbol.GetBaseTypes().Any(t => SymbolEqualityComparer.Default.Equals(t, exceptionType))
                 && GetIdentifier(namedTypeSymbol.DeclaringSyntaxReferences[0].GetSyntax()) is SyntaxToken identifier)
             {
                 context.ReportDiagnostic(identifier.CreateDiagnostic(Rule));

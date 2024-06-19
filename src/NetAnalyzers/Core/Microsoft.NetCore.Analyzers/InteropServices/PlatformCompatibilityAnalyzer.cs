@@ -1407,13 +1407,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), (notSuppressedAttributes, callSiteAttributes.Platforms));
                         }
                     }
-                    else if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes.Platforms!, msBuildPlatforms, out var copiedAttributes))
+                    else if (!OperationHasOnlyAssemblyAttributesAndCalledFromSameAssembly(operationAttributes, symbol, containingSymbol) &&
+                             TryCopyAttributesNotSuppressedByMsBuild(operationAttributes.Platforms!, msBuildPlatforms, out var copiedAttributes))
                     {
                         platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), (copiedAttributes, null));
                     }
                 }
             }
         }
+
+        private static bool OperationHasOnlyAssemblyAttributesAndCalledFromSameAssembly(PlatformAttributes operationAttributes, ISymbol symbol, ISymbol containingSymbol) =>
+            operationAttributes.IsAssemblyAttribute && containingSymbol.ContainingAssembly == symbol.ContainingAssembly;
 
         private static bool UsedInCreatingNotSupportedException(IArgumentOperation operation, ITypeSymbol? notSupportedExceptionType)
         {
@@ -1799,11 +1803,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                     if (attribute.AttributeClass.Name is SupportedOSPlatformGuardAttribute or UnsupportedOSPlatformGuardAttribute)
                     {
-                        if (!parentAttributes.IsAssemblyAttribute)
-                        {
-                            parentAttributes = new PlatformAttributes();
-                        }
-
+                        parentAttributes = new PlatformAttributes(); // The API is for guard, clear parent attributes
                         return;
                     }
 
@@ -2021,7 +2021,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             attributes.SupportedFirst = null;
                         }
                     }
-                    // For deny list UnsupportedSecond should only set if there is SupportedFirst verison between UnsupportedSecond and UnsupportedFirst 
+                    // For deny list UnsupportedSecond should only set if there is SupportedFirst version between UnsupportedSecond and UnsupportedFirst 
                     else if (attributes.SupportedFirst == null ||
                             (attributes.UnsupportedSecond != null &&
                              attributes.SupportedFirst > attributes.UnsupportedSecond))

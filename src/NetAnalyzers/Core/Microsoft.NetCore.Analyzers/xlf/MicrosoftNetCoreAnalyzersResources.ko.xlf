@@ -97,6 +97,26 @@
         <target state="translated">P/Invokes에는 'StringBuilder' 매개 변수를 사용하지 마세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidUnreliableStreamReadCodeFixTitle">
+        <source>Use 'Stream.ReadExactly'</source>
+        <target state="translated">'Stream.ReadExactly' 사용</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidUnreliableStreamReadDescription">
+        <source>A call to 'Stream.Read' may return fewer bytes than requested, resulting in unreliable code if the return value is not checked.</source>
+        <target state="translated">'Stream.Read'에 대한 호출은 요청된 바이트보다 적은 바이트를 반환할 수 있으므로 반환 값을 확인하지 않으면 신뢰할 수 없는 코드가 됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidUnreliableStreamReadMessage">
+        <source>Avoid inexact read with '{0}'</source>
+        <target state="translated">‘{0}’(으)로 부정확한 읽기 방지</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidUnreliableStreamReadTitle">
+        <source>Avoid inexact read with 'Stream.Read'</source>
+        <target state="translated">'Stream.Read'로 부정확한 읽기 방지</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesDescription">
         <source>The .NET Framework class library provides methods for retrieving custom attributes. By default, these methods search the attribute inheritance hierarchy. Sealing the attribute eliminates the search through the inheritance hierarchy and can improve performance.</source>
         <target state="translated">.NET Framework 클래스 라이브러리에서 사용자 지정 특성을 검색하기 위한 메서드를 제공합니다. 기본적으로 이 메서드는 특성 상속 계층 구조를 검색합니다. 특성을 봉인하면 상속 계층 구조를 통한 검색을 중단하여 성능을 향상시킬 수 있습니다.</target>
@@ -625,27 +645,27 @@ Enumerable.OfType&lt;T&gt;에서 사용하는 제네릭 형식 검사(C# 'is' �
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToDefaultMessage">
         <source>Comparing a span to 'default' might not do what you intended, make the code more explicit by checking 'IsEmpty'</source>
-        <target state="new">Comparing a span to 'default' might not do what you intended, make the code more explicit by checking 'IsEmpty'</target>
+        <target state="translated">범위를 'default'로 비교해도 의도한 대로 수행되지 않을 수 있습니다. 'IsEmpty'를 확인하여 코드를 더 명시적으로 만듭니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullIsEmptyCodeFixTitle">
         <source>Use 'IsEmpty'</source>
-        <target state="new">Use 'IsEmpty'</target>
+        <target state="translated">'IsEmpty' 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullMessage">
         <source>Comparing a span to 'null' might be redundant, the 'null' literal will be implicitly converted to a 'Span&lt;T&gt;.Empty'</source>
-        <target state="new">Comparing a span to 'null' might be redundant, the 'null' literal will be implicitly converted to a 'Span&lt;T&gt;.Empty'</target>
+        <target state="translated">범위를 'null'에 비교하면 중복될 수 있습니다. 'null' 리터럴은 암시적으로 'Span&lt;T&gt;.Empty'로 변환됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullOrDefaultDescription">
         <source>Comparing a span to 'null' or 'default' might not do what you intended. 'default' and the 'null' literal are implicitly converted to 'Span&lt;T&gt;.Empty'. Remove the redundant comparison or make the code more explicit by using 'IsEmpty'.</source>
-        <target state="new">Comparing a span to 'null' or 'default' might not do what you intended. 'default' and the 'null' literal are implicitly converted to 'Span&lt;T&gt;.Empty'. Remove the redundant comparison or make the code more explicit by using 'IsEmpty'.</target>
+        <target state="translated">범위를 'null' 또는 'default'에 비교해도 의도한 대로 수행되지 않을 수 있습니다. 'default'와 'null' 리터럴은 암시적으로 'Span&lt;T&gt;.Empty'로 변환됩니다. 중복 비교를 제거하거나 'IsEmpty'를 사용하여 코드를 더 명시적으로 만듭니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCompareSpanToNullOrDefaultTitle">
         <source>Do not compare Span&lt;T&gt; to 'null' or 'default'</source>
-        <target state="new">Do not compare Span&lt;T&gt; to 'null' or 'default'</target>
+        <target state="translated">Span&lt;T&gt;을(를) 'null' 또는 'default'와 비교하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCreateTaskCompletionSourceWithWrongArgumentsDescription">
@@ -885,42 +905,42 @@ Enumerable.OfType&lt;T&gt;에서 사용하는 제네릭 형식 검사(C# 'is' �
       </trans-unit>
       <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullCodeFixTitle">
         <source>Remove superfluous 'ArgumentNullException.ThrowIfNull' call</source>
-        <target state="new">Remove superfluous 'ArgumentNullException.ThrowIfNull' call</target>
+        <target state="translated">불필요한 'ArgumentNullException.ThrowIfNull' 호출 제거</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullDescription">
         <source>'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.</source>
-        <target state="new">'ArgumentNullException.ThrowIfNull' throws when the passed argument is 'null'. Certain constructs like non-nullable structs, 'nameof()' and 'new' expressions are known to never be null, so 'ArgumentNullException.ThrowIfNull' will never throw.</target>
+        <target state="translated">전달된 인수가 'null'이면 'ArgumentNullException.ThrowIfNull'이 throw됩니다. null을 허용하지 않는 구조체, 'nameof()' 및 'new' 식과 같은 특정 구문은 null이 아닌 것으로 알려져 있으므로 'ArgumentNullException.ThrowIfNull'은 throw되지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullMessage">
         <source>Calling 'ArgumentNullException.ThrowIfNull' and passing a non-nullable value is a no-op</source>
-        <target state="new">Calling 'ArgumentNullException.ThrowIfNull' and passing a non-nullable value is a no-op</target>
+        <target state="translated">'ArgumentNullException.ThrowIfNull'을 호출하고 null을 허용하지 않는 값을 전달하는 no-op</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNullTitle">
         <source>Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'</source>
-        <target state="new">Do not pass a non-nullable value to 'ArgumentNullException.ThrowIfNull'</target>
+        <target state="translated">null을 허용하지 않는 값을 'ArgumentNullException.ThrowIfNull'에 전달 금지</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullCodeFixTitle">
         <source>Replace the 'ArgumentNullException.ThrowIfNull' call with a conditional</source>
-        <target state="new">Replace the 'ArgumentNullException.ThrowIfNull' call with a conditional</target>
+        <target state="translated">'ArgumentNullException.ThrowIfNull' 호출을 조건부로 바꾸기</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullDescription">
         <source>'ArgumentNullException.ThrowIfNull' accepts an 'object', so passing a nullable struct may cause the value to be boxed.</source>
-        <target state="new">'ArgumentNullException.ThrowIfNull' accepts an 'object', so passing a nullable struct may cause the value to be boxed.</target>
+        <target state="translated">'ArgumentNullException.ThrowIfNull'은 'object'를 허용하므로 nullable 구조체를 전달하면 값이 박스 처리될 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullMessage">
         <source>Passing a nullable struct to 'ArgumentNullException.ThrowIfNull' may cause boxing</source>
-        <target state="new">Passing a nullable struct to 'ArgumentNullException.ThrowIfNull' may cause boxing</target>
+        <target state="translated">nullable 구조체를 'ArgumentNullException.ThrowIfNull'에 전달하면 박스 처리가 발생할 수 있음</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassNullableStructToArgumentNullExceptionThrowIfNullTitle">
         <source>Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'</source>
-        <target state="new">Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'</target>
+        <target state="translated">nullable 구조체를 'ArgumentNullException.ThrowIfNull'에 전달 금지</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesDescription">
@@ -1161,6 +1181,11 @@ Enumerable.OfType&lt;T&gt;에서 사용하는 제네릭 형식 검사(C# 'is' �
       <trans-unit id="DoNotUseStackallocInLoopsTitle">
         <source>Do not use stackalloc in loops</source>
         <target state="translated">루프에서 stackalloc을 사용하면 안 됨</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseThreadVolatileReadWriteCodeFixTitle">
+        <source>Replace obsolete call</source>
+        <target state="translated">사용되지 않는 호출 바꾸기</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseTimersThatPreventPowerStateChangesDescription">
@@ -2013,6 +2038,26 @@ Enumerable.OfType&lt;T&gt;에서 사용하는 제네릭 형식 검사(C# 'is' �
         <target state="translated">해당하는 경우 'StringBuilder.Append(char)'를 사용하는 것이 좋음</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferConvertToHexStringOverBitConverterCodeFixTitle">
+        <source>Replace with 'Convert.{0}'</source>
+        <target state="translated">'Convert.{0}'(으)로 대체</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConvertToHexStringOverBitConverterDescription">
+        <source>Use 'Convert.ToHexString' or 'Convert.ToHexStringLower' when encoding bytes to a hexadecimal string representation. These methods are more efficient and allocation-friendly than using 'BitConverter.ToString' in combination with 'String.Replace' to replace dashes and 'String.ToLower'.</source>
+        <target state="translated">바이트를 16진수 문자열 표현으로 인코딩할 때 'Convert.ToHexString' 또는 'Convert.ToHexStringLower'를 사용합니다. 이러한 메서드는 대시와 'String.ToLower'를 바꾸기 위해 'String.Replace'와 함께 'BitConverter.ToString'을 사용하는 것보다 효율적이고 할당에 친화적입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConvertToHexStringOverBitConverterMessage">
+        <source>Prefer '{0}' over call chains based on '{1}'</source>
+        <target state="translated">'{0}' 기반의 호출 체인보다 '{1}' 선호</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConvertToHexStringOverBitConverterTitle">
+        <source>Prefer 'Convert.ToHexString' and 'Convert.ToHexStringLower' over call chains based on 'BitConverter.ToString'</source>
+        <target state="translated">'BitConverter.ToString'을 기반으로 하는 호출 체인보다 'Convert.ToHexString' 및 'Convert.ToHexStringLower'를 선호합니다.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferCountOverAnyCodeFixTitle">
         <source>Use 'Count' check instead of 'Any()'</source>
         <target state="translated">'Any()' 대신 'Count' 확인 사용</target>
@@ -2100,22 +2145,22 @@ Enumerable.OfType&lt;T&gt;에서 사용하는 제네릭 형식 검사(C# 'is' �
       </trans-unit>
       <trans-unit id="PreferGenericOverloadsCodeFixTitle">
         <source>Use generic overload</source>
-        <target state="new">Use generic overload</target>
+        <target state="translated">제네릭 오버로드 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferGenericOverloadsDescription">
         <source>Using a generic overload is preferable to the 'System.Type' overload when the type is known, promoting cleaner and more type-safe code with improved compile-time checks.</source>
-        <target state="new">Using a generic overload is preferable to the 'System.Type' overload when the type is known, promoting cleaner and more type-safe code with improved compile-time checks.</target>
+        <target state="translated">형식이 알려진 경우 제네릭 오버로드를 사용하는 것이 'System.Type' 오버로드보다 낫기 때문에 컴파일 시간 검사를 개선하여 보다 깔끔하고 형식이 안전한 코드를 승격할 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferGenericOverloadsMessage">
         <source>Prefer the generic overload '{0}' instead of '{1}'</source>
-        <target state="new">Prefer the generic overload '{0}' instead of '{1}'</target>
+        <target state="translated">'{1}' 대신 '{0}' 제네릭 오버로드를 선호합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferGenericOverloadsTitle">
         <source>Prefer generic overload when type is known</source>
-        <target state="new">Prefer generic overload when type is known</target>
+        <target state="translated">형식이 알려진 경우 제네릭 오버로드 선호</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferHashDataCodefixTitle">
@@ -2300,12 +2345,12 @@ Enumerable.OfType&lt;T&gt;에서 사용하는 제네릭 형식 검사(C# 'is' �
       </trans-unit>
       <trans-unit id="ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectlyDescription">
         <source>The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. The provided value is multiplied by 1024, which might be greater than your intended maximum length.</source>
-        <target state="new">The property 'MaxResponseHeadersLength' is measured in kilobytes, not in bytes. The provided value is multiplied by 1024, which might be greater than your intended maximum length.</target>
+        <target state="translated">'MaxResponseHeadersLength' 속성은 바이트가 아닌 킬로바이트 단위로 측정됩니다. 제공된 값에 1024를 곱합니다. 이 값은 의도한 최대 길이보다 클 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectlyMessage">
         <source>Make sure the value '{0}' is correct. This value is measured in kilobytes, not bytes.</source>
-        <target state="new">Make sure the value '{0}' is correct. This value is measured in kilobytes, not bytes.</target>
+        <target state="translated">'{0}' 값이 올바른지 확인합니다. 이 값은 바이트가 아닌 킬로바이트 단위로 측정됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectlyTitle">

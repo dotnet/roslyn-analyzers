@@ -120,6 +120,7 @@ namespace Analyzer.Utilities
         public const string SystemAttribute = "System.Attribute";
         public const string SystemAttributeTargets = "System.AttributeTargets";
         public const string SystemAttributeUsageAttribute = "System.AttributeUsageAttribute";
+        public const string SystemBitConverter = "System.BitConverter";
         public const string SystemBoolean = "System.Boolean";
         public const string SystemBuffer = "System.Buffer";
         public const string SystemBuffersMemoryManager1 = "System.Buffers.MemoryManager`1";
@@ -425,6 +426,7 @@ namespace Analyzer.Utilities
         public const string SystemThreadingCancellationToken = "System.Threading.CancellationToken";
         public const string SystemThreadingInterlocked = "System.Threading.Interlocked";
         public const string SystemThreadingMonitor = "System.Threading.Monitor";
+        public const string SystemThreadingSemaphoreSlim = "System.Threading.SemaphoreSlim";
         public const string SystemThreadingSpinLock = "System.Threading.SpinLock";
         public const string SystemThreadingTasksConfigureAwaitOptions = "System.Threading.Tasks.ConfigureAwaitOptions";
         public const string SystemThreadingTasksTaskAsyncEnumerableExtensions = "System.Threading.Tasks.TaskAsyncEnumerableExtensions";
@@ -439,6 +441,7 @@ namespace Analyzer.Utilities
         public const string SystemThreadingTasksValueTask = "System.Threading.Tasks.ValueTask";
         public const string SystemThreadingTasksValueTask1 = "System.Threading.Tasks.ValueTask`1";
         public const string SystemThreadingThread = "System.Threading.Thread";
+        public const string SystemThreadingVolatile = "System.Threading.Volatile";
         public const string SystemTimeSpan = "System.TimeSpan";
         public const string SystemType = "System.Type";
         public const string SystemUri = "System.Uri";

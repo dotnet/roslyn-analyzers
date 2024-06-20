@@ -57,6 +57,11 @@
         <target state="translated">应比较符号是否相等</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConfigureGeneratedCodeAnalysisDescription">
+        <source>Call the 'AnalysisContext.ConfigureGeneratedCodeAnalysis' method to configure the handling of generated code for this analyzer. Non-configured analyzers will default to an appropriate default mode for generated code.</source>
+        <target state="new">Call the 'AnalysisContext.ConfigureGeneratedCodeAnalysis' method to configure the handling of generated code for this analyzer. Non-configured analyzers will default to an appropriate default mode for generated code.</target>
+        <note>Do not localize 'AnalysisContext.ConfigureGeneratedCodeAnalysis'.</note>
+      </trans-unit>
       <trans-unit id="ConfigureGeneratedCodeAnalysisFix">
         <source>Configure generated code analysis</source>
         <target state="translated">配置生成的代码分析</target>
@@ -217,6 +222,11 @@
         <target state="translated">启用并发执行</target>
         <note />
       </trans-unit>
+      <trans-unit id="EnabledConcurrentExecutionDescription">
+        <source>Call the 'AnalysisContext.EnableConcurrentExecution' method to enable concurrent execution of analyzer actions registered by this analyzer. An analyzer that registers for concurrent execution can have better performance than a non-concurrent analyzer. However, such an analyzer must ensure that its actions can execute correctly in parallel.</source>
+        <target state="new">Call the 'AnalysisContext.EnableConcurrentExecution' method to enable concurrent execution of analyzer actions registered by this analyzer. An analyzer that registers for concurrent execution can have better performance than a non-concurrent analyzer. However, such an analyzer must ensure that its actions can execute correctly in parallel.</target>
+        <note>Do not localize 'AnalysisContext.EnableConcurrentExecution'.</note>
+      </trans-unit>
       <trans-unit id="InvalidEntryInAnalyzerReleasesFileRuleDescription">
         <source>Invalid entry in analyzer release file.</source>
         <target state="translated">分析器版本文件中的条目无效。</target>
@@ -313,8 +323,8 @@
         <note />
       </trans-unit>
       <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription">
-        <source>A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'.</source>
-        <target state="translated">包含分析器或源生成器的项目应指定属性“&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;”。</target>
+        <source>A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'. This will flag the use of APIs that are problematic in analyzers/source generators and should be avoided.</source>
+        <target state="needs-review-translation">包含分析器或源生成器的项目应指定属性“&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;”。</target>
         <note />
       </trans-unit>
       <trans-unit id="NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage">

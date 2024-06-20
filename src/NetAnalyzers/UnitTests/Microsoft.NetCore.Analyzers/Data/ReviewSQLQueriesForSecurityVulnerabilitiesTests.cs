@@ -1075,6 +1075,25 @@ End Module");
         }
 
         [Fact]
+        public async Task NullConstructor_NoDiagnostic()
+        {
+
+            await VerifyVB.VerifyAnalyzerAsync($@"
+{SetupCodeBasic}
+
+Class C
+    Protected Structure S
+    End Structure
+End Class
+
+Module Test
+    Sub M1(param As Object)
+        M1(New {{|BC30389:C.S|}}())
+    End Sub
+End Module");
+        }
+
+        [Fact]
         public async Task DbCommand_CommandText_LocalVariable_DiagnosticAsync()
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
@@ -1763,6 +1782,21 @@ End Module"
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 <assembly: System.Diagnostics.CodeAnalysis.SuppressMessage(""Category"", ""Id"")>");
+        }
+
+        [Fact]
+        public async Task NoDiagnosticForNullConstructor()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Class C
+    Protected Structure S
+    End Structure
+End Class
+Class D
+    Shared Sub M(o)
+        M(New {|BC30389:C.S|}())
+    End Sub
+End Class");
         }
     }
 }

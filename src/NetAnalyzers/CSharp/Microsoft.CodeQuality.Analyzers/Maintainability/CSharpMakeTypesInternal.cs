@@ -10,11 +10,12 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpMakeTypesInternal : MakeTypesInternal
     {
-        protected override SyntaxToken? GetIdentifier(SyntaxNode type)
+        protected override SyntaxToken? GetIdentifier(SyntaxNode type) => type switch
         {
-            return (type as TypeDeclarationSyntax)?.Identifier
-                   ?? (type as EnumDeclarationSyntax)?.Identifier
-                   ?? (type as DelegateDeclarationSyntax)?.Identifier;
-        }
+            TypeDeclarationSyntax tds => tds.Identifier,
+            EnumDeclarationSyntax eds => eds.Identifier,
+            DelegateDeclarationSyntax dds => dds.Identifier,
+            _ => null
+        };
     }
 }

@@ -45,7 +45,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             });
         }
 
-        /// <see cref="Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ExceptionsShouldBePublicAnalyzer"/>
         private void AnalyzeType(SymbolAnalysisContext context)
         {
             INamedTypeSymbol namedTypeSymbol = (INamedTypeSymbol)context.Symbol;

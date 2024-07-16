@@ -42,14 +42,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.AvoidMultipleEnumera
 
         protected override void ComputeHashCodeParts(ref RoslynHashCode hashCode)
         {
-            hashCode.Add(EnumerationCount.GetHashCode());
+            hashCode.Add(((int)EnumerationCount).GetHashCode());
             hashCode.Add(HashUtilities.Combine(Operations));
         }
 
         protected override bool ComputeEqualsByHashCodeParts(CacheBasedEquatable<TrackingEnumerationSet> obj)
         {
             var other = (TrackingEnumerationSet)obj;
-            return other.EnumerationCount.GetHashCode() == EnumerationCount.GetHashCode()
+            return ((int)other.EnumerationCount).GetHashCode() == ((int)EnumerationCount).GetHashCode()
                 && HashUtilities.Combine(other.Operations) == HashUtilities.Combine(Operations);
         }
     }

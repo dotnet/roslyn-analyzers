@@ -27,6 +27,7 @@ namespace Test.Utilities
             var test = new Test
             {
                 TestCode = source,
+                FixedCode = source,
             };
 
             await RunTestAsync(test, expected);

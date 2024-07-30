@@ -520,7 +520,8 @@ namespace Microsoft.CodeAnalysis.ResxSourceGenerator
                             break;
 
                         case Lang.VisualBasic:
-                            getStringMethod = $@"{memberIndent}Public Shared Property Culture As Global.System.Globalization.CultureInfo
+                            getStringMethod = $@"{memberIndent}''' <summary>Culture</summary>
+{memberIndent}Public Shared Property Culture As Global.System.Globalization.CultureInfo
 {memberIndent}<Global.System.Runtime.CompilerServices.MethodImpl(Global.System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)>
 {memberIndent}Friend Shared Function GetResourceString(ByVal resourceKey As String, Optional ByVal defaultValue As String = Nothing) As String
 {memberIndent}    Return ResourceManager.GetString(resourceKey, Culture)
@@ -644,6 +645,7 @@ Imports System.Reflection
 
 {resourceTypeDefinition}
 {namespaceStart}
+{classIndent}''' <summary>{className}</summary>
 {classIndent}{(ResourceInformation.Public ? "Public" : "Friend")} Partial Class {className}
 {memberIndent}Private Sub New
 {memberIndent}End Sub

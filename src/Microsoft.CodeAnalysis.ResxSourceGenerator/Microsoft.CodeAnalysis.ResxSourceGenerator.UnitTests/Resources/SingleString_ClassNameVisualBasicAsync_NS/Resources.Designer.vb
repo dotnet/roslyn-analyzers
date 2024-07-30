@@ -3,7 +3,6 @@
 Imports System.Reflection
 
 Namespace TestProject
-    ''' <summary>Resources</summary>
     Friend Class Resources
     End Class
 End Namespace

@@ -5,7 +5,6 @@ using System.Reflection;
 
 namespace TestProject
 {
-    /// <summary>Resources</summary>
     internal static class Resources { }
 }
 

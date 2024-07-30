@@ -3,15 +3,18 @@
 Imports System.Reflection
 
 Namespace TestProject
+    ''' <summary>Resources</summary>
     Friend Class Resources
     End Class
 End Namespace
 
+''' <summary>NS</summary>
 Friend Partial Class NS
     Private Sub New
     End Sub
     
     Private Shared s_resourceManager As Global.System.Resources.ResourceManager
+    ''' <summary>ResourceManager</summary>
     Public Shared ReadOnly Property ResourceManager As Global.System.Resources.ResourceManager
         Get
             If s_resourceManager Is Nothing Then
@@ -20,6 +23,7 @@ Friend Partial Class NS
             Return s_resourceManager
         End Get
     End Property
+    ''' <summary>Culture</summary>
     Public Shared Property Culture As Global.System.Globalization.CultureInfo
     <Global.System.Runtime.CompilerServices.MethodImpl(Global.System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)>
     Friend Shared Function GetResourceString(ByVal resourceKey As String, Optional ByVal defaultValue As String = Nothing) As String

@@ -6,10 +6,13 @@ using System.Reflection;
 
 namespace TestProject.NS1
 {
+    /// <summary>NS2Resources</summary>
     internal static partial class NS2Resources
     {
         private static global::System.Resources.ResourceManager? s_resourceManager;
+        /// <summary>ResourceManager</summary>
         public static global::System.Resources.ResourceManager ResourceManager => s_resourceManager ?? (s_resourceManager = new global::System.Resources.ResourceManager(typeof(NS2Resources)));
+        /// <summary>Culture</summary>
         public static global::System.Globalization.CultureInfo? Culture { get; set; }
         [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         [return: global::System.Diagnostics.CodeAnalysis.NotNullIfNotNull("defaultValue")]

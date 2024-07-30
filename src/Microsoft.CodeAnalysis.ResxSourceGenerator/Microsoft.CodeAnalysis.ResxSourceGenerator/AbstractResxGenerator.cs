@@ -494,7 +494,8 @@ namespace Microsoft.CodeAnalysis.ResxSourceGenerator
                                 getResourceStringAttributes.Add("[return: global::System.Diagnostics.CodeAnalysis.NotNullIfNotNull(\"defaultValue\")]");
                             }
 
-                            getStringMethod = $@"{memberIndent}public static global::System.Globalization.CultureInfo{(CompilationInformation.SupportsNullable ? "?" : "")} Culture {{ get; set; }}
+                            getStringMethod = $@"{memberIndent}/// <summary>Culture</summary>
+{memberIndent}public static global::System.Globalization.CultureInfo{(CompilationInformation.SupportsNullable ? "?" : "")} Culture {{ get; set; }}
 {string.Join(Environment.NewLine, getResourceStringAttributes.Select(attr => memberIndent + attr))}
 {memberIndent}internal static {(CompilationInformation.SupportsNullable ? "string?" : "string")} GetResourceString(string resourceKey, {(CompilationInformation.SupportsNullable ? "string?" : "string")} defaultValue = null) =>  ResourceManager.GetString(resourceKey, Culture) ?? defaultValue;";
                             if (ResourceInformation.EmitFormatMethods)
@@ -623,9 +624,11 @@ using System.Reflection;
 
 {resourceTypeDefinition}
 {namespaceStart}
+{classIndent}/// <summary>{className}</summary>
 {classIndent}{(ResourceInformation.Public ? "public" : "internal")} static partial class {className}
 {classIndent}{{
 {memberIndent}private static global::System.Resources.ResourceManager{(CompilationInformation.SupportsNullable ? "?" : "")} s_resourceManager;
+{memberIndent}/// <summary>ResourceManager</summary>
 {memberIndent}public static global::System.Resources.ResourceManager ResourceManager => s_resourceManager ?? (s_resourceManager = new global::System.Resources.ResourceManager(typeof({resourceTypeName})));
 {getStringMethod}
 {strings}
@@ -646,6 +649,7 @@ Imports System.Reflection
 {memberIndent}End Sub
 {memberIndent}
 {memberIndent}Private Shared s_resourceManager As Global.System.Resources.ResourceManager
+{memberIndent}''' <summary>ResourceManager</summary>
 {memberIndent}Public Shared ReadOnly Property ResourceManager As Global.System.Resources.ResourceManager
 {memberIndent}    Get
 {memberIndent}        If s_resourceManager Is Nothing Then

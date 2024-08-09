@@ -355,11 +355,19 @@
   <data name="ConfigureGeneratedCodeAnalysisTitle" xml:space="preserve">
     <value>Configure generated code analysis</value>
   </data>
+  <data name="ConfigureGeneratedCodeAnalysisDescription" xml:space="preserve">
+    <value>Call the 'AnalysisContext.ConfigureGeneratedCodeAnalysis' method to configure the handling of generated code for this analyzer. Non-configured analyzers will default to an appropriate default mode for generated code.</value>
+    <comment>Do not localize 'AnalysisContext.ConfigureGeneratedCodeAnalysis'.</comment>
+  </data>
   <data name="EnableConcurrentExecutionMessage" xml:space="preserve">
     <value>Enable concurrent execution</value>
   </data>
   <data name="EnableConcurrentExecutionTitle" xml:space="preserve">
     <value>Enable concurrent execution</value>
+  </data>
+  <data name="EnabledConcurrentExecutionDescription" xml:space="preserve">
+    <value>Call the 'AnalysisContext.EnableConcurrentExecution' method to enable concurrent execution of analyzer actions registered by this analyzer. An analyzer that registers for concurrent execution can have better performance than a non-concurrent analyzer. However, such an analyzer must ensure that its actions can execute correctly in parallel.</value>
+    <comment>Do not localize 'AnalysisContext.EnableConcurrentExecution'.</comment>
   </data>
   <data name="ConfigureGeneratedCodeAnalysisFix" xml:space="preserve">
     <value>Configure generated code analysis</value>
@@ -548,7 +556,7 @@
     <value>Do not use APIs banned for analyzers</value>
   </data>
   <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersDescription" xml:space="preserve">
-    <value>A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'.</value>
+    <value>A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'. This will flag the use of APIs that are problematic in analyzers/source generators and should be avoided.</value>
   </data>
   <data name="NoSettingSpecifiedSymbolIsBannedInAnalyzersMessage" xml:space="preserve">
     <value>'{0}': A project containing analyzers or source generators should specify the property '&lt;EnforceExtendedAnalyzerRules&gt;true&lt;/EnforceExtendedAnalyzerRules&gt;'</value>

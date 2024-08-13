@@ -90,7 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchTitle)),
                                                                          CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchMessage)),
                                                                          DiagnosticCategory.Reliability,
-                                                                         RuleLevel.BuildError,
+                                                                         RuleLevel.BuildWarning,
                                                                          description: CreateLocalizableResourceString(nameof(LoggerMessageDiagnosticMessageTemplateBracesMismatchDescription)),
                                                                          isPortedFxCopRule: false,
                                                                          isDataflowRule: false,

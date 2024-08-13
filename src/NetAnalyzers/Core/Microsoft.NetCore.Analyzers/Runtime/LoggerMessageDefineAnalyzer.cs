@@ -1,11 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -323,11 +321,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             return !leftBrace;
-        }
-
-        private static bool IsCurrentAndNextCharSameEscapableBrace(string text, HashSet<char> escapableBraces, int i, char evalChar)
-        {
-            return escapableBraces.Contains(evalChar) && i + 1 < text.Length && text[i + 1] == evalChar;
         }
 
         private static bool FindLogParameters(IMethodSymbol methodSymbol, [NotNullWhen(true)] out IParameterSymbol? message, out IParameterSymbol? arguments)

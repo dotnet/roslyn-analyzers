@@ -218,7 +218,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            if (!IsValidBraces(formatter))
+            if (!IsValidMessageTemplate(formatter.OriginalFormat))
             {
                 context.ReportDiagnostic(formatExpression.CreateDiagnostic(CA2023Rule));
                 return;
@@ -272,127 +272,57 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         /// <summary>
-        /// Does the text have valid braces? (no unclosed braces, no braces without an opening, and no unescaped braces)
+        /// Is the message template valid? (no unclosed braces, no braces without an opening, and no unescaped braces)
         /// </summary>
-        /// <param name="formatter">The text to check.</param>
+        /// <param name="messageTemplate">The message template to check for validity.</param>
         /// <returns>When true braces are valid, false otherwise.</returns>
-        private static bool IsValidBraces(LogValuesFormatter formatter)
+        public static bool IsValidMessageTemplate(string messageTemplate)
         {
-            var textWithNumericPlaceholders = formatter.Format(); // an easily parsable representation of the template string like "{0}" instead of "{MyTemplateVar}"
-            var textWithValuePlaceHoldersRemoved = GetTextWithValuePlaceholdersRemoved(textWithNumericPlaceholders, formatter.ValueNames.Count);
-            var textWithEscapedBracesRemoved = GetTextWithEscapedBracesRemoved(textWithValuePlaceHoldersRemoved);
-
-            var stack = new Stack<char>();
-
-            for (var i = 0; i < textWithEscapedBracesRemoved.Length; i++)
-            {
-                // If we're on a closing brace...
-                if (textWithEscapedBracesRemoved[i].Equals('}'))
-                {
-                    // and nothing in the stack, invalid
-                    if (stack.Count == 0)
-                        return false;
-
-                    // pop from the stack as this should be the opening brace to this closing one
-                    stack.Pop();
-                }
-
-                // If we're on an opening brace, push onto stack for tracking
-                if (textWithEscapedBracesRemoved[i].Equals('{'))
-                {
-                    stack.Push(textWithEscapedBracesRemoved[i]);
-                }
-            }
-
-            // If anything exists in the stack, that means we have an opening without a close
-            if (stack.Count != 0)
+            if (messageTemplate is null)
             {
                 return false;
             }
 
-            // Entire text has been evaluated and no issues found
-            return true;
-        }
+            int index = 0;
+            bool leftBrace = false;
 
-        /// <summary>
-        /// Get the template message with the numeral variables substituted for placeholders
-        /// </summary>
-        /// <example>
-        /// "My log {0}" -> "My log ___"
-        /// </example>
-        private static string GetTextWithValuePlaceholdersRemoved(string text, int count)
-        {
-            // no items to swap to placeholders
-            if (count == 0)
+            while (index < messageTemplate.Length)
             {
-                return text;
-            }
-
-            const char placeholder = '_';
-            var queueOfPlaceholders = new Queue<string>();
-            for (var i = 0; i < count; i++)
-            {
-                queueOfPlaceholders.Enqueue($"{{{i}}}");
-            }
-
-            var textWithPlaceholdersRemoved = new StringBuilder();
-            var currentSearchString = queueOfPlaceholders.Dequeue();
-            for (var i = 0; i < text.Length; i++)
-            {
-                // look forward to see if this is one of the variable placeholders
-                if (text.Substring(i, currentSearchString.Length) == currentSearchString)
+                if (messageTemplate[index] == '{')
                 {
-                    textWithPlaceholdersRemoved.Append(placeholder, currentSearchString.Length);
-
-                    i += currentSearchString.Length - 1;
-
-                    if (queueOfPlaceholders.Count > 0)
+                    if (index < messageTemplate.Length - 1 && messageTemplate[index + 1] == '{')
                     {
-                        currentSearchString = queueOfPlaceholders.Dequeue();
+                        index++;
+                    }
+                    else if (leftBrace)
+                    {
+                        return false;
                     }
                     else
                     {
-                        currentSearchString = placeholder.ToString();
+                        leftBrace = true;
                     }
-
-                    continue;
                 }
-
-                textWithPlaceholdersRemoved.Append(text[i]);
-            }
-
-            return textWithPlaceholdersRemoved.ToString();
-        }
-
-        /// <summary>
-        /// Get the template message with escaped braces (either opening or closing) substituted with placeholders.
-        /// </summary>
-        /// <example>
-        /// "My log ___}} }} {{" -> "My log _____ __ __"
-        /// </example>
-        private static string GetTextWithEscapedBracesRemoved(string text)
-        {
-            var escapableBraces = new HashSet<char>() { '{', '}' };
-            const char placeholder = '_';
-            var textWithEscapedBracesRemoved = new StringBuilder();
-            for (var i = 0; i < text.Length; i++)
-            {
-                var evalChar = text[i];
-                // the current character is a brace, and another character exists in the loop that is the same character
-                if (IsCurrentAndNextCharSameEscapableBrace(text, escapableBraces, i, evalChar))
+                else if (messageTemplate[index] == '}')
                 {
-                    // replace the current character and next with the placeholder text
-                    textWithEscapedBracesRemoved.Append(placeholder, 2);
-
-                    // skip the next char, since we know it's the end to this pair
-                    i++;
-                    continue;
+                    if (leftBrace)
+                    {
+                        leftBrace = false;
+                    }
+                    else if (index < messageTemplate.Length - 1 && messageTemplate[index + 1] == '}')
+                    {
+                        index++;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
 
-                textWithEscapedBracesRemoved.Append(evalChar);
+                index++;
             }
 
-            return textWithEscapedBracesRemoved.ToString();
+            return !leftBrace;
         }
 
         private static bool IsCurrentAndNextCharSameEscapableBrace(string text, HashSet<char> escapableBraces, int i, char evalChar)

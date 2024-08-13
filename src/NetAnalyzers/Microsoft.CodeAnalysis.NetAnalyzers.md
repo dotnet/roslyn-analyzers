@@ -2072,13 +2072,13 @@ A call to 'Stream.Read' may return fewer bytes than requested, resulting in unre
 
 ## [CA2023](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2023): Invalid braces in message template
 
-The braces present in the message template are invalid.  Ensure any braces in the message template are valid opening/closing braces, or are escaped.
+The braces present in the message template are invalid. Ensure any braces in the message template are valid opening/closing braces, or are escaped.
 
 |Item|Value|
 |-|-|
 |Category|Reliability|
 |Enabled|True|
-|Severity|Error|
+|Severity|Warning|
 |CodeFix|False|
 ---
 

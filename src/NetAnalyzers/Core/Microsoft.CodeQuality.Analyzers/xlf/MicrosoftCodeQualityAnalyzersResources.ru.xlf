@@ -313,8 +313,8 @@
         <note />
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticMessageTemplateBracesMismatchDescription">
-        <source>The braces present in the message template are invalid.  Ensure any braces in the message template are valid opening/closing braces, or are escaped.</source>
-        <target state="new">The braces present in the message template are invalid.  Ensure any braces in the message template are valid opening/closing braces, or are escaped.</target>
+        <source>The braces present in the message template are invalid. Ensure any braces in the message template are valid opening/closing braces, or are escaped.</source>
+        <target state="new">The braces present in the message template are invalid. Ensure any braces in the message template are valid opening/closing braces, or are escaped.</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerMessageDiagnosticMessageTemplateBracesMismatchMessage">

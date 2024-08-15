@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.NetCore.Analyzers.Runtime;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -111,6 +112,7 @@ namespace Microsoft.Extensions.Logging.Analyzer
         [WorkItem(7285, "https://github.com/dotnet/roslyn-analyzers/issues/7285")]
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{{One}""|});")]
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""}{One}""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{One{Two}""|});")]
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{One}{""|});")]
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{One}}""|});")]
         [InlineData(@"LoggerMessage.DefineScope<int>({|CA2023:""{{{One}}""|});")]
@@ -121,6 +123,20 @@ namespace Microsoft.Extensions.Logging.Analyzer
         public async Task CA2023IsProducedWhenBracesAreInvalid(string format)
         {
             await TriggerCodeAsync(format);
+        }
+
+        [Theory]
+        [InlineData("", true)]
+        [InlineData(null, false)]
+        [InlineData("{One}", true)]
+        [InlineData("{One{", false)]
+        [InlineData("{{One}", false)]
+        [InlineData("{{One}}", true)]
+        public void IsValidMessageTemplate_ShouldReturnExpectedResult(string messageTemplate, bool expectedResult)
+        {
+            var result = LoggerMessageDefineAnalyzer.IsValidMessageTemplate(messageTemplate);
+
+            Assert.Equal(expectedResult, result);
         }
 
         [Theory]

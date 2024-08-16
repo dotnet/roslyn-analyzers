@@ -54,14 +54,23 @@ static class Extensions
      }}
 }}
 
+interface IValue
+{{
+}}
+
+class Value : IValue
+{{
+}}
+
 class C
 {{
-    public void M(IEnumerable<int> p1, List<int> p2, {collectionName}<int> p3, IEqualityComparer<int> comparer)
+    public void M(IEnumerable<int> p1, List<int> p2, {collectionName}<int> p3, {collectionName}<Value> p4, IEqualityComparer<int> comparer)
     {{
         // Allowed
         p1.To{collectionName}();
         p2.To{collectionName}();
         p3.To{collectionName}(comparer); // Potentially modifies the collection
+        p4.To{collectionName}<IValue>(); // Changes the generic type
 
         Extensions.To{collectionName}(p1);
         Extensions.To{collectionName}(p2);

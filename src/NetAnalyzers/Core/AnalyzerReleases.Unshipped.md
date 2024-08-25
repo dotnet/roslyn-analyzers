@@ -10,6 +10,7 @@ CA1871 | Performance | Info | DoNotPassNonNullableValueToArgumentNullExceptionTh
 CA1872 | Performance | Info | PreferConvertToHexStringOverBitConverterAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1872)
 CA2022 | Reliability | Warning | AvoidUnreliableStreamReadAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022)
 CA2023 | Reliability | Warning | LoggerMessageDefineAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2023)
+CA2024 | Reliability | Warning | DoNotUseEndOfStreamInAsyncMethods, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2024)
 CA2262 | Usage | Info | ProvideHttpClientHandlerMaxResponseHeaderLengthValueCorrectly, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2262)
 CA2263 | Usage | Info | PreferGenericOverloadsAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2263)
 CA2264 | Usage | Warning | DoNotPassNonNullableValueToArgumentNullExceptionThrowIfNull, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2264)

@@ -498,6 +498,32 @@ namespace Test
             }
             return 0;";
 
+        private const string GuardedReturnIdentifierUsed = @"
+            int value = 0;
+            int value1 = 1;
+            int value2 = 2;
+            string key = ""key"";
+            ConcurrentDictionary<string, int> data = new ConcurrentDictionary<string, int>();
+            if ({|#0:data.ContainsKey(key)|})
+            {
+                return {|#1:data[key]|};
+            }
+
+            return 0;";
+
+        private const string GuardedReturnIdentifierUsedFixed = @"
+            int value = 0;
+            int value1 = 1;
+            int value2 = 2;
+            string key = ""key"";
+            ConcurrentDictionary<string, int> data = new ConcurrentDictionary<string, int>();
+            if (data.TryGetValue(key, out int value3))
+            {
+                return value3;
+            }
+
+            return 0;";
+
         #region NoDiagnostic
 
         private const string InvalidModifiedBeforeUse = @"
@@ -1136,6 +1162,33 @@ End Namespace";
             End If
             Return 0";
 
+        private const string VbGuardedReturnIdentifierUsed = @"
+            Dim value As Integer = 0
+            Dim value1 As Integer = 1
+            Dim value2 As Integer = 2
+            Dim key As String = ""key""
+            Dim data As ConcurrentDictionary(Of String, Integer) = New ConcurrentDictionary(Of String, Integer)()
+
+            If {|#0:data.ContainsKey(key)|} Then
+                Return {|#1:data(key)|}
+            End If
+
+            Return 0";
+
+        private const string VbGuardedReturnIdentifierUsedFixed = @"
+            Dim value As Integer = 0
+            Dim value1 As Integer = 1
+            Dim value2 As Integer = 2
+            Dim key As String = ""key""
+            Dim data As ConcurrentDictionary(Of String, Integer) = New ConcurrentDictionary(Of String, Integer)()
+
+            Dim value3 As Integer = Nothing
+            If data.TryGetValue(key, value3) Then
+                Return value3
+            End If
+
+            Return 0";
+
         #region NoDiagnostic
 
         private const string VbInvalidModifiedBeforeUse = @"
@@ -1299,6 +1352,7 @@ End Namespace";
         [InlineData(GuardedKeyInSimpleAssignment, GuardedKeyInSimpleAssignmentFixed)]
         [InlineData(GuardedInlineVariable, GuardedInlineVariableFixed)]
         [InlineData(GuardedInlineVariable2, GuardedInlineVariable2Fixed)]
+        [InlineData(GuardedReturnIdentifierUsed, GuardedReturnIdentifierUsedFixed)]
         public Task ShouldReportDiagnostic(string codeSnippet, string fixedCodeSnippet, int additionalLocations = 1)
         {
             string testCode = CreateCSharpCode(codeSnippet);
@@ -1372,6 +1426,7 @@ End Namespace";
         [InlineData(VbGuardedKeyInSimpleAssignment, VbGuardedKeyInSimpleAssignmentFixed)]
         [InlineData(VbGuardedInlineVariable, VbGuardedInlineVariableFixed)]
         [InlineData(VbGuardedInlineVariable2, VbGuardedInlineVariable2Fixed)]
+        [InlineData(VbGuardedReturnIdentifierUsed, VbGuardedReturnIdentifierUsedFixed)]
         public Task VbShouldReportDiagnostic(string codeSnippet, string fixedCodeSnippet, int additionalLocations = 1)
         {
             string testCode = CreateVbCode(codeSnippet);
@@ -1728,6 +1783,42 @@ namespace UnitTests {
                         .WithLocation(1),
                 },
             }.RunAsync();
+        }
+
+        [Fact, WorkItem(7217, "https://github.com/dotnet/roslyn-analyzers/issues/7217")]
+        public Task WhenIndexerInIndirectContainsKeyClause_NoDiagnostic()
+        {
+            const string code = """
+                                using System.Collections.Generic;
+                                using System.Linq;
+
+                                class Program
+                                {
+                                    private Dictionary<string, List<string>> _dictionary = new Dictionary<string, List<string>>();
+                                
+                                    public void Test(string key)
+                                    {
+                                        List<string> data = new List<string>();
+                                
+                                        if (_dictionary.ContainsKey(key))
+                                        {
+                                            DbContext context = new DbContext();
+                                            data = context.LoadData(key);
+                                            if (data != null && data.Any())
+                                            {
+                                                var x = _dictionary[key];
+                                            }
+                                        }
+                                    }
+                                
+                                    public class DbContext
+                                    {
+                                        public List<string> LoadData(string key) => new List<string>();
+                                    }
+                                }
+                                """;
+
+            return VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         private static string CreateCSharpCode(string content)

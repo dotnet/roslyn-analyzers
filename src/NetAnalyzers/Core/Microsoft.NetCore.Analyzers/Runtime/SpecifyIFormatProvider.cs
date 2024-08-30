@@ -78,17 +78,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static readonly ImmutableArray<string> s_dateInvariantFormats = ImmutableArray.Create("o", "O", "r", "R", "s", "u");
 
-        private static readonly ImmutableArray<SpecialType> s_numberTypes = ImmutableArray.Create(
-            SpecialType.System_Int32,
-            SpecialType.System_UInt32,
-            SpecialType.System_Int64,
-            SpecialType.System_UInt64,
-            SpecialType.System_Int16,
-            SpecialType.System_UInt16,
-            SpecialType.System_Double,
-            SpecialType.System_Single,
-            SpecialType.System_Decimal);
-
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(IFormatProviderAlternateStringRule, IFormatProviderAlternateRule, IFormatProviderOptionalRule, UICultureStringRule, UICultureRule);
 
         protected override void InitializeWorker(CompilationStartAnalysisContext context)
@@ -110,7 +99,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var charType = context.Compilation.GetSpecialType(SpecialType.System_Char);
             var boolType = context.Compilation.GetSpecialType(SpecialType.System_Boolean);
             var guidType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemGuid);
-            var numberTypes = s_numberTypes.Select(context.Compilation.GetSpecialType).ToImmutableArray();
 
             var nullableT = context.Compilation.GetSpecialType(SpecialType.System_Nullable_T);
             var invariantToStringMethodsBuilder = ImmutableHashSet.CreateBuilder<IMethodSymbol>();
@@ -233,7 +221,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (!oaContext.Options.IsConfiguredToSkipAnalysis(iformatProviderAlternateRule, targetMethod, oaContext.ContainingSymbol, oaContext.Compilation))
                 {
                     bool diagnosticReported = false;
-                    IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>().WhereMethodDoesNotContainAttribute(obsoleteAttributeType);
+                    ITypeSymbol type = targetMethod.ContainingType.GetNullableValueTypeUnderlyingType() ?? targetMethod.ContainingType;
+                    IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = type.GetMembers(targetMethod.Name).OfType<IMethodSymbol>().WhereMethodDoesNotContainAttribute(obsoleteAttributeType);
                     if (methodsWithSameNameAsTargetMethod.HasMoreThan(1))
                     {
                         var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, iformatProviderType);
@@ -265,11 +254,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             SymbolEqualityComparer.Default.Equals(x.Parameter?.Type, iformatProviderType)
                             && x.ArgumentKind == ArgumentKind.DefaultValue);
 
-                        var nullableType = invocationExpression.Instance?.Type.GetNullableValueTypeUnderlyingType();
-                        var isDefaultToStringInvocation = invocationExpression.TargetMethod is { Name: nameof(object.ToString), Parameters.Length: 0 };
-                        var isNullableNumberToStringInvocation = isDefaultToStringInvocation && numberTypes.Contains(nullableType, SymbolEqualityComparer.Default);
-
-                        if (currentCallHasNullFormatProvider || isNullableNumberToStringInvocation)
+                        if (currentCallHasNullFormatProvider)
                         {
                             oaContext.ReportDiagnostic(invocationExpression.CreateDiagnostic(IFormatProviderOptionalRule,
                                 targetMethod.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));

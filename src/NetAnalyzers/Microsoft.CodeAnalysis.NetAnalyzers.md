@@ -1848,6 +1848,18 @@ Using a cached 'SearchValues' instance is more efficient than passing values to 
 |CodeFix|True|
 ---
 
+## [CA1872](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1872): Prefer 'Convert.ToHexString' and 'Convert.ToHexStringLower' over call chains based on 'BitConverter.ToString'
+
+Use 'Convert.ToHexString' or 'Convert.ToHexStringLower' when encoding bytes to a hexadecimal string representation. These methods are more efficient and allocation-friendly than using 'BitConverter.ToString' in combination with 'String.Replace' to replace dashes and 'String.ToLower'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
 
 If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.
@@ -2037,6 +2049,30 @@ The generic cast (IL 'unbox.any') used by the sequence returned by Enumerable.Ca
 The generic type check (C# 'is' operator/IL 'isinst') used by Enumerable.OfType\<T> will never succeed with elements of types specified, resulting in an empty sequence.  
 
 Widening and user defined conversions are not supported with generic types.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA2022](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022): Avoid inexact read with 'Stream.Read'
+
+A call to 'Stream.Read' may return fewer bytes than requested, resulting in unreliable code if the return value is not checked.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|True|
+---
+
+## [CA2023](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2023): Invalid braces in message template
+
+The braces present in the message template are invalid. Ensure any braces in the message template are valid opening/closing braces, or are escaped.
 
 |Item|Value|
 |-|-|

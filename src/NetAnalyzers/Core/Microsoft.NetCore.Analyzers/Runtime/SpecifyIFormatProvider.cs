@@ -153,25 +153,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var guidParseMethods = guidType?.GetMembers("Parse") ?? ImmutableArray<ISymbol>.Empty;
 
             var convertType = typeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConvert);
-            var superfluousConvertToStringFormatProviderOverloads = convertType?.GetMembers(nameof(Convert.ToString))
-                .OfType<IMethodSymbol>()
-                .Where(m => m.IsStatic
-                            && m.Parameters is [{ Type.SpecialType: SpecialType.System_String or SpecialType.System_Boolean or SpecialType.System_Char }, var possibleFormatProvider]
-                            && possibleFormatProvider.Type.Equals(iformatProviderType, SymbolEqualityComparer.Default)) ?? [];
-            var superfluousConvertToToCharFormatProviderOverloads = convertType?.GetMembers(nameof(Convert.ToChar))
-                .OfType<IMethodSymbol>()
-                .Where(m => m.IsStatic
-                            && m.Parameters is [{ Type.SpecialType: SpecialType.System_String }, var possibleFormatProvider]
-                            && possibleFormatProvider.Type.Equals(iformatProviderType, SymbolEqualityComparer.Default)) ?? [];
-            var superfluousConvertToBooleanFormatProviderOverloads = convertType?.GetMembers(nameof(Convert.ToBoolean))
-                .OfType<IMethodSymbol>()
-                .Where(m => m.IsStatic
-                            && m.Parameters is [{ Type.SpecialType: SpecialType.System_String }, var possibleFormatProvider]
-                            && possibleFormatProvider.Type.Equals(iformatProviderType, SymbolEqualityComparer.Default)) ?? [];
-            ImmutableHashSet<IMethodSymbol> superfluousFormatProviderOverloads = superfluousConvertToStringFormatProviderOverloads
-                .Concat(superfluousConvertToToCharFormatProviderOverloads)
-                .Concat(superfluousConvertToBooleanFormatProviderOverloads)
-                .ToImmutableHashSet<IMethodSymbol>(SymbolEqualityComparer.Default);
+            ImmutableHashSet<IMethodSymbol> superfluousFormatProviderOverloads = ImmutableHashSet<IMethodSymbol>.Empty;
+            if (convertType != null)
+            {
+                superfluousFormatProviderOverloads = convertType.GetMembers(nameof(Convert.ToString))
+                    .OfType<IMethodSymbol>()
+                    .Where(m => m.Parameters is [{ Type.SpecialType: SpecialType.System_String or SpecialType.System_Boolean or SpecialType.System_Char }, var possibleFormatProvider]
+                                && possibleFormatProvider.Type.Equals(iformatProviderType, SymbolEqualityComparer.Default)).ToImmutableHashSet();
+                superfluousFormatProviderOverloads = superfluousFormatProviderOverloads
+                    .Add(convertType.GetMembers(nameof(Convert.ToChar))
+                        .OfType<IMethodSymbol>()
+                        .First(m => m.Parameters is [{ Type.SpecialType: SpecialType.System_String }, var possibleFormatProvider]
+                                    && possibleFormatProvider.Type.Equals(iformatProviderType, SymbolEqualityComparer.Default)))
+                    .Add(convertType.GetMembers(nameof(Convert.ToBoolean))
+                        .OfType<IMethodSymbol>()
+                        .First(m => m.Parameters is [{ Type.SpecialType: SpecialType.System_String }, var possibleFormatProvider]
+                                    && possibleFormatProvider.Type.Equals(iformatProviderType, SymbolEqualityComparer.Default)));
+            }
 
             #endregion
 

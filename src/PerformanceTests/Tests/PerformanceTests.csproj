@@ -14,7 +14,7 @@
     <Optimize>true</Optimize>
     <Configuration>Release</Configuration>
     <IsPackable>false</IsPackable>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForTests)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
   <ItemGroup>

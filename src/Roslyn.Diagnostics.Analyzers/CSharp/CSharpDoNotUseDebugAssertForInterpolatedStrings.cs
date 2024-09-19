@@ -12,7 +12,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
 {
     using static RoslynDiagnosticsAnalyzersResources;
 
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpDoNotUseDebugAssertForInterpolatedStrings : DiagnosticAnalyzer
     {
         internal static readonly DiagnosticDescriptor Rule = new(

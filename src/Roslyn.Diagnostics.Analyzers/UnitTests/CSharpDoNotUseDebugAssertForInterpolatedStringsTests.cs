@@ -76,7 +76,7 @@ namespace Roslyn.Diagnostics.Analyzers.UnitTests
         [Fact]
         public async Task NoCrashOnUsingStaticedAssert()
         {
-            var source = """
+            var source = $$"""
                 using static System.Diagnostics.Debug;
 
                 class C
@@ -86,6 +86,8 @@ namespace Roslyn.Diagnostics.Analyzers.UnitTests
                         [|Assert(false, $"{0}")|];
                     }
                 }
+
+                {{RoslynDebug}}
                 """;
 
             await new VerifyCS.Test

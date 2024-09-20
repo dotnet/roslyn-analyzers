@@ -288,8 +288,7 @@
             "isEnabledByDefault": false,
             "typeName": "CSharpDoNotUseDebugAssertForInterpolatedStrings",
             "languages": [
-              "C#",
-              "Visual Basic"
+              "C#"
             ],
             "tags": [
               "Telemetry"

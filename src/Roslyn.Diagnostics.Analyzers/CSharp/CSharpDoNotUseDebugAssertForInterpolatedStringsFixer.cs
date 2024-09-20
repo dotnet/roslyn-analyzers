@@ -75,6 +75,6 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
             return document.WithSyntaxRoot(newRoot);
         }
 
-        public override FixAllProvider? GetFixAllProvider() => base.GetFixAllProvider();
+        public override FixAllProvider? GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
     }
 }

@@ -1069,6 +1069,33 @@ public class C
                 GetIFormatProviderAlternateStringRuleCSharpResultAt(1, "TimeSpan.ToString(string)", "C.M(TimeSpan)", "TimeSpan.ToString(string, IFormatProvider)"));
         }
 
+        [Theory, WorkItem(1848, "https://github.com/dotnet/roslyn-analyzers/issues/1848")]
+        [InlineData("sbyte")]
+        [InlineData("byte")]
+        [InlineData("short")]
+        [InlineData("ushort")]
+        [InlineData("int")]
+        [InlineData("long")]
+        [InlineData("ulong")]
+        [InlineData("float")]
+        [InlineData("double")]
+        [InlineData("decimal")]
+        public async Task CA1305_TryParseOverloads(string type)
+        {
+            await VerifyCS.VerifyAnalyzerAsync($@"
+public static class TryParseTest
+{{
+    public static void TestMethod()
+    {{
+        var r = {type}.TryParse(""1"", out var i);
+    }}
+}}
+",
+GetIFormatProviderAlternateRuleCSharpResultAt(6, 17, $"{type}.TryParse(string, out {type})",
+                                                     "TryParseTest.TestMethod()",
+                                                     $"{type}.TryParse(string, NumberStyles, IFormatProvider, out {type})"));
+        }
+
         [Theory, WorkItem(5372, "https://github.com/dotnet/roslyn-analyzers/issues/5372")]
         // Diagnostics
         [InlineData("")]

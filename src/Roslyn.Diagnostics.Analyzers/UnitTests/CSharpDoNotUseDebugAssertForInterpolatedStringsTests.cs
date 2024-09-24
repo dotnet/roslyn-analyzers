@@ -96,5 +96,41 @@ namespace Roslyn.Diagnostics.Analyzers.UnitTests
                 LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp12,
             }.RunAsync();
         }
+
+        [Theory]
+        [InlineData("""
+            $"{"0"}"
+            """)]
+        [InlineData("""
+            $@"{"0"}"
+            """)]
+        [InlineData("""
+            @$"{"0"}"
+            """)]
+        [InlineData(""""
+            $"""{"0"}"""
+            """")]
+        public async Task NoAssertForConstantString(string @string)
+        {
+            var source = $$"""
+                using System.Diagnostics;
+
+                class C
+                {
+                    void M()
+                    {
+                        Debug.Assert(false, {{@string}});
+                    }
+                }
+
+                {{RoslynDebug}}
+                """;
+
+            await new VerifyCS.Test
+            {
+                TestCode = source,
+                LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp12,
+            }.RunAsync();
+        }
     }
 }

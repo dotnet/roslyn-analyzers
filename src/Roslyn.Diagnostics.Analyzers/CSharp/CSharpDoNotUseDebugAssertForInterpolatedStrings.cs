@@ -63,7 +63,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
                     var invocation = (IInvocationOperation)context.Operation;
 
                     if (invocation.TargetMethod.Equals(assertMethod) &&
-                        invocation.Arguments is [_, IArgumentOperation { Value: IInterpolatedStringOperation }])
+                        invocation.Arguments is [_, IArgumentOperation { Value: IInterpolatedStringOperation { ConstantValue.HasValue: false } }])
                     {
                         context.ReportDiagnostic(invocation.CreateDiagnostic(Rule));
                     }

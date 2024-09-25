@@ -57,10 +57,11 @@ extends:
     - stage: build
       displayName: Build
       jobs:
-      - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+      - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/9.0.1xx') }}:
         - template: /eng/common/templates-official/job/onelocbuild.yml@self
           parameters:
             MirrorRepo: roslyn-analyzers
+            MirrorBranch: release/9.0.1xx
             LclSource: lclFilesfromPackage
             LclPackageId: 'LCL-JUNO-PROD-ROSANLZR'
       - template: /eng/common/templates-official/jobs/jobs.yml@self

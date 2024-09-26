@@ -17,9 +17,9 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CSharpDoNotUseDebugAssertForInterpolatedStringsFixer))]
     [Shared]
-    public class CSharpDoNotUseDebugAssertForInterpolatedStringsFixer : CodeFixProvider
+    public sealed class CSharpDoNotUseDebugAssertForInterpolatedStringsFixer : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(RoslynDiagnosticIds.DoNotUseInterpolatedStringsWithDebugAssertRuleId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(RoslynDiagnosticIds.DoNotUseInterpolatedStringsWithDebugAssertRuleId);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {

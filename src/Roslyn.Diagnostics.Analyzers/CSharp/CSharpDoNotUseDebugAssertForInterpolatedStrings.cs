@@ -13,7 +13,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
     using static RoslynDiagnosticsAnalyzersResources;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CSharpDoNotUseDebugAssertForInterpolatedStrings : DiagnosticAnalyzer
+    public sealed class CSharpDoNotUseDebugAssertForInterpolatedStrings : DiagnosticAnalyzer
     {
         internal static readonly DiagnosticDescriptor Rule = new(
             RoslynDiagnosticIds.DoNotUseInterpolatedStringsWithDebugAssertRuleId,
@@ -26,7 +26,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
             helpLinkUri: null,
             customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {

@@ -46,7 +46,12 @@ extends:
       sourceAnalysisPool:
         name: NetCore1ESPool-Svc-Internal
         image: 1es-windows-2022
-        os: windows
+        os: windows        
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
+        configFile: '$(Build.SourcesDirectory)/eng/TSAConfig.gdntsa'
     pool:
       name: NetCore1ESPool-Svc-Internal
       image: windows.vs2022preview.amd64

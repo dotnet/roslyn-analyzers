@@ -36,7 +36,7 @@ $xlfDirectories | ForEach-Object {
 };
 
 $resxFiles = Get-ChildItem -Filter *.resx -File -Recurse $destinationSrcDirectory `
-    | ForEach-Object { $_.FullName }
+    | ForEach-Object { $_.FullName } `
     | ForEach-Object { [System.IO.Path]::GetRelativePath($destinationRepo, $_) };
 
 $resxFiles | ForEach-Object {

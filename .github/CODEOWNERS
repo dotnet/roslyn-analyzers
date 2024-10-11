@@ -3,4 +3,4 @@
 
 * @dotnet/roslyn-analysis
 
-eng/SourceBuild* @dotnet/source-build-internal
+eng/SourceBuild* @dotnet/source-build

@@ -1895,7 +1895,7 @@ namespace UnitTests {
         }
 
         [Fact, WorkItem(7295, "https://github.com/dotnet/roslyn-analyzers/issues/7295")]
-        public Task WhenDifferentLocalInstancesWithThisQualifierContainingDictionary_NoDiagnostic()
+        public Task WhenReferencingSameInstanceWithThisQualifier_Diagnostic()
         {
             const string code = """
                                 using System;

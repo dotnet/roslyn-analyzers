@@ -610,12 +610,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private static bool AreInstancesEqual(IOperation instance1, IOperation instance2)
         {
             string syntax1 = instance1.Syntax
-                .WithoutTrivia()
                 .ToString()
                 .Replace("this.", string.Empty)
                 .Replace("Me.", string.Empty);
             string syntax2 = instance2.Syntax
-                .WithoutTrivia()
                 .ToString()
                 .Replace("this.", string.Empty)
                 .Replace("Me.", string.Empty);

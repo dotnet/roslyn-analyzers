@@ -111,6 +111,7 @@ namespace Analyzer.Utilities
         public const string NUnitFrameworkTearDownAttribute = "NUnit.Framework.TearDownAttribute";
         public const string NUnitFrameworkTestAttribute = "NUnit.Framework.TestAttribute";
         public const string RoslynUtilitiesNonDefaultableAttribute = "Roslyn.Utilities.NonDefaultableAttribute";
+        public const string RoslynDebug = "Roslyn.Utilities.RoslynDebug";
         public const string SystemActivator = "System.Activator";
         public const string SystemAppContext = "System.AppContext";
         public const string SystemAppDomain = "System.AppDomain";
@@ -426,6 +427,7 @@ namespace Analyzer.Utilities
         public const string SystemThreadingCancellationToken = "System.Threading.CancellationToken";
         public const string SystemThreadingInterlocked = "System.Threading.Interlocked";
         public const string SystemThreadingMonitor = "System.Threading.Monitor";
+        public const string SystemThreadingSemaphoreSlim = "System.Threading.SemaphoreSlim";
         public const string SystemThreadingSpinLock = "System.Threading.SpinLock";
         public const string SystemThreadingTasksConfigureAwaitOptions = "System.Threading.Tasks.ConfigureAwaitOptions";
         public const string SystemThreadingTasksTaskAsyncEnumerableExtensions = "System.Threading.Tasks.TaskAsyncEnumerableExtensions";

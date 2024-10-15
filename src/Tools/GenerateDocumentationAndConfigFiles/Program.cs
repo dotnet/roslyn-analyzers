@@ -35,13 +35,13 @@ namespace GenerateDocumentationAndConfigFiles
 
             if (args.Length != expectedArguments)
             {
-                await Console.Error.WriteLineAsync($"Excepted {expectedArguments} arguments, found {args.Length}: {string.Join(';', args)}").ConfigureAwait(false);
+                await Console.Error.WriteLineAsync($"Expected {expectedArguments} arguments, found {args.Length}: {string.Join(';', args)}").ConfigureAwait(false);
                 return 1;
             }
 
             if (!args[0].StartsWith("-validateOnly:", StringComparison.OrdinalIgnoreCase))
             {
-                await Console.Error.WriteLineAsync($"Excepted the first argument to start with `{validateOnlyPrefix}`. found `{args[0]}`.").ConfigureAwait(false);
+                await Console.Error.WriteLineAsync($"Expected the first argument to start with `{validateOnlyPrefix}`. found `{args[0]}`.").ConfigureAwait(false);
                 return 1;
             }
 
@@ -343,6 +343,7 @@ namespace GenerateDocumentationAndConfigFiles
                         <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="WithCulture" />
                         <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="GenerateSource" />
                         <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="RelativeDir" />
+                        <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="ClassName" />
                         <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="OmitGetResourceString" />
                         <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="AsConstants" />
                         <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="IncludeDefaultValues" />

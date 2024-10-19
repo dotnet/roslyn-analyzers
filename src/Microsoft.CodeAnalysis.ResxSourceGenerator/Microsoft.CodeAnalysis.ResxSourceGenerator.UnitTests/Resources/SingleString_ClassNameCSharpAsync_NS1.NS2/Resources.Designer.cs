@@ -9,10 +9,13 @@ namespace TestProject
 }
 namespace NS1
 {
+    /// <summary>NS2</summary>
     internal static partial class NS2
     {
         private static global::System.Resources.ResourceManager? s_resourceManager;
+        /// <summary>ResourceManager</summary>
         public static global::System.Resources.ResourceManager ResourceManager => s_resourceManager ?? (s_resourceManager = new global::System.Resources.ResourceManager(typeof(TestProject.Resources)));
+        /// <summary>Culture</summary>
         public static global::System.Globalization.CultureInfo? Culture { get; set; }
         [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         [return: global::System.Diagnostics.CodeAnalysis.NotNullIfNotNull("defaultValue")]

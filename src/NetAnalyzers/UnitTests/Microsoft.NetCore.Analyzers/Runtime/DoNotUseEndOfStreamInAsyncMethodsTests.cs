@@ -31,10 +31,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         var local = new StreamReader(stream);
 
-                        _ = [|local.EndOfStream|];
-                        _ = [|parameter.EndOfStream|];
-                        _ = [|_field.EndOfStream|];
-                        _ = [|Property.EndOfStream|];
+                        _ = {|CA2024:local.EndOfStream|};
+                        _ = {|CA2024:parameter.EndOfStream|};
+                        _ = {|CA2024:_field.EndOfStream|};
+                        _ = {|CA2024:Property.EndOfStream|};
                     }
                 }
                 """;
@@ -61,10 +61,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
                         async Task LocalMethod()
                         {
-                            _ = [|local.EndOfStream|];
-                            _ = [|parameter.EndOfStream|];
-                            _ = [|_field.EndOfStream|];
-                            _ = [|Property.EndOfStream|];
+                            _ = {|CA2024:local.EndOfStream|};
+                            _ = {|CA2024:parameter.EndOfStream|};
+                            _ = {|CA2024:_field.EndOfStream|};
+                            _ = {|CA2024:Property.EndOfStream|};
                         }
                     }
                 }
@@ -92,10 +92,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
                         async Task LocalMethod()
                         {
-                            _ = [|local.EndOfStream|];
-                            _ = [|parameter.EndOfStream|];
-                            _ = [|_field.EndOfStream|];
-                            _ = [|Property.EndOfStream|];
+                            _ = {|CA2024:local.EndOfStream|};
+                            _ = {|CA2024:parameter.EndOfStream|};
+                            _ = {|CA2024:_field.EndOfStream|};
+                            _ = {|CA2024:Property.EndOfStream|};
                         }
                     }
                 }
@@ -116,7 +116,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 {
                     async Task M()
                     {
-                        Func<StreamReader, Task<bool>> func = async (StreamReader sr) => [|sr.EndOfStream|];
+                        Func<StreamReader, Task<bool>> func = async (StreamReader sr) => {|CA2024:sr.EndOfStream|};
                     }
                 }
                 """;
@@ -136,7 +136,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 {
                     void M()
                     {
-                        Func<StreamReader, Task<bool>> func = async (StreamReader sr) => [|sr.EndOfStream|];
+                        Func<StreamReader, Task<bool>> func = async (StreamReader sr) => {|CA2024:sr.EndOfStream|};
                     }
                 }
                 """;
@@ -158,7 +158,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         Func<StreamReader, Task<bool>> func = async delegate (StreamReader sr)
                         {
-                            return [|sr.EndOfStream|];
+                            return {|CA2024:sr.EndOfStream|};
                         };
                     }
                 }
@@ -181,7 +181,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         Func<StreamReader, Task<bool>> func = async delegate (StreamReader sr)
                         {
-                            return [|sr.EndOfStream|];
+                            return {|CA2024:sr.EndOfStream|};
                         };
                     }
                 }
@@ -372,10 +372,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Async Function M(ByVal parameter As StreamReader, ByVal stream As Stream) As Task
                         Dim local = New StreamReader(stream)
 
-                        Dim __ = [|local.EndOfStream|]
-                        __ = [|parameter.EndOfStream|]
-                        __ = [|_field.EndOfStream|]
-                        __ = [|[Property].EndOfStream|]
+                        Dim __ = {|CA2024:local.EndOfStream|}
+                        __ = {|CA2024:parameter.EndOfStream|}
+                        __ = {|CA2024:_field.EndOfStream|}
+                        __ = {|CA2024:[Property].EndOfStream|}
                     End Function
                 End Class
                 """;
@@ -392,7 +392,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
                 Class C
                     Async Function M() As Task
-                        Dim func = Async Function(sr As StreamReader) [|sr.EndOfStream|]
+                        Dim func = Async Function(sr As StreamReader) {|CA2024:sr.EndOfStream|}
                     End Function
                 End Class
                 """;
@@ -408,7 +408,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
                 Class C
                     Sub M()
-                        Dim func = Async Function(sr As StreamReader) [|sr.EndOfStream|]
+                        Dim func = Async Function(sr As StreamReader) {|CA2024:sr.EndOfStream|}
                     End Sub
                 End Class
                 """;

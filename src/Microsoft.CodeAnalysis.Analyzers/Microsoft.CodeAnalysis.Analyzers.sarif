@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.Analyzers",
-        "version": "3.11.0",
+        "version": "3.12.0",
         "language": "en-US"
       },
       "rules": {
@@ -513,6 +513,21 @@
             ]
           }
         },
+        "RS1042": {
+          "id": "RS1042",
+          "shortDescription": "Implementations of this interface are not allowed",
+          "fullDescription": "The author of this interface has deprecated implementing this interface.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "MicrosoftCodeAnalysisCompatibility",
+            "isEnabledByDefault": true,
+            "typeName": "ImplementationIsObsoleteAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
         "RS2000": {
           "id": "RS2000",
           "shortDescription": "Add analyzer diagnostic IDs to analyzer release",
@@ -694,7 +709,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.CSharp.Analyzers",
-        "version": "3.11.0",
+        "version": "3.12.0",
         "language": "en-US"
       },
       "rules": {
@@ -927,7 +942,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.VisualBasic.Analyzers",
-        "version": "3.11.0",
+        "version": "3.12.0",
         "language": "en-US"
       },
       "rules": {

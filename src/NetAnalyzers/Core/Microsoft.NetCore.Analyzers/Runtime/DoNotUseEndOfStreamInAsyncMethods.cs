@@ -64,13 +64,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 var operation = (IPropertyReferenceOperation)context.Operation;
 
-                if (!IsAsyncContext(context))
+                if (!SymbolEqualityComparer.Default.Equals(streamReaderType, operation.Member.ContainingType) ||
+                    !SymbolEqualityComparer.Default.Equals(endOfStreamProperty, operation.Member))
                 {
                     return;
                 }
 
-                if (SymbolEqualityComparer.Default.Equals(streamReaderType, operation.Member.ContainingType) &&
-                    SymbolEqualityComparer.Default.Equals(endOfStreamProperty, operation.Member))
+                if (IsAsyncContext(context))
                 {
                     context.ReportDiagnostic(operation.CreateDiagnostic(Rule, operation.Syntax.ToString()));
                 }

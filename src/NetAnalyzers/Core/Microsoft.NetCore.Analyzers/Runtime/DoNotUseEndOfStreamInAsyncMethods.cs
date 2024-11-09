@@ -70,18 +70,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                if (IsAsyncContext(context))
+                var containingSymbol = operation.TryGetContainingAnonymousFunctionOrLocalFunction() ?? context.ContainingSymbol;
+
+                if (containingSymbol is IMethodSymbol containingMethod && containingMethod.IsAsync)
                 {
                     context.ReportDiagnostic(operation.CreateDiagnostic(Rule, operation.Syntax.ToString()));
                 }
             }
-        }
-
-        private static bool IsAsyncContext(OperationAnalysisContext context)
-        {
-            var containingSymbol = context.Operation.TryGetContainingAnonymousFunctionOrLocalFunction() ?? context.ContainingSymbol;
-
-            return containingSymbol is IMethodSymbol containingMethod && containingMethod.IsAsync;
         }
     }
 }

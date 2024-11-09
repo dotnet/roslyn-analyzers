@@ -64,8 +64,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 var operation = (IPropertyReferenceOperation)context.Operation;
 
-                if (!SymbolEqualityComparer.Default.Equals(streamReaderType, operation.Member.ContainingType) ||
-                    !SymbolEqualityComparer.Default.Equals(endOfStreamProperty, operation.Member))
+                if (!SymbolEqualityComparer.Default.Equals(endOfStreamProperty, operation.Member))
                 {
                     return;
                 }

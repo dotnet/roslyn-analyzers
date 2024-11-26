@@ -440,20 +440,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
                 {
                     public static void Main() {}
                 
-                    public struct [|MyValueType|]
+                    public struct MyValueType
                     {
-                        public class [|Nested|] {}
-                    }
-                }
-                """,
-                """
-                class Program
-                {
-                    public static void Main() {}
-                
-                    internal struct MyValueType
-                    {
-                        internal class Nested {}
+                        public class Nested {}
                     }
                 }
                 """);
@@ -463,19 +452,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
                     Public Shared Sub Main()
                     End Sub
                 
-                    Public Structure [|MyValueType|]
-                        Public Class [|Nested|]
-                        End Class
-                    End Structure
-                End Class
-                """,
-                """
-                Class Program
-                    Public Shared Sub Main()
-                    End Sub
-                
-                    Friend Structure MyValueType
-                        Friend Class Nested
+                    Public Structure MyValueType
+                        Public Class Nested
                         End Class
                     End Structure
                 End Class

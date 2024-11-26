@@ -48,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         private void AnalyzeType(SymbolAnalysisContext context)
         {
             INamedTypeSymbol namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-            if (namedTypeSymbol.IsPublic()
+            if (namedTypeSymbol.IsExternallyVisible()
                 && GetIdentifier(namedTypeSymbol.DeclaringSyntaxReferences[0].GetSyntax()) is SyntaxToken identifier)
             {
                 context.ReportDiagnostic(identifier.CreateDiagnostic(Rule));

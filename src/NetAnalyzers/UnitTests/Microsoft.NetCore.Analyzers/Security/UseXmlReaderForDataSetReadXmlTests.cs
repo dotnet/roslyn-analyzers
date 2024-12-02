@@ -359,6 +359,22 @@ class TestClass
 }");
         }
 
+        [Fact]
+        public async Task NoDiagnosticForNullConstructor()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Class C
+    Protected Structure S
+    End Structure
+End Class
+
+Class D
+    Private Shared X As {|BC30389:C.S|} = New {|BC30389:C.S|}()
+End Class
+
+");
+        }
+
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
 #pragma warning disable RS0030 // Do not use banned APIs
             => VerifyCS.Diagnostic()

@@ -234,5 +234,10 @@ namespace Analyzer.Utilities
         /// Boolean option whether to perform the analysis even if the assembly exposes its internals.
         /// </summary>
         public const string IgnoreInternalsVisibleTo = "ignore_internalsvisibleto";
+
+        /// <summary>
+        /// String option to configure names of additional safe value task consumptions (separated by '|') for CA2012.
+        /// </summary>
+        public const string AdditionalValidValueTaskConsumption = "additional_valid_valuetask_consumption";
     }
 }

@@ -520,9 +520,9 @@ The author of this interface has deprecated implementing this interface.
 |CodeFix|False|
 ---
 
-## RS1043: Do not use file types for analyzers, generators, and code fixers
+## RS1043: Do not use file types for implementing analyzers, generators, and code fixers
 
-Using a 'file' type is not allowed for analyzers, generators, or code fixers.
+Using a 'file' type is not allowed for implementing analyzers, generators, or code fixers. This can break analyzer loading on some platforms.
 
 |Item|Value|
 |-|-|

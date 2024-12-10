@@ -173,8 +173,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseFileTypesForAnalyzersOrGeneratorsDescription">
-        <source>Using a 'file' type is not allowed for analyzers, generators, or code fixers.</source>
-        <target state="new">Using a 'file' type is not allowed for analyzers, generators, or code fixers.</target>
+        <source>Using a 'file' type is not allowed for implementing analyzers, generators, or code fixers. This can break analyzer loading on some platforms.</source>
+        <target state="new">Using a 'file' type is not allowed for implementing analyzers, generators, or code fixers. This can break analyzer loading on some platforms.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseFileTypesForAnalyzersOrGeneratorsMessage">
@@ -183,8 +183,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseFileTypesForAnalyzersOrGeneratorsTitle">
-        <source>Do not use file types for analyzers, generators, and code fixers</source>
-        <target state="new">Do not use file types for analyzers, generators, and code fixers</target>
+        <source>Do not use file types for implementing analyzers, generators, and code fixers</source>
+        <target state="new">Do not use file types for implementing analyzers, generators, and code fixers</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReservedDiagnosticIdDescription">

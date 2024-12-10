@@ -10,7 +10,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
     using static CodeAnalysisDiagnosticsResources;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public class DoNotUseFileTypesForAnalyzersOrGenerators : DiagnosticAnalyzer
+    public sealed class DoNotUseFileTypesForAnalyzersOrGenerators : DiagnosticAnalyzer
     {
         private static readonly DiagnosticDescriptor Rule = new(
             DiagnosticIds.DoNotUseFileTypesForAnalyzersOrGenerators,

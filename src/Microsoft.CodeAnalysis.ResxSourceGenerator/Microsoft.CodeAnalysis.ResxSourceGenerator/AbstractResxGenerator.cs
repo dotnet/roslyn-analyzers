@@ -494,7 +494,10 @@ namespace Microsoft.CodeAnalysis.ResxSourceGenerator
                                 getResourceStringAttributes.Add("[return: global::System.Diagnostics.CodeAnalysis.NotNullIfNotNull(\"defaultValue\")]");
                             }
 
-                            getStringMethod = $@"{memberIndent}/// <summary>Culture</summary>
+                            getStringMethod = $@"{memberIndent}/// <summary>
+{memberIndent}///   Overrides the current thread's CurrentUICulture property for all
+{memberIndent}///   resource lookups using this strongly typed resource class.
+{memberIndent}/// </summary>
 {memberIndent}public static global::System.Globalization.CultureInfo{(CompilationInformation.SupportsNullable ? "?" : "")} Culture {{ get; set; }}
 {string.Join(Environment.NewLine, getResourceStringAttributes.Select(attr => memberIndent + attr))}
 {memberIndent}internal static {(CompilationInformation.SupportsNullable ? "string?" : "string")} GetResourceString(string resourceKey, {(CompilationInformation.SupportsNullable ? "string?" : "string")} defaultValue = null) =>  ResourceManager.GetString(resourceKey, Culture) ?? defaultValue;";
@@ -520,7 +523,10 @@ namespace Microsoft.CodeAnalysis.ResxSourceGenerator
                             break;
 
                         case Lang.VisualBasic:
-                            getStringMethod = $@"{memberIndent}''' <summary>Culture</summary>
+                            getStringMethod = $@"{memberIndent}''' <summary>
+{memberIndent}'''   Overrides the current thread's CurrentUICulture property for all
+{memberIndent}'''   resource lookups using this strongly typed resource class.
+{memberIndent}''' </summary>
 {memberIndent}Public Shared Property Culture As Global.System.Globalization.CultureInfo
 {memberIndent}<Global.System.Runtime.CompilerServices.MethodImpl(Global.System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)>
 {memberIndent}Friend Shared Function GetResourceString(ByVal resourceKey As String, Optional ByVal defaultValue As String = Nothing) As String
@@ -625,11 +631,15 @@ using System.Reflection;
 
 {resourceTypeDefinition}
 {namespaceStart}
-{classIndent}/// <summary>{className}</summary>
+{classIndent}/// <summary>
+{classIndent}///   A strongly-typed resource class, for looking up localized strings, etc.
+{classIndent}/// </summary>
 {classIndent}{(ResourceInformation.Public ? "public" : "internal")} static partial class {className}
 {classIndent}{{
 {memberIndent}private static global::System.Resources.ResourceManager{(CompilationInformation.SupportsNullable ? "?" : "")} s_resourceManager;
-{memberIndent}/// <summary>ResourceManager</summary>
+{memberIndent}/// <summary>
+{memberIndent}///   Returns the cached ResourceManager instance used by this class.
+{memberIndent}/// </summary>
 {memberIndent}public static global::System.Resources.ResourceManager ResourceManager => s_resourceManager ?? (s_resourceManager = new global::System.Resources.ResourceManager(typeof({resourceTypeName})));
 {getStringMethod}
 {strings}
@@ -645,13 +655,17 @@ Imports System.Reflection
 
 {resourceTypeDefinition}
 {namespaceStart}
-{classIndent}''' <summary>{className}</summary>
+{classIndent}''' <summary>
+{classIndent}'''   A strongly-typed resource class, for looking up localized strings, etc.
+{classIndent}''' </summary>
 {classIndent}{(ResourceInformation.Public ? "Public" : "Friend")} Partial Class {className}
 {memberIndent}Private Sub New
 {memberIndent}End Sub
 {memberIndent}
 {memberIndent}Private Shared s_resourceManager As Global.System.Resources.ResourceManager
-{memberIndent}''' <summary>ResourceManager</summary>
+{memberIndent}''' <summary>
+{memberIndent}'''   Returns the cached ResourceManager instance used by this class.
+{memberIndent}''' </summary>
 {memberIndent}Public Shared ReadOnly Property ResourceManager As Global.System.Resources.ResourceManager
 {memberIndent}    Get
 {memberIndent}        If s_resourceManager Is Nothing Then

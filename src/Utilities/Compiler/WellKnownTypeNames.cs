@@ -111,6 +111,7 @@ namespace Analyzer.Utilities
         public const string NUnitFrameworkTearDownAttribute = "NUnit.Framework.TearDownAttribute";
         public const string NUnitFrameworkTestAttribute = "NUnit.Framework.TestAttribute";
         public const string RoslynUtilitiesNonDefaultableAttribute = "Roslyn.Utilities.NonDefaultableAttribute";
+        public const string RoslynDebug = "Roslyn.Utilities.RoslynDebug";
         public const string SystemActivator = "System.Activator";
         public const string SystemAppContext = "System.AppContext";
         public const string SystemAppDomain = "System.AppDomain";
@@ -266,6 +267,7 @@ namespace Analyzer.Utilities
         public const string SystemIOMemoryStream = "System.IO.MemoryStream";
         public const string SystemIOPath = "System.IO.Path";
         public const string SystemIOStream = "System.IO.Stream";
+        public const string SystemIOStreamReader = "System.IO.StreamReader";
         public const string SystemIOStringReader = "System.IO.StringReader";
         public const string SystemIOUnmanagedMemoryStream = "System.IO.UnmanagedMemoryStream";
         public const string SystemIParsable1 = "System.IParsable`1";

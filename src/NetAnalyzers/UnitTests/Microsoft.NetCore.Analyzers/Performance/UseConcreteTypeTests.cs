@@ -1502,6 +1502,22 @@ class C
             await TestCSAsync(Source);
         }
 
+        [Fact, WorkItem(7504, "https://github.com/dotnet/roslyn-analyzers/issues/7504")]
+        public static async Task ShouldNotSuggestChangingToAnonymousType()
+        {
+            const string Source = @"
+            class Foo
+            {
+                object Bar()
+                {
+                    var outputData = new { A = 1, B = 2 };
+                    return outputData;
+                }
+            }";
+
+            await TestCSAsync(Source);
+        }
+
         private static async Task TestCSAsync(string source, params DiagnosticResult[] diagnosticResults)
         {
             var test = new VerifyCS.Test

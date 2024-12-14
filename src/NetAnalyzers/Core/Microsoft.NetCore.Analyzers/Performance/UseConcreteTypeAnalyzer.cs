@@ -324,6 +324,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
                 }
 
+                if (toType.IsAnonymousType)
+                {
+                    // don't recommend upgrading to an anonymous (i.e. invalid) type
+                    return;
+                }
+
                 if (toType.TypeKind is not TypeKind.Class and not TypeKind.Array and not TypeKind.Struct)
                 {
                     // we only deal with classes, arrays, or structs

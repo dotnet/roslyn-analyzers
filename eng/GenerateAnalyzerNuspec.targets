@@ -54,6 +54,10 @@
       <GenerateAnalyzerRulesMissingDocumentationFile Condition="'$(Sign)' == 'true'">false</GenerateAnalyzerRulesMissingDocumentationFile>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(ReleaseTrackingOptOut)' == ''">
+      <ReleaseTrackingOptOut>false</ReleaseTrackingOptOut>
+    </PropertyGroup>
+
     <PropertyGroup Condition="'$(GeneratePackagePropsFile)' == 'true'">
       <PackagePropsFileDir>$(IntermediateOutputPath)Build</PackagePropsFileDir>
       <PackagePropsFileName>$(NuspecPackageId).props</PackagePropsFileName>
@@ -108,9 +112,9 @@
 
     <!-- Only run validate only in CI builds. Running them in local builds will prevent refreshing auto-generated files. -->
     <Exec Condition="'$(ContinuousIntegrationBuild)' == 'true'"
-          Command='"$(DotNetExecutable)" --roll-forward major "$(_GenerateDocumentationAndConfigFilesPath)" "-validateOnly:true" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) "$(ReleaseTrackingOptOut)" $(_ValidateOffline)' />
+          Command='"$(DotNetExecutable)" --roll-forward major "$(_GenerateDocumentationAndConfigFilesPath)" "-validateOnly:true" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) $(ReleaseTrackingOptOut) $(_ValidateOffline)' />
 
-    <Exec Command='"$(DotNetExecutable)" --roll-forward major "$(_GenerateDocumentationAndConfigFilesPath)" "-validateOnly:false" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) "$(ReleaseTrackingOptOut)" $(_ValidateOffline)' />
+    <Exec Command='"$(DotNetExecutable)" --roll-forward major "$(_GenerateDocumentationAndConfigFilesPath)" "-validateOnly:false" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) $(ReleaseTrackingOptOut) $(_ValidateOffline)' />
 
     <ItemGroup Condition="Exists('$(PackageTargetsFileDir)\$(PackageTargetsFileName)')">
       <AnalyzerNupkgFile Include="$(PackageTargetsFileDir)\$(PackageTargetsFileName)"/>

@@ -595,4 +595,23 @@
   <data name="DoNotDeclareCompilerFeatureInAssemblyWithUnsupportedTargetFrameworkRuleTitle" xml:space="preserve">
     <value>Compiler extensions should be implemented in assemblies targeting netstandard2.0</value>
   </data>
+  <data name="ImplementationIsObsoleteDescription" xml:space="preserve">
+    <value>The author of this interface has deprecated implementing this interface.</value>
+  </data>
+  <data name="ImplementationIsObsoleteMessage" xml:space="preserve">
+    <value>Type {0} cannot implement interface {1} because {1} is obsolete for implementation. See {2} for more details.</value>
+    <remarks>{2} is a URL</remarks>
+  </data>
+  <data name="ImplementationIsObsoleteTitle" xml:space="preserve">
+    <value>Implementations of this interface are not allowed</value>
+  </data>
+  <data name="DoNotUseFileTypesForAnalyzersOrGeneratorsDescription" xml:space="preserve">
+    <value>Using a 'file' type is not allowed for implementing analyzers, generators, or code fixers. This can break analyzer loading on some platforms.</value>
+  </data>
+  <data name="DoNotUseFileTypesForAnalyzersOrGeneratorsMessage" xml:space="preserve">
+    <value>Type '{0}' should not be marked with 'file'</value>
+  </data>
+  <data name="DoNotUseFileTypesForAnalyzersOrGeneratorsTitle" xml:space="preserve">
+    <value>Do not use file types for implementing analyzers, generators, and code fixers</value>
+  </data>
 </root>

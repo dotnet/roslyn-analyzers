@@ -46,8 +46,7 @@ Please follow the below steps after publishing analyzer NuGet packages from this
 15. Make sure to change all the `CURRENT-VERSION` placeholders to the current tag value (`7.0.4` in this example), and all the `PREVIOUS-VERSION` placeholders to the previous tag value (`7.0.3` in this example).
 16. If necessary, check the "Set as the latest release" and/or "Set as a pre-release" checkboxes.
 17. Click on "Publish release".
-18. The new release should now show up under https://github.com/dotnet/roslyn-analyzers/releases
-
+18. The new release should now show up under [dotnet/roslyn-analyzers/releases](https://github.com/dotnet/roslyn-analyzers/releases)
 
 ## Followup items
 

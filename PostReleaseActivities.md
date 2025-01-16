@@ -22,10 +22,31 @@ Please follow the below steps after publishing analyzer NuGet packages from this
 
 ## Steps to generate Release Notes
 
-1. Checkout the sources for the release branch locally. This would normally be the main branch.
-2. Build.
-3. Ensure that nuget.exe is on path.
-4. Generate notes: Switch to the output directory, say `artifacts\bin\ReleaseNotesUtil\Debug\net8.0` and execute `GenDiffNotes.cmd` to generate release notes.  Example command line for v2.9.4 to v2.9.5: `GenDiffNotes.cmd C:\scratch nuget.org 2.9.4 2.9.5`.
+1. Go to the the NuGet page of [Microsoft.CodeAnalysis.NetAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers).
+2. Click on the Versions tab and select the version for which you want to create a tag and release notes, then download the nupkg. For this example, we are going to use [7.0.4](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers/7.0.4).
+3. Open the downloaded NuGet package as a zip, then open the `Microsoft.CodeAnalysis.NetAnalyzers.nuspec` file at the root.
+4. Copy the commit `hash` located in the `<repository>` entry at the end of the nuspec file.
+5. In your local roslyn-analyzers clone, fetch and checkout the latest bits in main (or the `release/X.Y.Zxx` branch if main does not contain that hash).
+6. Checkout the commit hash you copied: `git checkout <hash>`.
+7. Execute `git tag X.Y.Z` to create a new local tag, where `X.Y.Z` represents the package version. For this example, it's: `git tag 7.0.4`.
+8. Make sure you have permissions to push to dotnet/roslyn-analyzers.
+9. Assuming your dotnet/roslyn-analyzers remote is named `upstream`, execute `git push upstream X.Y.Z`. For example: `git push upstream 7.0.4`.
+10. Go to the [dotnet/roslyn-analyzers](https://github.com/dotnet/roslyn-analyzers) GitHub page. On the right sidebar, click on Releases. Then click on the "Draft a new release" button.
+11. Click on the "Choose a tag" dropdown menu and select the tag you just pushed, `7.0.4`. The dropdowns will now change.
+12. Click on the "Previous tag: auto" dropdown menu that just showed up and select the version that was released before your chosen tag. For this example, the previous version was `7.0.3`.
+13. Click on the "Generate release notes" button so GitHub autogenerates the "What's changed" and "Full Changelog" texts for you.
+14. **Prepend** the following text at the beginning of that generated text:
+
+      ```md
+      Release build of [Microsoft.CodeAnalysis.NetAnalyzers CURRENT-VERSION](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers/CURRENT-VERSION) containing first-party [code quality analyzers ("CAxxxx rules")](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/overview#code-quality-analysis).
+
+      Contains bug fixes on top of [PREVIOUS-VERSION](https://github.com/dotnet/roslyn-analyzers/releases/tag/PREVIOUS-VERSION) release.
+      ```
+
+15. Make sure to change all the `CURRENT-VERSION` placeholders to the current tag value (`7.0.4` in this example), and all the `PREVIOUS-VERSION` placeholders to the previous tag value (`7.0.3` in this example).
+16. If necessary, check the "Set as the latest release" and/or "Set as a pre-release" checkboxes.
+17. Click on "Publish release".
+18. The new release should now show up under [dotnet/roslyn-analyzers/releases](https://github.com/dotnet/roslyn-analyzers/releases)
 
 ## Followup items
 

@@ -78,7 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // Check if invocation is a logging invocation and capture the log level (either as IOperation or as int, depending if it is dynamic or not).
                 // Use these to check if the logging invocation is guarded by 'ILogger.IsEnabled' and bail out if it is.
                 if (!symbols.TryGetLogLevel(invocation, out var logLevelArgumentOperation, out var logLevel) ||
-                    symbols.IsGuardedByIsEnabled(currentOperation: invocation, logInvocation: invocation, logLevel, logLevelArgumentOperation))
+                    symbols.IsGuardedByIsEnabled(invocation, logLevel, logLevelArgumentOperation))
                 {
                     return;
                 }
@@ -262,29 +262,26 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return true;
             }
 
-            public bool IsGuardedByIsEnabled(IOperation currentOperation, IInvocationOperation logInvocation, int logLevel, IArgumentOperation? logLevelArgumentOperation)
+            public bool IsGuardedByIsEnabled(IInvocationOperation logInvocation, int logLevel, IArgumentOperation? logLevelArgumentOperation)
             {
-                var conditional = currentOperation.GetAncestor<IConditionalOperation>(OperationKind.Conditional);
-
-                // This is the base case where no ancestor conditional is found.
-                if (conditional is null)
+                var currentAncestorConditional = logInvocation.GetAncestor<IConditionalOperation>(OperationKind.Conditional);
+                while (currentAncestorConditional is not null)
                 {
-                    return false;
+                    var conditionInvocations = currentAncestorConditional.Condition
+                        .DescendantsAndSelf()
+                        .OfType<IInvocationOperation>();
+
+                    // Check each invocation in the condition to see if it is a valid guard invocation, i.e. same instance and same log level.
+                    // This is not perfect (e.g. 'if (logger.IsEnabled(LogLevel.Debug) || true)' is treated as guarded), but should be good enough to prevent false positives.
+                    if (conditionInvocations.Any(IsValidIsEnabledGuardInvocation))
+                    {
+                        return true;
+                    }
+
+                    currentAncestorConditional = currentAncestorConditional.GetAncestor<IConditionalOperation>(OperationKind.Conditional);
                 }
 
-                var conditionInvocations = conditional.Condition
-                    .DescendantsAndSelf()
-                    .OfType<IInvocationOperation>();
-
-                // Check each invocation in the condition to see if it is a valid guard invocation, i.e. same instance and same log level.
-                // This is not perfect (e.g. 'if (logger.IsEnabled(LogLevel.Debug) || true)' is treated as guarded), but should be good enough to prevent false positives.
-                if (conditionInvocations.Any(IsValidIsEnabledGuardInvocation))
-                {
-                    return true;
-                }
-
-                // Recursively check the next conditional.
-                return IsGuardedByIsEnabled(conditional, logInvocation, logLevel, logLevelArgumentOperation);
+                return false;
 
                 bool IsValidIsEnabledGuardInvocation(IInvocationOperation invocation)
                 {

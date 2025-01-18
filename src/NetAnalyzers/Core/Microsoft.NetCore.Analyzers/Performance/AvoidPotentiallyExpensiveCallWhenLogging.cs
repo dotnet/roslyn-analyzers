@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.Lightup;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -85,21 +86,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 var arguments = invocation.Arguments.Skip(invocation.IsExtensionMethodAndHasNoInstance() ? 1 : 0);
 
-                // At this stage we have a logging invocation that is not guarded.
-                // Check each argument if it is potentially expensive.
+                // Check each argument if it is potentially expensive to evaluate and raise a diagnostic if it is.
                 foreach (var argument in arguments)
                 {
-                    // Check the argument value after conversions to prevent noise (e.g. implicit conversions from null or from int to EventId).
-                    if (IsPotentiallyExpensive(argument.Value.WalkDownConversion()))
+                    if (IsPotentiallyExpensive(argument.Value))
                     {
-                        // Filter out implicit operations in the case of params arguments.
-                        // If we would report the diagnostic on the implicit argument operation, it would flag the whole invocation.
-                        var explicitDescendants = argument.Value.GetTopmostExplicitDescendants();
-
-                        if (!explicitDescendants.IsEmpty)
-                        {
-                            context.ReportDiagnostic(explicitDescendants[0].CreateDiagnostic(Rule));
-                        }
+                        context.ReportDiagnostic(argument.CreateDiagnostic(Rule));
                     }
                 }
             }
@@ -107,41 +99,96 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static bool IsPotentiallyExpensive(IOperation? operation)
         {
-            if (operation is null
-                // Implicit params array creation is treated as not expensive. This would otherwise cause a lot of noise.
-                or IArrayCreationOperation { IsImplicit: true, Initializer.ElementValues.IsEmpty: true }
-                or IInstanceReferenceOperation
-                or IConditionalAccessInstanceOperation
-                or ILiteralOperation
-                or ILocalReferenceOperation
-                or IParameterReferenceOperation)
+            if (operation is null)
             {
                 return false;
             }
 
-            if (operation is IPropertyReferenceOperation { Arguments.IsEmpty: false } indexerReference)
+            if (ICollectionExpressionOperationWrapper.IsInstance(operation) ||
+                operation is IAnonymousObjectCreationOperation or
+                IAwaitOperation or
+                IInterpolatedStringOperation { ConstantValue.HasValue: false } or
+                IInvocationOperation or
+                IObjectCreationOperation { Type.IsReferenceType: true } or
+                IWithOperation)
             {
-                return IsPotentiallyExpensive(indexerReference.Instance) ||
-                    indexerReference.Arguments.Any(a => IsPotentiallyExpensive(a.Value));
+                return true;
             }
 
-            if (operation is IArrayElementReferenceOperation arrayElementReference)
+            if (operation is IArrayCreationOperation arrayCreationOperation)
             {
-                return IsPotentiallyExpensive(arrayElementReference.ArrayReference) ||
-                    arrayElementReference.Indices.Any(IsPotentiallyExpensive);
+                return !IsEmptyImplicitParamsArrayCreation(arrayCreationOperation);
             }
 
-            if (operation is IConditionalAccessOperation conditionalAccess)
+            if (operation is IConversionOperation conversionOperation)
             {
-                return IsPotentiallyExpensive(conditionalAccess.WhenNotNull);
+                return IsBoxing(conversionOperation) || IsPotentiallyExpensive(conversionOperation.Operand);
             }
 
-            if (operation is IMemberReferenceOperation memberReference)
+            if (operation is IArrayElementReferenceOperation arrayElementReferenceOperation)
             {
-                return IsPotentiallyExpensive(memberReference.Instance);
+                return IsPotentiallyExpensive(arrayElementReferenceOperation.ArrayReference) ||
+                    arrayElementReferenceOperation.Indices.Any(IsPotentiallyExpensive);
             }
 
-            return true;
+            if (operation is IBinaryOperation binaryOperation)
+            {
+                return IsPotentiallyExpensive(binaryOperation.LeftOperand) ||
+                    IsPotentiallyExpensive(binaryOperation.RightOperand);
+            }
+
+            if (operation is ICoalesceOperation coalesceOperation)
+            {
+                return IsPotentiallyExpensive(coalesceOperation.Value) ||
+                    IsPotentiallyExpensive(coalesceOperation.WhenNull);
+            }
+
+            if (operation is IConditionalAccessOperation conditionalAccessOperation)
+            {
+                return IsPotentiallyExpensive(conditionalAccessOperation.WhenNotNull);
+            }
+
+            if (operation is IIncrementOrDecrementOperation incrementOrDecrementOperation)
+            {
+                return IsPotentiallyExpensive(incrementOrDecrementOperation.Target);
+            }
+
+            if (operation is IMemberReferenceOperation memberReferenceOperation)
+            {
+                if (IsPotentiallyExpensive(memberReferenceOperation.Instance))
+                {
+                    return true;
+                }
+
+                if (memberReferenceOperation is IPropertyReferenceOperation { Arguments.IsEmpty: false } indexerReferenceOperation)
+                {
+                    return indexerReferenceOperation.Arguments.Any(a => IsPotentiallyExpensive(a.Value));
+                }
+            }
+
+            if (operation is IUnaryOperation unaryOperation)
+            {
+                return IsPotentiallyExpensive(unaryOperation.Operand);
+            }
+
+            return false;
+
+            static bool IsBoxing(IConversionOperation conversionOperation)
+            {
+                var targetIsReferenceType = conversionOperation.Type?.IsReferenceType ?? false;
+                var operandIsValueType = conversionOperation.Operand.Type?.IsValueType ?? false;
+
+                return targetIsReferenceType && operandIsValueType;
+            }
+
+            static bool IsEmptyImplicitParamsArrayCreation(IArrayCreationOperation arrayCreationOperation)
+            {
+                return arrayCreationOperation.IsImplicit &&
+                    arrayCreationOperation.DimensionSizes.Length == 1 &&
+                    arrayCreationOperation.DimensionSizes[0].ConstantValue.HasValue &&
+                    arrayCreationOperation.DimensionSizes[0].ConstantValue.Value is int size &&
+                    size == 0;
+            }
         }
 
         internal sealed class RequiredSymbols

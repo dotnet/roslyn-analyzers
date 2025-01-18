@@ -660,7 +660,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task BinaryOperation_ReportsDiagnostic_CS()
+        public async Task BinaryOperation_NoDiagnostic_CS()
         {
             string source = """
                 using System;
@@ -668,9 +668,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 class C
                 {
-                    void M(ILogger logger, EventId eventId, Exception exception, Func<object, Exception, string> formatter)
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<int, Exception, string> formatter)
                     {
-                        logger.Log(LogLevel.Debug, eventId, [|4 + 2|], exception, formatter);
+                        logger.Log(LogLevel.Debug, eventId, 4 + 2, exception, formatter);
                     }
                 }
                 """;
@@ -679,7 +679,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task CoalesceOperation_ReportsDiagnostic_CS()
+        public async Task CoalesceOperation_NoDiagnostic_CS()
         {
             string source = """
                 #nullable enable
@@ -689,9 +689,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 class C
                 {
-                    void M(ILogger logger, EventId eventId, Exception? exception, Func<object, Exception?, string> formatter)
+                    void M(ILogger logger, EventId eventId, Exception? exception, Func<object, Exception?, string> formatter, string? message)
                     {
-                        logger.Log(LogLevel.Debug, eventId, [|exception ?? new Exception()|], exception, formatter);
+                        logger.Log(LogLevel.Debug, eventId, message ?? "null", exception, formatter);
                     }
                 }
                 """;
@@ -719,7 +719,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task DefaultValueOperation_ReportsDiagnostic_CS()
+        public async Task DefaultValueOperation_NoDiagnostic_CS()
         {
             string source = """
                 using System;
@@ -729,7 +729,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(ILogger logger, EventId eventId, Exception exception, Func<int, Exception, string> formatter)
                     {
-                        logger.Log(LogLevel.Debug, eventId, [|default|], exception, formatter);
+                        logger.Log(LogLevel.Debug, eventId, default, exception, formatter);
                     }
                 }
                 """;
@@ -738,7 +738,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task IncrementOrDecrementOperation_ReportsDiagnostic_CS()
+        public async Task IncrementOrDecrementOperation_NoDiagnostic_CS()
         {
             string source = """
                 using System;
@@ -748,7 +748,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(ILogger logger, EventId eventId, Exception exception, Func<int, Exception, string> formatter, int input)
                     {
-                        logger.Log(LogLevel.Debug, eventId, [|input++|], exception, formatter);
+                        logger.Log(LogLevel.Debug, eventId, input++, exception, formatter);
                     }
                 }
                 """;
@@ -795,7 +795,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task IsPatternOperation_ReportsDiagnostic_CS()
+        public async Task IsPatternOperation_NoDiagnostic_CS()
         {
             string source = """
                 #nullable enable
@@ -807,7 +807,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(ILogger logger, EventId eventId, Exception? exception, Func<bool, Exception?, string> formatter)
                     {
-                        logger.Log(LogLevel.Debug, eventId, [|exception is not null|], exception, formatter);
+                        logger.Log(LogLevel.Debug, eventId, exception is not null, exception, formatter);
                     }
                 }
                 """;
@@ -816,7 +816,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task IsTypeOperation_ReportsDiagnostic_CS()
+        public async Task IsTypeOperation_NoDiagnostic_CS()
         {
             string source = """
                 using System;
@@ -826,7 +826,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(ILogger logger, EventId eventId, Exception exception, Func<bool, Exception, string> formatter, object input)
                     {
-                        logger.Log(LogLevel.Debug, eventId, [|input is Exception|], exception, formatter);
+                        logger.Log(LogLevel.Debug, eventId, input is Exception, exception, formatter);
                     }
                 }
                 """;
@@ -835,7 +835,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task NameOfOperation_ReportsDiagnostic_CS()
+        public async Task NameOfOperation_NoDiagnostic_CS()
         {
             string source = """
                 using System;
@@ -845,7 +845,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter)
                     {
-                        logger.Log(LogLevel.Debug, eventId, [|nameof(logger)|], exception, formatter);
+                        logger.Log(LogLevel.Debug, eventId, nameof(logger), exception, formatter);
                     }
                 }
                 """;
@@ -854,7 +854,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task ObjectCreationOperation_ReportsDiagnostic_CS()
+        public async Task ObjectCreationOperationReferenceType_ReportsDiagnostic_CS()
         {
             string source = """
                 using System;
@@ -873,7 +873,26 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task SizeOfOperation_ReportsDiagnostic_CS()
+        public async Task ObjectCreationOperationValueType_NoDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<TimeSpan, Exception, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, new TimeSpan(), exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task SizeOfOperation_NoDiagnostic_CS()
         {
             string source = """
                 using System;
@@ -883,7 +902,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(ILogger logger, EventId eventId, Exception exception, Func<int, Exception, string> formatter)
                     {
-                        logger.Log(LogLevel.Debug, eventId, [|sizeof(int)|], exception, formatter);
+                        logger.Log(LogLevel.Debug, eventId, sizeof(int), exception, formatter);
                     }
                 }
                 """;
@@ -892,7 +911,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task TypeOfOperation_ReportsDiagnostic_CS()
+        public async Task TypeOfOperation_NoDiagnostic_CS()
         {
             string source = """
                 using System;
@@ -902,7 +921,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(ILogger logger, EventId eventId, Exception exception, Func<Type, Exception, string> formatter)
                     {
-                        logger.Log(LogLevel.Debug, eventId, [|typeof(int)|], exception, formatter);
+                        logger.Log(LogLevel.Debug, eventId, typeof(int), exception, formatter);
                     }
                 }
                 """;
@@ -911,7 +930,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task UnaryOperation_ReportsDiagnostic_CS()
+        public async Task UnaryOperation_NoDiagnostic_CS()
         {
             string source = """
                 using System;
@@ -921,7 +940,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(ILogger logger, EventId eventId, Exception exception, Func<bool, Exception, string> formatter, bool input)
                     {
-                        logger.Log(LogLevel.Debug, eventId, [|!input|], exception, formatter);
+                        logger.Log(LogLevel.Debug, eventId, !input, exception, formatter);
                     }
                 }
                 """;
@@ -1084,8 +1103,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 class C
                 {
-                    private int _field;
-
                     void M(ILogger logger, EventId eventId, Exception exception, Func<int, Exception, string> formatter, int[] input)
                     {
                         logger.Log(LogLevel.Debug, eventId, [|input[ExpensiveMethodCall()]|], exception, formatter);
@@ -1094,6 +1111,101 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     int ExpensiveMethodCall()
                     {
                         return 0;
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task WorkInUnaryOperand_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<bool, Exception, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|!ExpensiveMethodCall()|], exception, formatter);
+                    }
+
+                    bool ExpensiveMethodCall()
+                    {
+                        return true;
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task WorkInBinaryOperand_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<int, Exception, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|ExpensiveMethodCall() + ExpensiveMethodCall()|], exception, formatter);
+                    }
+
+                    int ExpensiveMethodCall()
+                    {
+                        return 0;
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task WorkInCoalesceOperationValue_ReportsDiagnostic_CS()
+        {
+            string source = """
+                #nullable enable
+                
+                using System;
+                using Microsoft.Extensions.Logging;
+                
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception? exception, Func<object, Exception?, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|ExpensiveMethodCall() ?? 0|], exception, formatter);
+                    }
+
+                    int? ExpensiveMethodCall()
+                    {
+                        return 0;
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task WorkInCoalesceOperationWhenNull_ReportsDiagnostic_CS()
+        {
+            string source = """
+                #nullable enable
+                
+                using System;
+                using Microsoft.Extensions.Logging;
+                
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception? exception, Func<object, Exception?, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|exception ?? new Exception()|], exception, formatter);
                     }
                 }
                 """;
@@ -1915,6 +2027,84 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyCSharpCodeFixAsync(source, source);
         }
 
+        // Boxing tests
+
+        [Fact]
+        public async Task ArgumentIsBoxed_ReportsDiagnostic_CS()
+        {
+            string source = $$"""
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<object, Exception, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|42|], exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task ArgumentIsUnboxed_NoDiagnostic_CS()
+        {
+            string source = $$"""
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<int, Exception, string> formatter, object value)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, (int)value, exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task BinaryOperationWithBoxing_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|"Hello " + 42|], exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task ImplicitBoxingParamsArrayCreation_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger)
+                    {
+                        [|logger.LogError("Test: {Number1} and {Number2}", 1, 2)|];
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
         // VB tests
 
         [Fact]
@@ -2526,15 +2716,15 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task BinaryOperation_ReportsDiagnostic_VB()
+        public async Task BinaryOperation_NoDiagnostic_VB()
         {
             string source = """
                 Imports System
                 Imports Microsoft.Extensions.Logging
 
                 Class C
-                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Object, Exception, String))
-                        logger.Log(LogLevel.Debug, eventId, [|4 + 2|], exception, formatter)
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Integer, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, 4 + 2, exception, formatter)
                     End Sub
                 End Class
                 """;
@@ -2543,15 +2733,15 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task CoalesceOperation_ReportsDiagnostic_VB()
+        public async Task CoalesceOperation_NoDiagnostic_VB()
         {
             string source = """
                 Imports System
                 Imports Microsoft.Extensions.Logging
 
                 Class C
-                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Object, Exception, String))
-                        logger.Log(LogLevel.Debug, eventId, [|If(exception, New Exception())|], exception, formatter)
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Object, Exception, String), message As String)
+                        logger.Log(LogLevel.Debug, eventId, If(message, "null"), exception, formatter)
                     End Sub
                 End Class
                 """;
@@ -2594,7 +2784,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task IsTypeOperation_ReportsDiagnostic_VB()
+        public async Task IsTypeOperation_NoDiagnostic_VB()
         {
             string source = """
                 Imports System
@@ -2602,7 +2792,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 Class C
                     Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Boolean, Exception, String), input As Object)
-                        logger.Log(LogLevel.Debug, eventId, [|TypeOf input Is Exception|], exception, formatter)
+                        logger.Log(LogLevel.Debug, eventId, TypeOf input Is Exception, exception, formatter)
                     End Sub
                 End Class
                 """;
@@ -2611,7 +2801,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task NameOfOperation_ReportsDiagnostic_VB()
+        public async Task NameOfOperation_NoDiagnostic_VB()
         {
             string source = """
                 Imports System
@@ -2619,7 +2809,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 Class C
                     Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
-                        logger.Log(LogLevel.Debug, eventId, [|NameOf(logger)|], exception, formatter)
+                        logger.Log(LogLevel.Debug, eventId, NameOf(logger), exception, formatter)
                     End Sub
                 End Class
                 """;
@@ -2628,7 +2818,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task ObjectCreationOperation_ReportsDiagnostic_VB()
+        public async Task ObjectCreationOperationReferenceType_ReportsDiagnostic_VB()
         {
             string source = """
                 Imports System
@@ -2645,15 +2835,15 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task TypeOfOperation_ReportsDiagnostic_VB()
+        public async Task ObjectCreationOperationValueType_NoDiagnostic_VB()
         {
             string source = """
                 Imports System
                 Imports Microsoft.Extensions.Logging
 
                 Class C
-                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Type, Exception, String))
-                        logger.Log(LogLevel.Debug, eventId, [|GetType(Integer)|], exception, formatter)
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of TimeSpan, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, New TimeSpan(), exception, formatter)
                     End Sub
                 End Class
                 """;
@@ -2662,7 +2852,24 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task UnaryOperation_ReportsDiagnostic_VB()
+        public async Task TypeOfOperation_NoDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Type, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, GetType(Integer), exception, formatter)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task UnaryOperation_NoDiagnostic_VB()
         {
             string source = """
                 Imports System
@@ -2670,7 +2877,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 Class C
                     Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Boolean, Exception, String), input As Boolean)
-                        logger.Log(LogLevel.Debug, eventId, [|Not input|], exception, formatter)
+                        logger.Log(LogLevel.Debug, eventId, Not input, exception, formatter)
                     End Sub
                 End Class
                 """;
@@ -2804,6 +3011,86 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     Function ExpensiveMethodCall() As Integer
                         Return 0
                     End Function
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task WorkInUnaryOperand_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Boolean, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, [|Not ExpensiveMethodCall()|], exception, formatter)
+                    End Sub
+                
+                    Function ExpensiveMethodCall() As Boolean
+                        Return 0
+                    End Function
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task WorkInBinaryOperand_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Integer, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, [|ExpensiveMethodCall() + ExpensiveMethodCall()|], exception, formatter)
+                    End Sub
+
+                    Function ExpensiveMethodCall() As Integer
+                        Return 0
+                    End Function
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task WorkInCoalesceOperationValue_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Object, Exception, String), message As String)
+                        logger.Log(LogLevel.Debug, eventId, [|If(ExpensiveMethodCall(), exception)|], exception, formatter)
+                    End Sub
+
+                    Function ExpensiveMethodCall() As Exception
+                        Return Nothing
+                    End Function
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task WorkInCoalesceOperationWhenNull_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Object, Exception, String), message As String)
+                        logger.Log(LogLevel.Debug, eventId, [|If(exception, new Exception())|], exception, formatter)
+                    End Sub
                 End Class
                 """;
 
@@ -3497,6 +3784,76 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         Return "very expensive call"
                     End Function
                 End Module
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        // Boxing tests
+
+        [Fact]
+        public async Task ArgumentIsBoxed_ReportsDiagnostic_VB()
+        {
+            string source = $$"""
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, [|42|], exception, formatter)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task ArgumentIsUnboxed_NoDiagnostic_VB()
+        {
+            string source = $$"""
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Integer, Exception, String), value As Object)
+                        logger.Log(LogLevel.Debug, eventId, CType(value, Integer), exception, formatter)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task BinaryOperationWithBoxing_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, [|"Hello " + 42|], exception, formatter)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task ImplicitBoxingParamsArrayCreation_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger)
+                        [|logger.LogError("Test: {Number1} and {Number2}", 1, 2)|]
+                    End Sub
+                End Class
                 """;
 
             await VerifyBasicCodeFixAsync(source, source);

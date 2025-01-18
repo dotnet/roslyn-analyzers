@@ -327,6 +327,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     static void M(ILogger logger)
                     {
                         logger.StaticLogLevel(Property);
+                        logger.DynamicLogLevel(LogLevel.Debug, Property);
                     }
                 }
                 """;
@@ -599,65 +600,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyCSharpCodeFixAsync(source, source);
         }
 
-        // Tests for operations that get flagged.
-
-        [Fact]
-        public async Task AnonymousObjectCreationOperation_ReportsDiagnostic_CS()
-        {
-            string source = """
-                using System;
-                using Microsoft.Extensions.Logging;
-
-                class C
-                {
-                    void M(ILogger logger, EventId eventId, Exception exception, Func<object, Exception, string> formatter)
-                    {
-                        logger.Log(LogLevel.Debug, eventId, [|new { Test = "42" }|], exception, formatter);
-                    }
-                }
-                """;
-
-            await VerifyCSharpCodeFixAsync(source, source);
-        }
-
-        [Fact]
-        public async Task ArrayCreationOperation_ReportsDiagnostic_CS()
-        {
-            string source = """
-                using System;
-                using Microsoft.Extensions.Logging;
-
-                class C
-                {
-                    void M(ILogger logger, EventId eventId, Exception exception, Func<object, Exception, string> formatter)
-                    {
-                        logger.Log(LogLevel.Debug, eventId, [|new int[10]|], exception, formatter);
-                    }
-                }
-                """;
-
-            await VerifyCSharpCodeFixAsync(source, source);
-        }
-
-        [Fact]
-        public async Task AwaitOperation_ReportsDiagnostic_CS()
-        {
-            string source = """
-                using System;
-                using System.Threading.Tasks;
-                using Microsoft.Extensions.Logging;
-
-                class C
-                {
-                    async void M(ILogger logger, EventId eventId, Exception exception, Func<object, Exception, string> formatter, Task<string> task)
-                    {
-                        logger.Log(LogLevel.Debug, eventId, [|await task|], exception, formatter);
-                    }
-                }
-                """;
-
-            await VerifyCSharpCodeFixAsync(source, source);
-        }
+        // TODO: Add more variants for new non-flagged tests below
 
         [Fact]
         public async Task BinaryOperation_NoDiagnostic_CS()
@@ -700,25 +643,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task CollectionExpressionOperation_ReportsDiagnostic_CS()
-        {
-            string source = """
-                using System;
-                using Microsoft.Extensions.Logging;
-
-                class C
-                {
-                    void M(ILogger logger, EventId eventId, Exception exception, Func<int[], Exception, string> formatter)
-                    {
-                        logger.Log(LogLevel.Debug, eventId, [|[4, 2]|], exception, formatter);
-                    }
-                }
-                """;
-
-            await VerifyCSharpCodeFixAsync(source, source, CodeAnalysis.CSharp.LanguageVersion.CSharp12);
-        }
-
-        [Fact]
         public async Task DefaultValueOperation_NoDiagnostic_CS()
         {
             string source = """
@@ -749,44 +673,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     void M(ILogger logger, EventId eventId, Exception exception, Func<int, Exception, string> formatter, int input)
                     {
                         logger.Log(LogLevel.Debug, eventId, input++, exception, formatter);
-                    }
-                }
-                """;
-
-            await VerifyCSharpCodeFixAsync(source, source);
-        }
-
-        [Fact]
-        public async Task InterpolatedStringOperation_ReportsDiagnostic_CS()
-        {
-            string source = """
-                using System;
-                using Microsoft.Extensions.Logging;
-
-                class C
-                {
-                    void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter, int input)
-                    {
-                        logger.Log(LogLevel.Debug, eventId, [|$"{input}"|], exception, formatter);
-                    }
-                }
-                """;
-
-            await VerifyCSharpCodeFixAsync(source, source);
-        }
-
-        [Fact]
-        public async Task InvocationOperation_ReportsDiagnostic_CS()
-        {
-            string source = """
-                using System;
-                using Microsoft.Extensions.Logging;
-
-                class C
-                {
-                    void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter)
-                    {
-                        logger.Log(LogLevel.Debug, eventId, [|exception.ToString()|], exception, formatter);
                     }
                 }
                 """;
@@ -846,25 +732,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter)
                     {
                         logger.Log(LogLevel.Debug, eventId, nameof(logger), exception, formatter);
-                    }
-                }
-                """;
-
-            await VerifyCSharpCodeFixAsync(source, source);
-        }
-
-        [Fact]
-        public async Task ObjectCreationOperationReferenceType_ReportsDiagnostic_CS()
-        {
-            string source = """
-                using System;
-                using Microsoft.Extensions.Logging;
-
-                class C
-                {
-                    void M(ILogger logger, EventId eventId, Exception exception, Func<Exception, Exception, string> formatter)
-                    {
-                        logger.Log(LogLevel.Debug, eventId, [|new Exception()|], exception, formatter);
                     }
                 }
                 """;
@@ -948,6 +815,142 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyCSharpCodeFixAsync(source, source);
         }
 
+        // Tests for operations that get flagged.
+
+        [Fact]
+        public async Task AnonymousObjectCreationOperation_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<object, Exception, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|new { Test = "42" }|], exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task ArrayCreationOperation_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<object, Exception, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|new int[10]|], exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AwaitOperation_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using System.Threading.Tasks;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    async void M(ILogger logger, EventId eventId, Exception exception, Func<object, Exception, string> formatter, Task<string> task)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|await task|], exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task CollectionExpressionOperation_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<int[], Exception, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|[4, 2]|], exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source, CodeAnalysis.CSharp.LanguageVersion.CSharp12);
+        }
+
+        [Fact]
+        public async Task InterpolatedStringOperation_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter, int input)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|$"{input}"|], exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task InvocationOperation_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|exception.ToString()|], exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task ObjectCreationOperationReferenceType_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<Exception, Exception, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, [|new Exception()|], exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
         [Fact]
         public async Task WithOperation_ReportsDiagnostic_CS()
         {
@@ -969,7 +972,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyCSharpCodeFixAsync(source, source);
         }
 
-        // Tests for work done in indexers, array element references or instances of member references.
+        // Tests for work done in other operations.
 
         [Fact]
         public async Task WorkInIndexerInstance_ReportsDiagnostic_CS()
@@ -2425,6 +2428,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 
                 	Sub M(logger As ILogger)
                         logger.StaticLogLevel([Property])
+                        logger.DynamicLogLevel(LogLevel.Debug, [Property])
                 	End Sub
                 End Module
                 """;
@@ -2683,59 +2687,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyBasicCodeFixAsync(source, source);
         }
 
-        // Tests for operations that get flagged.
-
-        [Fact]
-        public async Task AnonymousObjectCreationOperation_ReportsDiagnostic_VB()
-        {
-            string source = """
-                Imports System
-                Imports Microsoft.Extensions.Logging
-
-                Class C
-                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Object, Exception, String))
-                        logger.Log(LogLevel.Debug, eventId, [|New With {.Test = "42"}|], exception, formatter)
-                    End Sub
-                End Class
-                """;
-
-            await VerifyBasicCodeFixAsync(source, source);
-        }
-
-        [Fact]
-        public async Task ArrayCreationOperation_ReportsDiagnostic_VB()
-        {
-            string source = """
-                Imports System
-                Imports Microsoft.Extensions.Logging
-
-                Class C
-                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Object, Exception, String))
-                        logger.Log(LogLevel.Debug, eventId, [|New Integer(9) {}|], exception, formatter)
-                    End Sub
-                End Class
-                """;
-
-            await VerifyBasicCodeFixAsync(source, source);
-        }
-
-        [Fact]
-        public async Task AwaitOperation_ReportsDiagnostic_VB()
-        {
-            string source = """
-                Imports System
-                Imports System.Threading.Tasks
-                Imports Microsoft.Extensions.Logging
-
-                Class C
-                    Async Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Object, Exception, String), task As Task(Of String))
-                        logger.Log(LogLevel.Debug, eventId, [|Await task|], exception, formatter)
-                    End Sub
-                End Class
-                """;
-
-            await VerifyBasicCodeFixAsync(source, source);
-        }
+        // TODO: Add more variants for new non-flagged tests below
 
         [Fact]
         public async Task BinaryOperation_NoDiagnostic_VB()
@@ -2772,40 +2724,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
-        public async Task InterpolatedStringOperation_ReportsDiagnostic_VB()
-        {
-            string source = """
-                Imports System
-                Imports Microsoft.Extensions.Logging
-
-                Class C
-                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String), input As Integer)
-                        logger.Log(LogLevel.Debug, eventId, [|$"{input}"|], exception, formatter)
-                    End Sub
-                End Class
-                """;
-
-            await VerifyBasicCodeFixAsync(source, source);
-        }
-
-        [Fact]
-        public async Task InvocationOperation_ReportsDiagnostic_VB()
-        {
-            string source = """
-                Imports System
-                Imports Microsoft.Extensions.Logging
-
-                Class C
-                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
-                        logger.Log(LogLevel.Debug, eventId, [|exception.ToString()|], exception, formatter)
-                    End Sub
-                End Class
-                """;
-
-            await VerifyBasicCodeFixAsync(source, source);
-        }
-
-        [Fact]
         public async Task IsTypeOperation_NoDiagnostic_VB()
         {
             string source = """
@@ -2832,23 +2750,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 Class C
                     Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
                         logger.Log(LogLevel.Debug, eventId, NameOf(logger), exception, formatter)
-                    End Sub
-                End Class
-                """;
-
-            await VerifyBasicCodeFixAsync(source, source);
-        }
-
-        [Fact]
-        public async Task ObjectCreationOperationReferenceType_ReportsDiagnostic_VB()
-        {
-            string source = """
-                Imports System
-                Imports Microsoft.Extensions.Logging
-
-                Class C
-                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Exception, Exception, String))
-                        logger.Log(LogLevel.Debug, eventId, [|New Exception()|], exception, formatter)
                     End Sub
                 End Class
                 """;
@@ -2907,7 +2808,112 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyBasicCodeFixAsync(source, source);
         }
 
-        // Tests for work done in indexers, array element references or instances of member references.
+        // Tests for operations that get flagged.
+
+        [Fact]
+        public async Task AnonymousObjectCreationOperation_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Object, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, [|New With {.Test = "42"}|], exception, formatter)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task ArrayCreationOperation_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Object, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, [|New Integer(9) {}|], exception, formatter)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task AwaitOperation_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports System.Threading.Tasks
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Async Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Object, Exception, String), task As Task(Of String))
+                        logger.Log(LogLevel.Debug, eventId, [|Await task|], exception, formatter)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task InterpolatedStringOperation_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String), input As Integer)
+                        logger.Log(LogLevel.Debug, eventId, [|$"{input}"|], exception, formatter)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task InvocationOperation_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, [|exception.ToString()|], exception, formatter)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task ObjectCreationOperationReferenceType_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Exception, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, [|New Exception()|], exception, formatter)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        // Tests for work done in other operations.
 
         [Fact]
         public async Task WorkInIndexerInstance_ReportsDiagnostic_VB()

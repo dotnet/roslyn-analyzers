@@ -38,6 +38,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             public Version? UnsupportedSecond { get; set; }
             public bool IsSet() => SupportedFirst != null || UnsupportedFirst != null ||
                         SupportedSecond != null || UnsupportedSecond != null || Obsoleted != null;
+
+            public override string ToString()
+            {
+                return $"Supported: {SupportedFirst} {SupportedSecond}, Unsupported: {UnsupportedFirst} {UnsupportedSecond}, Obsoleted: {Obsoleted}";
+            }
         }
 
         private sealed class PlatformAttributes

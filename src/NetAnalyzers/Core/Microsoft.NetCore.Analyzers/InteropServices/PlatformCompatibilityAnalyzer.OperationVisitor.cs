@@ -237,6 +237,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         if (!mappedAttributes.TryGetValue(platformName, out var versions))
                         {
                             versions = new Versions();
+                            // versions.SupportedFirst = EmptyVersion;
                             mappedAttributes.Add(platformName, versions);
                         }
 

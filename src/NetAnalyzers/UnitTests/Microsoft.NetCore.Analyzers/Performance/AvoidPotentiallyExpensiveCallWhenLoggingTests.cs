@@ -815,6 +815,25 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyCSharpCodeFixAsync(source, source);
         }
 
+        [Fact]
+        public async Task InterpolatedStringOperationConstant_NoDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter, int input)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, $"constant", exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
         // Tests for operations that get flagged.
 
         [Fact]
@@ -2801,6 +2820,23 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 Class C
                     Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of Boolean, Exception, String), input As Boolean)
                         logger.Log(LogLevel.Debug, eventId, Not input, exception, formatter)
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task InterpolatedStringOperationConstant_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String), input As Integer)
+                        logger.Log(LogLevel.Debug, eventId, $"constant", exception, formatter)
                     End Sub
                 End Class
                 """;

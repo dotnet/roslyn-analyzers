@@ -107,7 +107,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (ICollectionExpressionOperationWrapper.IsInstance(operation) ||
                 operation is IAnonymousObjectCreationOperation or
                 IAwaitOperation or
-                IInterpolatedStringOperation { ConstantValue.HasValue: false } or
                 IInvocationOperation or
                 IObjectCreationOperation { Type.IsReferenceType: true } or
                 IWithOperation)
@@ -151,6 +150,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (operation is IIncrementOrDecrementOperation incrementOrDecrementOperation)
             {
                 return IsPotentiallyExpensive(incrementOrDecrementOperation.Target);
+            }
+
+            if (operation is IInterpolatedStringOperation interpolatedStringOperation)
+            {
+                return interpolatedStringOperation.Parts.All(p => p is IInterpolationOperation);
             }
 
             if (operation is IMemberReferenceOperation memberReferenceOperation)

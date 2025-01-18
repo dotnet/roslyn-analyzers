@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 
@@ -46,7 +48,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -69,7 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -95,7 +97,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -121,7 +123,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -146,7 +148,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -174,7 +176,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -200,7 +202,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -225,7 +227,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -253,7 +255,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -279,7 +281,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -304,7 +306,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -332,7 +334,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -359,7 +361,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -385,7 +387,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -414,7 +416,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -440,7 +442,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -465,7 +467,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -493,7 +495,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -519,7 +521,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -544,7 +546,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -572,7 +574,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -591,7 +593,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -614,7 +616,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -640,7 +642,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -666,7 +668,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -691,7 +693,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -719,7 +721,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -738,7 +740,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -761,7 +763,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -787,7 +789,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -806,7 +808,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -832,7 +834,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -853,7 +855,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -881,7 +883,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -900,7 +902,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -926,7 +928,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -950,7 +952,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -973,7 +975,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -999,7 +1001,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1018,7 +1020,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1044,7 +1046,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1063,7 +1065,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1089,7 +1091,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1108,7 +1110,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1134,7 +1136,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1153,7 +1155,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1179,7 +1181,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1203,7 +1205,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -1226,7 +1228,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1252,7 +1254,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1277,7 +1279,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         // Tests for operations that get flagged.
@@ -1298,7 +1300,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1317,7 +1319,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1337,7 +1339,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1356,7 +1358,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source, CodeAnalysis.CSharp.LanguageVersion.CSharp12);
+            await VerifyCSharpDiagnosticAsync(source, CodeAnalysis.CSharp.LanguageVersion.CSharp12);
         }
 
         [Fact]
@@ -1375,7 +1377,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1394,7 +1396,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1413,7 +1415,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1434,7 +1436,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         // Tests for work done in other operations.
@@ -1461,7 +1463,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1488,7 +1490,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1509,7 +1511,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1535,7 +1537,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1559,7 +1561,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1583,7 +1585,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1607,7 +1609,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1631,7 +1633,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1657,7 +1659,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1678,7 +1680,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         // Tests when log call is guarded.
@@ -1717,7 +1719,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1739,7 +1741,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1776,7 +1778,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -1811,7 +1813,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -1850,7 +1852,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -1885,7 +1887,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -1919,7 +1921,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -1958,7 +1960,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2005,7 +2007,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2049,7 +2051,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2093,7 +2095,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2135,7 +2137,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2181,7 +2183,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2218,7 +2220,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2253,7 +2255,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2292,7 +2294,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2329,7 +2331,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2364,7 +2366,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2403,7 +2405,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2442,7 +2444,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2479,7 +2481,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2515,7 +2517,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         // Boxing tests
@@ -2536,7 +2538,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2555,7 +2557,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2574,7 +2576,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2593,7 +2595,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 }
                 """;
 
-            await VerifyCSharpCodeFixAsync(source, source);
+            await VerifyCSharpDiagnosticAsync(source);
         }
 
         // VB tests
@@ -2617,7 +2619,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2638,7 +2640,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2667,7 +2669,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2692,7 +2694,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2715,7 +2717,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2746,7 +2748,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2771,7 +2773,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2794,7 +2796,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2825,7 +2827,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2849,7 +2851,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2872,7 +2874,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2903,7 +2905,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2928,7 +2930,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -2952,7 +2954,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -2984,7 +2986,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3009,7 +3011,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -3032,7 +3034,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3063,7 +3065,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3085,7 +3087,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -3106,7 +3108,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3135,7 +3137,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3152,7 +3154,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -3173,7 +3175,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3202,7 +3204,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3224,7 +3226,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -3245,7 +3247,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3274,7 +3276,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3291,7 +3293,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3320,7 +3322,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3342,7 +3344,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -3363,7 +3365,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3392,7 +3394,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3409,7 +3411,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3438,7 +3440,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3455,7 +3457,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3484,7 +3486,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3501,7 +3503,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3530,7 +3532,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3552,7 +3554,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -3573,7 +3575,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3602,7 +3604,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3624,7 +3626,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         // Tests for operations that get flagged.
@@ -3643,7 +3645,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3660,7 +3662,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3678,7 +3680,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3695,7 +3697,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3712,7 +3714,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3729,7 +3731,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         // Tests for work done in other operations.
@@ -3753,7 +3755,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3777,7 +3779,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3794,7 +3796,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3817,7 +3819,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3838,7 +3840,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3861,7 +3863,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3882,7 +3884,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3903,7 +3905,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3924,7 +3926,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3941,7 +3943,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         // Tests when log call is guarded.
@@ -3968,7 +3970,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -3991,7 +3993,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -4016,7 +4018,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -4041,7 +4043,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -4075,7 +4077,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -4104,7 +4106,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -4133,7 +4135,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -4177,7 +4179,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -4222,7 +4224,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -4263,7 +4265,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -4304,7 +4306,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -4345,7 +4347,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -4395,7 +4397,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -4420,7 +4422,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -4446,7 +4448,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -4480,7 +4482,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -4505,7 +4507,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -4531,7 +4533,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -4565,7 +4567,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -4592,7 +4594,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -4620,7 +4622,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Theory]
@@ -4656,7 +4658,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Module
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         // Boxing tests
@@ -4675,7 +4677,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -4692,7 +4694,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -4709,7 +4711,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         [Fact]
@@ -4726,28 +4728,28 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 End Class
                 """;
 
-            await VerifyBasicCodeFixAsync(source, source);
+            await VerifyBasicDiagnosticAsync(source);
         }
 
         // Helpers
 
-        private static async Task VerifyCSharpCodeFixAsync(string source, string fixedSource, CodeAnalysis.CSharp.LanguageVersion? languageVersion = null)
+        private static async Task VerifyCSharpDiagnosticAsync([StringSyntax($"{LanguageNames.CSharp}-Test")] string source, CodeAnalysis.CSharp.LanguageVersion? languageVersion = null)
         {
             await new VerifyCS.Test
             {
                 TestCode = source,
-                FixedCode = fixedSource,
+                FixedCode = source,
                 ReferenceAssemblies = Net60WithMELogging,
                 LanguageVersion = languageVersion ?? CodeAnalysis.CSharp.LanguageVersion.CSharp10
             }.RunAsync();
         }
 
-        private static async Task VerifyBasicCodeFixAsync(string source, string fixedSource, CodeAnalysis.VisualBasic.LanguageVersion? languageVersion = null)
+        private static async Task VerifyBasicDiagnosticAsync(string source, CodeAnalysis.VisualBasic.LanguageVersion? languageVersion = null)
         {
             await new VerifyVB.Test
             {
                 TestCode = source,
-                FixedCode = fixedSource,
+                FixedCode = source,
                 ReferenceAssemblies = Net60WithMELogging,
                 LanguageVersion = languageVersion ?? CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic16_9
             }.RunAsync();

@@ -1253,6 +1253,28 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task GuardedWorkInLogConditionalAccess_NoDiagnostic_CS()
+        {
+            string source = """
+                #nullable enable
+                
+                using System;
+                using Microsoft.Extensions.Logging;
+                
+                class C
+                {
+                    void M(ILogger? logger, EventId eventId, Exception? exception, Func<object, Exception?, string> formatter)
+                    {
+                        if (logger?.IsEnabled(LogLevel.Debug) ?? false)
+                            logger?.Log(LogLevel.Debug, eventId, new Exception(), exception, formatter);
+                    }
+                }
+                """;
+
+            await VerifyCSharpCodeFixAsync(source, source);
+        }
+
+        [Fact]
         public async Task GuardedWorkInLogWithDynamicLogLevel_NoDiagnostic_CS()
         {
             string source = """
@@ -3113,6 +3135,29 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         If logger.IsEnabled(LogLevel.Information) Then logger.Log(LogLevel.Information, eventId, ExpensiveMethodCall())
                         If logger.IsEnabled(LogLevel.Warning) Then logger.Log(LogLevel.Warning, exception, ExpensiveMethodCall())
                         If logger.IsEnabled(LogLevel.[Error]) Then logger.Log(LogLevel.[Error], eventId, exception, ExpensiveMethodCall())
+                    End Sub
+
+                    Function ExpensiveMethodCall() As String
+                        Return "very expensive call"
+                    End Function
+                End Class
+                """;
+
+            await VerifyBasicCodeFixAsync(source, source);
+        }
+
+        [Fact]
+        public async Task GuardedWorkInLogConditionalAccess_NoDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
+                        If (logger?.IsEnabled(LogLevel.Debug)) Then
+                            logger?.Log(LogLevel.Debug, eventId, ExpensiveMethodCall(), exception, formatter)
+                        End If
                     End Sub
 
                     Function ExpensiveMethodCall() As String

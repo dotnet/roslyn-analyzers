@@ -343,14 +343,28 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 static bool AreInvocationsOnSameInstance(IInvocationOperation invocation1, IInvocationOperation invocation2)
                 {
-                    return (invocation1.GetInstance()?.WalkDownConversion(), invocation2.GetInstance()?.WalkDownConversion()) switch
+                    var instance1 = GetInstanceResolvingConditionalAccess(invocation1);
+                    var instance2 = GetInstanceResolvingConditionalAccess(invocation2);
+
+                    return (instance1, instance2) switch
                     {
-                        (IFieldReferenceOperation fieldRef1, IFieldReferenceOperation fieldRef2) => fieldRef1.Member == fieldRef2.Member,
-                        (IPropertyReferenceOperation propRef1, IPropertyReferenceOperation propRef2) => propRef1.Member == propRef2.Member,
+                        (IMemberReferenceOperation memberRef1, IMemberReferenceOperation memberRef2) => memberRef1.Member == memberRef2.Member,
                         (IParameterReferenceOperation paramRef1, IParameterReferenceOperation paramRef2) => paramRef1.Parameter == paramRef2.Parameter,
                         (ILocalReferenceOperation localRef1, ILocalReferenceOperation localRef2) => localRef1.Local == localRef2.Local,
                         _ => false,
                     };
+                }
+
+                static IOperation? GetInstanceResolvingConditionalAccess(IInvocationOperation invocation)
+                {
+                    var instance = invocation.GetInstance()?.WalkDownConversion();
+
+                    if (instance is IConditionalAccessInstanceOperation conditionalAccessInstance)
+                    {
+                        return conditionalAccessInstance.GetConditionalAccess()?.Operation;
+                    }
+
+                    return instance;
                 }
 
                 bool IsSameLogLevel(IArgumentOperation isEnabledArgument)

@@ -1185,6 +1185,79 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task InterpolatedStringOperationLiteralInLog_NoDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, $"literal", exception, formatter);
+
+                        logger.Log(LogLevel.Debug, $"literal");
+                        logger.Log(LogLevel.Information, eventId, $"literal");
+                        logger.Log(LogLevel.Warning, exception, $"literal");
+                        logger.Log(LogLevel.Error, eventId, exception, $"literal");
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task InterpolatedStringOperationLiteralInLogNamed_NoDiagnostic_CS(string logLevel)
+        {
+            string source = $$"""
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception)
+                    {
+                        logger.Log{{logLevel}}($"literal");
+                        logger.Log{{logLevel}}(eventId, $"literal");
+                        logger.Log{{logLevel}}(exception, $"literal");
+                        logger.Log{{logLevel}}(eventId, exception, $"literal");
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Fact]
+        public async Task InterpolatedStringOperationLiteralInLoggerMessage_NoDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                static partial class C
+                {
+                    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Static log level `{argument}`")]
+                    static partial void StaticLogLevel(this ILogger logger, string argument);
+
+                    [LoggerMessage(EventId = 1, Message = "Dynamic log level `{argument}`")]
+                    static partial void DynamicLogLevel(this ILogger logger, LogLevel level, string argument);
+
+                    static void M(ILogger logger)
+                    {
+                        logger.StaticLogLevel($"literal");
+                        logger.DynamicLogLevel(LogLevel.Debug, $"literal");
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Fact]
         public async Task InterpolatedStringOperationConstantInLog_NoDiagnostic_CS()
         {
             string source = """
@@ -1195,12 +1268,14 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter)
                     {
-                        logger.Log(LogLevel.Debug, eventId, $"constant", exception, formatter);
+                        const string constant = "constant";
 
-                        logger.Log(LogLevel.Debug, $"constant");
-                        logger.Log(LogLevel.Information, eventId, $"constant");
-                        logger.Log(LogLevel.Warning, exception, $"constant");
-                        logger.Log(LogLevel.Error, eventId, exception, $"constant");
+                        logger.Log(LogLevel.Debug, eventId, $"{constant}", exception, formatter);
+
+                        logger.Log(LogLevel.Debug, $"{constant}");
+                        logger.Log(LogLevel.Information, eventId, $"{constant}");
+                        logger.Log(LogLevel.Warning, exception, $"{constant}");
+                        logger.Log(LogLevel.Error, eventId, exception, $"{constant}");
                     }
                 }
                 """;
@@ -1220,10 +1295,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     void M(ILogger logger, EventId eventId, Exception exception)
                     {
-                        logger.Log{{logLevel}}($"constant");
-                        logger.Log{{logLevel}}(eventId, $"constant");
-                        logger.Log{{logLevel}}(exception, $"constant");
-                        logger.Log{{logLevel}}(eventId, exception, $"constant");
+                        const string constant = "constant";
+
+                        logger.Log{{logLevel}}($"{constant}");
+                        logger.Log{{logLevel}}(eventId, $"{constant}");
+                        logger.Log{{logLevel}}(exception, $"{constant}");
+                        logger.Log{{logLevel}}(eventId, exception, $"{constant}");
                     }
                 }
                 """;
@@ -1248,8 +1325,83 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                     static void M(ILogger logger)
                     {
-                        logger.StaticLogLevel($"constant");
-                        logger.DynamicLogLevel(LogLevel.Debug, $"constant");
+                        const string constant = "constant";
+
+                        logger.StaticLogLevel($"{constant}");
+                        logger.DynamicLogLevel(LogLevel.Debug, $"{constant}");
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Fact]
+        public async Task InterpolatedStringOperationNameOfInLog_NoDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter)
+                    {
+                        logger.Log(LogLevel.Debug, eventId, $"logger name: {nameof(logger)}", exception, formatter);
+
+                        logger.Log(LogLevel.Debug, $"logger name: {nameof(logger)}");
+                        logger.Log(LogLevel.Information, eventId, $"logger name: {nameof(logger)}");
+                        logger.Log(LogLevel.Warning, exception, $"logger name: {nameof(logger)}");
+                        logger.Log(LogLevel.Error, eventId, exception, $"logger name: {nameof(logger)}");
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task InterpolatedStringOperationNameOfInLogNamed_NoDiagnostic_CS(string logLevel)
+        {
+            string source = $$"""
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception)
+                    {
+                        logger.Log{{logLevel}}($"logger name: {nameof(logger)}");
+                        logger.Log{{logLevel}}(eventId, $"logger name: {nameof(logger)}");
+                        logger.Log{{logLevel}}(exception, $"logger name: {nameof(logger)}");
+                        logger.Log{{logLevel}}(eventId, exception, $"logger name: {nameof(logger)}");
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Fact]
+        public async Task InterpolatedStringOperationNameOfInLoggerMessage_NoDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                static partial class C
+                {
+                    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Static log level `{argument}`")]
+                    static partial void StaticLogLevel(this ILogger logger, string argument);
+
+                    [LoggerMessage(EventId = 1, Message = "Dynamic log level `{argument}`")]
+                    static partial void DynamicLogLevel(this ILogger logger, LogLevel level, string argument);
+
+                    static void M(ILogger logger)
+                    {
+                        logger.StaticLogLevel($"logger name: {nameof(logger)}");
+                        logger.DynamicLogLevel(LogLevel.Debug, $"logger name: {nameof(logger)}");
                     }
                 }
                 """;
@@ -3536,6 +3688,78 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         }
 
         [Fact]
+        public async Task InterpolatedStringOperationLiteralInLog_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, $"literal", exception, formatter)
+
+                        logger.Log(LogLevel.Debug, $"literal")
+                        logger.Log(LogLevel.Information, eventId, $"literal")
+                        logger.Log(LogLevel.Warning, exception, $"literal")
+                        logger.Log(LogLevel.[Error], eventId, exception, $"literal")
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task InterpolatedStringOperationLiteralInLogNamed_NoDiagnostic_VB(string logLevel)
+        {
+            string source = $$"""
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception)
+                        logger.Log{{logLevel}}($"literal")
+                        logger.Log{{logLevel}}(eventId, $"literal")
+                        logger.Log{{logLevel}}(exception, $"literal")
+                        logger.Log{{logLevel}}(eventId, exception, $"literal")
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Fact]
+        public async Task InterpolatedStringOperationLiteralInLoggerMessage_NoDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports System.Runtime.CompilerServices
+                Imports Microsoft.Extensions.Logging
+                
+                Partial Module C
+                	<Extension>
+                	<LoggerMessage(EventId:=0, Level:=LogLevel.Information, Message:="Static log level `{argument}`")>
+                	Partial Private Sub StaticLogLevel(logger As ILogger, argument As String)
+                	End Sub
+                
+                	<Extension>
+                	<LoggerMessage(EventId:=1, Message:="Dynamic log level `{argument}`")>
+                	Partial Private Sub DynamicLogLevel(logger As ILogger, level As LogLevel, argument As String)
+                	End Sub
+                
+                	Sub M(logger As ILogger)
+                        logger.StaticLogLevel($"literal")
+                        logger.DynamicLogLevel(LogLevel.Debug, $"literal")
+                	End Sub
+                End Module
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Fact]
         public async Task InterpolatedStringOperationConstantInLog_ReportsDiagnostic_VB()
         {
             string source = """
@@ -3544,12 +3768,14 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
                 Class C
                     Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
-                        logger.Log(LogLevel.Debug, eventId, $"constant", exception, formatter)
+                        Const constant As String = "constant"
 
-                        logger.Log(LogLevel.Debug, $"constant")
-                        logger.Log(LogLevel.Information, eventId, $"constant")
-                        logger.Log(LogLevel.Warning, exception, $"constant")
-                        logger.Log(LogLevel.[Error], eventId, exception, $"constant")
+                        logger.Log(LogLevel.Debug, eventId, $"{constant}", exception, formatter)
+
+                        logger.Log(LogLevel.Debug, $"{constant}")
+                        logger.Log(LogLevel.Information, eventId, $"{constant}")
+                        logger.Log(LogLevel.Warning, exception, $"{constant}")
+                        logger.Log(LogLevel.[Error], eventId, exception, $"{constant}")
                     End Sub
                 End Class
                 """;
@@ -3567,10 +3793,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 
                 Class C
                     Sub M(logger As ILogger, eventId As EventId, exception As Exception)
-                        logger.Log{{logLevel}}($"constant")
-                        logger.Log{{logLevel}}(eventId, $"constant")
-                        logger.Log{{logLevel}}(exception, $"constant")
-                        logger.Log{{logLevel}}(eventId, exception, $"constant")
+                        Const constant As String = "constant"
+
+                        logger.Log{{logLevel}}($"{constant}")
+                        logger.Log{{logLevel}}(eventId, $"{constant}")
+                        logger.Log{{logLevel}}(exception, $"{constant}")
+                        logger.Log{{logLevel}}(eventId, exception, $"{constant}")
                     End Sub
                 End Class
                 """;
@@ -3598,8 +3826,82 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 	End Sub
                 
                 	Sub M(logger As ILogger)
-                        logger.StaticLogLevel($"constant")
-                        logger.DynamicLogLevel(LogLevel.Debug, $"constant")
+                        Const constant As String = "constant"
+
+                        logger.StaticLogLevel($"{constant}")
+                        logger.DynamicLogLevel(LogLevel.Debug, $"{constant}")
+                	End Sub
+                End Module
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Fact]
+        public async Task InterpolatedStringOperationNameOfInLog_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
+                        logger.Log(LogLevel.Debug, eventId, $"logger name: {NameOf(logger)}", exception, formatter)
+
+                        logger.Log(LogLevel.Debug, $"logger name: {NameOf(logger)}")
+                        logger.Log(LogLevel.Information, eventId, $"logger name: {NameOf(logger)}")
+                        logger.Log(LogLevel.Warning, exception, $"logger name: {NameOf(logger)}")
+                        logger.Log(LogLevel.[Error], eventId, exception, $"logger name: {NameOf(logger)}")
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task InterpolatedStringOperationNameOfInLogNamed_NoDiagnostic_VB(string logLevel)
+        {
+            string source = $$"""
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception)
+                        logger.Log{{logLevel}}($"logger name: {NameOf(logger)}")
+                        logger.Log{{logLevel}}(eventId, $"logger name: {NameOf(logger)}")
+                        logger.Log{{logLevel}}(exception, $"logger name: {NameOf(logger)}")
+                        logger.Log{{logLevel}}(eventId, exception, $"logger name: {NameOf(logger)}")
+                    End Sub
+                End Class
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Fact]
+        public async Task InterpolatedStringOperationNameOfInLoggerMessage_NoDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports System.Runtime.CompilerServices
+                Imports Microsoft.Extensions.Logging
+                
+                Partial Module C
+                	<Extension>
+                	<LoggerMessage(EventId:=0, Level:=LogLevel.Information, Message:="Static log level `{argument}`")>
+                	Partial Private Sub StaticLogLevel(logger As ILogger, argument As String)
+                	End Sub
+                
+                	<Extension>
+                	<LoggerMessage(EventId:=1, Message:="Dynamic log level `{argument}`")>
+                	Partial Private Sub DynamicLogLevel(logger As ILogger, level As LogLevel, argument As String)
+                	End Sub
+                
+                	Sub M(logger As ILogger)
+                        logger.StaticLogLevel($"logger name: {NameOf(logger)}")
+                        logger.DynamicLogLevel(LogLevel.Debug, $"logger name: {NameOf(logger)}")
                 	End Sub
                 End Module
                 """;

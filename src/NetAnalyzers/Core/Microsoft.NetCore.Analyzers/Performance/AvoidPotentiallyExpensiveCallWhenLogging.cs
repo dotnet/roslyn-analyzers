@@ -154,7 +154,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             if (operation is IInterpolatedStringOperation interpolatedStringOperation)
             {
-                return interpolatedStringOperation.Parts.All(p => p is IInterpolationOperation);
+                return interpolatedStringOperation.Parts.Any(p => p is
+                    IInterpolationOperation { Expression.ConstantValue.HasValue: false } or
+                    IInterpolatedStringTextOperation { Text.ConstantValue.HasValue: false });
             }
 
             if (operation is IMemberReferenceOperation memberReferenceOperation)

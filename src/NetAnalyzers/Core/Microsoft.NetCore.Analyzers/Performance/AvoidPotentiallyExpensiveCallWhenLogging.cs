@@ -75,9 +75,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 var invocation = (IInvocationOperation)context.Operation;
 
-                // Check if invocation is a logging invocation and capture the log level (either as IOperation or as int, depending if it is dynamic or not).
-                // Use these to check if the logging invocation is guarded by 'ILogger.IsEnabled' and bail out if it is.
-                if (!symbols.TryGetLogLevel(invocation, out var logLevelArgumentOperation, out var logLevel) ||
+                // Check if we have a log invocation and capture the log level used, either as IOperation or as int.
+                // Then, check if the invocation is guarded by 'ILogger.IsEnabled' and bail out if it is.
+                if (!symbols.IsLogInvocation(invocation, out var logLevel, out var logLevelArgumentOperation) ||
                     symbols.IsGuardedByIsEnabled(invocation, logLevel, logLevelArgumentOperation))
                 {
                     return;
@@ -207,10 +207,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
             }
 
-            public bool TryGetLogLevel(IInvocationOperation invocation, out IArgumentOperation? logLevelArgumentOperation, out int logLevel)
+            public bool IsLogInvocation(IInvocationOperation invocation, out int logLevel, out IArgumentOperation? logLevelArgumentOperation)
             {
-                logLevelArgumentOperation = default;
                 logLevel = LogLevelPassedAsParameter;
+                logLevelArgumentOperation = default;
 
                 var method = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
 

@@ -29,10 +29,10 @@ namespace TestProject
         }
 
         /// <summary>value {replacement}</summary>
-        public static string @Name => GetResourceString("Name")!;
+        public static string @Name_with_dots => GetResourceString("Name.with.dots")!;
         /// <summary>value {replacement}</summary>
-        internal static string FormatName(object? replacement)
-           => string.Format(Culture, GetResourceString("Name", new[] { "replacement" }), replacement);
+        internal static string FormatName_with_dots(object? replacement)
+           => string.Format(Culture, GetResourceString("Name.with.dots", new[] { "replacement" }), replacement);
 
 
     }

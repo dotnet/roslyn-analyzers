@@ -630,7 +630,7 @@ build_metadata.AdditionalFiles.IncludeDefaultValues = {(includeDefaultValues ? "
             bool emitFormatMethods)
         {
             var code = ResxHeader
-                + $@"  <data name=""Name"" xml:space=""preserve"">
+                + $@"  <data name=""Name.with.dots"" xml:space=""preserve"">
     <value>value {{{placeholder}}}</value>
     <comment>comment</comment>
   </data>"

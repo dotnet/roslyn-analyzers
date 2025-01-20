@@ -360,6 +360,11 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             Add(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestAttribute));
             Add(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTearDownAttribute));
 
+            // TUnit Attributes
+            Add(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.TUnitTestAttribute));
+            Add(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.TUnitBeforeAttribute));
+            Add(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.TUnitAfterAttribute));
+
             return builder?.ToImmutable() ?? ImmutableArray<INamedTypeSymbol>.Empty;
         }
 

@@ -57,6 +57,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private const string macOS = nameof(macOS);
         private const string OSX = nameof(OSX);
         private const string MacSlashOSX = "macOS/OSX";
+        private const string ios = nameof(ios);
+        private const string maccatalyst = nameof(maccatalyst);
         private static readonly Version EmptyVersion = new(0, 0);
 
         internal static readonly DiagnosticDescriptor OnlySupportedCsReachable = DiagnosticDescriptorHelper.Create(
@@ -1691,6 +1693,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             }
                         }
                     }
+                }
+
+                // if operation had ios and maccatalyst attibutes, and only maccatalyst has supppressed by callsite, we need to
+                // put that back else it would cause an issue in flow analysis when `OperatingSystem.IsIOSVersionAtLeast`
+                // guard is used, because the IsIOSVersionAtLeast method guards ios and maccatalyst both
+                if (notSuppressedAttributes.ContainsKey(ios) &&
+                    !notSuppressedAttributes.ContainsKey(maccatalyst) &&
+                    operationAttributes.TryGetValue(maccatalyst, out Versions? macVersion))
+                {
+                    Versions diagnosticAttribute = new Versions();
+                    CopyAllAttributes(diagnosticAttribute, macVersion);
+                    notSuppressedAttributes[maccatalyst] = diagnosticAttribute;
                 }
             }
 

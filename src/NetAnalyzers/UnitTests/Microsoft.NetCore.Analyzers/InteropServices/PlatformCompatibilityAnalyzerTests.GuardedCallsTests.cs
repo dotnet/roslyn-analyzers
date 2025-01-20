@@ -5338,6 +5338,30 @@ class MyType { }
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
+        [Fact]
+        public async Task MacCatalystWithMandatorySupportFound()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+class TestType
+{
+    [SupportedOSPlatform(""ios13.0"")]
+    [SupportedOSPlatform(""maccatalyst13.0"")]
+    private void Tapped()
+    {
+	    if (OperatingSystem.IsIOSVersionAtLeast(15,0))
+		    DoSomething();
+    }
+    [SupportedOSPlatform(""ios14.0"")]
+    [SupportedOSPlatform(""maccatalyst"")]
+    public void DoSomething() {}
+}";
+
+            string msBuildPlatforms = "build_property.TargetFramework=net8.0-maccatalyst13;";
+            await VerifyAnalyzerCSAsync(source, msBuildPlatforms);
+        }
+
         private readonly string TargetTypesForTest = @"
 namespace PlatformCompatDemo.SupportedUnupported
 {

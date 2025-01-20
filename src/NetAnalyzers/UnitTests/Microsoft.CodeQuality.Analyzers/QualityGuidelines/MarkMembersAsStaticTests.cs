@@ -526,8 +526,8 @@ End Class
         [InlineData("NUnit.Framework.TestCaseSource(\"asdf\")", false, true, false, false)]
         [InlineData("NUnit.Framework.Theory", false, true, false, false)]
         [InlineData("TUnit.Core.Test", false, false, false, true)]
-        [InlineData("TUnit.Core.Before(Test)", false, false, false, true)]
-        [InlineData("TUnit.Core.After(Test)", false, false, false, true)]
+        [InlineData("TUnit.Core.Before(TUnit.Core.HookType.Test)", false, false, false, true)]
+        [InlineData("TUnit.Core.After(TUnit.Core.HookType.Test)", false, false, false, true)]
         public async Task NoDiagnostic_TestAttributesAsync(string testAttributeData, bool isMSTest, bool isNUnit, bool isxunit, bool isTUnit)
         {
             var referenceAssemblies = (isMSTest, isNUnit, isxunit, isTUnit) switch

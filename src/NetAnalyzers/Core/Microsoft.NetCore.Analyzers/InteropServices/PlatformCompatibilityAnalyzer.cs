@@ -53,7 +53,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private const string IsOSPlatform = nameof(IsOSPlatform);
         private const string IsPrefix = "Is";
         private const string OptionalSuffix = "VersionAtLeast";
-        private const string Net = "net";
+        private const string NetCoreAppIdentifier = ".NETCoreApp";
         private const string macOS = nameof(macOS);
         private const string OSX = nameof(OSX);
         private const string MacSlashOSX = "macOS/OSX";
@@ -281,19 +281,34 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static bool PlatformAnalysisAllowed(AnalyzerOptions options, Compilation compilation)
         {
-            var tfmString = options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.TargetFramework, compilation);
+            string tfmIdentifer = options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.TargetFrameworkIdentifier, compilation) ?? "";
+            string tfmVersion = options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.TargetFrameworkVersion, compilation) ?? "";
 
-            if (tfmString?.Length >= 4 &&
-                tfmString.StartsWith(Net, StringComparison.OrdinalIgnoreCase) &&
-                int.TryParse(tfmString[3].ToString(), out var major) &&
-                major >= 5)
+            if (tfmIdentifier.Equals(NetCoreAppIdentifier, StringComparison.OrdinalIgnoreCase) && tfmVersion.StartsWith("v", StringComparison.OrdinalIgnoreCase))
             {
-                return true;
+                tfmVersion = tfmVersion[1..];
+
+                int majorVersion;
+
+                if (Version.TryParse(tfmVersion, out var version))
+                {
+                    // The default scenario will always have at least two parts, such as v9.0 or v10.0
+                    majorVersion = version.Major;
+                }
+                else
+                {
+                    // Custom scenarios may only specify one part such as v9 or v10
+                    _ = int.TryParse(tfmVersion, out majorVersion);
+                }
+
+                if (majorVersion >= 5)
+                {
+                    return true;
+                }
             }
-            else
-            {
-                return LowerTargetsEnabled(options, compilation);
-            }
+
+            // We want to fallback to allowing force enablement regardless of recognizing the Identifier/Version
+            return LowerTargetsEnabled(options, compilation);
         }
 
         private static bool LowerTargetsEnabled(AnalyzerOptions options, Compilation compilation) =>

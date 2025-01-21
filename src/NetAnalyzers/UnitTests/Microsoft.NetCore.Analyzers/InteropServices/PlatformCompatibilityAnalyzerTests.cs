@@ -54,6 +54,10 @@ public class Test
             yield return new object[] { "build_property.TargetFramework = net5.0-ios14.0", true };
             yield return new object[] { "build_property.TargetFramework = Net99", true };
             yield return new object[] { "build_property.TargetFramework = netcoreapp5", false };
+            yield return new object[] { "build_property.TargetFramework = net10.0", true };
+            yield return new object[] { "build_property.TargetFramework = net10", true };
+            yield return new object[] { "build_property.TargetFramework = nonesense\nbuild_property.TargetFrameworkIdentifier=.NETCoreApp\nbuild_property.TargetFrameworkVersion=v11", true };
+            yield return new object[] { "build_property.TargetFramework = nonesense\nbuild_property.TargetFrameworkIdentifier=.NETCoreApp\nbuild_property.TargetFrameworkVersion=v11.0", true };
         }
 
         [Theory]

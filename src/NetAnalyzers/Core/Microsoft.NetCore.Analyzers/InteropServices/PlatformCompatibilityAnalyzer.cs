@@ -281,7 +281,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static bool PlatformAnalysisAllowed(AnalyzerOptions options, Compilation compilation)
         {
-            string tfmIdentifer = options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.TargetFrameworkIdentifier, compilation) ?? "";
+            string tfmIdentifier = options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.TargetFrameworkIdentifier, compilation) ?? "";
             string tfmVersion = options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.TargetFrameworkVersion, compilation) ?? "";
 
             if (tfmIdentifier.Equals(NetCoreAppIdentifier, StringComparison.OrdinalIgnoreCase) && tfmVersion.StartsWith("v", StringComparison.OrdinalIgnoreCase))

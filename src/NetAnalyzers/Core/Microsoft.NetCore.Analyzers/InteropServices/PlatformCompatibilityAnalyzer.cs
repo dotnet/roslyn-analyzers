@@ -284,31 +284,19 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             string tfmIdentifier = options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.TargetFrameworkIdentifier, compilation) ?? "";
             string tfmVersion = options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.TargetFrameworkVersion, compilation) ?? "";
 
-            if (tfmIdentifier.Equals(NetCoreAppIdentifier, StringComparison.OrdinalIgnoreCase) && tfmVersion.StartsWith("v", StringComparison.OrdinalIgnoreCase))
+            if (tfmIdentifier.Equals(NetCoreAppIdentifier, StringComparison.OrdinalIgnoreCase) &&
+                tfmVersion.StartsWith("v", StringComparison.OrdinalIgnoreCase) &&
+                Version.TryParse(tfmVersion[1..], out var version) &&
+                version.Major >= 5)
             {
-                tfmVersion = tfmVersion[1..];
-
-                int majorVersion;
-
-                if (Version.TryParse(tfmVersion, out var version))
-                {
-                    // The default scenario will always have at least two parts, such as v9.0 or v10.0
-                    majorVersion = version.Major;
-                }
-                else
-                {
-                    // Custom scenarios may only specify one part such as v9 or v10
-                    _ = int.TryParse(tfmVersion, out majorVersion);
-                }
-
-                if (majorVersion >= 5)
-                {
-                    return true;
-                }
+                // We want to only support cases we know are well-formed by default
+                return true;
             }
-
-            // We want to fallback to allowing force enablement regardless of recognizing the Identifier/Version
-            return LowerTargetsEnabled(options, compilation);
+            else
+            {
+                // We want to fallback to allowing force enablement regardless of recognizing the Identifier/Version
+                return LowerTargetsEnabled(options, compilation);
+            }
         }
 
         private static bool LowerTargetsEnabled(AnalyzerOptions options, Compilation compilation) =>

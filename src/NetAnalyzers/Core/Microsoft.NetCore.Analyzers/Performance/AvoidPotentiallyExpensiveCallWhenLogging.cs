@@ -349,16 +349,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 static bool AreInvocationsOnSameInstance(IInvocationOperation invocation1, IInvocationOperation invocation2)
                 {
-                    var instance1 = GetInstanceResolvingConditionalAccess(invocation1);
-                    var instance2 = GetInstanceResolvingConditionalAccess(invocation2);
-
-                    return (instance1, instance2) switch
-                    {
-                        (IMemberReferenceOperation memberRef1, IMemberReferenceOperation memberRef2) => memberRef1.Member == memberRef2.Member,
-                        (IParameterReferenceOperation paramRef1, IParameterReferenceOperation paramRef2) => paramRef1.Parameter == paramRef2.Parameter,
-                        (ILocalReferenceOperation localRef1, ILocalReferenceOperation localRef2) => localRef1.Local == localRef2.Local,
-                        _ => false,
-                    };
+                    return SymbolEqualityComparer.Default.Equals(
+                        GetInstanceResolvingConditionalAccess(invocation1).GetReferencedMemberOrLocalOrParameter(),
+                        GetInstanceResolvingConditionalAccess(invocation2).GetReferencedMemberOrLocalOrParameter());
                 }
 
                 static IOperation? GetInstanceResolvingConditionalAccess(IInvocationOperation invocation)

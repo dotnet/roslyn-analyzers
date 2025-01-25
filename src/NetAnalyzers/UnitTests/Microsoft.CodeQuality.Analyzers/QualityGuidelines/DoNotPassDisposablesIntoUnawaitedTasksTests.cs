@@ -601,25 +601,25 @@ End Class
         [Fact]
         public async Task AwaitedElsewhereBeforeDispose_NoDiagnosticAsync()
         {
-            //             await VerifyCS.VerifyAnalyzerAsync(@"
-            // using System.IO;
-            // using System.Threading.Tasks;
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System.IO;
+using System.Threading.Tasks;
 
-            // public class C
-            // {
-            //     public static async Task D()
-            //     {
-            //         var ms = new MemoryStream();
-            //         var t = DoAsync(ms);
-            //         var val = ms.Length - ms.Position;
-            //         await t;
+public class C
+{
+    public static async Task D()
+    {
+        var ms = new MemoryStream();
+        var t = DoAsync(ms);
+        var val = ms.Length - ms.Position;
+        await t;
 
-            //         ms.Dispose();
-            //     }
+        ms.Dispose();
+    }
 
-            //     public static Task DoAsync(Stream s) => Task.CompletedTask;
-            // }
-            // ");
+    public static Task DoAsync(Stream s) => Task.CompletedTask;
+}
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.IO

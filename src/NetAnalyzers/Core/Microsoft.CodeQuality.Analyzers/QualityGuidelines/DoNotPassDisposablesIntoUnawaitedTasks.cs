@@ -9,7 +9,6 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using System.Threading.Tasks;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {

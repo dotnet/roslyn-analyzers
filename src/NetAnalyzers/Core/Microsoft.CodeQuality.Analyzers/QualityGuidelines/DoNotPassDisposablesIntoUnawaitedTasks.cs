@@ -68,95 +68,118 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     return;
                 }
 
-                // Matching references to disposables
-                var disposableArgumentReferences = disposableArguments.Select(matchingArg =>
-                {
-                    // Either a converted reference
-                    if (matchingArg.Value is IConversionOperation conversion
-                        && conversion.Operand is ILocalReferenceOperation convertedLocalReference)
-                    {
-                        return convertedLocalReference;
-                    }
-
-                    // Or an unconverted reference
-                    return (matchingArg.Value as ILocalReferenceOperation)!;
-                }).ToList();
-
-                // We use the inner method body only for checking disposable usage
-                IOperation? containingBlock = invocation.GetAncestor<IMethodBodyOperation>(OperationKind.MethodBody);
-                // In VB the real containing block is higher, especially if there are using blocks
-                containingBlock ??= invocation.GetRoot();
-
-                var descendants = containingBlock.Descendants();
-                var localReferences = descendants.OfType<ILocalReferenceOperation>();
-
-                // Get declarator for invocation and verify the invocation is the retrieved declarator's initializer value
-                var declaratorForInvocation = invocation.GetAncestor<IVariableDeclaratorOperation>(OperationKind.VariableDeclarator,
-                    decl => decl.Initializer?.Value == invocation);
-                // VB has slightly different structure for getting to declarator
-                declaratorForInvocation ??= invocation.GetAncestor<IVariableDeclarationOperation>(OperationKind.VariableDeclaration)?
-                    .Declarators.FirstOrDefault();
-
-                // If the task is awaited later, we can ignore reporting AS LONG AS all diposable arguments are disposed AFTER the task is awaited
-                if (declaratorForInvocation is { } && localReferences.AnyWhere(r => r.Parent is IInvocationOperation { TargetMethod.Name: nameof(IDisposable.Dispose) }, out var disposeCalls))
-                {
-                    var disposeCallsThatDisposeReferencedArgs = disposeCalls.Where(c => disposableArgumentReferences.Any(d => c.Local.Equals(d.Local)));
-
-                    // get tasks VariableDeclaratorOperation and it's symbol, need to see if that symbol shows up in awaited symbols
-                    var awaitedInvocationReference = localReferences.FirstOrDefault(r => r.IsAwaited() && r.Local.Equals(declaratorForInvocation.Symbol));
-                    if (awaitedInvocationReference is not null)
-                    {
-                        bool eachDisposeIsAferInvokedTaskIsAwaited = true;
-                        foreach (var disposeCall in disposeCallsThatDisposeReferencedArgs)
-                        {
-                            // If dispose is before await
-                            if (disposeCall.Syntax.SpanStart < awaitedInvocationReference.Syntax.SpanStart)
-                            {
-                                eachDisposeIsAferInvokedTaskIsAwaited = false;
-                                break;
-                            }
-                        }
-
-                        if (eachDisposeIsAferInvokedTaskIsAwaited)
-                        {
-                            return;
-                        }
-                    }
-                }
-
-                List<ILocalReferenceOperation> referencedDisposableArgs = new();
-                if (descendants.OfType<IUsingOperation>().ToList() is { Count: > 0 } usingBlocks)
-                {
-                    List<ILocalSymbol> usingLocals = new();
-                    usingBlocks.ForEach(u => usingLocals.AddRange(u.Locals));
-
-                    referencedDisposableArgs.AddRange(disposableArgumentReferences.Where(disposableRef =>
-                    {
-                        foreach (var usingLocal in usingLocals)
-                        {
-                            if (usingLocal.Equals(disposableRef))
-                            {
-                                return true;
-                            }
-                        }
-
-                        return false;
-                    }));
-                }
-                else if (!descendants.OfType<IUsingDeclarationOperation>().Any() && // check simple using statements
-                    !localReferences.Any(r => r.Parent is IInvocationOperation { TargetMethod.Name: nameof(IDisposable.Dispose) }))
-                {
-                    // If we have no using statements and no Dispose calls, nothing to report
-                    return;
-                }
-
-                referencedDisposableArgs.AddRange(localReferences.Intersect(disposableArgumentReferences));
+                var referencedDisposableArgs = GetReferencedDisposableArguments(invocation, disposableArguments);
 
                 foreach (var referencedArg in referencedDisposableArgs)
                 {
                     context.ReportDiagnostic(referencedArg.CreateDiagnostic(Rule));
                 }
             }, OperationKind.Invocation);
+        }
+
+        private static IEnumerable<ILocalReferenceOperation> GetReferencedDisposableArguments(IInvocationOperation invocation,
+            IList<IArgumentOperation> disposableArguments)
+        {
+            // Get the references of the disposable arguments
+            var disposableArgumentReferences = GetLocalReferencesFromArguments(disposableArguments).ToList();
+
+            // We use the inner method body only for checking disposable usage
+            IOperation? containingBlock = invocation.GetAncestor<IMethodBodyOperation>(OperationKind.MethodBody);
+            // In VB the real containing block is higher, especially if there are using blocks
+            containingBlock ??= invocation.GetRoot();
+
+            var descendants = containingBlock.Descendants().ToList();
+            var localReferences = descendants.OfType<ILocalReferenceOperation>();
+
+            // Get declarator for invocation and verify the invocation is the retrieved declarator's initializer value
+            var declaratorForInvocation = invocation.GetAncestor<IVariableDeclaratorOperation>(OperationKind.VariableDeclarator,
+                decl => decl.Initializer?.Value == invocation);
+            // VB has slightly different structure for getting to declarator
+            declaratorForInvocation ??= invocation.GetAncestor<IVariableDeclarationOperation>(OperationKind.VariableDeclaration)?
+                .Declarators.FirstOrDefault();
+
+            bool contextContainsDisposeCalls = localReferences.AnyWhere(r => r.Parent
+                is IInvocationOperation { TargetMethod.Name: nameof(IDisposable.Dispose) }, out var disposeCalls);
+
+            // We can skip reporting ONLY if the disposable arguments are disposed AFTER the task is awaited
+            if (declaratorForInvocation is { } && contextContainsDisposeCalls)
+            {
+                var disposeCallsThatDisposeReferencedArgs = disposeCalls.Where(disposeCall =>
+                    disposableArgumentReferences.Any(disposableArg => disposeCall.Local.Equals(disposableArg.Local)));
+
+                // See if the task is referenced and awaited elsewhere
+                var awaitedInvocationReference = localReferences.FirstOrDefault(r => r.IsAwaited() &&
+                    r.Local.Equals(declaratorForInvocation.Symbol));
+                if (awaitedInvocationReference is not null)
+                {
+                    // Check if all disposals of arguments into the task are after the task is awaited
+                    bool eachDisposeIsAferTaskIsAwaited = true;
+                    foreach (var disposeCall in disposeCallsThatDisposeReferencedArgs)
+                    {
+                        if (disposeCall.Syntax.SpanStart < awaitedInvocationReference.Syntax.SpanStart)
+                        {
+                            eachDisposeIsAferTaskIsAwaited = false;
+                            break;
+                        }
+                    }
+
+                    // Do not report if arguments are disposed after the task is awaited elsewhere
+                    if (eachDisposeIsAferTaskIsAwaited)
+                    {
+                        return new List<ILocalReferenceOperation>(0);
+                    }
+                }
+            }
+
+            var referencedDisposableArgs = new List<ILocalReferenceOperation>();
+
+            // Check if the disposable argument references originate from using statements
+            if (descendants.OfType<IUsingOperation>().ToList() is { Count: > 0 } usingBlocks)
+            {
+                List<ILocalSymbol> usingLocals = new();
+                usingBlocks.ForEach(u => usingLocals.AddRange(u.Locals));
+
+                // Add all argument references that originate from using statements
+                referencedDisposableArgs.AddRange(disposableArgumentReferences.Where(disposableRef =>
+                {
+                    foreach (var usingLocal in usingLocals)
+                    {
+                        if (usingLocal.Equals(disposableRef))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }));
+            }
+            else if (!descendants.OfType<IUsingDeclarationOperation>().Any() &&
+                !contextContainsDisposeCalls)
+            {
+                // If we have no using blocks/statements and no Dispose calls, nothing to report
+                return new List<ILocalReferenceOperation>(0);
+            }
+
+            // Add all references to disposable args not already caught with previous logic
+            referencedDisposableArgs.AddRange(localReferences.Intersect(disposableArgumentReferences));
+
+            return referencedDisposableArgs;
+        }
+
+        private static IEnumerable<ILocalReferenceOperation> GetLocalReferencesFromArguments(IList<IArgumentOperation> args)
+        {
+            return args.Select(disposableArg =>
+            {
+                // Either a converted reference
+                if (disposableArg.Value is IConversionOperation conversion
+                    && conversion.Operand is ILocalReferenceOperation convertedLocalReference)
+                {
+                    return convertedLocalReference;
+                }
+
+                // Or an unconverted reference
+                return (disposableArg.Value as ILocalReferenceOperation)!;
+            });
         }
     }
 
@@ -176,7 +199,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         }
     }
 
-    internal static class EnumerablExtensions
+    internal static class EnumerableExtensions
     {
         public static bool AnyWhere<T>(this IEnumerable<T> collection, Predicate<T> predicate, out IList<T> matches)
         {

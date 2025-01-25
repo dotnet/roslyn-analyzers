@@ -1,15 +1,15 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using System.Threading.Tasks;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
@@ -63,15 +63,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 }
 
                 // Only care about invocations that receive IDisposable's as args
-                if (!AnyWhere(arg => arg.Parameter?.Type?.AllInterfaces is { Length: > 0 } allInterfaces &&
-                    allInterfaces.Any(i => i.ToString() == WellKnownTypeNames.SystemIDisposable), invocation.Arguments,
-                    out var disposableArguments))
+                if (!invocation.Arguments.AnyWhere(arg => arg.Parameter?.Type?.AllInterfaces is { Length: > 0 } allInterfaces &&
+                    allInterfaces.Any(i => i.ToString() == WellKnownTypeNames.SystemIDisposable), out var disposableArguments))
                 {
                     return;
                 }
 
                 // Matching references to disposables
-                var disposableReferences = disposableArguments.Select(matchingArg =>
+                var disposableArgumentReferences = disposableArguments.Select(matchingArg =>
                 {
                     // Either a converted reference
                     if (matchingArg.Value is IConversionOperation conversion
@@ -82,7 +81,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                     // Or an unconverted reference
                     return (matchingArg.Value as ILocalReferenceOperation)!;
-                });
+                }).ToList();
 
                 // We use the inner method body only for checking disposable usage
                 IOperation? containingBlock = invocation.GetAncestor<IMethodBodyOperation>(OperationKind.MethodBody);
@@ -92,14 +91,47 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 var descendants = containingBlock.Descendants();
                 var localReferences = descendants.OfType<ILocalReferenceOperation>();
 
-                List<ILocalReferenceOperation> referencedDisposableArgs = new();
+                // Get declarator for invocation and verify the invocation is the retrieved declarator's initializer value
+                var declaratorForInvocation = invocation.GetAncestor<IVariableDeclaratorOperation>(OperationKind.VariableDeclarator,
+                    decl => decl.Initializer?.Value == invocation);
+                // VB has slightly different structure for getting to declarator
+                declaratorForInvocation ??= invocation.GetAncestor<IVariableDeclarationOperation>(OperationKind.VariableDeclaration)?
+                    .Declarators.FirstOrDefault();
 
+                // If the task is awaited later, we can ignore reporting AS LONG AS all diposable arguments are disposed AFTER the task is awaited
+                if (declaratorForInvocation is { } && localReferences.AnyWhere(r => r.Parent is IInvocationOperation { TargetMethod.Name: nameof(IDisposable.Dispose) }, out var disposeCalls))
+                {
+                    var disposeCallsThatDisposeReferencedArgs = disposeCalls.Where(c => disposableArgumentReferences.Any(d => c.Local.Equals(d.Local)));
+
+                    // get tasks VariableDeclaratorOperation and it's symbol, need to see if that symbol shows up in awaited symbols
+                    var awaitedInvocationReference = localReferences.FirstOrDefault(r => r.IsAwaited() && r.Local.Equals(declaratorForInvocation.Symbol));
+                    if (awaitedInvocationReference is not null)
+                    {
+                        bool eachDisposeIsAferInvokedTaskIsAwaited = true;
+                        foreach (var disposeCall in disposeCallsThatDisposeReferencedArgs)
+                        {
+                            // If dispose is before await
+                            if (disposeCall.Syntax.SpanStart < awaitedInvocationReference.Syntax.SpanStart)
+                            {
+                                eachDisposeIsAferInvokedTaskIsAwaited = false;
+                                break;
+                            }
+                        }
+
+                        if (eachDisposeIsAferInvokedTaskIsAwaited)
+                        {
+                            return;
+                        }
+                    }
+                }
+
+                List<ILocalReferenceOperation> referencedDisposableArgs = new();
                 if (descendants.OfType<IUsingOperation>().ToList() is { Count: > 0 } usingBlocks)
                 {
                     List<ILocalSymbol> usingLocals = new();
                     usingBlocks.ForEach(u => usingLocals.AddRange(u.Locals));
 
-                    referencedDisposableArgs.AddRange(disposableReferences.Where(disposableRef =>
+                    referencedDisposableArgs.AddRange(disposableArgumentReferences.Where(disposableRef =>
                     {
                         foreach (var usingLocal in usingLocals)
                         {
@@ -119,7 +151,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     return;
                 }
 
-                referencedDisposableArgs.AddRange(localReferences.Intersect(disposableReferences));
+                referencedDisposableArgs.AddRange(localReferences.Intersect(disposableArgumentReferences));
 
                 foreach (var referencedArg in referencedDisposableArgs)
                 {
@@ -127,11 +159,30 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 }
             }, OperationKind.Invocation);
         }
+    }
 
-        private static bool AnyWhere<T>(Predicate<T> predicate, IEnumerable<T> collection, out IList<T> matches)
+    internal static class TaskOperationExtensions
+    {
+        public static bool IsAwaited(this IOperation op)
+        {
+            return op.GetAncestor<IAwaitOperation>(OperationKind.Await) is not null ||
+                op.Parent is IInvocationOperation { TargetMethod.Name: nameof(Task<>.Wait) } or
+                IPropertyReferenceOperation { Property.Name: nameof(Task<>.Result) };
+        }
+
+        public static bool IsTask(this IOperation op)
+        {
+            return op.Type?.ToString() == WellKnownTypeNames.SystemThreadingTasksTask ||
+                op.Type?.BaseType?.ToString() == WellKnownTypeNames.SystemThreadingTasksTask;
+        }
+    }
+
+    internal static class EnumerablExtensions
+    {
+        public static bool AnyWhere<T>(this IEnumerable<T> collection, Predicate<T> predicate, out IList<T> matches)
         {
             bool anyMatches = false;
-            static IEnumerable<T> GetWhere(Predicate<T> predicate, IEnumerable<T> collection, Action onAny)
+            IEnumerable<T> GetWhere(Action onAny)
             {
                 Action triggerOnce = () =>
                 {
@@ -150,23 +201,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
 
             // ToList actually evaluates enumerable so anyMatches will be accurate
-            matches = [.. GetWhere(predicate, collection, () => anyMatches = true)];
+            matches = [.. GetWhere(() => anyMatches = true)];
             return anyMatches;
-        }
-    }
-
-    internal static class TaskOperationExtensions
-    {
-        public static bool IsAwaited(this IOperation op)
-        {
-            return op.Parent is IAwaitOperation or IInvocationOperation { TargetMethod.Name: nameof(Task<>.Wait) }
-                or IPropertyReferenceOperation { Property.Name: nameof(Task<>.Result) };
-        }
-
-        public static bool IsTask(this IOperation op)
-        {
-            return op.Type?.ToString() == WellKnownTypeNames.SystemThreadingTasksTask ||
-                op.Type?.BaseType?.ToString() == WellKnownTypeNames.SystemThreadingTasksTask;
         }
     }
 }

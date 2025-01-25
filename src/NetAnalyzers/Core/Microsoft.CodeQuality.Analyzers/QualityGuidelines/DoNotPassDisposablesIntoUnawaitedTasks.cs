@@ -166,8 +166,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         public static bool IsAwaited(this IOperation op)
         {
             return op.GetAncestor<IAwaitOperation>(OperationKind.Await) is not null ||
-                op.Parent is IInvocationOperation { TargetMethod.Name: nameof(Task<>.Wait) } or
-                IPropertyReferenceOperation { Property.Name: nameof(Task<>.Result) };
+                op.Parent is IInvocationOperation { TargetMethod.Name: "Wait" } or
+                IPropertyReferenceOperation { Property.Name: "Result" };
         }
 
         public static bool IsTask(this IOperation op)
@@ -182,26 +182,20 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         public static bool AnyWhere<T>(this IEnumerable<T> collection, Predicate<T> predicate, out IList<T> matches)
         {
             bool anyMatches = false;
-            IEnumerable<T> GetWhere(Action onAny)
+            IEnumerable<T> GetWhere()
             {
-                Action triggerOnce = () =>
-                {
-                    onAny();
-                    triggerOnce = () => { };
-                };
-
                 foreach (var item in collection)
                 {
                     if (predicate(item))
                     {
-                        triggerOnce();
+                        anyMatches = true;
                         yield return item;
                     }
                 }
             }
 
             // ToList actually evaluates enumerable so anyMatches will be accurate
-            matches = [.. GetWhere(() => anyMatches = true)];
+            matches = [.. GetWhere()];
             return anyMatches;
         }
     }

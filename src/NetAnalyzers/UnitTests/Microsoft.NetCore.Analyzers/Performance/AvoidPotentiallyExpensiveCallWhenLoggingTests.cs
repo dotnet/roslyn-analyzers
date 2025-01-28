@@ -2162,6 +2162,278 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyCSharpDiagnosticAsync(source);
         }
 
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task GuardedWorkWithReturnInLog_NoDiagnostic_CS(string logLevel)
+        {
+            string source = $$"""
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter)
+                    {
+                        if (!logger.IsEnabled(LogLevel.{{logLevel}}))
+                            return;
+
+                        logger.Log(LogLevel.{{logLevel}}, eventId, ExpensiveMethodCall(), exception, formatter);
+                        logger.Log(LogLevel.{{logLevel}}, ExpensiveMethodCall());
+                        logger.Log(LogLevel.{{logLevel}}, eventId, ExpensiveMethodCall());
+                        logger.Log(LogLevel.{{logLevel}}, exception, ExpensiveMethodCall());
+                        logger.Log(LogLevel.{{logLevel}}, eventId, exception, ExpensiveMethodCall());
+                    }
+
+                    string ExpensiveMethodCall()
+                    {
+                        return "very expensive call";
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedWorkWithReturnInLogWithDynamicLogLevel_NoDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter, LogLevel level)
+                    {
+                        if (!logger.IsEnabled(level))
+                            return;
+
+                        logger.Log(level, eventId, ExpensiveMethodCall(), exception, formatter);
+                        logger.Log(level, ExpensiveMethodCall());
+                        logger.Log(level, eventId, ExpensiveMethodCall());
+                        logger.Log(level, exception, ExpensiveMethodCall());
+                        logger.Log(level, eventId, exception, ExpensiveMethodCall());
+                    }
+
+                    string ExpensiveMethodCall()
+                    {
+                        return "very expensive call";
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task GuardedWorkWithReturnInLogNamed_NoDiagnostic_CS(string logLevel)
+        {
+            string source = $$"""
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception)
+                    {
+                        if (!logger.IsEnabled(LogLevel.{{logLevel}}))
+                            return;
+
+                        logger.Log{{logLevel}}(ExpensiveMethodCall());
+                        logger.Log{{logLevel}}(eventId, ExpensiveMethodCall());
+                        logger.Log{{logLevel}}(exception, ExpensiveMethodCall());
+                        logger.Log{{logLevel}}(eventId, exception, ExpensiveMethodCall());
+                    }
+
+                    string ExpensiveMethodCall()
+                    {
+                        return "very expensive call";
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task GuardedWorkWithReturnInLoggerMessage_NoDiagnostic_CS(string logLevel)
+        {
+            string source = $$"""
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                static partial class C
+                {
+                    [LoggerMessage(EventId = 0, Level = LogLevel.{{logLevel}}, Message = "Static log level `{argument}`")]
+                    static partial void StaticLogLevel(this ILogger logger, string argument);
+
+                    [LoggerMessage(EventId = 1, Message = "Dynamic log level `{argument}`")]
+                    static partial void DynamicLogLevel(this ILogger logger, LogLevel level, string argument);
+
+                    static void M(ILogger logger)
+                    {
+                        if (!logger.IsEnabled(LogLevel.{{logLevel}}))
+                            return;
+
+                        logger.StaticLogLevel(ExpensiveMethodCall());
+                        logger.DynamicLogLevel(LogLevel.{{logLevel}}, ExpensiveMethodCall());
+                    }
+
+                    static string ExpensiveMethodCall()
+                    {
+                        return "very expensive call";
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task NestedGuardedWorkWithReturnInLog_NoDiagnostic_CS(string logLevel)
+        {
+            string source = $$"""
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter)
+                    {
+                        if (!logger.IsEnabled(LogLevel.{{logLevel}}))
+                            return;
+
+                        if (exception is not null)
+                        {
+                            logger.Log(LogLevel.{{logLevel}}, eventId, ExpensiveMethodCall(), exception, formatter);
+                            logger.Log(LogLevel.{{logLevel}}, ExpensiveMethodCall());
+                            logger.Log(LogLevel.{{logLevel}}, eventId, ExpensiveMethodCall());
+                            logger.Log(LogLevel.{{logLevel}}, exception, ExpensiveMethodCall());
+                            logger.Log(LogLevel.{{logLevel}}, eventId, exception, ExpensiveMethodCall());
+                        }
+                    }
+
+                    string ExpensiveMethodCall()
+                    {
+                        return "very expensive call";
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Fact]
+        public async Task NestedGuardedWorkWithReturnInLogWithDynamicLogLevel_NoDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception, Func<string, Exception, string> formatter, LogLevel level)
+                    {
+                        if (!logger.IsEnabled(level))
+                            return;
+
+                        if (exception is not null)
+                        {
+                            logger.Log(level, eventId, ExpensiveMethodCall(), exception, formatter);
+                            logger.Log(level, ExpensiveMethodCall());
+                            logger.Log(level, eventId, ExpensiveMethodCall());
+                            logger.Log(level, exception, ExpensiveMethodCall());
+                            logger.Log(level, eventId, exception, ExpensiveMethodCall());
+                        }
+                    }
+
+                    string ExpensiveMethodCall()
+                    {
+                        return "very expensive call";
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task NestedGuardedWorkWithReturnInLogNamed_NoDiagnostic_CS(string logLevel)
+        {
+            string source = $$"""
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger, EventId eventId, Exception exception)
+                    {
+                        if (!logger.IsEnabled(LogLevel.{{logLevel}}))
+                            return;
+
+                        if (exception is not null)
+                        {
+                            logger.Log{{logLevel}}(ExpensiveMethodCall());
+                            logger.Log{{logLevel}}(eventId, ExpensiveMethodCall());
+                            logger.Log{{logLevel}}(exception, ExpensiveMethodCall());
+                            logger.Log{{logLevel}}(eventId, exception, ExpensiveMethodCall());
+                        }
+                    }
+
+                    string ExpensiveMethodCall()
+                    {
+                        return "very expensive call";
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task NestedGuardedWorkWithReturnInLoggerMessage_NoDiagnostic_CS(string logLevel)
+        {
+            string source = $$"""
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                static partial class C
+                {
+                    static bool IsExpensiveComputationEnabled { get; set; }
+
+                    [LoggerMessage(EventId = 0, Level = LogLevel.{{logLevel}}, Message = "Static log level `{argument}`")]
+                    static partial void StaticLogLevel(this ILogger logger, string argument);
+
+                    [LoggerMessage(EventId = 1, Message = "Dynamic log level `{argument}`")]
+                    static partial void DynamicLogLevel(this ILogger logger, LogLevel level, string argument);
+
+                    static void M(ILogger logger)
+                    {
+                        if (!logger.IsEnabled(LogLevel.{{logLevel}}))
+                            return;
+
+                        if (IsExpensiveComputationEnabled)
+                        {
+                            logger.StaticLogLevel(ExpensiveMethodCall());
+                            logger.DynamicLogLevel(LogLevel.{{logLevel}}, ExpensiveMethodCall());
+                        }
+                    }
+
+                    static string ExpensiveMethodCall()
+                    {
+                        return "very expensive call";
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
         [Fact]
         public async Task CustomLoggerGuardedWorkInLog_NoDiagnostic_CS()
         {
@@ -2663,6 +2935,35 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                     }
 
                     static string ExpensiveMethodCall()
+                    {
+                        return "very expensive call";
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardAfterLogInvocation_ReportsDiagnostic_CS()
+        {
+            string source = """
+                using System;
+                using Microsoft.Extensions.Logging;
+
+                class C
+                {
+                    void M(ILogger logger)
+                    {
+                        logger.Log(LogLevel.Debug, [|ExpensiveMethodCall()|]);
+
+                        if (!logger.IsEnabled(LogLevel.Debug))
+                        {
+                            return;
+                        }
+                    }
+
+                    string ExpensiveMethodCall()
                     {
                         return "very expensive call";
                     }
@@ -4529,6 +4830,252 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             await VerifyBasicDiagnosticAsync(source);
         }
 
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task GuardedWorkWithReturnInLog_NoDiagnostic_VB(string logLevel)
+        {
+            string source = $$"""
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
+                        If Not logger.IsEnabled(LogLevel.{{logLevel}}) Then Return
+
+                        logger.Log(LogLevel.{{logLevel}}, eventId, ExpensiveMethodCall(), exception, formatter)
+                        logger.Log(LogLevel.{{logLevel}}, ExpensiveMethodCall())
+                        logger.Log(LogLevel.{{logLevel}}, eventId, ExpensiveMethodCall())
+                        logger.Log(LogLevel.{{logLevel}}, exception, ExpensiveMethodCall())
+                        logger.Log(LogLevel.{{logLevel}}, eventId, exception, ExpensiveMethodCall())
+                    End Sub
+                
+                    Function ExpensiveMethodCall() As String
+                        Return "very expensive call"
+                    End Function
+                End Class
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedWorkWithReturnInLogWithDynamicLogLevel_NoDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String), level As LogLevel)
+                        If Not logger.IsEnabled(level) Then Return
+
+                        logger.Log(level, eventId, ExpensiveMethodCall(), exception, formatter)
+                        logger.Log(level, ExpensiveMethodCall())
+                        logger.Log(level, eventId, ExpensiveMethodCall())
+                        logger.Log(level, exception, ExpensiveMethodCall())
+                        logger.Log(level, eventId, exception, ExpensiveMethodCall())
+                    End Sub
+                
+                    Function ExpensiveMethodCall() As String
+                        Return "very expensive call"
+                    End Function
+                End Class
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task GuardedWorkWithReturnInLogNamed_NoDiagnostic_VB(string logLevel)
+        {
+            string source = $$"""
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
+                        If Not logger.IsEnabled(LogLevel.{{logLevel}}) Then Return
+                        
+                        logger.Log{{logLevel}}(ExpensiveMethodCall())
+                        logger.Log{{logLevel}}(eventId, ExpensiveMethodCall())
+                        logger.Log{{logLevel}}(exception, ExpensiveMethodCall())
+                        logger.Log{{logLevel}}(eventId, exception, ExpensiveMethodCall())
+                    End Sub
+                
+                    Function ExpensiveMethodCall() As String
+                        Return "very expensive call"
+                    End Function
+                End Class
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task GuardedWorkWithReturnInLoggerMessage_NoDiagnostic_VB(string logLevel)
+        {
+            string source = $$"""
+                Imports System
+                Imports System.Runtime.CompilerServices
+                Imports Microsoft.Extensions.Logging
+                
+                Partial Module C
+                	<Extension>
+                	<LoggerMessage(EventId:=0, Level:=LogLevel.{{logLevel}}, Message:="Static log level `{argument}`")>
+                	Partial Private Sub StaticLogLevel(logger As ILogger, argument As String)
+                	End Sub
+                
+                	<Extension>
+                	<LoggerMessage(EventId:=1, Message:="Dynamic log level `{argument}`")>
+                	Partial Private Sub DynamicLogLevel(logger As ILogger, level As LogLevel, argument As String)
+                	End Sub
+                
+                	Sub M(logger As ILogger)
+                        If Not logger.IsEnabled(LogLevel.{{logLevel}}) Then Return
+                        
+                        logger.StaticLogLevel(ExpensiveMethodCall())
+                        logger.DynamicLogLevel(LogLevel.{{logLevel}}, ExpensiveMethodCall())
+                	End Sub
+                
+                    Function ExpensiveMethodCall() As String
+                        Return "very expensive call"
+                    End Function
+                End Module
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task NestedGuardedWorkWithReturnInLog_NoDiagnostic_VB(string logLevel)
+        {
+            string source = $$"""
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
+                        If Not logger.IsEnabled(LogLevel.{{logLevel}}) Then Return
+
+                        If exception IsNot Nothing
+                            logger.Log(LogLevel.{{logLevel}}, eventId, ExpensiveMethodCall(), exception, formatter)
+                            logger.Log(LogLevel.{{logLevel}}, ExpensiveMethodCall())
+                            logger.Log(LogLevel.{{logLevel}}, eventId, ExpensiveMethodCall())
+                            logger.Log(LogLevel.{{logLevel}}, exception, ExpensiveMethodCall())
+                            logger.Log(LogLevel.{{logLevel}}, eventId, exception, ExpensiveMethodCall())
+                        End If
+                    End Sub
+                
+                    Function ExpensiveMethodCall() As String
+                        Return "very expensive call"
+                    End Function
+                End Class
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Fact]
+        public async Task NestedGuardedWorkWithReturnInLogWithDynamicLogLevel_NoDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String), level As LogLevel)
+                        If Not logger.IsEnabled(level) Then Return
+
+                        If exception IsNot Nothing Then
+                            logger.Log(level, eventId, ExpensiveMethodCall(), exception, formatter)
+                            logger.Log(level, ExpensiveMethodCall())
+                            logger.Log(level, eventId, ExpensiveMethodCall())
+                            logger.Log(level, exception, ExpensiveMethodCall())
+                            logger.Log(level, eventId, exception, ExpensiveMethodCall())
+                        End If
+                    End Sub
+                
+                    Function ExpensiveMethodCall() As String
+                        Return "very expensive call"
+                    End Function
+                End Class
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task NestedGuardedWorkWithReturnInLogNamed_NoDiagnostic_VB(string logLevel)
+        {
+            string source = $$"""
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger, eventId As EventId, exception As Exception, formatter As Func(Of String, Exception, String))
+                        If Not logger.IsEnabled(LogLevel.{{logLevel}}) Then Return
+
+                        If exception IsNot Nothing
+                            logger.Log{{logLevel}}(ExpensiveMethodCall())
+                            logger.Log{{logLevel}}(eventId, ExpensiveMethodCall())
+                            logger.Log{{logLevel}}(exception, ExpensiveMethodCall())
+                            logger.Log{{logLevel}}(eventId, exception, ExpensiveMethodCall())
+                        End If
+                    End Sub
+                
+                    Function ExpensiveMethodCall() As String
+                        Return "very expensive call"
+                    End Function
+                End Class
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(LogLevels))]
+        public async Task NestedGuardedWorkWithReturnInLoggerMessage_NoDiagnostic_VB(string logLevel)
+        {
+            string source = $$"""
+                Imports System
+                Imports System.Runtime.CompilerServices
+                Imports Microsoft.Extensions.Logging
+                
+                Partial Module C
+                    Public Property IsExpensiveComputationEnabled As Boolean
+                
+                	<Extension>
+                	<LoggerMessage(EventId:=0, Level:=LogLevel.{{logLevel}}, Message:="Static log level `{argument}`")>
+                	Partial Private Sub StaticLogLevel(logger As ILogger, argument As String)
+                	End Sub
+                
+                	<Extension>
+                	<LoggerMessage(EventId:=1, Message:="Dynamic log level `{argument}`")>
+                	Partial Private Sub DynamicLogLevel(logger As ILogger, level As LogLevel, argument As String)
+                	End Sub
+                
+                	Sub M(logger As ILogger)
+                        If Not logger.IsEnabled(LogLevel.{{logLevel}}) Then Return
+
+                        If IsExpensiveComputationEnabled
+                            logger.StaticLogLevel(ExpensiveMethodCall())
+                            logger.DynamicLogLevel(LogLevel.{{logLevel}}, ExpensiveMethodCall())
+                        End If
+                	End Sub
+                
+                    Function ExpensiveMethodCall() As String
+                        Return "very expensive call"
+                    End Function
+                End Module
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
         [Fact]
         public async Task CustomLoggerGuardedWorkInLog_NoDiagnostic_VB()
         {
@@ -4958,6 +5505,29 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                         Return "very expensive call"
                     End Function
                 End Module
+                """;
+
+            await VerifyBasicDiagnosticAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardAfterLogInvocation_ReportsDiagnostic_VB()
+        {
+            string source = """
+                Imports System
+                Imports Microsoft.Extensions.Logging
+                
+                Class C
+                    Sub M(logger As ILogger)
+                        logger.Log(LogLevel.Debug, [|ExpensiveMethodCall()|])
+
+                        If logger.IsEnabled(LogLevel.Debug) Then Return
+                    End Sub
+                
+                    Function ExpensiveMethodCall() As String
+                        Return "very expensive call"
+                    End Function
+                End Class
                 """;
 
             await VerifyBasicDiagnosticAsync(source);

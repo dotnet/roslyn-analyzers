@@ -317,34 +317,62 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             public bool IsGuardedByIsEnabled(IInvocationOperation logInvocation, int logLevel, IArgumentOperation? logLevelArgumentOperation)
             {
-                var currentAncestorConditional = logInvocation.GetAncestor<IConditionalOperation>(OperationKind.Conditional);
-                while (currentAncestorConditional is not null)
+                // Check each block for conditionals that contain an 'ILogger.IsEnabled' invocation that guards the log invocation:
+                //   1. If the 'ILogger.IsEnabled' invocation is negated, the 'WhenTrue' branch must contain a return.
+                //   2. If the 'ILogger.IsEnabled' invocation is not negated, the 'WhenTrue' branch must contain the log invocation.
+                // This is also not perfect, but should be good enough to prevent false positives.
+                var currentBlockAncestor = logInvocation.GetAncestor<IBlockOperation>(OperationKind.Block);
+                while (currentBlockAncestor is not null)
                 {
-                    var conditionInvocations = currentAncestorConditional.Condition
+                    var guardConditionals = currentBlockAncestor.Descendants().OfType<IConditionalOperation>();
+                    if (guardConditionals.Any(IsValidGuardConditional))
+                    {
+                        return true;
+                    }
+
+                    currentBlockAncestor = currentBlockAncestor.GetAncestor<IBlockOperation>(OperationKind.Block);
+                }
+
+                return false;
+
+                bool IsValidGuardConditional(IConditionalOperation conditional)
+                {
+                    if (conditional.Syntax.SpanStart > logInvocation.Syntax.SpanStart)
+                    {
+                        return false;
+                    }
+
+                    var conditionInvocations = conditional.Condition
                         .DescendantsAndSelf()
                         .OfType<IInvocationOperation>();
 
-                    // Check each invocation in the condition to see if it is a valid guard invocation, i.e. same instance and same log level.
-                    // This is not perfect (e.g. 'if (logger.IsEnabled(LogLevel.Debug) || true)' is treated as guarded), but should be good enough to prevent false positives.
                     if (conditionInvocations.Any(IsValidIsEnabledGuardInvocation))
                     {
                         return true;
                     }
 
-                    currentAncestorConditional = currentAncestorConditional.GetAncestor<IConditionalOperation>(OperationKind.Conditional);
+                    return false;
+
+                    bool IsValidIsEnabledGuardInvocation(IInvocationOperation invocation)
+                    {
+                        if (!IsIsEnabledInvocation(invocation) ||
+                            !AreInvocationsOnSameInstance(logInvocation, invocation) ||
+                            !IsSameLogLevel(invocation.Arguments[0]))
+                        {
+                            return false;
+                        }
+
+                        var isNegated = invocation.Parent is IUnaryOperation { OperatorKind: UnaryOperatorKind.Not };
+                        var descendants = conditional.WhenTrue.DescendantsAndSelf();
+
+                        return isNegated && descendants.OfType<IReturnOperation>().Any() || !isNegated && descendants.Contains(logInvocation);
+                    }
                 }
 
-                return false;
-
-                bool IsValidIsEnabledGuardInvocation(IInvocationOperation invocation)
+                bool IsIsEnabledInvocation(IInvocationOperation invocation)
                 {
-                    if (!SymbolEqualityComparer.Default.Equals(_isEnabledMethod, invocation.TargetMethod) &&
-                        !invocation.TargetMethod.IsOverrideOrImplementationOfInterfaceMember(_isEnabledMethod))
-                    {
-                        return false;
-                    }
-
-                    return AreInvocationsOnSameInstance(logInvocation, invocation) && IsSameLogLevel(invocation.Arguments[0]);
+                    return SymbolEqualityComparer.Default.Equals(_isEnabledMethod, invocation.TargetMethod) ||
+                        invocation.TargetMethod.IsOverrideOrImplementationOfInterfaceMember(_isEnabledMethod);
                 }
 
                 static bool AreInvocationsOnSameInstance(IInvocationOperation invocation1, IInvocationOperation invocation2)
@@ -377,7 +405,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             : isEnabledLogLevel == logLevel;
                     }
 
-                    return isEnabledArgument.Value.GetReferencedMemberOrLocalOrParameter() == logLevelArgumentOperation?.Value.GetReferencedMemberOrLocalOrParameter();
+                    return SymbolEqualityComparer.Default.Equals(
+                        isEnabledArgument.Value.GetReferencedMemberOrLocalOrParameter(),
+                        logLevelArgumentOperation?.Value.GetReferencedMemberOrLocalOrParameter());
                 }
             }
 

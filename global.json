@@ -1,6 +1,6 @@
 {
   "tools": {
-    "dotnet": "10.0.100-alpha.1.25074.2",
+    "dotnet": "10.0.100-alpha.1.25077.2",
     "runtimes": {
       "dotnet": [
         "3.1.7",
@@ -13,11 +13,11 @@
     "xcopy-msbuild": "17.7.4"
   },
   "sdk": {
-    "version": "10.0.100-alpha.1.25074.2",
+    "version": "10.0.100-alpha.1.25077.2",
     "allowPrerelease": true,
     "rollForward": "patch"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.25076.1"
+    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.25077.3"
   }
 }

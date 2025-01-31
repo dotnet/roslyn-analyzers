@@ -450,7 +450,7 @@ namespace Microsoft.CodeAnalysis.ResxSourceGenerator
                                 if (resourceString.HasArguments)
                                 {
                                     RenderDocComment(language, memberIndent, strings, docCommentString);
-                                    RenderFormatMethod(memberIndent, language, CompilationInformation.SupportsNullable, strings, resourceString);
+                                    RenderFormatMethod(memberIndent, language, CompilationInformation.SupportsNullable, strings, resourceString, identifier);
                                 }
                             }
 
@@ -811,9 +811,9 @@ Imports System.Reflection
                 }
             }
 
-            private static void RenderFormatMethod(string indent, Lang language, bool supportsNullable, StringBuilder strings, ResourceString resourceString)
+            private static void RenderFormatMethod(string indent, Lang language, bool supportsNullable, StringBuilder strings, ResourceString resourceString, string identifier)
             {
-                strings.AppendLine($"{indent}internal static string Format{resourceString.Name}({resourceString.GetMethodParameters(language, supportsNullable)})");
+                strings.AppendLine($"{indent}internal static string Format{identifier}({resourceString.GetMethodParameters(language, supportsNullable)})");
                 if (resourceString.UsingNamedArgs)
                 {
                     strings.AppendLine($@"{indent}   => string.Format(Culture, GetResourceString(""{resourceString.Name}"", new[] {{ {resourceString.GetArgumentNames()} }}), {resourceString.GetArguments()});");

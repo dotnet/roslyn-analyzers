@@ -167,7 +167,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
             hashCode.Add(HashUtilities.Combine(AnalysisValues));
             hashCode.Add(HashUtilities.Combine(Parents));
             hashCode.Add(Height.GetHashCode());
-            hashCode.Add(Kind.GetHashCode());
+            hashCode.Add(((int)Kind).GetHashCode());
         }
 
         protected override bool ComputeEqualsByHashCodeParts(CacheBasedEquatable<GlobalFlowStateAnalysisValueSet> obj)
@@ -176,7 +176,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
             return HashUtilities.Combine(AnalysisValues) == HashUtilities.Combine(other.AnalysisValues)
                 && HashUtilities.Combine(Parents) == HashUtilities.Combine(other.Parents)
                 && Height.GetHashCode() == other.Height.GetHashCode()
-                && Kind.GetHashCode() == other.Kind.GetHashCode();
+                && ((int)Kind).GetHashCode() == ((int)other.Kind).GetHashCode();
         }
 
         public override string ToString()

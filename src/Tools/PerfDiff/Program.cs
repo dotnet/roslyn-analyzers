@@ -45,7 +45,7 @@ namespace PerfDiff
 
             // Setup logging.
             var logLevel = GetLogLevel(verbosity);
-            var logger = SetupLogging(console, minimalLogLevel: logLevel, minimalErrorLevel: LogLevel.Warning);
+            var logger = SetupLogging(minimalLogLevel: logLevel, minimalErrorLevel: LogLevel.Warning);
 
             // Hook so we can cancel and exit when ctrl+c is pressed.
             var cancellationTokenSource = new CancellationTokenSource();
@@ -83,10 +83,10 @@ namespace PerfDiff
                 }
             }
 
-            static ILogger<Program> SetupLogging(IConsole console, LogLevel minimalLogLevel, LogLevel minimalErrorLevel)
+            static ILogger<Program> SetupLogging(LogLevel minimalLogLevel, LogLevel minimalErrorLevel)
             {
                 var serviceCollection = new ServiceCollection();
-                serviceCollection.AddSingleton(new LoggerFactory().AddSimpleConsole(console, minimalLogLevel, minimalErrorLevel));
+                serviceCollection.AddSingleton(new LoggerFactory().AddSimpleConsole(minimalLogLevel, minimalErrorLevel));
                 serviceCollection.AddLogging();
 
                 var serviceProvider = serviceCollection.BuildServiceProvider();

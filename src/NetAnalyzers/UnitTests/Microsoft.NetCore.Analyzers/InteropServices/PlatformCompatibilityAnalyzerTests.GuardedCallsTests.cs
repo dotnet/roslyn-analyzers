@@ -5398,6 +5398,37 @@ class TestType
             await VerifyAnalyzerCSAsync(source, msBuildPlatforms);
         }
 
+        [Fact, WorkItem(7530, "https://github.com/dotnet/roslyn-analyzers/issues/7530")]
+        public async Task OneOfCustomGuardsSuppressedByCallsite()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+class TestType
+{
+    [SupportedOSPlatform(""macos15.0"")]
+    [SupportedOSPlatform(""tvos12.2"")]
+    private void GetFilter ()
+    {
+        if (IsAtLeast)
+            DoSomething();
+
+        [|DoSomething()|]; // This call site is reachable on: 'macOS/OSX' 15.0 and later, 'tvos' 12.2 and later. 'TestType.DoSomething()' is only supported on: 'tvos' 15.0 and later.
+    }
+
+    [SupportedOSPlatform(""tvos15.0"")]
+    [SupportedOSPlatform(""macos15.0"")]
+    public void DoSomething() {}
+
+    [SupportedOSPlatformGuard (""macos15.0"")]
+    [SupportedOSPlatformGuard (""tvos15.0"")]
+    public bool IsAtLeast => false;
+}";
+
+            string msBuildPlatforms = "build_property.TargetFramework=net8.0-maccatalyst12.0;\nbuild_property.TargetFrameworkIdentifier=.NETCoreApp\nbuild_property.TargetFrameworkVersion=v8.0";
+            await VerifyAnalyzerCSAsync(source, msBuildPlatforms);
+        }
+
         private readonly string TargetTypesForTest = @"
 namespace PlatformCompatDemo.SupportedUnupported
 {

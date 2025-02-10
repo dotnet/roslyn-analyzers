@@ -57,8 +57,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private const string macOS = nameof(macOS);
         private const string OSX = nameof(OSX);
         private const string MacSlashOSX = "macOS/OSX";
-        private const string ios = nameof(ios);
-        private const string maccatalyst = nameof(maccatalyst);
         private static readonly Version EmptyVersion = new(0, 0);
 
         internal static readonly DiagnosticDescriptor OnlySupportedCsReachable = DiagnosticDescriptorHelper.Create(
@@ -638,16 +636,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 continue;
                             }
 
-                            // Skip maccatalyst check in case it was suppressed by callsite attribute
-                            if (parent.AnalysisValues.Count == 1 && attributes.ContainsKey(ios) && !attributes.ContainsKey(maccatalyst))
+                            // Skip the platform check that was originally in the list and suppressed by callsite attributes
+                            if (parent.AnalysisValues.Count == 1 &&
+                                IsPlatformSupportWasSuppresed((PlatformMethodValue)parent.AnalysisValues.First(), attributes, originalAttributes))
                             {
-                                PlatformMethodValue parentValue = (PlatformMethodValue)parent.AnalysisValues.First();
-                                if (!parentValue.Negated && parentValue.PlatformName.Equals(maccatalyst, StringComparison.OrdinalIgnoreCase) &&
-                                    originalAttributes.TryGetValue(maccatalyst, out Versions? macVersion) &&
-                                    parentValue.Version.IsGreaterThanOrEqualTo(macVersion.SupportedFirst))
-                                {
-                                    continue;
-                                }
+                                continue;
                             }
                         }
 
@@ -661,6 +654,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 return true;
             }
+
+            static bool IsPlatformSupportWasSuppresed(PlatformMethodValue parentValue, SmallDictionary<string, Versions> attributes, SmallDictionary<string, Versions> originalAttributes)
+                => !parentValue.Negated && !attributes.ContainsKey(parentValue.PlatformName) &&
+                    originalAttributes.TryGetValue(parentValue.PlatformName, out Versions? version) &&
+                    parentValue.Version.IsGreaterThanOrEqualTo(version.SupportedFirst);
 
             static bool IsOnlySupportNeedsGuard(string platformName, SmallDictionary<string, Versions> attributes, SmallDictionary<string, Versions> csAttributes)
                  => csAttributes.TryGetValue(platformName, out var versions) &&

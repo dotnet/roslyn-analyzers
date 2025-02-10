@@ -5340,6 +5340,64 @@ class MyType { }
             await VerifyAnalyzerCSAsync(source, s_msBuildPlatforms);
         }
 
+        [Fact, WorkItem(7239, "https://github.com/dotnet/roslyn-analyzers/issues/7239")]
+        public async Task MacCatalystSuppressedByCallsiteSupportWithinGuard()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+class TestType
+{
+    [SupportedOSPlatform(""ios13.0"")]
+    [SupportedOSPlatform(""maccatalyst13.0"")]
+    private void Tapped()
+    {
+        if (OperatingSystem.IsIOSVersionAtLeast(15,0))
+            DoSomething();
+
+        [|DoSomething()|]; // This call site is reachable on: 'ios' 13.0 and later, 'maccatalyst' 13.0 and later. 'TestType.DoSomething()' is only supported on: 'ios' 14.0 and later.
+    }
+
+    [SupportedOSPlatform(""ios14.0"")]
+    [SupportedOSPlatform(""maccatalyst"")]
+    public void DoSomething() {}
+}";
+
+            string msBuildPlatforms = "build_property.TargetFramework=net8.0-maccatalyst13.0;\nbuild_property.TargetFrameworkIdentifier=.NETCoreApp\nbuild_property.TargetFrameworkVersion=v8.0";
+            await VerifyAnalyzerCSAsync(source, msBuildPlatforms);
+        }
+
+        [Fact, WorkItem(6955, "https://github.com/dotnet/roslyn-analyzers/issues/6955")]
+        public async Task MacCatalystSuppressedByCallSiteSupportCalledWithinCustomGuard()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+class TestType
+{
+    [SupportedOSPlatform(""ios12.0"")]
+    private void Tapped()
+    {
+        if (CheckSystemVersion(13,0))
+            DoSomething();
+
+        [|DoSomething()|]; // This call site is reachable on: 'ios' 12.0 and later, 'maccatalyst' 12.0 and later. 'TestType.DoSomething()' is only supported on: 'ios' 13.0 and later.
+    }
+
+    [SupportedOSPlatform(""ios13.0"")]
+    [SupportedOSPlatform(""maccatalyst"")]
+    public void DoSomething() {}
+
+    [SupportedOSPlatformGuard (""ios"")]
+    [SupportedOSPlatformGuard (""tvos"")]
+    [SupportedOSPlatformGuard (""maccatalyst"")]
+    public bool CheckSystemVersion (int major, int minor) => false;
+}";
+
+            string msBuildPlatforms = "build_property.TargetFramework=net8.0-maccatalyst12.0;\nbuild_property.TargetFrameworkIdentifier=.NETCoreApp\nbuild_property.TargetFrameworkVersion=v8.0";
+            await VerifyAnalyzerCSAsync(source, msBuildPlatforms);
+        }
+
         private readonly string TargetTypesForTest = @"
 namespace PlatformCompatDemo.SupportedUnupported
 {

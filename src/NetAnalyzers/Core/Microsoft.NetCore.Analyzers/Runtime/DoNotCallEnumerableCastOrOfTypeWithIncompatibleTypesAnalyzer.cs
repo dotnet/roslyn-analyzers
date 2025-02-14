@@ -267,7 +267,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (castToTypeParam.HasValueTypeConstraint
                             && castFrom.TypeKind == TypeKind.Class)
                         {
-                            return true;
+                            return castFrom.SpecialType is not SpecialType.System_Enum
+                                                       and not SpecialType.System_ValueType;
                         }
 
                         return false;

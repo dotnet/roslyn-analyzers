@@ -910,6 +910,35 @@ class GenericDerived : GenericBase<int>
             await test.RunAsync();
         }
 
+        [Fact, WorkItem(7031, "https://github.com/dotnet/roslyn-analyzers/issues/7031")]
+        public async Task GenericValueType()
+        {
+            // ensure runtime behavior is matches
+            _ = new Enum[] { StringComparison.OrdinalIgnoreCase }.Cast<StringComparison>().ToArray();
+            _ = new ValueType[] { int.MaxValue }.Cast<int>().ToArray();
+
+            var test = new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net90,
+                LanguageVersion = LanguageVersion.Latest,
+
+                TestCode = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public static class Program
+{
+    public static IEnumerable<T> CastEnums<T>(IEnumerable<Enum> values) where T : struct, Enum
+          => values.Cast<T>(); // CA2021
+
+    public static IEnumerable<T> CastValueTypes<T>(IEnumerable<ValueType> values) where T : struct
+          => values.Cast<T>(); // CA2021
+}"
+            };
+            await test.RunAsync();
+        }
+
         [Fact]
         public async Task NonGenericCasesVB()
         {

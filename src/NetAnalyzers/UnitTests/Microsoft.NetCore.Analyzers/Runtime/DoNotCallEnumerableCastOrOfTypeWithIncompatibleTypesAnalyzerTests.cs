@@ -929,8 +929,17 @@ using System.Linq;
 
 public static class Program
 {
-    public static IEnumerable<T> CastEnums<T>(IEnumerable<Enum> values) where T : struct, Enum
-          => values.Cast<T>(); // CA2021
+    public static IEnumerable<T> CastFromEnums<T>(IEnumerable<Enum> values) where T : struct, Enum
+          => values.Cast<T>();
+
+    public static IEnumerable<T> CastFromValueTypes<T>(IEnumerable<ValueType> values) where T : struct
+          => values.Cast<T>();
+
+    public static IEnumerable<Enum> CastToEnums<T>(IEnumerable<T> values) where T : struct, Enum
+          => values.Cast<Enum>();
+
+    public static IEnumerable<ValueType> CastToValueTypes<T>(IEnumerable<T> values) where T : struct
+          => values.Cast<ValueType>();
 
     public static IEnumerable<T> CastValueTypes<T>(IEnumerable<ValueType> values) where T : struct
           => values.Cast<T>(); // CA2021

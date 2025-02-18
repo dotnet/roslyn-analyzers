@@ -911,7 +911,7 @@ class GenericDerived : GenericBase<int>
         }
 
         [Fact, WorkItem(7031, "https://github.com/dotnet/roslyn-analyzers/issues/7031")]
-        public async Task GenericValueType()
+        public async Task GenericConstraints()
         {
             // ensure runtime behavior is matches
             _ = new Enum[] { StringComparison.OrdinalIgnoreCase }.Cast<StringComparison>().ToArray();
@@ -942,8 +942,46 @@ public static class Program
           => values.Cast<ValueType>();
 
     public static IEnumerable<T> CastValueTypes<T>(IEnumerable<ValueType> values) where T : struct
-          => values.Cast<T>(); // CA2021
-}"
+          => values.Cast<T>();
+
+    public static IEnumerable<TOut> CastUnconstrainedGeneric<TIn, TOut>(IEnumerable<TIn> values)
+          => values.Cast<TOut>();
+
+    public static IEnumerable<TOut> CastGenericUnmanagedToGeneric<TIn, TOut>(IEnumerable<TIn> values)
+        where TOut : unmanaged
+          => values.Cast<TOut>();
+
+    public static IEnumerable<TOut> CastGenericUnmanagedToGenericUnmanagedl<TIn, TOut>(IEnumerable<TIn> values)
+        where TIn : unmanaged
+        where TOut : unmanaged
+          => values.Cast<TOut>();
+
+    public static IEnumerable<TOut> CastGenericNotNullToGenericNotNull<TIn, TOut>(IEnumerable<TIn> values)
+        where TIn : notnull
+        where TOut : notnull
+          => values.Cast<TOut>();
+
+    public static IEnumerable<TOut> CastGenericToGeneric<TIn, TOut>(IEnumerable<TIn> values)
+        where TIn : Enum
+        where TOut : Uri
+          => {|#1:values.Cast<TOut>()|};
+
+    public static IEnumerable<TOut> CastGenericStructToGeneric<TIn, TOut>(IEnumerable<TIn> values)
+        where TIn : struct
+        where TOut : Uri
+          => {|#2:values.Cast<TOut>()|};
+
+    public static IEnumerable<TOut> CastGenericToGenericStruct<TIn, TOut>(IEnumerable<TIn> values)
+        where TIn : Uri
+        where TOut : struct
+          => {|#3:values.Cast<TOut>()|};
+}",
+                ExpectedDiagnostics =
+                {
+                    VerifyCS.Diagnostic(castRule).WithLocation(1).WithArguments("TIn", "TOut"),
+                    VerifyCS.Diagnostic(castRule).WithLocation(2).WithArguments("TIn", "TOut"),
+                    VerifyCS.Diagnostic(castRule).WithLocation(3).WithArguments("TIn", "TOut"),
+                }
             };
             await test.RunAsync();
         }

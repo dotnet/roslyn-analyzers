@@ -5,7 +5,8 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <IsShipping>true</IsShipping>
     <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
-    <MicrosoftCodeAnalysisVersion Condition="'$(MicrosoftCodeAnalysisVersion)' == ''">$(MicrosoftCodeAnalysisVersionForExecution)</MicrosoftCodeAnalysisVersion>
+    <!-- Excluded from source build. Otherwise this should be conditionalized to only be set when DotNetBuildSourceOnly != true -->
+    <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForExecution)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\..\Utilities\Compiler\Extensions\ReportDiagnosticExtensions.cs" Link="ReportDiagnosticExtensions.cs" />

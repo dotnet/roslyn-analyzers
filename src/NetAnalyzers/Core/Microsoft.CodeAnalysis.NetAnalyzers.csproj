@@ -9,7 +9,7 @@
     <PackageId>*$(MSBuildProjectFile)*</PackageId>
     <RootNamespace></RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <MicrosoftCodeAnalysisVersion Condition="'$(MicrosoftCodeAnalysisVersion)' == ''">$(MicrosoftCodeAnalysisVersionForNetAnalyzers)</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForNetAnalyzers)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CSharp.NetAnalyzers" />

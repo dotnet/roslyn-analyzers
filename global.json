@@ -10,7 +10,7 @@
     "vs": {
       "version": "17.7.0"
     },
-    "xcopy-msbuild": "17.7.4"
+    "xcopy-msbuild": "17.13.0"
   },
   "sdk": {
     "version": "9.0.102",

@@ -8,7 +8,7 @@
       ]
     },
     "vs": {
-      "version": "17.7.0"
+      "version": "17.13.0"
     },
     "xcopy-msbuild": "17.13.0"
   },

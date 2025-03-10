@@ -20,15 +20,16 @@ Recently the set of analyzer packages produced by this repository have been cons
 
 | NuGet Package Name | Version | Summary |
 |----------|:-------:|---------|
-| Microsoft.CodeAnalysis.NetAnalyzers       | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers) | ✔️ Primary analyzer package for this repo. Included default for .NET 5+. For earlier targets [read more](#microsoftcodeanalysisnetanalyzers). |
-| Microsoft.CodeAnalysis.BannedApiAnalyzers | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.BannedApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.BannedApiAnalyzers) | ✔️ Allows banning use of arbitrary code. [Read more](#microsoftcodeanalysisbannedapianalyzers). |
-| Microsoft.CodeAnalysis.PublicApiAnalyzers | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.PublicApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.PublicApiAnalyzers) | ✔️ Helps library authors monitor changes to their public APIs. [Read more](#microsoftcodeanalysispublicapianalyzers). |
-| Microsoft.CodeAnalysis.Analyzers          | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers) | ⚠️ Intended projects providing analyzers and code fixes. [Read more](#microsoftcodeanalysisanalyzers). |
-| Roslyn.Diagnostics.Analyzers              | [![NuGet](https://img.shields.io/nuget/v/Roslyn.Diagnostics.Analyzers.svg)](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers) | ⚠️ Rules specific to the Roslyn project, not intended for general consumption. [Read more](#roslyndiagnosticsanalyzers). |
-| Microsoft.CodeAnalysis.FxCopAnalyzers     | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftcodeanalysisfxcopanalyzers). |
-| Microsoft.CodeQuality.Analyzers           | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeQuality.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftcodequalityanalyzers). |
-| Microsoft.NetCore.Analyzers               | [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetCore.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftnetcoreanalyzers). |
-| Microsoft.NetFramework.Analyzers          | [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetFramework.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftnetcoreanalyzers). |
+| Microsoft.CodeAnalysis.NetAnalyzers        | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers) | ✔️ Primary analyzer package for this repo. Included default for .NET 5+. For earlier targets [read more](#microsoftcodeanalysisnetanalyzers). |
+| Microsoft.CodeAnalysis.BannedApiAnalyzers  | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.BannedApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.BannedApiAnalyzers) | ✔️ Allows banning use of arbitrary code. [Read more](#microsoftcodeanalysisbannedapianalyzers). |
+| Microsoft.CodeAnalysis.PublicApiAnalyzers  | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.PublicApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.PublicApiAnalyzers) | ✔️ Helps library authors monitor changes to their public APIs. [Read more](#microsoftcodeanalysispublicapianalyzers). |
+| Microsoft.CodeAnalysis.Analyzers           | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers) | ⚠️ Intended projects providing analyzers and code fixes. [Read more](#microsoftcodeanalysisanalyzers). |
+| Roslyn.Diagnostics.Analyzers               | [![NuGet](https://img.shields.io/nuget/v/Roslyn.Diagnostics.Analyzers.svg)](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers) | ⚠️ Rules specific to the Roslyn project, not intended for general consumption. [Read more](#roslyndiagnosticsanalyzers). |
+| Microsoft.CodeAnalysis.FxCopAnalyzers      | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftcodeanalysisfxcopanalyzers). |
+| Microsoft.CodeQuality.Analyzers            | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeQuality.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftcodequalityanalyzers). |
+| Microsoft.NetCore.Analyzers                | [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetCore.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftnetcoreanalyzers). |
+| Microsoft.NetFramework.Analyzers           | [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetFramework.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftnetcoreanalyzers). |
+| Microsoft.CodeAnalysis.ResxSourceGenerator | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.ResxSourceGenerator.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.ResxSourceGenerator) | ✔️ Provides a source generator for resource files. |
 
 ### Microsoft.CodeAnalysis.NetAnalyzers
 
@@ -128,9 +129,11 @@ For instructions on using this analyzer, see [Instructions](src/Microsoft.CodeAn
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.PublicApiAnalyzers/versions)
 
-This package contains rules to help library authors monitoring change to their public APIs. [More info about rules in this package](src/PublicApiAnalyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.md)
+### Microsoft.CodeAnalysis.ResxSourceGenerator
 
-For instructions on using this analyzer, see [Instructions](src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md).
+*Latest pre-release version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.ResxSourceGenerator.svg)]([https://www.nuget.org/packages/Microsoft.CodeAnalysis.ResxSourceGenerator](https://www.nuget.org/packages/Microsoft.CodeAnalysis.ResxSourceGenerator))</sub>
+
+This package contains a source generator for resource files that can be used as a replacement for `ResXFileCodeGenerator` and `PublicResXFileCodeGenerator`.
 
 ### MetaCompilation (prototype)
 

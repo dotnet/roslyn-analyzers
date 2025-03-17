@@ -93,6 +93,7 @@ This package contains rules for correct usage of APIs that are present only in *
 ## Other Analyzer Packages
 
 The following analyzers have moved into the [Roslyn](https://github.com/dotnet/roslyn) repo:
+
 - Microsoft.CodeAnalysis.Analyzers
 - Roslyn.Diagnostics.Analyzers
 - Microsoft.CodeAnalysis.BannedApiAnalyzers

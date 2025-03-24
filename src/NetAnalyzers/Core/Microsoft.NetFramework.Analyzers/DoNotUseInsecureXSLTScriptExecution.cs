@@ -35,11 +35,9 @@ namespace Microsoft.NetFramework.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(RuleDoNotUseInsecureXSLTScriptExecution);
 
-#pragma warning disable RS1026 // Enable concurrent execution
         public override void Initialize(AnalysisContext context)
-#pragma warning restore RS1026 // Enable concurrent execution
         {
-            //analysisContext.EnableConcurrentExecution();
+            context.EnableConcurrentExecution();
 
             // Security analyzer - analyze and report diagnostics in generated code.
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);

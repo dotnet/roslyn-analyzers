@@ -217,6 +217,7 @@ namespace Analyzer.Utilities
         public const string SystemDecimal = "System.Decimal";
         public const string SystemDiagnosticContractsContract = "System.Diagnostics.Contracts.Contract";
         public const string SystemDiagnosticsCodeAnalysisConstantExpectedAttribute = "System.Diagnostics.CodeAnalysis.ConstantExpectedAttribute";
+        public const string SystemDiagnosticsCodeAnalysisExperimentalAttribute = "System.Diagnostics.CodeAnalysis.ExperimentalAttribute";
         public const string SystemDiagnosticsCodeAnalysisNotNullAttribute = "System.Diagnostics.CodeAnalysis.NotNullAttribute";
         public const string SystemDiagnosticsCodeAnalysisNotNullIfNotNullAttribute = "System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute";
         public const string SystemDiagnosticsCodeAnalysisStringSyntaxAttributeName = "System.Diagnostics.CodeAnalysis.StringSyntaxAttribute";

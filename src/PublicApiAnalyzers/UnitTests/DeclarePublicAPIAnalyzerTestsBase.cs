@@ -3294,6 +3294,106 @@ C.C() -> void";
             await test.RunAsync();
         }
 
+        [Fact]
+        [WorkItem(7195, "https://github.com/dotnet/roslyn-analyzers/issues/7195")]
+        public async Task TestExperimentalApiWithProperty()
+        {
+            var source = $$"""
+                           using System.Diagnostics.CodeAnalysis;
+
+                           {{EnabledModifierCSharp}} class C
+                           {
+                               [Experimental("RSEXPERIMENTAL001")]
+                               {{EnabledModifierCSharp}} bool DisableNullableAnalysis { {|{{AddNewApiId}}:get|}; }
+                           }
+                           """;
+
+            const string shippedText = """
+                                       C
+                                       C.C() -> void
+                                       """;
+            const string fixedUnshippedText = """
+                                              [RSEXPERIMENTAL001]C.DisableNullableAnalysis.get -> bool
+                                              """;
+
+            var test = new CSharpCodeFixTest<DeclarePublicApiAnalyzer, DeclarePublicApiFix, XUnitVerifier>()
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+                CompilerDiagnostics = CompilerDiagnostics.None,
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalFiles =
+                    {
+                        (ShippedFileName, shippedText),
+                        (UnshippedFileName, string.Empty),
+                    },
+                },
+                FixedState =
+                {
+                    AdditionalFiles =
+                    {
+                        (ShippedFileName, shippedText),
+                        (UnshippedFileName, fixedUnshippedText),
+                    },
+                },
+            };
+
+            test.DisabledDiagnostics.AddRange(DisabledDiagnostics);
+
+            await test.RunAsync();
+        }
+
+        [Fact]
+        [WorkItem(7195, "https://github.com/dotnet/roslyn-analyzers/issues/7195")]
+        public async Task TestExperimentalApiWithAbstractProperty()
+        {
+            var source = $$"""
+                           using System.Diagnostics.CodeAnalysis;
+
+                           {{EnabledModifierCSharp}} class C
+                           {
+                               [Experimental("RSEXPERIMENTAL001")]
+                               {{EnabledModifierCSharp}} abstract bool DisableNullableAnalysis { {|{{AddNewApiId}}:get|}; }
+                           }
+                           """;
+
+            const string shippedText = """
+                                       C
+                                       C.C() -> void
+                                       """;
+            const string fixedUnshippedText = """
+                                              [RSEXPERIMENTAL001]abstract C.DisableNullableAnalysis.get -> bool
+                                              """;
+
+            var test = new CSharpCodeFixTest<DeclarePublicApiAnalyzer, DeclarePublicApiFix, XUnitVerifier>()
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+                CompilerDiagnostics = CompilerDiagnostics.None,
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalFiles =
+                    {
+                        (ShippedFileName, shippedText),
+                        (UnshippedFileName, string.Empty),
+                    },
+                },
+                FixedState =
+                {
+                    AdditionalFiles =
+                    {
+                        (ShippedFileName, shippedText),
+                        (UnshippedFileName, fixedUnshippedText),
+                    },
+                },
+            };
+
+            test.DisabledDiagnostics.AddRange(DisabledDiagnostics);
+
+            await test.RunAsync();
+        }
+
         #endregion
     }
 }

@@ -1,21 +1,20 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
-
-using Microsoft.Extensions.Logging;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.CommandLine;
-using System.CommandLine.Rendering;
+using Microsoft.Extensions.Logging;
 
 namespace PerfDiff.Logging
 {
     internal sealed class SimpleConsoleLogger : ILogger
     {
-        private readonly object _gate = new();
+        private static readonly bool ColorsAreSupported =
+            !(OperatingSystem.IsBrowser() || OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS())
+                && !Console.IsOutputRedirected;
 
-        private readonly IConsole _console;
-        private readonly ITerminal _terminal;
+        private static readonly object _gate = new();
+
         private readonly LogLevel _minimalLogLevel;
         private readonly LogLevel _minimalErrorLevel;
 
@@ -30,10 +29,8 @@ namespace PerfDiff.Logging
             [LogLevel.None] = ConsoleColor.White,
         }.ToImmutableDictionary();
 
-        public SimpleConsoleLogger(IConsole console, LogLevel minimalLogLevel, LogLevel minimalErrorLevel)
+        public SimpleConsoleLogger(LogLevel minimalLogLevel, LogLevel minimalErrorLevel)
         {
-            _terminal = console.GetTerminal();
-            _console = console;
             _minimalLogLevel = minimalLogLevel;
             _minimalErrorLevel = minimalErrorLevel;
         }
@@ -49,14 +46,8 @@ namespace PerfDiff.Logging
             {
                 var message = formatter(state, exception);
                 var logToErrorStream = logLevel >= _minimalErrorLevel;
-                if (_terminal is null)
-                {
-                    LogToConsole(_console, message, logToErrorStream);
-                }
-                else
-                {
-                    LogToTerminal(message, logLevel, logToErrorStream);
-                }
+
+                Log(message, logLevel, logToErrorStream);
             }
         }
 
@@ -70,25 +61,25 @@ namespace PerfDiff.Logging
             return NullScope.Instance;
         }
 
-        private void LogToTerminal(string message, LogLevel logLevel, bool logToErrorStream)
+        private void Log(string message, LogLevel logLevel, bool logToErrorStream)
         {
-            var messageColor = LogLevelColorMap[logLevel];
-            _terminal.ForegroundColor = messageColor;
+            if (ColorsAreSupported)
+            {
+                Console.ForegroundColor = LogLevelColorMap[logLevel];
+            }
 
-            LogToConsole(_terminal, message, logToErrorStream);
-
-            _terminal.ResetColor();
-        }
-
-        private static void LogToConsole(IConsole console, string message, bool logToErrorStream)
-        {
             if (logToErrorStream)
             {
-                console.Error.Write($"{message}{Environment.NewLine}");
+                Console.Error.WriteLine(message);
             }
             else
             {
-                console.Out.Write($"  {message}{Environment.NewLine}");
+                Console.Out.WriteLine(message);
+            }
+
+            if (ColorsAreSupported)
+            {
+                Console.ResetColor();
             }
         }
     }

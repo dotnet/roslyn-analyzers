@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">  
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net472</TargetFrameworks>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <IsShipping>true</IsShipping>
     <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>

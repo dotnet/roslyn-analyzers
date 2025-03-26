@@ -47,7 +47,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     var field = (IFieldSymbol)context.Symbol;
 
                     // FxCop compat: only analyze externally visible symbols by default.
-                    if (!context.Options.MatchesConfiguredVisibility(Rule, field, context.Compilation))
+                    if (!context.Options.MatchesConfiguredVisibility(Rule, field, context.Compilation) ||
+                        field.ContainingType is { TypeKind: TypeKind.Class, IsSealed: true })
                     {
                         return;
                     }
@@ -65,7 +66,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     var property = (IPropertySymbol)context.Symbol;
 
                     if (property.IsOverride ||
-                        property.IsImplementationOfAnyInterfaceMember())
+                        property.IsImplementationOfAnyInterfaceMember() ||
+                        property.ContainingType is { TypeKind: TypeKind.Class, IsSealed: true })
                     {
                         return;
                     }
@@ -95,7 +97,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     }
 
                     if (methodSymbol.IsOverride ||
-                        methodSymbol.IsImplementationOfAnyInterfaceMember())
+                        methodSymbol.IsImplementationOfAnyInterfaceMember() ||
+                        methodSymbol.ContainingType is { TypeKind: TypeKind.Class, IsSealed: true })
                     {
                         return;
                     }

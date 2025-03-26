@@ -132,14 +132,6 @@ This package contains rules to help library authors monitoring change to their p
 
 For instructions on using this analyzer, see [Instructions](src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md).
 
-### MetaCompilation (prototype)
-
-Created by summer 2015 interns [Zoë Petard](https://github.com/zoepetard), [Jessica Petty](https://github.com/jepetty), and [Daniel King](https://github.com/daking2014)
-
-The MetaCompilation Analyzer is an analyzer that functions as a tutorial to teach users how to write an analyzer. It uses diagnostics and code fixes to guide the user through the various steps required to create a simple analyzer. It is designed for novice analyzer developers who have some previous programming experience.
-
-For instructions on using this tutorial, see [Instructions](https://github.com/dotnet/roslyn-analyzers/blob/main/src/MetaCompilation.Analyzers/Core/ReadMe.md#instructions).
-
 ## Getting Started
 
 1. Install Visual Studio 2022 or later, with at least the following workloads:

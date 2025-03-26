@@ -249,7 +249,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                         optionsToUse = null;
                         deserializedTypes = null;
 
-                        IMethodSymbol? constructor = objectCreationOperation.Constructor;
                         if (objectCreationOperation?.Type?.Equals(dataContractSerializerTypeSymbol) == true
                             || objectCreationOperation?.Type?.Equals(dataContractJsonSerializerTypeSymbol) == true)
                         {

@@ -72,6 +72,22 @@ End Class");
         }
 
         [Fact]
+        public async Task NoDiagnosticForNullConstructor()
+        {
+            await VerifyBasicAnalyzerAsync(@"
+Class C
+    Protected Structure S
+    End Structure
+End Class
+
+Class D
+    Shared Sub M(o)
+        M(New {|BC30389:C.S|}())
+    End Sub
+End Class", "M:System.Console.WriteLine()");
+        }
+
+        [Fact]
         public async Task NoDiagnosticReportedForEmptyBannedTextAsync()
         {
             var source = @"";

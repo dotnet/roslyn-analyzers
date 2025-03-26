@@ -14,6 +14,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class DoNotRaiseReservedExceptionTypesTests
     {
+
+        [Fact]
+        public async Task NullConstructor_NoDiagnostic()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+
+Class C
+    Protected Structure S
+    End Structure
+End Class
+
+Module Test
+    Sub M(o)
+        M(New {|BC30389:C.S|}())
+    End Sub
+End Module");
+        }
+
         [Fact]
         public async Task CreateSystemNotImplementedExceptionAsync()
         {

@@ -93,7 +93,6 @@
     <MicrosoftDiagnosticsTracingTraceEventVersion>2.0.69</MicrosoftDiagnosticsTracingTraceEventVersion>
     <MicrosoftExtensionsLoggingVersion>6.0.0-preview.5.21301.5</MicrosoftExtensionsLoggingVersion>
     <MicrosoftNETCoreAppRefVersion>6.0.2</MicrosoftNETCoreAppRefVersion>
-    <MicrosoftVisualBasicVersion>10.1.0</MicrosoftVisualBasicVersion>
     <MicrosoftVisualStudioCompositionVersion>16.1.8</MicrosoftVisualStudioCompositionVersion>
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
     <PerfolizerVersion>0.2.1</PerfolizerVersion>

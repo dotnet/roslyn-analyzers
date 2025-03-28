@@ -21,10 +21,6 @@ Recently the set of analyzer packages produced by this repository have been cons
 | NuGet Package Name | Version | Summary |
 |----------|:-------:|---------|
 | Microsoft.CodeAnalysis.NetAnalyzers       | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers) | ✔️ Primary analyzer package for this repo. Included default for .NET 5+. For earlier targets [read more](#microsoftcodeanalysisnetanalyzers). |
-| Microsoft.CodeAnalysis.BannedApiAnalyzers | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.BannedApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.BannedApiAnalyzers) | ✔️ Allows banning use of arbitrary code. [Read more](#microsoftcodeanalysisbannedapianalyzers). |
-| Microsoft.CodeAnalysis.PublicApiAnalyzers | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.PublicApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.PublicApiAnalyzers) | ✔️ Helps library authors monitor changes to their public APIs. [Read more](#microsoftcodeanalysispublicapianalyzers). |
-| Microsoft.CodeAnalysis.Analyzers          | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers) | ⚠️ Intended projects providing analyzers and code fixes. [Read more](#microsoftcodeanalysisanalyzers). |
-| Roslyn.Diagnostics.Analyzers              | [![NuGet](https://img.shields.io/nuget/v/Roslyn.Diagnostics.Analyzers.svg)](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers) | ⚠️ Rules specific to the Roslyn project, not intended for general consumption. [Read more](#roslyndiagnosticsanalyzers). |
 | Microsoft.CodeAnalysis.FxCopAnalyzers     | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftcodeanalysisfxcopanalyzers). |
 | Microsoft.CodeQuality.Analyzers           | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeQuality.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftcodequalityanalyzers). |
 | Microsoft.NetCore.Analyzers               | [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetCore.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftnetcoreanalyzers). |
@@ -96,49 +92,12 @@ This package contains rules for correct usage of APIs that are present only in *
 
 ## Other Analyzer Packages
 
-### Microsoft.CodeAnalysis.Analyzers
+The following analyzers have moved into the [Roslyn](https://github.com/dotnet/roslyn) repo:
 
-*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers)</sub>
-
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.Analyzers/versions)
-
-This package contains rules for correct usage of APIs from the [Microsoft.CodeAnalysis](https://www.nuget.org/packages/Microsoft.CodeAnalysis) NuGet package, i.e. .NET Compiler Platform ("Roslyn") APIs. These are primarily aimed towards helping authors of diagnostic analyzers and code fix providers to invoke the Microsoft.CodeAnalysis APIs in a recommended manner. [More info about rules in this package](src/Microsoft.CodeAnalysis.Analyzers/Microsoft.CodeAnalysis.Analyzers.md)
-
-### Roslyn.Diagnostics.Analyzers
-
-*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Roslyn.Diagnostics.Analyzers.svg)](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers)</sub>
-
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Roslyn.Diagnostics.Analyzers/versions)
-
-This package contains rules that are very specific to the .NET Compiler Platform ("Roslyn") project, i.e. [dotnet/roslyn](https://github.com/dotnet/roslyn) repo. This analyzer package is *not intended for general consumption* outside the Roslyn repo. [More info about rules in this package](src/Roslyn.Diagnostics.Analyzers/Roslyn.Diagnostics.Analyzers.md)
-
-### Microsoft.CodeAnalysis.BannedApiAnalyzers
-
-*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.BannedApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.BannedApiAnalyzers)</sub>
-
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.BannedApiAnalyzers/versions)
-
-This package contains customizable rules for identifying references to banned APIs. [More info about rules in this package](src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Microsoft.CodeAnalysis.BannedApiAnalyzers.md)
-
-For instructions on using this analyzer, see [Instructions](src/Microsoft.CodeAnalysis.BannedApiAnalyzers/BannedApiAnalyzers.Help.md).
-
-### Microsoft.CodeAnalysis.PublicApiAnalyzers
-
-*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.PublicApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.PublicApiAnalyzers)</sub>
-
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet7/NuGet/Microsoft.CodeAnalysis.PublicApiAnalyzers/versions)
-
-This package contains rules to help library authors monitoring change to their public APIs. [More info about rules in this package](src/PublicApiAnalyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.md)
-
-For instructions on using this analyzer, see [Instructions](src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md).
-
-### MetaCompilation (prototype)
-
-Created by summer 2015 interns [Zoë Petard](https://github.com/zoepetard), [Jessica Petty](https://github.com/jepetty), and [Daniel King](https://github.com/daking2014)
-
-The MetaCompilation Analyzer is an analyzer that functions as a tutorial to teach users how to write an analyzer. It uses diagnostics and code fixes to guide the user through the various steps required to create a simple analyzer. It is designed for novice analyzer developers who have some previous programming experience.
-
-For instructions on using this tutorial, see [Instructions](https://github.com/dotnet/roslyn-analyzers/blob/main/src/MetaCompilation.Analyzers/Core/ReadMe.md#instructions).
+- Microsoft.CodeAnalysis.Analyzers
+- Roslyn.Diagnostics.Analyzers
+- Microsoft.CodeAnalysis.BannedApiAnalyzers
+- Microsoft.CodeAnalysis.PublicApiAnalyzers
 
 ## Getting Started
 

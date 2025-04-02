@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForNetAnalyzers)</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersion Condition="'$(MicrosoftCodeAnalysisVersion)' == ''">$(MicrosoftCodeAnalysisVersionForNetAnalyzers)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Microsoft.CodeAnalysis.NetAnalyzers.csproj" />
@@ -11,7 +11,7 @@
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.NetAnalyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(MicrosoftCodeAnalysisVersionForNetAnalyzers)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(MicrosoftCodeAnalysisVersion)" />
   </ItemGroup>
   <Import Project="..\..\Utilities\Compiler.CSharp\Analyzer.CSharp.Utilities.projitems" Label="Shared" />
 </Project>

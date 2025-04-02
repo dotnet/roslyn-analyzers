@@ -79,6 +79,7 @@ namespace Analyzer.Utilities
         public const string MicrosoftExtensionsLoggingILogger = "Microsoft.Extensions.Logging.ILogger";
         public const string MicrosoftExtensionsLoggingLoggerExtensions = "Microsoft.Extensions.Logging.LoggerExtensions";
         public const string MicrosoftExtensionsLoggingLoggerMessage = "Microsoft.Extensions.Logging.LoggerMessage";
+        public const string MicrosoftExtensionsLoggingLoggerMessageAttribute = "Microsoft.Extensions.Logging.LoggerMessageAttribute";
         public const string MicrosoftIdentityModelTokensAudienceValidator = "Microsoft.IdentityModel.Tokens.AudienceValidator";
         public const string MicrosoftIdentityModelTokensLifetimeValidator = "Microsoft.IdentityModel.Tokens.LifetimeValidator";
         public const string MicrosoftIdentityModelTokensSecurityToken = "Microsoft.IdentityModel.Tokens.SecurityToken";
@@ -267,6 +268,7 @@ namespace Analyzer.Utilities
         public const string SystemIOMemoryStream = "System.IO.MemoryStream";
         public const string SystemIOPath = "System.IO.Path";
         public const string SystemIOStream = "System.IO.Stream";
+        public const string SystemIOStreamReader = "System.IO.StreamReader";
         public const string SystemIOStringReader = "System.IO.StringReader";
         public const string SystemIOUnmanagedMemoryStream = "System.IO.UnmanagedMemoryStream";
         public const string SystemIParsable1 = "System.IParsable`1";
@@ -421,6 +423,8 @@ namespace Analyzer.Utilities
         public const string SystemTextEncoding = "System.Text.Encoding";
         public const string SystemTextJsonJsonSerializerOptions = "System.Text.Json.JsonSerializerOptions";
         public const string SystemTextJsonJsonSerializer = "System.Text.Json.JsonSerializer";
+        public const string SystemTextRegularExpressionsGroup = "System.Text.RegularExpressions.Group";
+        public const string SystemTextRegularExpressionsMatchCollection = "System.Text.RegularExpressions.MatchCollection";
         public const string SystemTextRegularExpressionsRegex = "System.Text.RegularExpressions.Regex";
         public const string SystemTextStringBuilder = "System.Text.StringBuilder";
         public const string SystemThreadStaticAttribute = "System.ThreadStaticAttribute";

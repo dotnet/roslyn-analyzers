@@ -4,8 +4,7 @@
     <TargetFramework>$(NetCurrent)</TargetFramework>
     <NonShipping>true</NonShipping>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
-    <!-- Excluded from source build. Otherwise this should be conditionalized to only be set when DotNetBuildSourceOnly != true -->
-    <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForToolsAndUtilities)</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersion Condition="'$(MicrosoftCodeAnalysisVersion)' == ''">$(MicrosoftCodeAnalysisVersionForToolsAndUtilities)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisVersion)" />

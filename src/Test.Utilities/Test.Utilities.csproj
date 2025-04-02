@@ -5,14 +5,12 @@
     <NonShipping>true</NonShipping>
     <IsShipping>false</IsShipping>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
-    <!-- Excluded from source build. Otherwise this should be conditionalized to only be set when DotNetBuildSourceOnly != true -->
-    <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForToolsAndUtilities)</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersion Condition="'$(MicrosoftCodeAnalysisVersion)' == ''">$(MicrosoftCodeAnalysisVersionForToolsAndUtilities)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
   <PropertyGroup>
     <DefineConstants>TEST_UTILITIES</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualBasic" Version="$(MicrosoftVisualBasicVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing" Version="$(MicrosoftCodeAnalysisTestingVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing" Version="$(MicrosoftCodeAnalysisTestingVersion)" />

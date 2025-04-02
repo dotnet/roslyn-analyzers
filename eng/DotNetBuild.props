@@ -1,0 +1,10 @@
+<!-- When altering this file, include @dotnet/product-construction as a reviewer. -->
+
+<Project>
+
+  <PropertyGroup>
+    <GitHubRepositoryName>roslyn-analyzers</GitHubRepositoryName>
+    <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+  </PropertyGroup>
+
+</Project>

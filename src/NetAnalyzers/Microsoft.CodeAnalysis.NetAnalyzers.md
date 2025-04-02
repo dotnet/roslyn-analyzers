@@ -1860,6 +1860,42 @@ Use 'Convert.ToHexString' or 'Convert.ToHexStringLower' when encoding bytes to a
 |CodeFix|True|
 ---
 
+## [CA1873](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1873): Avoid potentially expensive logging
+
+In many situations, logging is disabled or set to a log level that results in an unnecessary evaluation for this argument.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
+## [CA1874](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1874): Use 'Regex.IsMatch'
+
+'Regex.IsMatch' is simpler and faster than 'Regex.Match(...).Success'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1875](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1875): Use 'Regex.Count'
+
+'Regex.Count' is simpler and faster than 'Regex.Matches(...).Count'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
 
 If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.
@@ -2073,6 +2109,18 @@ A call to 'Stream.Read' may return fewer bytes than requested, resulting in unre
 ## [CA2023](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2023): Invalid braces in message template
 
 The braces present in the message template are invalid. Ensure any braces in the message template are valid opening/closing braces, or are escaped.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA2024](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2024): Do not use 'StreamReader.EndOfStream' in async methods
+
+The property 'StreamReader.EndOfStream' can cause unintended synchronous blocking when no data is buffered. Instead, use 'StreamReader.ReadLineAsync' directly, which returns 'null' when reaching the end of the stream.
 
 |Item|Value|
 |-|-|

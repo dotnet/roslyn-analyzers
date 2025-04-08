@@ -1,4 +1,3 @@
-id: 
 name: GitOps.PullRequestIssueManagement
 description: GitOps.PullRequestIssueManagement primitive
 owner: 
@@ -7,40 +6,6 @@ disabled: false
 where: 
 configuration:
   resourceManagementConfiguration:
-    scheduledSearches:
-    - description: 
-      frequencies:
-      - hourly:
-          hour: 6
-      filters:
-      - isIssue
-      - isOpen
-      - hasLabel:
-          label: needs-author-feedback
-      - noActivitySince:
-          days: 10
-      - isNotLabeledWith:
-          label: status-no-recent-activity
-      actions:
-      - addLabel:
-          label: status-no-recent-activity
-      - addReply:
-          reply: This issue has been automatically marked as stale because it has been marked as requiring author feedback but has not had any activity for **10 days**.
-    - description: 
-      frequencies:
-      - hourly:
-          hour: 6
-      filters:
-      - isIssue
-      - isOpen
-      - hasLabel:
-          label: duplicate
-      - noActivitySince:
-          days: 1
-      actions:
-      - addReply:
-          reply: This issue has been marked as duplicate and has not had any activity for **1 day**. It will be closed for housekeeping purposes.
-      - closeIssue
     eventResponderTasks:
     - if:
       - payloadType: Issues
@@ -73,5 +38,3 @@ configuration:
 
             You can refer to the [.NET SDK breaking change guidelines](https://github.com/dotnet/sdk/blob/main/documentation/project-docs/breaking-change-guidelines.md)
       description: Add breaking change instructions to PR.
-onFailure: 
-onSuccess: 

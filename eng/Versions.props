@@ -85,7 +85,7 @@
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
     <PerfolizerVersion>0.2.1</PerfolizerVersion>
     <SQLitePCLRawVersion>1.1.2</SQLitePCLRawVersion>
-    <SystemCommandLineVersion>2.0.0-beta4.25072.1</SystemCommandLineVersion>
+    <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <SystemComponentModelCompositionVersion>4.7.0</SystemComponentModelCompositionVersion>
     <SystemCompositionVersion>8.0.0-preview.4.23259.5</SystemCompositionVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>

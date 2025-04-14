@@ -6,9 +6,6 @@ using Microsoft.Extensions.Logging;
 using PerfDiff.Logging;
 
 using System;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.CommandLine.Parsing;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,48 +15,26 @@ namespace PerfDiff
     internal sealed class Program
     {
         internal const int UnhandledExceptionExitCode = 1;
-        private static ParseResult? s_parseResult;
 
-        private static async Task<int> Main(string[] args)
-        {
-            var rootCommand = DiffCommand.CreateCommandLineOptions();
-            rootCommand.Handler = CommandHandler.Create(new DiffCommand.Handler(RunAsync));
-
-            // Parse the incoming args so we can give warnings when deprecated options are used.
-            s_parseResult = rootCommand.Parse(args);
-
-            return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
-        }
+        private static Task<int> Main(string[] args)
+            => DiffCommand.CreateCommandLineOptions().Parse(args).InvokeAsync();
 
         public static async Task<int> RunAsync(
             string baseline,
             string results,
             string? verbosity,
             bool failOnRegression,
-            IConsole console)
+            CancellationToken token)
         {
-            if (s_parseResult == null)
-            {
-                return 1;
-            }
-
             // Setup logging.
             var logLevel = GetLogLevel(verbosity);
-            var logger = SetupLogging(console, minimalLogLevel: logLevel, minimalErrorLevel: LogLevel.Warning);
-
-            // Hook so we can cancel and exit when ctrl+c is pressed.
-            var cancellationTokenSource = new CancellationTokenSource();
-            Console.CancelKeyPress += (sender, e) =>
-            {
-                e.Cancel = true;
-                cancellationTokenSource.Cancel();
-            };
+            var logger = SetupLogging(minimalLogLevel: logLevel, minimalErrorLevel: LogLevel.Warning);
 
             var currentDirectory = string.Empty;
 
             try
             {
-                var exitCode = await PerfDiff.CompareAsync(baseline, results, failOnRegression, logger, cancellationTokenSource.Token).ConfigureAwait(false);
+                var exitCode = await PerfDiff.CompareAsync(baseline, results, failOnRegression, logger, token).ConfigureAwait(false);
                 return exitCode;
             }
             catch (FileNotFoundException fex)
@@ -83,10 +58,10 @@ namespace PerfDiff
                 }
             }
 
-            static ILogger<Program> SetupLogging(IConsole console, LogLevel minimalLogLevel, LogLevel minimalErrorLevel)
+            static ILogger<Program> SetupLogging(LogLevel minimalLogLevel, LogLevel minimalErrorLevel)
             {
                 var serviceCollection = new ServiceCollection();
-                serviceCollection.AddSingleton(new LoggerFactory().AddSimpleConsole(console, minimalLogLevel, minimalErrorLevel));
+                serviceCollection.AddSingleton(new LoggerFactory().AddSimpleConsole(minimalLogLevel, minimalErrorLevel));
                 serviceCollection.AddLogging();
 
                 var serviceProvider = serviceCollection.BuildServiceProvider();

@@ -87,7 +87,6 @@
     <SQLitePCLRawVersion>1.1.2</SQLitePCLRawVersion>
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <SystemComponentModelCompositionVersion>4.7.0</SystemComponentModelCompositionVersion>
-    <SystemCompositionVersion>8.0.0-preview.4.23259.5</SystemCompositionVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
   </PropertyGroup>

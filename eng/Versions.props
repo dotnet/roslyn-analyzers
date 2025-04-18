@@ -1,12 +1,8 @@
 <Project>
   <Import Project="$(SourceBuildPackageVersionPropsPath)" Condition="'$(SourceBuildPackageVersionPropsPath)' != ''" />
   <PropertyGroup>
-    <VersionPrefix>3.12.0</VersionPrefix>
-    <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
-    <NetAnalyzersVersionPrefix>10.0.0</NetAnalyzersVersionPrefix>
-    <NetAnalyzersPreReleaseVersionLabel>preview</NetAnalyzersPreReleaseVersionLabel>
-    <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
-    <MetricsVersionPrefix>4.0.0</MetricsVersionPrefix>
+    <VersionPrefix>10.0.0</VersionPrefix>
+    <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
     <!--
         When StabilizePackageVersion is set to 'true', this branch will produce stable outputs for 'Shipping' packages
     -->
@@ -17,6 +13,8 @@
     <UseVSTestRunner>true</UseVSTestRunner>
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
+    <!-- Don't allow netstandard1.x dependencies when building from source in this repository. -->
+    <FlagNetStandard1XDependencies Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">true</FlagNetStandard1XDependencies>
     <!-- Toolset -->
     <MicrosoftVSSDKBuildToolsVersion>17.0.1056-Dev17PIAs-g9dffd635</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftVSSDKVSDConfigToolVersion>16.0.2032702</MicrosoftVSSDKVSDConfigToolVersion>
@@ -48,24 +46,16 @@
 
            Example of surface area usage:
 
-           <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers)</MicrosoftCodeAnalysisVersion>
+           <MicrosoftCodeAnalysisVersion Condition="'$(MicrosoftCodeAnalysisVersion)' == ''">$(MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers)</MicrosoftCodeAnalysisVersion>
 
            Example of executable usage:
 
-          <MicrosoftCodeAnalysisVersion Condition="'$(DotNetBuildSourceOnly)' != 'true' or '$(DotNetBuildOrchestrator)' != 'true'">$(MicrosoftCodeAnalysisVersionForExecution)</MicrosoftCodeAnalysisVersion>
+          <MicrosoftCodeAnalysisVersion Condition="'$(MicrosoftCodeAnalysisVersion)' == ''">$(MicrosoftCodeAnalysisVersionForExecution)</MicrosoftCodeAnalysisVersion>
     -->
     <!-- Microsoft.CodeAnalysis versions for different purposes. -->
     <!-- Surface area that various projects compile against. These should have source-build reference packages -->
-    <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.11.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
-    <MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>1.2.1</MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>
-    <MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>
-    <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>
-    <MicrosoftCodeAnalysisVersionForResxSourceGenerators>4.0.1</MicrosoftCodeAnalysisVersionForResxSourceGenerators>
     <MicrosoftCodeAnalysisVersionForNetAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForNetAnalyzers>
-    <MicrosoftCodeAnalysisVersionForTextAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForTextAnalyzers>
-    <MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>
     <MicrosoftCodeAnalysisVersionForToolsAndUtilities>3.11.0</MicrosoftCodeAnalysisVersionForToolsAndUtilities>
-    <MicrosoftCodeAnalysisVersionForMetrics>4.0.1</MicrosoftCodeAnalysisVersionForMetrics>
     <!-- Versions for tests and general utility execution. -->
     <!-- This version is for utility and executable assemblies. The version here should not overlap with any of the surface
          area versions. -->
@@ -91,15 +81,12 @@
     <MicrosoftDiagnosticsTracingTraceEventVersion>2.0.69</MicrosoftDiagnosticsTracingTraceEventVersion>
     <MicrosoftExtensionsLoggingVersion>6.0.0-preview.5.21301.5</MicrosoftExtensionsLoggingVersion>
     <MicrosoftNETCoreAppRefVersion>6.0.2</MicrosoftNETCoreAppRefVersion>
-    <MicrosoftVisualBasicVersion>10.1.0</MicrosoftVisualBasicVersion>
     <MicrosoftVisualStudioCompositionVersion>16.1.8</MicrosoftVisualStudioCompositionVersion>
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
     <PerfolizerVersion>0.2.1</PerfolizerVersion>
     <SQLitePCLRawVersion>1.1.2</SQLitePCLRawVersion>
-    <SystemCommandLineRenderingVersion>2.0.0-beta1.20074.1</SystemCommandLineRenderingVersion>
-    <SystemCommandLineVersion>2.0.0-beta1.21216.1</SystemCommandLineVersion>
+    <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <SystemComponentModelCompositionVersion>4.7.0</SystemComponentModelCompositionVersion>
-    <SystemCompositionVersion>8.0.0-preview.4.23259.5</SystemCompositionVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
   </PropertyGroup>

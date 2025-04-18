@@ -67,6 +67,21 @@
         <target state="translated">Sabit dizileri bağımsız değişkenler olarak kullanmaktan sakının</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidPotentiallyExpensiveCallWhenLoggingDescription">
+        <source>In many situations, logging is disabled or set to a log level that results in an unnecessary evaluation for this argument.</source>
+        <target state="new">In many situations, logging is disabled or set to a log level that results in an unnecessary evaluation for this argument.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidPotentiallyExpensiveCallWhenLoggingMessage">
+        <source>Evaluation of this argument may be expensive and unnecessary if logging is disabled</source>
+        <target state="new">Evaluation of this argument may be expensive and unnecessary if logging is disabled</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidPotentiallyExpensiveCallWhenLoggingTitle">
+        <source>Avoid potentially expensive logging</source>
+        <target state="new">Avoid potentially expensive logging</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsDescription">
         <source>Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead. Single use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.</source>
         <target state="translated">Her serileştirme işlemi için yeni bir 'JsonSerializerOptions' örneği oluşturmaktan kaçının. Bunun yerine örnekleri önbelleğe alıp yeniden kullanın. Tek kullanımlık 'JsonSerializerOptions' örnekleri uygulamanızın performansını önemli ölçüde düşürebilir.</target>
@@ -3146,6 +3161,46 @@ Genel türlerde genişletme ve kullanıcı tanımlı dönüştürmeler desteklen
       <trans-unit id="UseRSAWithSufficientKeySizeMessage">
         <source>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
         <target state="translated">Asimetrik şifreleme algoritması {0} anahtar boyutu 2048'den az. Bunun yerine en az 2048 anahtar boyutuna, ECDH veya ECDSA algoritmasına sahip bir RSA'ya geçiş yapın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexCountDescription">
+        <source>'Regex.Count' is simpler and faster than 'Regex.Matches(...).Count'.</source>
+        <target state="new">'Regex.Count' is simpler and faster than 'Regex.Matches(...).Count'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexCountFix">
+        <source>Use 'Regex.Count'</source>
+        <target state="new">Use 'Regex.Count'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexCountMessage">
+        <source>Use 'Regex.Count' instead of 'Regex.Matches(...).Count'</source>
+        <target state="new">Use 'Regex.Count' instead of 'Regex.Matches(...).Count'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexCountTitle">
+        <source>Use 'Regex.Count'</source>
+        <target state="new">Use 'Regex.Count'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexIsMatchDescription">
+        <source>'Regex.IsMatch' is simpler and faster than 'Regex.Match(...).Success'.</source>
+        <target state="new">'Regex.IsMatch' is simpler and faster than 'Regex.Match(...).Success'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexIsMatchFix">
+        <source>Use 'Regex.IsMatch'</source>
+        <target state="new">Use 'Regex.IsMatch'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexIsMatchMessage">
+        <source>Use 'Regex.IsMatch' instead of 'Regex.Match(...).Success'</source>
+        <target state="new">Use 'Regex.IsMatch' instead of 'Regex.Match(...).Success'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexIsMatchTitle">
+        <source>Use 'Regex.IsMatch'</source>
+        <target state="new">Use 'Regex.IsMatch'</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSearchValuesCodeFixTitle">

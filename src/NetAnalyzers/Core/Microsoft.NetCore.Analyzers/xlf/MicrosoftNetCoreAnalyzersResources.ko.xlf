@@ -67,6 +67,21 @@
         <target state="translated">상수 배열을 인수로 사용하지 않습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidPotentiallyExpensiveCallWhenLoggingDescription">
+        <source>In many situations, logging is disabled or set to a log level that results in an unnecessary evaluation for this argument.</source>
+        <target state="new">In many situations, logging is disabled or set to a log level that results in an unnecessary evaluation for this argument.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidPotentiallyExpensiveCallWhenLoggingMessage">
+        <source>Evaluation of this argument may be expensive and unnecessary if logging is disabled</source>
+        <target state="new">Evaluation of this argument may be expensive and unnecessary if logging is disabled</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidPotentiallyExpensiveCallWhenLoggingTitle">
+        <source>Avoid potentially expensive logging</source>
+        <target state="new">Avoid potentially expensive logging</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidSingleUseOfLocalJsonSerializerOptionsDescription">
         <source>Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead. Single use 'JsonSerializerOptions' instances can substantially degrade the performance of your application.</source>
         <target state="translated">모든 직렬화 작업에 대해 새 'JsonSerializerOptions' 인스턴스를 만들지 마세요. 대신 인스턴스를 캐시하고 다시 사용합니다. 단일 사용 'JsonSerializerOptions' 인스턴스는 애플리케이션의 성능을 크게 저하시킬 수 있습니다.</target>
@@ -3146,6 +3161,46 @@ Enumerable.OfType&lt;T&gt;에서 사용하는 제네릭 형식 검사(C# 'is' �
       <trans-unit id="UseRSAWithSufficientKeySizeMessage">
         <source>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
         <target state="translated">비대칭 암호화 알고리즘 {0}의 키 크기가 2048보다 작습니다. 최소 2048 키 크기, ECDH 또는 ECDSA 알고리즘이 포함된 RSA로 전환하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexCountDescription">
+        <source>'Regex.Count' is simpler and faster than 'Regex.Matches(...).Count'.</source>
+        <target state="new">'Regex.Count' is simpler and faster than 'Regex.Matches(...).Count'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexCountFix">
+        <source>Use 'Regex.Count'</source>
+        <target state="new">Use 'Regex.Count'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexCountMessage">
+        <source>Use 'Regex.Count' instead of 'Regex.Matches(...).Count'</source>
+        <target state="new">Use 'Regex.Count' instead of 'Regex.Matches(...).Count'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexCountTitle">
+        <source>Use 'Regex.Count'</source>
+        <target state="new">Use 'Regex.Count'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexIsMatchDescription">
+        <source>'Regex.IsMatch' is simpler and faster than 'Regex.Match(...).Success'.</source>
+        <target state="new">'Regex.IsMatch' is simpler and faster than 'Regex.Match(...).Success'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexIsMatchFix">
+        <source>Use 'Regex.IsMatch'</source>
+        <target state="new">Use 'Regex.IsMatch'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexIsMatchMessage">
+        <source>Use 'Regex.IsMatch' instead of 'Regex.Match(...).Success'</source>
+        <target state="new">Use 'Regex.IsMatch' instead of 'Regex.Match(...).Success'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRegexIsMatchTitle">
+        <source>Use 'Regex.IsMatch'</source>
+        <target state="new">Use 'Regex.IsMatch'</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSearchValuesCodeFixTitle">

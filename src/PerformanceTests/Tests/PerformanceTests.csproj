@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <LangVersion>preview</LangVersion>
     <Nullable>disable</Nullable>
     <OutputType>Exe</OutputType>
@@ -15,7 +15,7 @@
     <Configuration>Release</Configuration>
     <IsPackable>false</IsPackable>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
-    <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForTests)</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersion Condition="'$(MicrosoftCodeAnalysisVersion)' == ''">$(MicrosoftCodeAnalysisVersionForTests)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="$(BenchmarkDotNetVersion)" />

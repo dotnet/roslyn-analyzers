@@ -1376,6 +1376,30 @@
   <data name="UseEnvironmentCurrentManagedThreadIdFix" xml:space="preserve">
     <value>Use 'Environment.CurrentManagedThreadId'</value>
   </data>
+  <data name="UseRegexCountDescription" xml:space="preserve">
+    <value>'Regex.Count' is simpler and faster than 'Regex.Matches(...).Count'.</value>
+  </data>
+  <data name="UseRegexCountMessage" xml:space="preserve">
+    <value>Use 'Regex.Count' instead of 'Regex.Matches(...).Count'</value>
+  </data>
+  <data name="UseRegexCountTitle" xml:space="preserve">
+    <value>Use 'Regex.Count'</value>
+  </data>
+  <data name="UseRegexCountFix" xml:space="preserve">
+    <value>Use 'Regex.Count'</value>
+  </data>
+  <data name="UseRegexIsMatchDescription" xml:space="preserve">
+    <value>'Regex.IsMatch' is simpler and faster than 'Regex.Match(...).Success'.</value>
+  </data>
+  <data name="UseRegexIsMatchMessage" xml:space="preserve">
+    <value>Use 'Regex.IsMatch' instead of 'Regex.Match(...).Success'</value>
+  </data>
+  <data name="UseRegexIsMatchTitle" xml:space="preserve">
+    <value>Use 'Regex.IsMatch'</value>
+  </data>
+  <data name="UseRegexIsMatchFix" xml:space="preserve">
+    <value>Use 'Regex.IsMatch'</value>
+  </data>
   <data name="ThreadStaticOnNonStaticFieldDescription" xml:space="preserve">
     <value>'ThreadStatic' only affects static fields. When applied to instance fields, it has no impact on behavior.</value>
   </data>
@@ -2131,6 +2155,15 @@ Widening and user defined conversions are not supported with generic types.</val
   </data>
   <data name="UseStringMethodCharOverloadWithSingleCharactersTitle" xml:space="preserve">
     <value>Use char overload</value>
+  </data>
+  <data name="AvoidPotentiallyExpensiveCallWhenLoggingDescription" xml:space="preserve">
+    <value>In many situations, logging is disabled or set to a log level that results in an unnecessary evaluation for this argument.</value>
+  </data>
+  <data name="AvoidPotentiallyExpensiveCallWhenLoggingMessage" xml:space="preserve">
+    <value>Evaluation of this argument may be expensive and unnecessary if logging is disabled</value>
+  </data>
+  <data name="AvoidPotentiallyExpensiveCallWhenLoggingTitle" xml:space="preserve">
+    <value>Avoid potentially expensive logging</value>
   </data>
   <data name="AvoidSingleUseOfLocalJsonSerializerOptionsMessage" xml:space="preserve">
     <value>Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead.</value>

@@ -89,5 +89,8 @@
     <SystemComponentModelCompositionVersion>4.7.0</SystemComponentModelCompositionVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
+    <MicrosoftCodeAnalysisPackageVersion>5.0.0-1.25223.119</MicrosoftCodeAnalysisPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>10.0.0-beta.25223.119</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-1.25223.119</MicrosoftNetCompilersToolsetPackageVersion>
   </PropertyGroup>
 </Project>

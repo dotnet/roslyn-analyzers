@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="roslyn-analyzers" Sha="721dc7a2a59416b21fc49447d264009d708d6000" BarId="265489" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.CodeAnalysis" Version="3.11.0">
-      <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>ae1fff344d46976624e68ae17164e0607ab68b10</Sha>
+    <Dependency Name="Microsoft.CodeAnalysis" Version="5.0.0-1.25223.119">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>721dc7a2a59416b21fc49447d264009d708d6000</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23374.3">
@@ -19,9 +20,9 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25206.1">
-      <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>37f732fbfa006386f89a16be417278ea4fee375e</Sha>
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25223.119">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>721dc7a2a59416b21fc49447d264009d708d6000</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
     <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25206.1">
@@ -29,13 +30,13 @@
       <Sha>37f732fbfa006386f89a16be417278ea4fee375e</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.25206.1">
-      <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>37f732fbfa006386f89a16be417278ea4fee375e</Sha>
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.25223.119">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>721dc7a2a59416b21fc49447d264009d708d6000</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.5.0">
-      <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>6a5a63bbc9f4449d9bd1e95a8f9624939c3ccdc3</Sha>
+    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="5.0.0-1.25223.119">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>721dc7a2a59416b21fc49447d264009d708d6000</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

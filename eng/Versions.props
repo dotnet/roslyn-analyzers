@@ -74,6 +74,8 @@
     <MicrosoftVisualStudioThreadingAnalyzersVersion>17.0.26-alpha</MicrosoftVisualStudioThreadingAnalyzersVersion>
     <!-- Roslyn Testing -->
     <MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.24314.1</MicrosoftCodeAnalysisTestingVersion>
+    <!-- arcade -->
+    <MicrosoftDotNetXliffTasksVersion>10.0.0-beta.25223.119</MicrosoftDotNetXliffTasksVersion>
     <!-- Libs -->
     <BenchmarkDotNetVersion>0.13.0</BenchmarkDotNetVersion>
     <HumanizerVersion>2.14.1</HumanizerVersion>

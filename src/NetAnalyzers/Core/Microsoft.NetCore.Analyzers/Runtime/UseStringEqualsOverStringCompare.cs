@@ -301,7 +301,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         /// <summary>
-        /// Returns <c>true</c> if the specified <see cref="IBinaryOperation"/> or <see cref="IInvocationOperation"/>:
+        /// Returns <c>true</c> if the specified <paramref name="operation"/> is an <see cref="IBinaryOperation"/> or <see cref="IInvocationOperation"/>:
         /// <list type="bullet">
         /// <item>Is an equals or not-equals operation</item>
         /// <item>One operand is a literal zero</item>
@@ -310,7 +310,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         /// </summary>
         /// <param name="operation">The operation to check</param>
         /// <param name="symbols">The cache of symbols to be used for checking against known symbols.</param>
-        /// <returns><c>true> if the operation is one of the matching symbols.</returns>
+        /// <returns><c>true</c> if the <paramref name="operation"/> is one of the matching symbols.</returns>
         internal static bool IsOrdinalStringStringCase(IOperation operation, RequiredSymbols symbols)
         {
             //  Don't report a diagnostic if either the string.CompareOrdinal overload or the

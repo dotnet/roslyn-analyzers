@@ -1,9 +1,6 @@
-name: GitOps.PullRequestIssueManagement
-description: GitOps.PullRequestIssueManagement primitive
-owner: null
+name: breaking-change
+description: Automatically apply the label and comment needed to ensure breaking changes are documented properly when the 'breaking-change' label is applied.
 resource: repository
-disabled: false
-where: null
 configuration:
   resourceManagementConfiguration:
     eventResponderTasks:

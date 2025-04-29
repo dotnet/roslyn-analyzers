@@ -1,5 +1,7 @@
 <Project>
+
   <PropertyGroup>
     <UseDotNetCertificate>true</UseDotNetCertificate>
   </PropertyGroup>
+
 </Project>

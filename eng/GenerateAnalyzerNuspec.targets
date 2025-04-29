@@ -1,5 +1,5 @@
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information. -->
-<Project>  
+<Project>
+
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
@@ -165,4 +165,5 @@
 
     <Exec Command='"$(DotNetExecutable)" --roll-forward major "$(_GenerateAnalyzerNuspecPath)" "$(NuspecFile)" "$(AssetsDir)$(EscapeDirectorySuffix)" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFrameworksForPackage)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(PackageReadmeFileSource)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(AnalyzerConfigurationFileDir)" "$(AnalyzerConfigurationFileName)" "$(_GeneratedGlobalAnalyzerConfigsDir)"' />
   </Target>
+
 </Project>

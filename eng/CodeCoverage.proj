@@ -1,4 +1,5 @@
 <Project DefaultTargets="Codecov">
+
   <PropertyGroup>
     <Language>C#</Language>
   </PropertyGroup>
@@ -37,4 +38,5 @@
   </Target>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+
 </Project>

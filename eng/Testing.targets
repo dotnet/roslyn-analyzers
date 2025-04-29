@@ -1,4 +1,5 @@
 <Project>
+
   <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
     <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --blame</TestRunnerAdditionalArguments>
     <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --blame-hang-dump-type full</TestRunnerAdditionalArguments>
@@ -11,4 +12,5 @@
     <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --test-adapter-path "$(Pkgcoverlet_collector)/build/netstandard1.0"</TestRunnerAdditionalArguments>
     <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --settings "$(RepoRoot)/eng/CodeCoverage.runsettings"</TestRunnerAdditionalArguments>
   </PropertyGroup>
+
 </Project>

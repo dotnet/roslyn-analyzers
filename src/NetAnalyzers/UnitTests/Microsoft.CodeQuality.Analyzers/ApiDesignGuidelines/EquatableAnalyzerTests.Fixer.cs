@@ -1,6 +1,8 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EquatableAnalyzer,
@@ -167,6 +169,76 @@ struct S : IEquatable<S>
     }
 }
 ");
+        }
+
+        [Fact]
+        public async Task CodeFixWhenNullableEnabledWithAnnotatedReferenceAssembliesAsync()
+        {
+            await new VerifyCS.Test()
+            {
+                TestCode = """
+                    using System;
+                    
+                    #nullable enable
+                    
+                    class {|CA1067:C|} : IEquatable<C>
+                    {
+                        public bool Equals(C? other) => true;
+                    }
+                    """,
+                FixedCode = """
+                    using System;
+                    
+                    #nullable enable
+                    
+                    class C : IEquatable<C>
+                    {
+                        public bool Equals(C? other) => true;
+                    
+                        public override bool Equals(object? obj)
+                        {
+                            return Equals(obj as C);
+                        }
+                    }
+                    """,
+                LanguageVersion = LanguageVersion.CSharp8,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net80
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task CodeFixWhenNullableEnabledWithUnannotatedReferenceAssembliesAsync()
+        {
+            await new VerifyCS.Test()
+            {
+                TestCode = """
+                    using System;
+                    
+                    #nullable enable
+                    
+                    class {|CA1067:C|} : IEquatable<C>
+                    {
+                        public bool Equals(C? other) => true;
+                    }
+                    """,
+                FixedCode = """
+                    using System;
+                    
+                    #nullable enable
+                    
+                    class C : IEquatable<C>
+                    {
+                        public bool Equals(C? other) => true;
+                    
+                        public override bool Equals(object obj)
+                        {
+                            return Equals(obj as C);
+                        }
+                    }
+                    """,
+                LanguageVersion = LanguageVersion.CSharp8,
+                ReferenceAssemblies = ReferenceAssemblies.NetStandard.NetStandard20
+            }.RunAsync();
         }
     }
 }

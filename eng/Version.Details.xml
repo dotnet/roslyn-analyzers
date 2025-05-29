@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="roslyn-analyzers" Sha="f5705c8f4c5079bba77bae8698ba1583bde0388c" BarId="269610" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="roslyn-analyzers" Sha="0a01b394b186e190a80cb55740c13f6293cf5446" BarId="269884" />
   <ProductDependencies>
     <Dependency Name="Microsoft.CodeAnalysis" Version="3.11.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>
@@ -8,13 +8,13 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25276.103">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25278.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>f5705c8f4c5079bba77bae8698ba1583bde0388c</Sha>
+      <Sha>0a01b394b186e190a80cb55740c13f6293cf5446</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.25276.103">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.25278.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>f5705c8f4c5079bba77bae8698ba1583bde0388c</Sha>
+      <Sha>0a01b394b186e190a80cb55740c13f6293cf5446</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.5.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>

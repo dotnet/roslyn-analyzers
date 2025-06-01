@@ -13,7 +13,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
     /// <summary>
     /// Operation visitor to flow the GlobalFlowState values across a given statement in a basic block.
     /// </summary>
-    internal abstract class GlobalFlowStateValueSetFlowOperationVisitor
+    public abstract class GlobalFlowStateValueSetFlowOperationVisitor
         : GlobalFlowStateDataFlowOperationVisitor<GlobalFlowStateAnalysisContext, GlobalFlowStateAnalysisResult, GlobalFlowStateAnalysisValueSet>
     {
         protected GlobalFlowStateValueSetFlowOperationVisitor(GlobalFlowStateAnalysisContext analysisContext, bool hasPredicatedGlobalState)

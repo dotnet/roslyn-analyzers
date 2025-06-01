@@ -7,7 +7,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
     /// <summary>
     /// Abstract analysis value for <see cref="GlobalFlowStateAnalysis"/>.
     /// </summary>
-    internal interface IAbstractAnalysisValue : IEquatable<IAbstractAnalysisValue>
+    public interface IAbstractAnalysisValue : IEquatable<IAbstractAnalysisValue>
     {
         /// <summary>
         /// Return negated value if the analysis value is a predicated value.

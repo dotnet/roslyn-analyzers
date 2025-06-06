@@ -3,14 +3,14 @@
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Analyzer.Utilities;
 using System.Threading;
+using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Editing;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -135,12 +135,19 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     : GetReturnStatementForImplicitStruct(generator, typeSymbol, argumentName);
             }
 
+            var compilation = editor.SemanticModel.Compilation;
+            var objectEqualsMethod = (IMethodSymbol?)compilation.ObjectType
+                .GetMembers(nameof(Equals))
+                .FirstOrDefault(m => m is IMethodSymbol { IsStatic: false, DeclaredAccessibility: Accessibility.Public, Parameters: [{ Type.SpecialType: SpecialType.System_Object }] });
+            // We can get either `object` or `object?` here depending of which reference assemblies are used in the project
+            var parameterTypeOfObjectEqualsMethod = objectEqualsMethod?.Parameters[0].Type ?? compilation.ObjectType;
+
             var equalsMethod = generator.MethodDeclaration(
                 WellKnownMemberNames.ObjectEquals,
                 new[]
                 {
                     generator.ParameterDeclaration(argumentName.ToString(),
-                        generator.TypeExpression(SpecialType.System_Object))
+                        generator.TypeExpression(parameterTypeOfObjectEqualsMethod))
                 },
                 returnType: generator.TypeExpression(SpecialType.System_Boolean),
                 accessibility: Accessibility.Public,

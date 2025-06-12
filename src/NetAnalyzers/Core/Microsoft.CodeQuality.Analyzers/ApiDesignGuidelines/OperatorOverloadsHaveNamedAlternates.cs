@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -113,7 +113,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 IPropertySymbol property = typeSymbol.GetMembers(IsTrueText).OfType<IPropertySymbol>().FirstOrDefault();
                 if (property == null || property.Type.SpecialType != SpecialType.System_Boolean)
                 {
-                    symbolContext.ReportDiagnostic(CreateDiagnostic(PropertyRule, GetSymbolLocation(methodSymbol), AddAlternateText, IsTrueText, operatorName));
+                    // don't report a diagnostic on the `op_False` method because then the user would see two diagnostics for what is really one error
+                    // special-case looking for `IsTrue` instance property
+                    // named properties can't be overloaded so there will only ever be 0 or 1
+                    IPropertySymbol? property = GetIsTrueProperty(typeSymbol);
+                    if (property == null || property.Type.SpecialType != SpecialType.System_Boolean)
+                    {
+                        symbolContext.ReportDiagnostic(CreateDiagnostic(PropertyRule, GetSymbolLocation(methodSymbol), AddAlternateText, IsTrueText, operatorName));
+                    }
+                    else if (!property.IsPublic())
+                    {
+                        symbolContext.ReportDiagnostic(CreateDiagnostic(VisibilityRule, GetSymbolLocation(property), FixVisibilityText, IsTrueText, operatorName));
+                    }
                 }
                 else if (!property.IsPublic())
                 {
@@ -136,9 +147,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     unmatchedMethods.Add(expectedGroup.AlternateMethod2);
                 }
 
-                foreach (IMethodSymbol candidateMethod in typeSymbol.GetMembers().OfType<IMethodSymbol>())
-                {
-                    if (candidateMethod.Name == expectedGroup.AlternateMethod1 || candidateMethod.Name == expectedGroup.AlternateMethod2)
+                    foreach (IMethodSymbol candidateMethod in typeSymbol.GetBaseTypesAndThis().SelectMany(x => x.GetMembers().OfType<IMethodSymbol>()))
                     {
                         // found an appropriately-named method
                         matchedMethods.Add(candidateMethod);
@@ -175,6 +184,23 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         }
                     }
                 }
+            }
+
+            return;
+
+            //  Local functions.
+
+            static IPropertySymbol? GetIsTrueProperty(ITypeSymbol type)
+            {
+                foreach (var baseType in type.GetBaseTypesAndThis())
+                {
+                    foreach (var member in baseType.GetMembers(IsTrueText).OfType<IPropertySymbol>())
+                    {
+                        return member;
+                    }
+                }
+
+                return null;
             }
         }
 

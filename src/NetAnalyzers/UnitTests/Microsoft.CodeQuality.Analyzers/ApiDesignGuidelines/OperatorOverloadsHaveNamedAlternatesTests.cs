@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -66,6 +66,24 @@ public class C
     public static C Add(C left, C right) { return new C(); }
 }
 ");
+        }
+
+        [Fact]
+        public Task HasAlternateMethodOnBaseClass_CSharpAsync()
+        {
+            return VerifyCS.VerifyAnalyzerAsync(@"
+public class B
+{
+    public static D Add(D left, D right) { return new D(); }
+    public bool IsTrue => true;
+}
+
+public class D : B
+{
+    public static D operator +(D left, D right) { return new D(); }
+    public static bool operator true(D d) => true;
+    public static bool operator false(D d) => false;
+}");
         }
 
         [Fact]

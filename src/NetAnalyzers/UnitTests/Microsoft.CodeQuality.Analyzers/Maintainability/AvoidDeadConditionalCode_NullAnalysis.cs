@@ -7763,6 +7763,31 @@ internal class SerialPort
             }.RunAsync();
         }
 
+        [Fact, WorkItem(6868, "https://github.com/dotnet/roslyn-analyzers/issues/6868")]
+        public async Task NullableBooleanComparisonWithNullAndFalse()
+        {
+            var code = """
+                public class Test
+                {
+                	public static void Method(string parameter)
+                	{
+                		var flag = GetFlag();
+
+                		if (flag == null || flag == false)
+                		{
+                			if (flag == false)
+                			{
+                			}
+                		}
+                	}
+
+                	public static bool? GetFlag() => false;
+                }
+                
+                """;
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact, WorkItem(4984, "https://github.com/dotnet/roslyn-analyzers/issues/4984")]

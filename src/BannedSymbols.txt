@@ -4,3 +4,4 @@ M:Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithLocation(Microsoft.CodeAna
 M:Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithLocation(System.String,System.Int32,System.Int32); Use overload with markupKey instead
 M:Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithLocation(System.String,Microsoft.CodeAnalysis.Text.LinePosition); Use overload with markupKey instead
 M:Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithLocation(System.String,Microsoft.CodeAnalysis.Text.LinePosition,Microsoft.CodeAnalysis.Testing.DiagnosticLocationOptions); Use overload with markupKey instead
+M:System.Enum.GetHashCode(); Cast to integral type to avoid boxing on .NET Framework

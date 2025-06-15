@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -1369,6 +1369,41 @@ namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
                 VerifyCS.Diagnostic(UseValueTasksCorrectlyAnalyzer.DoubleConsumptionRule).WithSpan(10, 41, 10, 67),
                 VerifyCS.Diagnostic(UseValueTasksCorrectlyAnalyzer.DoubleConsumptionRule).WithSpan(12, 44, 12, 76)
             );
+        }
+
+        [Theory]
+        [InlineData("dotnet_code_quality.additional_valid_valuetask_consumption= KeepContext")]
+        public async Task NoDiagnostics_AdditionalMembers_VBAsync(string editorConfigText)
+        {
+            var test = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        VBBoilerplate("""
+                        Imports System
+                        Imports System.Threading.Tasks
+                        
+                        Class C
+                            Public Async Sub DontConsume()
+                                Await Helpers.ReturnsValueTask().KeepContext()
+                            End Sub
+                        End Class
+                        Module AsyncHelpers
+                            <System.Runtime.CompilerServices.Extension>
+                            Public Function KeepContext(vt As ValueTask) As System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable
+                                Return vt.ConfigureAwait(True)
+                            End Function
+                        End Module
+                        """)
+                    },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+[*]
+{editorConfigText}") }
+                }
+            };
+            await test.RunAsync();
         }
 
         #endregion

@@ -143,10 +143,11 @@ namespace Analyzer.Utilities.Extensions
             INamedTypeSymbol? iAsyncDisposable,
             INamedTypeSymbol? configuredAsyncDisposable)
         {
-            if (type.IsReferenceType)
+            // structs can be Disposable as well
+            if (type.IsReferenceType || type.IsValueType)
             {
-                return IsInterfaceOrImplementsInterface(type, iDisposable)
-                    || IsInterfaceOrImplementsInterface(type, iAsyncDisposable);
+                if (IsInterfaceOrImplementsInterface(type, iDisposable) || IsInterfaceOrImplementsInterface(type, iAsyncDisposable))
+                    return true;
             }
             else if (SymbolEqualityComparer.Default.Equals(type, configuredAsyncDisposable))
             {

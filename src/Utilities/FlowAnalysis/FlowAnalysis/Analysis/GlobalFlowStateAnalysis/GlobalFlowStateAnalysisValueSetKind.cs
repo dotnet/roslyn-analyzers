@@ -2,7 +2,7 @@
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
 {
-    internal enum GlobalFlowStateAnalysisValueSetKind
+    public enum GlobalFlowStateAnalysisValueSetKind
     {
         /// <summary>
         /// Unset value set.

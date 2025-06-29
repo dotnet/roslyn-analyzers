@@ -134,6 +134,10 @@ public class Test
     {{
         T Method(T operand1, [ConstantExpected] T operand2);
     }}
+    public interface ITest3<T>
+    {{
+        T Method(T operand1, T operand2);
+    }}
     public abstract class AbstractTest<T>
     {{
         public abstract T Method2(T operand1, [ConstantExpected] T operand2);
@@ -145,6 +149,20 @@ public class Test
         {type} ITest2<{type}>.Method({type} operand1, {{|#1:{type} operand2|}}) => throw new NotImplementedException();
         public override {type} Method2({type} operand1, {{|#2:{type} operand2|}}) => throw new NotImplementedException();
     }}
+
+    public class GenericExplicit : ITest<{type}>, ITest3<{type}>
+    {{
+        public {type} Method({type} operand1, {type} operand2) => throw new NotImplementedException();
+        {type} ITest<{type}>.Method({type} operand1, {{|#3:{type} operand2|}}) => throw new NotImplementedException();
+    }}
+    public class Generic13 : ITest<{type}>, ITest3<{type}>
+    {{
+        public {type} Method({type} operand1, {{|#4:{type} operand2|}}) => throw new NotImplementedException();
+    }}
+    public class Generic31 : ITest3<{type}>, ITest<{type}>
+    {{
+        public {type} Method({type} operand1, {{|#5:{type} operand2|}}) => throw new NotImplementedException();
+    }}
 }}
 ";
             await TestCSAsync(csInput,
@@ -153,7 +171,13 @@ public class Test
                 VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.AttributeExpectedRule)
                         .WithLocation(1),
                 VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.AttributeExpectedRule)
-                        .WithLocation(2));
+                        .WithLocation(2),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.AttributeExpectedRule)
+                        .WithLocation(3),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.AttributeExpectedRule)
+                        .WithLocation(4),
+                VerifyCS.Diagnostic(ConstantExpectedAnalyzer.CA1857.AttributeExpectedRule)
+                        .WithLocation(5));
         }
 
         [Theory]

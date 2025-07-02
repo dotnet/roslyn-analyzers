@@ -533,7 +533,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
 
-            if (propertyOrMethodSymbol.IsImplementationOfAnyImplicitInterfaceMember(out ISymbol baseInterfaceMember))
+            foreach (var baseInterfaceMember in propertyOrMethodSymbol.GetImplementedImplicitInterfaceMembers<ISymbol>())
             {
                 if (SymbolIsAnnotatedAsPreview(baseInterfaceMember, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
                 {
@@ -555,6 +555,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         ReportDiagnosticWithCustomMessageIfItExists(context, baseInterfaceMember, propertyOrMethodSymbol, requiresPreviewFeaturesSymbols,
                             ImplementsPreviewMethodRule, ImplementsPreviewMethodRuleWithCustomMessage, propertyOrMethodSymbol.Name, baseInterfaceMemberName);
                     }
+
+                    break;
                 }
             }
 

@@ -118,7 +118,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 IArgumentOperation arg0 = invocation.Arguments[0];
                 IArgumentOperation arg1 = invocation.Arguments[1];
 
-                if (!isCommutative && (arg0.Parameter.Ordinal != 0))
+                if (!isCommutative && (arg0.Parameter?.Ordinal != 0))
                 {
                     (arg0, arg1) = (arg1, arg0);
                 }

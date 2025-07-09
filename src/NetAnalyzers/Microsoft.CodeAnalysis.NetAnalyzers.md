@@ -864,9 +864,9 @@ Invalid entry in code metrics rule specification file.
 |CodeFix|False|
 ---
 
-## [CA1510](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510): Use ArgumentNullException throw helper
+## [CA1510](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510): Use cross-platform intrinsics
 
-Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+This rule detects usage of platform-specific intrinsics that can be replaced with an equivalent cross-platform intrinsic instead.
 
 |Item|Value|
 |-|-|

@@ -70,6 +70,7 @@ CA1506 | Maintainability | Disabled | CodeMetricsAnalyzer, [Documentation](https
 CA1507 | Maintainability | Info | UseNameofInPlaceOfStringAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1507)
 CA1508 | Maintainability | Disabled | AvoidDeadConditionalCode, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1508)
 CA1509 | Maintainability | Disabled | CodeMetricsAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1509)
+CA1510 | Maintainability | Info | UseCrossPlatformIntrinsicsAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510)
 CA1700 | Naming | Disabled | DoNotNameEnumValuesReserved, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1700)
 CA1707 | Naming | Hidden | IdentifiersShouldNotContainUnderscoresAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1707)
 CA1708 | Naming | Hidden | IdentifiersShouldDifferByMoreThanCaseAnalyzer, [Documentation](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1708)

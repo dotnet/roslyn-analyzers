@@ -2,6 +2,7 @@
 
 using System;
 using System.Composition;
+using Analyzer.Utilities.Lightup;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
@@ -24,10 +25,9 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
 
         protected override SyntaxNode? CreateUnsignedRightShiftExpression(SyntaxNode left, SyntaxNode right)
         {
-            const SyntaxKind UnsignedRightShiftExpression = (SyntaxKind)8692;
             const LanguageVersion CSharp11 = (LanguageVersion)1100;
 
-            if (!Enum.IsDefined(typeof(SyntaxKind), UnsignedRightShiftExpression))
+            if (!Enum.IsDefined(typeof(SyntaxKind), SyntaxKindEx.UnsignedRightShiftExpression))
             {
                 return null;
             }
@@ -37,7 +37,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
                 return null;
             }
 
-            return SyntaxFactory.BinaryExpression(UnsignedRightShiftExpression, (ExpressionSyntax)left, (ExpressionSyntax)right);
+            return SyntaxFactory.BinaryExpression(SyntaxKindEx.UnsignedRightShiftExpression, (ExpressionSyntax)left, (ExpressionSyntax)right);
         }
     }
 }

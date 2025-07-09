@@ -29,10 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                       .Select(i => CreateDiagnosticDescriptor((RuleKind)i))
         );
 
-        private readonly ImmutableArray<HashSet<IMethodSymbol>> _methodSymbols = ImmutableArray.CreateRange(
-            Enumerable.Range(0, (int)RuleKind.Count)
-                      .Select(_ => new HashSet<IMethodSymbol>(SymbolEqualityComparer.Default))
-        );
+        private ImmutableArray<HashSet<IMethodSymbol>> _methodSymbols;
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => Rules;
 
@@ -46,6 +43,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
             var compilation = context.Compilation;
+
+            _methodSymbols = ImmutableArray.CreateRange(
+                Enumerable.Range(0, (int)RuleKind.Count)
+                          .Select(_ => new HashSet<IMethodSymbol>(SymbolEqualityComparer.Default))
+            );
 
             if (compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeIntrinsicsArmAdvSimd, out var armAdvSimdTypeSymbol))
             {

@@ -71,179 +71,22 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
 
-            SyntaxNode? replacementNode = null;
-
-            switch (ruleKind)
+            SyntaxNode? replacementNode = ruleKind switch
             {
-                case RuleKind.opAddition:
-                    {
-                        if (invocation.Arguments.Length != 2)
-                        {
-                            break;
-                        }
-
-                        replacementNode = generator.AddExpression(
-                            invocation.Arguments[0].Value.Syntax,
-                            invocation.Arguments[1].Value.Syntax
-                        );
-                        break;
-                    }
-
-                case RuleKind.opBitwiseAnd:
-                    {
-                        if (invocation.Arguments.Length != 2)
-                        {
-                            break;
-                        }
-
-                        replacementNode = generator.BitwiseAndExpression(
-                            invocation.Arguments[0].Value.Syntax,
-                            invocation.Arguments[1].Value.Syntax
-                        );
-                        break;
-                    }
-
-                case RuleKind.opBitwiseOr:
-                    {
-                        if (invocation.Arguments.Length != 2)
-                        {
-                            break;
-                        }
-
-                        replacementNode = generator.BitwiseOrExpression(
-                            invocation.Arguments[0].Value.Syntax,
-                            invocation.Arguments[1].Value.Syntax
-                        );
-                        break;
-                    }
-
-                case RuleKind.opDivision:
-                    {
-                        if (invocation.Arguments.Length != 2)
-                        {
-                            break;
-                        }
-
-                        replacementNode = generator.DivideExpression(
-                            invocation.Arguments[0].Value.Syntax,
-                            invocation.Arguments[1].Value.Syntax
-                        );
-                        break;
-                    }
-
-                case RuleKind.opExclusiveOr:
-                    {
-                        if (invocation.Arguments.Length != 2)
-                        {
-                            break;
-                        }
-
-                        replacementNode = CreateExclusiveOrExpression(
-                            invocation.Arguments[0].Value.Syntax,
-                            invocation.Arguments[1].Value.Syntax
-                        );
-                        break;
-                    }
-
-                case RuleKind.opLeftShift:
-                    {
-                        if (invocation.Arguments.Length != 2)
-                        {
-                            break;
-                        }
-
-                        replacementNode = CreateLeftShiftExpression(
-                            invocation.Arguments[0].Value.Syntax,
-                            invocation.Arguments[1].Value.Syntax
-                        );
-                        break;
-                    }
-
-                case RuleKind.opMultiply:
-                    {
-                        if (invocation.Arguments.Length != 2)
-                        {
-                            break;
-                        }
-
-                        replacementNode = generator.MultiplyExpression(
-                            invocation.Arguments[0].Value.Syntax,
-                            invocation.Arguments[1].Value.Syntax
-                        );
-                        break;
-                    }
-
-                case RuleKind.opOnesComplement:
-                    {
-                        if (invocation.Arguments.Length != 1)
-                        {
-                            break;
-                        }
-
-                        replacementNode = generator.BitwiseNotExpression(
-                            invocation.Arguments[0].Value.Syntax
-                        );
-                        break;
-                    }
-
-                case RuleKind.opRightShift:
-                    {
-                        if (invocation.Arguments.Length != 2)
-                        {
-                            break;
-                        }
-
-                        replacementNode = CreateRightShiftExpression(
-                            invocation.Arguments[0].Value.Syntax,
-                            invocation.Arguments[1].Value.Syntax
-                        );
-                        break;
-                    }
-
-                case RuleKind.opSubtraction:
-                    {
-                        if (invocation.Arguments.Length != 2)
-                        {
-                            break;
-                        }
-
-                        replacementNode = generator.SubtractExpression(
-                            invocation.Arguments[0].Value.Syntax,
-                            invocation.Arguments[1].Value.Syntax
-                        );
-                        break;
-                    }
-
-                case RuleKind.opUnaryNegation:
-                    {
-                        if (invocation.Arguments.Length != 1)
-                        {
-                            break;
-                        }
-
-                        replacementNode = generator.NegateExpression(
-                            invocation.Arguments[0].Value.Syntax
-                        );
-                        break;
-                    }
-
-                case RuleKind.opUnsignedRightShift:
-                    {
-                        if (invocation.Arguments.Length != 2)
-                        {
-                            break;
-                        }
-
-                        replacementNode = CreateUnsignedRightShiftExpression(
-                            invocation.Arguments[0].Value.Syntax,
-                            invocation.Arguments[1].Value.Syntax
-                        );
-                        break;
-                    }
-
-                default:
-                    break;
-            }
+                RuleKind.opAddition => ReplaceBinaryOp(invocation, isCommutative: true, generator.AddExpression),
+                RuleKind.opBitwiseAnd => ReplaceBinaryOp(invocation, isCommutative: true, generator.BitwiseAndExpression),
+                RuleKind.opBitwiseOr => ReplaceBinaryOp(invocation, isCommutative: true, generator.BitwiseOrExpression),
+                RuleKind.opDivision => ReplaceBinaryOp(invocation, isCommutative: false, generator.DivideExpression),
+                RuleKind.opExclusiveOr => ReplaceBinaryOp(invocation, isCommutative: true, CreateExclusiveOrExpression),
+                RuleKind.opLeftShift => ReplaceBinaryOp(invocation, isCommutative: false, CreateLeftShiftExpression),
+                RuleKind.opMultiply => ReplaceBinaryOp(invocation, isCommutative: true, generator.MultiplyExpression),
+                RuleKind.opOnesComplement => ReplaceUnaryOp(invocation, generator.BitwiseNotExpression),
+                RuleKind.opRightShift => ReplaceBinaryOp(invocation, isCommutative: false, CreateRightShiftExpression),
+                RuleKind.opSubtraction => ReplaceBinaryOp(invocation, isCommutative: false, generator.SubtractExpression),
+                RuleKind.opUnaryNegation => ReplaceUnaryOp(invocation, generator.NegateExpression),
+                RuleKind.opUnsignedRightShift => ReplaceBinaryOp(invocation, isCommutative: false, CreateUnsignedRightShiftExpression),
+                _ => null,
+            };
 
             if (replacementNode is not null)
             {
@@ -252,6 +95,39 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             return document;
+
+            static SyntaxNode? ReplaceUnaryOp(IInvocationOperation invocation, Func<SyntaxNode, SyntaxNode> unaryOpFunc)
+            {
+                if (invocation.Arguments.Length != 1)
+                {
+                    return null;
+                }
+
+                return unaryOpFunc(
+                    invocation.Arguments[0].Value.Syntax
+                );
+            }
+
+            static SyntaxNode? ReplaceBinaryOp(IInvocationOperation invocation, bool isCommutative, Func<SyntaxNode, SyntaxNode, SyntaxNode> binaryOpFunc)
+            {
+                if (invocation.Arguments.Length != 2)
+                {
+                    return null;
+                }
+
+                IArgumentOperation arg0 = invocation.Arguments[0];
+                IArgumentOperation arg1 = invocation.Arguments[1];
+
+                if (!isCommutative && (arg0.Parameter.Ordinal != 0))
+                {
+                    (arg0, arg1) = (arg1, arg0);
+                }
+
+                return binaryOpFunc(
+                    arg0.Value.Syntax,
+                    arg1.Value.Syntax
+                );
+            }
         }
 
         protected abstract SyntaxNode CreateExclusiveOrExpression(SyntaxNode left, SyntaxNode right);

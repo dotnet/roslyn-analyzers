@@ -76,175 +76,173 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             switch (ruleKind)
             {
                 case RuleKind.opAddition:
-                {
-                    if (invocation.Arguments.Length != 2)
                     {
+                        if (invocation.Arguments.Length != 2)
+                        {
+                            break;
+                        }
+
+                        replacementNode = generator.AddExpression(
+                            invocation.Arguments[0].Value.Syntax,
+                            invocation.Arguments[1].Value.Syntax
+                        );
                         break;
                     }
-
-                    replacementNode = generator.AddExpression(
-                        invocation.Arguments[0].Value.Syntax,
-                        invocation.Arguments[1].Value.Syntax
-                    );
-                    break;
-                }
 
                 case RuleKind.opBitwiseAnd:
-                {
-                    if (invocation.Arguments.Length != 2)
                     {
+                        if (invocation.Arguments.Length != 2)
+                        {
+                            break;
+                        }
+
+                        replacementNode = generator.BitwiseAndExpression(
+                            invocation.Arguments[0].Value.Syntax,
+                            invocation.Arguments[1].Value.Syntax
+                        );
                         break;
                     }
-
-                    replacementNode = generator.BitwiseAndExpression(
-                        invocation.Arguments[0].Value.Syntax,
-                        invocation.Arguments[1].Value.Syntax
-                    );
-                    break;
-                }
 
                 case RuleKind.opBitwiseOr:
-                {
-                    if (invocation.Arguments.Length != 2)
                     {
+                        if (invocation.Arguments.Length != 2)
+                        {
+                            break;
+                        }
+
+                        replacementNode = generator.BitwiseOrExpression(
+                            invocation.Arguments[0].Value.Syntax,
+                            invocation.Arguments[1].Value.Syntax
+                        );
                         break;
                     }
-
-                    replacementNode = generator.BitwiseOrExpression(
-                        invocation.Arguments[0].Value.Syntax,
-                        invocation.Arguments[1].Value.Syntax
-                    );
-                    break;
-                }
 
                 case RuleKind.opDivision:
-                {
-                    if (invocation.Arguments.Length != 2)
                     {
+                        if (invocation.Arguments.Length != 2)
+                        {
+                            break;
+                        }
+
+                        replacementNode = generator.DivideExpression(
+                            invocation.Arguments[0].Value.Syntax,
+                            invocation.Arguments[1].Value.Syntax
+                        );
                         break;
                     }
-
-                    replacementNode = generator.DivideExpression(
-                        invocation.Arguments[0].Value.Syntax,
-                        invocation.Arguments[1].Value.Syntax
-                    );
-                    break;
-                }
 
                 case RuleKind.opExclusiveOr:
-                {
-                    if (invocation.Arguments.Length != 2)
                     {
+                        if (invocation.Arguments.Length != 2)
+                        {
+                            break;
+                        }
+
+                        replacementNode = CreateExclusiveOrExpression(
+                            invocation.Arguments[0].Value.Syntax,
+                            invocation.Arguments[1].Value.Syntax
+                        );
                         break;
                     }
-
-                    replacementNode = CreateExclusiveOrExpression(
-                        invocation.Arguments[0].Value.Syntax,
-                        invocation.Arguments[1].Value.Syntax
-                    );
-                    break;
-                }
 
                 case RuleKind.opLeftShift:
-                {
-                    if (invocation.Arguments.Length != 2)
                     {
+                        if (invocation.Arguments.Length != 2)
+                        {
+                            break;
+                        }
+
+                        replacementNode = CreateLeftShiftExpression(
+                            invocation.Arguments[0].Value.Syntax,
+                            invocation.Arguments[1].Value.Syntax
+                        );
                         break;
                     }
-
-                    replacementNode = CreateLeftShiftExpression(
-                        invocation.Arguments[0].Value.Syntax,
-                        invocation.Arguments[1].Value.Syntax
-                    );
-                    break;
-                }
 
                 case RuleKind.opMultiply:
-                {
-                    if (invocation.Arguments.Length != 2)
                     {
+                        if (invocation.Arguments.Length != 2)
+                        {
+                            break;
+                        }
+
+                        replacementNode = generator.MultiplyExpression(
+                            invocation.Arguments[0].Value.Syntax,
+                            invocation.Arguments[1].Value.Syntax
+                        );
                         break;
                     }
-
-                    replacementNode = generator.MultiplyExpression(
-                        invocation.Arguments[0].Value.Syntax,
-                        invocation.Arguments[1].Value.Syntax
-                    );
-                    break;
-                }
 
                 case RuleKind.opOnesComplement:
-                {
-                    if (invocation.Arguments.Length != 1)
                     {
+                        if (invocation.Arguments.Length != 1)
+                        {
+                            break;
+                        }
+
+                        replacementNode = generator.BitwiseNotExpression(
+                            invocation.Arguments[0].Value.Syntax
+                        );
                         break;
                     }
-
-                    replacementNode = generator.BitwiseNotExpression(
-                        invocation.Arguments[0].Value.Syntax
-                    );
-                    break;
-                }
 
                 case RuleKind.opRightShift:
-                {
-                    if (invocation.Arguments.Length != 2)
                     {
+                        if (invocation.Arguments.Length != 2)
+                        {
+                            break;
+                        }
+
+                        replacementNode = CreateRightShiftExpression(
+                            invocation.Arguments[0].Value.Syntax,
+                            invocation.Arguments[1].Value.Syntax
+                        );
                         break;
                     }
-
-                    replacementNode = CreateRightShiftExpression(
-                        invocation.Arguments[0].Value.Syntax,
-                        invocation.Arguments[1].Value.Syntax
-                    );
-                    break;
-                }
 
                 case RuleKind.opSubtraction:
-                {
-                    if (invocation.Arguments.Length != 2)
                     {
+                        if (invocation.Arguments.Length != 2)
+                        {
+                            break;
+                        }
+
+                        replacementNode = generator.SubtractExpression(
+                            invocation.Arguments[0].Value.Syntax,
+                            invocation.Arguments[1].Value.Syntax
+                        );
                         break;
                     }
-
-                    replacementNode = generator.SubtractExpression(
-                        invocation.Arguments[0].Value.Syntax,
-                        invocation.Arguments[1].Value.Syntax
-                    );
-                    break;
-                }
 
                 case RuleKind.opUnaryNegation:
-                {
-                    if (invocation.Arguments.Length != 1)
                     {
+                        if (invocation.Arguments.Length != 1)
+                        {
+                            break;
+                        }
+
+                        replacementNode = generator.NegateExpression(
+                            invocation.Arguments[0].Value.Syntax
+                        );
                         break;
                     }
-
-                    replacementNode = generator.NegateExpression(
-                        invocation.Arguments[0].Value.Syntax
-                    );
-                    break;
-                }
 
                 case RuleKind.opUnsignedRightShift:
-                {
-                    if (invocation.Arguments.Length != 2)
                     {
+                        if (invocation.Arguments.Length != 2)
+                        {
+                            break;
+                        }
+
+                        replacementNode = CreateUnsignedRightShiftExpression(
+                            invocation.Arguments[0].Value.Syntax,
+                            invocation.Arguments[1].Value.Syntax
+                        );
                         break;
                     }
 
-                    replacementNode = CreateUnsignedRightShiftExpression(
-                        invocation.Arguments[0].Value.Syntax,
-                        invocation.Arguments[1].Value.Syntax
-                    );
-                    break;
-                }
-
                 default:
-                {
                     break;
-                }
             }
 
             if (replacementNode is not null)

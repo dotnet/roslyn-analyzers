@@ -47,22 +47,24 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                foreach (string customTag in diagnostic.Descriptor.CustomTags)
+                if (!diagnostic.Properties.TryGetValue(nameof(RuleKind), out string? ruleKindName))
                 {
-                    if (!Enum.TryParse(customTag, out RuleKind ruleKind))
-                    {
-                        continue;
-                    }
-
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            UseCrossPlatformIntrinsicsTitle,
-                            c => ReplaceWithCrossPlatformIntrinsicAsync(context.Document, ruleKind, invocation, c),
-                            equivalenceKey: nameof(UseCrossPlatformIntrinsicsFixer)
-                        ),
-                        diagnostic
-                    );
+                    continue;
                 }
+
+                if (!Enum.TryParse(ruleKindName, out RuleKind ruleKind))
+                {
+                    continue;
+                }
+
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        UseCrossPlatformIntrinsicsTitle,
+                        c => ReplaceWithCrossPlatformIntrinsicAsync(context.Document, ruleKind, invocation, c),
+                        equivalenceKey: nameof(UseCrossPlatformIntrinsicsFixer)
+                    ),
+                    diagnostic
+                );
             }
         }
 

@@ -29,6 +29,15 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                       .Select(i => CreateDiagnosticDescriptor((RuleKind)i))
         );
 
+        internal static readonly ImmutableArray<ImmutableDictionary<string, string>> Properties = ImmutableArray.CreateRange(
+            Enumerable.Range(0, (int)RuleKind.Count)
+                      .Select(i => {
+                          ImmutableDictionary<string, string>.Builder builder = ImmutableDictionary.CreateBuilder<string, string>();
+                          builder[nameof(RuleKind)] = ((RuleKind)i).ToString();
+                          return builder.ToImmutable();
+                      })
+        );
+
         private ImmutableArray<HashSet<IMethodSymbol>> _methodSymbols;
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => Rules;
@@ -221,7 +230,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 if (methodSymbols.Contains(invocation.TargetMethod, SymbolEqualityComparer.Default))
                 {
-                    context.ReportDiagnostic(invocation.CreateDiagnostic(Rules[i]));
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(Rules[i], Properties[i]));
                     return;
                 }
             }
@@ -285,8 +294,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             RuleLevel.IdeSuggestion,
             description: s_localizableDescription,
             isPortedFxCopRule: false,
-            isDataflowRule: false,
-            additionalCustomTags: ruleKind.ToString()
+            isDataflowRule: false
         );
 
         internal enum RuleKind

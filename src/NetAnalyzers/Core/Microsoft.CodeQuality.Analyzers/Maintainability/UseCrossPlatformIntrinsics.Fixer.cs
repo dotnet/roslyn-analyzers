@@ -96,7 +96,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             return document;
 
-            static SyntaxNode? ReplaceUnaryOp(IInvocationOperation invocation, Func<SyntaxNode, SyntaxNode> unaryOpFunc)
+            static SyntaxNode? ReplaceUnaryOp(IInvocationOperation invocation, Func<SyntaxNode, SyntaxNode?> unaryOpFunc)
             {
                 if (invocation.Arguments.Length != 1)
                 {
@@ -108,7 +108,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 );
             }
 
-            static SyntaxNode? ReplaceBinaryOp(IInvocationOperation invocation, bool isCommutative, Func<SyntaxNode, SyntaxNode, SyntaxNode> binaryOpFunc)
+            static SyntaxNode? ReplaceBinaryOp(IInvocationOperation invocation, bool isCommutative, Func<SyntaxNode, SyntaxNode, SyntaxNode?> binaryOpFunc)
             {
                 if (invocation.Arguments.Length != 2)
                 {

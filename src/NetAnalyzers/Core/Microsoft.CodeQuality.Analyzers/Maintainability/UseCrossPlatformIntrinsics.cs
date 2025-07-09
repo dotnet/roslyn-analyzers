@@ -15,11 +15,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     using static MicrosoftCodeQualityAnalyzersResources;
 
     /// <summary>
-    /// CA1510: <inheritdoc cref="UseCrossPlatformIntrinsicsTitle"/>
+    /// CA1516: <inheritdoc cref="UseCrossPlatformIntrinsicsTitle"/>
     /// </summary>
     public abstract class UseCrossPlatformIntrinsicsAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1510";
+        internal const string RuleId = "CA1516";
 
         private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(UseCrossPlatformIntrinsicsTitle));
         private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(UseCrossPlatformIntrinsicsDescription));

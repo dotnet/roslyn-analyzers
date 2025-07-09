@@ -864,9 +864,9 @@ Invalid entry in code metrics rule specification file.
 |CodeFix|False|
 ---
 
-## [CA1510](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510): Use cross-platform intrinsics
+## [CA1510](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510): Use ArgumentNullException throw helper
 
-This rule detects usage of platform-specific intrinsics that can be replaced with an equivalent cross-platform intrinsic instead.
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
 
 |Item|Value|
 |-|-|
@@ -933,6 +933,18 @@ Unlike a class library, an application's API isn't typically referenced publicly
 |Category|Maintainability|
 |Enabled|False|
 |Severity|Warning|
+|CodeFix|True|
+---
+
+## [CA1516](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1516): Use cross-platform intrinsics
+
+This rule detects usage of platform-specific intrinsics that can be replaced with an equivalent cross-platform intrinsic instead.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
 |CodeFix|True|
 ---
 

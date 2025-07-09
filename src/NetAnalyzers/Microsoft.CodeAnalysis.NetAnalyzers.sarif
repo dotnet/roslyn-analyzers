@@ -126,26 +126,6 @@
             ]
           }
         },
-        "CA1510": {
-          "id": "CA1510",
-          "shortDescription": "Use cross-platform intrinsics",
-          "fullDescription": "This rule detects usage of platform-specific intrinsics that can be replaced with an equivalent cross-platform intrinsic instead.",
-          "defaultLevel": "note",
-          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510",
-          "properties": {
-            "category": "Maintainability",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpUseCrossPlatformIntrinsicsAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "Telemetry",
-              "EnabledRuleInAggressiveMode",
-              "opUnsignedRightShift"
-            ]
-          }
-        },
         "CA1515": {
           "id": "CA1515",
           "shortDescription": "Consider making public types internal",
@@ -162,6 +142,26 @@
             "tags": [
               "Telemetry",
               "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1516": {
+          "id": "CA1516",
+          "shortDescription": "Use cross-platform intrinsics",
+          "fullDescription": "This rule detects usage of platform-specific intrinsics that can be replaced with an equivalent cross-platform intrinsic instead.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1516",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpUseCrossPlatformIntrinsicsAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode",
+              "opUnsignedRightShift"
             ]
           }
         },

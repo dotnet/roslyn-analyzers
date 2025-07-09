@@ -7,7 +7,7 @@ using Microsoft.CodeQuality.Analyzers.Maintainability;
 namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
 {
     /// <summary>
-    /// CA1510: Use cross-platform intrinsics
+    /// CA1516: Use cross-platform intrinsics
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpUseCrossPlatformIntrinsicsAnalyzer : UseCrossPlatformIntrinsicsAnalyzer

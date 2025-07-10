@@ -160,8 +160,7 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode",
-              "opUnsignedRightShift"
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },

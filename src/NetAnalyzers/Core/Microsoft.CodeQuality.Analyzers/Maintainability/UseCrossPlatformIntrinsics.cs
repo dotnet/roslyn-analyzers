@@ -31,7 +31,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         internal static readonly ImmutableArray<ImmutableDictionary<string, string?>> Properties = ImmutableArray.CreateRange(
             Enumerable.Range(0, (int)RuleKind.Count)
-                      .Select(i => {
+                      .Select(i =>
+                      {
                           ImmutableDictionary<string, string?>.Builder builder = ImmutableDictionary.CreateBuilder<string, string?>();
                           builder[nameof(RuleKind)] = ((RuleKind)i).ToString();
                           return builder.ToImmutable();

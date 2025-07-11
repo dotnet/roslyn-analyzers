@@ -10,7 +10,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
     /// Result from execution of <see cref="GlobalFlowStateAnalysis"/> on a basic block.
     /// It store GlobalFlowState value at the start and end of the basic block.
     /// </summary>
-    internal sealed class GlobalFlowStateBlockAnalysisResult : AbstractBlockAnalysisResult
+    public sealed class GlobalFlowStateBlockAnalysisResult : AbstractBlockAnalysisResult
     {
         internal GlobalFlowStateBlockAnalysisResult(BasicBlock basicBlock, GlobalFlowStateAnalysisData blockAnalysisData)
             : base(basicBlock)

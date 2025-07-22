@@ -59,6 +59,24 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                           .Select(_ => new HashSet<IMethodSymbol>(SymbolEqualityComparer.Default))
             );
 
+            if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeIntrinsicsVector64, out var _) ||
+                !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeIntrinsicsVector128, out var _) ||
+                !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeIntrinsicsVector256, out var _) ||
+                !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeIntrinsicsVector512, out var _))
+            {
+                // The core vector types are not available in the compilation, so we cannot register any operators.
+                // This may exclude out of support versions of .NET, such as .NET 6, which only have some of the vector types
+                //
+                // Notably, this is still not an exact check. There may be custom runtimes or edge case scenarios where a given
+                // operator is not available on a given type but the platform specific API is available. In such a case, we will
+                // report a diagnostic and the fixer will be reported. If the user applies the fixer, the code would produce an
+                // error. This is considered an acceptable tradeoff given there would need to be hundreds of checks to exactly
+                // cover the potential scenarios, which would make the analyzer too complex and slow. There will be no diagnostic
+                // or fixer reported for in support versions of .NET, such as .NET Standard and .NET Framework; and the diagnostic
+                // and fixer reported for .NET 8+ will be correct.
+                return;
+            }
+
             if (compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeIntrinsicsArmAdvSimd, out var armAdvSimdTypeSymbol))
             {
                 AddBinaryOperatorMethods("Add", armAdvSimdTypeSymbol, RuleKind.opAddition);

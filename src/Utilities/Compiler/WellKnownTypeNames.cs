@@ -357,6 +357,10 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeInteropServicesStructLayoutAttribute = "System.Runtime.InteropServices.StructLayoutAttribute";
         public const string SystemRuntimeInteropServicesUnmanagedFunctionPoitnerAttribute = "System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute";
         public const string SystemRuntimeInteropServicesUnmanagedType = "System.Runtime.InteropServices.UnmanagedType";
+        public const string SystemRuntimeIntrinsicsVector128 = "System.Runtime.Intrinsics.Vector128";
+        public const string SystemRuntimeIntrinsicsVector256 = "System.Runtime.Intrinsics.Vector256";
+        public const string SystemRuntimeIntrinsicsVector512 = "System.Runtime.Intrinsics.Vector512";
+        public const string SystemRuntimeIntrinsicsVector64 = "System.Runtime.Intrinsics.Vector64";
         public const string SystemRuntimeIntrinsicsArmAdvSimd = "System.Runtime.Intrinsics.Arm.AdvSimd";
         public const string SystemRuntimeIntrinsicsArmAdvSimdArm64 = "System.Runtime.Intrinsics.Arm.AdvSimd+Arm64";
         public const string SystemRuntimeIntrinsicsWasmPackedSimd = "System.Runtime.Intrinsics.Wasm.PackedSimd";

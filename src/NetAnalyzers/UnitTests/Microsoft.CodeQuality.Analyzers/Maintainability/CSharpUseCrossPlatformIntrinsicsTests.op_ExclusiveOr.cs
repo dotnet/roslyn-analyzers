@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     using static UseCrossPlatformIntrinsicsAnalyzer;
 
-    public class CSharpUseCrossPlatformIntrinsicsTests
+    public partial class CSharpUseCrossPlatformIntrinsicsTests
     {
         [Fact]
         public async Task Fixer_opExclusiveOrArmV64Async()

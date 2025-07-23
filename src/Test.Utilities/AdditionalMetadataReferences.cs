@@ -64,6 +64,9 @@ namespace Test.Utilities
         public static ReferenceAssemblies DefaultWithMSTest { get; } = Default
             .AddPackages(ImmutableArray.Create(new PackageIdentity("MSTest.TestFramework", "2.1.0")));
 
+        public static ReferenceAssemblies DefaultWithTUnit { get; } = Default
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("TUnit", "0.6.154")));
+
         public static ReferenceAssemblies DefaultWithAsyncInterfaces { get; } = Default
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "1.1.0")));
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Xunit;
@@ -139,7 +139,6 @@ public struct A
     {
         throw new System.NotImplementedException();
     }
-
     public static bool operator ==(A left, A right)
     {
         return left.Equals(right);
@@ -188,7 +187,6 @@ public struct A
     {
         throw new System.NotImplementedException();
     }
-
     public static bool operator !=(A left, A right)
     {
         return !(left == right);

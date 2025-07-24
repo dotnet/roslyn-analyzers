@@ -1322,7 +1322,7 @@ public class C1
         get;
     }
 
-    public string [|P4|] // Because of the error there is no generated field
+    public string P4 // Because of the error there is no generated field
     {
         [DebuggerStepThrough]
         {|CS8051:set|};

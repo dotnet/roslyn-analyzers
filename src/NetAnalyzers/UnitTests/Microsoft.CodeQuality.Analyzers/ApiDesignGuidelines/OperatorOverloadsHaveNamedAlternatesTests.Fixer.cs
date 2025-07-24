@@ -77,7 +77,6 @@ public class C
 {
     public static bool operator true(C item) { return true; }
     public static bool operator false(C item) { return false; }
-
     public bool IsTrue
     {
         get
@@ -206,7 +205,6 @@ public class C
 public class C
 {
     public static C operator +(C left, C right) { return new C(); }
-
     public static C Add(C left, C right) { return new C(); }
 }
 ",
@@ -235,7 +233,6 @@ public class C
 {
     public static bool operator true(C item) { return true; }
     public static bool operator false(C item) { return false; }
-
     public bool IsTrue => true;
 }
 ",

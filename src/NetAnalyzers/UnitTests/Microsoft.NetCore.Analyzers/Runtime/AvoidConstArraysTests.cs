@@ -1035,9 +1035,7 @@ public class MyClass
             const string fixedSource = """
                                        using System;
                                        
-                                       _ = "a".Split(separator, StringSplitOptions.None);
-
-                                       partial class Program
+                                       _ = "a".Split(separator, StringSplitOptions.None); partial class Program
                                        {
                                            private static readonly string[] separator = new[] { "1", "2" };
                                        }

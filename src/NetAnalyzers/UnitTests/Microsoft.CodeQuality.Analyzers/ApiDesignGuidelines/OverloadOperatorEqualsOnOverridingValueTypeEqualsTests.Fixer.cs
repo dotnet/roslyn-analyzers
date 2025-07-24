@@ -38,7 +38,6 @@ public struct A
     {
         return true;
     }
-
     public static bool operator ==(A left, A right)
     {
         return left.Equals(right);
@@ -113,7 +112,6 @@ public struct A
     {
         return true;
     }
-
     public static bool operator ==(A left, A right)
     {
         return left.Equals(right);
@@ -131,7 +129,6 @@ public struct B
     {
         return true;
     }
-
     public static bool operator ==(B left, B right)
     {
         return left.Equals(right);

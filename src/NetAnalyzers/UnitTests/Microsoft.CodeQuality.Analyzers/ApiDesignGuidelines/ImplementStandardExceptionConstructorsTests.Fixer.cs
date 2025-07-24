@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Xunit;
@@ -35,11 +35,9 @@ public class SomeException : Exception
     public SomeException()
     {
     }
-
     public SomeException(string message) : base(message)
     {
     }
-
     public SomeException(string message, Exception innerException) : base(message, innerException)
     {
     }
@@ -72,11 +70,9 @@ public class SomeException : Exception
     public SomeException(string message)
     {
     }
-
     public SomeException()
     {
     }
-
     public SomeException(string message, Exception innerException) : base(message, innerException)
     {
     }
@@ -109,11 +105,9 @@ public class SomeException : Exception
     public SomeException(string message, Exception innerException)
     {
     }
-
     public SomeException()
     {
     }
-
     public SomeException(string message) : base(message)
     {
     }
@@ -155,7 +149,6 @@ public class SomeException : Exception
     public SomeException(string message, Exception innerException) : base(message, innerException)
     {
     }
-
     public SomeException()
     {
     }
@@ -192,7 +185,6 @@ public class SomeException : Exception
     public SomeException(string message)
     {
     }
-
     public SomeException(string message, Exception innerException) : base(message, innerException)
     {
     }
@@ -229,7 +221,6 @@ public class SomeException : Exception
     public SomeException(string message, Exception innerException)
     {
     }
-
     public SomeException(string message) : base(message)
     {
     }

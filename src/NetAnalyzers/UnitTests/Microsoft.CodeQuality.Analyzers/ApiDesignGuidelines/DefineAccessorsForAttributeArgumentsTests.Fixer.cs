@@ -42,6 +42,7 @@ public sealed class NoAccessorTestAttribute : Attribute
     {
         m_name = name;
     }
+
     public string Name { get; }
 }");
         }

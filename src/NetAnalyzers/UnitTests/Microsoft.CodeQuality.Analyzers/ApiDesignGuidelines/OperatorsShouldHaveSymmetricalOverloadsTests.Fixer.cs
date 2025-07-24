@@ -25,6 +25,7 @@ public class A
 public class A
 {
     public static bool operator==(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '!=' to also be defined
+
     public static bool operator !=(A a1, A a2)
     {
         return !(a1 == a2);
@@ -45,12 +46,14 @@ public class A
 public class A
 {
     public static bool operator==(A a1, A a2) { return false; }      // error CS0216: The operator requires a matching operator '!=' to also be defined
+
     public static bool operator !=(A a1, A a2)
     {
         return !(a1 == a2);
     }
 
     public static bool operator==(A a1, bool a2) { return false; }   // error CS0216: The operator requires a matching operator '!=' to also be defined
+
     public static bool operator !=(A a1, bool a2)
     {
         return !(a1 == a2);
@@ -70,6 +73,7 @@ public class A
 public class A
 {
     public static bool operator!=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '==' to also be defined
+
     public static bool operator ==(A a1, A a2)
     {
         return !(a1 != a2);
@@ -89,6 +93,7 @@ public class A
 public class A
 {
     public static bool operator<(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>' to also be defined
+
     public static bool operator >(A a1, A a2)
     {
         throw new System.NotImplementedException();
@@ -108,6 +113,7 @@ public class A
 public class A
 {
     public static bool operator<=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>=' to also be defined
+
     public static bool operator >=(A a1, A a2)
     {
         throw new System.NotImplementedException();
@@ -127,6 +133,7 @@ public class A
 public class A
 {
     public static bool operator>(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '<' to also be defined
+
     public static bool operator <(A a1, A a2)
     {
         throw new System.NotImplementedException();
@@ -146,6 +153,7 @@ public class A
 public class A
 {
     public static bool operator>=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '<=' to also be defined
+
     public static bool operator <=(A a1, A a2)
     {
         throw new System.NotImplementedException();

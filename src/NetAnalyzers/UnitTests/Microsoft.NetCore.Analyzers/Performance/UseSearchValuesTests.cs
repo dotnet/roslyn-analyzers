@@ -1089,7 +1089,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 using System.Buffers;
                 using System;
 
-                _ = "".AsSpan().IndexOfAny(s_myChars); partial class Program
+                _ = "".AsSpan().IndexOfAny(s_myChars);
+
+                partial class Program
                 {
                     private static readonly SearchValues<char> s_myChars = SearchValues.Create("aeiouA");
                 }
@@ -1119,6 +1121,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 partial class Program
                 {
                 }
+
                 partial class Program
                 {
                     private static readonly SearchValues<char> s_myValues = SearchValues.Create("aeiouA");

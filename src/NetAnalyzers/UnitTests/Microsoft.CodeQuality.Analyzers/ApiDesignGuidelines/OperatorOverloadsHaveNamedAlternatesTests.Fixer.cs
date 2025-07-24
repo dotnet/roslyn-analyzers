@@ -77,6 +77,7 @@ public class C
 {
     public static bool operator true(C item) { return true; }
     public static bool operator false(C item) { return false; }
+
     public bool IsTrue
     {
         get

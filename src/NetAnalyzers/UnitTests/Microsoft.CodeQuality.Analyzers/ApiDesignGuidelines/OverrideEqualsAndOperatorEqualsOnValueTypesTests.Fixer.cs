@@ -139,6 +139,7 @@ public struct A
     {
         throw new System.NotImplementedException();
     }
+
     public static bool operator ==(A left, A right)
     {
         return left.Equals(right);
@@ -187,6 +188,7 @@ public struct A
     {
         throw new System.NotImplementedException();
     }
+
     public static bool operator !=(A left, A right)
     {
         return !(left == right);

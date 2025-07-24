@@ -35,9 +35,11 @@ public class SomeException : Exception
     public SomeException()
     {
     }
+
     public SomeException(string message) : base(message)
     {
     }
+
     public SomeException(string message, Exception innerException) : base(message, innerException)
     {
     }
@@ -70,9 +72,11 @@ public class SomeException : Exception
     public SomeException(string message)
     {
     }
+
     public SomeException()
     {
     }
+
     public SomeException(string message, Exception innerException) : base(message, innerException)
     {
     }
@@ -105,9 +109,11 @@ public class SomeException : Exception
     public SomeException(string message, Exception innerException)
     {
     }
+
     public SomeException()
     {
     }
+
     public SomeException(string message) : base(message)
     {
     }
@@ -149,6 +155,7 @@ public class SomeException : Exception
     public SomeException(string message, Exception innerException) : base(message, innerException)
     {
     }
+
     public SomeException()
     {
     }
@@ -185,6 +192,7 @@ public class SomeException : Exception
     public SomeException(string message)
     {
     }
+
     public SomeException(string message, Exception innerException) : base(message, innerException)
     {
     }
@@ -221,6 +229,7 @@ public class SomeException : Exception
     public SomeException(string message, Exception innerException)
     {
     }
+
     public SomeException(string message) : base(message)
     {
     }

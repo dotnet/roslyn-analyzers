@@ -471,27 +471,13 @@ namespace Analyzer.Utilities.Extensions
         public static bool IsImplementationOfAnyImplicitInterfaceMember<TSymbol>(this ISymbol symbol)
             where TSymbol : ISymbol
         {
-            if (symbol.ContainingType != null)
-            {
-                foreach (INamedTypeSymbol interfaceSymbol in symbol.ContainingType.AllInterfaces)
-                {
-                    foreach (var interfaceMember in interfaceSymbol.GetMembers().OfType<TSymbol>())
-                    {
-                        if (IsImplementationOfInterfaceMember(symbol, interfaceMember))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
+            return GetImplementedImplicitInterfaceMembers(symbol).Any();
         }
 
         /// <summary>
-        /// Checks if a given symbol implements an interface member implicitly
+        /// Checks if a given symbol implements an interface member implicitly and interface member satisfies given predicate
         /// </summary>
-        public static bool IsImplementationOfAnyImplicitInterfaceMember<TSymbol>(this ISymbol symbol, out TSymbol interfaceMember)
+        public static IEnumerable<TSymbol> GetImplementedImplicitInterfaceMembers<TSymbol>(this ISymbol symbol)
             where TSymbol : ISymbol
         {
             if (symbol.ContainingType != null)
@@ -500,17 +486,13 @@ namespace Analyzer.Utilities.Extensions
                 {
                     foreach (var baseInterfaceMember in interfaceSymbol.GetMembers().OfType<TSymbol>())
                     {
-                        if (IsImplementationOfInterfaceMember(symbol, baseInterfaceMember))
+                        if (IsImplementationOfInterfaceMember(symbol, baseInterfaceMember) && predicate(symbol))
                         {
-                            interfaceMember = baseInterfaceMember;
-                            return true;
+                            yield return baseInterfaceMember;
                         }
                     }
                 }
             }
-
-            interfaceMember = default;
-            return false;
         }
 
         public static bool IsImplementationOfInterfaceMember(this ISymbol symbol, [NotNullWhen(returnValue: true)] ISymbol? interfaceMember)

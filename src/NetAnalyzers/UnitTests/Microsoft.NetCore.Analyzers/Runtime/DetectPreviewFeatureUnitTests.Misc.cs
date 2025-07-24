@@ -398,6 +398,54 @@ namespace Preview_Feature_Scratch
             await test.RunAsync();
         }
 
+
+        [Fact]
+        public async Task TestInterfaceMethodDoubleImplementations()
+        {
+            var csInput = @" 
+        using System.Runtime.Versioning; using System;
+        namespace Preview_Feature_Scratch
+        {
+            class Program : IProgram, IProgram2
+            {
+                static void Main(string[] args)
+                {
+                }
+
+                public void {|#0:Foo|}()
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            class Program2 : IProgram2, IProgram
+            {
+                public void {|#1:Foo|}()
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public interface IProgram
+            {
+                [RequiresPreviewFeatures]
+                public void Foo();
+            }
+
+            public interface IProgram2
+            {
+                public void Foo();
+            }
+        }
+
+            ";
+
+            var test = TestCS(csInput);
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(0).WithArguments("Foo", "IProgram.Foo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            test.ExpectedDiagnostics.Add(VerifyCS.Diagnostic(DetectPreviewFeatureAnalyzer.ImplementsPreviewMethodRule).WithLocation(1).WithArguments("Foo", "IProgram.Foo", DetectPreviewFeatureAnalyzer.DefaultURL));
+            await test.RunAsync();
+        }
+
         [Fact]
         public async Task TestDelegate()
         {

@@ -3,11 +3,9 @@
 using System;
 using System.Composition;
 using System.Diagnostics;
-using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeQuality.Analyzers.Maintainability;
@@ -22,10 +20,10 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
         {
             return ruleKind switch
             {
-                RuleKind.op_ExclusiveOr => ReplaceWithBinaryOperator(currentNode, isCommutative: true, generator.ExclusiveOrExpression),
-                RuleKind.op_LeftShift => ReplaceWithBinaryOperator(currentNode, isCommutative: false, generator.LeftShiftExpression),
-                RuleKind.op_RightShift => ReplaceWithBinaryOperator(currentNode, isCommutative: false, generator.RightShiftExpression),
-                RuleKind.op_UnsignedRightShift => ReplaceWithBinaryOperator(currentNode, isCommutative: false, generator.UnsignedRightShiftExpression),
+                RuleKind.op_ExclusiveOr => ReplaceWithBinaryOperator(currentNode, generator, isCommutative: true, generator.ExclusiveOrExpression),
+                RuleKind.op_LeftShift => ReplaceWithBinaryOperator(currentNode, generator, isCommutative: false, generator.LeftShiftExpression),
+                RuleKind.op_RightShift => ReplaceWithBinaryOperator(currentNode, generator, isCommutative: false, generator.RightShiftExpression),
+                RuleKind.op_UnsignedRightShift => ReplaceWithBinaryOperator(currentNode, generator, isCommutative: false, generator.UnsignedRightShiftExpression),
                 _ => base.ReplaceNode(currentNode, generator, ruleKind),
             };
         }

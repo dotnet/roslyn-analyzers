@@ -34,8 +34,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
                 }
                 """;
 
-             // lang=C#-test
-             string fixedCode = $$"""
+            // lang=C#-test
+            string fixedCode = $$"""
                 using System;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.Arm;

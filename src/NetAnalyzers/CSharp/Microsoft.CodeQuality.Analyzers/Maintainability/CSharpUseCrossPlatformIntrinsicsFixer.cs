@@ -3,45 +3,34 @@
 using System;
 using System.Composition;
 using System.Diagnostics;
-using Analyzer.Utilities.Lightup;
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeQuality.Analyzers.Maintainability;
+using static Microsoft.CodeQuality.Analyzers.Maintainability.UseCrossPlatformIntrinsicsAnalyzer;
 
 namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
 {
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpUseCrossPlatformIntrinsicsFixer : UseCrossPlatformIntrinsicsFixer
     {
-        protected override SyntaxNode CreateExclusiveOrExpression(SyntaxNode left, SyntaxNode right)
-            => SyntaxFactory.BinaryExpression(SyntaxKind.ExclusiveOrExpression, (ExpressionSyntax)left, (ExpressionSyntax)right);
-
-        protected override SyntaxNode CreateLeftShiftExpression(SyntaxNode left, SyntaxNode right)
-            => SyntaxFactory.BinaryExpression(SyntaxKind.LeftShiftExpression, (ExpressionSyntax)left, (ExpressionSyntax)right);
-
-        protected override SyntaxNode CreateRightShiftExpression(SyntaxNode left, SyntaxNode right)
-            => SyntaxFactory.BinaryExpression(SyntaxKind.RightShiftExpression, (ExpressionSyntax)left, (ExpressionSyntax)right);
-
-        protected override SyntaxNode? CreateUnsignedRightShiftExpression(SyntaxNode left, SyntaxNode right)
+        protected override SyntaxNode ReplaceNode(SyntaxNode currentNode, SyntaxGenerator generator, RuleKind ruleKind)
         {
-            const LanguageVersion CSharp11 = (LanguageVersion)1100;
-
-            if (!Enum.IsDefined(typeof(SyntaxKind), SyntaxKindEx.UnsignedRightShiftExpression))
+            return ruleKind switch
             {
-                return null;
-            }
-
-            if ((left.SyntaxTree.Options is not CSharpParseOptions csharpParseOptions) || (csharpParseOptions.LanguageVersion < CSharp11))
-            {
-                return null;
-            }
-
-            return SyntaxFactory.BinaryExpression(SyntaxKindEx.UnsignedRightShiftExpression, (ExpressionSyntax)left, (ExpressionSyntax)right);
+                RuleKind.op_ExclusiveOr => ReplaceWithBinaryOperator(currentNode, isCommutative: true, generator.ExclusiveOrExpression),
+                RuleKind.op_LeftShift => ReplaceWithBinaryOperator(currentNode, isCommutative: false, generator.LeftShiftExpression),
+                RuleKind.op_RightShift => ReplaceWithBinaryOperator(currentNode, isCommutative: false, generator.RightShiftExpression),
+                RuleKind.op_UnsignedRightShift => ReplaceWithBinaryOperator(currentNode, isCommutative: false, generator.UnsignedRightShiftExpression),
+                _ => base.ReplaceNode(currentNode, generator, ruleKind),
+            };
         }
 
-        protected override SyntaxNode ReplaceWithBinaryOperator(SyntaxNode currentNode, bool isCommutative, Func<SyntaxNode, SyntaxNode, SyntaxNode?> binaryOpFunc)
+        protected override SyntaxNode ReplaceWithBinaryOperator(SyntaxNode currentNode, SyntaxGenerator generator, bool isCommutative, Func<SyntaxNode, SyntaxNode, SyntaxNode?> binaryOpFunc)
         {
             if (currentNode is not InvocationExpressionSyntax invocationExpression)
             {
@@ -62,10 +51,10 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
                 return currentNode;
             }
 
-            return SyntaxFactory.ParenthesizedExpression(replacementExpression);
+            return generator.Parenthesize(replacementExpression);
         }
 
-        protected override SyntaxNode ReplaceWithUnaryOperator(SyntaxNode currentNode, Func<SyntaxNode, SyntaxNode?> unaryOpFunc)
+        protected override SyntaxNode ReplaceWithUnaryOperator(SyntaxNode currentNode, SyntaxGenerator generator, Func<SyntaxNode, SyntaxNode?> unaryOpFunc)
         {
             if (currentNode is not InvocationExpressionSyntax invocationExpression)
             {
@@ -86,7 +75,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
                 return currentNode;
             }
 
-            return SyntaxFactory.ParenthesizedExpression(replacementExpression);
+            return generator.Parenthesize(replacementExpression);
         }
     }
 }

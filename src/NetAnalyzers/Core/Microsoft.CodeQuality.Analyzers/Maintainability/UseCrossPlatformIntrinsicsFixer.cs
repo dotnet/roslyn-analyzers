@@ -22,11 +22,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         protected sealed override string CodeActionEquivalenceKey => nameof(UseCrossPlatformIntrinsicsFixer);
 
-        protected abstract SyntaxNode CreateExclusiveOrExpression(SyntaxNode left, SyntaxNode right);
-        protected abstract SyntaxNode CreateLeftShiftExpression(SyntaxNode left, SyntaxNode right);
-        protected abstract SyntaxNode CreateRightShiftExpression(SyntaxNode left, SyntaxNode right);
-        protected abstract SyntaxNode? CreateUnsignedRightShiftExpression(SyntaxNode left, SyntaxNode right);
-
         protected sealed override Task FixAllCoreAsync(SyntaxEditor editor, SyntaxGenerator generator, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             SyntaxNode node = editor.OriginalRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
@@ -49,11 +44,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return Task.CompletedTask;
         }
 
-        protected abstract SyntaxNode ReplaceWithUnaryOperator(SyntaxNode currentNode, Func<SyntaxNode, SyntaxNode?> unaryOpFunc);
-
-        protected abstract SyntaxNode ReplaceWithBinaryOperator(SyntaxNode currentNode, bool isCommutative, Func<SyntaxNode, SyntaxNode, SyntaxNode?> binaryOpFunc);
-
-        private SyntaxNode ReplaceNode(SyntaxNode currentNode, SyntaxGenerator generator, RuleKind ruleKind)
+        protected virtual SyntaxNode ReplaceNode(SyntaxNode currentNode, SyntaxGenerator generator, RuleKind ruleKind)
         {
             return ruleKind switch
             {
@@ -61,16 +52,16 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 RuleKind.op_BitwiseAnd => ReplaceWithBinaryOperator(currentNode, isCommutative: true, generator.BitwiseAndExpression),
                 RuleKind.op_BitwiseOr => ReplaceWithBinaryOperator(currentNode, isCommutative: true, generator.BitwiseOrExpression),
                 RuleKind.op_Division => ReplaceWithBinaryOperator(currentNode, isCommutative: false, generator.DivideExpression),
-                RuleKind.op_ExclusiveOr => ReplaceWithBinaryOperator(currentNode, isCommutative: true, CreateExclusiveOrExpression),
-                RuleKind.op_LeftShift => ReplaceWithBinaryOperator(currentNode, isCommutative: false, CreateLeftShiftExpression),
                 RuleKind.op_Multiply => ReplaceWithBinaryOperator(currentNode, isCommutative: true, generator.MultiplyExpression),
                 RuleKind.op_OnesComplement => ReplaceWithUnaryOperator(currentNode, generator.BitwiseNotExpression),
-                RuleKind.op_RightShift => ReplaceWithBinaryOperator(currentNode, isCommutative: false, CreateRightShiftExpression),
                 RuleKind.op_Subtraction => ReplaceWithBinaryOperator(currentNode, isCommutative: false, generator.SubtractExpression),
                 RuleKind.op_UnaryNegation => ReplaceWithUnaryOperator(currentNode, generator.NegateExpression),
-                RuleKind.op_UnsignedRightShift => ReplaceWithBinaryOperator(currentNode, isCommutative: false, CreateUnsignedRightShiftExpression),
                 _ => currentNode,
             };
         }
+
+        protected abstract SyntaxNode ReplaceWithUnaryOperator(SyntaxNode currentNode, SyntaxGenerator generator, Func<SyntaxNode, SyntaxNode?> unaryOpFunc);
+
+        protected abstract SyntaxNode ReplaceWithBinaryOperator(SyntaxNode currentNode, SyntaxGenerator generator, bool isCommutative, Func<SyntaxNode, SyntaxNode, SyntaxNode?> binaryOpFunc);
     }
 }

@@ -40,8 +40,8 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
 
-            // Process diagnostics in order so we produce edits correctly
-            var orderedDiagnostics = diagnostics.OrderByDescending((diagnostic) => diagnostic.Location.SourceSpan.Start).ToImmutableArray();
+            // Process diagnostics from inside-out so that higher up edits see and pass along the edits made to inner constructs.
+            var orderedDiagnostics = diagnostics.OrderByDescending((diagnostic) => diagnostic.Location.SourceSpan.Start);
 
             foreach (var diagnostic in orderedDiagnostics)
             {

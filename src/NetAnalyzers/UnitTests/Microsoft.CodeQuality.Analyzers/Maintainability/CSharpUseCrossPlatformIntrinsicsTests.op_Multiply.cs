@@ -330,12 +330,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
         }
 
         [Theory]
-        [InlineData("short", "AvxBW.MultiplyLow")]
-        [InlineData("ushort", "AvxBW.MultiplyLow")]
+        [InlineData("short", "Avx512BW.MultiplyLow")]
+        [InlineData("ushort", "Avx512BW.MultiplyLow")]
         [InlineData("int", "Avx512F.MultiplyLow")]
         [InlineData("uint", "Avx512F.MultiplyLow")]
-        [InlineData("long", "Avx512DQ.VL.MultiplyLow")]
-        [InlineData("ulong", "Avx512DQ.VL.MultiplyLow")]
+        [InlineData("long", "Avx512DQ.MultiplyLow")]
+        [InlineData("ulong", "Avx512DQ.MultiplyLow")]
         [InlineData("float", "Avx512F.Multiply")]
         [InlineData("double", "Avx512F.Multiply")]
         public async Task Fixer_opMultiplyx86V512Async(string type, string method)

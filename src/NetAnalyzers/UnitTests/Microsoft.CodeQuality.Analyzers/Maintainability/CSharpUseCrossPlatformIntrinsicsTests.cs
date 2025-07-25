@@ -62,7 +62,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 
                 class C
                 {
-                    Vector128<float> M(Vector128<float> x, Vector128<float> y) => {|#1:Sse.Add(x, {|#2:Sse.Add(y, z)|})|};
+                    Vector128<float> M(Vector128<float> x, Vector128<float> y, Vector128<float> z) => {|#1:Sse.Add(x, {|#2:Sse.Add(y, z)|})|};
                 }
                 """;
 
@@ -74,7 +74,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
                 
                 class C
                 {
-                    Vector128<float> M(Vector128<float> x, Vector128<float> y) => x + y + z;
+                    Vector128<float> M(Vector128<float> x, Vector128<float> y, Vector128<float> z) => x + (y + z);
                 }
                 """;
 
@@ -101,7 +101,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 
                 class C
                 {
-                    Vector128<float> M(Vector128<float> x, Vector128<float> y) => {|#1:Sse.Multiply(x, {|#2:Sse.Add(y, z)|})|};
+                    Vector128<float> M(Vector128<float> x, Vector128<float> y, Vector128<float> z) => {|#1:Sse.Multiply(x, {|#2:Sse.Add(y, z)|})|};
                 }
                 """;
 
@@ -113,7 +113,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
                 
                 class C
                 {
-                    Vector128<float> M(Vector128<float> x, Vector128<float> y) => x * (y + z);
+                    Vector128<float> M(Vector128<float> x, Vector128<float> y, Vector128<float> z) => x * (y + z);
                 }
                 """;
 

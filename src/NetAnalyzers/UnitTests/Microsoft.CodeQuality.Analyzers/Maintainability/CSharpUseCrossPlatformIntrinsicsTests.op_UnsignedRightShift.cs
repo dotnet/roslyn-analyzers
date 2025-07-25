@@ -27,6 +27,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             // lang=C#-test
             string testCode = $$"""
                 using System;
+                using System.Diagnostics.CodeAnalysis;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.Arm;
 
@@ -39,6 +40,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             // lang=C#-test
             string fixedCode = $$"""
                 using System;
+                using System.Diagnostics.CodeAnalysis;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.Arm;
 
@@ -74,6 +76,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             // lang=C#-test
             string testCode = $$"""
                 using System;
+                using System.Diagnostics.CodeAnalysis;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.Arm;
 
@@ -86,6 +89,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             // lang=C#-test
             string fixedCode = $$"""
                 using System;
+                using System.Diagnostics.CodeAnalysis;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.Arm;
 
@@ -121,6 +125,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             // lang=C#-test
             string testCode = $$"""
                 using System;
+                using System.Diagnostics.CodeAnalysis;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.Wasm;
 
@@ -133,6 +138,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             // lang=C#-test
             string fixedCode = $$"""
                 using System;
+                using System.Diagnostics.CodeAnalysis;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.Wasm;
 
@@ -166,6 +172,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             // lang=C#-test
             string testCode = $$"""
                 using System;
+                using System.Diagnostics.CodeAnalysis;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.X86;
 
@@ -178,6 +185,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             // lang=C#-test
             string fixedCode = $$"""
                 using System;
+                using System.Diagnostics.CodeAnalysis;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.X86;
 
@@ -211,6 +219,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             // lang=C#-test
             string testCode = $$"""
                 using System;
+                using System.Diagnostics.CodeAnalysis;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.X86;
 
@@ -223,6 +232,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             // lang=C#-test
             string fixedCode = $$"""
                 using System;
+                using System.Diagnostics.CodeAnalysis;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.X86;
 
@@ -256,6 +266,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             // lang=C#-test
             string testCode = $$"""
                 using System;
+                using System.Diagnostics.CodeAnalysis;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.X86;
 
@@ -268,6 +279,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             // lang=C#-test
             string fixedCode = $$"""
                 using System;
+                using System.Diagnostics.CodeAnalysis;
                 using System.Runtime.Intrinsics;
                 using System.Runtime.Intrinsics.X86;
 

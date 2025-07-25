@@ -96,10 +96,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
         [InlineData("ushort", "AdvSimd.Subtract")]
         [InlineData("int", "AdvSimd.Subtract")]
         [InlineData("uint", "AdvSimd.Subtract")]
-        [InlineData("long", "AdvSimd.SubtractScalar")]
-        [InlineData("ulong", "AdvSimd.SubtractScalar")]
+        [InlineData("long", "AdvSimd.Subtract")]
+        [InlineData("ulong", "AdvSimd.Subtract")]
         [InlineData("float", "AdvSimd.Subtract")]
-        [InlineData("double", "AdvSimd.Arm64.SubtractScalar")]
+        [InlineData("double", "AdvSimd.Arm64.Subtract")]
         public async Task Fixer_opSubtractionArmV128Async(string type, string method)
         {
             // lang=C#-test

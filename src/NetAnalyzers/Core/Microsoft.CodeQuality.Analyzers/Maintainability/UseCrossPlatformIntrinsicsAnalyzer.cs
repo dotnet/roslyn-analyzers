@@ -90,23 +90,23 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             static bool IsValidBinaryOperatorMethodInvocation(IInvocationOperation invocation, bool isCommutative)
             {
                 return (invocation.Arguments.Length == 2) &&
-                       SymbolEqualityComparer.Default.Equals(invocation.Type, invocation.Arguments[0].Type) &&
-                       SymbolEqualityComparer.Default.Equals(invocation.Type, invocation.Arguments[1].Type) &&
+                       SymbolEqualityComparer.Default.Equals(invocation.Type, invocation.Arguments[0].Parameter?.Type) &&
+                       SymbolEqualityComparer.Default.Equals(invocation.Type, invocation.Arguments[1].Parameter?.Type) &&
                        (isCommutative || (invocation.Arguments[0].Parameter?.Ordinal == 0));
             }
 
             static bool IsValidShiftOperatorMethodInvocation(IInvocationOperation invocation)
             {
                 return (invocation.Arguments.Length == 2) &&
-                       SymbolEqualityComparer.Default.Equals(invocation.Type, invocation.Arguments[0].Type) &&
-                       (invocation.Arguments[1].Type?.SpecialType is SpecialType.System_Byte or SpecialType.System_Int32) &&
+                       SymbolEqualityComparer.Default.Equals(invocation.Type, invocation.Arguments[0].Parameter?.Type) &&
+                       (invocation.Arguments[1].Parameter?.Type.SpecialType is SpecialType.System_Byte or SpecialType.System_Int32) &&
                        (invocation.Arguments[0].Parameter?.Ordinal == 0);
             }
 
             static bool IsValidUnaryOperatorMethodInvocation(IInvocationOperation invocation)
             {
                 return (invocation.Arguments.Length == 1) &&
-                       SymbolEqualityComparer.Default.Equals(invocation.Type, invocation.Arguments[0].Type);
+                       SymbolEqualityComparer.Default.Equals(invocation.Type, invocation.Arguments[0].Parameter?.Type);
             }
         }
 

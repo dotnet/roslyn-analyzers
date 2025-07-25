@@ -96,10 +96,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
         [InlineData("ushort", "AdvSimd.Add")]
         [InlineData("int", "AdvSimd.Add")]
         [InlineData("uint", "AdvSimd.Add")]
-        [InlineData("long", "AdvSimd.AddScalar")]
-        [InlineData("ulong", "AdvSimd.AddScalar")]
+        [InlineData("long", "AdvSimd.Add")]
+        [InlineData("ulong", "AdvSimd.Add")]
         [InlineData("float", "AdvSimd.Add")]
-        [InlineData("double", "AdvSimd.Arm64.AddScalar")]
+        [InlineData("double", "AdvSimd.Arm64.Add")]
         public async Task Fixer_opAdditionArmV128Async(string type, string method)
         {
             // lang=C#-test

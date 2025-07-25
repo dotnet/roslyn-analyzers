@@ -14,7 +14,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
     public partial class CSharpUseCrossPlatformIntrinsicsTests
     {
         [Fact]
-        public async Task Fixer_InnerNodeReplacedAsync(string type, string method)
+        public async Task Fixer_InnerNodeReplacedAsync()
         {
             // lang=C#-test
             string testCode = """
@@ -52,7 +52,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
         }
 
         [Fact]
-        public async Task Fixer_ChainReplacedAsync(string type, string method)
+        public async Task Fixer_ChainReplacedAsync()
         {
             // lang=C#-test
             string testCode = """
@@ -91,7 +91,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
         }
 
         [Fact]
-        public async Task Fixer_ChainParenthesizedAsync(string type, string method)
+        public async Task Fixer_ChainParenthesizedAsync()
         {
             // lang=C#-test
             string testCode = """

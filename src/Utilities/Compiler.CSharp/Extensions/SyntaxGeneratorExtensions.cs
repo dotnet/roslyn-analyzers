@@ -16,13 +16,13 @@ namespace Analyzer.Utilities.Extensions
             => SyntaxFactory.BinaryExpression(syntaxKind, (ExpressionSyntax)generator.Parenthesize(left), (ExpressionSyntax)generator.Parenthesize(right));
 
         public static SyntaxNode ExclusiveOrExpression(this SyntaxGenerator generator, SyntaxNode left, SyntaxNode right)
-            => generator.CreateBinaryExpression(SyntaxKind.ExclusiveOrExpression, left, right)
+            => generator.CreateBinaryExpression(SyntaxKind.ExclusiveOrExpression, left, right);
 
         public static SyntaxNode LeftShiftExpression(this SyntaxGenerator generator, SyntaxNode left, SyntaxNode right)
             => generator.CreateBinaryExpression(SyntaxKind.LeftShiftExpression, left, right);
 
         public static SyntaxNode RightShiftExpression(this SyntaxGenerator generator, SyntaxNode left, SyntaxNode right)
-            => generator.CreateBinaryExpression(SyntaxKind.RightShiftExpression, left, right)
+            => generator.CreateBinaryExpression(SyntaxKind.RightShiftExpression, left, right);
 
         public static SyntaxNode? UnsignedRightShiftExpression(this SyntaxGenerator generator, SyntaxNode left, SyntaxNode right)
         {

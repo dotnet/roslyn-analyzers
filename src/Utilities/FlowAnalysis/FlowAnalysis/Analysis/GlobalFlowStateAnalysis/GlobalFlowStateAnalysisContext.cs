@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
     /// <summary>
     /// Analysis context for execution of <see cref="GlobalFlowStateAnalysis"/> on a control flow graph.
     /// </summary>
-    internal sealed class GlobalFlowStateAnalysisContext : AbstractDataFlowAnalysisContext<GlobalFlowStateAnalysisData, GlobalFlowStateAnalysisContext, GlobalFlowStateAnalysisResult, GlobalFlowStateAnalysisValueSet>
+    public sealed class GlobalFlowStateAnalysisContext : AbstractDataFlowAnalysisContext<GlobalFlowStateAnalysisData, GlobalFlowStateAnalysisContext, GlobalFlowStateAnalysisResult, GlobalFlowStateAnalysisValueSet>
     {
         private GlobalFlowStateAnalysisContext(
             AbstractValueDomain<GlobalFlowStateAnalysisValueSet> valueDomain,

@@ -13,148 +13,132 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 
     public partial class CSharpUseCrossPlatformIntrinsicsTests
     {
-        [Fact]
-        public async Task Fixer_opUnaryNegationArmV64Async()
+        [Theory]
+        [InlineData("sbyte", "AdvSimd.Negate")]
+        [InlineData("short", "AdvSimd.Negate")]
+        [InlineData("int", "AdvSimd.Negate")]
+        [InlineData("long", "AdvSimd.Arm64.NegateScalar")]
+        [InlineData("float", "AdvSimd.Negate")]
+        [InlineData("double", "AdvSimd.NegateScalar")]
+        public async Task Fixer_opUnaryNegationArmV64Async(string type, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Arm;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
 
-class C
-{
-    Vector64<sbyte> M(Vector64<sbyte> x) => {|#1:AdvSimd.Negate(x)|};
-    Vector64<short> M(Vector64<short> x) => {|#2:AdvSimd.Negate(x)|};
-    Vector64<int> M(Vector64<int> x) => {|#3:AdvSimd.Negate(x)|};
-    Vector64<long> M(Vector64<long> x) => {|#4:AdvSimd.Arm64.NegateScalar(x)|};
-    Vector64<float> M(Vector64<float> x) => {|#5:AdvSimd.Negate(x)|};
-    Vector64<double> M(Vector64<double> x) => {|#6:AdvSimd.NegateScalar(x)|};
+                class C
+                {
+                    Vector64<{{type}}> M(Vector64<{{type}}> x) => {|#1:{{method}}(x)|};
+                }
+                """;
 
-    Vector64<float> N(Vector64<float> x) => AdvSimd.NegateScalar(x);
-}";
-            // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Arm;
+             // lang=C#-test
+             string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
 
-class C
-{
-    Vector64<sbyte> M(Vector64<sbyte> x) => -x;
-    Vector64<short> M(Vector64<short> x) => -x;
-    Vector64<int> M(Vector64<int> x) => -x;
-    Vector64<long> M(Vector64<long> x) => -x;
-    Vector64<float> M(Vector64<float> x) => -x;
-    Vector64<double> M(Vector64<double> x) => -x;
-
-    Vector64<float> N(Vector64<float> x) => AdvSimd.NegateScalar(x);
-}";
+                class C
+                {
+                    Vector64<{{type}}> M(Vector64<{{type}}> x) => -x;
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(3),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(4),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(5),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(6),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_UnaryNegation]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task Fixer_opUnaryNegationArmV128Async()
+        [Theory]
+        [InlineData("sbyte", "AdvSimd.Negate")]
+        [InlineData("short", "AdvSimd.Negate")]
+        [InlineData("int", "AdvSimd.Negate")]
+        [InlineData("long", "AdvSimd.Arm64.Negate")]
+        [InlineData("float", "AdvSimd.Negate")]
+        [InlineData("double", "AdvSimd.Arm64.Negate")]
+        public async Task Fixer_opUnaryNegationArmV128Async(string type, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Arm;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
 
-class C
-{
-    Vector128<sbyte> M(Vector128<sbyte> x) => {|#1:AdvSimd.Negate(x)|};
-    Vector128<short> M(Vector128<short> x) => {|#2:AdvSimd.Negate(x)|};
-    Vector128<int> M(Vector128<int> x) => {|#3:AdvSimd.Negate(x)|};
-    Vector128<long> M(Vector128<long> x) => {|#4:AdvSimd.Arm64.Negate(x)|};
-    Vector128<float> M(Vector128<float> x) => {|#5:AdvSimd.Negate(x)|};
-    Vector128<double> M(Vector128<double> x) => {|#6:AdvSimd.Arm64.Negate(x)|};
-}";
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x) => {|#1:{{method}}(x)|};
+                }
+                """;
+
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Arm;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
 
-class C
-{
-    Vector128<sbyte> M(Vector128<sbyte> x) => -x;
-    Vector128<short> M(Vector128<short> x) => -x;
-    Vector128<int> M(Vector128<int> x) => -x;
-    Vector128<long> M(Vector128<long> x) => -x;
-    Vector128<float> M(Vector128<float> x) => -x;
-    Vector128<double> M(Vector128<double> x) => -x;
-}";
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x) => -x;
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(3),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(4),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(5),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(6),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_UnaryNegation]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task Fixer_opUnaryNegationWasmV128Async()
+        [Theory]
+        [InlineData("sbyte", "PackedSimd.Negate")]
+        [InlineData("short", "PackedSimd.Negate")]
+        [InlineData("int", "PackedSimd.Negate")]
+        [InlineData("long", "PackedSimd.Negate")]
+        [InlineData("float", "PackedSimd.Negate")]
+        [InlineData("double", "PackedSimd.Negate")]
+        public async Task Fixer_opUnaryNegationWasmV128Async(string type, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Wasm;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Wasm;
 
-class C
-{
-    Vector128<sbyte> M(Vector128<sbyte> x) => {|#1:PackedSimd.Negate(x)|};
-    Vector128<short> M(Vector128<short> x) => {|#2:PackedSimd.Negate(x)|};
-    Vector128<int> M(Vector128<int> x) => {|#3:PackedSimd.Negate(x)|};
-    Vector128<long> M(Vector128<long> x) => {|#4:PackedSimd.Negate(x)|};
-    Vector128<float> M(Vector128<float> x) => {|#5:PackedSimd.Negate(x)|};
-    Vector128<double> M(Vector128<double> x) => {|#6:PackedSimd.Negate(x)|};
-}";
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x) => {|#1:{{method}}(x)|};
+                }
+                """;
+
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Wasm;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Wasm;
 
-class C
-{
-    Vector128<sbyte> M(Vector128<sbyte> x) => -x;
-    Vector128<short> M(Vector128<short> x) => -x;
-    Vector128<int> M(Vector128<int> x) => -x;
-    Vector128<long> M(Vector128<long> x) => -x;
-    Vector128<float> M(Vector128<float> x) => -x;
-    Vector128<double> M(Vector128<double> x) => -x;
-}";
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x) => -x;
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(3),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(4),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(5),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opUnaryNegation]).WithLocation(6),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_UnaryNegation]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80

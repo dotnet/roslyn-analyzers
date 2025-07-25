@@ -13,268 +13,280 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 
     public partial class CSharpUseCrossPlatformIntrinsicsTests
     {
-        [Fact]
-        public async Task Fixer_opDivisionArmV64Async()
+        [Theory]
+        [InlineData("float", "AdvSimd.Arm64.Divide")]
+        [InlineData("double", "AdvSimd.DivideScalar")]
+        public async Task Fixer_opDivisionArmV64Async(string type, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Arm;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
 
-class C
-{
-    Vector64<float> M(Vector64<float> x, Vector64<float> y) => {|#1:AdvSimd.Arm64.Divide(x, y)|};
-    Vector64<double> M(Vector64<double> x, Vector64<double> y) => {|#2:AdvSimd.DivideScalar(x, y)|};
+                class C
+                {
+                    Vector64<{{type}}> M(Vector64<{{type}}> x, Vector64<{{type}}> y) => {|#1:{{method}}(x, y)|};
+                    Vector64<{{type}}> R(Vector64<{{type}}> x, Vector64<{{type}}> y) => {{method}}(right: y, left: x);
+                }
+                """;
 
-    Vector64<float> R(Vector64<float> x, Vector64<float> y) => {|#3:AdvSimd.Arm64.Divide(right: y, left: x)|};
-    Vector64<double> R(Vector64<double> x, Vector64<double> y) => {|#4:AdvSimd.DivideScalar(right: y, left: x)|};
-
-    Vector64<float> N(Vector64<float> x, Vector64<float> y) => AdvSimd.DivideScalar(x, y);
-}";
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Arm;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
 
-class C
-{
-    Vector64<float> M(Vector64<float> x, Vector64<float> y) => x / y;
-    Vector64<double> M(Vector64<double> x, Vector64<double> y) => x / y;
-
-    Vector64<float> R(Vector64<float> x, Vector64<float> y) => x / y;
-    Vector64<double> R(Vector64<double> x, Vector64<double> y) => x / y;
-
-    Vector64<float> N(Vector64<float> x, Vector64<float> y) => AdvSimd.DivideScalar(x, y);
-}";
+                class C
+                {
+                    Vector64<{{type}}> M(Vector64<{{type}}> x, Vector64<{{type}}> y) => x / y;
+                    Vector64<{{type}}> R(Vector64<{{type}}> x, Vector64<{{type}}> y) => {{method}}(right: y, left: x);
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(3),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(4),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_Division]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task Fixer_opDivisionArmV128Async()
+        [Theory]
+        [InlineData("float", "AdvSimd.DivideScalar")]
+        public async Task Fixer_opDivisionArmV64Async_NoReplacement(string type, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Arm;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
 
-class C
-{
-    Vector128<float> M(Vector128<float> x, Vector128<float> y) => {|#1:AdvSimd.Arm64.Divide(x, y)|};
-    Vector128<double> M(Vector128<double> x, Vector128<double> y) => {|#2:AdvSimd.Arm64.Divide(x, y)|};
+                class C
+                {
+                    Vector64<{{type}}> M(Vector64<{{type}}> x, Vector64<{{type}}> y) => {{method}}(x, y);
+                }
+                """;
 
-    Vector128<float> R(Vector128<float> x, Vector128<float> y) => {|#3:AdvSimd.Arm64.Divide(right: y, left: x)|};
-    Vector128<double> R(Vector128<double> x, Vector128<double> y) => {|#4:AdvSimd.Arm64.Divide(right: y, left: x)|};
-}";
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Arm;
+            string fixedCode = testCode;
 
-class C
-{
-    Vector128<float> M(Vector128<float> x, Vector128<float> y) => x / y;
-    Vector128<double> M(Vector128<double> x, Vector128<double> y) => x / y;
+            await new VerifyCS.Test
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { },
+                FixedCode = fixedCode,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net80
+            }.RunAsync();
+        }
 
-    Vector128<float> R(Vector128<float> x, Vector128<float> y) => x / y;
-    Vector128<double> R(Vector128<double> x, Vector128<double> y) => x / y;
-}";
+        [Theory]
+        [InlineData("float", "AdvSimd.Arm64.Divide")]
+        [InlineData("double", "AdvSimd.Arm64.Divide")]
+        public async Task Fixer_opDivisionArmV128Async(string type, string method)
+        {
+            // lang=C#-test
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
+
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x, Vector128<{{type}}> y) => {|#1:{{method}}(x, y)|};
+                    Vector128<{{type}}> R(Vector128<{{type}}> x, Vector128<{{type}}> y) => {{method}}(right: y, left: x);
+                }
+                """;
+
+            // lang=C#-test
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
+
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x, Vector128<{{type}}> y) => x / y;
+                    Vector128<{{type}}> R(Vector128<{{type}}> x, Vector128<{{type}}> y) => {{method}}(right: y, left: x);
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(3),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(4),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_Division]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task Fixer_opDivisionWasmV128Async()
+        [Theory]
+        [InlineData("float", "PackedSimd.Divide")]
+        [InlineData("double", "PackedSimd.Divide")]
+        public async Task Fixer_opDivisionWasmV128Async(string type, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Wasm;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Wasm;
 
-class C
-{
-    Vector128<float> M(Vector128<float> x, Vector128<float> y) => {|#1:PackedSimd.Divide(x, y)|};
-    Vector128<double> M(Vector128<double> x, Vector128<double> y) => {|#2:PackedSimd.Divide(x, y)|};
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x, Vector128<{{type}}> y) => {|#1:{{method}}(x, y)|};
+                    Vector128<{{type}}> R(Vector128<{{type}}> x, Vector128<{{type}}> y) => {{method}}(right: y, left: x);
+                }
+                """;
 
-    Vector128<float> R(Vector128<float> x, Vector128<float> y) => {|#3:PackedSimd.Divide(right: y, left: x)|};
-    Vector128<double> R(Vector128<double> x, Vector128<double> y) => {|#4:PackedSimd.Divide(right: y, left: x)|};
-}";
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Wasm;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Wasm;
 
-class C
-{
-    Vector128<float> M(Vector128<float> x, Vector128<float> y) => x / y;
-    Vector128<double> M(Vector128<double> x, Vector128<double> y) => x / y;
-
-    Vector128<float> R(Vector128<float> x, Vector128<float> y) => x / y;
-    Vector128<double> R(Vector128<double> x, Vector128<double> y) => x / y;
-}";
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x, Vector128<{{type}}> y) => x / y;
+                    Vector128<{{type}}> R(Vector128<{{type}}> x, Vector128<{{type}}> y) => {{method}}(right: y, left: x);
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(3),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(4),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_Division]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task Fixer_opDivisionx86V128Async()
+        [Theory]
+        [InlineData("float", "Sse.Divide")]
+        [InlineData("double", "Sse2.Divide")]
+        public async Task Fixer_opDivisionx86V128Async(string type, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.X86;
 
-class C
-{
-    Vector128<float> M(Vector128<float> x, Vector128<float> y) => {|#1:Sse.Divide(x, y)|};
-    Vector128<double> M(Vector128<double> x, Vector128<double> y) => {|#2:Sse2.Divide(x, y)|};
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x, Vector128<{{type}}> y) => {|#1:{{method}}(x, y)|};
+                    Vector128<{{type}}> R(Vector128<{{type}}> x, Vector128<{{type}}> y) => {{method}}(right: y, left: x);
+                }
+                """;
 
-    Vector128<float> R(Vector128<float> x, Vector128<float> y) => {|#3:Sse.Divide(right: y, left: x)|};
-    Vector128<double> R(Vector128<double> x, Vector128<double> y) => {|#4:Sse2.Divide(right: y, left: x)|};
-}";
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.X86;
 
-class C
-{
-    Vector128<float> M(Vector128<float> x, Vector128<float> y) => x / y;
-    Vector128<double> M(Vector128<double> x, Vector128<double> y) => x / y;
-
-    Vector128<float> R(Vector128<float> x, Vector128<float> y) => x / y;
-    Vector128<double> R(Vector128<double> x, Vector128<double> y) => x / y;
-}";
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x, Vector128<{{type}}> y) => x / y;
+                    Vector128<{{type}}> R(Vector128<{{type}}> x, Vector128<{{type}}> y) => {{method}}(right: y, left: x);
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(3),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(4),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_Division]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task Fixer_opDivisionx86V256Async()
+        [Theory]
+        [InlineData("float", "Avx.Divide")]
+        [InlineData("double", "Avx.Divide")]
+        public async Task Fixer_opDivisionx86V256Async(string type, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.X86;
 
-class C
-{
-    Vector256<float> M(Vector256<float> x, Vector256<float> y) => {|#1:Avx.Divide(x, y)|};
-    Vector256<double> M(Vector256<double> x, Vector256<double> y) => {|#2:Avx.Divide(x, y)|};
+                class C
+                {
+                    Vector256<{{type}}> M(Vector256<{{type}}> x, Vector256<{{type}}> y) => {|#1:{{method}}(x, y)|};
+                    Vector256<{{type}}> R(Vector256<{{type}}> x, Vector256<{{type}}> y) => {{method}}(right: y, left: x);
+                }
+                """;
 
-    Vector256<float> R(Vector256<float> x, Vector256<float> y) => {|#3:Avx.Divide(right: y, left: x)|};
-    Vector256<double> R(Vector256<double> x, Vector256<double> y) => {|#4:Avx.Divide(right: y, left: x)|};
-}";
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.X86;
 
-class C
-{
-    Vector256<float> M(Vector256<float> x, Vector256<float> y) => x / y;
-    Vector256<double> M(Vector256<double> x, Vector256<double> y) => x / y;
-
-    Vector256<float> R(Vector256<float> x, Vector256<float> y) => x / y;
-    Vector256<double> R(Vector256<double> x, Vector256<double> y) => x / y;
-}";
+                class C
+                {
+                    Vector256<{{type}}> M(Vector256<{{type}}> x, Vector256<{{type}}> y) => x / y;
+                    Vector256<{{type}}> R(Vector256<{{type}}> x, Vector256<{{type}}> y) => {{method}}(right: y, left: x);
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(3),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(4),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_Division]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task Fixer_opDivisionx86V512Async()
+        [Theory]
+        [InlineData("float", "Avx512F.Divide")]
+        [InlineData("double", "Avx512F.Divide")]
+        public async Task Fixer_opDivisionx86V512Async(string type, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.X86;
 
-class C
-{
-    Vector512<float> M(Vector512<float> x, Vector512<float> y) => {|#1:Avx512F.Divide(x, y)|};
-    Vector512<double> M(Vector512<double> x, Vector512<double> y) => {|#2:Avx512F.Divide(x, y)|};
+                class C
+                {
+                    Vector512<{{type}}> M(Vector512<{{type}}> x, Vector512<{{type}}> y) => {|#1:{{method}}(x, y)|};
+                    Vector512<{{type}}> R(Vector512<{{type}}> x, Vector512<{{type}}> y) => {{method}}(right: y, left: x);
+                }
+                """;
 
-    Vector512<float> R(Vector512<float> x, Vector512<float> y) => {|#3:Avx512F.Divide(right: y, left: x)|};
-    Vector512<double> R(Vector512<double> x, Vector512<double> y) => {|#4:Avx512F.Divide(right: y, left: x)|};
-}";
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.X86;
 
-class C
-{
-    Vector512<float> M(Vector512<float> x, Vector512<float> y) => x / y;
-    Vector512<double> M(Vector512<double> x, Vector512<double> y) => x / y;
-
-    Vector512<float> R(Vector512<float> x, Vector512<float> y) => x / y;
-    Vector512<double> R(Vector512<double> x, Vector512<double> y) => x / y;
-}";
+                class C
+                {
+                    Vector512<{{type}}> M(Vector512<{{type}}> x, Vector512<{{type}}> y) => x / y;
+                    Vector512<{{type}}> R(Vector512<{{type}}> x, Vector512<{{type}}> y) => {{method}}(right: y, left: x);
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(3),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opDivision]).WithLocation(4),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_Division]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80

@@ -13,255 +13,249 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 
     public partial class CSharpUseCrossPlatformIntrinsicsTests
     {
-        [Fact]
-        public async Task Fixer_opRightShiftArmV64Async()
+        [Theory]
+        [InlineData("sbyte", "7", "AdvSimd.ShiftRightArithmetic")]
+        [InlineData("short", "15", "AdvSimd.ShiftRightArithmetic")]
+        [InlineData("int", "31", "AdvSimd.ShiftRightArithmetic")]
+        [InlineData("long", "63", "AdvSimd.ShiftRightArithmeticScalar")]
+        public async Task Fixer_opRightShiftArmV64Async(string type, string max, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Arm;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
 
-class C
-{
-    Vector64<sbyte> M(Vector64<sbyte> x, [ConstantExpected(Max = (byte)(7))] byte  y) => {|#1:AdvSimd.ShiftRightArithmetic(x, y)|};
-    Vector64<short> M(Vector64<short> x, [ConstantExpected(Max = (byte)(15))] byte  y) => {|#2:AdvSimd.ShiftRightArithmetic(x, y)|};
-    Vector64<int> M(Vector64<int> x, [ConstantExpected(Max = (byte)(31))] byte  y) => {|#3:AdvSimd.ShiftRightArithmetic(x, y)|};
-    Vector64<long> M(Vector64<long> x, [ConstantExpected(Max = (byte)(63))] byte  y) => {|#4:AdvSimd.ShiftRightArithmeticScalar(x, y)|};
-}";
+                class C
+                {
+                    Vector64<{{type}}> M(Vector64<{{type}}> x, [ConstantExpected(Max = (byte)({{max}}))] byte y) => {|#1:{{method}}(x, y)|};
+                }
+                """;
+
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Arm;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
 
-class C
-{
-    Vector64<sbyte> M(Vector64<sbyte> x, [ConstantExpected(Max = (byte)(7))] byte  y) => x >> y;
-    Vector64<short> M(Vector64<short> x, [ConstantExpected(Max = (byte)(15))] byte  y) => x >> y;
-    Vector64<int> M(Vector64<int> x, [ConstantExpected(Max = (byte)(31))] byte  y) => x >> y;
-    Vector64<long> M(Vector64<long> x, [ConstantExpected(Max = (byte)(63))] byte  y) => x >> y;
-}";
+                class C
+                {
+                    Vector64<{{type}}> M(Vector64<{{type}}> x, [ConstantExpected(Max = (byte)({{max}}))] byte y) => x >> y;
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(3),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(4),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_RightShift]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task Fixer_opRightShiftArmV128Async()
+        [Theory]
+        [InlineData("sbyte", "7", "AdvSimd.ShiftRightArithmetic")]
+        [InlineData("short", "15", "AdvSimd.ShiftRightArithmetic")]
+        [InlineData("int", "31", "AdvSimd.ShiftRightArithmetic")]
+        [InlineData("long", "63", "AdvSimd.ShiftRightArithmetic")]
+        public async Task Fixer_opRightShiftArmV128Async(string type, string max, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Arm;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
 
-class C
-{
-    Vector128<sbyte> M(Vector128<sbyte> x, [ConstantExpected(Max = (byte)(7))] byte y) => {|#1:AdvSimd.ShiftRightArithmetic(x, y)|};
-    Vector128<short> M(Vector128<short> x, [ConstantExpected(Max = (byte)(15))] byte y) => {|#2:AdvSimd.ShiftRightArithmetic(x, y)|};
-    Vector128<int> M(Vector128<int> x, [ConstantExpected(Max = (byte)(31))] byte y) => {|#3:AdvSimd.ShiftRightArithmetic(x, y)|};
-    Vector128<long> M(Vector128<long> x, [ConstantExpected(Max = (byte)(63))] byte y) => {|#4:AdvSimd.ShiftRightArithmetic(x, y)|};
-}";
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x, [ConstantExpected(Max = (byte)({{max}}))] byte y) => {|#1:{{method}}(x, y)|};
+                }
+                """;
+
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Arm;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Arm;
 
-class C
-{
-    Vector128<sbyte> M(Vector128<sbyte> x, [ConstantExpected(Max = (byte)(7))] byte y) => x >> y;
-    Vector128<short> M(Vector128<short> x, [ConstantExpected(Max = (byte)(15))] byte y) => x >> y;
-    Vector128<int> M(Vector128<int> x, [ConstantExpected(Max = (byte)(31))] byte y) => x >> y;
-    Vector128<long> M(Vector128<long> x, [ConstantExpected(Max = (byte)(63))] byte y) => x >> y;
-}";
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x, [ConstantExpected(Max = (byte)({{max}}))] byte y) => x >> y;
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(3),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(4),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_RightShift]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task Fixer_opRightShiftWasmV128Async()
+        [Theory]
+        [InlineData("sbyte", "7", "PackedSimd.ShiftRightArithmetic")]
+        [InlineData("short", "15", "PackedSimd.ShiftRightArithmetic")]
+        [InlineData("int", "31", "PackedSimd.ShiftRightArithmetic")]
+        [InlineData("long", "63", "PackedSimd.ShiftRightArithmetic")]
+        public async Task Fixer_opRightShiftWasmV128Async(string type, string max, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Wasm;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Wasm;
 
-class C
-{
-    Vector128<sbyte> M(Vector128<sbyte> x, [ConstantExpected(Max = (byte)(7))] byte y) => {|#1:PackedSimd.ShiftRightArithmetic(x, y)|};
-    Vector128<short> M(Vector128<short> x, [ConstantExpected(Max = (byte)(15))] byte y) => {|#2:PackedSimd.ShiftRightArithmetic(x, y)|};
-    Vector128<int> M(Vector128<int> x, [ConstantExpected(Max = (byte)(31))] byte y) => {|#3:PackedSimd.ShiftRightArithmetic(x, y)|};
-    Vector128<long> M(Vector128<long> x, [ConstantExpected(Max = (byte)(63))] byte y) => {|#4:PackedSimd.ShiftRightArithmetic(x, y)|};
-}";
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x, [ConstantExpected(Max = (byte)({{max}}))] byte y) => {|#1:{{method}}(x, y)|};
+                }
+                """;
+
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.Wasm;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.Wasm;
 
-class C
-{
-    Vector128<sbyte> M(Vector128<sbyte> x, [ConstantExpected(Max = (byte)(7))] byte y) => x >> y;
-    Vector128<short> M(Vector128<short> x, [ConstantExpected(Max = (byte)(15))] byte y) => x >> y;
-    Vector128<int> M(Vector128<int> x, [ConstantExpected(Max = (byte)(31))] byte y) => x >> y;
-    Vector128<long> M(Vector128<long> x, [ConstantExpected(Max = (byte)(63))] byte y) => x >> y;
-}";
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x, [ConstantExpected(Max = (byte)({{max}}))] byte y) => x >> y;
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(3),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(4),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_RightShift]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task Fixer_opRightShiftx86V128Async()
+        [Theory]
+        [InlineData("short", "15", "Sse2.ShiftRightArithmetic")]
+        [InlineData("int", "31", "Sse2.ShiftRightArithmetic")]
+        [InlineData("long", "63", "Avx512F.VL.ShiftRightArithmetic")]
+        public async Task Fixer_opRightShiftx86V128Async(string type, string max, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.X86;
 
-class C
-{
-    Vector128<short> M(Vector128<short> x, [ConstantExpected(Max = (byte)(15))] byte y) => {|#1:Sse2.ShiftRightArithmetic(x, y)|};
-    Vector128<int> M(Vector128<int> x, [ConstantExpected(Max = (byte)(31))] byte y) => {|#2:Sse2.ShiftRightArithmetic(x, y)|};
-    Vector128<long> M(Vector128<long> x, [ConstantExpected(Max = (byte)(63))] byte y) => {|#3:Avx512F.VL.ShiftRightArithmetic(x, y)|};
-}";
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x, [ConstantExpected(Max = (byte)({{max}}))] byte y) => {|#1:{{method}}(x, y)|};
+                }
+                """;
+
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.X86;
 
-class C
-{
-    Vector128<short> M(Vector128<short> x, [ConstantExpected(Max = (byte)(15))] byte y) => x >> y;
-    Vector128<int> M(Vector128<int> x, [ConstantExpected(Max = (byte)(31))] byte y) => x >> y;
-    Vector128<long> M(Vector128<long> x, [ConstantExpected(Max = (byte)(63))] byte y) => x >> y;
-}";
+                class C
+                {
+                    Vector128<{{type}}> M(Vector128<{{type}}> x, [ConstantExpected(Max = (byte)({{max}}))] byte y) => x >> y;
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(3),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_RightShift]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task Fixer_opRightShiftx86V256Async()
+        [Theory]
+        [InlineData("short", "15", "Avx2.ShiftRightArithmetic")]
+        [InlineData("int", "31", "Avx2.ShiftRightArithmetic")]
+        [InlineData("long", "63", "Avx512F.VL.ShiftRightArithmetic")]
+        public async Task Fixer_opRightShiftx86V256Async(string type, string max, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.X86;
 
-class C
-{
-    Vector256<short> M(Vector256<short> x, [ConstantExpected(Max = (byte)(15))] byte y) => {|#1:Avx2.ShiftRightArithmetic(x, y)|};
-    Vector256<int> M(Vector256<int> x, [ConstantExpected(Max = (byte)(31))] byte y) => {|#2:Avx2.ShiftRightArithmetic(x, y)|};
-    Vector256<long> M(Vector256<long> x, [ConstantExpected(Max = (byte)(63))] byte y) => {|#3:Avx512F.VL.ShiftRightArithmetic(x, y)|};
-}";
+                class C
+                {
+                    Vector256<{{type}}> M(Vector256<{{type}}> x, [ConstantExpected(Max = (byte)({{max}}))] byte y) => {|#1:{{method}}(x, y)|};
+                }
+                """;
+
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.X86;
 
-class C
-{
-    Vector256<short> M(Vector256<short> x, [ConstantExpected(Max = (byte)(15))] byte y) => x >> y;
-    Vector256<int> M(Vector256<int> x, [ConstantExpected(Max = (byte)(31))] byte y) => x >> y;
-    Vector256<long> M(Vector256<long> x, [ConstantExpected(Max = (byte)(63))] byte y) => x >> y;
-}";
+                class C
+                {
+                    Vector256<{{type}}> M(Vector256<{{type}}> x, [ConstantExpected(Max = (byte)({{max}}))] byte y) => x >> y;
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(3),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_RightShift]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task Fixer_opRightShiftx86V512Async()
+        [Theory]
+        [InlineData("short", "15", "Avx512BW.ShiftRightArithmetic")]
+        [InlineData("int", "31", "Avx512F.ShiftRightArithmetic")]
+        [InlineData("long", "63", "Avx512F.ShiftRightArithmetic")]
+        public async Task Fixer_opRightShiftx86V512Async(string type, string max, string method)
         {
             // lang=C#-test
-            const string testCode = @"using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+            string testCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.X86;
 
-class C
-{
-    Vector512<short> M(Vector512<short> x, [ConstantExpected(Max = (byte)(15))] byte y) => {|#1:Avx512BW.ShiftRightArithmetic(x, y)|};
-    Vector512<int> M(Vector512<int> x, [ConstantExpected(Max = (byte)(31))] byte y) => {|#2:Avx512F.ShiftRightArithmetic(x, y)|};
-    Vector512<long> M(Vector512<long> x, [ConstantExpected(Max = (byte)(63))] byte y) => {|#3:Avx512F.ShiftRightArithmetic(x, y)|};
-}";
+                class C
+                {
+                    Vector512<{{type}}> M(Vector512<{{type}}> x, [ConstantExpected(Max = (byte)({{max}}))] byte y) => {|#1:{{method}}(x, y)|};
+                }
+                """;
+
             // lang=C#-test
-            const string fixedCode = @"using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+            string fixedCode = $$"""
+                using System;
+                using System.Runtime.Intrinsics;
+                using System.Runtime.Intrinsics.X86;
 
-class C
-{
-    Vector512<short> M(Vector512<short> x, [ConstantExpected(Max = (byte)(15))] byte y) => x >> y;
-    Vector512<int> M(Vector512<int> x, [ConstantExpected(Max = (byte)(31))] byte y) => x >> y;
-    Vector512<long> M(Vector512<long> x, [ConstantExpected(Max = (byte)(63))] byte y) => x >> y;
-}";
+                class C
+                {
+                    Vector512<{{type}}> M(Vector512<{{type}}> x, [ConstantExpected(Max = (byte)({{max}}))] byte y) => x >> y;
+                }
+                """;
 
             await new VerifyCS.Test
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = {
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(1),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(2),
-                    VerifyCS.Diagnostic(Rules[(int)RuleKind.opRightShift]).WithLocation(3),
+                    VerifyCS.Diagnostic(Rules[(int)RuleKind.op_RightShift]).WithLocation(1),
                 },
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80

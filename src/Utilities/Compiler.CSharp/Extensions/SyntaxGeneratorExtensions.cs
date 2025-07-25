@@ -6,7 +6,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeAnalysis.Simplification;
+
+// Analyzer complaines `this SyntaxGenerator generator` is unused, but its an extension
+#pragma warning disable IDE0060
 
 namespace Analyzer.Utilities.Extensions
 {

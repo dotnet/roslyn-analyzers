@@ -20,6 +20,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
             {
                 return false;
             }
+
             return base.IsSupported(invocation, ruleKind);
         }
     }

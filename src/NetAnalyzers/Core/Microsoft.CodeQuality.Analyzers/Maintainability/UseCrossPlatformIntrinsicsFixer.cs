@@ -48,14 +48,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         {
             return ruleKind switch
             {
-                RuleKind.op_Addition => ReplaceWithBinaryOperator(currentNode, isCommutative: true, generator.AddExpression),
-                RuleKind.op_BitwiseAnd => ReplaceWithBinaryOperator(currentNode, isCommutative: true, generator.BitwiseAndExpression),
-                RuleKind.op_BitwiseOr => ReplaceWithBinaryOperator(currentNode, isCommutative: true, generator.BitwiseOrExpression),
-                RuleKind.op_Division => ReplaceWithBinaryOperator(currentNode, isCommutative: false, generator.DivideExpression),
-                RuleKind.op_Multiply => ReplaceWithBinaryOperator(currentNode, isCommutative: true, generator.MultiplyExpression),
-                RuleKind.op_OnesComplement => ReplaceWithUnaryOperator(currentNode, generator.BitwiseNotExpression),
-                RuleKind.op_Subtraction => ReplaceWithBinaryOperator(currentNode, isCommutative: false, generator.SubtractExpression),
-                RuleKind.op_UnaryNegation => ReplaceWithUnaryOperator(currentNode, generator.NegateExpression),
+                RuleKind.op_Addition => ReplaceWithBinaryOperator(currentNode, generator, isCommutative: true, generator.AddExpression),
+                RuleKind.op_BitwiseAnd => ReplaceWithBinaryOperator(currentNode, generator, isCommutative: true, generator.BitwiseAndExpression),
+                RuleKind.op_BitwiseOr => ReplaceWithBinaryOperator(currentNode, generator, isCommutative: true, generator.BitwiseOrExpression),
+                RuleKind.op_Division => ReplaceWithBinaryOperator(currentNode, generator, isCommutative: false, generator.DivideExpression),
+                RuleKind.op_Multiply => ReplaceWithBinaryOperator(currentNode, generator, isCommutative: true, generator.MultiplyExpression),
+                RuleKind.op_OnesComplement => ReplaceWithUnaryOperator(currentNode, generator, generator.BitwiseNotExpression),
+                RuleKind.op_Subtraction => ReplaceWithBinaryOperator(currentNode, generator, isCommutative: false, generator.SubtractExpression),
+                RuleKind.op_UnaryNegation => ReplaceWithUnaryOperator(currentNode, generator, generator.NegateExpression),
                 _ => currentNode,
             };
         }

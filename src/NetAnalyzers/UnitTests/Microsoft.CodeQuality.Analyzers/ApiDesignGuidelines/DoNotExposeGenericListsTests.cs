@@ -2,6 +2,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DoNotExposeGenericLists,
@@ -359,6 +360,24 @@ End Class"
 "), },
                 },
             }.RunAsync();
+        }
+
+        [Theory, WorkItem(6626, "https://github.com/dotnet/roslyn-analyzers/issues/6626")]
+        [InlineData("public List<int> List { get; set; }")]
+        [InlineData("public List<string> _list;")]
+        [InlineData("public static List<byte> List;")]
+        [InlineData("public readonly List<float> _list;")]
+        [InlineData("public readonly List<int> _list;")]
+        [InlineData("public List<char> GetList() => throw null;")]
+        [InlineData("public void ConsumeList(List<double> list) {}")]
+        public Task SealedClass_NoDiagnostic(string code)
+        {
+            return VerifyCS.VerifyAnalyzerAsync(@$"
+using System.Collections.Generic;
+
+public sealed class Test {{
+    {code}
+}}");
         }
 
         private static DiagnosticResult GetCSharpExpectedResult(int line, int col, string returnTypeName, string typeDotMemberName)

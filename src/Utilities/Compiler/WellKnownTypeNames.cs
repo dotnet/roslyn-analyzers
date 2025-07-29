@@ -645,6 +645,8 @@ namespace Analyzer.Utilities
         public const string XunitFactAttribute = "Xunit.FactAttribute";
         public const string XunitSdkDataAttribute = "Xunit.Sdk.DataAttribute";
         public const string XunitTraitAttribute = "Xunit.TraitAttribute";
-
+        public const string TUnitTestAttribute = "TUnit.Core.TestAttribute";
+        public const string TUnitBeforeAttribute = "TUnit.Core.BeforeAttribute";
+        public const string TUnitAfterAttribute = "TUnit.Core.AfterAttribute";
     }
 }

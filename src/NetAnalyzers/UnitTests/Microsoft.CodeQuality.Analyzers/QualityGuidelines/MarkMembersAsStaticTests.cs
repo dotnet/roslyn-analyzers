@@ -510,28 +510,32 @@ End Class
         }
 
         [Theory]
-        [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.TestInitialize", true, false, false)]
-        [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod", true, false, false)]
-        [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.DataTestMethod", true, false, false)]
-        [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanup", true, false, false)]
-        [InlineData("Xunit.Fact", false, false, true)]
-        [InlineData("Xunit.Theory", false, false, true)]
-        [InlineData("CustomxUnit.WpfFact", false, false, true)]
-        [InlineData("NUnit.Framework.OneTimeSetUp", false, true, false)]
-        [InlineData("NUnit.Framework.OneTimeTearDown", false, true, false)]
-        [InlineData("NUnit.Framework.SetUp", false, true, false)]
-        [InlineData("NUnit.Framework.TearDown", false, true, false)]
-        [InlineData("NUnit.Framework.Test", false, true, false)]
-        [InlineData("NUnit.Framework.TestCase(\"asdf\")", false, true, false)]
-        [InlineData("NUnit.Framework.TestCaseSource(\"asdf\")", false, true, false)]
-        [InlineData("NUnit.Framework.Theory", false, true, false)]
-        public async Task NoDiagnostic_TestAttributesAsync(string testAttributeData, bool isMSTest, bool isNUnit, bool isxunit)
+        [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.TestInitialize", true, false, false, false)]
+        [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod", true, false, false, false)]
+        [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.DataTestMethod", true, false, false, false)]
+        [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanup", true, false, false, false)]
+        [InlineData("Xunit.Fact", false, false, true, false)]
+        [InlineData("Xunit.Theory", false, false, true, false)]
+        [InlineData("CustomxUnit.WpfFact", false, false, true, false)]
+        [InlineData("NUnit.Framework.OneTimeSetUp", false, true, false, false)]
+        [InlineData("NUnit.Framework.OneTimeTearDown", false, true, false, false)]
+        [InlineData("NUnit.Framework.SetUp", false, true, false, false)]
+        [InlineData("NUnit.Framework.TearDown", false, true, false, false)]
+        [InlineData("NUnit.Framework.Test", false, true, false, false)]
+        [InlineData("NUnit.Framework.TestCase(\"asdf\")", false, true, false, false)]
+        [InlineData("NUnit.Framework.TestCaseSource(\"asdf\")", false, true, false, false)]
+        [InlineData("NUnit.Framework.Theory", false, true, false, false)]
+        [InlineData("TUnit.Core.Test", false, false, false, true)]
+        [InlineData("TUnit.Core.Before(TUnit.Core.HookType.Test)", false, false, false, true)]
+        [InlineData("TUnit.Core.After(TUnit.Core.HookType.Test)", false, false, false, true)]
+        public async Task NoDiagnostic_TestAttributesAsync(string testAttributeData, bool isMSTest, bool isNUnit, bool isxunit, bool isTUnit)
         {
-            var referenceAssemblies = (isMSTest, isNUnit, isxunit) switch
+            var referenceAssemblies = (isMSTest, isNUnit, isxunit, isTUnit) switch
             {
-                (true, false, false) => AdditionalMetadataReferences.DefaultWithMSTest,
-                (false, true, false) => AdditionalMetadataReferences.DefaultWithNUnit,
-                (false, false, true) => AdditionalMetadataReferences.DefaultWithXUnit,
+                (true, false, false, false) => AdditionalMetadataReferences.DefaultWithMSTest,
+                (false, true, false, false) => AdditionalMetadataReferences.DefaultWithNUnit,
+                (false, false, true, false) => AdditionalMetadataReferences.DefaultWithXUnit,
+                (false, false, false, true) => AdditionalMetadataReferences.DefaultWithTUnit,
                 _ => throw new InvalidOperationException("Invalid combination of test framework")
             };
 

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -130,6 +131,16 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                             case nameof(ValueTask.ConfigureAwait):
                                 // ConfigureAwait returns another awaitable. Use that one instead for subsequent analysis.
                                 operation = invocation = parentIo;
+                                break;
+                            default:
+                                var additionalMethods =
+                                    operationContext.Options.GetStringOptionValue(
+                                        EditorConfigOptionNames.AdditionalValidValueTaskConsumption, GeneralRule,
+                                        operation.Syntax.SyntaxTree, operationContext.Compilation)
+                                    .Split(['|'], StringSplitOptions.RemoveEmptyEntries)
+                                    .ToImmutableArray();
+                                if (additionalMethods.Contains(parentIo.TargetMethod.Name))
+                                    return;
                                 break;
                         }
                     }

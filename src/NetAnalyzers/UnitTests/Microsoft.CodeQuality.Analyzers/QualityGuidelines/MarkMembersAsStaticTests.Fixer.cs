@@ -1635,5 +1635,27 @@ partial class Class1
                     """,
             }.RunAsync();
         }
+
+        [Fact]
+        public async Task TestBasic_Iterator_ModifierRemoved()
+        {
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+Imports System.Collections.Generic
+Public Class MembersTests
+    Public Iterator Function [|Method1|]() As IEnumerable(Of Integer)
+        Yield 1
+    End Function
+End Class",
+@"
+Imports System
+Imports System.Collections.Generic
+Public Class MembersTests
+    Public Shared Iterator Function Method1() As IEnumerable(Of Integer)
+        Yield 1
+    End Function
+End Class");
+        }
+
     }
 }

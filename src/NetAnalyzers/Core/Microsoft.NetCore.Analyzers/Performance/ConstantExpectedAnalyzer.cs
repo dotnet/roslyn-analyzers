@@ -147,28 +147,36 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (methodSymbol.ExplicitInterfaceImplementations
                     .FirstOrDefault(methodSymbol.IsImplementationOfInterfaceMember) is { } explicitInterfaceMethod)
             {
-                CheckParameters(methodSymbol.Parameters, explicitInterfaceMethod.Parameters);
+                ReportIfAttributeNotImplementedFromParent(methodSymbol.Parameters, explicitInterfaceMethod.Parameters);
             }
             else if (methodSymbol.OverriddenMethod is not null)
             {
-                CheckParameters(methodSymbol.Parameters, methodSymbol.OverriddenMethod.Parameters);
+                ReportIfAttributeNotImplementedFromParent(methodSymbol.Parameters, methodSymbol.OverriddenMethod.Parameters);
             }
-            else if (methodSymbol.IsImplementationOfAnyImplicitInterfaceMember(out IMethodSymbol interfaceMethodSymbol))
+            else
             {
-                CheckParameters(methodSymbol.Parameters, interfaceMethodSymbol.Parameters);
+                foreach (var interfaceMethodSymbol in methodSymbol.GetImplementedImplicitInterfaceMembers<IMethodSymbol>())
+                {
+                    if (ReportIfAttributeNotImplementedFromParent(methodSymbol.Parameters, interfaceMethodSymbol.Parameters))
+                    {
+                        break;
+                    }
+                }
             }
 
-            void CheckParameters(ImmutableArray<IParameterSymbol> parameters, ImmutableArray<IParameterSymbol> baseParameters)
+            void ReportIfAttributeNotImplementedFromParent(ImmutableArray<IParameterSymbol> parameters, ImmutableArray<IParameterSymbol> baseParameters)
             {
                 if (constantExpectedContext.ValidatesAttributeImplementedFromParent(parameters, baseParameters, out var diagnostics))
                 {
-                    return;
+                    return false;
                 }
 
                 foreach (var diagnostic in diagnostics)
                 {
                     context.ReportDiagnostic(diagnostic);
                 }
+
+                return true;
             }
         }
 

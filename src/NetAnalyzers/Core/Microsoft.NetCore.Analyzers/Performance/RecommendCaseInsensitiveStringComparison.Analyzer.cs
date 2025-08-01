@@ -322,6 +322,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
+            // If using the same parameter on both sides of the binary operation, don't emit a diagnostic.
+            var lParam = GetParameter(binaryOperation.LeftOperand);
+            var rParam = GetParameter(binaryOperation.RightOperand);
+
+            if (lParam is not null && lParam == rParam)
+            {
+                return;
+            }
+
             ImmutableDictionary<string, string?> dict = new Dictionary<string, string?>()
                 {
                     { LeftOffendingMethodName, leftOffendingMethodName },
@@ -379,6 +388,16 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             offendingMethodName = invocation.TargetMethod.Name;
             return true;
+        }
+
+        private static IParameterSymbol? GetParameter(IOperation op)
+        {
+            return op switch
+            {
+                IParameterReferenceOperation paramRefOp => paramRefOp.Parameter,
+                IInvocationOperation invocationOp => GetParameter(invocationOp.Children.FirstOrDefault()),
+                _ => null,
+            };
         }
     }
 }

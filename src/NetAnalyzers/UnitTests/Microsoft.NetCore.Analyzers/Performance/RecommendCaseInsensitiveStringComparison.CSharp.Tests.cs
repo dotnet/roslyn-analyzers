@@ -431,6 +431,30 @@ class C
             }.RunAsync();
         }
 
+        [Theory]
+        [InlineData("s != s.ToLowerInvariant()")]
+        [InlineData("s.ToLower() == s")]
+        [InlineData("s.ToUpperInvariant() == s.ToUpper()")]
+        [InlineData("s.ToLower().ToUpper() != s")]
+        [WorkItem(7074, "https://github.com/dotnet/roslyn-analyzers/issues/7074")]
+        public async Task NoDiagnostic_SameParameterOnBothSidesOfComparison(string expression)
+        {
+            var originalCode = $$"""
+                using System;
+
+                class C
+                {
+                    void M(string s)
+                    {
+                        if ({{expression}})
+                            Console.WriteLine("string comparison was true");
+                    }
+                }
+                """;
+
+            await VerifyNoDiagnosticCSharpAsync(originalCode);
+        }
+
         private async Task VerifyNoDiagnosticCSharpAsync(string originalSource)
         {
             VerifyCS.Test test = new()

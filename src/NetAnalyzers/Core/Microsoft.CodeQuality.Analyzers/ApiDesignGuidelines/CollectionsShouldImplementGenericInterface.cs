@@ -68,7 +68,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                    if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIList, out var iListType))
                    {
-                       var builder = ArrayBuilder<INamedTypeSymbol>.GetInstance();
+                       using var builder = ArrayBuilder<INamedTypeSymbol>.GetInstance();
                        builder.AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIList1));
                        builder.AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIReadOnlyList1));
                        if (builder.Count > 0)
@@ -79,7 +79,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                    if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection, out var iCollectionType))
                    {
-                       var builder = ArrayBuilder<INamedTypeSymbol>.GetInstance();
+                       using var builder = ArrayBuilder<INamedTypeSymbol>.GetInstance();
                        builder.AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1));
                        builder.AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIReadOnlyCollection1));
                        if (builder.Count > 0)

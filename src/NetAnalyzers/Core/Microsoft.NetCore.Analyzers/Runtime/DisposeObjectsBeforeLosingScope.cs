@@ -148,10 +148,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         // and avoiding duplicates.
                         foreach (var diagnostic in notDisposedDiagnostics.Concat(mayBeNotDisposedDiagnostics))
                         {
-                            if (reportedLocations is null)
-                            {
-                                Interlocked.CompareExchange(ref reportedLocations, new(), comparand: null);
-                            }
+                            LazyInitializer.EnsureInitialized(ref reportedLocations);
 
                             if (reportedLocations.TryAdd(diagnostic.Location, true))
                             {

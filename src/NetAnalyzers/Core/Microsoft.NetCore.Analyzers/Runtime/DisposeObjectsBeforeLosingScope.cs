@@ -150,7 +150,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         {
                             LazyInitializer.EnsureInitialized(ref reportedLocations);
 
-                            if (reportedLocations.TryAdd(diagnostic.Location, true))
+                            if (reportedLocations!.TryAdd(diagnostic.Location, true))
                             {
                                 operationBlockContext.ReportDiagnostic(diagnostic);
                             }

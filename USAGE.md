@@ -30,8 +30,8 @@ The analyzer produces **Info**-level diagnostics (REGEX001), which means:
 To see all diagnostics during a CLI build, you can:
 
 ```bash
-# Option 1: Treat info as warnings
-dotnet build /p:WarningLevel=9999
+# Option 1: Use detailed build verbosity
+dotnet build --verbosity detailed
 
 # Option 2: Use an .editorconfig file to promote the diagnostic to Warning
 ```

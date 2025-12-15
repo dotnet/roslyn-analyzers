@@ -21,7 +21,7 @@
     <LangVersion Condition="'$(Language)' == 'C#'">preview</LangVersion>
     <LangVersion Condition="'$(Language)' == 'VB'">16</LangVersion>
 
-    <NoWarn>$(NoWarn);NU1701</NoWarn>
+    <NoWarn>$(NoWarn);NU1701;NETSDK1138</NoWarn>
 
     <!-- Do not warn about the version of analyzers being used in this project -->
     <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>

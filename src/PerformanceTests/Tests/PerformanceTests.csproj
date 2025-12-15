@@ -4,6 +4,7 @@
     <LangVersion>preview</LangVersion>
     <Nullable>disable</Nullable>
     <OutputType>Exe</OutputType>
+    <NoWarn>$(NoWarn);NETSDK1138</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <NonShipping>true</NonShipping>

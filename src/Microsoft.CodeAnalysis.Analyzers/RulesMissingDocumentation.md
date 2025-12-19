@@ -39,3 +39,12 @@ RS1036 |  | Specify analyzer banned API enforcement setting |
 RS1037 |  | Add "CompilationEnd" custom tag to compilation end diagnostic descriptor |
 RS1039 |  | This call to 'SemanticModel.GetDeclaredSymbol()' will always return 'null' |
 RS1040 |  | This call to 'SemanticModel.GetDeclaredSymbol()' will always return 'null' |
+RS2000 | <https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md> | Add analyzer diagnostic IDs to analyzer release |
+RS2001 | <https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md> | Ensure up-to-date entry for analyzer diagnostic IDs are added to analyzer release |
+RS2002 | <https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md> | Do not add removed analyzer diagnostic IDs to unshipped analyzer release |
+RS2003 | <https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md> | Shipped diagnostic IDs that are no longer reported should have an entry in the 'Removed Rules' table in unshipped file |
+RS2004 | <https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md> | Diagnostic IDs marked as removed in analyzer release file should not be reported by analyzers |
+RS2005 | <https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md> | Remove duplicate entries for diagnostic ID in the same analyzer release |
+RS2006 | <https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md> | Remove duplicate entries for diagnostic ID between analyzer releases |
+RS2007 | <https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md> | Invalid entry in analyzer release file |
+RS2008 | <https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md> | Enable analyzer release tracking |

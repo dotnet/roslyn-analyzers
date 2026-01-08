@@ -48,7 +48,7 @@ jobs:
       displayName: Set PATH Environment Variable
     - pwsh: Write-Host "##vso[task.setvariable variable=VSTEST_DUMP_FORCEPROCDUMP;]1"
       displayName: Set VSTEST_DUMP_FORCEPROCDUMP Environment Variable
-    - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine /p:Coverage=$(_codeCoverage)
+    - script: eng\common\cibuild.cmd -configuration $(_configuration) -test -prepareMachine /p:Coverage=$(_codeCoverage)
       displayName: Build and Test
     - task: PublishTestResults@2
       inputs:

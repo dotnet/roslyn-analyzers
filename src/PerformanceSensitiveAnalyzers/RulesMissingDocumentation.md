@@ -12,9 +12,9 @@ HAA0303 |  | Lambda or anonymous method in a generic method allocates a delegate
 HAA0401 |  | Possible allocation of reference type enumerator |
 HAA0501 |  | Explicit new array type allocation |
 HAA0502 |  | Explicit new reference type allocation |
+HAA0503 | <http://msdn.microsoft.com/en-us/library/bb397696.aspx> | Explicit new anonymous object allocation |
 HAA0506 |  | Let clause induced allocation |
 HAA0601 |  | Value type to reference type conversion causing boxing allocation |
 HAA0602 |  | Delegate on struct instance caused a boxing allocation |
 HAA0603 |  | Delegate allocation from a method group |
 HAA0604 |  | Delegate allocation from a method group |
-  

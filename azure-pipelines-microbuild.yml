@@ -13,7 +13,7 @@ trigger:
 - 2.9.x
 
 schedules:
-  - cron: "0 8 23-29 * 0"
+  - cron: "0 8 22-28 * 0"
     displayName: "Monthly smoke test"
     branches:
       include: 
@@ -47,6 +47,8 @@ extends:
         name: NetCore1ESPool-Svc-Internal
         image: 1es-windows-2022
         os: windows
+    settings:
+      networkIsolationPolicy: Permissive,CFSClean
     pool:
       name: NetCore1ESPool-Svc-Internal
       image: windows.vs2022preview.amd64

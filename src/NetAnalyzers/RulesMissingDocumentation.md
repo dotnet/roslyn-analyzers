@@ -5,4 +5,5 @@ Rule ID | Missing Help Link | Title |
 CA1000 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1000> | Do not declare static members on generic types |
 CA1001 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1001> | Types that own disposable fields should be disposable |
 CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
+CA1840 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1840> | Use 'Environment.CurrentManagedThreadId' |
 CA5365 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5365> | Do Not Disable HTTP Header Checking |

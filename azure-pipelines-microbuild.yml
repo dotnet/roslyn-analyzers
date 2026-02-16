@@ -51,7 +51,7 @@ extends:
       networkIsolationPolicy: Permissive,CFSClean
     pool:
       name: NetCore1ESPool-Svc-Internal
-      image: windows.vs2022preview.amd64
+      image: windows.vs2022.amd64
       os: windows
     customBuildTags:
     - ES365AIMigrationTooling
@@ -79,7 +79,7 @@ extends:
           - job: Signed_Build
             pool:
               name: NetCore1ESPool-Internal
-              demands: ImageOverride -equals windows.vs2022preview.amd64
+              demands: ImageOverride -equals windows.vs2022.amd64
             variables:
             - group: Publish-Build-Assets
             - name: _BuildConfig
@@ -105,7 +105,7 @@ extends:
       displayName: Code analysis
       pool:
         name: NetCore1ESPool-Internal
-        demands: ImageOverride -equals windows.vs2022preview.amd64
+        demands: ImageOverride -equals windows.vs2022.amd64
       jobs:
       - job: codeql
         displayName: CodeQL

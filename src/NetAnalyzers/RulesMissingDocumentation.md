@@ -7,4 +7,5 @@ CA1001 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1724 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1724> | Type names should not match namespaces |
 CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
 CA1840 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1840> | Use 'Environment.CurrentManagedThreadId' |
+CA2017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
 CA5365 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5365> | Do Not Disable HTTP Header Checking |

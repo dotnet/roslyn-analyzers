@@ -15,3 +15,5 @@ Rule ID | Missing Help Link | Title |
  CA2237 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2237> | Mark ISerializable types with serializable |
  CA5369 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5369> | Use XmlReader for 'XmlSerializer.Deserialize()' |
  CA5379 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5379> | Ensure Key Derivation Function algorithm is sufficiently strong |
+ CA5390 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5390> | Do not hard-code encryption key |
+ 

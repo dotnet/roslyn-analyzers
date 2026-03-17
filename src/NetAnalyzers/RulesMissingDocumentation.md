@@ -7,6 +7,7 @@ Rule ID | Missing Help Link | Title |
  CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |
  CA1505 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1505> | Avoid unmaintainable code |
  CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
+ CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
  CA1829 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1829> | Use Length/Count property instead of Count() when available |
  CA1847 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847> | Use char literal for a single character lookup |
  CA1859 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859> | Use concrete types when possible for improved performance |

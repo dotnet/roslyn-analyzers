@@ -13,6 +13,7 @@ Rule ID | Missing Help Link | Title |
  CA1859 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859> | Use concrete types when possible for improved performance |
  CA2021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |
  CA2119 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119> | Seal methods that satisfy private interfaces |
+ CA2217 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2217> | Do not mark enums with FlagsAttribute |
  CA2237 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2237> | Mark ISerializable types with serializable |
  CA5369 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5369> | Use XmlReader for 'XmlSerializer.Deserialize()' |
  CA5379 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5379> | Ensure Key Derivation Function algorithm is sufficiently strong |

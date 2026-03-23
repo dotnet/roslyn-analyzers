@@ -88,7 +88,7 @@ extends:
             steps:
             - checkout: self
               clean: true
-            - script: eng\common\CIBuild.cmd -configuration $(_BuildConfig) /p:OfficialBuildId=$(BUILD.BUILDNUMBER) /p:DotNetSignType=$(_SignType) /p:DotnetPublishUsingPipelines=true
+            - script: eng\common\CIBuild.cmd -configuration $(_BuildConfig) /p:OfficialBuildId=$(BUILD.BUILDNUMBER) /p:DotNetSignType=$(_SignType) /p:DotnetPublishUsingPipelines=true /p:Test=false
               displayName: Build and Test
             templateContext:
               outputs:

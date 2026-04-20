@@ -9,6 +9,7 @@ Rule ID | Missing Help Link | Title |
  CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
  CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
  CA1829 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1829> | Use Length/Count property instead of Count() when available |
+ CA1836 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1836> | Prefer IsEmpty over Count |
  CA1847 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847> | Use char literal for a single character lookup |
  CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
  CA1855 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1855> | Prefer 'Clear' over 'Fill' |

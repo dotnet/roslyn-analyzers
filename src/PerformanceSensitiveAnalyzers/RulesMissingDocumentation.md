@@ -5,6 +5,7 @@ Rule ID | Missing Help Link | Title |
 HAA0101 |  | Array allocation for params parameter |
 HAA0102 |  | Non-overridden virtual method call on value type |
 HAA0201 | <http://msdn.microsoft.com/en-us/library/2839d5h5(v=vs.110).aspx> | Implicit string concatenation allocation |
+HAA0202 | <http://msdn.microsoft.com/en-us/library/yz2be5wk.aspx> | Value type to reference type conversion allocation for string concatenation |
 HAA0301 |  | Closure Allocation Source |
 HAA0302 |  | Display class allocation to capture closure |
 HAA0303 |  | Lambda or anonymous method in a generic method allocates a delegate instance |

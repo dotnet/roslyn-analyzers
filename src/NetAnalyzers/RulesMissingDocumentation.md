@@ -3,6 +3,7 @@
 Rule ID | Missing Help Link | Title |
 --------|-------------------|-------|
  CA1000 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1000> | Do not declare static members on generic types |
+ CA1002 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1002> | Do not expose generic lists |
  CA1003 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1003> | Use generic event handler instances |
  CA1018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1018> | Mark attributes with AttributeUsageAttribute |
  CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |
@@ -14,6 +15,7 @@ Rule ID | Missing Help Link | Title |
  CA1836 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1836> | Prefer IsEmpty over Count |
  CA1847 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847> | Use char literal for a single character lookup |
  CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
+ CA1853 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853> | Unnecessary call to 'Dictionary.ContainsKey(key)' |
  CA1855 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1855> | Prefer 'Clear' over 'Fill' |
  CA1859 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859> | Use concrete types when possible for improved performance |
  CA1868 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1868> | Unnecessary call to 'Contains(item)' |
@@ -27,3 +29,4 @@ Rule ID | Missing Help Link | Title |
  CA5369 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5369> | Use XmlReader for 'XmlSerializer.Deserialize()' |
  CA5379 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5379> | Ensure Key Derivation Function algorithm is sufficiently strong |
  CA5390 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5390> | Do not hard-code encryption key |
+ 

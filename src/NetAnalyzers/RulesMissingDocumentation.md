@@ -20,6 +20,7 @@ Rule ID | Missing Help Link | Title |
  CA1859 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859> | Use concrete types when possible for improved performance |
  CA1868 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1868> | Unnecessary call to 'Contains(item)' |
  CA1872 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1872> | Prefer 'Convert.ToHexString' and 'Convert.ToHexStringLower' over call chains based on 'BitConverter.ToString' |
+ CA2008 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2008> | Do not create tasks without passing a TaskScheduler |
  CA2015 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2015> | Do not define finalizers for types derived from MemoryManager\<T> |
  CA2021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |
  CA2119 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119> | Seal methods that satisfy private interfaces |

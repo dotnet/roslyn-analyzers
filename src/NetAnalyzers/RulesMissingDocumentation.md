@@ -5,6 +5,7 @@ Rule ID | Missing Help Link | Title |
 CA1000 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1000> | Do not declare static members on generic types |
 CA1001 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1001> | Types that own disposable fields should be disposable |
 CA1002 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1002> | Do not expose generic lists |
+CA1003 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1003> | Use generic event handler instances |
 CA1727 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727> | Use PascalCase for named placeholders |
 CA1821 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1821> | Remove empty Finalizers |
 CA1822 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822> | Mark members as static |

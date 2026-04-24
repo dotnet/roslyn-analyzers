@@ -7,6 +7,7 @@ Rule ID | Missing Help Link | Title |
  CA1003 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1003> | Use generic event handler instances |
  CA1018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1018> | Mark attributes with AttributeUsageAttribute |
  CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |
+ CA1419 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419> | Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle' |
  CA1505 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1505> | Avoid unmaintainable code |
  CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
  CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
@@ -24,6 +25,7 @@ Rule ID | Missing Help Link | Title |
  CA2015 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2015> | Do not define finalizers for types derived from MemoryManager\<T> |
  CA2021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |
  CA2119 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119> | Seal methods that satisfy private interfaces |
+ CA2200 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2200> | Rethrow to preserve stack details |
  CA2217 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2217> | Do not mark enums with FlagsAttribute |
  CA2219 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2219> | Do not raise exceptions in finally clauses |
  CA2237 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2237> | Mark ISerializable types with serializable |
@@ -31,3 +33,4 @@ Rule ID | Missing Help Link | Title |
  CA5379 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5379> | Ensure Key Derivation Function algorithm is sufficiently strong |
  CA5390 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5390> | Do not hard-code encryption key |
  CA5395 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5395> | Miss HttpVerb attribute for action methods |
+ 

@@ -11,5 +11,6 @@ Rule ID | Missing Help Link | Title |
  CA2015 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2015> | Do not define finalizers for types derived from MemoryManager\<T> |
  CA2020 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020> | Prevent behavioral change |
  CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
+ CA2321 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2321> | Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver |
  CA2361 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2361> | Ensure auto-generated class containing DataSet.ReadXml() is not used with untrusted data |
  CA5360 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5360> | Do Not Call Dangerous Methods In Deserialization |

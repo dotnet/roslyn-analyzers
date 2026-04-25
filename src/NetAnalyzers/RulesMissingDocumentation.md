@@ -19,6 +19,7 @@ CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1853 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853> | Unnecessary call to 'Dictionary.ContainsKey(key)' |
 CA1866 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1866> | Use char overload |
 CA2000 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000> | Dispose objects before losing scope |
+CA2012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2012> | Use ValueTasks correctly |
 CA2211 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2211> | Non-constant fields should not be visible |
 CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
 CA3077 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3077> | Insecure Processing in API Design, XmlDocument and XmlTextReader |

@@ -7,6 +7,7 @@ Rule ID | Missing Help Link | Title |
  CA1003 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1003> | Use generic event handler instances |
  CA1018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1018> | Mark attributes with AttributeUsageAttribute |
  CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |
+ CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
  CA1419 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419> | Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle' |
  CA1505 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1505> | Avoid unmaintainable code |
  CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
@@ -18,6 +19,7 @@ Rule ID | Missing Help Link | Title |
  CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
  CA1853 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853> | Unnecessary call to 'Dictionary.ContainsKey(key)' |
  CA1855 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1855> | Prefer 'Clear' over 'Fill' |
+ CA1856 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856> | Incorrect usage of ConstantExpected attribute |
  CA1859 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859> | Use concrete types when possible for improved performance |
  CA1868 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1868> | Unnecessary call to 'Contains(item)' |
  CA1872 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1872> | Prefer 'Convert.ToHexString' and 'Convert.ToHexStringLower' over call chains based on 'BitConverter.ToString' |
@@ -33,4 +35,3 @@ Rule ID | Missing Help Link | Title |
  CA5379 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5379> | Ensure Key Derivation Function algorithm is sufficiently strong |
  CA5390 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5390> | Do not hard-code encryption key |
  CA5395 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5395> | Miss HttpVerb attribute for action methods |
- 

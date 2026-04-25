@@ -13,8 +13,8 @@ Rule ID | Missing Help Link | Title |
  CA1860 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860> | Avoid using 'Enumerable.Any()' extension method |
  CA2002 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2002> | Do not lock on objects with weak identity |
  CA2015 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2015> | Do not define finalizers for types derived from MemoryManager\<T> |
- CA2119 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119> | Seal methods that satisfy private interfaces |
  CA2020 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020> | Prevent behavioral change |
+ CA2119 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119> | Seal methods that satisfy private interfaces |
  CA2234 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234> | Pass system uri objects instead of strings |
  CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
  CA2321 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2321> | Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver |

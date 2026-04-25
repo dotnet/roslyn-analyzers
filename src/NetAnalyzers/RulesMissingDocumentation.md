@@ -20,6 +20,7 @@ Rule ID | Missing Help Link | Title |
  CA1853 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853> | Unnecessary call to 'Dictionary.ContainsKey(key)' |
  CA1855 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1855> | Prefer 'Clear' over 'Fill' |
  CA1856 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856> | Incorrect usage of ConstantExpected attribute |
+ CA1858 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858> | Use 'StartsWith' instead of 'IndexOf' |
  CA1859 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859> | Use concrete types when possible for improved performance |
  CA1868 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1868> | Unnecessary call to 'Contains(item)' |
  CA1872 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1872> | Prefer 'Convert.ToHexString' and 'Convert.ToHexStringLower' over call chains based on 'BitConverter.ToString' |

@@ -3,6 +3,7 @@
 Rule ID | Missing Help Link | Title |
 --------|-------------------|-------|
  CA1000 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1000> | Do not declare static members on generic types |
+ CA1421 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421> | This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied |
  CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
  CA1812 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1812> | Avoid uninstantiated internal classes |
  CA1828 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1828> | Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used |
@@ -19,4 +20,3 @@ Rule ID | Missing Help Link | Title |
  CA2321 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2321> | Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver |
  CA2361 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2361> | Ensure auto-generated class containing DataSet.ReadXml() is not used with untrusted data |
  CA5360 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5360> | Do Not Call Dangerous Methods In Deserialization |
- 

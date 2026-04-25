@@ -14,6 +14,7 @@ CA1727 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1821 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1821> | Remove empty Finalizers |
 CA1822 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822> | Mark members as static |
 CA1824 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1824> | Mark assemblies with NeutralResourcesLanguageAttribute |
+CA1827 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1827> | Do not use Count() or LongCount() when Any() can be used |
 CA1836 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1836> | Prefer IsEmpty over Count |
 CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
 CA1853 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853> | Unnecessary call to 'Dictionary.ContainsKey(key)' |

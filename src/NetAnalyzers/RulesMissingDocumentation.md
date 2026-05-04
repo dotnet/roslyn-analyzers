@@ -33,6 +33,7 @@ Rule ID | Missing Help Link | Title |
  CA2217 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2217> | Do not mark enums with FlagsAttribute |
  CA2219 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2219> | Do not raise exceptions in finally clauses |
  CA2237 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2237> | Mark ISerializable types with serializable |
+ CA2245 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2245> | Do not assign a property to itself |
  CA2312 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2312> | Ensure NetDataContractSerializer.Binder is set before deserializing |
  CA5369 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5369> | Use XmlReader for 'XmlSerializer.Deserialize()' |
  CA5379 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5379> | Ensure Key Derivation Function algorithm is sufficiently strong |

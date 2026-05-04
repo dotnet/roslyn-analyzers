@@ -10,11 +10,13 @@ CA1005 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1008 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1008> | Enums should have zero value |
 CA1010 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1010> | Generic interface should also be implemented |
 CA1012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1012> | Abstract types should not have public constructors |
+CA1014 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1014> | Mark assemblies with CLSCompliant |
 CA1727 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727> | Use PascalCase for named placeholders |
 CA1821 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1821> | Remove empty Finalizers |
 CA1822 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822> | Mark members as static |
 CA1824 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1824> | Mark assemblies with NeutralResourcesLanguageAttribute |
 CA1827 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1827> | Do not use Count() or LongCount() when Any() can be used |
+CA1828 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1828> | Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used |
 CA1836 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1836> | Prefer IsEmpty over Count |
 CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
 CA1853 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853> | Unnecessary call to 'Dictionary.ContainsKey(key)' |

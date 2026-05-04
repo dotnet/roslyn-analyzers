@@ -25,5 +25,6 @@ CA2000 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA2012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2012> | Use ValueTasks correctly |
 CA2211 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2211> | Non-constant fields should not be visible |
 CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
+CA2328 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2328> | Ensure that JsonSerializerSettings are secure |
 CA3077 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3077> | Insecure Processing in API Design, XmlDocument and XmlTextReader |
 CA5402 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5402> | Use CreateEncryptor with the default IV  |

@@ -13,10 +13,13 @@ CA1012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1014 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1014> | Mark assemblies with CLSCompliant |
 CA1016 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1016> | Mark assemblies with assembly version |
 CA1017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1017> | Mark assemblies with ComVisible |
+CA1055 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055> | URI-like return values should not be strings |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
+CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
 CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
 CA1724 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1724> | Type names should not match namespaces |
 CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
+CA1822 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822> | Mark members as static |
 CA1827 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1827> | Do not use Count() or LongCount() when Any() can be used |
 CA1833 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1833> | Use AsSpan or AsMemory instead of Range-based indexers when appropriate |
 CA1840 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1840> | Use 'Environment.CurrentManagedThreadId' |

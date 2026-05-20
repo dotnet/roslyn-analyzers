@@ -15,6 +15,7 @@ Rule ID | Missing Help Link | Title |
  CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
  CA1805 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1805> | Do not initialize unnecessarily |
  CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
+ CA1823 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1823> | Avoid unused private fields |
  CA1829 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1829> | Use Length/Count property instead of Count() when available |
  CA1830 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1830> | Prefer strongly-typed Append and Insert method overloads on StringBuilder |
  CA1836 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1836> | Prefer IsEmpty over Count |

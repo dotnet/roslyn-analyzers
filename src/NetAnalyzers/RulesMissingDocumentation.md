@@ -12,6 +12,7 @@ Rule ID | Missing Help Link | Title |
  CA1419 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419> | Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle' |
  CA1505 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1505> | Avoid unmaintainable code |
  CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
+ CA1805 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1805> | Do not initialize unnecessarily |
  CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
  CA1829 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1829> | Use Length/Count property instead of Count() when available |
  CA1830 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1830> | Prefer strongly-typed Append and Insert method overloads on StringBuilder |

@@ -23,7 +23,9 @@ CA1840 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
 CA1867 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867> | Use char overload |
 CA2017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
+CA2217 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2217> | Do not mark enums with FlagsAttribute |
 CA2224 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2224> | Override Equals on overloading operator equals |
+CA2225 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2225> | Operator overloads have named alternates |
 CA2234 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234> | Pass system uri objects instead of strings |
 CA2253 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253> | Named placeholders should not be numeric values |
 CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |

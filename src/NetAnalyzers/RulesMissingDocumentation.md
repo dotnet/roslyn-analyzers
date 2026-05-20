@@ -22,3 +22,4 @@ Rule ID | Missing Help Link | Title |
  CA2321 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2321> | Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver |
  CA2361 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2361> | Ensure auto-generated class containing DataSet.ReadXml() is not used with untrusted data |
  CA5360 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5360> | Do Not Call Dangerous Methods In Deserialization |
+ CA5370 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5370> | Use XmlReader for XmlValidatingReader constructor |

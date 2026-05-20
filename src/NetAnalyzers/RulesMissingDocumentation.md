@@ -19,6 +19,7 @@ Rule ID | Missing Help Link | Title |
  CA1829 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1829> | Use Length/Count property instead of Count() when available |
  CA1830 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1830> | Prefer strongly-typed Append and Insert method overloads on StringBuilder |
  CA1836 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1836> | Prefer IsEmpty over Count |
+ CA1839 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839> | Use 'Environment.ProcessPath' |
  CA1847 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847> | Use char literal for a single character lookup |
  CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
  CA1853 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853> | Unnecessary call to 'Dictionary.ContainsKey(key)' |

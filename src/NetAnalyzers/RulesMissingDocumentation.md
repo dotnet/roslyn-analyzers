@@ -43,5 +43,6 @@ Rule ID | Missing Help Link | Title |
  CA2350 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2350> | Do not use DataTable.ReadXml() with untrusted data |
  CA5369 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5369> | Use XmlReader for 'XmlSerializer.Deserialize()' |
  CA5379 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5379> | Ensure Key Derivation Function algorithm is sufficiently strong |
+ CA5386 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5386> | Avoid hardcoding SecurityProtocolType value |
  CA5390 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5390> | Do not hard-code encryption key |
  CA5395 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5395> | Miss HttpVerb attribute for action methods |

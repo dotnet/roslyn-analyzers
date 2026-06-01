@@ -20,6 +20,7 @@ Rule ID | Missing Help Link | Title |
  CA1829 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1829> | Use Length/Count property instead of Count() when available |
  CA1830 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1830> | Prefer strongly-typed Append and Insert method overloads on StringBuilder |
  CA1836 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1836> | Prefer IsEmpty over Count |
+ CA1838 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1838> | Avoid 'StringBuilder' parameters for P/Invokes |
  CA1839 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839> | Use 'Environment.ProcessPath' |
  CA1847 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847> | Use char literal for a single character lookup |
  CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
@@ -47,3 +48,4 @@ Rule ID | Missing Help Link | Title |
  CA5386 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5386> | Avoid hardcoding SecurityProtocolType value |
  CA5390 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5390> | Do not hard-code encryption key |
  CA5395 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5395> | Miss HttpVerb attribute for action methods |
+ CA5401 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5401> | Do not use CreateEncryptor with non-default IV |

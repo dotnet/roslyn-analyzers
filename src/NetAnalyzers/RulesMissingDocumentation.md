@@ -11,7 +11,9 @@ CA1008 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1010 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1010> | Generic interface should also be implemented |
 CA1012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1012> | Abstract types should not have public constructors |
 CA1014 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1014> | Mark assemblies with CLSCompliant |
+CA1016 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1016> | Mark assemblies with assembly version |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
+CA1509 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1509> | Invalid entry in code metrics rule specification file |
 CA1727 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727> | Use PascalCase for named placeholders |
 CA1819 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1819> | Properties should not return arrays |
 CA1821 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1821> | Remove empty Finalizers |

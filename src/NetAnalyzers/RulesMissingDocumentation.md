@@ -13,7 +13,9 @@ CA1012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1014 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1014> | Mark assemblies with CLSCompliant |
 CA1016 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1016> | Mark assemblies with assembly version |
 CA1017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1017> | Mark assemblies with ComVisible |
+CA1018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1018> | Mark attributes with AttributeUsageAttribute |
 CA1307 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1307> | Specify StringComparison for clarity |
+CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
 CA1509 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1509> | Invalid entry in code metrics rule specification file |
 CA1727 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727> | Use PascalCase for named placeholders |
@@ -32,6 +34,7 @@ CA2012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA2211 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2211> | Non-constant fields should not be visible |
 CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
 CA2328 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2328> | Ensure that JsonSerializerSettings are secure |
+CA3012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3012> | Review code for regex injection vulnerabilities |
 CA3077 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3077> | Insecure Processing in API Design, XmlDocument and XmlTextReader |
 CA5368 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5368> | Set ViewStateUserKey For Classes Derived From Page |
 CA5402 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5402> | Use CreateEncryptor with the default IV  |

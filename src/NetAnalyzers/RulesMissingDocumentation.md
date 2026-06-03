@@ -19,8 +19,11 @@ CA1021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1055 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055> | URI-like return values should not be strings |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
 CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
+CA1401 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401> | P/Invokes should not be visible |
+CA1707 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1707> | Identifiers should not contain underscores |
 CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
 CA1724 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1724> | Type names should not match namespaces |
+CA1810 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1810> | Initialize reference type static fields inline |
 CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
 CA1822 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822> | Mark members as static |
 CA1827 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1827> | Do not use Count() or LongCount() when Any() can be used |

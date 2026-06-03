@@ -15,6 +15,7 @@ CA1016 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1017> | Mark assemblies with ComVisible |
 CA1018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1018> | Mark attributes with AttributeUsageAttribute |
 CA1019 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1019> | Define accessors for attribute arguments |
+CA1021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1021> | Avoid out parameters |
 CA1055 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055> | URI-like return values should not be strings |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
 CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |

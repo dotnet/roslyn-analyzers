@@ -6,6 +6,7 @@ Rule ID | Missing Help Link | Title |
  CA1002 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1002> | Do not expose generic lists |
  CA1003 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1003> | Use generic event handler instances |
  CA1018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1018> | Mark attributes with AttributeUsageAttribute |
+ CA1062 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062> | Validate arguments of public methods |
  CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |
  CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
  CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
@@ -17,6 +18,7 @@ Rule ID | Missing Help Link | Title |
  CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
  CA1822 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822> | Mark members as static |
  CA1823 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1823> | Avoid unused private fields |
+ CA1828 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1828> | Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used |
  CA1829 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1829> | Use Length/Count property instead of Count() when available |
  CA1830 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1830> | Prefer strongly-typed Append and Insert method overloads on StringBuilder |
  CA1836 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1836> | Prefer IsEmpty over Count |

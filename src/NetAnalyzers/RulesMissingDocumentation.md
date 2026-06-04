@@ -16,10 +16,12 @@ CA1017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1018> | Mark attributes with AttributeUsageAttribute |
 CA1019 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1019> | Define accessors for attribute arguments |
 CA1021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1021> | Avoid out parameters |
+CA1024 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1024> | Use properties where appropriate |
 CA1055 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055> | URI-like return values should not be strings |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
 CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
 CA1401 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401> | P/Invokes should not be visible |
+CA1416 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416> | Validate platform compatibility |
 CA1707 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1707> | Identifiers should not contain underscores |
 CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
 CA1724 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1724> | Type names should not match namespaces |
@@ -41,3 +43,4 @@ CA2253 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
 CA5365 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5365> | Do Not Disable HTTP Header Checking |
 CA5367 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5367> | Do Not Serialize Types With Pointer Fields |
+CA5390 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5390> | Do not hard-code encryption key |

@@ -15,6 +15,7 @@ Rule ID | Missing Help Link | Title |
  CA1505 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1505> | Avoid unmaintainable code |
  CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
  CA1805 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1805> | Do not initialize unnecessarily |
+ CA1813 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1813> | Avoid unsealed attributes |
  CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
  CA1822 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822> | Mark members as static |
  CA1823 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1823> | Avoid unused private fields |

@@ -15,12 +15,14 @@ CA1016 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1017> | Mark assemblies with ComVisible |
 CA1018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1018> | Mark attributes with AttributeUsageAttribute |
 CA1019 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1019> | Define accessors for attribute arguments |
+CA1021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1021> | Avoid out parameters |
 CA1307 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1307> | Specify StringComparison for clarity |
 CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
 CA1509 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1509> | Invalid entry in code metrics rule specification file |
 CA1727 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727> | Use PascalCase for named placeholders |
 CA1819 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1819> | Properties should not return arrays |
+CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
 CA1821 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1821> | Remove empty Finalizers |
 CA1822 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822> | Mark members as static |
 CA1824 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1824> | Mark assemblies with NeutralResourcesLanguageAttribute |
@@ -34,6 +36,7 @@ CA2000 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA2012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2012> | Use ValueTasks correctly |
 CA2211 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2211> | Non-constant fields should not be visible |
 CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
+CA2305 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2305> | Do not use insecure deserializer LosFormatter |
 CA2328 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2328> | Ensure that JsonSerializerSettings are secure |
 CA3012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3012> | Review code for regex injection vulnerabilities |
 CA3077 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3077> | Insecure Processing in API Design, XmlDocument and XmlTextReader |

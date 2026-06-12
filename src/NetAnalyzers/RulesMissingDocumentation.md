@@ -46,4 +46,5 @@ CA2253 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
 CA5365 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5365> | Do Not Disable HTTP Header Checking |
 CA5367 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5367> | Do Not Serialize Types With Pointer Fields |
+CA5373 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5373> | Do not use obsolete key derivation function |
 CA5390 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5390> | Do not hard-code encryption key |

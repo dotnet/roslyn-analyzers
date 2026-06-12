@@ -30,6 +30,7 @@ Rule ID | Missing Help Link | Title |
  CA2020 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020> | Prevent behavioral change |
  CA2119 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119> | Seal methods that satisfy private interfaces |
  CA2234 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234> | Pass system uri objects instead of strings |
+ CA2242 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2242> | Test for NaN correctly |
  CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
  CA2321 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2321> | Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver |
  CA2361 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2361> | Ensure auto-generated class containing DataSet.ReadXml() is not used with untrusted data |

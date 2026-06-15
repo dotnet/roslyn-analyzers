@@ -18,6 +18,7 @@ CA1019 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1021> | Avoid out parameters |
 CA1024 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1024> | Use properties where appropriate |
 CA1027 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1027> | Mark enums with FlagsAttribute |
+CA1028 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1028> | Enum Storage should be Int32 | 
 CA1055 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055> | URI-like return values should not be strings |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
 CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
@@ -34,6 +35,7 @@ CA1827 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1833 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1833> | Use AsSpan or AsMemory instead of Range-based indexers when appropriate |
 CA1835 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1835> | Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync' |
 CA1840 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1840> | Use 'Environment.CurrentManagedThreadId' |
+CA1841 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1841> | Prefer Dictionary.Contains methods |
 CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
 CA1867 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867> | Use char overload |
 CA2017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
@@ -41,6 +43,7 @@ CA2217 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA2224 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2224> | Override Equals on overloading operator equals |
 CA2225 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2225> | Operator overloads have named alternates |
 CA2234 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234> | Pass system uri objects instead of strings |
+CA2248 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2248> | Provide correct 'enum' argument to 'Enum.HasFlag' |
 CA2249 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2249> | Consider using 'string.Contains' instead of 'string.IndexOf' |
 CA2253 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253> | Named placeholders should not be numeric values |
 CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |

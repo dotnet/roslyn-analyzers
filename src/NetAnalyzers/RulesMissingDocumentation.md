@@ -24,12 +24,13 @@ Rule ID | Missing Help Link | Title |
  CA1847 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847> | Use char literal for a single character lookup |
  CA1848 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848> | Use the LoggerMessage delegates |
  CA1860 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860> | Avoid using 'Enumerable.Any()' extension method |
-  CA2002 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2002> | Do not lock on objects with weak identity |
+ CA2002 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2002> | Do not lock on objects with weak identity |
  CA2009 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2009> | Do not call ToImmutableCollection on an ImmutableCollection value |
  CA2015 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2015> | Do not define finalizers for types derived from MemoryManager\<T> |
  CA2017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
  CA2018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2018> | 'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument |
  CA2020 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020> | Prevent behavioral change |
+ CA2100 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100> | Review SQL queries for security vulnerabilities |
  CA2119 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119> | Seal methods that satisfy private interfaces |
  CA2234 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234> | Pass system uri objects instead of strings |
  CA2242 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2242> | Test for NaN correctly |

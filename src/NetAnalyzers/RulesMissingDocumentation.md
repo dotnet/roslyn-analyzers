@@ -15,6 +15,7 @@ Rule ID | Missing Help Link | Title |
  CA1724 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1724> | Type names should not match namespaces |
  CA1812 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1812> | Avoid uninstantiated internal classes |
  CA1815 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1815> | Override equals and operator equals on value types |
+ CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
  CA1822 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822> | Mark members as static |
  CA1828 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1828> | Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used |
  CA1832 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1832> | Use AsSpan or AsMemory instead of Range-based indexers when appropriate |

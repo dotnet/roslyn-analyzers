@@ -18,12 +18,13 @@ CA1019 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1021> | Avoid out parameters |
 CA1024 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1024> | Use properties where appropriate |
 CA1027 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1027> | Mark enums with FlagsAttribute |
-CA1028 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1028> | Enum Storage should be Int32 | 
+CA1028 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1028> | Enum Storage should be Int32 |
 CA1055 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055> | URI-like return values should not be strings |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
 CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
 CA1401 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401> | P/Invokes should not be visible |
 CA1416 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416> | Validate platform compatibility |
+CA1507 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1507> | Use nameof to express symbol names |
 CA1707 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1707> | Identifiers should not contain underscores |
 CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
 CA1724 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1724> | Type names should not match namespaces |
@@ -38,6 +39,7 @@ CA1840 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1841 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1841> | Prefer Dictionary.Contains methods |
 CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
 CA1867 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867> | Use char overload |
+CA1870 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1870> | Use a cached 'SearchValues' instance |
 CA2017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
 CA2217 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2217> | Do not mark enums with FlagsAttribute |
 CA2224 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2224> | Override Equals on overloading operator equals |

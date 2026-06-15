@@ -16,12 +16,15 @@ CA1017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1018> | Mark attributes with AttributeUsageAttribute |
 CA1019 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1019> | Define accessors for attribute arguments |
 CA1021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1021> | Avoid out parameters |
+CA1024 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1024> | Use properties where appropriate |
 CA1307 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1307> | Specify StringComparison for clarity |
 CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |
 CA1309 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1309> | Use ordinal string comparison |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
+CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
 CA1418 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1418> | Use valid platform string |
 CA1419 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419> | Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle' |
+CA1421 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421> | This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied |
 CA1509 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1509> | Invalid entry in code metrics rule specification file |
 CA1727 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727> | Use PascalCase for named placeholders |
 CA1819 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1819> | Properties should not return arrays |

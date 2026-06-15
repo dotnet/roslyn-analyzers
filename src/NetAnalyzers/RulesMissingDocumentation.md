@@ -15,6 +15,7 @@ Rule ID | Missing Help Link | Title |
  CA1724 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1724> | Type names should not match namespaces |
  CA1812 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1812> | Avoid uninstantiated internal classes |
  CA1815 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1815> | Override equals and operator equals on value types |
+ CA1822 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822> | Mark members as static |
  CA1828 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1828> | Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used |
  CA1832 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1832> | Use AsSpan or AsMemory instead of Range-based indexers when appropriate |
  CA1833 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1833> | Use AsSpan or AsMemory instead of Range-based indexers when appropriate |
@@ -23,7 +24,8 @@ Rule ID | Missing Help Link | Title |
  CA1847 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847> | Use char literal for a single character lookup |
  CA1848 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848> | Use the LoggerMessage delegates |
  CA1860 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860> | Avoid using 'Enumerable.Any()' extension method |
- CA2002 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2002> | Do not lock on objects with weak identity |
+  CA2002 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2002> | Do not lock on objects with weak identity |
+ CA2009 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2009> | Do not call ToImmutableCollection on an ImmutableCollection value |
  CA2015 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2015> | Do not define finalizers for types derived from MemoryManager\<T> |
  CA2017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
  CA2018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2018> | 'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument |

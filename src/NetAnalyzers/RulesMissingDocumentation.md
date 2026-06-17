@@ -31,6 +31,7 @@ Rule ID | Missing Help Link | Title |
  CA2017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
  CA2018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2018> | 'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument |
  CA2020 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020> | Prevent behavioral change |
+ CA2021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |
  CA2100 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100> | Review SQL queries for security vulnerabilities |
  CA2119 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119> | Seal methods that satisfy private interfaces |
  CA2234 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234> | Pass system uri objects instead of strings |

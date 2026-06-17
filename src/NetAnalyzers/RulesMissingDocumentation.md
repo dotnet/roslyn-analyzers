@@ -17,6 +17,8 @@ CA1018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1019 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1019> | Define accessors for attribute arguments |
 CA1021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1021> | Avoid out parameters |
 CA1024 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1024> | Use properties where appropriate |
+CA1027 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1027> | Mark enums with FlagsAttribute | 
+CA1060 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1060> | Move pinvokes to native methods class |
 CA1307 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1307> | Specify StringComparison for clarity |
 CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |
 CA1309 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1309> | Use ordinal string comparison |

@@ -17,7 +17,7 @@ CA1018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1019 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1019> | Define accessors for attribute arguments |
 CA1021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1021> | Avoid out parameters |
 CA1024 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1024> | Use properties where appropriate |
-CA1027 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1027> | Mark enums with FlagsAttribute | 
+CA1027 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1027> | Mark enums with FlagsAttribute |
 CA1060 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1060> | Move pinvokes to native methods class |
 CA1307 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1307> | Specify StringComparison for clarity |
 CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |
@@ -29,6 +29,7 @@ CA1419 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1421 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421> | This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied |
 CA1509 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1509> | Invalid entry in code metrics rule specification file |
 CA1727 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727> | Use PascalCase for named placeholders |
+CA1813 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1813> | Avoid unsealed attributes |
 CA1819 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1819> | Properties should not return arrays |
 CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
 CA1821 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1821> | Remove empty Finalizers |
@@ -44,10 +45,12 @@ CA1855 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1866 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1866> | Use char overload |
 CA2000 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000> | Dispose objects before losing scope |
 CA2012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2012> | Use ValueTasks correctly |
+CA2014 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2014> | Do not use stackalloc in loops |
 CA2211 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2211> | Non-constant fields should not be visible |
 CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
 CA2305 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2305> | Do not use insecure deserializer LosFormatter |
 CA2328 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2328> | Ensure that JsonSerializerSettings are secure |
+CA2330 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2330> | Ensure that JsonSerializer has a secure configuration when deserializing |
 CA3012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3012> | Review code for regex injection vulnerabilities |
 CA3077 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3077> | Insecure Processing in API Design, XmlDocument and XmlTextReader |
 CA5359 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5359> | Do Not Disable Certificate Validation |

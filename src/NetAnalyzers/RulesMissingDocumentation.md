@@ -23,6 +23,7 @@ Rule ID | Missing Help Link | Title |
  CA1829 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1829> | Use Length/Count property instead of Count() when available |
  CA1830 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1830> | Prefer strongly-typed Append and Insert method overloads on StringBuilder |
  CA1836 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1836> | Prefer IsEmpty over Count |
+ CA1837 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1837> | Use 'Environment.ProcessId' |
  CA1838 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1838> | Avoid 'StringBuilder' parameters for P/Invokes |
  CA1839 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839> | Use 'Environment.ProcessPath' |
  CA1847 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847> | Use char literal for a single character lookup |

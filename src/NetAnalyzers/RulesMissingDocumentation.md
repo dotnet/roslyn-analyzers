@@ -4,6 +4,7 @@ Rule ID | Missing Help Link | Title |
 --------|-------------------|-------|
  CA1000 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1000> | Do not declare static members on generic types |
  CA1034 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1034> | Nested types should not be visible |
+ CA1061 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1061> | Do not hide base class methods |
  CA1307 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1307> | Specify StringComparison for clarity |
  CA1309 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1309> | Use ordinal string comparison |
  CA1401 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401> | P/Invokes should not be visible |
@@ -11,6 +12,8 @@ Rule ID | Missing Help Link | Title |
  CA1505 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1505> | Avoid unmaintainable code |
  CA1508 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1508> | Avoid dead conditional code |
  CA1510 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510> | Use ArgumentNullException throw helper |
+ CA1512 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1512> | Use ArgumentOutOfRangeException throw helper |
+ CA1513 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1513> | Use ObjectDisposedException throw helper |
  CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
  CA1724 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1724> | Type names should not match namespaces |
  CA1812 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1812> | Avoid uninstantiated internal classes |

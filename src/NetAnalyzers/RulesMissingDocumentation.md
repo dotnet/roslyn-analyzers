@@ -20,11 +20,13 @@ CA1024 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1027 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1027> | Mark enums with FlagsAttribute |
 CA1028 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1028> | Enum Storage should be Int32 |
 CA1030 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1030> | Use events where appropriate |
+CA1031 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1031> | Do not catch general exception types |
 CA1055 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055> | URI-like return values should not be strings |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
 CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
 CA1401 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401> | P/Invokes should not be visible |
 CA1416 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416> | Validate platform compatibility |
+CA1422 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1422> | Validate platform compatibility |
 CA1507 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1507> | Use nameof to express symbol names |
 CA1707 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1707> | Identifiers should not contain underscores |
 CA1715 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1715> | Identifiers should have correct prefix |
@@ -37,6 +39,7 @@ CA1822 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1827 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1827> | Do not use Count() or LongCount() when Any() can be used |
 CA1833 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1833> | Use AsSpan or AsMemory instead of Range-based indexers when appropriate |
 CA1835 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1835> | Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync' |
+CA1837 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1837> | Use 'Environment.ProcessId' |
 CA1840 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1840> | Use 'Environment.CurrentManagedThreadId' |
 CA1841 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1841> | Prefer Dictionary.Contains methods |
 CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
@@ -44,6 +47,7 @@ CA1867 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1870 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1870> | Use a cached 'SearchValues' instance |
 CA2017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
 CA2021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |
+CA2119 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119> | Seal methods that satisfy private interfaces |
 CA2217 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2217> | Do not mark enums with FlagsAttribute |
 CA2224 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2224> | Override Equals on overloading operator equals |
 CA2225 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2225> | Operator overloads have named alternates |

@@ -42,6 +42,7 @@ CA1835 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1837 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1837> | Use 'Environment.ProcessId' |
 CA1840 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1840> | Use 'Environment.CurrentManagedThreadId' |
 CA1841 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1841> | Prefer Dictionary.Contains methods |
+CA1842 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1842> | Do not use 'WhenAll' with a single task |
 CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
 CA1867 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867> | Use char overload |
 CA1870 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1870> | Use a cached 'SearchValues' instance |
@@ -52,6 +53,7 @@ CA2217 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA2224 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2224> | Override Equals on overloading operator equals |
 CA2225 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2225> | Operator overloads have named alternates |
 CA2234 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234> | Pass system uri objects instead of strings |
+CA2243 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2243> | Attribute string literals should parse correctly |
 CA2248 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2248> | Provide correct 'enum' argument to 'Enum.HasFlag' |
 CA2249 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2249> | Consider using 'string.Contains' instead of 'string.IndexOf' |
 CA2253 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253> | Named placeholders should not be numeric values |

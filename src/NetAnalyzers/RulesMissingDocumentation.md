@@ -14,6 +14,7 @@ Rule ID | Missing Help Link | Title |
  CA1510 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510> | Use ArgumentNullException throw helper |
  CA1512 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1512> | Use ArgumentOutOfRangeException throw helper |
  CA1513 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1513> | Use ObjectDisposedException throw helper |
+ CA1700 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1700> | Do not name enum values 'Reserved' |
  CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
  CA1724 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1724> | Type names should not match namespaces |
  CA1812 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1812> | Avoid uninstantiated internal classes |
@@ -28,6 +29,7 @@ Rule ID | Missing Help Link | Title |
  CA1847 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847> | Use char literal for a single character lookup |
  CA1848 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848> | Use the LoggerMessage delegates |
  CA1860 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860> | Avoid using 'Enumerable.Any()' extension method |
+ CA1870 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1870> | Use a cached 'SearchValues' instance |
  CA2002 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2002> | Do not lock on objects with weak identity |
  CA2009 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2009> | Do not call ToImmutableCollection on an ImmutableCollection value |
  CA2015 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2015> | Do not define finalizers for types derived from MemoryManager\<T> |
@@ -41,6 +43,7 @@ Rule ID | Missing Help Link | Title |
  CA2242 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2242> | Test for NaN correctly |
  CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
  CA2321 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2321> | Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver |
+ CA2351 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2351> | Do not use DataSet.ReadXml() with untrusted data |
  CA2361 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2361> | Ensure auto-generated class containing DataSet.ReadXml() is not used with untrusted data |
  CA5360 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5360> | Do Not Call Dangerous Methods In Deserialization |
  CA5367 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5367> | Do Not Serialize Types With Pointer Fields |

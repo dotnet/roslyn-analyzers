@@ -26,6 +26,7 @@ CA1309 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
 CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
 CA1401 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401> | P/Invokes should not be visible |
+CA1416 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416> | Validate platform compatibility |
 CA1418 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1418> | Use valid platform string |
 CA1419 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419> | Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle' |
 CA1421 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421> | This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied |

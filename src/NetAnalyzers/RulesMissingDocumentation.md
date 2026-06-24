@@ -5,8 +5,11 @@ Rule ID | Missing Help Link | Title |
  CA1000 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1000> | Do not declare static members on generic types |
  CA1034 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1034> | Nested types should not be visible |
  CA1061 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1061> | Do not hide base class methods |
+ CA1303 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1303> | Do not pass literals as localized parameters |
+ CA1305 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1305> | Specify IFormatProvider |
  CA1307 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1307> | Specify StringComparison for clarity |
  CA1309 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1309> | Use ordinal string comparison |
+ CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
  CA1401 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401> | P/Invokes should not be visible |
  CA1421 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421> | This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied |
  CA1505 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1505> | Avoid unmaintainable code |

@@ -19,6 +19,7 @@ CA1021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1024 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1024> | Use properties where appropriate |
 CA1027 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1027> | Mark enums with FlagsAttribute |
 CA1028 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1028> | Enum Storage should be Int32 |
+CA1030 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1030> | Use events where appropriate |
 CA1060 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1060> | Move pinvokes to native methods class |
 CA1307 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1307> | Specify StringComparison for clarity |
 CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |
@@ -27,6 +28,7 @@ CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
 CA1401 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401> | P/Invokes should not be visible |
 CA1416 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416> | Validate platform compatibility |
+CA1417 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1417> | Do not use 'OutAttribute' on string parameters for P/Invokes |
 CA1418 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1418> | Use valid platform string |
 CA1419 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419> | Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle' |
 CA1421 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421> | This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied |
@@ -59,4 +61,5 @@ CA3012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA3077 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3077> | Insecure Processing in API Design, XmlDocument and XmlTextReader |
 CA5359 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5359> | Do Not Disable Certificate Validation |
 CA5368 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5368> | Set ViewStateUserKey For Classes Derived From Page |
+CA5372 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5372> | Use XmlReader for XPathDocument constructor |
 CA5402 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5402> | Use CreateEncryptor with the default IV  |

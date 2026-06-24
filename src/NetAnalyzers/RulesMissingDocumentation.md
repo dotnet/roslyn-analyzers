@@ -7,6 +7,7 @@ Rule ID | Missing Help Link | Title |
  CA1003 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1003> | Use generic event handler instances |
  CA1018 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1018> | Mark attributes with AttributeUsageAttribute |
  CA1062 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062> | Validate arguments of public methods |
+ CA1303 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1303> | Do not pass literals as localized parameters |
  CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |
  CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
  CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |

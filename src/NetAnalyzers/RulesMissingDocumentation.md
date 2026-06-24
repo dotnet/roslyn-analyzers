@@ -22,11 +22,13 @@ CA1028 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1030 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1030> | Use events where appropriate |
 CA1031 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1031> | Do not catch general exception types |
 CA1032 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1032> | Implement standard exception constructors |
+CA1033 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1033> | Interface methods should be callable by child types |
 CA1055 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055> | URI-like return values should not be strings |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
 CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
 CA1401 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401> | P/Invokes should not be visible |
 CA1416 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416> | Validate platform compatibility |
+CA1419 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419> | Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle' |
 CA1422 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1422> | Validate platform compatibility |
 CA1507 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1507> | Use nameof to express symbol names |
 CA1515 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515> | Consider making public types internal |

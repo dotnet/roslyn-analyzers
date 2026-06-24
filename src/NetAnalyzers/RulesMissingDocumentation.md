@@ -21,6 +21,7 @@ CA1027 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1028 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1028> | Enum Storage should be Int32 |
 CA1030 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1030> | Use events where appropriate |
 CA1031 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1031> | Do not catch general exception types |
+CA1032 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1032> | Implement standard exception constructors |
 CA1055 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055> | URI-like return values should not be strings |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
 CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |
@@ -48,6 +49,7 @@ CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1856 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856> | Incorrect usage of ConstantExpected attribute |
 CA1867 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867> | Use char overload |
 CA1870 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1870> | Use a cached 'SearchValues' instance |
+CA2002 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2002> | Do not lock on objects with weak identity |
 CA2017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
 CA2021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |
 CA2119 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119> | Seal methods that satisfy private interfaces |

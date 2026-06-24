@@ -26,6 +26,7 @@ Rule ID | Missing Help Link | Title |
  CA1837 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1837> | Use 'Environment.ProcessId' |
  CA1838 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1838> | Avoid 'StringBuilder' parameters for P/Invokes |
  CA1839 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839> | Use 'Environment.ProcessPath' |
+ CA1846 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1846> | Prefer 'AsSpan' over 'Substring' |
  CA1847 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847> | Use char literal for a single character lookup |
  CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
  CA1852 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1852> | Seal internal types |

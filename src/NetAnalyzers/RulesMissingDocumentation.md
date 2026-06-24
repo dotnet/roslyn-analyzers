@@ -28,6 +28,7 @@ CA1401 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1416 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416> | Validate platform compatibility |
 CA1422 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1422> | Validate platform compatibility |
 CA1507 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1507> | Use nameof to express symbol names |
+CA1515 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515> | Consider making public types internal |
 CA1707 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1707> | Identifiers should not contain underscores |
 CA1715 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1715> | Identifiers should have correct prefix |
 CA1716 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716> | Identifiers should not match keywords |
@@ -44,12 +45,14 @@ CA1840 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1841 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1841> | Prefer Dictionary.Contains methods |
 CA1842 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1842> | Do not use 'WhenAll' with a single task |
 CA1849 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Call async methods when in an async method |
+CA1856 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1856> | Incorrect usage of ConstantExpected attribute |
 CA1867 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867> | Use char overload |
 CA1870 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1870> | Use a cached 'SearchValues' instance |
 CA2017 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017> | Parameter count mismatch |
 CA2021 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021> | Do not call Enumerable.Cast\<T> or Enumerable.OfType\<T> with incompatible types |
 CA2119 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119> | Seal methods that satisfy private interfaces |
 CA2217 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2217> | Do not mark enums with FlagsAttribute |
+CA2219 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2219> | Do not raise exceptions in finally clauses |
 CA2224 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2224> | Override Equals on overloading operator equals |
 CA2225 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2225> | Operator overloads have named alternates |
 CA2234 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234> | Pass system uri objects instead of strings |
@@ -58,6 +61,7 @@ CA2248 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA2249 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2249> | Consider using 'string.Contains' instead of 'string.IndexOf' |
 CA2253 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253> | Named placeholders should not be numeric values |
 CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
+CA3006 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3006> | Review code for process command injection vulnerabilities |
 CA5365 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5365> | Do Not Disable HTTP Header Checking |
 CA5367 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5367> | Do Not Serialize Types With Pointer Fields |
 CA5373 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5373> | Do not use obsolete key derivation function |

@@ -13,6 +13,7 @@ Rule ID | Missing Help Link | Title |
  CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
  CA1401 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401> | P/Invokes should not be visible |
  CA1421 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421> | This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied |
+ CA1501 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1501> | Avoid excessive inheritance |
  CA1505 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1505> | Avoid unmaintainable code |
  CA1508 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1508> | Avoid dead conditional code |
  CA1510 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510> | Use ArgumentNullException throw helper |

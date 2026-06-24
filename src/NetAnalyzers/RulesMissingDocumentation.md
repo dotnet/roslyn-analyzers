@@ -20,6 +20,7 @@ CA1024 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1027 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1027> | Mark enums with FlagsAttribute |
 CA1028 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1028> | Enum Storage should be Int32 |
 CA1030 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1030> | Use events where appropriate |
+CA1031 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1031> | Do not catch general exception types |
 CA1060 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1060> | Move pinvokes to native methods class |
 CA1307 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1307> | Specify StringComparison for clarity |
 CA1308 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1308> | Normalize strings to uppercase |

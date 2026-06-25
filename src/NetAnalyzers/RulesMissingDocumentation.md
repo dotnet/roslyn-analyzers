@@ -42,6 +42,7 @@ CA1816 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1820 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820> | Test for empty strings using string length |
 CA1822 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822> | Mark members as static |
 CA1827 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1827> | Do not use Count() or LongCount() when Any() can be used |
+CA1829 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1829> | Use Length/Count property instead of Count() when available |
 CA1833 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1833> | Use AsSpan or AsMemory instead of Range-based indexers when appropriate |
 CA1835 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1835> | Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync' |
 CA1837 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1837> | Use 'Environment.ProcessId' |

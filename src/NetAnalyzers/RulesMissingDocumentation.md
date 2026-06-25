@@ -23,6 +23,7 @@ CA1030 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1031 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1031> | Do not catch general exception types |
 CA1032 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1032> | Implement standard exception constructors |
 CA1033 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1033> | Interface methods should be callable by child types |
+CA1034 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1034> | Nested types should not be visible |
 CA1055 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055> | URI-like return values should not be strings |
 CA1310 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1310> | Specify StringComparison for correctness |
 CA1311 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1311> | Specify a culture or use an invariant version |

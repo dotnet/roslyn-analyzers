@@ -32,6 +32,7 @@ CA1416 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA1417 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1417> | Do not use 'OutAttribute' on string parameters for P/Invokes |
 CA1418 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1418> | Use valid platform string |
 CA1419 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419> | Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle' |
+CA1420 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1420> | Property, type, or attribute requires runtime marshalling |
 CA1421 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1421> | This method uses runtime marshalling even when the 'DisableRuntimeMarshallingAttribute' is applied |
 CA1509 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1509> | Invalid entry in code metrics rule specification file |
 CA1727 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727> | Use PascalCase for named placeholders |
@@ -52,12 +53,14 @@ CA1866 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-
 CA2000 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000> | Dispose objects before losing scope |
 CA2012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2012> | Use ValueTasks correctly |
 CA2014 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2014> | Do not use stackalloc in loops |
+CA2119 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2119> | Seal methods that satisfy private interfaces |
 CA2211 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2211> | Non-constant fields should not be visible |
 CA2224 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2224> | Override Equals on overloading operator equals |
 CA2302 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2302> | Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize |
 CA2305 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2305> | Do not use insecure deserializer LosFormatter |
 CA2328 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2328> | Ensure that JsonSerializerSettings are secure |
 CA2330 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2330> | Ensure that JsonSerializer has a secure configuration when deserializing |
+CA2352 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2352> | Unsafe DataSet or DataTable in serializable type can be vulnerable to remote code execution attacks |
 CA3012 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3012> | Review code for regex injection vulnerabilities |
 CA3077 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3077> | Insecure Processing in API Design, XmlDocument and XmlTextReader |
 CA5359 | <https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5359> | Do Not Disable Certificate Validation |

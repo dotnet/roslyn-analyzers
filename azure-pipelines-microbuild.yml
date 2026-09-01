@@ -28,7 +28,6 @@ variables:
 - name: TeamName
   value: Roslyn
 - group: DotNet-Roslyn-SDLValidation-Params
-- group: DotNet-Symbol-Server-Pats
 - group: DotNet-Versions-Publish
 - group: ManagedLanguageSecrets
 
